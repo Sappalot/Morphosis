@@ -74,7 +74,7 @@ public class Edge : MonoBehaviour {
 
     public void Update() {
         if (frontCell != null && backCell != null) {
-            /*
+            
             //draw main
             mainArrow.GetComponent<LineRenderer>().SetPosition(1, frontCell.transform.position);
             mainArrow.GetComponent<LineRenderer>().SetPosition(0, backCell.transform.position);
@@ -93,7 +93,7 @@ public class Edge : MonoBehaviour {
             //draw force
             forceArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + force * 100f);
             forceArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
-            */
+            
         }
     }
 

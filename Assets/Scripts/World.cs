@@ -10,8 +10,8 @@ public class World : MonoBehaviour {
 	void Start () {
 
         //test, OK with 24 * 24 (18 cells per creature) ~ 10 FPS :) 
-        for (int y = 1; y <= 25; y++) {
-            for (int x = 1; x <= 25; x++) {
+        for (int y = 1; y <= 10; y++) {
+            for (int x = 1; x <= 10; x++) {
                 life.SpawnCreatureEmbryo(new Vector3(x*10f, y*10, 0f));
             }
          }
