@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.6.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -78,6 +80,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
+    <Compile Include="Assets\Scripts\HeadUpDisplay\WorldView.cs" />
     <Compile Include="Assets\Scripts\Inanimate\Terrain.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\CardinalDirection.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\CardinalDirectionHelper.cs" />
@@ -100,9 +104,11 @@
     <Compile Include="Assets\Scripts\Life\Creature\Phenotype\Phenotype.cs" />
     <Compile Include="Assets\Scripts\Life\IdGenerator.cs" />
     <Compile Include="Assets\Scripts\Life\Life.cs" />
+    <Compile Include="Assets\Scripts\Utils\MouseDrag.cs" />
     <Compile Include="Assets\Scripts\Utils\Vector2i.cs" />
     <Compile Include="Assets\Scripts\World.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>
