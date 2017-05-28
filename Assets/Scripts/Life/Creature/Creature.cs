@@ -22,7 +22,7 @@ public class Creature : MonoBehaviour {
     [Range(0f, 40f)]
     public float wingPow = 10f;
 
-    [Range(0f, 10f)]
+    [Range(0f, 100f)]
     public float wingMax = 0.1f;
 
     //muscle

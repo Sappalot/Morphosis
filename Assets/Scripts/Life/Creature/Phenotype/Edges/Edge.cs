@@ -102,19 +102,20 @@ public class Edge : MonoBehaviour {
 
     //Use 2 cells to find normal, allways on wings RIGHT hand
     public void UpdateNormal() {
+        //TODO Optimize in 2D, try to get rid of normalization
         Vector3 wingSegment = frontCell.transform.position - backCell.transform.position;
         normal = Vector3.Cross(wingSegment.normalized, new Vector3(0f, 0f, 1f));
     }
 
-
-
     //use 2 cells to find center velocity
     public void UpdateVelocity() {
+        //TODO Get references once
         velocity = (frontCell.GetComponent<Rigidbody2D>().velocity + backCell.GetComponent<Rigidbody2D>().velocity) / 2f;
     }
 
     // use normal and velocity to calculate force
     public void UpdateForce(Vector3 creatureVelocity, Creature creature) {
+        //Don't give up on Pow!
         float velocityInNormalDirection = Math.Max(0f, Vector3.Dot(normal, velocity - creatureVelocity * (1f - creature.wingDrag)));
         force = -normal * Math.Min(creature.wingMax, (creature.f1 * velocityInNormalDirection + creature.wingF2 * Mathf.Pow(velocityInNormalDirection, creature.wingPow)));
     }
