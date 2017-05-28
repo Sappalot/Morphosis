@@ -8,7 +8,25 @@ public class Life : MonoBehaviour {
     private IdGenerator idGenerator = new IdGenerator();
     private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
     private List<Creature> creatureList = new List<Creature>();
-    
+
+    public void EvoUpdate() {
+        foreach (Creature creature in creatureList) {
+            creature.EvoUpdate();
+        }
+    }
+
+    public void EvoFixedUpdate() {
+        foreach (Creature creature in creatureList) {
+            creature.EvoFixedUpdate();
+        }
+    }
+
+    //public void UpdateGrowth(float time) {
+    //    foreach (Creature creature in creatureList) {
+    //        creature.UpdateGrowth(time);
+    //    }
+    //}
+
     //makes a minimal new creature with blank genotype
     public string SpawnCreatureEmbryo(Vector3 position) {
         // TODO creatre a copy
@@ -19,6 +37,7 @@ public class Life : MonoBehaviour {
             throw new System.Exception("Generated ID was not unique.");
         }
         creature.id = id;
+        creature.name = id;
         creature.transform.parent = this.transform;
         creature.transform.position = position;
         creatureDictionary.Add(id, creature);
@@ -45,34 +64,4 @@ public class Life : MonoBehaviour {
 
     }
 
-    public void UpdateGrowth(float time) {
-        foreach (Creature creature in creatureList) {
-            creature.UpdateGrowth(time);
-        }
-    }
-
-    public void UpdateAction(float time) {
-        foreach (Creature creature in creatureList) {
-            creature.UpdateAction(time);
-        }
-    }
-
-    public void UpdatePhyscis() {
-        foreach (Creature creature in creatureList) {
-            creature.UpdatePhyscis();
-        }
-    }
-
-    public void UpdateGraphics() {
-        foreach (Creature creature in creatureList) {
-            creature.UpdateGraphics();
-        }
-    }
-
-
-    //public void UpdateGraphics() {
-    //    foreach (Creature creature in creatureList) {
-    //        creature.UpdateGraphics();
-    //    }
-    //}
 }

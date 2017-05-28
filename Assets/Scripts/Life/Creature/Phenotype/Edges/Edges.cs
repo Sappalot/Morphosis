@@ -20,21 +20,7 @@ public class Edges : MonoBehaviour {
         edgeList.Clear();
     }
 
-    //All wings will apply forces to their cells 
-    public void UpdateWingForces(Vector3 creatureVelocity, Creature creature) {
-        foreach (Edge edge in edgeList) {
-            if (edge.isWing) {
-                edge.UpdateNormal();
-                edge.UpdateVelocity();
-                edge.UpdateForce(creatureVelocity, creature);
-            }
-        }
-        foreach (Edge edge in edgeList) {
-            if (edge.isWing) {
-                edge.ApplyForce();
-            }
-        }
-    }
+
 
     /*public void UpdateWings(List<Cell> cellList) {
         RemoveWings();
@@ -47,6 +33,30 @@ public class Edges : MonoBehaviour {
         }
     }*/
 
+    //All wings will apply forces to their cells 
+    public void EvoFixedUpdate(Vector3 creatureVelocity, Creature creature) {
+        foreach (Edge edge in edgeList) {
+            if (edge.IsWing) {
+                edge.UpdateNormal();
+                edge.UpdateVelocity();
+                edge.UpdateForce(creatureVelocity, creature);
+            }
+        }
+        foreach (Edge edge in edgeList) {
+            if (edge.IsWing) {
+                edge.ApplyForce();
+            }
+        }
+    }
+
+    public void EvoUpdate() {
+        foreach (Edge edge in edgeList) {
+            if (edge.IsWing) {
+                edge.EvoUpdate();
+            }
+        }
+    } 
+
     public void GenerateWings(List<Cell> cellList) {
         if (cellList.Count < 2)
             return;
@@ -55,13 +65,13 @@ public class Edges : MonoBehaviour {
         Cell currentCell = firstCell;
         Cell previousCell = null;
         for (int safe = 0; safe < 1000; safe++) {
-            Cell nextCell = getNextPeripheryCell(currentCell, previousCell);
+            Cell nextCell = GetNextPeripheryCell(currentCell, previousCell);
             Edge edge = (GameObject.Instantiate(edgePrefab, transform.position, Quaternion.identity) as Edge);
             edge.transform.parent = transform;
             //edge.frontCell = nextCell;
             //edge.backCell = currentCell;
             edgeList.Add(edge);
-            edge.Setup(currentCell, nextCell, currentCell.getDirectionOfNeighbourCell(nextCell), false );
+            edge.Setup(currentCell, nextCell, currentCell.GetDirectionOfNeighbourCell(nextCell), false );
             edge.MakeWing(nextCell);
             if (nextCell == firstCell) {
                 break;
@@ -71,10 +81,10 @@ public class Edges : MonoBehaviour {
         }
     }
 
-    private Cell getNextPeripheryCell(Cell currentCell, Cell previousCell) {
+    private Cell GetNextPeripheryCell(Cell currentCell, Cell previousCell) {
         int previousDirection = 0;
         if (previousCell != null) {
-            previousDirection = currentCell.getDirectionOfNeighbourCell(previousCell);
+            previousDirection = currentCell.GetDirectionOfNeighbourCell(previousCell);
         }
 
         for (int index = previousDirection + 1; index < previousDirection + 7; index++) {

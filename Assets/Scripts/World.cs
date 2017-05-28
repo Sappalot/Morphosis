@@ -22,11 +22,11 @@ public class World : MonoBehaviour {
 
     }
 
-	void Update () {
-        //life.UpdateGraphics();
-	}
+    void Update() {
+        life.EvoUpdate();
+    }
 
     void FixedUpdate() {
-        life.UpdatePhyscis();
+        life.EvoFixedUpdate();
     }
 }

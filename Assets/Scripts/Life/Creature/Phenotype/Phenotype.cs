@@ -21,6 +21,37 @@ public class Phenotype : MonoBehaviour {
     private List<Cell> cellList = new List<Cell>();
     private CellMap cellMap = new CellMap();
 
+    private int update = 0;
+
+    public void EvoUpdate() {
+        EvoUpdateCells();
+        edges.EvoUpdate();
+    }
+
+    public void EvoFixedUpdate(Creature creature) {
+        update++;
+        if (true || update % 10 == 0) {
+            // Creature
+            Vector3 averageVelocity = new Vector3();
+            foreach (Cell cell in cellList) {
+                averageVelocity += cell.velocity;
+            }
+            velocity = (cellList.Count > 0f) ? velocity = averageVelocity / cellList.Count : new Vector3();
+
+            // Cells, turn strings of cells straight
+            foreach (Cell cell in cellList) {
+                cell.TurnNeighboursInPlace();
+            }
+
+            // Edges, let edge-wings apply proper forces to neighbouring cells
+            edges.EvoFixedUpdate(velocity, creature);
+
+            foreach (Cell cell in cellList) {
+                cell.EvoFixedUpdate();
+            }
+        }
+    }
+
     public void Generate(Genotype genotype, Creature creature) {
         timeOffset = Random.Range(0f, 7f);
 
@@ -136,79 +167,11 @@ public class Phenotype : MonoBehaviour {
         cellMap.Clear();
     }
 
-    //private bool grownUp = false;
-
-    /*public void Grow(float time) {
-        if (!grownUp) {
-            if (model == 0)
-                cellType = model0;
-            else if (model == 1)
-                cellType = model1;
-            else if (model == 2)
-                cellType = model2;
-            else if (model == 3)
-                cellType = model3;
-            else if (model == 4)
-                cellType = model4;
-            else if (model == 5)
-                cellType = model5;
-            else if (model == 6)
-                cellType = model6;
-
-            //cells
-            //§SpawnCells();
-            //ConnectCells();
-
-            //wings
-            //edges.GenerateWings(cellList);
-
-            //springs
-            //UpdateSpringsFrequenze();
-
-            grownUp = true;
-        }
-    }*/
-
-    int update = 0;
-    public void UpdatePhysics(Creature creature) {
-        update++;
-        if (true || update % 10 == 0) { 
-            // Creature
-            UpdateVelocity();
-
-            // Cells
-            TurnNeighboursInPlace();
-
-            // Wings
-            edges.UpdateWingForces(velocity, creature);
-
-            UpdateCellPhysics();
-        }
-    }
-
-    public void UpdateGraphics() {
-        UpdateCellGraphics();
-    }
-
-
-    private void UpdateCellGraphics() {
+    private void EvoUpdateCells() {
+        //Todo: only if creature inside frustum && should be shown
         foreach (Cell cell in cellList) {
-            cell.UpdateGraphics();
+            cell.EvoUpdate();
         }
-    }
-
-    private void UpdateCellPhysics() {
-        foreach (Cell cell in cellList) {
-            cell.UpdatePhysics();
-        }
-    }
-
-    public void UpdateVelocity() {
-        Vector3 averageVelocity = new Vector3();
-        foreach (Cell cell in cellList) {
-            averageVelocity += cell.velocity;
-        }
-        velocity = (cellList.Count > 0f) ? velocity = averageVelocity / cellList.Count : new Vector3();
     }
 
     public int GetCellCount() {
@@ -220,146 +183,4 @@ public class Phenotype : MonoBehaviour {
             cell.UpdateSpringFrequenzy();
         }
     }
-
-    /*private void UpdateRadius(float time) {
-        foreach (Cell cell in cellList) {
-            cell.UpdateRadius(time);
-        }
-    }
-
-   private void UpdateSpringLengths() {
-        foreach (Cell cell in cellList) {
-            cell.UpdateSpringLengths();
-        }
-    }
-   */
-    private void TurnNeighboursInPlace() {
-        foreach (Cell cell in cellList) {
-            cell.TurnNeighboursInPlace();
-        }
-    } 
-
-    /*public void UpdateGraphics() {
-        foreach (Cell cell in cellList) {
-            cell.UpdateGraphics();
-        }
-    }*/
-
-    /*void SpawnCells() {
-        float cellRadius = 0.5f;
-        float xStride = Mathf.Sqrt(Mathf.Pow(cellRadius * 2, 2) - Mathf.Pow(cellRadius, 2));
-        float yStride = cellRadius * 2;
-        for (int x = 0; x < sizeX; x++) {
-            for (int y = 0; y < sizeY; y++) {
-                if (cellType[x, y] != 0) {
-                    float displace = (x % 2 == 0) ? 0f : cellRadius;
-                    Vector3 position = transform.position + new Vector3(xStride * x, yStride * y + displace, 0f);
-
-                    Cell cell = null;
-                    if (cellType[x, y] == 1) {
-                        cell = (GameObject.Instantiate(leafCellPrefab, position, Quaternion.identity) as Cell);
-                    }
-                    else if (cellType[x, y] == 2) {
-                        cell = (GameObject.Instantiate(muscleCellPrefab, position, Quaternion.identity) as Cell);
-                    }
-
-                    cell.transform.parent = cells.transform;
-
-                    grid[x, y] = cell;
-                    cellList.Add(cell);
-                }
-            }
-        }
-    }*/
-
-
-
-   /* Vector2i GetGridNeighbour(Vector2i pos, CardinalDirection direction) {
-        Vector2i neighbour = null;
-        int even = (pos.x % 2 == 0) ? 1 : 0;
-        int odd = (pos.x % 2 == 0) ? 0 : 1;
-        if (direction == CardinalDirection.northEast) {
-            neighbour = new Vector2i(pos.x + 1, pos.y + odd);
-        }
-        if (direction == CardinalDirection.north) {
-            neighbour = new Vector2i(pos.x, pos.y + 1);
-        }
-        if (direction == CardinalDirection.northWest) {
-            neighbour = new Vector2i(pos.x - 1, pos.y + odd);
-        }
-        if (direction == CardinalDirection.southWest) {
-            neighbour = new Vector2i(pos.x - 1, pos.y - even);
-        }
-        if (direction == CardinalDirection.south) {
-            neighbour = new Vector2i(pos.x, pos.y - 1);
-        }
-        if (direction == CardinalDirection.southEast) {
-            neighbour = new Vector2i(pos.x + 1, pos.y - even);
-        }
-
-        if (neighbour != null && neighbour.x >= 0 && neighbour.x < sizeX && neighbour.y >= 0 && neighbour.y < sizeY && cellType[neighbour.x, neighbour.y] != 0) {
-            return neighbour;
-        }
-        return null;
-    }*/
-
-
-
-    //--------------------------------------------------------------
-   /* const int sizeX = 6;
-    const int sizeY = 10;
-
-    Cell[,] grid = new Cell[sizeX, sizeY];
-    int[,] model0 = new int[sizeX, sizeY] { { 0,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
-                                              { 1,  1,  2,  2,  2,  2,  2,  2,  1,  1 },
-                                            { 0,  0,  0,  0,  0,  1,  0,  0,  0,  0 },
-                                              { 0,  0,  0,  0,  1,  1,  0,  0,  0,  0 },
-                                            { 0,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
-                                              { 1,  1,  2,  2,  2,  2,  2,  2,  1,  1 } };
-
-    int[,] model1 = new int[sizeX, sizeY] { { 0,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
-                                              { 1,  1,  1,  2,  2,  2,  2,  1,  1,  1 },
-                                            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                              { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                              { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 } };
-
-    int[,] model2 = new int[sizeX, sizeY] { { 0,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
-                                              { 1,  1,  2,  2,  2,  2,  2,  2,  1,  1 },
-                                            { 0,  0,  0,  0,  0,  1,  0,  0,  0,  0 },
-                                              { 0,  0,  0,  0,  1,  1,  0,  0,  0,  0 },
-                                            { 0,  0,  0,  0,  1,  1,  1,  0,  0,  0 },
-                                              { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 } };
-
-    int[,] model3 = new int[sizeX, sizeY] { { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                              { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                            { 0,  0,  0,  0,  0,  4,  4,  4,  4,  4 },
-                                              { 1,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
-                                            { 0,  0,  0,  0,  0,  3,  3,  3,  3,  3 },
-                                              { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 } };
-
-    int[,] model4 = new int[sizeX, sizeY] { { 0,  1,  1,  1,  1,  1,  1,  1,  1,  1 },
-                                              { 2,  2,  2,  2,  2,  2,  2,  2,  2,  2 },
-                                            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                              { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                              { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 } };
-
-
-    int[,] model5 = new int[sizeX, sizeY] { { 0,  0,  1,  1,  1,  1,  1,  1,  1,  0 },
-                                              { 0,  1,  2,  2,  2,  2,  2,  2,  1,  0 },
-                                            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                              { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                              { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 } };
-
-    int[,] model6 = new int[sizeX, sizeY] { { 0,  0,  0,  1,  1,  1,  1,  1,  0,  0 },
-                                              { 0,  0,  1,  2,  2,  2,  2,  1,  0,  0 },
-                                            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                              { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-                                              { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0 } };
-
-    int[,] cellType = new int[sizeX, sizeY]; */
-
 }

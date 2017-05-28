@@ -29,12 +29,12 @@ public class Edge : MonoBehaviour {
         this.mIsBranch = isBranch;
    }
 
-    public SpringJoint2D spring {
+    public SpringJoint2D Spring {
         get { return mSpring; }
         private set { } 
     }
 
-    public bool isWing {
+    public bool IsWing {
         get { return mIsWing; }
         private set { }
     }
@@ -72,13 +72,14 @@ public class Edge : MonoBehaviour {
         this.mIsWing = true;
     }
 
-    public void Update() {
+    public void EvoUpdate() {
+        //TODO: If draw wings && inside frustum
         if (frontCell != null && backCell != null) {
-            
+
             //draw main
             mainArrow.GetComponent<LineRenderer>().SetPosition(1, frontCell.transform.position);
             mainArrow.GetComponent<LineRenderer>().SetPosition(0, backCell.transform.position);
-            
+
             //draw normal
             Vector3 wingSegmentHalf = (frontCell.transform.position - backCell.transform.position) * 0.5f;
             Vector3 midSegment = backCell.transform.position + wingSegmentHalf;
@@ -93,7 +94,7 @@ public class Edge : MonoBehaviour {
             //draw force
             forceArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + force * 100f);
             forceArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
-            
+
         }
     }
 
@@ -114,18 +115,15 @@ public class Edge : MonoBehaviour {
 
     // use normal and velocity to calculate force
     public void UpdateForce(Vector3 creatureVelocity, Creature creature) {
-
         float velocityInNormalDirection = Math.Max(0f, Vector3.Dot(normal, velocity - creatureVelocity * (1f - creature.wingDrag)));
         force = -normal * Math.Min(creature.wingMax, (creature.f1 * velocityInNormalDirection + creature.wingF2 * Mathf.Pow(velocityInNormalDirection, creature.wingPow)));
     }
 
     //Apply current force as an impulse on cells
     public void ApplyForce() {
+        // There is still a possibility ForceMode2D.Force will work better
         frontCell.GetComponent<Rigidbody2D>().AddForce(force * 0.5f, ForceMode2D.Impulse);
         backCell.GetComponent<Rigidbody2D>().AddForce(force * 0.5f, ForceMode2D.Impulse);
-
-        //frontCell.GetComponent<Rigidbody2D>().AddForce(force *5f, ForceMode2D.Force);
-        //backCell.GetComponent<Rigidbody2D>().AddForce(force * 5f, ForceMode2D.Force);
     }
 }
 

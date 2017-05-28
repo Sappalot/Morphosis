@@ -7,6 +7,7 @@ using UnityEngine;
 public class Creature : MonoBehaviour {
 
     public string id;
+    public string name;
 
     //wing force
     [Range(0f, 1f)]
@@ -34,14 +35,6 @@ public class Creature : MonoBehaviour {
     [Range(0f, 10f)]
     public float muscleSpeed = 1.55f;
 
-    //private string spieces;
-    //private long age;
-    //private Creature directMother;
-    //private Creature directFather;
-    //private List<Creature> offspring = new List<Creature>();
-    //private Creature partsInward;
-    //private List<Creature> partsOutward = new List<Creature>();
-
     public Genotype genotype;
     public Phenotype phenotype;
     
@@ -51,28 +44,16 @@ public class Creature : MonoBehaviour {
         phenotype.Generate(genotype, this);
     }
 
-    //void FixedUpdate() {
-    //    phenotype.UpdatePhysics(this);
+    public void EvoUpdate() {
+        phenotype.EvoUpdate();
+    }
+
+    public void EvoFixedUpdate() {
+        phenotype.EvoFixedUpdate(this);
+    }
+
+    //public void UpdateGrowth(float time) {
+    //    //phenotype.Grow(time);
     //}
-
-    //private void RegeneratePhenotype() {
-    //    phenotype.Generate(genotype);
-    //}
-
-    public void UpdateGrowth(float time) {
-        //phenotype.Grow(time);
-    }
-
-    public void UpdatePhyscis() {
-        phenotype.UpdatePhysics(this);
-    }
-
-    public void UpdateAction(float time) {
-
-    }
-
-    public void UpdateGraphics() {
-        phenotype.UpdateGraphics();
-    }
 }
 

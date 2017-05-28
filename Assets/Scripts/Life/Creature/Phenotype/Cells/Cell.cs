@@ -40,16 +40,9 @@ public abstract class Cell : MonoBehaviour {
     [HideInInspector]
     public CellNeighbour southEastNeighbour =   new CellNeighbour(5);
    
-    Dictionary<int, CellNeighbour> index_Neighbour = new Dictionary<int, CellNeighbour>();
-
-
-
-
+    private Dictionary<int, CellNeighbour> index_Neighbour = new Dictionary<int, CellNeighbour>();
     private List<SpringJoint2D> springList = new List<SpringJoint2D>();
-
     private Transform spriteTransform;
-
-
 
     public Cell( ) {
         index_Neighbour.Add(0, northEastNeighbour);
@@ -64,14 +57,23 @@ public abstract class Cell : MonoBehaviour {
         springList.Add( southWestSpring );
     }
 
+    public void EvoUpdate() {
+        spriteTransform.localRotation = Quaternion.Euler(0f, 0f, CardinalDirectionHelper.ToAngle(heading));
+    }
+
+    public void EvoFixedUpdate() {
+        time += Time.fixedDeltaTime;
+        //TurnNeighboursInPlace();
+        UpdateRadius(time);
+        UpdateSpringLengths(); // It is costy to update spring length
+    }
 
     // Use this for initialization
     void Start() {
         spriteTransform = transform.Find("Sprite");
-        //spriteTransform.gameObject.GetComponent<CellAppearance>().SetAppearance(this);
     }
 
-    public int getDirectionOfNeighbourCell(Cell cell) {
+    public int GetDirectionOfNeighbourCell(Cell cell) {
         for (int index = 0; index < 6; index++) {
             if (HasNeighbourCell(index) && GetNeighbour(index).cell == cell) {
                 return index;
@@ -80,28 +82,11 @@ public abstract class Cell : MonoBehaviour {
         return -1;
     }
 
-    //void Update() {
-    //    spriteTransform.localRotation = Quaternion.Euler(0f, 0f, CardinalDirectionHelper.ToAngle(heading));
-    //}
 
-    public void UpdateGraphics() {
-        spriteTransform.localRotation = Quaternion.Euler(0f, 0f, CardinalDirectionHelper.ToAngle(heading));
-    }
+
+
 
     float time = 0;
-    //void FixedUpdate() {
-    //    time += Time.fixedDeltaTime;
-    //    TurnNeighboursInPlace();
-    //    UpdateRadius(time);
-    //    UpdateSpringLengths();
-    //}
-
-    public void UpdatePhysics() {
-        time += Time.fixedDeltaTime;
-        //TurnNeighboursInPlace();
-        UpdateRadius(time);
-        UpdateSpringLengths(); // It is costy to update spring length
-    }
 
     virtual public void UpdateRadius(float time ) { }
 
@@ -279,31 +264,38 @@ public abstract class Cell : MonoBehaviour {
         return index_Neighbour[index % 6].cell != null;
     }
 
-    //  Updates world space rotation (heading) derived from neighbour position and localRotation
-    public void UpdateRotation() {
+    ////  Updates world space rotation (heading) derived from neighbour position and localRotation
+    //public void UpdateRotation() {
 
-        UpdateNeighbourVectors();
-        UpdateNeighbourAngles();
+    //    UpdateNeighbourVectors();
+    //    UpdateNeighbourAngles();
 
-        float angleSum = 0; // CardinalDirectionIndex.ToAngle(heading);
+    //    float angleSum = 0; // CardinalDirectionIndex.ToAngle(heading);
 
-        for (int index = 0; index < 6; index++)
-        {
-            if (HasNeighbourCell(index))
-            {
-                angleSum = index_Neighbour[index].angle;
-                break;
-            }
-        }
-        if (GetNeighbourCount() > 0)
-        {
-            spriteTransform.localRotation = Quaternion.Euler(0f, 0f, angleSum);
-        }
-        else {
-            //spriteTransform.rotation.SetEulerAngles(0f, 0f, Random.Range(0f, 360f));
-        }
-    }
+    //    for (int index = 0; index < 6; index++)
+    //    {
+    //        if (HasNeighbourCell(index))
+    //        {
+    //            angleSum = index_Neighbour[index].angle;
+    //            break;
+    //        }
+    //    }
+    //    if (GetNeighbourCount() > 0)
+    //    {
+    //        spriteTransform.localRotation = Quaternion.Euler(0f, 0f, angleSum);
+    //    }
+    //    else {
+    //        //spriteTransform.rotation.SetEulerAngles(0f, 0f, Random.Range(0f, 360f));
+    //    }
+    //}
 
+    //void UpdateNeighbourAngles() {
+    //    for (int index = 0; index < 6; index++) {
+    //        if (HasNeighbourCell(index)) {
+    //            GetNeighbour(index).angle = FindAngle(GetNeighbour(index).coreToThis);
+    //        }
+    //    }
+    //}
 
 
     void UpdateNeighbourVectors() {
@@ -312,16 +304,6 @@ public abstract class Cell : MonoBehaviour {
             if (HasNeighbourCell(index))
             {
                 GetNeighbour(index).coreToThis = GetNeighbourCell(index).GetPosition() - transform.position;
-            }
-        }
-    }
-
-    void UpdateNeighbourAngles() {
-        for (int index = 0; index < 6; index++)
-        {
-            if (HasNeighbourCell(index))
-            {
-                GetNeighbour(index).angle = FindAngle(GetNeighbour(index).coreToThis);
             }
         }
     }
