@@ -37,18 +37,29 @@ public class Genotype : MonoBehaviour {
         genome[20].setReference(1, 20);
         genome[20].setReference(0, 1);
 
-        ////simplistic motor experiment
-        //genome[0].type = CellType.Muscle;
+        ////string
+        //genome[0].type = CellType.Leaf;
         //genome[0].setReference(1, 1);
-        //genome[0].setReference(2, 2);
-        //genome[0].setReference(3, 2);
 
-        //genome[1].type = CellType.Muscle;
+        //genome[1].type = CellType.Leaf;
+        //genome[1].setReference(1, 2);
 
-        //genome[2].type = CellType.Muscle;
-        //genome[2].setReference(2, 3);
+        //genome[2].type = CellType.Leaf;
+        //genome[2].setReference(1, 3);
 
-        //genome[3].type = CellType.Muscle;
+        //genome[3].type = CellType.Leaf;
+        //genome[3].setReference(1, 4);
+
+        //genome[4].type = CellType.Leaf;
+        //genome[4].setReference(1, 5);
+
+        //genome[5].type = CellType.Leaf;
+        //genome[5].setReference(1, 6);
+
+        //genome[6].type = CellType.Leaf;
+        //genome[6].setReference(1, 7);
+
+        //genome[7].type = CellType.Leaf;
     }
 
     // No references, type = vein

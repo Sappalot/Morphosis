@@ -28,28 +28,36 @@ public class Phenotype : MonoBehaviour {
         edges.EvoUpdate();
     }
 
-    public void EvoFixedUpdate(Creature creature) {
-        update++;
-        if (true || update % 10 == 0) {
-            // Creature
-            Vector3 averageVelocity = new Vector3();
-            foreach (Cell cell in cellList) {
-                averageVelocity += cell.velocity;
-            }
-            velocity = (cellList.Count > 0f) ? velocity = averageVelocity / cellList.Count : new Vector3();
+    public void EvoFixedUpdate(Creature creature, float fixedTime) {
+        //if (update % 50 == 0) {
+        //    edges.ShuffleEdgeUpdateOrder();
+        //    ShuffleCellUpdateOrder();
+        //}
+        //update++;
 
-            // Cells, turn strings of cells straight
-            foreach (Cell cell in cellList) {
-                cell.TurnNeighboursInPlace();
-            }
-
-            // Edges, let edge-wings apply proper forces to neighbouring cells
-            edges.EvoFixedUpdate(velocity, creature);
-
-            foreach (Cell cell in cellList) {
-                cell.EvoFixedUpdate();
-            }
+        // Creature
+        Vector3 averageVelocity = new Vector3(); 
+        foreach (Cell cell in cellList) {
+            averageVelocity += cell.velocity;
         }
+        velocity = (cellList.Count > 0f) ? velocity = averageVelocity / cellList.Count : new Vector3();
+
+        //// Cells, turn strings of cells straight
+        //foreach (Cell cell in cellList) {
+        //    cell.TurnNeighboursInPlace();
+        //}
+
+        // Edges, let edge-wings apply proper forces to neighbouring cells
+        edges.EvoFixedUpdate(velocity, creature);
+
+        foreach (Cell cell in cellList) {
+            cell.EvoFixedUpdate(fixedTime);
+        }
+  
+    }
+
+    public void ShuffleCellUpdateOrder() {
+        ListUtils.Shuffle(cellList);
     }
 
     public void Generate(Genotype genotype, Creature creature) {
