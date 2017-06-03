@@ -31,7 +31,7 @@ public class Life : MonoBehaviour {
             throw new System.Exception("Generated ID was not unique.");
         }
         creature.id = id;
-        creature.nickname = id;
+        creature.nickname = "nick" + id;
         creature.transform.parent = this.transform;
         creature.transform.position = position;
         creatureDictionary.Add(id, creature);

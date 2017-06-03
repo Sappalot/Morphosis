@@ -368,4 +368,10 @@ public abstract class Cell : MonoBehaviour {
         return 180f + angle;
 
     }
+
+    private void OnMouseDown() {
+        if (Input.GetKey("mouse 0")) {
+            Debug.Log("click on Creature: " + creature.nickname);
+        }
+    }
 }
