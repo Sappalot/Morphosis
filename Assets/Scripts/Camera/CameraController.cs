@@ -5,7 +5,7 @@ public class CameraController : MouseDrag {
     public float cameraMoveSpeed = 1f; //Screenwidths per second
     public float cameraZoomStep = 0.1f; //Screenwidths per second
 
-    public Camera camera;
+    public new Camera camera;
 
     private Vector3 dragVector = new Vector3();
     private Vector3 downPositionMouse;
@@ -42,12 +42,6 @@ public class CameraController : MouseDrag {
             isDragging = false;
             //Debug.Log("MouseButton" + mouseButton + " END Drag");
         }
-    }
-
-
-
-    private void FixedUpdate() {
-
     }
 
     private void Start() {
