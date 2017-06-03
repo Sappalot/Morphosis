@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Edges : MonoBehaviour {
 
     public float timeOffset;
 
     public void Awake() {
-        timeOffset = Random.Range(0f, 7f);
+        timeOffset = UnityEngine.Random.Range(0f, 7f);
     }
 
     public Edge edgePrefab;
@@ -35,6 +36,7 @@ public class Edges : MonoBehaviour {
 
     //All wings will apply forces to their cells 
     public void EvoFixedUpdate(Vector3 creatureVelocity, Creature creature) {
+        //Todo do this more seldom
         foreach (Edge edge in edgeList) {
             if (edge.IsWing) {
                 edge.UpdateNormal();
@@ -56,6 +58,10 @@ public class Edges : MonoBehaviour {
             }
         }
     } 
+
+    public void ShuffleEdgeUpdateOrder() {
+        ListUtils.Shuffle(edgeList);
+    }
 
     public void GenerateWings(List<Cell> cellList) {
         if (cellList.Count < 2)
