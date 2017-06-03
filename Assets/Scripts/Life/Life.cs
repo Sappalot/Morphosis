@@ -15,17 +15,11 @@ public class Life : MonoBehaviour {
         }
     }
 
-    public void EvoFixedUpdate() {
+    public void EvoFixedUpdate(float fixedTime) {
         foreach (Creature creature in creatureList) {
-            creature.EvoFixedUpdate();
+            creature.EvoFixedUpdate(fixedTime);
         }
     }
-
-    //public void UpdateGrowth(float time) {
-    //    foreach (Creature creature in creatureList) {
-    //        creature.UpdateGrowth(time);
-    //    }
-    //}
 
     //makes a minimal new creature with blank genotype
     public string SpawnCreatureEmbryo(Vector3 position) {
@@ -37,7 +31,7 @@ public class Life : MonoBehaviour {
             throw new System.Exception("Generated ID was not unique.");
         }
         creature.id = id;
-        creature.name = id;
+        creature.nickname = id;
         creature.transform.parent = this.transform;
         creature.transform.position = position;
         creatureDictionary.Add(id, creature);
@@ -59,9 +53,4 @@ public class Life : MonoBehaviour {
 
         return "not done";
     }
-
-    public void RemoveCreture(string id) {
-
-    }
-
 }

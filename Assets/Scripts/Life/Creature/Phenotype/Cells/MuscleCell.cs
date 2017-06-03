@@ -10,7 +10,7 @@ public class MuscleCell : Cell {
     float modularTime = 0f;
 
     float lastTime = 0;
-    public override void UpdateRadius(float time) {
+    public override void UpdateRadius(float fixedTime) {
         float muscleSpeed = creature.muscleSpeed;
         float radiusDiff = creature.muscleRadiusDiff;
         float curveOffset = creature.muscleContractRetract;
@@ -31,8 +31,8 @@ public class MuscleCell : Cell {
 
         modularTime += Time.fixedDeltaTime * muscleSpeed;
 
-        float deltaTime = time - lastTime;
-        lastTime = time;
+        float deltaTime = fixedTime - lastTime;
+        lastTime = fixedTime;
 
         float radiusGoal = 0.5f - 0.5f * radiusDiff + 0.5f * radiusDiff * Mathf.Sign(curveOffset + Mathf.Cos(timeOffset + modularTime / (2f * Mathf.PI)));
 

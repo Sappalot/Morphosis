@@ -58,18 +58,20 @@ public abstract class Cell : MonoBehaviour {
     }
 
     public void EvoUpdate() {
-        spriteTransform.localRotation = Quaternion.Euler(0f, 0f, CardinalDirectionHelper.ToAngle(heading));
+        //spriteTransform.localRotation = Quaternion.Euler(0f, 0f, CardinalDirectionHelper.ToAngle(heading));
     }
 
-    public void EvoFixedUpdate() {
-        time += Time.fixedDeltaTime;
-        //TurnNeighboursInPlace();
-        UpdateRadius(time);
+    public void EvoFixedUpdate(float fixedTime) {
+        UpdateRotation();
+        TurnNeighboursInPlace();
+        UpdateRadius(fixedTime);
         UpdateSpringLengths(); // It is costy to update spring length
     }
 
+
+
     // Use this for initialization
-    void Start() {
+    private void Awake() {
         spriteTransform = transform.Find("Sprite");
     }
 
@@ -82,13 +84,7 @@ public abstract class Cell : MonoBehaviour {
         return -1;
     }
 
-
-
-
-
-    float time = 0;
-
-    virtual public void UpdateRadius(float time ) { }
+    virtual public void UpdateRadius(float fixedTime) { }
 
     virtual public void UpdateSpringLengths() { }
 
@@ -184,8 +180,10 @@ public abstract class Cell : MonoBehaviour {
         float diff = (goalAngle - angle);
 
 
-        float k1 = 0.0005f;
-        float k2 = 0.0003f;
+        float k1 = 0.00005f; //Works with RB mass 0.08
+        float k2 = 0.00003f;
+        //float k1 = 0.0005f;
+        //float k2 = 0.0003f;
         float magnitude = k1 * diff + Mathf.Sign(diff) * k2 * diff * diff;
         Vector3 alphaForce = Vector3.Cross(alphaVector, new Vector3(0f, 0f, 1f)) * magnitude;
         Vector3 betaForce =  Vector3.Cross(betaVector, new Vector3(0f, 0f, -1f)) * magnitude;
@@ -265,37 +263,34 @@ public abstract class Cell : MonoBehaviour {
     }
 
     ////  Updates world space rotation (heading) derived from neighbour position and localRotation
-    //public void UpdateRotation() {
+    public void UpdateRotation() {
 
-    //    UpdateNeighbourVectors();
-    //    UpdateNeighbourAngles();
+        UpdateNeighbourVectors();
+        UpdateNeighbourAngles();
 
-    //    float angleSum = 0; // CardinalDirectionIndex.ToAngle(heading);
+        float angleSum = 0; // CardinalDirectionIndex.ToAngle(heading);
 
-    //    for (int index = 0; index < 6; index++)
-    //    {
-    //        if (HasNeighbourCell(index))
-    //        {
-    //            angleSum = index_Neighbour[index].angle;
-    //            break;
-    //        }
-    //    }
-    //    if (GetNeighbourCount() > 0)
-    //    {
-    //        spriteTransform.localRotation = Quaternion.Euler(0f, 0f, angleSum);
-    //    }
-    //    else {
-    //        //spriteTransform.rotation.SetEulerAngles(0f, 0f, Random.Range(0f, 360f));
-    //    }
-    //}
+        for (int index = 0; index < 6; index++) {
+            if (HasNeighbourCell(index)) {
+                angleSum = index_Neighbour[index].angle;
+                break;
+            }
+        }
+        if (GetNeighbourCount() > 0) {
+            spriteTransform.localRotation = Quaternion.Euler(0f, 0f, angleSum);
+        }
+        else {
+            spriteTransform.localRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+        }
+    }
 
-    //void UpdateNeighbourAngles() {
-    //    for (int index = 0; index < 6; index++) {
-    //        if (HasNeighbourCell(index)) {
-    //            GetNeighbour(index).angle = FindAngle(GetNeighbour(index).coreToThis);
-    //        }
-    //    }
-    //}
+    void UpdateNeighbourAngles() {
+        for (int index = 0; index < 6; index++) {
+            if (HasNeighbourCell(index)) {
+                GetNeighbour(index).angle = FindAngle(GetNeighbour(index).coreToThis);
+            }
+        }
+    }
 
 
     void UpdateNeighbourVectors() {
