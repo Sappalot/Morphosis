@@ -83,11 +83,16 @@ public class CameraController : MouseDrag {
             verticalMove = 1;
         }
 
-
         camera.transform.position += new Vector3(
             horizontalMove * cameraMoveSpeed  * 2f * camera.orthographicSize * Time.deltaTime,
             verticalMove * cameraMoveSpeed * 2f * camera.orthographicSize * Time.deltaTime,
             0f);
     }
 
+    private void OnMouseDown() {
+        if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject()) {
+            Debug.Log("Clear selection <clicked>");
+            CreatureSelection.instance.ClearSelection();
+        }
+    }
 }

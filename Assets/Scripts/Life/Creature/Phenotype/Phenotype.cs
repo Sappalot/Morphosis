@@ -191,4 +191,10 @@ public class Phenotype : MonoBehaviour {
             cell.UpdateSpringFrequenzy();
         }
     }
+
+    public void SetHighlite(bool on) {
+        foreach (Cell cell in cellList) {
+            cell.SetHighlite(on);
+        }
+    }
 }

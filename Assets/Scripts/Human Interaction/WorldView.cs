@@ -3,7 +3,7 @@ using System.Collections;
 
 public class WorldView : MonoBehaviour {
 
-    public void OnbuttonClicked() {
+    public void OnButtonClicked() {
         Debug.Log("Click...");
     }
 

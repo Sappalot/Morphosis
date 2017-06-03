@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public abstract class Cell : MonoBehaviour {
     public Gene gene;
@@ -20,7 +21,15 @@ public abstract class Cell : MonoBehaviour {
 
     public float timeOffset;
 
+    [HideInInspector]
     public Creature creature;
+
+    public SpriteRenderer phenotype;
+    public SpriteRenderer selection;
+
+    public void SetHighlite(bool on) {
+        selection.enabled = on;
+    }
 
     public Vector3 velocity {
         get { return this.GetComponent<Rigidbody2D>().velocity; }
@@ -43,6 +52,7 @@ public abstract class Cell : MonoBehaviour {
     private Dictionary<int, CellNeighbour> index_Neighbour = new Dictionary<int, CellNeighbour>();
     private List<SpringJoint2D> springList = new List<SpringJoint2D>();
     private Transform spriteTransform;
+    
 
     public Cell( ) {
         index_Neighbour.Add(0, northEastNeighbour);
@@ -57,6 +67,14 @@ public abstract class Cell : MonoBehaviour {
         springList.Add( southWestSpring );
     }
 
+    private void Awake() {
+        spriteTransform = transform.Find("Phenotype");
+    }
+
+    private void Start() {
+        SetHighlite(false);
+    }
+
     public void EvoUpdate() {
         //spriteTransform.localRotation = Quaternion.Euler(0f, 0f, CardinalDirectionHelper.ToAngle(heading));
     }
@@ -69,11 +87,6 @@ public abstract class Cell : MonoBehaviour {
     }
 
 
-
-    // Use this for initialization
-    private void Awake() {
-        spriteTransform = transform.Find("Sprite");
-    }
 
     public int GetDirectionOfNeighbourCell(Cell cell) {
         for (int index = 0; index < 6; index++) {
@@ -370,8 +383,9 @@ public abstract class Cell : MonoBehaviour {
     }
 
     private void OnMouseDown() {
-        if (Input.GetKey("mouse 0")) {
-            Debug.Log("click on Creature: " + creature.nickname);
+        if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject()) {
+            Debug.Log("Select this Creature <clicked>");
+            CreatureSelection.instance.SelectOnly(creature);
         }
     }
 }

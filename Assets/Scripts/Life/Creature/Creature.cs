@@ -42,6 +42,7 @@ public class Creature : MonoBehaviour {
     void Awake() {
         genotype.Generate();
         phenotype.Generate(genotype, this);
+        
     }
 
     public void EvoUpdate() {
@@ -50,6 +51,10 @@ public class Creature : MonoBehaviour {
 
     public void EvoFixedUpdate(float fixedTime) {
         phenotype.EvoFixedUpdate(this, fixedTime);
+    }
+
+    public void SetHighlite(bool on) {
+        phenotype.SetHighlite(on);
     }
 }
 
