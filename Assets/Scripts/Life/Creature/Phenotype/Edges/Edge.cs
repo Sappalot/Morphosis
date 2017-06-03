@@ -11,7 +11,6 @@ public class Edge : MonoBehaviour {
     public bool mIsBranch = false; //if branch then A is mother
 
     private bool mIsWing = false;
-    private SpringJoint2D mSpring;
     private EdgeAttachment attachmentParent;
     private EdgeAttachment attachmentChild;
 
@@ -22,6 +21,12 @@ public class Edge : MonoBehaviour {
     private Vector3 velocity; //used with wings
     private Vector3 force; //used with wings
 
+    private void Start() {
+        mainArrow.SetActive(false);
+        normalArrow.SetActive(false);
+        velocityArrow.SetActive(false);
+        forceArrow.SetActive(false);
+    }
 
     public void Setup(Cell parentCell, Cell childCell, int directionChildToParentCell, bool isBranch) {
         attachmentParent = new EdgeAttachment(parentCell, (directionChildToParentCell + 3 ) % 6);
@@ -29,12 +34,7 @@ public class Edge : MonoBehaviour {
         this.mIsBranch = isBranch;
    }
 
-    public SpringJoint2D Spring {
-        get { return mSpring; }
-        private set { } 
-    }
-
-    public bool IsWing {
+    public bool IsWing { 
         get { return mIsWing; }
         private set { }
     }
@@ -74,28 +74,40 @@ public class Edge : MonoBehaviour {
 
     public void EvoUpdate() {
         //TODO: If draw wings && inside frustum
-        if (frontCell != null && backCell != null) {
+        if (HUD.instance.isEdgesEnabled) {
+            if (frontCell != null && backCell != null) {
 
-            //draw main
-            mainArrow.GetComponent<LineRenderer>().SetPosition(1, frontCell.transform.position);
-            mainArrow.GetComponent<LineRenderer>().SetPosition(0, backCell.transform.position);
+                mainArrow.SetActive(true);
+                normalArrow.SetActive(true);
+                velocityArrow.SetActive(true);
+                forceArrow.SetActive(true);
 
-            //draw normal
-            Vector3 wingSegmentHalf = (frontCell.transform.position - backCell.transform.position) * 0.5f;
-            Vector3 midSegment = backCell.transform.position + wingSegmentHalf;
-            Vector3 normalPoint = midSegment + normal;
-            normalArrow.GetComponent<LineRenderer>().SetPosition(1, normalPoint);
-            normalArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
+                //draw main
+                mainArrow.GetComponent<LineRenderer>().SetPosition(1, frontCell.transform.position);
+                mainArrow.GetComponent<LineRenderer>().SetPosition(0, backCell.transform.position);
 
-            //draw velocity
-            velocityArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + velocity);
-            velocityArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
+                //draw normal
+                Vector3 wingSegmentHalf = (frontCell.transform.position - backCell.transform.position) * 0.5f;
+                Vector3 midSegment = backCell.transform.position + wingSegmentHalf;
+                Vector3 normalPoint = midSegment + normal;
+                normalArrow.GetComponent<LineRenderer>().SetPosition(1, normalPoint);
+                normalArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
 
-            //draw force
-            forceArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + force * 100f);
-            forceArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
+                //draw velocity
+                velocityArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + velocity);
+                velocityArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
 
+                //draw force
+                forceArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + force * 100f);
+                forceArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
+            }
+        } else {
+            mainArrow.SetActive(false);
+            normalArrow.SetActive(false);
+            velocityArrow.SetActive(false);
+            forceArrow.SetActive(false);
         }
+
     }
 
     public static float maxForce = 0f;
