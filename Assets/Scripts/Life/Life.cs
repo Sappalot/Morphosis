@@ -53,4 +53,11 @@ public class Life : MonoBehaviour {
 
         return "not done";
     }
+
+    public void DeleteCreature(Creature creature) {
+        Destroy(creature.gameObject);
+
+        creatureDictionary.Remove(creature.id);
+        creatureList.Remove(creature);
+    }
 }

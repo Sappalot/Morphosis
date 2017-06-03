@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class CreatureSelection : MonoSingleton<CreatureSelection> {
 
+    public Life life;
     public Text selectedCreatureText;
 
     public List<Creature> selection { get; private set; }
@@ -55,6 +56,14 @@ public class CreatureSelection : MonoSingleton<CreatureSelection> {
             selectedCreatureText.text = selection.Count + " Creatures";
         }
             
+    }
+
+    //Buttons
+    public void OnClickDelete() {
+        foreach (Creature c in selection) {
+            life.DeleteCreature(c);
+        }
+        ClearSelection();
     }
 
 
