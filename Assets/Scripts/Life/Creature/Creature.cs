@@ -7,7 +7,7 @@ using UnityEngine;
 public class Creature : MonoBehaviour {
 
     public string id;
-    public string name;
+    public string nickname;
 
     //wing force
     [Range(0f, 1f)]
@@ -48,12 +48,8 @@ public class Creature : MonoBehaviour {
         phenotype.EvoUpdate();
     }
 
-    public void EvoFixedUpdate() {
-        phenotype.EvoFixedUpdate(this);
+    public void EvoFixedUpdate(float fixedTime) {
+        phenotype.EvoFixedUpdate(this, fixedTime);
     }
-
-    //public void UpdateGrowth(float time) {
-    //    //phenotype.Grow(time);
-    //}
 }
 
