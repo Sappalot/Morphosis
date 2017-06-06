@@ -80,11 +80,16 @@ public abstract class Cell : MonoBehaviour {
     }
 
     public void EvoFixedUpdate(float fixedTime) {
-        // Theese are COSTY, needs optimization, needed to turn cell graphics in right direction (opt: only if has direction & in frustum), as well as turning neighbour articulalated into place (only if this one is a hinge cell)
-        UpdateNeighbourVectors();
-        UpdateNeighbourAngles();
-        UpdateRotation();
-        TurnHingeNeighboursInPlace();
+        //Optimize further
+        if (groups > 1) {
+            UpdateNeighbourVectors(); //optimize further
+            TurnHingeNeighboursInPlace(); //optimize further
+
+            //UpdateRotation(); //costy, update only if cell has direction and is in frustum
+        } else {
+            //UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
+            //UpdateRotation(); //costy, update only if cell has direction and is in frustum
+        }
 
         UpdateRadius(fixedTime);
         UpdateSpringLengths(); // It is costy to update spring length
@@ -109,11 +114,7 @@ public abstract class Cell : MonoBehaviour {
 
     public void TurnHingeNeighboursInPlace() {
         //TODO Update turn springs only when nessesary 
-        if (groups < 2) {
-            return;
-        }
-
-        UpdateNeighbourVectors();
+        
         //CellNeighbour firstNeighbour = null;
         int springs = 0;
         Vector3 responceForce = new Vector3();
@@ -250,7 +251,7 @@ public abstract class Cell : MonoBehaviour {
     }
 
     public CellNeighbour GetNeighbour(int index) {
-        return index_Neighbour[index%6];
+        return index_Neighbour[index % 6];
     }
 
     //  World space position
@@ -281,8 +282,9 @@ public abstract class Cell : MonoBehaviour {
 
     ////  Updates world space rotation (heading) derived from neighbour position and localRotation
     public void UpdateRotation() {
-        float angleSum = 0; // CardinalDirectionIndex.ToAngle(heading);
+        UpdateNeighbourAngles();
 
+        float angleSum = 0; // CardinalDirectionIndex.ToAngle(heading);
         for (int index = 0; index < 6; index++) {
             if (HasNeighbourCell(index)) {
                 angleSum = index_Neighbour[index].angle;
@@ -297,7 +299,7 @@ public abstract class Cell : MonoBehaviour {
         }
     }
 
-    void UpdateNeighbourAngles() {
+    private void UpdateNeighbourAngles() {
         for (int index = 0; index < 6; index++) {
             if (HasNeighbourCell(index)) {
                 GetNeighbour(index).angle = FindAngle(GetNeighbour(index).coreToThis);
@@ -305,12 +307,9 @@ public abstract class Cell : MonoBehaviour {
         }
     }
 
-
-    void UpdateNeighbourVectors() {
-        for (int index = 0; index < 6; index++)
-        {
-            if (HasNeighbourCell(index))
-            {
+    private void UpdateNeighbourVectors() {
+        for (int index = 0; index < 6; index++) {
+            if (HasNeighbourCell(index)) {
                 GetNeighbour(index).coreToThis = GetNeighbourCell(index).GetPosition() - transform.position;
             }
         }

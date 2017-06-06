@@ -38,11 +38,17 @@ public class Creature : MonoBehaviour {
     public Genotype genotype;
     public Phenotype phenotype;
     
+    private static int number = 0;
 
-    void Awake() {
-        genotype.Generate();
+    private void Awake() {
+        float rnd = Random.Range(0f, 2f);
+        if (number > 0) {
+            genotype.GenerateJellyfich();
+        } else {
+            genotype.GenerateString();
+        }
         phenotype.Generate(genotype, this);
-        
+        number++;
     }
 
     public void EvoUpdate() {

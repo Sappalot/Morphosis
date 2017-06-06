@@ -52,6 +52,8 @@ public class MuscleCell : Cell {
                 radius = radiusGoal;
         }
 
+        //transform.localScale = new Vector3(radius * 2, radius * 2, 1f); //costy, only if in frustum
+
         //--------------------------------------------------
 
         // Note: It is cost to change scale, do we really have to? Maybee we could just change the graphics
@@ -96,7 +98,7 @@ public class MuscleCell : Cell {
                     radius = radiusGoal;
             } 
 
-            gameObject.transform.localScale = new Vector3(radius * 2, radius * 2, 1f);
+            gameObject.transform.localScale = new Vector3(radius * 2, radius * 2, 1f); //costy
         }*/
     }
 

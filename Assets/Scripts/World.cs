@@ -8,18 +8,17 @@ public class World : MonoBehaviour {
     private float fixedTime;
 
 	void Start () {
-
-        //test, OK with 24 * 24 (18 cells per creature) ~ 10 FPS :) 
-        for (int y = 1; y <= 10; y++) {
-            for (int x = 1; x <= 10; x++) {
+        //test, OK with 24 * 24 (18 cells per creature) ~ 25 FPS :)
+        //including: turn hinged neighbours to correct angle
+        //excluding: turn cell graphics to correct angle
+        for (int y = 1; y <= 24; y++) {
+            for (int x = 1; x <= 24; x++) {
                 life.SpawnCreatureEmbryo(new Vector3(x * 10f, y * 10, 0f));
             }
         }
         //life.SpawnCreatureEmbryo(new Vector3(50f, 50f, 0f));
-
         //life.SpawnCreatureEmbryo(new Vector3(10f, 20f, 0f));
         //life.SpawnCreatureEmbryo(new Vector3(10f, 30f, 0f));
-
     }
 
     void Update() {

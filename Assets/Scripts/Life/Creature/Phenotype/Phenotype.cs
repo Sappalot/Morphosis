@@ -149,7 +149,7 @@ public class Phenotype : MonoBehaviour {
         return cell;
     }
 
-    void ConnectCells() {
+    private void ConnectCells() {
         foreach (Cell cell in cellList) {
             Vector2i center = cell.mapPosition;
             for (int direction = 0; direction < 6; direction++) {
