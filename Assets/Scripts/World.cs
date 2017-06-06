@@ -10,8 +10,8 @@ public class World : MonoBehaviour {
 	void Start () {
 
         //test, OK with 24 * 24 (18 cells per creature) ~ 10 FPS :) 
-        for (int y = 1; y <= 14; y++) {
-            for (int x = 1; x <= 14; x++) {
+        for (int y = 1; y <= 10; y++) {
+            for (int x = 1; x <= 10; x++) {
                 life.SpawnCreatureEmbryo(new Vector3(x * 10f, y * 10, 0f));
             }
         }
@@ -29,7 +29,7 @@ public class World : MonoBehaviour {
             life.EvoUpdate();
         } else if (HUD.instance.timeControllValue == 1) {
             Time.timeScale = 1;
-            life.EvoUpdate();
+            //life.EvoUpdate();
         } else {
             Time.timeScale = 4;
         } 

@@ -80,8 +80,12 @@ public abstract class Cell : MonoBehaviour {
     }
 
     public void EvoFixedUpdate(float fixedTime) {
+        // Theese are COSTY, needs optimization, needed to turn cell graphics in right direction (opt: only if has direction & in frustum), as well as turning neighbour articulalated into place (only if this one is a hinge cell)
+        UpdateNeighbourVectors();
+        UpdateNeighbourAngles();
         UpdateRotation();
-        TurnNeighboursInPlace();
+        TurnHingeNeighboursInPlace();
+
         UpdateRadius(fixedTime);
         UpdateSpringLengths(); // It is costy to update spring length
     }
@@ -103,7 +107,7 @@ public abstract class Cell : MonoBehaviour {
 
     virtual public void UpdateSpringFrequenzy() { }
 
-    public void TurnNeighboursInPlace() {
+    public void TurnHingeNeighboursInPlace() {
         //TODO Update turn springs only when nessesary 
         if (groups < 2) {
             return;
@@ -277,10 +281,6 @@ public abstract class Cell : MonoBehaviour {
 
     ////  Updates world space rotation (heading) derived from neighbour position and localRotation
     public void UpdateRotation() {
-
-        UpdateNeighbourVectors();
-        UpdateNeighbourAngles();
-
         float angleSum = 0; // CardinalDirectionIndex.ToAngle(heading);
 
         for (int index = 0; index < 6; index++) {
@@ -384,8 +384,16 @@ public abstract class Cell : MonoBehaviour {
 
     private void OnMouseDown() {
         if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject()) {
-            Debug.Log("Select this Creature <clicked>");
-            CreatureSelection.instance.SelectOnly(creature);
+            if (Input.GetKey(KeyCode.LeftControl)) {
+                if (CreatureSelectionPanel.instance.IsSelected(creature)) {
+                    CreatureSelectionPanel.instance.RemoveFromSelection(creature);
+                } else {
+                    CreatureSelectionPanel.instance.AddToSelection(creature);
+                }
+            } else {
+                Debug.Log("Select this Creature <clicked>");
+                CreatureSelectionPanel.instance.SelectOnly(creature);
+            }
         }
     }
 }

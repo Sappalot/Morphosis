@@ -92,7 +92,7 @@ public class CameraController : MouseDrag {
     private void OnMouseDown() {
         if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject()) {
             Debug.Log("Clear selection <clicked>");
-            CreatureSelection.instance.ClearSelection();
+            CreatureSelectionPanel.instance.ClearSelection();
         }
     }
 }

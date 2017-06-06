@@ -25,17 +25,17 @@ public class Genotype : MonoBehaviour {
         genome[0].type = CellType.Vein;
         genome[0].setReference(3, 10);
         genome[0].setReference(5, 20);
-        genome[0].setReference(4, 1);
+        //genome[0].setReference(4, 1);
 
         genome[1].type = CellType.Muscle;
 
         genome[10].type = CellType.Leaf;
         genome[10].setReference(1, 10);
-        genome[10].setReference(2, 1);
+        //genome[10].setReference(2, 1);
 
         genome[20].type = CellType.Leaf;
         genome[20].setReference(1, 20);
-        genome[20].setReference(0, 1);
+        //genome[20].setReference(0, 1);
 
         ////string
         //genome[0].type = CellType.Leaf;
