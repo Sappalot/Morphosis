@@ -2,12 +2,18 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CreatureSelection : MonoSingleton<CreatureSelection> {
+public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
     public Life life;
+    public PhenotypePanel phenotypePanel;
+
     public Text selectedCreatureText;
 
     public List<Creature> selection { get; private set; }
+
+    public bool IsSelected(Creature creature) {
+        return selection.Contains(creature);
+    }
 
     public override void Init() {
         base.Init();
@@ -21,7 +27,7 @@ public class CreatureSelection : MonoSingleton<CreatureSelection> {
             c.SetHighlite(false);
         } 
         selection.Clear();
-        UpdateselectedCreatureText();
+        UpdateGUI();
     }
 
     public void SelectOnly(Creature creature) {
@@ -32,30 +38,35 @@ public class CreatureSelection : MonoSingleton<CreatureSelection> {
 
         creature.SetHighlite(true);
         selection.Add(creature);
-        UpdateselectedCreatureText();
+        UpdateGUI();
     }
 
     public void AddToSelection(Creature creature) {
         creature.SetHighlite(true);
         selection.Add(creature);
-        UpdateselectedCreatureText();
+        UpdateGUI();
     }
 
     public void RemoveFromSelection(Creature creature) {
         creature.SetHighlite(false);
         selection.Remove(creature);
-        UpdateselectedCreatureText();
+        UpdateGUI();
     }
 
-    private void UpdateselectedCreatureText() {
+    private void UpdateGUI() {
         if (selection.Count == 0) {
-            selectedCreatureText.text = ""; 
+            gameObject.SetActive(false);
+            selectedCreatureText.text = "";
+            phenotypePanel.gameObject.SetActive(false);
         } else if (selection.Count == 1) {
+            gameObject.SetActive(true);
             selectedCreatureText.text = selection[0].nickname;
+            phenotypePanel.gameObject.SetActive(true);
         } else {
+            gameObject.SetActive(true);
             selectedCreatureText.text = selection.Count + " Creatures";
-        }
-            
+            phenotypePanel.gameObject.SetActive(false);
+        }            
     }
 
     //Buttons
@@ -65,6 +76,4 @@ public class CreatureSelection : MonoSingleton<CreatureSelection> {
         }
         ClearSelection();
     }
-
-
 }
