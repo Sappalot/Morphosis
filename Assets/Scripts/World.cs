@@ -8,9 +8,9 @@ public class World : MonoBehaviour {
     private float fixedTime;
 
 	void Start () {
-        //test, OK with 24 * 24 (18 cells per creature) ~ 25 FPS :)
-        //including: turn hinged neighbours to correct angle
-        //excluding: turn cell graphics to correct angle
+        //test, OK with 24 * 24 (18 cells per creature) ~ 27 FPS :)
+        //including: turn hinged neighbours to correct angle, just one test string creature
+        //excluding: turn cell graphics to correct angle, scale mussle cells
         for (int y = 1; y <= 24; y++) {
             for (int x = 1; x <= 24; x++) {
                 life.SpawnCreatureEmbryo(new Vector3(x * 10f, y * 10, 0f));
@@ -40,6 +40,4 @@ public class World : MonoBehaviour {
             life.EvoFixedUpdate(fixedTime);
         }
     }
-
-
 }
