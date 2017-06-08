@@ -4,9 +4,9 @@ using System.Collections;
 public class Genotype : MonoBehaviour {
     public static int root = 0;
     public static int genomeLength = 100;
-    Gene[] genome = new Gene[genomeLength];
+    public Gene[] genome = new Gene[genomeLength];
 
-    public void GenerateJellyfich() {
+    public void GenerateJellyfish() {
         CreateEmptyGenome();
         CreateJellyfish();
     }

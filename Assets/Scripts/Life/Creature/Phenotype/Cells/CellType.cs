@@ -9,7 +9,7 @@
     Fat,
     Bone,
     Egg,
-    Sperm,
+    Sperm, //Slurm
     Bomb,
     Eye,
     Nerve,

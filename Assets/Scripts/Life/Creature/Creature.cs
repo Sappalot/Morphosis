@@ -43,7 +43,7 @@ public class Creature : MonoBehaviour {
     private void Awake() {
         float rnd = Random.Range(0f, 2f);
         if (number > 0) {
-            genotype.GenerateJellyfich();
+            genotype.GenerateJellyfish();
         } else {
             genotype.GenerateString();
         }
