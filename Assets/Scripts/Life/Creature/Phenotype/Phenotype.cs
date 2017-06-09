@@ -36,22 +36,22 @@ public class Phenotype : MonoBehaviour {
         //update++;
 
         // Creature
-        Vector3 averageVelocity = new Vector3(); 
-        foreach (Cell cell in cellList) {
-            averageVelocity += cell.velocity;
+        Vector3 averageVelocity = new Vector3();
+        for (int index = 0; index < cellList.Count; index++) {
+            averageVelocity += cellList[index].velocity;
         }
         velocity = (cellList.Count > 0f) ? velocity = averageVelocity / cellList.Count : new Vector3();
 
         //// Cells, turn strings of cells straight
-        //foreach (Cell cell in cellList) {
-        //    cell.TurnNeighboursInPlace();
+        //for (int index = 0; index < cellList.Count; index++) {
+        //    cellList[index].TurnNeighboursInPlace();
         //}
 
         // Edges, let edge-wings apply proper forces to neighbouring cells
         edges.EvoFixedUpdate(velocity, creature);
 
-        foreach (Cell cell in cellList) {
-            cell.EvoFixedUpdate(fixedTime);
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].EvoFixedUpdate(fixedTime);
         }
   
     }
@@ -70,7 +70,8 @@ public class Phenotype : MonoBehaviour {
 
         List<Cell> nextSpawningFromCells = new List<Cell>();
         for (int buildOrderIndex = 1;  spawningFromCells.Count != 0 && buildOrderIndex < 4; buildOrderIndex++) {
-            foreach (Cell cell in spawningFromCells) {
+            for (int index = 0; index < spawningFromCells.Count; index++) {
+                Cell cell = spawningFromCells[index];
                 for (int referenceDirection = 0; referenceDirection < 6; referenceDirection++) {
                     if (cell.gene.getReference(referenceDirection) != null) {
                         int referenceHeading = (cell.heading + referenceDirection + 5) % 6; //!!
@@ -150,7 +151,8 @@ public class Phenotype : MonoBehaviour {
     }
 
     private void ConnectCells() {
-        foreach (Cell cell in cellList) {
+        for (int index = 0; index < cellList.Count; index++) {
+            Cell cell = cellList[index];
             Vector2i center = cell.mapPosition;
             for (int direction = 0; direction < 6; direction++) {
                 Vector2i gridNeighbourPos = cellMap.GetGridNeighbourGridPosition(center, direction); // GetGridNeighbour(center, CardinalDirectionHelper.ToCardinalDirection(direction));
@@ -167,8 +169,8 @@ public class Phenotype : MonoBehaviour {
     }
 
     private void Clear() {
-        foreach (Cell cell in cellList) {
-            GameObject.Destroy(cell);
+        for (int index = 0; index < cellList.Count; index++) {
+            Destroy(cellList[index].gameObject);
         }
         cellList.Clear();
         edges.Clear();
@@ -177,8 +179,8 @@ public class Phenotype : MonoBehaviour {
 
     private void EvoUpdateCells() {
         //Todo: only if creature inside frustum && should be shown
-        foreach (Cell cell in cellList) {
-            cell.EvoUpdate();
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].EvoUpdate();
         }
     }
 
@@ -187,14 +189,14 @@ public class Phenotype : MonoBehaviour {
     }
 
     private void UpdateSpringsFrequenze() {
-        foreach (Cell cell in cellList) {
-            cell.UpdateSpringFrequenzy();
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].UpdateSpringFrequenzy();
         }
     }
 
     public void SetHighlite(bool on) {
-        foreach (Cell cell in cellList) {
-            cell.SetHighlite(on);
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].SetHighlite(on);
         }
     }
 }

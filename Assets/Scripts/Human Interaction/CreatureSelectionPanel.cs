@@ -23,16 +23,16 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
     }
 
     public void ClearSelection() {
-        foreach (Creature c in selection) {
-            c.SetHighlite(false);
+        for (int index = 0; index < selection.Count; index++) {
+            selection[index].SetHighlite(false);
         } 
         selection.Clear();
         UpdateGUI();
     }
 
     public void SelectOnly(Creature creature) {
-        foreach (Creature c in selection) {
-            c.SetHighlite(false);
+        for (int index = 0; index < selection.Count; index++) {
+            selection[index].SetHighlite(false);
         }
         selection.Clear();
 
@@ -71,8 +71,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
     //Buttons
     public void OnClickDelete() {
-        foreach (Creature c in selection) {
-            life.DeleteCreature(c);
+        for (int index = 0; index < selection.Count; index++) {
+            life.DeleteCreature(selection[index]);
         }
         ClearSelection();
     }

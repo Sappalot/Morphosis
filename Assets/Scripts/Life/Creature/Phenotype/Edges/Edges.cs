@@ -15,36 +15,25 @@ public class Edges : MonoBehaviour {
     private List<Edge> edgeList = new List<Edge>();
 
     public void Clear() {
-        foreach (Edge edge in edgeList) {
-            GameObject.Destroy(edge);
+        for (int index = 0; index < edgeList.Count; index++) {
+            Destroy(edgeList[index].gameObject);
         }
         edgeList.Clear();
     }
 
-
-
-    /*public void UpdateWings(List<Cell> cellList) {
-        RemoveWings();
-        GenerateWings(cellList);
-    }
-
-    private void RemoveWings() {
-        foreach (Edge edge in edgeList) {
-            //edge.isWing = false;
-        }
-    }*/
-
     //All wings will apply forces to their cells 
     public void EvoFixedUpdate(Vector3 creatureVelocity, Creature creature) {
         //Todo do this more seldom
-        foreach (Edge edge in edgeList) {
+        for (int index = 0; index < edgeList.Count; index++) {
+            Edge edge = edgeList[index];
             if (edge.IsWing) {
                 edge.UpdateNormal();
                 edge.UpdateVelocity();
                 edge.UpdateForce(creatureVelocity, creature);
             }
         }
-        foreach (Edge edge in edgeList) {
+        for (int index = 0; index < edgeList.Count; index++) {
+            Edge edge = edgeList[index];
             if (edge.IsWing) {
                 edge.ApplyForce();
             }
@@ -52,7 +41,8 @@ public class Edges : MonoBehaviour {
     }
 
     public void EvoUpdate() {
-        foreach (Edge edge in edgeList) {
+        for (int index = 0; index < edgeList.Count; index++) {
+            Edge edge = edgeList[index];
             if (edge.IsWing) {
                 edge.EvoUpdate();
             }
@@ -104,7 +94,8 @@ public class Edges : MonoBehaviour {
     private Cell GetRightmostCell(List<Cell> cellList) {
         float leftValueRecord = float.NegativeInfinity;
         Cell leftCellRecord = null;
-        foreach (Cell cell in cellList) {
+        for (int index = 0; index < cellList.Count; index++) {
+            Cell cell = cellList[index];
             if (cell.transform.localPosition.x > leftValueRecord) {
                 leftCellRecord = cell;
                 leftValueRecord = cell.transform.localPosition.x;

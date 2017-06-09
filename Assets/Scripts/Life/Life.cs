@@ -10,14 +10,14 @@ public class Life : MonoBehaviour {
     private List<Creature> creatureList = new List<Creature>();
 
     public void EvoUpdate() {
-        foreach (Creature creature in creatureList) {
-            creature.EvoUpdate();
+        for (int index = 0; index < creatureList.Count; index++) {
+            creatureList[index].EvoUpdate();
         }
     }
 
     public void EvoFixedUpdate(float fixedTime) {
-        foreach (Creature creature in creatureList) {
-            creature.EvoFixedUpdate(fixedTime);
+        for (int index = 0; index < creatureList.Count; index++) {
+            creatureList[index].EvoFixedUpdate(fixedTime);
         }
     }
 

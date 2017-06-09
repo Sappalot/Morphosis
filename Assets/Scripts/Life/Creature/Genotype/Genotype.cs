@@ -76,8 +76,8 @@ public class Genotype : MonoBehaviour {
 
     // No references, type = vein
     public void Clear() {
-        foreach (Gene gene in genome) {
-            gene.Clear();
+        for (int index = 0; index < genome.Length; index++) {
+            genome[index].Clear();
         }
     }
 	
