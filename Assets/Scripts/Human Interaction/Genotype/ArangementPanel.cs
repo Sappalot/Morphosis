@@ -7,7 +7,7 @@ public class ArangementPanel : MonoBehaviour {
 
     public ReferenceGraphics[] referenceGraphics = new ReferenceGraphics[6];
 
-    public FlipSide flipSideView = FlipSide.BlackWhite;
+    public FlipSideEnum flipSideView = FlipSideEnum.BlackWhite;
 
     private Arrangement m_arrangement;
     public Arrangement arangement {
@@ -45,7 +45,7 @@ public class ArangementPanel : MonoBehaviour {
 
     private void UpdateRepresentation() {
         for (int i = 0; i < 6; i++) {
-           referenceGraphics[i].reference = m_arrangement == null ? null : m_arrangement.GetReference(flipSideView, CardinalDirectionHelper.ToCardinalDirection(i));
+           referenceGraphics[i].reference = m_arrangement == null ? null : m_arrangement.GetReference(flipSideView, CardinalDirectionUtil.ToCardinalDirection(i));
         }
     }
 }

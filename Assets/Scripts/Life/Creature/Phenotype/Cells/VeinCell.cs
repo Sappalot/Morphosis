@@ -11,27 +11,27 @@ public class VeinCell : Cell {
 
     public override void UpdateSpringFrequenzy() {
 
-        if (HasNeighbour(CardinalDirection.northEast)) {
+        if (HasNeighbour(CardinalDirectionEnum.northEast)) {
             northEastNeighbour.cell.GetSpring(this).frequency = this.springFrequenzy;
         }
 
-        if (HasNeighbour(CardinalDirection.north)) {
+        if (HasNeighbour(CardinalDirectionEnum.north)) {
             northSpring.frequency = this.springFrequenzy;
         }
 
-        if (HasNeighbour(CardinalDirection.northWest)) {
+        if (HasNeighbour(CardinalDirectionEnum.northWest)) {
             northWestNeighbour.cell.GetSpring(this).frequency = this.springFrequenzy;
         }
 
-        if (HasNeighbour(CardinalDirection.southWest)) {
+        if (HasNeighbour(CardinalDirectionEnum.southWest)) {
             southWestSpring.frequency = this.springFrequenzy;
         }
 
-        if (HasNeighbour(CardinalDirection.south)) {
+        if (HasNeighbour(CardinalDirectionEnum.south)) {
             southNeighbour.cell.GetSpring(this).frequency = this.springFrequenzy;
         }
 
-        if (HasNeighbour(CardinalDirection.southEast)) {
+        if (HasNeighbour(CardinalDirectionEnum.southEast)) {
             southEastSpring.frequency = this.springFrequenzy;
         }
     }

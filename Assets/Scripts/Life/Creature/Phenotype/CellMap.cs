@@ -42,16 +42,16 @@ public class CellMap {
         illegalPositions.Add(gridPosition);
     }
 
-    public Cell GetGridNeighbourCell(Vector2i gridPosition, CardinalDirection direction) {
-        return GetGridNeighbourCell(gridPosition, CardinalDirectionHelper.ToIndex(direction));
+    public Cell GetGridNeighbourCell(Vector2i gridPosition, CardinalDirectionEnum direction) {
+        return GetGridNeighbourCell(gridPosition, CardinalDirectionUtil.ToIndex(direction));
     }
 
     public Cell GetGridNeighbourCell(Vector2i gridPosition, int direction) {
         return GetCell(GetGridNeighbourGridPosition(gridPosition, direction));
     }
 
-    public Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, CardinalDirection direction) {
-        return GetGridNeighbourGridPosition(gridPosition, CardinalDirectionHelper.ToIndex(direction));
+    public Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, CardinalDirectionEnum direction) {
+        return GetGridNeighbourGridPosition(gridPosition, CardinalDirectionUtil.ToIndex(direction));
     }
 
     public Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, int direction) {

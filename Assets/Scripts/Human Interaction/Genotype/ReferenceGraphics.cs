@@ -11,8 +11,8 @@ public class ReferenceGraphics : MonoBehaviour {
         set {
             if (value != null && value.isThere) {
                 geneReferenceImage.enabled = true;
-                flipBlackWhite.enabled = value.flip == FlipSide.BlackWhite;
-                flipWhiteBlack.enabled = value.flip == FlipSide.WhiteBlack;
+                flipBlackWhite.enabled = value.flip == FlipSideEnum.BlackWhite;
+                flipWhiteBlack.enabled = value.flip == FlipSideEnum.WhiteBlack;
                 geneReferenceText.enabled = true;
                 geneReferenceText.text = value.geneIndex.ToString();
             } else {

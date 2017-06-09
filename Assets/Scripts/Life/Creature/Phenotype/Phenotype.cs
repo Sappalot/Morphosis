@@ -66,7 +66,7 @@ public class Phenotype : MonoBehaviour {
         Clear();
 
         List<Cell> spawningFromCells = new List<Cell>();
-        spawningFromCells.Add(SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, CardinalDirectionHelper.ToIndex(CardinalDirection.north), creature)); //root
+        spawningFromCells.Add(SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, CardinalDirectionUtil.ToIndex(CardinalDirectionEnum.north), creature)); //root
 
         List<Cell> nextSpawningFromCells = new List<Cell>();
         for (int buildOrderIndex = 1;  spawningFromCells.Count != 0 && buildOrderIndex < 4; buildOrderIndex++) {
@@ -155,10 +155,10 @@ public class Phenotype : MonoBehaviour {
             for (int direction = 0; direction < 6; direction++) {
                 Vector2i gridNeighbourPos = cellMap.GetGridNeighbourGridPosition(center, direction); // GetGridNeighbour(center, CardinalDirectionHelper.ToCardinalDirection(direction));
                 if (gridNeighbourPos != null) {
-                    cell.SetNeighbourCell(CardinalDirectionHelper.ToCardinalDirection(direction), cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
+                    cell.SetNeighbourCell(CardinalDirectionUtil.ToCardinalDirection(direction), cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
                 }
                 else {
-                    cell.SetNeighbourCell(CardinalDirectionHelper.ToCardinalDirection(direction), null);
+                    cell.SetNeighbourCell(CardinalDirectionUtil.ToCardinalDirection(direction), null);
                 }
             }
             cell.UpdateSpringConnections();

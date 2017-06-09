@@ -106,27 +106,27 @@ public class MuscleCell : Cell {
     public override void UpdateSpringLengths() {
 
         if (seldom % 5 == 0) {
-            if (HasNeighbour(CardinalDirection.northEast)) {
+            if (HasNeighbour(CardinalDirectionEnum.northEast)) {
                 northEastNeighbour.cell.GetSpring(this).distance = this.radius + northEastNeighbour.cell.radius;
             }
 
-            if (HasNeighbour(CardinalDirection.north)) {
+            if (HasNeighbour(CardinalDirectionEnum.north)) {
                 northSpring.distance = this.radius + northNeighbour.cell.radius;
             }
 
-            if (HasNeighbour(CardinalDirection.northWest)) {
+            if (HasNeighbour(CardinalDirectionEnum.northWest)) {
                 northWestNeighbour.cell.GetSpring(this).distance = this.radius + northWestNeighbour.cell.radius;
             }
 
-            if (HasNeighbour(CardinalDirection.southWest)) {
+            if (HasNeighbour(CardinalDirectionEnum.southWest)) {
                 southWestSpring.distance = this.radius + southWestNeighbour.cell.radius;
             }
 
-            if (HasNeighbour(CardinalDirection.south)) {
+            if (HasNeighbour(CardinalDirectionEnum.south)) {
                 southNeighbour.cell.GetSpring(this).distance = this.radius + southNeighbour.cell.radius;
             }
 
-            if (HasNeighbour(CardinalDirection.southEast)) {
+            if (HasNeighbour(CardinalDirectionEnum.southEast)) {
                 southEastSpring.distance = this.radius + southEastNeighbour.cell.radius;
             }
         }
@@ -135,27 +135,27 @@ public class MuscleCell : Cell {
 
     public override void UpdateSpringFrequenzy() {
 
-        if (HasNeighbour(CardinalDirection.northEast)) {
+        if (HasNeighbour(CardinalDirectionEnum.northEast)) {
             northEastNeighbour.cell.GetSpring(this).frequency = this.springFrequenzy;
         }
 
-        if (HasNeighbour(CardinalDirection.north)) {
+        if (HasNeighbour(CardinalDirectionEnum.north)) {
             northSpring.frequency = this.springFrequenzy;
         }
 
-        if (HasNeighbour(CardinalDirection.northWest)) {
+        if (HasNeighbour(CardinalDirectionEnum.northWest)) {
             northWestNeighbour.cell.GetSpring(this).frequency = this.springFrequenzy;
         }
 
-        if (HasNeighbour(CardinalDirection.southWest)) {
+        if (HasNeighbour(CardinalDirectionEnum.southWest)) {
             southWestSpring.frequency = this.springFrequenzy;
         }
 
-        if (HasNeighbour(CardinalDirection.south)) {
+        if (HasNeighbour(CardinalDirectionEnum.south)) {
             southNeighbour.cell.GetSpring(this).frequency = this.springFrequenzy;
         }
 
-        if (HasNeighbour(CardinalDirection.southEast)) {
+        if (HasNeighbour(CardinalDirectionEnum.southEast)) {
             southEastSpring.frequency = this.springFrequenzy;
         }
     }
