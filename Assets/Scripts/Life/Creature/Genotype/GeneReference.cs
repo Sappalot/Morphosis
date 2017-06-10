@@ -1,6 +1,9 @@
 ﻿public class GeneReference {
-    public bool isThere;
-    public FlipSideEnum flip;
-    public CellType cellType;
-    public int geneIndex;
+    public readonly Gene gene;
+    public readonly FlipSideEnum flip;
+
+    public GeneReference(Gene gene, FlipSideEnum flip) {
+        this.gene = gene;
+        this.flip = flip;
+    }
 }

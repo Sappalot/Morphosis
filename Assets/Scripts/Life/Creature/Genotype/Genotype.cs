@@ -17,8 +17,11 @@ public class Genotype : MonoBehaviour {
     }
 
     private void CreateEmptyGenome() {
-        for (int g = 0; g < genomeLength; g++) {
-            genome[g] = new Gene();
+        for (int index = 0; index < genomeLength; index++) {
+            genome[index] = new Gene(index);
+        }
+        for (int index = 0; index < genomeLength; index++) {
+            genome[index].SetDefaultReferenceGene(genome[1]);
         }
     }
 
@@ -30,18 +33,18 @@ public class Genotype : MonoBehaviour {
         Clear();
 
         //Simple Jellyfish (FPS Reference creature, Don't change!!)
-        genome[0].type = CellType.Vein;
+        genome[0].type = CellTypeEnum.Vein;
         genome[0].setReference(3, 10);
         genome[0].setReference(5, 20);
         genome[0].setReference(4, 1);
 
-        genome[1].type = CellType.Muscle;
+        genome[1].type = CellTypeEnum.Muscle;
 
-        genome[10].type = CellType.Leaf;
+        genome[10].type = CellTypeEnum.Leaf;
         genome[10].setReference(1, 10);
         genome[10].setReference(2, 1);
 
-        genome[20].type = CellType.Leaf;
+        genome[20].type = CellTypeEnum.Leaf;
         genome[20].setReference(1, 20);
         genome[20].setReference(0, 1);
     }
@@ -50,28 +53,28 @@ public class Genotype : MonoBehaviour {
         Clear();
 
         //string
-        genome[0].type = CellType.Leaf;
+        genome[0].type = CellTypeEnum.Leaf;
         genome[0].setReference(1, 1);
 
-        genome[1].type = CellType.Leaf;
+        genome[1].type = CellTypeEnum.Leaf;
         genome[1].setReference(1, 2);
 
-        genome[2].type = CellType.Leaf;
+        genome[2].type = CellTypeEnum.Leaf;
         genome[2].setReference(1, 3);
 
-        genome[3].type = CellType.Leaf;
+        genome[3].type = CellTypeEnum.Leaf;
         genome[3].setReference(1, 4);
 
-        genome[4].type = CellType.Leaf;
+        genome[4].type = CellTypeEnum.Leaf;
         genome[4].setReference(1, 5);
 
-        genome[5].type = CellType.Leaf;
+        genome[5].type = CellTypeEnum.Leaf;
         genome[5].setReference(1, 6);
 
-        genome[6].type = CellType.Leaf;
+        genome[6].type = CellTypeEnum.Leaf;
         genome[6].setReference(1, 7);
 
-        genome[7].type = CellType.Leaf;
+        genome[7].type = CellTypeEnum.Leaf;
     }
 
     // No references, type = vein

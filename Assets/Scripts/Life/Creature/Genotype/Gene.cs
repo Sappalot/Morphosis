@@ -1,19 +1,18 @@
 ﻿public class Gene {
-    public CellType type = CellType.Vein; // + this vein cell's settings 
+    public CellTypeEnum type = CellTypeEnum.Leaf; // + this vein cell's settings 
+    public readonly int index;
 
-    public Arrangement primary = new Arrangement();
-    public Arrangement secondary = new Arrangement();
-    public Arrangement tertiary = new Arrangement();
-
-    public Arrangement[] arrangements = new Arrangement[3];
+    public readonly Arrangement[] arrangements = new Arrangement[3];
     //------------------old shit ---------------------
 
     private int?[] reference = new int?[6];
 
-    public Gene() {
-        arrangements[0] = primary;
-        arrangements[1] = secondary;
-        arrangements[2] = tertiary;
+    public Gene(int index) {
+        this.index = index;
+
+        arrangements[0] = new Arrangement();
+        arrangements[1] = new Arrangement();
+        arrangements[2] = new Arrangement();
 
         //--------------old 
         reference[0] = null;
@@ -22,6 +21,12 @@
         reference[3] = null;
         reference[4] = null;
         reference[5] = null;
+    }
+
+    public void SetDefaultReferenceGene(Gene gene) {
+        for (int index = 0; index < arrangements.Length; index++) {
+            arrangements[index].referenceGene = gene;
+        }
     }
 
     public void setReference(int direction, int reference) {
@@ -36,7 +41,9 @@
         for (int i = 0; i < 6; i++) {
             reference[0] = null;
         }
-        type = CellType.Vein;
+        type = CellTypeEnum.Vein;
     }
+
+   
 }
 

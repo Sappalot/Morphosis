@@ -123,13 +123,13 @@ public class Phenotype : MonoBehaviour {
     // 3 Add cell to list and CellMap
     private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int direction, Creature creature) {
         Cell cell = null;
-        if (gene.type == CellType.Leaf) {
+        if (gene.type == CellTypeEnum.Leaf) {
             cell = (Instantiate(leafCellPrefab, transform.position + cellMap.toPosition(mapPosition), Quaternion.identity) as Cell);
         }
-        else if (gene.type == CellType.Muscle) {
+        else if (gene.type == CellTypeEnum.Muscle) {
             cell = (Instantiate(muscleCellPrefab, transform.position + cellMap.toPosition(mapPosition), Quaternion.identity) as Cell);
         }
-        else if (gene.type == CellType.Vein) {
+        else if (gene.type == CellTypeEnum.Vein) {
             cell = (Instantiate(veinCellPrefab, transform.position + cellMap.toPosition(mapPosition), Quaternion.identity) as Cell);
         }
 

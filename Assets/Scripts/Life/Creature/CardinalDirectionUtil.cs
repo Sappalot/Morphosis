@@ -1,11 +1,10 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 public static class CardinalDirectionUtil {
 
-    static Dictionary<int, CardinalDirectionEnum> index_Directions = new Dictionary<int, CardinalDirectionEnum>();
-    static Dictionary<CardinalDirectionEnum, int> directions_Index = new Dictionary<CardinalDirectionEnum, int>();
-    static Dictionary<int, float> index_Angle = new Dictionary<int, float>();
+    private static Dictionary<int, CardinalDirectionEnum> index_Directions = new Dictionary<int, CardinalDirectionEnum>();
+    private static Dictionary<CardinalDirectionEnum, int> directions_Index = new Dictionary<CardinalDirectionEnum, int>();
+    private static Dictionary<int, float> index_Angle = new Dictionary<int, float>();
 
     static CardinalDirectionUtil() {
         index_Directions.Add(0, CardinalDirectionEnum.northEast);
