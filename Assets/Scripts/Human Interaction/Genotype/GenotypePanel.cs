@@ -19,17 +19,21 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
     public void OnClickedBlackWhite() {
         viewedFlipSide = FlipSideEnum.BlackWhite;
         UpdateButtonImages();
-        genePanel.UpdateRepresentation();
+        UpdateRepresentation();
     }
 
     public void OnClickedWhiteBlack() {
         viewedFlipSide = FlipSideEnum.WhiteBlack;
         UpdateButtonImages();
-        genePanel.UpdateRepresentation();
+        UpdateRepresentation();
     }
 
     private void UpdateButtonImages() {
         blackWhiteImage.color = (viewedFlipSide == FlipSideEnum.BlackWhite) ? chosenColor : unchosenColor;
         whiteBlackImage.color = (viewedFlipSide == FlipSideEnum.WhiteBlack) ? chosenColor : unchosenColor;
+    }
+
+    public void UpdateRepresentation() {
+        genePanel.UpdateRepresentation();
     }
 }

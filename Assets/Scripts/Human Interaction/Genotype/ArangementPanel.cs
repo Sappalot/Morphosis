@@ -122,43 +122,52 @@ public class ArangementPanel : MonoBehaviour {
 
     public void OnClickedCenterCircle() {
         arrangement.CycleArrangementType();
+        UpdateRepresentation();
     }
 
     public void OnClickedIncreasRefCount() {
         arrangement.IncreasRefCount();
+        UpdateRepresentation();
     }
 
     public void OnClickedDecreasseRefCount() {
         arrangement.DecreasseRefCount();
+        UpdateRepresentation();
     }
 
     public void OnClickedAngleCounterClowkwise() {
         arrangement.TurnArrowCounterClowkwise();
+        UpdateRepresentation();
     }
 
     public void OnClickedAngleClowkwise() {
         arrangement.TurnArrowClowkwise();
+        UpdateRepresentation();
     }
 
     public void OnClickedFlipSame() {
         arrangement.SetFlipSame();
+        UpdateRepresentation();
     }
 
     public void OnClickedFlipOpposite() {
         arrangement.SetFlipOpposite();
+        UpdateRepresentation();
     }
 
     public void OnClickedFlipBlackToArrow() {
         arrangement.SetFlipBlackToArrow();
+        UpdateRepresentation();
     }
 
     public void OnClickedFlipWhiteToArrow() {
         arrangement.SetFlipWhiteToArrow();
+        UpdateRepresentation();
     }
 
     public void OnTogglePairs(bool value) {
         arrangement.SetEnablePairs(value);
-        UpdateFlipButtonColors();
+        UpdateRepresentation();
     }
 
     public void OnClickedPerifierCircle() {

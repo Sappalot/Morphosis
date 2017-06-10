@@ -39,6 +39,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
         creature.SetHighlite(true);
         selection.Add(creature);
         UpdateGUI();
+
+        GenotypePanel.instance.UpdateRepresentation();
     }
 
     public void AddToSelection(Creature creature) {

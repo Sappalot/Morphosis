@@ -112,7 +112,6 @@ public class Arrangement {
                 referenceCount = 6;
             }
         }
-        Debug.Log("count: " + referenceCount);
     }
 
     public void DecreasseRefCount() {

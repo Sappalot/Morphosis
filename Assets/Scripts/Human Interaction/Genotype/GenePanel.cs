@@ -6,12 +6,12 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
     public ArangementPanel primary;
 
-    private void Update() {
+    public void UpdateRepresentation() {
+
+        //hack select
         List<Creature> selection = CreatureSelectionPanel.instance.selection;
         primary.arrangement = selection.Count == 1 ? selection[0].genotype.genome[0].arrangements[0] : null;
-    }
 
-    public void UpdateRepresentation() {
         primary.UpdateRepresentation();
     }
 }
