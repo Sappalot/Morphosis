@@ -66,11 +66,8 @@ public class ArangementPanel : MonoBehaviour {
             flipOppositeSameButtons.SetActive(true);
             flipWhiteBlackToArrowButtons.SetActive(false);
             gapSizeButtons.SetActive(false);
-
-            arrangement.SnapToLegalSide();
-
+       
             //Main Arrow
-
             arrowTransform.gameObject.SetActive(true);
             arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableMathAngle(GenotypePanel.instance.viewedFlipSide));
 
@@ -79,16 +76,19 @@ public class ArangementPanel : MonoBehaviour {
         } else if (arrangement.type == ArrangementTypeEnum.Mirror) {
             angleButtons.SetActive(true);
             referenceCountButtons.SetActive(true);
-            pairsToggle.SetActive(true);
+            pairsToggle.SetActive(arrangement.referenceCount == 4);
             flipOppositeSameButtons.SetActive(false);
             flipWhiteBlackToArrowButtons.SetActive(true);
-            gapSizeButtons.SetActive(true);
-
-            arrangement.SnapToLegalMirror();
+            gapSizeButtons.SetActive(arrangement.referenceCount <= 4);
 
             arrowTransform.gameObject.SetActive(true);
+            arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableMathAngle(GenotypePanel.instance.viewedFlipSide));
 
-            //Adjust Reference Count if nessesary
+            //Flip Buttons
+            UpdateFlipButtonColors();
+
+            //Checkmark
+            UpdatePairCheckmark();
         } else if (arrangement.type == ArrangementTypeEnum.Star) {
             angleButtons.SetActive(arrangement.referenceCount < 6 || arrangement.flipPairsEnabled);
             referenceCountButtons.SetActive(true);
@@ -97,8 +97,7 @@ public class ArangementPanel : MonoBehaviour {
             flipWhiteBlackToArrowButtons.SetActive(arrangement.referenceCount == 6 && arrangement.flipPairsEnabled);
             gapSizeButtons.SetActive(false);
 
-            arrangement.SnapToLegalStar();
-
+            //Arrow
             arrowTransform.gameObject.SetActive(arrangement.referenceCount < 6 || arrangement.flipPairsEnabled);
             arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableMathAngle(GenotypePanel.instance.viewedFlipSide));
             
@@ -122,6 +121,16 @@ public class ArangementPanel : MonoBehaviour {
 
     public void OnClickedCenterCircle() {
         arrangement.CycleArrangementType();
+        UpdateRepresentation();
+    }
+
+    public void OnClickIncreaseGap() {
+        arrangement.IncreaseGap();
+        UpdateRepresentation();
+    }
+
+    public void OnClickDecreseGap() {
+        arrangement.DecreseGap();
         UpdateRepresentation();
     }
 
