@@ -29,7 +29,7 @@ public class CellMap {
         grid.Add(new Key(gridPosition), cell);
     }
 
-    public void removeCellAtGridPosition(Vector2i gridPosition) {
+    public void RemoveCellAtGridPosition(Vector2i gridPosition) {
         grid.Remove(new Key(gridPosition));
     }
 
@@ -80,7 +80,7 @@ public class CellMap {
     }
 
     //returned position is in creature space
-    public Vector3 toPosition(Vector2i gridPosition) {
+    public Vector3 ToPosition(Vector2i gridPosition) {
         float xStride = Mathf.Sqrt(Mathf.Pow(cellRadius * 2, 2) - Mathf.Pow(cellRadius, 2));
         float yStride = cellRadius * 2;
 
@@ -88,7 +88,7 @@ public class CellMap {
         return new Vector3(xStride * gridPosition.x, yStride * gridPosition.y + displace, 0f);
     }
 
-    public Vector2i toGridPosition(Vector3 position) {
+    public Vector2i ToGridPosition(Vector3 position) {
         // TODO
         return new Vector2i();
     }

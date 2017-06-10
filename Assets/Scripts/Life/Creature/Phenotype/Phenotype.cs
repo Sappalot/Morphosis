@@ -94,7 +94,7 @@ public class Phenotype : MonoBehaviour {
                                     //trying to spawn a cell where ther is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
                                     GameObject.Destroy(residentCell.gameObject);
                                     cellList.Remove(residentCell);
-                                    cellMap.removeCellAtGridPosition(residentCell.mapPosition);
+                                    cellMap.RemoveCellAtGridPosition(residentCell.mapPosition);
                                     nextSpawningFromCells.Remove(residentCell);
                                     cellMap.MarkAsIllegal(residentCell.mapPosition);
                                 } else {
@@ -124,13 +124,13 @@ public class Phenotype : MonoBehaviour {
     private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int direction, Creature creature) {
         Cell cell = null;
         if (gene.type == CellTypeEnum.Leaf) {
-            cell = (Instantiate(leafCellPrefab, transform.position + cellMap.toPosition(mapPosition), Quaternion.identity) as Cell);
+            cell = (Instantiate(leafCellPrefab, transform.position + cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
         }
         else if (gene.type == CellTypeEnum.Muscle) {
-            cell = (Instantiate(muscleCellPrefab, transform.position + cellMap.toPosition(mapPosition), Quaternion.identity) as Cell);
+            cell = (Instantiate(muscleCellPrefab, transform.position + cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
         }
         else if (gene.type == CellTypeEnum.Vein) {
-            cell = (Instantiate(veinCellPrefab, transform.position + cellMap.toPosition(mapPosition), Quaternion.identity) as Cell);
+            cell = (Instantiate(veinCellPrefab, transform.position + cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
         }
 
         if (cell == null) {

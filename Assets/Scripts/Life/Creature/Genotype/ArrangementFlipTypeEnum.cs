@@ -1,4 +1,4 @@
-﻿public enum FlipTypeEnum {
+﻿public enum ArrangementFlipTypeEnum {
     Same, //SIDE, STAR
     Opposite,//SIDE, STAR
     BlackToArrow, //MIRROR

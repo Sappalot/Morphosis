@@ -5,27 +5,34 @@ using UnityEngine.UI;
 public class ArangementPanel : MonoBehaviour {
     public Image grayOut;
     public GameObject arrangementButtons;
+
+    public GameObject angleButtons;
+    public GameObject referenceCountButtons;
+    public GameObject pairsToggle;
+    public GameObject flipOppositeSameButtons;
+    public GameObject flipWhiteBlackToArrowButtons;
+    public GameObject gapSizeButtons;
+    
+
     public Text arrangementTypeText;
+
     public Image centerCircleFlipBlackWhiteImage;
     public Image centerCircleFlipWhiteBlack;
+
     public Image flipSameButtonImage;
     public Image flipOppositeButtonImage;
+    public Image flipBlackToArrowButtonImage;
+    public Image flipWhiteToArrowButtonImage;
+
+    public Toggle togglePair;
+
     public RectTransform arrowTransform;
+
+
     public ReferenceGraphics[] referenceGraphics = new ReferenceGraphics[6];
 
-    private static Dictionary<int, int> cardinalToArrangement = new Dictionary<int, int>();
-
-    public void Awake() {
-        cardinalToArrangement.Add(0, -2);
-        cardinalToArrangement.Add(1, 0);
-        cardinalToArrangement.Add(2, 2);
-        cardinalToArrangement.Add(3, 4);
-        cardinalToArrangement.Add(4, 6);
-        cardinalToArrangement.Add(5, -4);
-    }
-
     private Arrangement m_arrangement;
-    public Arrangement arangement {
+    public Arrangement arrangement {
         get {
             return m_arrangement;
         }
@@ -41,49 +48,117 @@ public class ArangementPanel : MonoBehaviour {
         }
     }
 
+    public void UpdateRepresentation() {
+        FlipSideEnum viewedFlipSide = GenotypePanel.instance.viewedFlipSide;
+
+        //Center
+        if (arrangement == null) {
+            return;
+        }
+        arrangementTypeText.text = arrangement.type.ToString();
+        centerCircleFlipBlackWhiteImage.enabled = viewedFlipSide == FlipSideEnum.BlackWhite;
+        centerCircleFlipWhiteBlack.enabled = viewedFlipSide == FlipSideEnum.WhiteBlack;
+
+        if (arrangement.type == ArrangementTypeEnum.Side) {
+            angleButtons.SetActive(true);
+            referenceCountButtons.SetActive(true);
+            pairsToggle.SetActive(false);
+            flipOppositeSameButtons.SetActive(true);
+            flipWhiteBlackToArrowButtons.SetActive(false);
+            gapSizeButtons.SetActive(false);
+
+            arrangement.SnapToLegalSide();
+
+            //Main Arrow
+
+            arrowTransform.gameObject.SetActive(true);
+            arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableMathAngle(GenotypePanel.instance.viewedFlipSide));
+
+            //Flip Buttons
+            UpdateFlipButtonColors();
+        } else if (arrangement.type == ArrangementTypeEnum.Mirror) {
+            angleButtons.SetActive(true);
+            referenceCountButtons.SetActive(true);
+            pairsToggle.SetActive(true);
+            flipOppositeSameButtons.SetActive(false);
+            flipWhiteBlackToArrowButtons.SetActive(true);
+            gapSizeButtons.SetActive(true);
+
+            arrangement.SnapToLegalMirror();
+
+            arrowTransform.gameObject.SetActive(true);
+
+            //Adjust Reference Count if nessesary
+        } else if (arrangement.type == ArrangementTypeEnum.Star) {
+            angleButtons.SetActive(arrangement.referenceCount < 6 || arrangement.flipPairsEnabled);
+            referenceCountButtons.SetActive(true);
+            pairsToggle.SetActive(arrangement.referenceCount == 6);
+            flipOppositeSameButtons.SetActive(arrangement.referenceCount < 6 || !arrangement.flipPairsEnabled);
+            flipWhiteBlackToArrowButtons.SetActive(arrangement.referenceCount == 6 && arrangement.flipPairsEnabled);
+            gapSizeButtons.SetActive(false);
+
+            arrangement.SnapToLegalStar();
+
+            arrowTransform.gameObject.SetActive(arrangement.referenceCount < 6 || arrangement.flipPairsEnabled);
+            arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableMathAngle(GenotypePanel.instance.viewedFlipSide));
+            
+            //Flip Buttons
+            UpdateFlipButtonColors();
+
+            //Checkmark
+            UpdatePairCheckmark();
+        }
+
+        //Perifier
+        for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+            referenceGraphics[cardinalIndex].reference = arrangement.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
+        }
+    }
+
     public void OnClickEnabledToggle(bool value) {
         grayOut.enabled = !value;
         arrangementButtons.SetActive(isEnabled);
     }
 
     public void OnClickedCenterCircle() {
-        if (m_arrangement.type == ArrangementTypeEnum.Side) {
-            m_arrangement.type = ArrangementTypeEnum.Mirror;
-        } else if (m_arrangement.type == ArrangementTypeEnum.Mirror) {
-            m_arrangement.type = ArrangementTypeEnum.Star;
-        } else if (m_arrangement.type == ArrangementTypeEnum.Star) {
-            m_arrangement.type = ArrangementTypeEnum.Side;
-        }
+        arrangement.CycleArrangementType();
     }
 
     public void OnClickedIncreasRefCount() {
-        Debug.Log("+");
-        m_arrangement.referenceCount++;
-        if (m_arrangement.referenceCount == -1) {
-            m_arrangement.referenceCount = 1;
-        }
-        if (m_arrangement.referenceCount > 5) {
-            m_arrangement.referenceCount = 5;
-        }
+        arrangement.IncreasRefCount();
     }
 
     public void OnClickedDecreasseRefCount() {
-        Debug.Log("-");
-        m_arrangement.referenceCount--;
-        if (m_arrangement.referenceCount == 1) {
-            m_arrangement.referenceCount = -1;
-        }
-        if (m_arrangement.referenceCount < -5) {
-            m_arrangement.referenceCount = -5;
-        }
+        arrangement.DecreasseRefCount();
+    }
+
+    public void OnClickedAngleCounterClowkwise() {
+        arrangement.TurnArrowCounterClowkwise();
+    }
+
+    public void OnClickedAngleClowkwise() {
+        arrangement.TurnArrowClowkwise();
     }
 
     public void OnClickedFlipSame() {
-        m_arrangement.flipType = FlipTypeEnum.Same;
+        arrangement.SetFlipSame();
     }
 
     public void OnClickedFlipOpposite() {
-        m_arrangement.flipType = FlipTypeEnum.Opposite;
+        arrangement.SetFlipOpposite();
+    }
+
+    public void OnClickedFlipBlackToArrow() {
+        arrangement.SetFlipBlackToArrow();
+    }
+
+    public void OnClickedFlipWhiteToArrow() {
+        arrangement.SetFlipWhiteToArrow();
+    }
+
+    public void OnTogglePairs(bool value) {
+        arrangement.SetEnablePairs(value);
+        UpdateFlipButtonColors();
     }
 
     public void OnClickedPerifierCircle() {
@@ -98,82 +173,15 @@ public class ArangementPanel : MonoBehaviour {
         arrangementButtons.SetActive(false);
     }
 
-    public void UpdateRepresentation() {
-        FlipSideEnum viewedFlipSide = GenotypePanel.instance.viewedFlipSide;
-        
-        //Center
-        if (m_arrangement == null) {
-            return;
-        }
-        arrangementTypeText.text = m_arrangement.type.ToString();
-        centerCircleFlipBlackWhiteImage.enabled = viewedFlipSide == FlipSideEnum.BlackWhite;
-        centerCircleFlipWhiteBlack.enabled = viewedFlipSide == FlipSideEnum.WhiteBlack;
+    private void UpdateFlipButtonColors() {
+        flipSameButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipTypeEnum.Same) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
+        flipOppositeButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipTypeEnum.Opposite) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
 
-        if (m_arrangement.type == ArrangementTypeEnum.Side) {
-            arrowTransform.transform.eulerAngles = new Vector3(0, 0, m_arrangement.angle * 30f + 90f);
-        }
-
-        //Flip Buttons
-        flipSameButtonImage.color = (m_arrangement.flipType == FlipTypeEnum.Same) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
-        flipOppositeButtonImage.color = (m_arrangement.flipType == FlipTypeEnum.Opposite) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
-
-        //Perifier
-        for (int i = 0; i < 6; i++) {
-           referenceGraphics[i].reference = m_arrangement == null ? null : GetReference(i);
-        }
+        flipBlackToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
+        flipWhiteToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.WhiteToArrow) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
     }
 
-    private GeneReference GetReference(int cardinalIndex) {
-        if (m_arrangement.type == ArrangementTypeEnum.Side) {
-
-            for (int index = 0; index < Mathf.Abs(m_arrangement.referenceCount); index++) {
-                if (CardinalIndexToArrangementAngle(cardinalIndex) == WarpArrAngle(m_arrangement.angle + ( (m_arrangement.referenceCount > 0) ? index * 2 : -index * 2))) {
-                    return new GeneReference(m_arrangement.referenceGene, m_arrangement.flipType == FlipTypeEnum.Same ? GenotypePanel.instance.viewedFlipSide : Opposite(GenotypePanel.instance.viewedFlipSide));
-                }
-            }
-
-        }
-        return null;
-    }
-
-    private static int WarpArrAngle(int angle) {
-        if (angle < -5) {
-            return angle + 12;
-        }
-        if (angle > 6) {
-            return angle - 12;
-        }
-        return angle;
-    }
-
-    private static int CardinalIndexToArrangementAngle(int cardinalIndex) {
-        return cardinalToArrangement[cardinalIndex];
-    }
-
-    private static FlipSideEnum Opposite(FlipSideEnum flipSide) {
-        if (flipSide == FlipSideEnum.BlackWhite) {
-            return FlipSideEnum.WhiteBlack;
-        }
-        return FlipSideEnum.BlackWhite;
-    }
-
-    public void OnClickedAngleCounterClowkwise() {
-        if (m_arrangement == null) {
-            return;
-        }
-        if (m_arrangement.type == ArrangementTypeEnum.Side) {
-            m_arrangement.angle += 2;
-        }
-        m_arrangement.angle = WarpArrAngle(m_arrangement.angle);
-    }
-
-    public void OnClickedAngleClowkwise() {
-        if (m_arrangement == null) {
-            return;
-        }
-        if (m_arrangement.type == ArrangementTypeEnum.Side) {
-            m_arrangement.angle -= 2;
-        }
-        m_arrangement.angle = WarpArrAngle(m_arrangement.angle);
+    private void UpdatePairCheckmark() {
+        togglePair.isOn = arrangement.flipPairsEnabled;
     }
 }

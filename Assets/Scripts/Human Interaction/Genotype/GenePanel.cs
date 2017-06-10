@@ -8,7 +8,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
     private void Update() {
         List<Creature> selection = CreatureSelectionPanel.instance.selection;
-        primary.arangement = selection.Count == 1 ? selection[0].genotype.genome[0].arrangements[0] : null;
+        primary.arrangement = selection.Count == 1 ? selection[0].genotype.genome[0].arrangements[0] : null;
     }
 
     public void UpdateRepresentation() {
