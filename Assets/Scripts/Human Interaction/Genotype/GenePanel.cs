@@ -5,20 +5,29 @@ using UnityEngine.UI;
 
 public class GenePanel : MonoSingleton<GenePanel> {
 
+    public GameObject circles;
+
     public Image geneReferenceImage;
     public Image flipBlackWhite;
     public Image flipWhiteBlack;
     public Text geneReferenceText;
 
-    public Gene gene;
+    private Gene m_gene;
+    public Gene gene {
+        get {
+            return m_gene;
+        }
+        set {
+            m_gene = value;
+            UpdateRepresentation();
+        }
+    }
     public ReferenceGraphics[] referenceGraphics;
 
     public ArrangementPanel arrangementPanelTemplate;
     private ArrangementPanel[] arrangementPanels = new ArrangementPanel[3];
     
     override public void Init() {
-
-
         RectTransform originalTransform = arrangementPanelTemplate.GetComponent<RectTransform>();
 
         for (int index = 0; index < arrangementPanels.Length; index++) {
@@ -36,17 +45,25 @@ public class GenePanel : MonoSingleton<GenePanel> {
     }
 
     public void UpdateRepresentation() {
+        //Nothing to represent
+        if (gene == null) {
+            for (int index = 0; index < arrangementPanels.Length; index++) {
+                if (arrangementPanels[index] != null) {
+                    arrangementPanels[index].arrangement = null;
+                }
+            }
 
-        //hack select
-        List<Creature> selection = CreatureSelectionPanel.instance.selection;
-        gene = selection[0].genotype.genome[0];
-        
-        arrangementPanels[0].arrangement = selection.Count == 1 ? selection[0].genotype.genome[0].arrangements[0] : null;
-        arrangementPanels[1].arrangement = selection.Count == 1 ? selection[0].genotype.genome[0].arrangements[1] : null;
-        arrangementPanels[2].arrangement = selection.Count == 1 ? selection[0].genotype.genome[0].arrangements[2] : null;
-        arrangementPanels[0].UpdateRepresentation();
-        arrangementPanels[1].UpdateRepresentation();
-        arrangementPanels[2].UpdateRepresentation();
+            circles.SetActive(false);
+            return;
+        }
+
+        circles.SetActive(true);
+
+        for (int index = 0; index < arrangementPanels.Length; index++) {
+            if (arrangementPanels[index] != null) {
+                arrangementPanels[index].arrangement = gene.arrangements[index];
+            }
+        }
 
         //perifier
         for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
@@ -57,5 +74,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
         flipBlackWhite.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.BlackWhite;
         flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
         geneReferenceText.text = gene.index.ToString();
+
+
     }
 }

@@ -2,7 +2,9 @@
 using UnityEngine.UI;
 
 public class ArrangementPanel : MonoBehaviour {
-
+    public GameObject enableToggle;
+    public GameObject circles;
+    [HideInInspector]
     public GenePanel genePanel;
 
     public Image grayOut;
@@ -42,11 +44,17 @@ public class ArrangementPanel : MonoBehaviour {
         }
     }
 
+    public bool isValid {
+        get {
+            return m_arrangement != null;
+        }
+    }
+
     private void Awake() {
         arrangementButtons.SetActive(false);
     }
 
-    public bool isEnabled {
+    public bool isUsed {
         get {
             return arrangement.isEnabled;
         }
@@ -55,10 +63,28 @@ public class ArrangementPanel : MonoBehaviour {
     public void UpdateRepresentation() {
         FlipSideEnum viewedFlipSide = GenotypePanel.instance.viewedFlipSide;
 
-        //Center
+        //Nothing to represent
         if (arrangement == null) {
+            for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+                referenceGraphics[cardinalIndex].reference = null;
+            }
+            arrangementButtons.SetActive(false);
+
+            grayOut.gameObject.SetActive(false);
+            circles.SetActive(false);
+            arrowTransform.gameObject.SetActive(false);
+            enableToggle.SetActive(false);
             return;
         }
+        grayOut.gameObject.SetActive(true);
+        circles.SetActive(true);
+        arrowTransform.gameObject.SetActive(true);
+        enableToggle.SetActive(true);
+
+        //grey out
+        UpdateIsUsed();
+
+        //Center
         arrangementTypeText.text = arrangement.type.ToString();
         centerCircleFlipBlackWhiteImage.enabled = viewedFlipSide == FlipSideEnum.BlackWhite;
         centerCircleFlipWhiteBlack.enabled = viewedFlipSide == FlipSideEnum.WhiteBlack;
@@ -121,9 +147,10 @@ public class ArrangementPanel : MonoBehaviour {
     }
 
     public void OnClickEnabledToggle(bool value) {
-        grayOut.enabled = !value;
         arrangement.isEnabled = value;
-        arrangementButtons.SetActive(isEnabled);
+        arrangementButtons.SetActive(value);
+
+        UpdateRepresentation();
         genePanel.UpdateRepresentation();
     }
 
@@ -204,11 +231,15 @@ public class ArrangementPanel : MonoBehaviour {
     }
 
     public void OnPointerEnterArea() {
-        arrangementButtons.SetActive(isEnabled);
+        if (isValid) {
+            arrangementButtons.SetActive(isUsed);
+        }
     }
 
     public void OnPointerExitArea() {
-        arrangementButtons.SetActive(false);
+        if (isValid) {
+            arrangementButtons.SetActive(false);
+        }
     }
 
     private void UpdateFlipButtonColors() {
@@ -222,4 +253,11 @@ public class ArrangementPanel : MonoBehaviour {
     private void UpdatePairCheckmark() {
         togglePair.isOn = arrangement.flipPairsEnabled;
     }
+
+    //grey out
+    private void UpdateIsUsed() {
+        grayOut.enabled = !isUsed;
+        enableToggle.GetComponent<Toggle>().isOn = isUsed;
+    }
+    
 }

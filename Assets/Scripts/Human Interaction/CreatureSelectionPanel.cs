@@ -28,6 +28,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
         } 
         selection.Clear();
         UpdateGUI();
+
+        GenotypePanel.instance.genotype = null;
     }
 
     public void SelectOnly(Creature creature) {
@@ -40,7 +42,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
         selection.Add(creature);
         UpdateGUI();
 
-        GenotypePanel.instance.UpdateRepresentation();
+        GenotypePanel.instance.genotype = creature.genotype;
     }
 
     public void AddToSelection(Creature creature) {
