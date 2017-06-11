@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.6.1f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -82,8 +80,10 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\CreatureSelectionPanel.cs" />
-    <Compile Include="Assets\Scripts\Human Interaction\Genotype\ArangementPanel.cs" />
+    <Compile Include="Assets\Scripts\Human Interaction\Genotype\ArrangementPanel.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\Genotype\GenePanel.cs" />
+    <Compile Include="Assets\Scripts\Human Interaction\Genotype\GenomeGene.cs" />
+    <Compile Include="Assets\Scripts\Human Interaction\Genotype\GenomePanel.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\Genotype\GenotypePanel.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\Genotype\ReferenceGraphics.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\HUD.cs" />
@@ -92,19 +92,19 @@
     <Compile Include="Assets\Scripts\Inanimate\Terrain.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\CardinalDirectionEnum.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\CardinalDirectionUtil.cs" />
+    <Compile Include="Assets\Scripts\Life\Creature\CellTypeEnum.cs" />
+    <Compile Include="Assets\Scripts\Life\Creature\CellTypeUtil.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Creature.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Genotype\Arrangement.cs" />
+    <Compile Include="Assets\Scripts\Life\Creature\Genotype\ArrangementFlipTypeEnum.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Genotype\ArrangementTypeEnum.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Genotype\FlipSideEnum.cs" />
-    <Compile Include="Assets\Scripts\Life\Creature\Genotype\ArrangementFlipTypeEnum.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Genotype\Gene.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Genotype\GeneReference.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Genotype\Genotype.cs" />
-    <Compile Include="Assets\Scripts\Life\Creature\CellTypeUtil.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Phenotype\CellMap.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Phenotype\CellNeighbour.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Phenotype\Cells\Cell.cs" />
-    <Compile Include="Assets\Scripts\Life\Creature\CellTypeEnum.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Phenotype\Cells\LeafCell.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Phenotype\Cells\MuscleCell.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Phenotype\Cells\VeinCell.cs" />
