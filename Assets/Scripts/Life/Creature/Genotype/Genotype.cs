@@ -21,7 +21,7 @@ public class Genotype : MonoBehaviour {
             genome[index] = new Gene(index);
         }
         for (int index = 0; index < genomeLength; index++) {
-            genome[index].SetDefaultReferenceGene(genome[1]);
+            genome[index].SetDefaultReferenceGene(genome);
         }
     }
 
@@ -75,6 +75,8 @@ public class Genotype : MonoBehaviour {
         genome[6].setReference(1, 7);
 
         genome[7].type = CellTypeEnum.Leaf;
+
+        genome[10].type = CellTypeEnum.Mouth;
     }
 
     // No references, type = vein

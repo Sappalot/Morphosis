@@ -23,10 +23,12 @@
         reference[5] = null;
     }
 
-    public void SetDefaultReferenceGene(Gene gene) {
-        for (int index = 0; index < arrangements.Length; index++) {
-            arrangements[index].referenceGene = gene;
-        }
+    public void SetDefaultReferenceGene(Gene[] genome) {
+
+        arrangements[0].referenceGene = genome[1];
+        arrangements[1].referenceGene = genome[2];
+        arrangements[2].referenceGene = genome[10];
+
     }
 
     public void setReference(int direction, int reference) {

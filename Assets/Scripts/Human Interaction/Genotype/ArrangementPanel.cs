@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class ArangementPanel : MonoBehaviour {
+public class ArrangementPanel : MonoBehaviour {
+
+    public GenePanel genePanel;
+
     public Image grayOut;
     public GameObject arrangementButtons;
 
@@ -12,7 +14,6 @@ public class ArangementPanel : MonoBehaviour {
     public GameObject flipOppositeSameButtons;
     public GameObject flipWhiteBlackToArrowButtons;
     public GameObject gapSizeButtons;
-    
 
     public Text arrangementTypeText;
 
@@ -28,7 +29,6 @@ public class ArangementPanel : MonoBehaviour {
 
     public RectTransform arrowTransform;
 
-
     public ReferenceGraphics[] referenceGraphics = new ReferenceGraphics[6];
 
     private Arrangement m_arrangement;
@@ -42,9 +42,13 @@ public class ArangementPanel : MonoBehaviour {
         }
     }
 
+    private void Awake() {
+        arrangementButtons.SetActive(false);
+    }
+
     public bool isEnabled {
         get {
-            return !grayOut.enabled;
+            return arrangement.isEnabled;
         }
     }
 
@@ -110,73 +114,89 @@ public class ArangementPanel : MonoBehaviour {
 
         //Perifier
         for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+
+            //referenceGraphics[cardinalIndex].SetGeneReference(arrangement.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide), genePanel.testCreature.genotype.genome);
             referenceGraphics[cardinalIndex].reference = arrangement.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
         }
     }
 
     public void OnClickEnabledToggle(bool value) {
         grayOut.enabled = !value;
+        arrangement.isEnabled = value;
         arrangementButtons.SetActive(isEnabled);
+        //UpdateParentRepresentation();
     }
 
     public void OnClickedCenterCircle() {
         arrangement.CycleArrangementType();
         UpdateRepresentation();
+        //UpdateParentRepresentation();
     }
 
     public void OnClickIncreaseGap() {
         arrangement.IncreaseGap();
         UpdateRepresentation();
+       // UpdateParentRepresentation();
     }
 
     public void OnClickDecreseGap() {
         arrangement.DecreseGap();
         UpdateRepresentation();
+        //UpdateParentRepresentation();
     }
 
     public void OnClickedIncreasRefCount() {
         arrangement.IncreasRefCount();
         UpdateRepresentation();
+       // UpdateParentRepresentation();
     }
 
     public void OnClickedDecreasseRefCount() {
         arrangement.DecreasseRefCount();
         UpdateRepresentation();
+        //UpdateParentRepresentation();
     }
 
     public void OnClickedAngleCounterClowkwise() {
         arrangement.TurnArrowCounterClowkwise();
         UpdateRepresentation();
+        //UpdateParentRepresentation();
     }
 
     public void OnClickedAngleClowkwise() {
         arrangement.TurnArrowClowkwise();
         UpdateRepresentation();
+        //UpdateParentRepresentation();
     }
 
     public void OnClickedFlipSame() {
         arrangement.SetFlipSame();
         UpdateRepresentation();
+        //UpdateParentRepresentation();
     }
 
     public void OnClickedFlipOpposite() {
         arrangement.SetFlipOpposite();
         UpdateRepresentation();
+        //UpdateParentRepresentation();
     }
 
     public void OnClickedFlipBlackToArrow() {
         arrangement.SetFlipBlackToArrow();
         UpdateRepresentation();
+       // UpdateParentRepresentation();
     }
 
     public void OnClickedFlipWhiteToArrow() {
         arrangement.SetFlipWhiteToArrow();
         UpdateRepresentation();
+       // UpdateParentRepresentation();
     }
 
     public void OnTogglePairs(bool value) {
         arrangement.SetEnablePairs(value);
         UpdateRepresentation();
+        //UpdateParentRepresentation();
     }
 
     public void OnClickedPerifierCircle() {
