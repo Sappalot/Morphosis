@@ -23,12 +23,22 @@
         reference[5] = null;
     }
 
-    public void SetDefaultReferenceGene(Gene[] genome) {
+    public GeneReference GetFlippableReference(int referenceCardinalIndex, FlipSideEnum viewedFlipSide) {
+        GeneReference first = null;
+        for (int index = 0; index < arrangements.Length; index++) {
+            GeneReference found = arrangements[index].GetFlippableReference(referenceCardinalIndex, viewedFlipSide);
+            if (found != null && arrangements[index].isEnabled) {
+                first = found;
+                break;
+            }
+        }
+        return first;
+    }
 
+    public void SetDefaultReferenceGene(Gene[] genome) {
         arrangements[0].referenceGene = genome[1];
         arrangements[1].referenceGene = genome[2];
         arrangements[2].referenceGene = genome[10];
-
     }
 
     public void setReference(int direction, int reference) {

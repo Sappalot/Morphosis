@@ -11,6 +11,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
     public Text geneReferenceText;
 
     public Gene gene;
+    public ReferenceGraphics[] referenceGraphics;
 
     public ArrangementPanel arrangementPanelTemplate;
     private ArrangementPanel[] arrangementPanels = new ArrangementPanel[3];
@@ -27,33 +28,30 @@ public class GenePanel : MonoSingleton<GenePanel> {
             RectTransform spawnTransform = arrangementPanels[index].GetComponent<RectTransform>();
             spawnTransform.position = originalTransform.position + Vector3.down * index * (originalTransform.rect.height + 2);
 
+            arrangementPanels[index].genePanel = this;
         }
 
         arrangementPanelTemplate.gameObject.SetActive(false);
         arrangementPanelTemplate.arrangementButtons.SetActive(false);
     }
 
-
     public void UpdateRepresentation() {
-
-
 
         //hack select
         List<Creature> selection = CreatureSelectionPanel.instance.selection;
-
+        gene = selection[0].genotype.genome[0];
         
-        
-        //perifier
         arrangementPanels[0].arrangement = selection.Count == 1 ? selection[0].genotype.genome[0].arrangements[0] : null;
         arrangementPanels[1].arrangement = selection.Count == 1 ? selection[0].genotype.genome[0].arrangements[1] : null;
         arrangementPanels[2].arrangement = selection.Count == 1 ? selection[0].genotype.genome[0].arrangements[2] : null;
-
         arrangementPanels[0].UpdateRepresentation();
         arrangementPanels[1].UpdateRepresentation();
         arrangementPanels[2].UpdateRepresentation();
 
-        //core
-        gene = selection[0].genotype.genome[0];
+        //perifier
+        for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+            referenceGraphics[cardinalIndex].reference = gene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
+        }
 
         geneReferenceImage.color = CellTypeUtil.ToColor(gene.type);
         flipBlackWhite.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.BlackWhite;

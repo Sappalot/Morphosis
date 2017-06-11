@@ -43,8 +43,6 @@ public class Arrangement {
         flipTypeBlackWhiteToArrow = ArrangementFlipTypeEnum.BlackToArrow;
     }
 
-
-
     public void CycleArrangementType() {
         if (type == ArrangementTypeEnum.Side) {
             type = ArrangementTypeEnum.Mirror;

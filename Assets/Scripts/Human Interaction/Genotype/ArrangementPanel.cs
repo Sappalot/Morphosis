@@ -124,79 +124,79 @@ public class ArrangementPanel : MonoBehaviour {
         grayOut.enabled = !value;
         arrangement.isEnabled = value;
         arrangementButtons.SetActive(isEnabled);
-        //UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnClickedCenterCircle() {
         arrangement.CycleArrangementType();
         UpdateRepresentation();
-        //UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnClickIncreaseGap() {
         arrangement.IncreaseGap();
         UpdateRepresentation();
-       // UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnClickDecreseGap() {
         arrangement.DecreseGap();
         UpdateRepresentation();
-        //UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnClickedIncreasRefCount() {
         arrangement.IncreasRefCount();
         UpdateRepresentation();
-       // UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnClickedDecreasseRefCount() {
         arrangement.DecreasseRefCount();
         UpdateRepresentation();
-        //UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnClickedAngleCounterClowkwise() {
         arrangement.TurnArrowCounterClowkwise();
         UpdateRepresentation();
-        //UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnClickedAngleClowkwise() {
         arrangement.TurnArrowClowkwise();
         UpdateRepresentation();
-        //UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnClickedFlipSame() {
         arrangement.SetFlipSame();
         UpdateRepresentation();
-        //UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnClickedFlipOpposite() {
         arrangement.SetFlipOpposite();
         UpdateRepresentation();
-        //UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnClickedFlipBlackToArrow() {
         arrangement.SetFlipBlackToArrow();
         UpdateRepresentation();
-       // UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnClickedFlipWhiteToArrow() {
         arrangement.SetFlipWhiteToArrow();
         UpdateRepresentation();
-       // UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnTogglePairs(bool value) {
         arrangement.SetEnablePairs(value);
         UpdateRepresentation();
-        //UpdateParentRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     public void OnClickedPerifierCircle() {
