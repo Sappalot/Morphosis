@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Genotype : MonoBehaviour {
     public static int root = 0;
-    public static int genomeLength = 100;
+    public static int genomeLength = 50;
     public Gene[] genome = new Gene[genomeLength];
 
     public void GenerateJellyfish() {

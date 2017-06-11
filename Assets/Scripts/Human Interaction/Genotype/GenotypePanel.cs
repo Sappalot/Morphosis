@@ -18,6 +18,12 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
         }
         set {
             m_genotype = value;
+            if (value != null) {
+                Debug.Log("Sel");
+                genePanel.gene = m_genotype.genome[0];
+            } else {
+                Debug.Log("xxx");
+            }
             UpdateRepresentation();
         }
     }
@@ -48,11 +54,12 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
         //Nothing to represent
         if (genotype == null) {
             genePanel.gene = null;
+            GenomePanel.instance.genotype = null;
             return;
         }
 
-        genePanel.gene = genotype.genome[0];
-
-        //TODO: genome
+        //genePanel.gene = m_genotype.genome[0];
+        genePanel.UpdateRepresentation();
+        GenomePanel.instance.genotype = genotype;
     }
 }

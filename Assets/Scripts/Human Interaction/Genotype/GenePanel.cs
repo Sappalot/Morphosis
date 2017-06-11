@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class GenePanel : MonoSingleton<GenePanel> {
@@ -32,7 +30,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
         for (int index = 0; index < arrangementPanels.Length; index++) {
             arrangementPanels[index] = Instantiate(arrangementPanelTemplate, transform);
-            arrangementPanelTemplate.gameObject.SetActive(true);
+            arrangementPanels[index].gameObject.SetActive(true);
             arrangementPanels[index].name = "Arrangement Panel " + index;
             RectTransform spawnTransform = arrangementPanels[index].GetComponent<RectTransform>();
             spawnTransform.position = originalTransform.position + Vector3.down * index * (originalTransform.rect.height + 2);
