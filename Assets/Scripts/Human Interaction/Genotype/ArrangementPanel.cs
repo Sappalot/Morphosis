@@ -54,7 +54,7 @@ public class ArrangementPanel : MonoBehaviour {
         arrangementButtons.SetActive(false);
     }
 
-    public bool isUsed {
+    public bool isEnabled {
         get {
             return arrangement.isEnabled;
         }
@@ -152,78 +152,91 @@ public class ArrangementPanel : MonoBehaviour {
 
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedCenterCircle() {
         arrangement.CycleArrangementType();
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickIncreaseGap() {
         arrangement.IncreaseGap();
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickDecreseGap() {
         arrangement.DecreseGap();
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedIncreasRefCount() {
         arrangement.IncreasRefCount();
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedDecreasseRefCount() {
         arrangement.DecreasseRefCount();
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedAngleCounterClowkwise() {
         arrangement.TurnArrowCounterClowkwise();
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedAngleClowkwise() {
         arrangement.TurnArrowClowkwise();
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedFlipSame() {
         arrangement.SetFlipSame();
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedFlipOpposite() {
         arrangement.SetFlipOpposite();
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedFlipBlackToArrow() {
         arrangement.SetFlipBlackToArrow();
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedFlipWhiteToArrow() {
         arrangement.SetFlipWhiteToArrow();
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnTogglePairs(bool value) {
         arrangement.SetEnablePairs(value);
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
+        GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedPerifierCircle() {
@@ -232,7 +245,7 @@ public class ArrangementPanel : MonoBehaviour {
 
     public void OnPointerEnterArea() {
         if (isValid) {
-            arrangementButtons.SetActive(isUsed);
+            arrangementButtons.SetActive(isEnabled);
         }
     }
 
@@ -254,10 +267,9 @@ public class ArrangementPanel : MonoBehaviour {
         togglePair.isOn = arrangement.flipPairsEnabled;
     }
 
-    //grey out
     private void UpdateIsUsed() {
-        grayOut.enabled = !isUsed;
-        enableToggle.GetComponent<Toggle>().isOn = isUsed;
+        grayOut.enabled = !isEnabled;
+        enableToggle.GetComponent<Toggle>().isOn = isEnabled;
     }
     
 }

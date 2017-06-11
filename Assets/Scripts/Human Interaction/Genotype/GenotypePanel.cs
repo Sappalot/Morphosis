@@ -6,8 +6,12 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
     public Image blackWhiteImage;
     public Image whiteBlackImage;
 
-    public Color chosenColor;
+    //Button chosen
     public Color unchosenColor;
+    public Color chosenColor;
+
+    public Color unSelectedGeneColor;
+    public Color selectedGeneColor;
 
     public FlipSideEnum viewedFlipSide { get; private set; }
 
@@ -19,10 +23,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
         set {
             m_genotype = value;
             if (value != null) {
-                Debug.Log("Sel");
                 genePanel.gene = m_genotype.genome[0];
-            } else {
-                Debug.Log("xxx");
             }
             UpdateRepresentation();
         }

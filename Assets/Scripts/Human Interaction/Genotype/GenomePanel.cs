@@ -32,8 +32,8 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
             RectTransform spawnTransform = genomeGenes[index].GetComponent<RectTransform>();
             spawnTransform.position = originalTransform.position + Vector3.down * index * (originalTransform.rect.height + 2);
 
-            genomeGenes[index].index = index;
-            genomeGenes[index].text.text = "Gene " + index;
+            //genomeGenes[index].index = index;
+            //genomeGenes[index].text.text = "Gene " + index;
         }
     }
 
