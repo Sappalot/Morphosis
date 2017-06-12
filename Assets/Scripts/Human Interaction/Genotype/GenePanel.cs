@@ -75,4 +75,14 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
 
     }
+
+    //----
+    private ArrangementPanel arrangementPanelAskingForReference;
+    public void SetAskingForGeneReference(ArrangementPanel arrangementPanel) {
+        arrangementPanelAskingForReference = arrangementPanel;
+    }
+
+    public void GiveAnswerGeneReference(Gene gene) {
+        arrangementPanelAskingForReference.SetGeneReference(gene);
+    }
 }

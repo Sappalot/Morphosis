@@ -255,6 +255,16 @@ public class ArrangementPanel : MonoBehaviour {
         }
     }
 
+    public void OnClickedSetReference() {
+        GenePanel.instance.SetAskingForGeneReference(this);
+        MouseAction.instance.actionState = MouseActionStateEnum.selectGene;
+    }
+
+    public void SetGeneReference(Gene gene) {
+        arrangement.referenceGene = gene;
+        UpdateRepresentation();
+    }
+
     private void UpdateFlipButtonColors() {
         flipSameButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipTypeEnum.Same) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
         flipOppositeButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipTypeEnum.Opposite) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;

@@ -29,8 +29,13 @@ public class GenomeGene : MonoBehaviour {
 
     public void OnClicked() {
         //Debug.Log("Clicked " + index);
-        GenotypePanel.instance.genePanel.gene = gene;
-        GenomePanel.instance.UpdateRepresentation();
+        if (MouseAction.instance.actionState == MouseActionStateEnum.free) {
+            GenePanel.instance.gene = gene;
+            GenomePanel.instance.UpdateRepresentation();
+        } else if (MouseAction.instance.actionState == MouseActionStateEnum.selectGene) {
+            GenePanel.instance.GiveAnswerGeneReference(gene);
+            MouseAction.instance.actionState = MouseActionStateEnum.free;
+        }
     }
 
     public void UpdateRepresentation() {
