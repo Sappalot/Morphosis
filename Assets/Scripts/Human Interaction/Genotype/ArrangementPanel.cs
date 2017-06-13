@@ -33,6 +33,8 @@ public class ArrangementPanel : MonoBehaviour {
 
     public ReferenceGraphics[] referenceGraphics = new ReferenceGraphics[6];
 
+    private bool isMouseHoverng;
+
     private Arrangement m_arrangement;
     public Arrangement arrangement {
         get {
@@ -81,6 +83,8 @@ public class ArrangementPanel : MonoBehaviour {
         arrowTransform.gameObject.SetActive(true);
         enableToggle.SetActive(true);
 
+        arrangementButtons.SetActive(isEnabled && isMouseHoverng);
+
         //grey out
         UpdateIsUsed();
 
@@ -99,7 +103,7 @@ public class ArrangementPanel : MonoBehaviour {
        
             //Main Arrow
             arrowTransform.gameObject.SetActive(true);
-            arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableMathAngle(GenotypePanel.instance.viewedFlipSide));
+            arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableArrowAngle(GenotypePanel.instance.viewedFlipSide));
 
             //Flip Buttons
             UpdateFlipButtonColors();
@@ -112,7 +116,7 @@ public class ArrangementPanel : MonoBehaviour {
             gapSizeButtons.SetActive(arrangement.referenceCount <= 4);
 
             arrowTransform.gameObject.SetActive(true);
-            arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableMathAngle(GenotypePanel.instance.viewedFlipSide));
+            arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableArrowAngle(GenotypePanel.instance.viewedFlipSide));
 
             //Flip Buttons
             UpdateFlipButtonColors();
@@ -129,7 +133,7 @@ public class ArrangementPanel : MonoBehaviour {
 
             //Arrow
             arrowTransform.gameObject.SetActive(arrangement.referenceCount < 6 || arrangement.flipPairsEnabled);
-            arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableMathAngle(GenotypePanel.instance.viewedFlipSide));
+            arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableArrowAngle(GenotypePanel.instance.viewedFlipSide));
             
             //Flip Buttons
             UpdateFlipButtonColors();
@@ -148,7 +152,7 @@ public class ArrangementPanel : MonoBehaviour {
 
     public void OnClickEnabledToggle(bool value) {
         arrangement.isEnabled = value;
-        arrangementButtons.SetActive(value);
+        //arrangementButtons.SetActive(value);
 
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
@@ -240,18 +244,20 @@ public class ArrangementPanel : MonoBehaviour {
     }
 
     public void OnClickedPerifierCircle() {
-        Debug.Log("TODO: pick reference gene");
+        Debug.Log("TODO: select the gene this reference is pointing to?");
     }
 
     public void OnPointerEnterArea() {
         if (isValid) {
-            arrangementButtons.SetActive(isEnabled);
+            isMouseHoverng = true;
+            UpdateRepresentation();
         }
     }
 
     public void OnPointerExitArea() {
         if (isValid) {
-            arrangementButtons.SetActive(false);
+            isMouseHoverng = false;
+            UpdateRepresentation();
         }
     }
 
@@ -280,6 +286,5 @@ public class ArrangementPanel : MonoBehaviour {
     private void UpdateIsUsed() {
         grayOut.enabled = !isEnabled;
         enableToggle.GetComponent<Toggle>().isOn = isEnabled;
-    }
-    
+    }    
 }

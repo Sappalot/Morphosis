@@ -4,7 +4,7 @@ using System.Collections;
 public class Genotype : MonoBehaviour {
     public static int root = 0;
     public static int genomeLength = 21;
-    public Gene[] genome = new Gene[genomeLength];
+    private Gene[] genome = new Gene[genomeLength];
 
     public void GenerateJellyfish() {
         CreateEmptyGenome();
@@ -53,7 +53,7 @@ public class Genotype : MonoBehaviour {
         Clear();
 
         //string
-        genome[0].type = CellTypeEnum.Leaf;
+        genome[0].type = CellTypeEnum.Vein;
         genome[0].setReference(1, 1);
 
         genome[1].type = CellTypeEnum.Leaf;

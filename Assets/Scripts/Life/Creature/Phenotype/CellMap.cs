@@ -43,7 +43,7 @@ public class CellMap {
     }
 
     public Cell GetGridNeighbourCell(Vector2i gridPosition, CardinalDirectionEnum direction) {
-        return GetGridNeighbourCell(gridPosition, CardinalDirectionUtil.ToIndex(direction));
+        return GetGridNeighbourCell(gridPosition, AngleUtil.ToCardinalDirectionIndex(direction));
     }
 
     public Cell GetGridNeighbourCell(Vector2i gridPosition, int direction) {
@@ -51,7 +51,7 @@ public class CellMap {
     }
 
     public Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, CardinalDirectionEnum direction) {
-        return GetGridNeighbourGridPosition(gridPosition, CardinalDirectionUtil.ToIndex(direction));
+        return GetGridNeighbourGridPosition(gridPosition, AngleUtil.ToCardinalDirectionIndex(direction));
     }
 
     public Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, int direction) {

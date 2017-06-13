@@ -47,7 +47,7 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
         }
 
         for (int index = 0; index < genomeGenes.Length; index++) {
-            genomeGenes[index].gene = genotype.genome[index];
+            genomeGenes[index].gene = genotype.GetGeneAt(index);
         }
     }
 }

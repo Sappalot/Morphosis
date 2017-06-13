@@ -2,13 +2,15 @@
 
 public class CellNeighbour
 {
-    public CellNeighbour(int index) {
-        this.index = index;
+    public CellNeighbour(int cardinalIndex) {
+        this.cardinalIndex = cardinalIndex;
+        bindAngle = AngleUtil.ToAngle(cardinalIndex);
     }
 
     public Cell cell;
-    public float angle;
+    public float angle; //worldSpace degrees, from me to this neighbour (as sen in world when creature is floating about, rotating )
+    public float bindAngle; //genomeSpace degrees, from me to this neighbour (as seen in gene view, root points up)
     public Vector3 coreToThis;
-    public int index; //cardinal direction index
+    public int cardinalIndex; //cardinal direction index
 }
 

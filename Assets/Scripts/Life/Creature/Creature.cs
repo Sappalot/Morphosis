@@ -40,8 +40,8 @@ public class Creature : MonoBehaviour {
     
     private static int number = 0;
 
-    private void Awake() {
-        float rnd = Random.Range(0f, 2f);
+    public void Generate() {
+        //float rnd = Random.Range(0f, 2f);
         if (number > 0) {
             genotype.GenerateJellyfish();
         } else {

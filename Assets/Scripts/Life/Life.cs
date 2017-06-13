@@ -38,6 +38,7 @@ public class Life : MonoBehaviour {
         creatureDictionary.Add(id, creature);
         creatureList.Add(creature);
 
+        creature.Generate();
 
         if (test++ == 13) {
             CreatureSelectionPanel.instance.SelectOnly(creature);

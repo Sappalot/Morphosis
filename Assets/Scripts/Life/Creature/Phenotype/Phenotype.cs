@@ -66,15 +66,16 @@ public class Phenotype : MonoBehaviour {
         Clear();
 
         List<Cell> spawningFromCells = new List<Cell>();
-        spawningFromCells.Add(SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, CardinalDirectionUtil.ToIndex(CardinalDirectionEnum.north), creature)); //root
+        spawningFromCells.Add(SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), creature)); //root
+
 
         List<Cell> nextSpawningFromCells = new List<Cell>();
-        for (int buildOrderIndex = 1;  spawningFromCells.Count != 0 && buildOrderIndex < 4; buildOrderIndex++) {
+        for (int buildOrderIndex = 1; spawningFromCells.Count != 0 && buildOrderIndex < 4; buildOrderIndex++) {
             for (int index = 0; index < spawningFromCells.Count; index++) {
                 Cell cell = spawningFromCells[index];
                 for (int referenceDirection = 0; referenceDirection < 6; referenceDirection++) {
                     if (cell.gene.getReference(referenceDirection) != null) {
-                        int referenceHeading = (cell.heading + referenceDirection + 5) % 6; //!!
+                        int referenceHeading = (cell.bindHeading + referenceDirection + 5) % 6; //!!
                         Gene referenceGene = genotype.GetGeneAt((int)cell.gene.getReference(referenceDirection));
                         Vector2i referenceCellMapPosition = cellMap.GetGridNeighbourGridPosition(cell.mapPosition, referenceHeading);
 
@@ -85,12 +86,10 @@ public class Phenotype : MonoBehaviour {
                                 Cell newCell = SpawnCell(referenceGene, referenceCellMapPosition, buildOrderIndex, referenceHeading, creature);
                                 nextSpawningFromCells.Add(newCell);
                                 cellList.Add(cell);
-                            }
-                            else {
+                            } else {
                                 if (residentCell.buildOrderIndex > buildOrderIndex) {
                                     throw new System.Exception("Trying to spawn a cell at a location where a cell of higher build order are allready present.");
-                                }
-                                else if (residentCell.buildOrderIndex == buildOrderIndex) {
+                                } else if (residentCell.buildOrderIndex == buildOrderIndex) {
                                     //trying to spawn a cell where ther is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
                                     GameObject.Destroy(residentCell.gameObject);
                                     cellList.Remove(residentCell);
@@ -121,7 +120,7 @@ public class Phenotype : MonoBehaviour {
     // 1 Spawn cell from prefab
     // 2 Setup its properties according to parameters
     // 3 Add cell to list and CellMap
-    private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int direction, Creature creature) {
+    private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, Creature creature) {
         Cell cell = null;
         if (gene.type == CellTypeEnum.Leaf) {
             cell = (Instantiate(leafCellPrefab, transform.position + cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
@@ -140,7 +139,7 @@ public class Phenotype : MonoBehaviour {
         cell.mapPosition = mapPosition;
         cell.buildOrderIndex = buildOrderIndex;
         cell.gene = gene;
-        cell.heading = direction;
+        cell.bindHeading = bindHeading;
         cell.timeOffset = this.timeOffset;
         cell.creature = creature;
 
@@ -157,10 +156,10 @@ public class Phenotype : MonoBehaviour {
             for (int direction = 0; direction < 6; direction++) {
                 Vector2i gridNeighbourPos = cellMap.GetGridNeighbourGridPosition(center, direction); // GetGridNeighbour(center, CardinalDirectionHelper.ToCardinalDirection(direction));
                 if (gridNeighbourPos != null) {
-                    cell.SetNeighbourCell(CardinalDirectionUtil.ToCardinalDirection(direction), cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
+                    cell.SetNeighbourCell(AngleUtil.ToCardinalDirection(direction), cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
                 }
                 else {
-                    cell.SetNeighbourCell(CardinalDirectionUtil.ToCardinalDirection(direction), null);
+                    cell.SetNeighbourCell(AngleUtil.ToCardinalDirection(direction), null);
                 }
             }
             cell.UpdateSpringConnections();

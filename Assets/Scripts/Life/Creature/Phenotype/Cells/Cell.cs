@@ -8,7 +8,7 @@ public abstract class Cell : MonoBehaviour {
     public int buildOrderIndex = 0;
 
     //  The direction the cell is facing in creature space
-    public int heading = 0;
+    public int bindHeading = 0;
 
     public string id;
     public int groups = 0;
@@ -85,10 +85,10 @@ public abstract class Cell : MonoBehaviour {
             UpdateNeighbourVectors(); //optimize further
             TurnHingeNeighboursInPlace(); //optimize further
 
-            //UpdateRotation(); //costy, update only if cell has direction and is in frustum
+            UpdateRotation(); //costy, update only if cell has direction and is in frustum
         } else {
-            //UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
-            //UpdateRotation(); //costy, update only if cell has direction and is in frustum
+            UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
+            UpdateRotation(); //costy, update only if cell has direction and is in frustum
         }
 
         UpdateRadius(fixedTime);
@@ -193,7 +193,7 @@ public abstract class Cell : MonoBehaviour {
         //float angle = Vector3.Angle(alphaVector, betaVector);
         float angle = LongAngle(alphaVector, betaVector);
 
-        float goalAngle = CardinalDirectionUtil.GetAngleBetween(alphaIndex, betaIndex);
+        float goalAngle = AngleUtil.GetAngleDifference(alphaIndex, betaIndex);
         //Debug.Log(this.id + " Spring: " + alphaNeighbour.cell.id + "-" + betaNeighbour.cell.id + " = GoalA: " + goalAngle + " A: " + angle);
         float diff = (goalAngle - angle);
 
@@ -235,19 +235,19 @@ public abstract class Cell : MonoBehaviour {
     }
 
     public void SetNeighbourCell(CardinalDirectionEnum direction, Cell cell) {
-        index_Neighbour[CardinalDirectionUtil.ToIndex(direction)].cell = cell;
+        index_Neighbour[AngleUtil.ToCardinalDirectionIndex(direction)].cell = cell;
     }
 
     public Cell GetNeighbourCell(CardinalDirectionEnum direction) {
-        return GetNeighbourCell(CardinalDirectionUtil.ToIndex(direction));
+        return GetNeighbourCell(AngleUtil.ToCardinalDirectionIndex(direction));
     }
 
-    public Cell GetNeighbourCell(int index) {
-        return index_Neighbour[index%6].cell;
+    public Cell GetNeighbourCell(int cardinalDirectionIndex) {
+        return index_Neighbour[cardinalDirectionIndex % 6].cell;
     }
 
     public CellNeighbour GetNeighbour(CardinalDirectionEnum direction) {
-        return GetNeighbour(CardinalDirectionUtil.ToIndex(direction));
+        return GetNeighbour(AngleUtil.ToCardinalDirectionIndex(direction));
     }
 
     public CellNeighbour GetNeighbour(int index) {
@@ -273,29 +273,29 @@ public abstract class Cell : MonoBehaviour {
     }
 
     public bool HasNeighbour(CardinalDirectionEnum direction) {
-        return HasNeighbourCell(CardinalDirectionUtil.ToIndex(direction));
+        return HasNeighbourCell(AngleUtil.ToCardinalDirectionIndex(direction));
     }
 
     public bool HasNeighbourCell(int index) {
         return index_Neighbour[index % 6].cell != null;
     }
 
-    ////  Updates world space rotation (heading) derived from neighbour position and localRotation
+    ////  Updates world space rotation (heading) derived from neighbour position relative to this
     public void UpdateRotation() {
         UpdateNeighbourAngles();
 
-        float angleSum = 0; // CardinalDirectionIndex.ToAngle(heading);
+        float angleDiffFromBindpose = 0; // CardinalDirectionIndex.ToAngle(heading);
         for (int index = 0; index < 6; index++) {
             if (HasNeighbourCell(index)) {
-                angleSum = index_Neighbour[index].angle;
+                angleDiffFromBindpose = AngleUtil.GetAngleDifference(index_Neighbour[index].bindAngle, index_Neighbour[index].angle);
                 break;
             }
         }
         if (GetNeighbourCount() > 0) {
-            spriteTransform.localRotation = Quaternion.Euler(0f, 0f, angleSum);
+            spriteTransform.localRotation = Quaternion.Euler(0f, 0f, AngleUtil.ToAngle(bindHeading) + angleDiffFromBindpose); 
         }
         else {
-            spriteTransform.localRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+            spriteTransform.localRotation = Quaternion.Euler(0f, 0f, AngleUtil.ToAngle(bindHeading)); //Random.Range(0f, 360f)
         }
     }
 
@@ -378,6 +378,8 @@ public abstract class Cell : MonoBehaviour {
         if (direction.y > 0f)
             return 180f - angle;
         return 180f + angle;
+
+        //return 180 + Mathf.Rad2Deg * Mathf.Atan2(direction.y, direction.x);
 
     }
 
