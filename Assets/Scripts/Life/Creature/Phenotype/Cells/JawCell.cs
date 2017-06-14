@@ -1,6 +1,9 @@
-﻿public class LeafCell : Cell {
+﻿using UnityEngine;
+using System.Collections.Generic;
 
-    public LeafCell() : base() {
+public class JawCell : Cell {
+
+    public JawCell() : base() {
         springFrequenzy = 5f;
     }
 

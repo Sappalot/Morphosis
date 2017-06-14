@@ -24,11 +24,34 @@ public abstract class Cell : MonoBehaviour {
     [HideInInspector]
     public Creature creature;
 
-    public SpriteRenderer phenotype;
-    public SpriteRenderer selection;
+    public SpriteRenderer phenotypeSprite;
+    public SpriteRenderer genotypeSprite;
+    public SpriteRenderer selectionSprite;
+    public Transform triangleTransform;
+    public SpriteRenderer triangleSprite;
 
-    public void SetHighlite(bool on) {
-        selection.enabled = on;
+    public void ShowPhenotype(bool show) {
+        phenotypeSprite.enabled = show;
+    }
+
+    public void ShowGenotype(bool show) {
+        genotypeSprite.enabled = show;
+    }
+
+    public void ShowSelection(bool on) {
+        selectionSprite.enabled = on;
+    }
+
+    public void ShowTriangle(bool show) {
+        triangleSprite.enabled = show;
+    }
+
+    public void SetTringleHeadingAngle(float angle) {
+        triangleTransform.rotation = Quaternion.Euler(0, 0, angle);
+    }
+
+    public void SetTringleFlipSide(FlipSideEnum flip) {
+        triangleSprite.flipX = flip == FlipSideEnum.WhiteBlack;
     }
 
     public Vector3 velocity {
@@ -51,8 +74,6 @@ public abstract class Cell : MonoBehaviour {
    
     private Dictionary<int, CellNeighbour> index_Neighbour = new Dictionary<int, CellNeighbour>();
     private List<SpringJoint2D> springList = new List<SpringJoint2D>();
-    private Transform spriteTransform;
-    
 
     public Cell( ) {
         index_Neighbour.Add(0, northEastNeighbour);
@@ -67,12 +88,8 @@ public abstract class Cell : MonoBehaviour {
         springList.Add( southWestSpring );
     }
 
-    private void Awake() {
-        spriteTransform = transform.Find("Phenotype");
-    }
-
     private void Start() {
-        SetHighlite(false);
+        ShowSelection(false);
     }
 
     public void EvoUpdate() {
@@ -292,10 +309,10 @@ public abstract class Cell : MonoBehaviour {
             }
         }
         if (GetNeighbourCount() > 0) {
-            spriteTransform.localRotation = Quaternion.Euler(0f, 0f, AngleUtil.ToAngle(bindHeading) + angleDiffFromBindpose); 
+            triangleTransform.localRotation = Quaternion.Euler(0f, 0f, AngleUtil.ToAngle(bindHeading) + angleDiffFromBindpose); 
         }
         else {
-            spriteTransform.localRotation = Quaternion.Euler(0f, 0f, AngleUtil.ToAngle(bindHeading)); //Random.Range(0f, 360f)
+            triangleTransform.localRotation = Quaternion.Euler(0f, 0f, AngleUtil.ToAngle(bindHeading)); //Random.Range(0f, 360f)
         }
     }
 

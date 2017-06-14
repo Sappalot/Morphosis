@@ -7,9 +7,12 @@ public class Phenotype : MonoBehaviour {
     public int model = 0;
     //public Cell cellPrefab;
 
-    public VeinCell veinCellPrefab;
-    public MuscleCell muscleCellPrefab;
+    public JawCell jawCellPrefab;
     public LeafCell leafCellPrefab;
+    public MuscleCell muscleCellPrefab;
+    public VeinCell veinCellPrefab;
+    
+    
 
     public float timeOffset;
 
@@ -122,7 +125,11 @@ public class Phenotype : MonoBehaviour {
     // 3 Add cell to list and CellMap
     private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, Creature creature) {
         Cell cell = null;
-        if (gene.type == CellTypeEnum.Leaf) {
+
+        if (gene.type == CellTypeEnum.Jaw) {
+            cell = (Instantiate(jawCellPrefab, transform.position + cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
+        }
+        else if (gene.type == CellTypeEnum.Leaf) {
             cell = (Instantiate(leafCellPrefab, transform.position + cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
         }
         else if (gene.type == CellTypeEnum.Muscle) {
@@ -195,7 +202,7 @@ public class Phenotype : MonoBehaviour {
 
     public void SetHighlite(bool on) {
         for (int index = 0; index < cellList.Count; index++) {
-            cellList[index].SetHighlite(on);
+            cellList[index].ShowSelection(on);
         }
     }
 }
