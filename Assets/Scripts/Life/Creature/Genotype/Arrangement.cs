@@ -3,152 +3,162 @@ using UnityEngine;
 
 public class Arrangement {
     public bool isEnabled = true;
-    public ArrangementTypeEnum type = ArrangementTypeEnum.Side;
+    private ArrangementTypeEnum m_type = ArrangementTypeEnum.Side;
+    public ArrangementTypeEnum type {
+        get {
+            return m_type;
+        }
+        set {
+            m_type = value;
+            SnapToLegalValues();
+        }
+    }
 
-    public int referenceCount { get; private set; } //ALL: negative value indicated cells on the white side (when arrangementtype = Side)
-    public int arrowIndex { get; private set; } //ALL: +- 30 degrees per step, 0 is straight up (possitive y), negative on white side possitive on black side  
-    public int gap { get; private set; } //MIRROR: number of cells in the gap
-    public bool flipPairsEnabled { get; private set; } //MIRROR & STAR
-    public ArrangementFlipTypeEnum flipTypeSameOpposite { get; private set; } // SIDE and STAR use Same/Opposite, Mirror use BlackToArrow/WhiteToArrow 
-    public ArrangementFlipTypeEnum flipTypeBlackWhiteToArrow { get; private set; }
+    private int m_referenceCount = 1; //ALL: negative value indicated cells on the white side (when arrangementtype = Side)
+    public int referenceCount {
+        get {
+            return m_referenceCount;
+        }
+        set {
+            m_referenceCount = value;
+            SnapToLegalValues();
+        }
+    }
+
+    private int m_arrowIndex = 0; //ALL: +- 30 degrees per step, 0 is straight up (possitive y), negative on white side possitive on black side  
+    public int arrowIndex {
+        get {
+            return m_arrowIndex;
+        }
+        set {
+            m_arrowIndex = value;
+            m_arrowIndex = AngleUtil.WarpArrowIndex(m_arrowIndex);
+        }
+    }
+
+    private int m_gap = 0; //MIRROR: number of cells in the gap
+    public int gap {
+        get {
+            return m_gap;
+        }
+        set {
+            m_gap = value;
+            SnapToLegalValues();
+        }
+    }
+
+    public bool flipPairsEnabled = false; //MIRROR4 & STAR6
+
+    public ArrangementFlipSmOpTypeEnum flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same; // SIDE and STAR use Same/Opposite, Mirror use BlackToArrow/WhiteToArrow 
+
+    public ArrangementFlipBtaWtaTypeEnum flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow;
     public Gene referenceGene;
 
     public Arrangement() {
-        SnapToLegalValues();
-        referenceCount = 1;
-        flipTypeSameOpposite = ArrangementFlipTypeEnum.Same;
-        flipTypeBlackWhiteToArrow = ArrangementFlipTypeEnum.BlackToArrow;
+        //SnapToLegalValues();
     }
 
     public void CycleArrangementType() {
-        if (type == ArrangementTypeEnum.Side) {
-            type = ArrangementTypeEnum.Mirror;
+        if (m_type == ArrangementTypeEnum.Side) {
+            m_type = ArrangementTypeEnum.Mirror;
         }
-        else if (type == ArrangementTypeEnum.Mirror) {
-            type = ArrangementTypeEnum.Star;
+        else if (m_type == ArrangementTypeEnum.Mirror) {
+            m_type = ArrangementTypeEnum.Star;
         }
-        else if (type == ArrangementTypeEnum.Star) {
-            type = ArrangementTypeEnum.Side;
-        }
-        SnapToLegalValues();
-    }
-
-    public void IncreaseGap() {
-        if (type == ArrangementTypeEnum.Mirror) {
-            gap++;
-        }
-        SnapToLegalValues();
-    }
-
-    public void DecreseGap() {
-        if (type == ArrangementTypeEnum.Mirror) {
-            gap--;
+        else if (m_type == ArrangementTypeEnum.Star) {
+            m_type = ArrangementTypeEnum.Side;
         }
         SnapToLegalValues();
     }
 
     public void IncreasRefCount() {
-        if (type == ArrangementTypeEnum.Side) {
-            if (referenceCount == -2) {
-                referenceCount = 1;
+        if (m_type == ArrangementTypeEnum.Side) {
+            if (m_referenceCount == -2) {
+                m_referenceCount = 1;
+            } else {
+                m_referenceCount++;
             }
-            else {
-                referenceCount++;
+            if (m_referenceCount > 5) {
+                m_referenceCount = 5;
             }
-            if (referenceCount > 5) {
-                referenceCount = 5;
+        } else if (m_type == ArrangementTypeEnum.Mirror) {
+            if (m_referenceCount < 4) {
+                m_referenceCount = 4;
+            } else if (m_referenceCount < 6) {
+                m_referenceCount = 6;
             }
-        } else if (type == ArrangementTypeEnum.Mirror) {
-            if (referenceCount < 4) {
-                referenceCount = 4;
-            } else if (referenceCount < 6) {
-                referenceCount = 6;
-            }
-        } else if (type == ArrangementTypeEnum.Star) {
-            if (referenceCount < 2) {
-                referenceCount = 2;
-            } else if(referenceCount <= 3) {
-                referenceCount++;
-            } else if (referenceCount == 4) {
-                referenceCount = 6;
+        } else if (m_type == ArrangementTypeEnum.Star) {
+            if (m_referenceCount < 2) {
+                m_referenceCount = 2;
+            } else if (m_referenceCount <= 3) {
+                m_referenceCount++;
+            } else if (m_referenceCount == 4) {
+                m_referenceCount = 6;
             }
         }
         SnapToLegalValues();
     }
 
     public void DecreasseRefCount() {
-        if (type == ArrangementTypeEnum.Side) {
-            if (referenceCount == 1) {
-                referenceCount = -2;
+        if (m_type == ArrangementTypeEnum.Side) {
+            if (m_referenceCount == 1) {
+                m_referenceCount = -2;
             } else {
-                referenceCount--;
+                m_referenceCount--;
             }
-            if (referenceCount < -5) {
-                referenceCount = -5;
+            if (m_referenceCount < -5) {
+                m_referenceCount = -5;
             }
-        } else if (type == ArrangementTypeEnum.Mirror) {
-            if (referenceCount > 4) {
-                referenceCount = 4;
-            } else if (referenceCount > 2) {
-                referenceCount = 2;
-            } 
-        } else if (type == ArrangementTypeEnum.Star) {
-            if (referenceCount == 3 || referenceCount == 4) {
-                referenceCount--;
-            } else if (referenceCount >= 6) {
-                referenceCount = 4;
-            }            
+        } else if (m_type == ArrangementTypeEnum.Mirror) {
+            if (m_referenceCount > 4) {
+                m_referenceCount = 4;
+            } else if (m_referenceCount > 2) {
+                m_referenceCount = 2;
+            }
+        } else if (m_type == ArrangementTypeEnum.Star) {
+            if (m_referenceCount == 3 || m_referenceCount == 4) {
+                m_referenceCount--;
+            } else if (m_referenceCount >= 6) {
+                m_referenceCount = 4;
+            }
         }
         SnapToLegalValues();
     }
+
     public void TurnArrowCounterClowkwise() {
-        if (type == ArrangementTypeEnum.Side) {
-            arrowIndex += 2;
-        } else if (type == ArrangementTypeEnum.Mirror) {
-            arrowIndex += 2;
-        } else if (type == ArrangementTypeEnum.Star) {
-            arrowIndex += 2;
+        if (m_type == ArrangementTypeEnum.Side) {
+            m_arrowIndex += 2;
+        } else if (m_type == ArrangementTypeEnum.Mirror) {
+            m_arrowIndex += 2;
+        } else if (m_type == ArrangementTypeEnum.Star) {
+            m_arrowIndex += 2;
         }
-        arrowIndex = AngleUtil.WarpArrowIndex(arrowIndex);
+        m_arrowIndex = AngleUtil.WarpArrowIndex(m_arrowIndex);
     }
 
     public void TurnArrowClowkwise() {
-        if (type == ArrangementTypeEnum.Side) {
-            arrowIndex -= 2;
-        } else if (type == ArrangementTypeEnum.Mirror) {
-            arrowIndex -= 2;
-        } else if (type == ArrangementTypeEnum.Star) {
-            arrowIndex -= 2;
+        if (m_type == ArrangementTypeEnum.Side) {
+            m_arrowIndex -= 2;
+        } else if (m_type == ArrangementTypeEnum.Mirror) {
+            m_arrowIndex -= 2;
+        } else if (m_type == ArrangementTypeEnum.Star) {
+            m_arrowIndex -= 2;
         }
-        arrowIndex = AngleUtil.WarpArrowIndex(arrowIndex);
+        m_arrowIndex = AngleUtil.WarpArrowIndex(m_arrowIndex);
     }
 
-    public void SetFlipSame() {
-        flipTypeSameOpposite = ArrangementFlipTypeEnum.Same;
-    }
-
-    public void SetFlipOpposite() {
-        flipTypeSameOpposite = ArrangementFlipTypeEnum.Opposite;
-    }
-
-    public void SetFlipBlackToArrow() {
-        flipTypeBlackWhiteToArrow = ArrangementFlipTypeEnum.BlackToArrow;
-    }
-
-    public void SetFlipWhiteToArrow() {
-        flipTypeBlackWhiteToArrow = ArrangementFlipTypeEnum.WhiteToArrow;
-    }
-
-    public void SetEnablePairs(bool enable) {
-        if (type == ArrangementTypeEnum.Side) {
-
+    public void IncreaseGap() {
+        if (m_type == ArrangementTypeEnum.Mirror) {
+            m_gap++;
         }
-        else if (type == ArrangementTypeEnum.Mirror) {
-            flipPairsEnabled = enable;
+        SnapToLegalValues();
+    }
+
+    public void DecreseGap() {
+        if (m_type == ArrangementTypeEnum.Mirror) {
+            m_gap--;
         }
-        else if (type == ArrangementTypeEnum.Star) {
-            flipPairsEnabled = enable;
-        }
+        SnapToLegalValues();
     }
 
     //reference location 0-5
@@ -157,110 +167,110 @@ public class Arrangement {
     public GeneReference GetFlippableReference(int referenceCardinalIndex, FlipSideEnum viewedFlipSide) {
         int referenceCardinalIndexFlippable = AngleUtil.GetFlipableCardinalIndex(referenceCardinalIndex, viewedFlipSide); // look on flipped side if nessesary
 
-        if (type == ArrangementTypeEnum.Side) {
-            for (int index = 0; index < Mathf.Abs(referenceCount); index++) {
-                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + ((referenceCount > 0) ? index * 2 : -index * 2))) {
-                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+        if (m_type == ArrangementTypeEnum.Side) {
+            for (int index = 0; index < Mathf.Abs(m_referenceCount); index++) {
+                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + ((m_referenceCount > 0) ? index * 2 : -index * 2))) {
+                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                 }
             }
-        } else if (type == ArrangementTypeEnum.Mirror) {
-            if (referenceCount == 2) {
-                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + gap + 1)) {
-                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - gap - 1)) {
-                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+        } else if (m_type == ArrangementTypeEnum.Mirror) {
+            if (m_referenceCount == 2) {
+                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + m_gap + 1)) {
+                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
+                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - m_gap - 1)) {
+                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                 }
-            } else if (referenceCount == 4) {
+            } else if (m_referenceCount == 4) {
                 if (flipPairsEnabled) {
-                    if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + gap + 1)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - gap - 1)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + gap + 3)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - gap - 3)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
+                    if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + m_gap + 1)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - m_gap - 1)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    } if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + m_gap + 3)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - m_gap - 3)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
                     }
                 } else {
-                    if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + gap + 1)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - gap - 1)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + gap + 3)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - gap - 3)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + m_gap + 1)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - m_gap - 1)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    } if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + m_gap + 3)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - m_gap - 3)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                     }
                 }
-            } else if (referenceCount == 6) {
-                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 1)) {
-                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 1)) {
-                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 3)) {
-                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 3)) {
-                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 5)) {
-                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 5)) {
-                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+            } else if (m_referenceCount == 6) {
+                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 1)) {
+                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
+                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 1)) {
+                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 3)) {
+                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
+                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 3)) {
+                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 5)) {
+                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
+                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 5)) {
+                    return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                 }
             }
-        } else if (type == ArrangementTypeEnum.Star) {
-            if (referenceCount == 2) {
-                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 3)) {
-                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 3)) {
-                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+        } else if (m_type == ArrangementTypeEnum.Star) {
+            if (m_referenceCount == 2) {
+                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 3)) {
+                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 3)) {
+                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                 }
             }
-            else if (referenceCount == 3) {
-                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 2)) {
-                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 2)) {
-                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 6)) {
-                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+            else if (m_referenceCount == 3) {
+                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 2)) {
+                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 2)) {
+                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 6)) {
+                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                 }
-            } else if (referenceCount == 4) {
-                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 2)) {
-                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 4)) {
-                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 2)) {
-                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 4)) {
-                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+            } else if (m_referenceCount == 4) {
+                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 2)) {
+                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 4)) {
+                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 2)) {
+                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 4)) {
+                    return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                 }
-            } else if (referenceCount == 6) {
+            } else if (m_referenceCount == 6) {
                 if (flipPairsEnabled) {
-                    if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 1)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 1)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 3)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 3)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 5)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 5)) {
-                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
+                    if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 1)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 1)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 3)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 3)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 5)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 5)) {
+                        return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
                     }
                 } else { 
-                    if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 1)) {
-                        return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 1)) {
-                        return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 3)) {
-                        return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 3)) {
-                        return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex - 5)) {
-                        return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(arrowIndex + 5)) {
-                        return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 1)) {
+                        return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 1)) {
+                        return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 3)) {
+                        return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 3)) {
+                        return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 5)) {
+                        return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 5)) {
+                        return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                     }
                 }
             }
@@ -271,7 +281,7 @@ public class Arrangement {
 
     //Mathematical angle 0 at possitive x
     public float GetFlipableArrowAngle(FlipSideEnum flipSide) {
-        return AngleUtil.ToAngle(arrowIndex, flipSide);
+        return AngleUtil.ToAngle(m_arrowIndex, flipSide);
     }
 
     private static FlipSideEnum GetOppositeFlipSide(FlipSideEnum flipSide) {
@@ -282,35 +292,35 @@ public class Arrangement {
     }
 
     private void SnapToLegalValues() {
-        if (type == ArrangementTypeEnum.Side) {
+        if (m_type == ArrangementTypeEnum.Side) {
             SnapToLegalSide();
-        } else if (type == ArrangementTypeEnum.Mirror) {
+        } else if (m_type == ArrangementTypeEnum.Mirror) {
             SnapToLegalMirror();
-        } else if (type == ArrangementTypeEnum.Star) {
+        } else if (m_type == ArrangementTypeEnum.Star) {
             SnapToLegalStar();
         }
     }
 
     private void SnapToLegalSide() {
         SnapArrowToEvenAngles();
-        referenceCount = Mathf.Clamp(referenceCount, -5, 5);
+        m_referenceCount = Mathf.Clamp(m_referenceCount, -5, 5);
     }
 
     private void SnapToLegalMirror() {
-        referenceCount = Mathf.Abs(referenceCount);
-        if (referenceCount == 1 || referenceCount == 3 || referenceCount == 5) {
-            referenceCount++;
+        m_referenceCount = Mathf.Abs(m_referenceCount);
+        if (m_referenceCount == 1 || m_referenceCount == 3 || m_referenceCount == 5) {
+            m_referenceCount++;
         }
 
-        if (referenceCount == 2) {
-            gap = Mathf.Clamp(gap, 0, 4);
-        } else if (referenceCount == 4) {
-            gap = Mathf.Clamp(gap, 0, 2);
-        } else if (referenceCount == 6) {
-            gap = 0;
+        if (m_referenceCount == 2) {
+            m_gap = Mathf.Clamp(m_gap, 0, 4);
+        } else if (m_referenceCount == 4) {
+            m_gap = Mathf.Clamp(m_gap, 0, 2);
+        } else if (m_referenceCount == 6) {
+            m_gap = 0;
         }
 
-        if (gap == 0 || gap == 2 || gap == 4) {
+        if (m_gap == 0 || m_gap == 2 || m_gap == 4) {
             SnapArrowToOddAngles();
         } else {
             SnapArrowToEvenAngles();
@@ -319,17 +329,17 @@ public class Arrangement {
 
     private void SnapToLegalStar() {
         //Adjust Reference Count if nessesary
-        referenceCount = Mathf.Abs(referenceCount);
-        if (referenceCount == 1) {
-            referenceCount = 2;
+        m_referenceCount = Mathf.Abs(m_referenceCount);
+        if (m_referenceCount == 1) {
+            m_referenceCount = 2;
         }
-        else if (referenceCount == 5) {
-            referenceCount = 4;
+        else if (m_referenceCount == 5) {
+            m_referenceCount = 4;
         }
 
         //Main Arrow
         //Adjust ArrowAngle if nessesary
-        if (referenceCount == 2 || referenceCount == 6) {
+        if (m_referenceCount == 2 || m_referenceCount == 6) {
             SnapArrowToOddAngles();
         }
         else {
@@ -339,15 +349,15 @@ public class Arrangement {
 
     //even ==> odd: snap towards black
     private void SnapArrowToOddAngles() {
-        if (Mathf.Abs(arrowIndex) % 2 == 0) {
-            arrowIndex = AngleUtil.WarpArrowIndex(arrowIndex + 1);
+        if (Mathf.Abs(m_arrowIndex) % 2 == 0) {
+            m_arrowIndex = AngleUtil.WarpArrowIndex(m_arrowIndex + 1);
         }
     }
 
     //odd ==> even: snap towards white
     private void SnapArrowToEvenAngles() {
-        if (Mathf.Abs(arrowIndex) % 2 == 1) {
-            arrowIndex = AngleUtil.WarpArrowIndex(arrowIndex - 1);
+        if (Mathf.Abs(m_arrowIndex) % 2 == 1) {
+            m_arrowIndex = AngleUtil.WarpArrowIndex(m_arrowIndex - 1);
         }
     }
 }

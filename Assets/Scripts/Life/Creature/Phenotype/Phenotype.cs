@@ -77,9 +77,9 @@ public class Phenotype : MonoBehaviour {
             for (int index = 0; index < spawningFromCells.Count; index++) {
                 Cell cell = spawningFromCells[index];
                 for (int referenceDirection = 0; referenceDirection < 6; referenceDirection++) {
-                    if (cell.gene.getReference(referenceDirection) != null) {
+                    if (cell.gene.getReferenceDeprecated(referenceDirection) != null) {
                         int referenceHeading = (cell.bindHeading + referenceDirection + 5) % 6; //!!
-                        Gene referenceGene = genotype.GetGeneAt((int)cell.gene.getReference(referenceDirection));
+                        Gene referenceGene = genotype.GetGeneAt((int)cell.gene.getReferenceDeprecated(referenceDirection));
                         Vector2i referenceCellMapPosition = cellMap.GetGridNeighbourGridPosition(cell.mapPosition, referenceHeading);
 
                         if (cellMap.IsLegalPosition(referenceCellMapPosition)) {

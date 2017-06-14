@@ -5,7 +5,7 @@
     public readonly Arrangement[] arrangements = new Arrangement[3];
     //------------------old shit ---------------------
 
-    private int?[] reference = new int?[6];
+    private int?[] referenceDeprecated = new int?[6];
 
     public Gene(int index) {
         this.index = index;
@@ -15,12 +15,12 @@
         arrangements[2] = new Arrangement();
 
         //--------------old 
-        reference[0] = null;
-        reference[1] = null;
-        reference[2] = null;
-        reference[3] = null;
-        reference[4] = null;
-        reference[5] = null;
+        referenceDeprecated[0] = null;
+        referenceDeprecated[1] = null;
+        referenceDeprecated[2] = null;
+        referenceDeprecated[3] = null;
+        referenceDeprecated[4] = null;
+        referenceDeprecated[5] = null;
     }
 
     public GeneReference GetFlippableReference(int referenceCardinalIndex, FlipSideEnum viewedFlipSide) {
@@ -37,25 +37,29 @@
 
     public void SetDefaultReferenceGene(Gene[] genome) {
         arrangements[0].referenceGene = genome[1];
-        arrangements[1].referenceGene = genome[2];
-        arrangements[2].referenceGene = genome[10];
+        arrangements[1].referenceGene = genome[1];
+        arrangements[2].referenceGene = genome[1];
+
+        arrangements[0].isEnabled = false;
+        arrangements[1].isEnabled = false;
+        arrangements[2].isEnabled = false;
     }
 
-    public void setReference(int direction, int reference) {
-        this.reference[direction] = reference;
+    //------------------------ Deprecated
+
+    public void setReferenceDeprecated(int direction, int reference) {
+        this.referenceDeprecated[direction] = reference;
     }
 
-    public int? getReference(int direction) {
-        return this.reference[direction];
+    public int? getReferenceDeprecated(int direction) {
+        return this.referenceDeprecated[direction];
     }
 
-    public void Clear() {
+    public void ClearDeprecated() {
         for (int i = 0; i < 6; i++) {
-            reference[0] = null;
+            referenceDeprecated[0] = null;
         }
         type = CellTypeEnum.Vein;
-    }
-
-   
+    }   
 }
 

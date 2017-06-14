@@ -4,7 +4,7 @@ using System.Collections;
 public class Genotype : MonoBehaviour {
     public static int root = 0;
     public static int genomeLength = 21;
-    private Gene[] genome = new Gene[genomeLength];
+    private Gene[] genes = new Gene[genomeLength];
 
     public void GenerateJellyfish() {
         CreateEmptyGenome();
@@ -18,71 +18,73 @@ public class Genotype : MonoBehaviour {
 
     private void CreateEmptyGenome() {
         for (int index = 0; index < genomeLength; index++) {
-            genome[index] = new Gene(index);
+            genes[index] = new Gene(index);
         }
         for (int index = 0; index < genomeLength; index++) {
-            genome[index].SetDefaultReferenceGene(genome);
+            genes[index].SetDefaultReferenceGene(genes);
         }
     }
 
     public Gene GetGeneAt(int index) {
-        return genome[index];
+        return genes[index];
     }
 
     private void CreateJellyfish() {
         Clear();
 
         //Simple Jellyfish (FPS Reference creature, Don't change!!)
-        genome[0].type = CellTypeEnum.Vein;
-        genome[0].setReference(3, 10);
-        genome[0].setReference(5, 20);
-        genome[0].setReference(4, 1);
+        genes[0].type = CellTypeEnum.Vein;
+        genes[0].setReferenceDeprecated(3, 10);
+        genes[0].setReferenceDeprecated(5, 20);
+        genes[0].setReferenceDeprecated(4, 1);
 
-        genome[1].type = CellTypeEnum.Muscle;
+        genes[1].type = CellTypeEnum.Muscle;
 
-        genome[10].type = CellTypeEnum.Leaf;
-        genome[10].setReference(1, 10);
-        genome[10].setReference(2, 1);
+        genes[10].type = CellTypeEnum.Leaf;
+        genes[10].setReferenceDeprecated(1, 10);
+        genes[10].setReferenceDeprecated(2, 1);
 
-        genome[20].type = CellTypeEnum.Leaf;
-        genome[20].setReference(1, 20);
-        genome[20].setReference(0, 1);
+        genes[20].type = CellTypeEnum.Leaf;
+        genes[20].setReferenceDeprecated(1, 20);
+        genes[20].setReferenceDeprecated(0, 1);
     }
 
     private void CreateString() {
         Clear();
 
         //string
-        genome[0].type = CellTypeEnum.Vein;
-        genome[0].setReference(1, 1);
+        genes[0].type = CellTypeEnum.Vein;
+        genes[0].setReferenceDeprecated(1, 1);
+        //genes[0].arrangements[0].type = ArrangementTypeEnum.Side;
+        //genes[0].arrangements[0].count
 
-        genome[1].type = CellTypeEnum.Leaf;
-        genome[1].setReference(1, 2);
+        genes[1].type = CellTypeEnum.Leaf;
+        genes[1].setReferenceDeprecated(1, 2);
 
-        genome[2].type = CellTypeEnum.Leaf;
-        genome[2].setReference(1, 3);
+        genes[2].type = CellTypeEnum.Leaf;
+        genes[2].setReferenceDeprecated(1, 3);
 
-        genome[3].type = CellTypeEnum.Leaf;
-        genome[3].setReference(1, 4);
+        genes[3].type = CellTypeEnum.Leaf;
+        genes[3].setReferenceDeprecated(1, 4);
 
-        genome[4].type = CellTypeEnum.Leaf;
-        genome[4].setReference(1, 5);
+        genes[4].type = CellTypeEnum.Leaf;
+        genes[4].setReferenceDeprecated(1, 5);
 
-        genome[5].type = CellTypeEnum.Leaf;
-        genome[5].setReference(1, 6);
+        genes[5].type = CellTypeEnum.Leaf;
+        genes[5].setReferenceDeprecated(1, 6);
 
-        genome[6].type = CellTypeEnum.Leaf;
-        genome[6].setReference(1, 7);
+        genes[6].type = CellTypeEnum.Leaf;
+        genes[6].setReferenceDeprecated(1, 7);
 
-        genome[7].type = CellTypeEnum.Leaf;
+        genes[7].type = CellTypeEnum.Leaf;
 
-        genome[10].type = CellTypeEnum.Mouth;
+        genes[10].type = CellTypeEnum.Mouth;
     }
 
     // No references, type = vein
     public void Clear() {
-        for (int index = 0; index < genome.Length; index++) {
-            genome[index].Clear();
+        for (int index = 0; index < genes.Length; index++) {
+            genes[index].ClearDeprecated();
         }
     }
 	
