@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 
 public abstract class Cell : MonoBehaviour {
     public Gene gene;
+    public FlipSideEnum flipSide;
     public Vector2i mapPosition = new Vector2i();
     public int buildOrderIndex = 0;
 
@@ -107,6 +108,7 @@ public abstract class Cell : MonoBehaviour {
             UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
             UpdateRotation(); //costy, update only if cell has direction and is in frustum
         }
+        UpdateFlipSide();
 
         UpdateRadius(fixedTime);
         UpdateSpringLengths(); // It is costy to update spring length
@@ -298,7 +300,7 @@ public abstract class Cell : MonoBehaviour {
     }
 
     ////  Updates world space rotation (heading) derived from neighbour position relative to this
-    public void UpdateRotation() {
+    private void UpdateRotation() {
         UpdateNeighbourAngles();
 
         float angleDiffFromBindpose = 0; // CardinalDirectionIndex.ToAngle(heading);
@@ -314,6 +316,10 @@ public abstract class Cell : MonoBehaviour {
         else {
             triangleTransform.localRotation = Quaternion.Euler(0f, 0f, AngleUtil.ToAngle(bindHeading)); //Random.Range(0f, 360f)
         }
+    }
+
+    private void UpdateFlipSide() {
+        SetTringleFlipSide(flipSide);
     }
 
     private void UpdateNeighbourAngles() {

@@ -20,9 +20,9 @@ public class ReferenceGraphics : MonoBehaviour {
             geneReferenceImage.enabled = true;
             geneReferenceImage.color = CellTypeUtil.ToColor(value.gene.type);
 
-            flipBlackWhite.enabled = value.flip == FlipSideEnum.BlackWhite;
+            flipBlackWhite.enabled = value.flipSide == FlipSideEnum.BlackWhite;
 
-            flipWhiteBlack.enabled = value.flip == FlipSideEnum.WhiteBlack;
+            flipWhiteBlack.enabled = value.flipSide == FlipSideEnum.WhiteBlack;
 
             geneReferenceText.enabled = true;
             geneReferenceText.text = value.gene.index.ToString();

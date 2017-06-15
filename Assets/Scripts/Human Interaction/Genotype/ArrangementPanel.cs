@@ -209,35 +209,35 @@ public class ArrangementPanel : MonoBehaviour {
     }
 
     public void OnClickedFlipSame() {
-        arrangement.SetFlipSame();
+        arrangement.flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same;
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedFlipOpposite() {
-        arrangement.SetFlipOpposite();
+        arrangement.flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Opposite;
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedFlipBlackToArrow() {
-        arrangement.SetFlipBlackToArrow();
+        arrangement.flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow;
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedFlipWhiteToArrow() {
-        arrangement.SetFlipWhiteToArrow();
+        arrangement.flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnTogglePairs(bool value) {
-        arrangement.SetEnablePairs(value);
+        arrangement.flipPairsEnabled = value;
         UpdateRepresentation();
         genePanel.UpdateRepresentation();
         GenomePanel.instance.UpdateRepresentation();
@@ -269,14 +269,15 @@ public class ArrangementPanel : MonoBehaviour {
     public void SetGeneReference(Gene gene) {
         arrangement.referenceGene = gene;
         UpdateRepresentation();
+        genePanel.UpdateRepresentation();
     }
 
     private void UpdateFlipButtonColors() {
-        flipSameButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipTypeEnum.Same) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
-        flipOppositeButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipTypeEnum.Opposite) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
+        flipSameButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
+        flipOppositeButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Opposite) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
 
-        flipBlackToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.BlackToArrow) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
-        flipWhiteToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipTypeEnum.WhiteToArrow) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
+        flipBlackToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
+        flipWhiteToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.WhiteToArrow) ? GenotypePanel.instance.chosenColor : GenotypePanel.instance.unchosenColor;
     }
 
     private void UpdatePairCheckmark() {

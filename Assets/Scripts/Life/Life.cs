@@ -32,7 +32,7 @@ public class Life : MonoBehaviour {
             throw new System.Exception("Generated ID was not unique.");
         }
         creature.id = id;
-        creature.nickname = "nick" + id;
+        creature.nickname = "Nick " + id;
         creature.transform.parent = this.transform;
         creature.transform.position = position;
         creatureDictionary.Add(id, creature);
@@ -40,9 +40,10 @@ public class Life : MonoBehaviour {
 
         creature.Generate();
 
-        if (test++ == 13) {
+        if (test == 0) {
             CreatureSelectionPanel.instance.SelectOnly(creature);
         }
+        test++;
         return id;
     }
 

@@ -1,7 +1,6 @@
 ﻿public enum CellTypeEnum {
     Jaw,
     Leaf,
-    Mouth,
     Muscle,
     Vein,
 }

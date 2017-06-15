@@ -73,7 +73,8 @@ public class GenePanel : MonoSingleton<GenePanel> {
         flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
         geneReferenceText.text = gene.index.ToString();
 
-
+        //Hack
+        CreatureSelectionPanel.instance.selection[0].Regenerate();
     }
 
     //----

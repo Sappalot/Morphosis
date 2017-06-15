@@ -3,6 +3,11 @@ using UnityEngine;
 
 public class Arrangement {
     public bool isEnabled = true;
+    public Gene referenceGene;
+    public ArrangementFlipSmOpTypeEnum flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same; // SIDE and STAR use Same/Opposite, Mirror use BlackToArrow/WhiteToArrow 
+    public ArrangementFlipBtaWtaTypeEnum flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow;
+    public bool flipPairsEnabled = false; //MIRROR4 & STAR6
+
     private ArrangementTypeEnum m_type = ArrangementTypeEnum.Side;
     public ArrangementTypeEnum type {
         get {
@@ -32,7 +37,7 @@ public class Arrangement {
         }
         set {
             m_arrowIndex = value;
-            m_arrowIndex = AngleUtil.WarpArrowIndex(m_arrowIndex);
+            SnapToLegalValues();
         }
     }
 
@@ -45,17 +50,6 @@ public class Arrangement {
             m_gap = value;
             SnapToLegalValues();
         }
-    }
-
-    public bool flipPairsEnabled = false; //MIRROR4 & STAR6
-
-    public ArrangementFlipSmOpTypeEnum flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same; // SIDE and STAR use Same/Opposite, Mirror use BlackToArrow/WhiteToArrow 
-
-    public ArrangementFlipBtaWtaTypeEnum flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow;
-    public Gene referenceGene;
-
-    public Arrangement() {
-        //SnapToLegalValues();
     }
 
     public void CycleArrangementType() {

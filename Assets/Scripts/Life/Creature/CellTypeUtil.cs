@@ -7,7 +7,7 @@ public static class CellTypeUtil {
 
     static CellTypeUtil() {
         cellTypeToColor.Add(CellTypeEnum.Leaf,      new Color(0f,   1,      0f,     1f));
-        cellTypeToColor.Add(CellTypeEnum.Mouth,     new Color(1f,   0,      1f,     1f));
+        cellTypeToColor.Add(CellTypeEnum.Jaw,       new Color(1f,   0,      1f,     1f));
         cellTypeToColor.Add(CellTypeEnum.Muscle,    new Color(1f,   0.5f,   0f,     1f));
         cellTypeToColor.Add(CellTypeEnum.Vein,      new Color(1f,   0f,     0f,     1f));
     }

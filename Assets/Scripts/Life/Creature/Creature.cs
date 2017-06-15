@@ -51,6 +51,10 @@ public class Creature : MonoBehaviour {
         number++;
     }
 
+    public void Regenerate() {
+        phenotype.Generate(genotype, this);
+    }
+
     public void EvoUpdate() {
         phenotype.EvoUpdate();
     }
