@@ -10,8 +10,8 @@ public class World : MonoBehaviour {
         //test, OK with 24 * 24 (18 cells per creature) ~ 27 FPS :)
         //including: turn hinged neighbours to correct angle, just one test string creature
         //excluding: turn cell graphics to correct angle, scale mussle cells
-        for (int y = 1; y <= 1; y++) {
-            for (int x = 1; x <= 1; x++) {
+        for (int y = 1; y <= 30; y++) {
+            for (int x = 1; x <= 10; x++) {
                 life.SpawnCreatureEmbryo(new Vector3(x * 10f, y * 10, 0f));
             }
         }

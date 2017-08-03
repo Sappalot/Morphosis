@@ -42,11 +42,12 @@ public class Creature : MonoBehaviour {
 
     public void Generate() {
         //float rnd = Random.Range(0f, 2f);
-        if (number > 0) {
-            genotype.GenerateJellyfish();
-        } else {
-            genotype.GenerateString();
-        }
+        genotype.GenerateJellyfish();
+        //if (number > 0) {
+        //    genotype.GenerateJellyfish();
+        //} else {
+        //    genotype.GenerateString();
+        //}
         phenotype.Generate(genotype, this);
         number++;
     }

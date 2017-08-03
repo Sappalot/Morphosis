@@ -47,6 +47,34 @@ public class Genotype : MonoBehaviour {
         //genes[20].type = CellTypeEnum.Leaf;
         //genes[20].setReferenceDeprecated(1, 20);
         //genes[20].setReferenceDeprecated(0, 1);
+
+        //New Jellyfish using Arrangements
+        genes[0].type = CellTypeEnum.Vein;
+        genes[0].arrangements[0].isEnabled = true;
+        genes[0].arrangements[0].type = ArrangementTypeEnum.Mirror;
+        genes[0].arrangements[0].referenceCount = 2;
+        genes[0].arrangements[0].gap = 3;
+        genes[0].arrangements[0].referenceGene = genes[1];
+        genes[0].arrangements[0].arrowIndex = 0;
+        genes[0].arrangements[1].isEnabled = true;
+        genes[0].arrangements[1].type = ArrangementTypeEnum.Side;
+        genes[0].arrangements[1].referenceCount = 1;
+        genes[0].arrangements[1].arrowIndex = 6;
+        genes[0].arrangements[1].referenceGene = genes[2];
+
+        genes[1].type = CellTypeEnum.Leaf;
+        genes[1].arrangements[0].isEnabled = true;
+        genes[1].arrangements[0].type = ArrangementTypeEnum.Side;
+        genes[1].arrangements[0].referenceCount = 1;
+        genes[1].arrangements[0].referenceGene = genes[2];
+        genes[1].arrangements[0].arrowIndex = -2;
+        genes[1].arrangements[1].isEnabled = true;
+        genes[1].arrangements[1].type = ArrangementTypeEnum.Side;
+        genes[1].arrangements[1].referenceCount = 1;
+        genes[1].arrangements[1].referenceGene = genes[1];
+        genes[1].arrangements[1].arrowIndex = 0;
+
+        genes[2].type = CellTypeEnum.Muscle;
     }
 
     private void CreateString() {
