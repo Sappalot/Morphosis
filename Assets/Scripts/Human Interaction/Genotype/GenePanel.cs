@@ -88,7 +88,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
         }
 
         //Hack
-        //CreatureSelectionPanel.instance.selection[0].Regenerate();
+        CreatureSelectionPanel.instance.selection[0].genotype.Generate(CreatureSelectionPanel.instance.selection[0]);
     }
 
     //----
