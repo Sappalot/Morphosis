@@ -9,6 +9,20 @@ public class Life : MonoBehaviour {
     private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
     private List<Creature> creatureList = new List<Creature>();
 
+    public void SwitchToPhenotypes() {
+        for (int index = 0; index < creatureList.Count; index++) {
+            Creature creature = creatureList[index];
+            creature.SwitchToPhenotype();
+        }
+    }
+
+    public void SwitchToGenotypes() {
+        for (int index = 0; index < creatureList.Count; index++) {
+            Creature creature = creatureList[index];
+            creature.SwitchToGenotype();
+        }
+    }
+
     public void EvoUpdate() {
         for (int index = 0; index < creatureList.Count; index++) {
             creatureList[index].EvoUpdate();
@@ -34,11 +48,11 @@ public class Life : MonoBehaviour {
         creature.id = id;
         creature.nickname = "Nick " + id;
         creature.transform.parent = this.transform;
-        creature.transform.position = position;
+        creature.transform.position = Vector3.zero;
         creatureDictionary.Add(id, creature);
         creatureList.Add(creature);
 
-        creature.Generate();
+        creature.GenerateGenotypeAndPhenotype(position);
 
         //if (test == 0) {
         //    CreatureSelectionPanel.instance.SelectOnly(creature);

@@ -40,7 +40,18 @@ public class Creature : MonoBehaviour {
     
     private static int number = 0;
 
-    public void Generate() {
+    public void SwitchToPhenotype() {
+        phenotype.gameObject.SetActive(true);
+        genotype.gameObject.SetActive(false);
+    }
+
+    public void SwitchToGenotype() {
+        phenotype.gameObject.SetActive(false);
+        genotype.Generate(this);
+        genotype.gameObject.SetActive(true);
+    }
+
+    public void GenerateGenotypeAndPhenotype(Vector3 offset) {
         //float rnd = Random.Range(0f, 2f);
         genotype.GenerateJellyfish();
         //if (number > 0) {
@@ -48,12 +59,8 @@ public class Creature : MonoBehaviour {
         //} else {
         //    genotype.GenerateString();
         //}
-        phenotype.Generate(genotype, this);
+        phenotype.Generate(genotype, this, offset);
         number++;
-    }
-
-    public void Regenerate() {
-        phenotype.Generate(genotype, this);
     }
 
     public void EvoUpdate() {

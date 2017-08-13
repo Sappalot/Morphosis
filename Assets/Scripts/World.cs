@@ -6,13 +6,21 @@ public class World : MonoBehaviour {
 
     private float fixedTime;
 
-	void Start () {
+    public void ShowPhenotypes() {
+        life.SwitchToPhenotypes();
+    }
+
+    public void ShowGenotypes() {
+        life.SwitchToGenotypes();
+    }
+
+    private void Start () {
         //test, OK with 24 * 24 (18 cells per creature) ~ 27 FPS :)
         //including: turn hinged neighbours to correct angle, just one test string creature
         //excluding: turn cell graphics to correct angle, scale mussle cells
-        for (int y = 1; y <= 10; y++) {
+        for (int y = 1; y <= 15; y++) {
             for (int x = 1; x <= 15; x++) {
-                life.SpawnCreatureEmbryo(new Vector3(x * 10f, 200f + y * 10, 0f));
+                life.SpawnCreatureEmbryo(new Vector3(x * 15f, 100f + y * 15, 0f));
             }
         }
         life.EvoFixedUpdate(fixedTime);
@@ -22,7 +30,8 @@ public class World : MonoBehaviour {
         //life.SpawnCreatureEmbryo(new Vector3(10f, 30f, 0f));
     }
 
-    void Update() {
+    private bool isShowingPhenotypes = true;
+    private void Update() {
         //Handle time from here to not get locked out
         if (HUD.instance.timeControllValue == 0 || CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
             Time.timeScale = 0;
@@ -32,13 +41,24 @@ public class World : MonoBehaviour {
             //life.EvoUpdate();
         } else {
             Time.timeScale = 4;
-        } 
+        }
+
+        if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype && isShowingPhenotypes) {
+            isShowingPhenotypes = false;
+            ShowGenotypes();
+        }
+        if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype && !isShowingPhenotypes) {
+            isShowingPhenotypes = true;
+            ShowPhenotypes();
+        }
     }
 
-    void FixedUpdate() {
+    private void FixedUpdate() {
         if (HUD.instance.timeControllValue > 0) {
             fixedTime += Time.fixedDeltaTime;
             life.EvoFixedUpdate(fixedTime);
         }
     }
+
+    
 }

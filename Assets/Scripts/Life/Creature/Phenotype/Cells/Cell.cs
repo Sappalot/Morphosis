@@ -299,6 +299,8 @@ public abstract class Cell : MonoBehaviour {
         return index_Neighbour[index % 6].cell != null;
     }
 
+    public float heading;
+
     ////  Updates world space rotation (heading) derived from neighbour position relative to this
     private void UpdateRotation() {
         UpdateNeighbourAngles();
@@ -311,10 +313,11 @@ public abstract class Cell : MonoBehaviour {
             }
         }
         if (GetNeighbourCount() > 0) {
-            triangleTransform.localRotation = Quaternion.Euler(0f, 0f, AngleUtil.ToAngle(bindHeading) + angleDiffFromBindpose); 
-        }
-        else {
-            triangleTransform.localRotation = Quaternion.Euler(0f, 0f, AngleUtil.ToAngle(bindHeading)); //Random.Range(0f, 360f)
+            heading = AngleUtil.ToAngle(bindHeading) + angleDiffFromBindpose;
+            triangleTransform.localRotation = Quaternion.Euler(0f, 0f, heading); 
+        } else {
+            heading = AngleUtil.ToAngle(bindHeading);
+            triangleTransform.localRotation = Quaternion.Euler(0f, 0f, heading); //Random.Range(0f, 360f)
         }
     }
 

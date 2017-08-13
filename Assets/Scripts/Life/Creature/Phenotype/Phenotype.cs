@@ -14,9 +14,12 @@ public class Phenotype : MonoBehaviour {
 
     public float timeOffset;
 
-    public GameObject cells; //folder
+    public GameObject cells;
     //public Wings wings;
     public Edges edges;
+
+    [HideInInspector]
+    public Cell rootCell;
 
     private Vector3 velocity = new Vector3();
     private List<Cell> cellList = new List<Cell>();
@@ -61,13 +64,14 @@ public class Phenotype : MonoBehaviour {
         ListUtils.Shuffle(cellList);
     }
 
-    public void Generate(Genotype genotype, Creature creature) {
+    public void Generate(Genotype genotype, Creature creature, Vector3 offset) {
         timeOffset = Random.Range(0f, 7f);
 
         Clear();
 
         List<Cell> spawningFromCells = new List<Cell>();
-        spawningFromCells.Add(SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature)); //root
+        rootCell = SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature, offset);
+        spawningFromCells.Add(rootCell);
 
         List<Cell> nextSpawningFromCells = new List<Cell>();
         for (int buildOrderIndex = 1; spawningFromCells.Count != 0 && buildOrderIndex < 4; buildOrderIndex++) {
@@ -84,7 +88,7 @@ public class Phenotype : MonoBehaviour {
                             Cell residentCell = cellMap.GetCell(referenceCellMapPosition);
                             if (residentCell == null) {
                                 //only time we spawn a cell if there is a vacant spot
-                                Cell newCell = SpawnCell(referenceGene, referenceCellMapPosition, buildOrderIndex, referenceBindHeading, geneReference.flipSide, creature);
+                                Cell newCell = SpawnCell(referenceGene, referenceCellMapPosition, buildOrderIndex, referenceBindHeading, geneReference.flipSide, creature, offset);
                                 nextSpawningFromCells.Add(newCell);
                                 cellList.Add(spawningFromCell);
                             } else {
@@ -116,6 +120,89 @@ public class Phenotype : MonoBehaviour {
         ConnectCells();
         edges.GenerateWings(cellList);
         UpdateSpringsFrequenze();
+    }
+
+    // 1 Spawn cell from prefab
+    // 2 Setup its properties according to parameters
+    // 3 Add cell to list and CellMap
+    private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature, Vector3 offset) {
+        Cell cell = null;
+
+        if (gene.type == CellTypeEnum.Jaw) {
+            cell = (Instantiate(jawCellPrefab, cellMap.ToPosition(mapPosition) + offset, Quaternion.identity) as Cell);
+        } else if (gene.type == CellTypeEnum.Leaf) {
+            cell = (Instantiate(leafCellPrefab, cellMap.ToPosition(mapPosition) + offset, Quaternion.identity) as Cell);
+        } else if (gene.type == CellTypeEnum.Muscle) {
+            cell = (Instantiate(muscleCellPrefab, cellMap.ToPosition(mapPosition) + offset, Quaternion.identity) as Cell);
+        } else if (gene.type == CellTypeEnum.Vein) {
+            cell = (Instantiate(veinCellPrefab, cellMap.ToPosition(mapPosition) + offset, Quaternion.identity) as Cell);
+        }
+
+        if (cell == null) {
+            throw new System.Exception("Could not create Cell out of type defined in gene");
+        }
+        cell.transform.parent = cells.transform;
+        cell.mapPosition = mapPosition;
+        cell.buildOrderIndex = buildOrderIndex;
+        cell.gene = gene;
+        cell.bindHeading = bindHeading;
+        cell.flipSide = flipSide;
+        cell.timeOffset = this.timeOffset;
+        cell.creature = creature;
+
+        cellMap.SetCell(mapPosition, cell);
+        cellList.Add(cell);
+
+        return cell;
+    }
+
+    private void ConnectCells() {
+        for (int index = 0; index < cellList.Count; index++) {
+            Cell cell = cellList[index];
+            Vector2i center = cell.mapPosition;
+            for (int direction = 0; direction < 6; direction++) {
+                Vector2i gridNeighbourPos = cellMap.GetGridNeighbourGridPosition(center, direction); // GetGridNeighbour(center, CardinalDirectionHelper.ToCardinalDirection(direction));
+                if (gridNeighbourPos != null) {
+                    cell.SetNeighbourCell(AngleUtil.ToCardinalDirection(direction), cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
+                } else {
+                    cell.SetNeighbourCell(AngleUtil.ToCardinalDirection(direction), null);
+                }
+            }
+            cell.UpdateSpringConnections();
+            cell.UpdateGroups();
+        }
+    }
+
+    private void Clear() {
+        for (int index = 0; index < cellList.Count; index++) {
+            Destroy(cellList[index].gameObject);
+        }
+        cellList.Clear();
+        edges.Clear();
+        cellMap.Clear();
+    }
+
+    private void EvoUpdateCells() {
+        //Todo: only if creature inside frustum && should be shown
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].EvoUpdate();
+        }
+    }
+
+    public int GetCellCount() {
+        return cellList.Count;
+    }
+
+    private void UpdateSpringsFrequenze() {
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].UpdateSpringFrequenzy();
+        }
+    }
+
+    public void SetHighlite(bool on) {
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].ShowSelection(on);
+        }
     }
 
     //public void Generate(Genotype genotype, Creature creature) {
@@ -174,90 +261,5 @@ public class Phenotype : MonoBehaviour {
     //    UpdateSpringsFrequenze();
     //}
 
-    // 1 Spawn cell from prefab
-    // 2 Setup its properties according to parameters
-    // 3 Add cell to list and CellMap
-    private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature) {
-        Cell cell = null;
 
-        if (gene.type == CellTypeEnum.Jaw) {
-            cell = (Instantiate(jawCellPrefab, transform.position + cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
-        }
-        else if (gene.type == CellTypeEnum.Leaf) {
-            cell = (Instantiate(leafCellPrefab, transform.position + cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
-        }
-        else if (gene.type == CellTypeEnum.Muscle) {
-            cell = (Instantiate(muscleCellPrefab, transform.position + cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
-        }
-        else if (gene.type == CellTypeEnum.Vein) {
-            cell = (Instantiate(veinCellPrefab, transform.position + cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
-        }
-
-        if (cell == null) {
-            throw new System.Exception("Could not create Cell out of type defined in gene");
-        }
-        cell.transform.parent = cells.transform;
-        cell.mapPosition = mapPosition;
-        cell.buildOrderIndex = buildOrderIndex;
-        cell.gene = gene;
-        cell.bindHeading = bindHeading;
-        cell.flipSide = flipSide;
-        cell.timeOffset = this.timeOffset;
-        cell.creature = creature;
-
-        cellMap.SetCell(mapPosition, cell);
-        cellList.Add(cell);
-
-        return cell;
-    }
-
-    private void ConnectCells() {
-        for (int index = 0; index < cellList.Count; index++) {
-            Cell cell = cellList[index];
-            Vector2i center = cell.mapPosition;
-            for (int direction = 0; direction < 6; direction++) {
-                Vector2i gridNeighbourPos = cellMap.GetGridNeighbourGridPosition(center, direction); // GetGridNeighbour(center, CardinalDirectionHelper.ToCardinalDirection(direction));
-                if (gridNeighbourPos != null) {
-                    cell.SetNeighbourCell(AngleUtil.ToCardinalDirection(direction), cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
-                }
-                else {
-                    cell.SetNeighbourCell(AngleUtil.ToCardinalDirection(direction), null);
-                }
-            }
-            cell.UpdateSpringConnections();
-            cell.UpdateGroups();
-        }
-    }
-
-    private void Clear() {
-        for (int index = 0; index < cellList.Count; index++) {
-            Destroy(cellList[index].gameObject);
-        }
-        cellList.Clear();
-        edges.Clear();
-        cellMap.Clear();
-    }
-
-    private void EvoUpdateCells() {
-        //Todo: only if creature inside frustum && should be shown
-        for (int index = 0; index < cellList.Count; index++) {
-            cellList[index].EvoUpdate();
-        }
-    }
-
-    public int GetCellCount() {
-        return cellList.Count;
-    }
-
-    private void UpdateSpringsFrequenze() {
-        for (int index = 0; index < cellList.Count; index++) {
-            cellList[index].UpdateSpringFrequenzy();
-        }
-    }
-
-    public void SetHighlite(bool on) {
-        for (int index = 0; index < cellList.Count; index++) {
-            cellList[index].ShowSelection(on);
-        }
-    }
 }
