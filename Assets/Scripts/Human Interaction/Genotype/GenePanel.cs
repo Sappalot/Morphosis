@@ -24,7 +24,10 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
     public ArrangementPanel arrangementPanelTemplate;
     private ArrangementPanel[] arrangementPanels = new ArrangementPanel[3];
-    
+
+    //Gene Settings
+    public Dropdown cellTypeDropdown;
+
     override public void Init() {
         RectTransform originalTransform = arrangementPanelTemplate.GetComponent<RectTransform>();
 
@@ -73,11 +76,35 @@ public class GenePanel : MonoSingleton<GenePanel> {
         flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
         geneReferenceText.text = gene.index.ToString();
 
+        //Gene Settings
+        if (gene.type == CellTypeEnum.Jaw) {
+            cellTypeDropdown.value = 0;
+        } else if (gene.type == CellTypeEnum.Leaf) {
+            cellTypeDropdown.value = 1;
+        } else if (gene.type == CellTypeEnum.Muscle) {
+            cellTypeDropdown.value = 2;
+        } else if (gene.type == CellTypeEnum.Vein) {
+            cellTypeDropdown.value = 3;
+        }
+
         //Hack
-        CreatureSelectionPanel.instance.selection[0].Regenerate();
+        //CreatureSelectionPanel.instance.selection[0].Regenerate();
     }
 
     //----
+    public void OnCellTypeDropdownChanged() {
+        if (cellTypeDropdown.value == 0) {
+            gene.type = CellTypeEnum.Jaw;
+        } else if (cellTypeDropdown.value == 1) {
+            gene.type = CellTypeEnum.Leaf;
+        } else if (cellTypeDropdown.value == 2) {
+            gene.type = CellTypeEnum.Muscle;
+        } else if (cellTypeDropdown.value == 3) {
+            gene.type = CellTypeEnum.Vein;
+        }
+        GenotypePanel.instance.UpdateRepresentation();
+    }
+
     private ArrangementPanel arrangementPanelAskingForReference;
     public void SetAskingForGeneReference(ArrangementPanel arrangementPanel) {
         arrangementPanelAskingForReference = arrangementPanel;

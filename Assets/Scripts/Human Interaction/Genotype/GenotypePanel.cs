@@ -6,10 +6,6 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
     public Image blackWhiteImage;
     public Image whiteBlackImage;
 
-    //Button chosen
-    public Color unchosenColor;
-    public Color chosenColor;
-
     public Color unSelectedGeneColor;
     public Color selectedGeneColor;
 
@@ -34,6 +30,10 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
         UpdateButtonImages();
     }
 
+    private void Start() {
+        UpdateRepresentation();
+    }
+
     public void OnClickedBlackWhite() {
         viewedFlipSide = FlipSideEnum.BlackWhite;
         UpdateButtonImages();
@@ -47,8 +47,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
     }
 
     private void UpdateButtonImages() {
-        blackWhiteImage.color = (viewedFlipSide == FlipSideEnum.BlackWhite) ? chosenColor : unchosenColor;
-        whiteBlackImage.color = (viewedFlipSide == FlipSideEnum.WhiteBlack) ? chosenColor : unchosenColor;
+        blackWhiteImage.color = (viewedFlipSide == FlipSideEnum.BlackWhite) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+        whiteBlackImage.color = (viewedFlipSide == FlipSideEnum.WhiteBlack) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
     }
 
     public void UpdateRepresentation() {

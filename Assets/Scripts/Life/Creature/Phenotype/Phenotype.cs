@@ -11,8 +11,6 @@ public class Phenotype : MonoBehaviour {
     public LeafCell leafCellPrefab;
     public MuscleCell muscleCellPrefab;
     public VeinCell veinCellPrefab;
-    
-    
 
     public float timeOffset;
 

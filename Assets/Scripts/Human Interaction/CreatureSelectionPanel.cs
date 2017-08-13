@@ -25,11 +25,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
     public void ClearSelection() {
         for (int index = 0; index < selection.Count; index++) {
             selection[index].SetHighlite(false);
-        } 
+        }
         selection.Clear();
         UpdateGUI();
 
-        GenotypePanel.instance.genotype = null;
+        UpdateGenotypePanel();
     }
 
     public void SelectOnly(Creature creature) {
@@ -42,34 +42,46 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
         selection.Add(creature);
         UpdateGUI();
 
-        GenotypePanel.instance.genotype = creature.genotype;
+        UpdateGenotypePanel();
     }
 
     public void AddToSelection(Creature creature) {
         creature.SetHighlite(true);
         selection.Add(creature);
         UpdateGUI();
+
+        UpdateGenotypePanel();
     }
 
     public void RemoveFromSelection(Creature creature) {
         creature.SetHighlite(false);
         selection.Remove(creature);
         UpdateGUI();
+
+        UpdateGenotypePanel();
+    }
+
+    private void UpdateGenotypePanel() {
+        if (selection.Count == 1) {
+            GenotypePanel.instance.genotype = selection[0].genotype;
+        } else {
+            GenotypePanel.instance.genotype = null;
+        }
     }
 
     private void UpdateGUI() {
         if (selection.Count == 0) {
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
             selectedCreatureText.text = "";
-            phenotypePanel.gameObject.SetActive(false);
+            //phenotypePanel.gameObject.SetActive(false);
         } else if (selection.Count == 1) {
-            gameObject.SetActive(true);
+            //gameObject.SetActive(true);
             selectedCreatureText.text = selection[0].nickname;
-            phenotypePanel.gameObject.SetActive(true);
+            //phenotypePanel.gameObject.SetActive(true);
         } else {
-            gameObject.SetActive(true);
+            //gameObject.SetActive(true);
             selectedCreatureText.text = selection.Count + " Creatures";
-            phenotypePanel.gameObject.SetActive(false);
+            //phenotypePanel.gameObject.SetActive(false);
         }            
     }
 

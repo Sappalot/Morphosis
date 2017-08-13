@@ -21,7 +21,7 @@ public class Life : MonoBehaviour {
         }
     }
 
-    int test = 0;
+    //int test = 0;
     //makes a minimal new creature with blank genotype
     public string SpawnCreatureEmbryo(Vector3 position) {
         // TODO creatre a copy
@@ -40,10 +40,10 @@ public class Life : MonoBehaviour {
 
         creature.Generate();
 
-        if (test == 0) {
-            CreatureSelectionPanel.instance.SelectOnly(creature);
-        }
-        test++;
+        //if (test == 0) {
+        //    CreatureSelectionPanel.instance.SelectOnly(creature);
+        //}
+        //test++;
         return id;
     }
 
