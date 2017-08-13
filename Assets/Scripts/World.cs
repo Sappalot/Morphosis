@@ -24,7 +24,7 @@ public class World : MonoBehaviour {
 
     void Update() {
         //Handle time from here to not get locked out
-        if (HUD.instance.timeControllValue == 0) {
+        if (HUD.instance.timeControllValue == 0 || CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
             Time.timeScale = 0;
             life.EvoUpdate();
         } else if (HUD.instance.timeControllValue == 1) {
