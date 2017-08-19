@@ -9,6 +9,14 @@ public class Life : MonoBehaviour {
     private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
     private List<Creature> creatureList = new List<Creature>();
 
+    public void KillAll() {
+        foreach (Creature creature in creatureList) {
+            Destroy(creature.gameObject);
+        }
+        creatureDictionary.Clear();
+        creatureList.Clear();
+    }
+
     public void SwitchToPhenotypes() {
         for (int index = 0; index < creatureList.Count; index++) {
             Creature creature = creatureList[index];

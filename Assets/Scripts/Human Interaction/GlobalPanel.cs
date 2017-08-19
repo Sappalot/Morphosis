@@ -12,7 +12,7 @@ public class GlobalPanel : MonoBehaviour {
     private float updateTimeCount;
     private float updatePeriod = 1f;
 
-	void Update () {
+	private void Update () {
         frameCount++;
         timeCount += Time.deltaTime;
         updateTimeCount += Time.deltaTime;
@@ -23,4 +23,8 @@ public class GlobalPanel : MonoBehaviour {
             timeCount = 0;
         }        
 	}
+
+    public void OnLoadWorldClicked() {
+        World.instance.Restart();
+    }
 }

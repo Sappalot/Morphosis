@@ -143,10 +143,9 @@ public class Genotype : MonoBehaviour {
 
     public void Generate(Creature creature) {
         Clear();
-        
 
         List <Cell> spawningFromCells = new List<Cell>();
-        spawningFromCells.Add(SpawnCell(GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature)); //root
+        spawningFromCells.Add(SpawnGene(GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature)); //root
 
         List<Cell> nextSpawningFromCells = new List<Cell>();
         for (int buildOrderIndex = 1; spawningFromCells.Count != 0 && buildOrderIndex < 4; buildOrderIndex++) {
@@ -163,13 +162,15 @@ public class Genotype : MonoBehaviour {
                             Cell residentCell = cellMap.GetCell(referenceCellMapPosition);
                             if (residentCell == null) {
                                 //only time we spawn a cell if there is a vacant spot
-                                Cell newCell = SpawnCell(referenceGene, referenceCellMapPosition, buildOrderIndex, referenceBindHeading, geneReference.flipSide, creature);
+                                Cell newCell = SpawnGene(referenceGene, referenceCellMapPosition, buildOrderIndex, referenceBindHeading, geneReference.flipSide, creature);
                                 nextSpawningFromCells.Add(newCell);
                                 cellList.Add(spawningFromCell);
-                            } else {
+                            }
+                            else {
                                 if (residentCell.buildOrderIndex > buildOrderIndex) {
                                     throw new System.Exception("Trying to spawn a cell at a location where a cell of higher build order are allready present.");
-                                } else if (residentCell.buildOrderIndex == buildOrderIndex) {
+                                }
+                                else if (residentCell.buildOrderIndex == buildOrderIndex) {
                                     //trying to spawn a cell where ther is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
                                     GameObject.Destroy(residentCell.gameObject);
                                     cellList.Remove(residentCell);
@@ -187,22 +188,9 @@ public class Genotype : MonoBehaviour {
             spawningFromCells.Clear();
             spawningFromCells.AddRange(nextSpawningFromCells);
             nextSpawningFromCells.Clear();
-            if (buildOrderIndex == 99) {
-                throw new System.Exception("Creature generation going on for too long");
-            }
-        }
-
-        //transform.rotation = Quaternion.Euler(0f, 0f, creature.phenotype.rootCell.heading - 90f);
-        cells.localPosition = creature.phenotype.rootCell.transform.position;
-        cells.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
-        //cells.rotat
-
-        //SetHighlite(true);
-
-        SetHighlite(CreatureSelectionPanel.instance.IsSelected(creature));
-
-        for (int index = 0; index < cellList.Count; index++) {
-            cellList[index].EvoFixedUpdate(0, false);
+        //    if (buildOrderIndex == 99) {
+        //        throw new System.Exception("Creature generation going on for too long");
+         //   }
         }
 
         //ConnectCells();
@@ -210,10 +198,20 @@ public class Genotype : MonoBehaviour {
         //UpdateSpringsFrequenze();
     }
 
+    public void UpdateGraphics(Creature creature) {
+        cells.localPosition = creature.phenotype.rootCell.transform.position;
+        cells.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
+        SetHighlite(CreatureSelectionPanel.instance.IsSelected(creature));
+
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].EvoFixedUpdate(0, false);
+        }
+    }
+
     // 1 Spawn cell from prefab
     // 2 Setup its properties according to parameters
     // 3 Add cell to list and CellMap
-    private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature) {
+    private Cell SpawnGene(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature) {
         Cell cell = null;
 
         if (gene.type == CellTypeEnum.Jaw) {
@@ -225,6 +223,9 @@ public class Genotype : MonoBehaviour {
         } else if (gene.type == CellTypeEnum.Vein) {
             cell = (Instantiate(veinCellPrefab, cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
         }
+
+        cell.RemovePhysicsComponents();
+
 
         if (cell == null) {
             throw new System.Exception("Could not create Cell out of type defined in gene");
@@ -239,8 +240,6 @@ public class Genotype : MonoBehaviour {
 
         cellMap.SetCell(mapPosition, cell);
         cellList.Add(cell);
-
-
 
         return cell;
     }

@@ -48,18 +48,27 @@ public class Creature : MonoBehaviour {
     public void SwitchToGenotype() {
         phenotype.gameObject.SetActive(false);
         genotype.Generate(this);
+        genotype.UpdateGraphics(this);
         genotype.gameObject.SetActive(true);
     }
 
     public void GenerateGenotypeAndPhenotype(Vector3 offset) {
         //float rnd = Random.Range(0f, 2f);
-        genotype.GenerateJellyfish();
+        genotype.GenerateJellyfish(); // TODO: Load from disc
         //if (number > 0) {
         //    genotype.GenerateJellyfish();
         //} else {
         //    genotype.GenerateString();
         //}
-        phenotype.Generate(genotype, this, offset);
+
+
+        genotype.Generate(this); // Generating genotype here caused Unity freeze ;/
+        //Debug.Log("genotype: " + this.ToString());
+        //genotype.UpdateGraphics(this);
+        phenotype.Generate(genotype, this, offset); // TODO: Load from disc
+
+
+        Debug.Log("phenotype: " + this.ToString());
         number++;
     }
 

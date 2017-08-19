@@ -77,6 +77,19 @@ public abstract class Cell : MonoBehaviour {
     private List<SpringJoint2D> springList = new List<SpringJoint2D>();
 
     public Cell( ) {
+        //index_Neighbour.Add(0, northEastNeighbour);
+        //index_Neighbour.Add(1, northNeighbour);
+        //index_Neighbour.Add(2, northWestNeighbour);
+        //index_Neighbour.Add(3, southWestNeighbour);
+        //index_Neighbour.Add(4, southNeighbour);
+        //index_Neighbour.Add(5, southEastNeighbour);
+
+        //springList.Add( northSpring );
+        //springList.Add( southEastSpring );
+        //springList.Add( southWestSpring );
+    }
+
+    private void Awake() {
         index_Neighbour.Add(0, northEastNeighbour);
         index_Neighbour.Add(1, northNeighbour);
         index_Neighbour.Add(2, northWestNeighbour);
@@ -84,12 +97,10 @@ public abstract class Cell : MonoBehaviour {
         index_Neighbour.Add(4, southNeighbour);
         index_Neighbour.Add(5, southEastNeighbour);
 
-        springList.Add( northSpring );
-        springList.Add( southEastSpring );
-        springList.Add( southWestSpring );
-    }
+        springList.Add(northSpring);
+        springList.Add(southEastSpring);
+        springList.Add(southWestSpring);
 
-    private void Awake() {
         ShowSelection(false);
     }
 
@@ -112,6 +123,15 @@ public abstract class Cell : MonoBehaviour {
 
         UpdateRadius(fixedTime);
         UpdateSpringLengths(); // It is costy to update spring length
+    }
+
+    public void RemovePhysicsComponents() {
+
+        SpringJoint2D[] springJoints = gameObject.GetComponents<SpringJoint2D>();
+        foreach (SpringJoint2D springJoint in springJoints) {
+            Destroy(springJoint);
+        }
+        Destroy(GetComponent<Rigidbody2D>());
     }
 
     public int GetDirectionOfNeighbourCell(Cell cell) {

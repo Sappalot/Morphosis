@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class World : MonoBehaviour {
+public class World : MonoSingleton<World> {
 
     public Life life;
 
@@ -14,15 +14,25 @@ public class World : MonoBehaviour {
         life.SwitchToGenotypes();
     }
 
+    public void KillAllCreatures() {
+        life.KillAll();
+        CreatureSelectionPanel.instance.ClearSelection();
+    }
+
+    public void Restart() {
+        KillAllCreatures();
+        for (int y = 1; y <= 8; y++) {
+            for (int x = 1; x <= 8; x++) {
+                life.SpawnCreatureEmbryo(new Vector3(x * 15f, 100f + y * 15, 0f));
+            }
+        }
+    }
+
     private void Start () {
         //test, OK with 24 * 24 (18 cells per creature) ~ 27 FPS :)
         //including: turn hinged neighbours to correct angle, just one test string creature
         //excluding: turn cell graphics to correct angle, scale mussle cells
-        for (int y = 1; y <= 15; y++) {
-            for (int x = 1; x <= 15; x++) {
-                life.SpawnCreatureEmbryo(new Vector3(x * 15f, 100f + y * 15, 0f));
-            }
-        }
+        //Restart();
         life.EvoFixedUpdate(fixedTime);
         //life.EvoFixedUpdate(fixedTime);
         //life.SpawnCreatureEmbryo(new Vector3(50f, 50f, 0f));
@@ -53,12 +63,18 @@ public class World : MonoBehaviour {
         }
     }
 
+    private int frameCounter = 0;
+
     private void FixedUpdate() {
+        //frameCounter++;
+        //Debug.Log(frameCounter);
+        //if (frameCounter == 80) {
+        //    Restart();
+        //}
+
         if (HUD.instance.timeControllValue > 0) {
             fixedTime += Time.fixedDeltaTime;
             life.EvoFixedUpdate(fixedTime);
         }
-    }
-
-    
+    }    
 }
