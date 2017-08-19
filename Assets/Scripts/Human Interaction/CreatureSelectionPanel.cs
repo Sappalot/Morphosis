@@ -11,6 +11,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
     public List<Creature> selection { get; private set; }
 
+    public int selectionCount {
+        get {
+            return selection.Count;
+        }        
+    }
+
     public bool IsSelected(Creature creature) {
         return selection.Contains(creature);
     }
@@ -86,10 +92,22 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
     }
 
     //Buttons
-    public void OnClickDelete() {
+    public void OnDeleteClicked() {
         for (int index = 0; index < selection.Count; index++) {
             life.DeleteCreature(selection[index]);
         }
         ClearSelection();
+    }
+
+    public void OnGrowClicked() {
+        for (int index = 0; index < selection.Count; index++) {
+            selection[index].TryGrow();
+        }
+    }
+
+    public void OnShrinkClicked() {
+        for (int index = 0; index < selection.Count; index++) {
+            selection[index].TryShrink();
+        }
     }
 }

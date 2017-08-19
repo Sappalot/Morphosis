@@ -43,6 +43,7 @@ public class Creature : MonoBehaviour {
     public void SwitchToPhenotype() {
         phenotype.gameObject.SetActive(true);
         genotype.gameObject.SetActive(false);
+        RegeneratePhenotype();
     }
 
     public void SwitchToGenotype() {
@@ -61,15 +62,28 @@ public class Creature : MonoBehaviour {
         //    genotype.GenerateString();
         //}
 
-
         genotype.Generate(this); // Generating genotype here caused Unity freeze ;/
-        //Debug.Log("genotype: " + this.ToString());
-        //genotype.UpdateGraphics(this);
-        phenotype.Generate(genotype, this, offset); // TODO: Load from disc
+                                 //Debug.Log("genotype: " + this.ToString());
+                                 //genotype.UpdateGraphics(this);
 
+        //phenotype.Generate(genotype, this, offset); // TODO: Load from disc
+        phenotype.Setup(this, offset);
+        phenotype.TryGrow(40);
 
-        Debug.Log("phenotype: " + this.ToString());
         number++;
+    }
+
+    public void RegeneratePhenotype() {
+        phenotype.Setup(this, phenotype.rootCell.transform.position);
+        phenotype.TryGrow(40);
+    }
+
+    public void TryGrow(int cellCount = 1) {
+        phenotype.TryGrow(cellCount);
+    }
+
+    public void TryShrink(int cellCount = 1) {
+        phenotype.TryShrink(cellCount);
     }
 
     public void EvoUpdate() {

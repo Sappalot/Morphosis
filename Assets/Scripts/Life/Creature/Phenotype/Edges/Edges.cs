@@ -14,7 +14,7 @@ public class Edges : MonoBehaviour {
 
     private List<Edge> edgeList = new List<Edge>();
 
-    public void Clear() {
+    private void Clear() {
         for (int index = 0; index < edgeList.Count; index++) {
             Destroy(edgeList[index].gameObject);
         }
@@ -54,6 +54,7 @@ public class Edges : MonoBehaviour {
     }
 
     public void GenerateWings(List<Cell> cellList) {
+        Clear();
         if (cellList.Count < 2)
             return;
 

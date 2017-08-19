@@ -93,7 +93,7 @@ public class CellMap {
         return new Vector2i();
     }
 
-    struct Key {
+    public struct Key {
         public readonly int x;
         public readonly int y;
         public Key(Vector2i gridPosition) {

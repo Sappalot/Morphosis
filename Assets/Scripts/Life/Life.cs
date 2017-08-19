@@ -89,4 +89,6 @@ public class Life : MonoBehaviour {
         creatureDictionary.Remove(creature.id);
         creatureList.Remove(creature);
     }
+
+
 }

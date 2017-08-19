@@ -23,9 +23,18 @@ public class Phenotype : MonoBehaviour {
 
     private Vector3 velocity = new Vector3();
     private List<Cell> cellList = new List<Cell>();
+    private Genotype genotype;
+    private Vector3 spawnPositionRoot;
+    private Creature creature;
     private CellMap cellMap = new CellMap();
 
     private int update = 0;
+
+    public int cellCount {
+        get {
+            return cellList.Count;
+        }
+    }
 
     public void EvoUpdate() {
         EvoUpdateCells();
@@ -64,56 +73,37 @@ public class Phenotype : MonoBehaviour {
         ListUtils.Shuffle(cellList);
     }
 
-    public void Generate(Genotype genotype, Creature creature, Vector3 offset) {
-        timeOffset = Random.Range(0f, 7f);
+    //Create cellMap so that 
+    //SpawnPosition is the position where the center of the root cell wil appear in word space
+    public void Setup(Creature creature, Vector3 spawnPosition) {
+        timeOffset = Random.Range(0f, 7f); //TODO: Remove
 
-        Clear();
+        Clear();        
 
-        List<Cell> spawningFromCells = new List<Cell>();
-        rootCell = SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature, offset);
-        spawningFromCells.Add(rootCell);
+        this.creature = creature;
+        genotype = creature.genotype; 
+        spawnPositionRoot = spawnPosition;
+    }
 
-        List<Cell> nextSpawningFromCells = new List<Cell>();
-        for (int buildOrderIndex = 1; spawningFromCells.Count != 0 && buildOrderIndex < 4; buildOrderIndex++) {
-            for (int index = 0; index < spawningFromCells.Count; index++) {
-                Cell spawningFromCell = spawningFromCells[index];
-                for (int referenceCardinalIndex = 0; referenceCardinalIndex < 6; referenceCardinalIndex++) {
-                    GeneReference geneReference = spawningFromCell.gene.GetFlippableReference(referenceCardinalIndex, spawningFromCell.flipSide);
-                    if (geneReference != null) {
-                        int referenceBindHeading = (spawningFromCell.bindHeading + referenceCardinalIndex + 5) % 6; //!!
-                        Gene referenceGene = geneReference.gene;
-                        Vector2i referenceCellMapPosition = cellMap.GetGridNeighbourGridPosition(spawningFromCell.mapPosition, referenceBindHeading);
+    public void TryGrow(int cellCount) {
+        int growCellCount = 0;
+        if (cellCount < 1 || this.cellCount >= genotype.geneCellCount) {
+            return;
+        }
+        if (cellList.Count == 0) {
+            rootCell = SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature, spawnPositionRoot, Quaternion.identity);
+            growCellCount++;
+        }
+        genotype.geneCellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
 
-                        if (cellMap.IsLegalPosition(referenceCellMapPosition)) {
-                            Cell residentCell = cellMap.GetCell(referenceCellMapPosition);
-                            if (residentCell == null) {
-                                //only time we spawn a cell if there is a vacant spot
-                                Cell newCell = SpawnCell(referenceGene, referenceCellMapPosition, buildOrderIndex, referenceBindHeading, geneReference.flipSide, creature, offset);
-                                nextSpawningFromCells.Add(newCell);
-                                cellList.Add(spawningFromCell);
-                            } else {
-                                if (residentCell.buildOrderIndex > buildOrderIndex) {
-                                    throw new System.Exception("Trying to spawn a cell at a location where a cell of higher build order are allready present.");
-                                } else if (residentCell.buildOrderIndex == buildOrderIndex) {
-                                    //trying to spawn a cell where ther is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
-                                    GameObject.Destroy(residentCell.gameObject);
-                                    cellList.Remove(residentCell);
-                                    cellMap.RemoveCellAtGridPosition(residentCell.mapPosition);
-                                    nextSpawningFromCells.Remove(residentCell);
-                                    cellMap.MarkAsIllegal(residentCell.mapPosition);
-                                } else {
-                                    // trying to spawn a cell where there is one with lowerBuildOrder index, no action needed
-                                }
-                            }
-                        }
-                    }
-                }
+
+        foreach (Cell geneCell in genotype.geneCellList) {
+            if (growCellCount >= cellCount) {
+                break;
             }
-            spawningFromCells.Clear();
-            spawningFromCells.AddRange(nextSpawningFromCells);
-            nextSpawningFromCells.Clear();
-            if (buildOrderIndex == 99) {
-                throw new System.Exception("Creature generation going on for too long");
+            if (!IsCellBuiltForGene(geneCell) && IsCellBuiltAtNeighbourPosition(geneCell.mapPosition)) {
+                Cell newCell = SpawnCell(geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindHeading, geneCell.flipSide, creature, rootCell.transform.position, rootCell.transform.localRotation);
+                growCellCount++;
             }
         }
 
@@ -122,20 +112,57 @@ public class Phenotype : MonoBehaviour {
         UpdateSpringsFrequenze();
     }
 
+    public void TryShrink(int cellCount) {
+        int shrinkCellCount = 0;
+        if (this.cellCount == 1) {
+            return;
+        }
+        cellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
+
+        DeleteCell(cellList[cellList.Count - 1]);
+        shrinkCellCount++;
+
+        ConnectCells();
+        edges.GenerateWings(cellList);
+        UpdateSpringsFrequenze();
+    }
+
+    private bool IsCellBuiltForGene(Cell gene) {
+        return cellMap.HasCell(gene.mapPosition);
+    }
+
+    private bool IsCellBuiltAtNeighbourPosition(Vector2i gridPosition) {
+        for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+            if (cellMap.HasCell(cellMap.GetGridNeighbourGridPosition(gridPosition, cardinalIndex))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void DeleteCell(Cell cell) {
+        cellMap.RemoveCellAtGridPosition(cell.mapPosition);
+        cellList.Remove(cell);
+        Destroy(cell.gameObject);
+
+        ConnectCells();
+        edges.GenerateWings(cellList);
+    }
+
     // 1 Spawn cell from prefab
     // 2 Setup its properties according to parameters
     // 3 Add cell to list and CellMap
-    private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature, Vector3 offset) {
+    private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature, Vector3 position, Quaternion rotation) {
         Cell cell = null;
 
         if (gene.type == CellTypeEnum.Jaw) {
-            cell = (Instantiate(jawCellPrefab, cellMap.ToPosition(mapPosition) + offset, Quaternion.identity) as Cell);
+            cell = (Instantiate(jawCellPrefab, genotype.geneCellMap.ToPosition(mapPosition) + position, rotation) as Cell);
         } else if (gene.type == CellTypeEnum.Leaf) {
-            cell = (Instantiate(leafCellPrefab, cellMap.ToPosition(mapPosition) + offset, Quaternion.identity) as Cell);
+            cell = (Instantiate(leafCellPrefab, genotype.geneCellMap.ToPosition(mapPosition) + position, rotation) as Cell);
         } else if (gene.type == CellTypeEnum.Muscle) {
-            cell = (Instantiate(muscleCellPrefab, cellMap.ToPosition(mapPosition) + offset, Quaternion.identity) as Cell);
+            cell = (Instantiate(muscleCellPrefab, genotype.geneCellMap.ToPosition(mapPosition) + position, rotation) as Cell);
         } else if (gene.type == CellTypeEnum.Vein) {
-            cell = (Instantiate(veinCellPrefab, cellMap.ToPosition(mapPosition) + offset, Quaternion.identity) as Cell);
+            cell = (Instantiate(veinCellPrefab, genotype.geneCellMap.ToPosition(mapPosition) + position, rotation) as Cell);
         }
 
         if (cell == null) {
@@ -178,7 +205,6 @@ public class Phenotype : MonoBehaviour {
             Destroy(cellList[index].gameObject);
         }
         cellList.Clear();
-        edges.Clear();
         cellMap.Clear();
     }
 
@@ -204,62 +230,4 @@ public class Phenotype : MonoBehaviour {
             cellList[index].ShowSelection(on);
         }
     }
-
-    //public void Generate(Genotype genotype, Creature creature) {
-    //    timeOffset = Random.Range(0f, 7f);
-
-    //    Clear();
-
-    //    List<Cell> spawningFromCells = new List<Cell>();
-    //    spawningFromCells.Add(SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), creature)); //root
-
-    //    List<Cell> nextSpawningFromCells = new List<Cell>();
-    //    for (int buildOrderIndex = 1; spawningFromCells.Count != 0 && buildOrderIndex < 4; buildOrderIndex++) {
-    //        for (int index = 0; index < spawningFromCells.Count; index++) {
-    //            Cell cell = spawningFromCells[index];
-    //            for (int referenceDirection = 0; referenceDirection < 6; referenceDirection++) {
-    //                if (cell.gene.getReferenceDeprecated(referenceDirection) != null) {
-    //                    int referenceHeading = (cell.bindHeading + referenceDirection + 5) % 6; //!!
-    //                    Gene referenceGene = genotype.GetGeneAt((int)cell.gene.getReferenceDeprecated(referenceDirection));
-    //                    Vector2i referenceCellMapPosition = cellMap.GetGridNeighbourGridPosition(cell.mapPosition, referenceHeading);
-
-    //                    if (cellMap.IsLegalPosition(referenceCellMapPosition)) {
-    //                        Cell residentCell = cellMap.GetCell(referenceCellMapPosition);
-    //                        if (residentCell == null) {
-    //                            //only time we spawn a cell if there is a vacant spot
-    //                            Cell newCell = SpawnCell(referenceGene, referenceCellMapPosition, buildOrderIndex, referenceHeading, creature);
-    //                            nextSpawningFromCells.Add(newCell);
-    //                            cellList.Add(cell);
-    //                        } else {
-    //                            if (residentCell.buildOrderIndex > buildOrderIndex) {
-    //                                throw new System.Exception("Trying to spawn a cell at a location where a cell of higher build order are allready present.");
-    //                            } else if (residentCell.buildOrderIndex == buildOrderIndex) {
-    //                                //trying to spawn a cell where ther is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
-    //                                GameObject.Destroy(residentCell.gameObject);
-    //                                cellList.Remove(residentCell);
-    //                                cellMap.RemoveCellAtGridPosition(residentCell.mapPosition);
-    //                                nextSpawningFromCells.Remove(residentCell);
-    //                                cellMap.MarkAsIllegal(residentCell.mapPosition);
-    //                            } else {
-    //                                // trying to spawn a cell where there is one with lowerBuildOrder index, no action needed
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //        spawningFromCells.Clear();
-    //        spawningFromCells.AddRange(nextSpawningFromCells);
-    //        nextSpawningFromCells.Clear();
-    //        if (buildOrderIndex == 99) {
-    //            throw new System.Exception("Creature generation going on for too long");
-    //        }
-    //    }
-
-    //    ConnectCells();
-    //    edges.GenerateWings(cellList);
-    //    UpdateSpringsFrequenze();
-    //}
-
-
 }

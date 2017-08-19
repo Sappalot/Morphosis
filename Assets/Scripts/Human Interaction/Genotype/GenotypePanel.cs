@@ -59,7 +59,6 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
             return;
         }
 
-        //genePanel.gene = m_genotype.genome[0];
         genePanel.UpdateRepresentation();
         GenomePanel.instance.genotype = genotype;
     }

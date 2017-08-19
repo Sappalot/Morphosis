@@ -12,9 +12,16 @@ public class Genotype : MonoBehaviour {
 
     public static int root = 0;
     public static int genomeLength = 21;
-    private Gene[] genes = new Gene[genomeLength];
-    private CellMap cellMap = new CellMap();
-    private List<Cell> cellList = new List<Cell>();
+    private Gene[] genes = new Gene[genomeLength]; //One gene can give rise to many geneCells
+    public CellMap geneCellMap = new CellMap();
+    public List<Cell> geneCellList = new List<Cell>();
+
+    public int geneCellCount {
+        get {
+            return geneCellList.Count;
+        }
+
+    }
 
     public void GenerateJellyfish() {
         CreateEmptyGenome();
@@ -136,8 +143,8 @@ public class Genotype : MonoBehaviour {
     //}
 
     public void SetHighlite(bool on) {
-        for (int index = 0; index < cellList.Count; index++) {
-            cellList[index].ShowSelection(on);
+        for (int index = 0; index < geneCellList.Count; index++) {
+            geneCellList[index].ShowSelection(on);
         }
     }
 
@@ -156,27 +163,25 @@ public class Genotype : MonoBehaviour {
                     if (geneReference != null) {
                         int referenceBindHeading = (spawningFromCell.bindHeading + referenceCardinalIndex + 5) % 6; //!!
                         Gene referenceGene = geneReference.gene;
-                        Vector2i referenceCellMapPosition = cellMap.GetGridNeighbourGridPosition(spawningFromCell.mapPosition, referenceBindHeading);
+                        Vector2i referenceCellMapPosition = geneCellMap.GetGridNeighbourGridPosition(spawningFromCell.mapPosition, referenceBindHeading);
 
-                        if (cellMap.IsLegalPosition(referenceCellMapPosition)) {
-                            Cell residentCell = cellMap.GetCell(referenceCellMapPosition);
+                        if (geneCellMap.IsLegalPosition(referenceCellMapPosition)) {
+                            Cell residentCell = geneCellMap.GetCell(referenceCellMapPosition);
                             if (residentCell == null) {
                                 //only time we spawn a cell if there is a vacant spot
                                 Cell newCell = SpawnGene(referenceGene, referenceCellMapPosition, buildOrderIndex, referenceBindHeading, geneReference.flipSide, creature);
                                 nextSpawningFromCells.Add(newCell);
-                                cellList.Add(spawningFromCell);
-                            }
-                            else {
+                                geneCellList.Add(spawningFromCell);
+                            } else {
                                 if (residentCell.buildOrderIndex > buildOrderIndex) {
                                     throw new System.Exception("Trying to spawn a cell at a location where a cell of higher build order are allready present.");
-                                }
-                                else if (residentCell.buildOrderIndex == buildOrderIndex) {
+                                } else if (residentCell.buildOrderIndex == buildOrderIndex) {
                                     //trying to spawn a cell where ther is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
                                     GameObject.Destroy(residentCell.gameObject);
-                                    cellList.Remove(residentCell);
-                                    cellMap.RemoveCellAtGridPosition(residentCell.mapPosition);
+                                    geneCellList.Remove(residentCell);
+                                    geneCellMap.RemoveCellAtGridPosition(residentCell.mapPosition);
                                     nextSpawningFromCells.Remove(residentCell);
-                                    cellMap.MarkAsIllegal(residentCell.mapPosition);
+                                    geneCellMap.MarkAsIllegal(residentCell.mapPosition);
                                 } else {
                                     // trying to spawn a cell where there is one with lowerBuildOrder index, no action needed
                                 }
@@ -188,9 +193,9 @@ public class Genotype : MonoBehaviour {
             spawningFromCells.Clear();
             spawningFromCells.AddRange(nextSpawningFromCells);
             nextSpawningFromCells.Clear();
-        //    if (buildOrderIndex == 99) {
-        //        throw new System.Exception("Creature generation going on for too long");
-         //   }
+            if (buildOrderIndex == 99) {
+                throw new System.Exception("Creature generation going on for too long");
+            }
         }
 
         //ConnectCells();
@@ -203,8 +208,8 @@ public class Genotype : MonoBehaviour {
         cells.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
         SetHighlite(CreatureSelectionPanel.instance.IsSelected(creature));
 
-        for (int index = 0; index < cellList.Count; index++) {
-            cellList[index].EvoFixedUpdate(0, false);
+        for (int index = 0; index < geneCellList.Count; index++) {
+            geneCellList[index].EvoFixedUpdate(0, false);
         }
     }
 
@@ -215,13 +220,13 @@ public class Genotype : MonoBehaviour {
         Cell cell = null;
 
         if (gene.type == CellTypeEnum.Jaw) {
-            cell = (Instantiate(jawCellPrefab, cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
+            cell = (Instantiate(jawCellPrefab, geneCellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
         } else if (gene.type == CellTypeEnum.Leaf) {
-            cell = (Instantiate(leafCellPrefab, cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
+            cell = (Instantiate(leafCellPrefab, geneCellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
         } else if (gene.type == CellTypeEnum.Muscle) {
-            cell = (Instantiate(muscleCellPrefab, cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
+            cell = (Instantiate(muscleCellPrefab, geneCellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
         } else if (gene.type == CellTypeEnum.Vein) {
-            cell = (Instantiate(veinCellPrefab, cellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
+            cell = (Instantiate(veinCellPrefab, geneCellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
         }
 
         cell.RemovePhysicsComponents();
@@ -238,18 +243,18 @@ public class Genotype : MonoBehaviour {
         cell.flipSide = flipSide;
         cell.creature = creature;
 
-        cellMap.SetCell(mapPosition, cell);
-        cellList.Add(cell);
+        geneCellMap.SetCell(mapPosition, cell);
+        geneCellList.Add(cell);
 
         return cell;
     }
 
     private void Clear() {
-        for (int index = 0; index < cellList.Count; index++) {
-            Destroy(cellList[index].gameObject);
+        for (int index = 0; index < geneCellList.Count; index++) {
+            Destroy(geneCellList[index].gameObject);
         }
-        cellList.Clear();
-        cellMap.Clear();
+        geneCellList.Clear();
+        geneCellMap.Clear();
 
         cells.localPosition = Vector3.zero;
         cells.localRotation = Quaternion.identity;
