@@ -88,7 +88,10 @@ public class GenePanel : MonoSingleton<GenePanel> {
         }
 
         //Hack
-        CreatureSelectionPanel.instance.selection[0].genotype.Generate(CreatureSelectionPanel.instance.selection[0]);
+        if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+            CreatureSelectionPanel.instance.selection[0].genotype.Generate(CreatureSelectionPanel.instance.selection[0]);
+            CreatureSelectionPanel.instance.selection[0].genotype.SetHighlite(true);
+        }
     }
 
     //----
@@ -102,7 +105,9 @@ public class GenePanel : MonoSingleton<GenePanel> {
         } else if (cellTypeDropdown.value == 3) {
             gene.type = CellTypeEnum.Vein;
         }
-        GenotypePanel.instance.UpdateRepresentation();
+        if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+            GenotypePanel.instance.UpdateRepresentation();
+        }
     }
 
     private ArrangementPanel arrangementPanelAskingForReference;

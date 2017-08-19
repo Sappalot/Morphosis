@@ -135,6 +135,11 @@ public class Genotype : MonoBehaviour {
     //    }
     //}
 
+    public void SetHighlite(bool on) {
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].ShowSelection(on);
+        }
+    }
 
     public void Generate(Creature creature) {
         Clear();
@@ -192,7 +197,9 @@ public class Genotype : MonoBehaviour {
         cells.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
         //cells.rotat
 
+        //SetHighlite(true);
 
+        SetHighlite(CreatureSelectionPanel.instance.IsSelected(creature));
 
         //ConnectCells();
         //edges.GenerateWings(cellList);

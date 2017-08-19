@@ -73,6 +73,7 @@ public class Creature : MonoBehaviour {
 
     public void SetHighlite(bool on) {
         phenotype.SetHighlite(on);
+        genotype.SetHighlite(on);
     }
 }
 

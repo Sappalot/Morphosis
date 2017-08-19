@@ -89,7 +89,7 @@ public abstract class Cell : MonoBehaviour {
         springList.Add( southWestSpring );
     }
 
-    private void Start() {
+    private void Awake() {
         ShowSelection(false);
     }
 
