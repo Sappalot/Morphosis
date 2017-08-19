@@ -68,14 +68,14 @@ public class Creature : MonoBehaviour {
 
         //phenotype.Generate(genotype, this, offset); // TODO: Load from disc
         phenotype.Setup(this, offset);
-        phenotype.TryGrow(22);
+        phenotype.TryGrowFully();
 
         number++;
     }
 
     public void RegeneratePhenotype() {
         phenotype.Setup(this, phenotype.rootCell.transform.position);
-        phenotype.TryGrow(22);
+        phenotype.TryGrowFully();
     }
 
     public void TryGrow(int cellCount = 1) {

@@ -85,6 +85,10 @@ public class Phenotype : MonoBehaviour {
         spawnPositionRoot = spawnPosition;
     }
 
+    public void TryGrowFully() {
+        TryGrow(genotype.geneCellCount);
+    }
+
     public void TryGrow(int cellCount) {
         int growCellCount = 0;
         if (cellCount < 1 || this.cellCount >= genotype.geneCellCount) {
