@@ -201,6 +201,10 @@ public class Genotype : MonoBehaviour {
 
         SetHighlite(CreatureSelectionPanel.instance.IsSelected(creature));
 
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].EvoFixedUpdate(0, false);
+        }
+
         //ConnectCells();
         //edges.GenerateWings(cellList);
         //UpdateSpringsFrequenze();

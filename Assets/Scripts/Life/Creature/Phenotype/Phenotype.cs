@@ -55,7 +55,7 @@ public class Phenotype : MonoBehaviour {
         edges.EvoFixedUpdate(velocity, creature);
 
         for (int index = 0; index < cellList.Count; index++) {
-            cellList[index].EvoFixedUpdate(fixedTime);
+            cellList[index].EvoFixedUpdate(fixedTime, true);
         }
   
     }

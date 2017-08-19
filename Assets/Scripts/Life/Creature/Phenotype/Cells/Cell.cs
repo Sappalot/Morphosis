@@ -97,7 +97,7 @@ public abstract class Cell : MonoBehaviour {
         //spriteTransform.localRotation = Quaternion.Euler(0f, 0f, CardinalDirectionHelper.ToAngle(heading));
     }
 
-    public void EvoFixedUpdate(float fixedTime) {
+    public void EvoFixedUpdate(float fixedTime, bool updatePhysics) {
         //Optimize further
         if (groups > 1) {
             UpdateNeighbourVectors(); //optimize further
@@ -113,8 +113,6 @@ public abstract class Cell : MonoBehaviour {
         UpdateRadius(fixedTime);
         UpdateSpringLengths(); // It is costy to update spring length
     }
-
-
 
     public int GetDirectionOfNeighbourCell(Cell cell) {
         for (int index = 0; index < 6; index++) {
