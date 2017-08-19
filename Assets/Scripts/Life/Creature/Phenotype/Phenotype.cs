@@ -64,7 +64,7 @@ public class Phenotype : MonoBehaviour {
         edges.EvoFixedUpdate(velocity, creature);
 
         for (int index = 0; index < cellList.Count; index++) {
-            cellList[index].EvoFixedUpdate(fixedTime, true);
+            cellList[index].EvoFixedUpdate(fixedTime);
         }
   
     }
@@ -91,18 +91,35 @@ public class Phenotype : MonoBehaviour {
             return;
         }
         if (cellList.Count == 0) {
-            rootCell = SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature, spawnPositionRoot, Quaternion.identity);
+            rootCell = SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature, spawnPositionRoot, true);
+            EvoFixedUpdate(creature, 0f);
             growCellCount++;
         }
         genotype.geneCellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
-
 
         foreach (Cell geneCell in genotype.geneCellList) {
             if (growCellCount >= cellCount) {
                 break;
             }
             if (!IsCellBuiltForGene(geneCell) && IsCellBuiltAtNeighbourPosition(geneCell.mapPosition)) {
-                Cell newCell = SpawnCell(geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindHeading, geneCell.flipSide, creature, rootCell.transform.position, rootCell.transform.localRotation);
+                Vector3 averagePosition = Vector3.zero;
+                int positionCount = 0;
+                for (int neighbourIndex = 0; neighbourIndex < 6; neighbourIndex++) {
+                    Cell neighbour = cellMap.GetGridNeighbourCell(geneCell.mapPosition, neighbourIndex);
+                    if (neighbour != null) {
+                        float neighbourDiffFromBindAngle = neighbour.heading - AngleUtil.ToAngle(neighbour.bindHeading); // -90 since we wan't 0 to be straigt up 
+                        int indexToMe = CardinaIndexToNeighbour(neighbour, geneCell);
+                        float meFromNeightbourBindPose = AngleUtil.ToAngle(indexToMe);
+                        float meFromNeighbour = (neighbourDiffFromBindAngle + meFromNeightbourBindPose) % 360f;
+                        float distance = geneCell.radius + neighbour.radius;
+                        averagePosition += neighbour.transform.position + new Vector3(1f * Mathf.Cos(meFromNeighbour * Mathf.Deg2Rad), 1f * Mathf.Sin(meFromNeighbour * Mathf.Deg2Rad), 0f);
+                        positionCount++;
+                    }
+                }
+                Cell newCell = SpawnCell(geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindHeading, geneCell.flipSide, creature, averagePosition / positionCount, false);
+                //EvoFixedUpdate(creature, 0f);
+                newCell.UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
+                newCell.UpdateRotation(); //costy, update only if cell has direction and is in frustum
                 growCellCount++;
             }
         }
@@ -110,6 +127,17 @@ public class Phenotype : MonoBehaviour {
         ConnectCells();
         edges.GenerateWings(cellList);
         UpdateSpringsFrequenze();
+        SetHighlite(CreatureSelectionPanel.instance.IsSelected(creature));
+    }
+
+    private int CardinaIndexToNeighbour(Cell from, Cell to) {
+        for (int index = 0; index < 6; index++) {
+            Vector2i neighbourPosition = cellMap.GetGridNeighbourGridPosition(from.mapPosition, index);
+            if (neighbourPosition.x == to.mapPosition.x && neighbourPosition.y == to.mapPosition.y) {
+                return index;
+            }
+        }
+        return -1;
     }
 
     public void TryShrink(int cellCount) {
@@ -121,14 +149,21 @@ public class Phenotype : MonoBehaviour {
 
         DeleteCell(cellList[cellList.Count - 1]);
         shrinkCellCount++;
-
-        ConnectCells();
-        edges.GenerateWings(cellList);
-        UpdateSpringsFrequenze();
     }
 
     private bool IsCellBuiltForGene(Cell gene) {
         return cellMap.HasCell(gene.mapPosition);
+    }
+
+    private List<Cell> GetBuiltNeighbourCells(Vector2i gridPosition) {
+        List<Cell> neighbours = new List<Cell>();
+        for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+            Cell neighbour = cellMap.GetCell(cellMap.GetGridNeighbourGridPosition(gridPosition, cardinalIndex));
+            if (neighbour != null) {
+                neighbours.Add(neighbour);
+            }
+        }
+        return neighbours;
     }
 
     private bool IsCellBuiltAtNeighbourPosition(Vector2i gridPosition) {
@@ -152,17 +187,19 @@ public class Phenotype : MonoBehaviour {
     // 1 Spawn cell from prefab
     // 2 Setup its properties according to parameters
     // 3 Add cell to list and CellMap
-    private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature, Vector3 position, Quaternion rotation) {
+    private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature, Vector3 position, bool useMapPosition) {
         Cell cell = null;
 
+        Vector3 spawnPosition = (useMapPosition ? genotype.geneCellMap.ToPosition(mapPosition) : Vector3.zero) + position;
+
         if (gene.type == CellTypeEnum.Jaw) {
-            cell = (Instantiate(jawCellPrefab, genotype.geneCellMap.ToPosition(mapPosition) + position, rotation) as Cell);
+            cell = (Instantiate(jawCellPrefab, spawnPosition, Quaternion.identity) as Cell);
         } else if (gene.type == CellTypeEnum.Leaf) {
-            cell = (Instantiate(leafCellPrefab, genotype.geneCellMap.ToPosition(mapPosition) + position, rotation) as Cell);
+            cell = (Instantiate(leafCellPrefab, spawnPosition, Quaternion.identity) as Cell);
         } else if (gene.type == CellTypeEnum.Muscle) {
-            cell = (Instantiate(muscleCellPrefab, genotype.geneCellMap.ToPosition(mapPosition) + position, rotation) as Cell);
+            cell = (Instantiate(muscleCellPrefab, spawnPosition, Quaternion.identity) as Cell);
         } else if (gene.type == CellTypeEnum.Vein) {
-            cell = (Instantiate(veinCellPrefab, genotype.geneCellMap.ToPosition(mapPosition) + position, rotation) as Cell);
+            cell = (Instantiate(veinCellPrefab, spawnPosition, Quaternion.identity) as Cell);
         }
 
         if (cell == null) {

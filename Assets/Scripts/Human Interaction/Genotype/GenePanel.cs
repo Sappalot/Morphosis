@@ -91,7 +91,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
         if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
             CreatureSelectionPanel.instance.selection[0].genotype.Generate(CreatureSelectionPanel.instance.selection[0]);
             CreatureSelectionPanel.instance.selection[0].genotype.UpdateGraphics(CreatureSelectionPanel.instance.selection[0]);
-        }
+        } 
     }
 
     //----

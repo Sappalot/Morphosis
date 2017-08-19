@@ -5,6 +5,7 @@ public class MuscleCell : Cell {
 
     public MuscleCell() : base() {
         springFrequenzy = 20f;
+        springDamping = 11f;
     }
 
     float modularTime = 0f;
@@ -134,29 +135,19 @@ public class MuscleCell : Cell {
     }
 
     public override void UpdateSpringFrequenzy() {
-
-        if (HasNeighbour(CardinalDirectionEnum.northEast)) {
-            northEastNeighbour.cell.GetSpring(this).frequency = this.springFrequenzy;
-        }
-
         if (HasNeighbour(CardinalDirectionEnum.north)) {
-            northSpring.frequency = this.springFrequenzy;
-        }
-
-        if (HasNeighbour(CardinalDirectionEnum.northWest)) {
-            northWestNeighbour.cell.GetSpring(this).frequency = this.springFrequenzy;
+            northSpring.frequency = (this.springFrequenzy + northWestNeighbour.cell.springFrequenzy) / 2f;
+            northSpring.dampingRatio = (this.springDamping + northWestNeighbour.cell.springDamping) / 2f;
         }
 
         if (HasNeighbour(CardinalDirectionEnum.southWest)) {
-            southWestSpring.frequency = this.springFrequenzy;
-        }
-
-        if (HasNeighbour(CardinalDirectionEnum.south)) {
-            southNeighbour.cell.GetSpring(this).frequency = this.springFrequenzy;
+            southWestSpring.frequency = (this.springFrequenzy + southWestNeighbour.cell.springFrequenzy) / 2f;
+            southWestSpring.dampingRatio = (this.springDamping + southWestNeighbour.cell.springDamping) / 2f;
         }
 
         if (HasNeighbour(CardinalDirectionEnum.southEast)) {
-            southEastSpring.frequency = this.springFrequenzy;
+            southEastSpring.frequency = (this.springFrequenzy + southEastNeighbour.cell.springFrequenzy) / 2f;
+            southEastSpring.dampingRatio = (this.springDamping + southEastNeighbour.cell.springDamping) / 2f;
         }
     }
 

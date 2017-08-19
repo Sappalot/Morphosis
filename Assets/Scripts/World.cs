@@ -21,8 +21,8 @@ public class World : MonoSingleton<World> {
 
     public void Restart() {
         KillAllCreatures();
-        for (int y = 1; y <= 8; y++) {
-            for (int x = 1; x <= 8; x++) {
+        for (int y = 1; y <= 1; y++) {
+            for (int x = 1; x <= 1; x++) {
                 life.SpawnCreatureEmbryo(new Vector3(x * 15f, 100f + y * 15, 0f));
             }
         }

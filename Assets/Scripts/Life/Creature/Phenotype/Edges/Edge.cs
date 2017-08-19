@@ -107,7 +107,6 @@ public class Edge : MonoBehaviour {
             velocityArrow.SetActive(false);
             forceArrow.SetActive(false);
         }
-
     }
 
     public static float maxForce = 0f;

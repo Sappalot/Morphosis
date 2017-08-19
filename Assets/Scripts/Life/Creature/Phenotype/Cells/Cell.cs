@@ -10,6 +10,7 @@ public abstract class Cell : MonoBehaviour {
 
     //  The direction the cell is facing in creature space
     public int bindHeading = 0;
+    public float heading;
 
     public string id;
     public int groups = 0;
@@ -19,6 +20,7 @@ public abstract class Cell : MonoBehaviour {
     public SpringJoint2D southEastSpring;
     public SpringJoint2D southWestSpring;
     public float springFrequenzy = 5f;
+    public float springDamping = 11f;
 
     public float timeOffset;
 
@@ -108,7 +110,7 @@ public abstract class Cell : MonoBehaviour {
         //spriteTransform.localRotation = Quaternion.Euler(0f, 0f, CardinalDirectionHelper.ToAngle(heading));
     }
 
-    public void EvoFixedUpdate(float fixedTime, bool updatePhysics) {
+    public void EvoFixedUpdate(float fixedTime) {
         //Optimize further
         if (groups > 1) {
             UpdateNeighbourVectors(); //optimize further
@@ -317,10 +319,10 @@ public abstract class Cell : MonoBehaviour {
         return index_Neighbour[index % 6].cell != null;
     }
 
-    public float heading;
+    
 
     ////  Updates world space rotation (heading) derived from neighbour position relative to this
-    private void UpdateRotation() {
+    public void UpdateRotation() {
         UpdateNeighbourAngles();
 
         float angleDiffFromBindpose = 0; // CardinalDirectionIndex.ToAngle(heading);
@@ -351,7 +353,7 @@ public abstract class Cell : MonoBehaviour {
         }
     }
 
-    private void UpdateNeighbourVectors() {
+    public void UpdateNeighbourVectors() {
         for (int index = 0; index < 6; index++) {
             if (HasNeighbourCell(index)) {
                 GetNeighbour(index).coreToThis = GetNeighbourCell(index).GetPosition() - transform.position;

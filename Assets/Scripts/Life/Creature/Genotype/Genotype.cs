@@ -198,9 +198,6 @@ public class Genotype : MonoBehaviour {
             }
         }
 
-        //ConnectCells();
-        //edges.GenerateWings(cellList);
-        //UpdateSpringsFrequenze();
     }
 
     public void UpdateGraphics(Creature creature) {
@@ -209,7 +206,7 @@ public class Genotype : MonoBehaviour {
         SetHighlite(CreatureSelectionPanel.instance.IsSelected(creature));
 
         for (int index = 0; index < geneCellList.Count; index++) {
-            geneCellList[index].EvoFixedUpdate(0, false);
+            geneCellList[index].EvoFixedUpdate(0);
         }
     }
 
