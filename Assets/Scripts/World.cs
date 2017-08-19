@@ -48,7 +48,7 @@ public class World : MonoSingleton<World> {
             life.EvoUpdate();
         } else if (HUD.instance.timeControllValue == 1) {
             Time.timeScale = 1;
-            //life.EvoUpdate();
+            life.EvoUpdate();
         } else {
             Time.timeScale = 4;
         }

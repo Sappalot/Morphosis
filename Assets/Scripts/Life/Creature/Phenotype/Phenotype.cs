@@ -37,7 +37,7 @@ public class Phenotype : MonoBehaviour {
     }
 
     public void EvoUpdate() {
-        EvoUpdateCells();
+        //EvoUpdateCells();
         edges.EvoUpdate();
     }
 
