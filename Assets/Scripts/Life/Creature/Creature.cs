@@ -43,39 +43,24 @@ public class Creature : MonoBehaviour {
     public void SwitchToPhenotype() {
         phenotype.gameObject.SetActive(true);
         genotype.gameObject.SetActive(false);
-        RegeneratePhenotype();
+        phenotype.Generate(this);
     }
 
     public void SwitchToGenotype() {
         phenotype.gameObject.SetActive(false);
-        genotype.Generate(this);
-        genotype.UpdateGraphics(this);
+        genotype.UpdateTransformAndHighlite(this);
         genotype.gameObject.SetActive(true);
     }
 
-    public void GenerateGenotypeAndPhenotype(Vector3 offset) {
-        //float rnd = Random.Range(0f, 2f);
+    public void GenerateGenotypeAndPhenotype(Vector3 position) {
+
         genotype.GenerateJellyfish(); // TODO: Load from disc
-        //if (number > 0) {
-        //    genotype.GenerateJellyfish();
-        //} else {
-        //    genotype.GenerateString();
-        //}
-
+        genotype.isDirty = true;
         genotype.Generate(this); // Generating genotype here caused Unity freeze ;/
-                                 //Debug.Log("genotype: " + this.ToString());
-                                 //genotype.UpdateGraphics(this);
 
-        //phenotype.Generate(genotype, this, offset); // TODO: Load from disc
-        phenotype.Setup(this, offset);
-        phenotype.TryGrowFully();
-
+        phenotype.isDirty = true;
+        phenotype.Generate(this, position);
         number++;
-    }
-
-    public void RegeneratePhenotype() {
-        phenotype.Setup(this, phenotype.rootCell.transform.position);
-        phenotype.TryGrowFully();
     }
 
     public void TryGrow(int cellCount = 1) {

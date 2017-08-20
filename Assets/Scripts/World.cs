@@ -26,6 +26,7 @@ public class World : MonoSingleton<World> {
                 life.SpawnCreatureEmbryo(new Vector3(x * 15f, 100f + y * 15, 0f));
             }
         }
+        CreatureEditModePanel.instance.Restart();
     }
 
     private void Start () {
@@ -40,7 +41,6 @@ public class World : MonoSingleton<World> {
         //life.SpawnCreatureEmbryo(new Vector3(10f, 30f, 0f));
     }
 
-    private bool isShowingPhenotypes = true;
     private void Update() {
         //Handle time from here to not get locked out
         if (HUD.instance.timeControllValue == 0 || CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
@@ -51,27 +51,11 @@ public class World : MonoSingleton<World> {
             life.EvoUpdate();
         } else {
             Time.timeScale = 4;
-        }
-
-        if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype && isShowingPhenotypes) {
-            isShowingPhenotypes = false;
-            ShowGenotypes();
-        }
-        if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype && !isShowingPhenotypes) {
-            isShowingPhenotypes = true;
-            ShowPhenotypes();
+            life.EvoUpdate();
         }
     }
 
-    private int frameCounter = 0;
-
     private void FixedUpdate() {
-        //frameCounter++;
-        //Debug.Log(frameCounter);
-        //if (frameCounter == 80) {
-        //    Restart();
-        //}
-
         if (HUD.instance.timeControllValue > 0) {
             fixedTime += Time.fixedDeltaTime;
             life.EvoFixedUpdate(fixedTime);

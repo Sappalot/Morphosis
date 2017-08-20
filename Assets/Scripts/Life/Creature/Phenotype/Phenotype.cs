@@ -12,6 +12,7 @@ public class Phenotype : MonoBehaviour {
     public MuscleCell muscleCellPrefab;
     public VeinCell veinCellPrefab;
 
+    public bool isDirty = true;
     public float timeOffset;
 
     public GameObject cells;
@@ -25,10 +26,9 @@ public class Phenotype : MonoBehaviour {
     private List<Cell> cellList = new List<Cell>();
     private Genotype genotype;
     private Vector3 spawnPositionRoot;
+    private float headingAngleRoot;
     private Creature creature;
     private CellMap cellMap = new CellMap();
-
-    private int update = 0;
 
     public int cellCount {
         get {
@@ -66,16 +66,34 @@ public class Phenotype : MonoBehaviour {
         for (int index = 0; index < cellList.Count; index++) {
             cellList[index].EvoFixedUpdate(fixedTime);
         }
-  
+
     }
 
     public void ShuffleCellUpdateOrder() {
         ListUtils.Shuffle(cellList);
     }
 
+    public void Generate(Creature creature) {
+        if (isDirty) {
+
+            Setup(creature, rootCell.transform.position, rootCell.heading);
+            TryGrowFully();
+            isDirty = false;
+        }
+    }
+
+    public void Generate(Creature creature, Vector3 position) {
+        if (isDirty) {
+            Setup(creature, position, 90f);
+            
+            TryGrowFully();
+            isDirty = false;
+        }
+    }
+
     //Create cellMap so that 
     //SpawnPosition is the position where the center of the root cell wil appear in word space
-    public void Setup(Creature creature, Vector3 spawnPosition) {
+    private void Setup(Creature creature, Vector3 spawnPosition, float spawnAngle) {
         timeOffset = Random.Range(0f, 7f); //TODO: Remove
 
         Clear();        
@@ -83,6 +101,7 @@ public class Phenotype : MonoBehaviour {
         this.creature = creature;
         genotype = creature.genotype; 
         spawnPositionRoot = spawnPosition;
+        headingAngleRoot = spawnAngle;
     }
 
     public void TryGrowFully() {
@@ -96,7 +115,10 @@ public class Phenotype : MonoBehaviour {
         }
         if (cellList.Count == 0) {
             rootCell = SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature, spawnPositionRoot, true);
+            
             EvoFixedUpdate(creature, 0f);
+            rootCell.heading = headingAngleRoot;
+            rootCell.angleDiffFromBindpose = headingAngleRoot - 90f;
             growCellCount++;
         }
         genotype.geneCellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
@@ -111,16 +133,15 @@ public class Phenotype : MonoBehaviour {
                 for (int neighbourIndex = 0; neighbourIndex < 6; neighbourIndex++) {
                     Cell neighbour = cellMap.GetGridNeighbourCell(geneCell.mapPosition, neighbourIndex);
                     if (neighbour != null) {
-                        float neighbourDiffFromBindAngle = neighbour.heading - AngleUtil.ToAngle(neighbour.bindHeading); // -90 since we wan't 0 to be straigt up 
                         int indexToMe = CardinaIndexToNeighbour(neighbour, geneCell);
                         float meFromNeightbourBindPose = AngleUtil.ToAngle(indexToMe);
-                        float meFromNeighbour = (neighbourDiffFromBindAngle + meFromNeightbourBindPose) % 360f;
+                        float meFromNeighbour = (neighbour.angleDiffFromBindpose + meFromNeightbourBindPose) % 360f;
                         float distance = geneCell.radius + neighbour.radius;
                         averagePosition += neighbour.transform.position + new Vector3(1f * Mathf.Cos(meFromNeighbour * Mathf.Deg2Rad), 1f * Mathf.Sin(meFromNeighbour * Mathf.Deg2Rad), 0f);
                         positionCount++;
                     }
                 }
-                Cell newCell = SpawnCell(geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindHeading, geneCell.flipSide, creature, averagePosition / positionCount, false);
+                Cell newCell = SpawnCell(geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, creature, averagePosition / positionCount, false);
                 //EvoFixedUpdate(creature, 0f);
                 newCell.UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
                 newCell.UpdateRotation(); //costy, update only if cell has direction and is in frustum
@@ -213,7 +234,7 @@ public class Phenotype : MonoBehaviour {
         cell.mapPosition = mapPosition;
         cell.buildOrderIndex = buildOrderIndex;
         cell.gene = gene;
-        cell.bindHeading = bindHeading;
+        cell.bindCardinalIndex = bindHeading;
         cell.flipSide = flipSide;
         cell.timeOffset = this.timeOffset;
         cell.creature = creature;

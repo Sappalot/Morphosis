@@ -17,7 +17,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
         }
         set {
             m_gene = value;
-            UpdateRepresentation();
+            UpdateRepresentation(false);
         }
     }
     public ReferenceGraphics[] referenceGraphics;
@@ -45,7 +45,8 @@ public class GenePanel : MonoSingleton<GenePanel> {
         arrangementPanelTemplate.arrangementButtons.SetActive(false);
     }
 
-    public void UpdateRepresentation() {
+    public void UpdateRepresentation(bool changeToGenomeMade) {
+
         //Nothing to represent
         if (gene == null) {
             for (int index = 0; index < arrangementPanels.Length; index++) {
@@ -57,6 +58,9 @@ public class GenePanel : MonoSingleton<GenePanel> {
             circles.SetActive(false);
             return;
         }
+
+        if (GenomePanel.instance.genotype != null)
+            GenomePanel.instance.genotype.isDirty |= changeToGenomeMade;
 
         circles.SetActive(true);
 
@@ -90,12 +94,20 @@ public class GenePanel : MonoSingleton<GenePanel> {
         //Hack
         if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
             CreatureSelectionPanel.instance.selection[0].genotype.Generate(CreatureSelectionPanel.instance.selection[0]);
-            CreatureSelectionPanel.instance.selection[0].genotype.UpdateGraphics(CreatureSelectionPanel.instance.selection[0]);
+            CreatureSelectionPanel.instance.selection[0].genotype.UpdateTransformAndHighlite(CreatureSelectionPanel.instance.selection[0]);
+
+            CreatureSelectionPanel.instance.selection[0].phenotype.isDirty = true;
         } 
+    }
+
+    public void SetDropDownValue(int value) {
+
     }
 
     //----
     public void OnCellTypeDropdownChanged() {
+        bool trueChange = (int)gene.type != cellTypeDropdown.value;
+
         if (cellTypeDropdown.value == 0) {
             gene.type = CellTypeEnum.Jaw;
         } else if (cellTypeDropdown.value == 1) {
@@ -105,8 +117,9 @@ public class GenePanel : MonoSingleton<GenePanel> {
         } else if (cellTypeDropdown.value == 3) {
             gene.type = CellTypeEnum.Vein;
         }
-        if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
-            GenotypePanel.instance.UpdateRepresentation();
+        
+        if (trueChange && CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+            GenotypePanel.instance.UpdateRepresentation(trueChange);
         }
     }
 

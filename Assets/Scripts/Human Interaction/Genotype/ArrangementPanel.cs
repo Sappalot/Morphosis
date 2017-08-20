@@ -151,95 +151,98 @@ public class ArrangementPanel : MonoBehaviour {
     }
 
     public void OnClickEnabledToggle(bool value) {
+        bool trueChange = arrangement.isEnabled != value;
         arrangement.isEnabled = value;
         //arrangementButtons.SetActive(value);
 
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(trueChange);
+
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedCenterCircle() {
         arrangement.CycleArrangementType();
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(true);
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickIncreaseGap() {
         arrangement.IncreaseGap();
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(true);
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickDecreseGap() {
         arrangement.DecreseGap();
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(true);
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedIncreasRefCount() {
         arrangement.IncreasRefCount();
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(true);
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedDecreasseRefCount() {
         arrangement.DecreasseRefCount();
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(true);
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedAngleCounterClowkwise() {
         arrangement.TurnArrowCounterClowkwise();
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(true);
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedAngleClowkwise() {
         arrangement.TurnArrowClowkwise();
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(true);
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedFlipSame() {
         arrangement.flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same;
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(true);
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedFlipOpposite() {
         arrangement.flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Opposite;
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(true);
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedFlipBlackToArrow() {
         arrangement.flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow;
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(true);
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnClickedFlipWhiteToArrow() {
         arrangement.flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(true);
         GenomePanel.instance.UpdateRepresentation();
     }
 
     public void OnTogglePairs(bool value) {
+        bool trueChange = arrangement.flipPairsEnabled != value;
         arrangement.flipPairsEnabled = value;
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(trueChange);
         GenomePanel.instance.UpdateRepresentation();
     }
 
@@ -269,7 +272,7 @@ public class ArrangementPanel : MonoBehaviour {
     public void SetGeneReference(Gene gene) {
         arrangement.referenceGene = gene;
         UpdateRepresentation();
-        genePanel.UpdateRepresentation();
+        genePanel.UpdateRepresentation(true);
     }
 
     private void UpdateFlipButtonColors() {

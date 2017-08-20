@@ -21,7 +21,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
             if (value != null) {
                 genePanel.gene = m_genotype.GetGeneAt(0);
             }
-            UpdateRepresentation();
+            UpdateRepresentation(false);
         }
     }
 
@@ -31,19 +31,19 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
     }
 
     private void Start() {
-        UpdateRepresentation();
+        UpdateRepresentation(false);
     }
 
     public void OnClickedBlackWhite() {
         viewedFlipSide = FlipSideEnum.BlackWhite;
         UpdateButtonImages();
-        UpdateRepresentation();
+        UpdateRepresentation(false);
     }
 
     public void OnClickedWhiteBlack() {
         viewedFlipSide = FlipSideEnum.WhiteBlack;
         UpdateButtonImages();
-        UpdateRepresentation();
+        UpdateRepresentation(false);
     }
 
     private void UpdateButtonImages() {
@@ -51,7 +51,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
         whiteBlackImage.color = (viewedFlipSide == FlipSideEnum.WhiteBlack) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
     }
 
-    public void UpdateRepresentation() {
+    public void UpdateRepresentation(bool changeToGenomeMade) {
         //Nothing to represent
         if (genotype == null) {
             genePanel.gene = null;
@@ -59,7 +59,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
             return;
         }
 
-        genePanel.UpdateRepresentation();
+        genotype.isDirty |= changeToGenomeMade;
+        genePanel.UpdateRepresentation(changeToGenomeMade);
         GenomePanel.instance.genotype = genotype;
     }
 }

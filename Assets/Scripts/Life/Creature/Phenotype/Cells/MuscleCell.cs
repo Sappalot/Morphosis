@@ -136,8 +136,8 @@ public class MuscleCell : Cell {
 
     public override void UpdateSpringFrequenzy() {
         if (HasNeighbour(CardinalDirectionEnum.north)) {
-            northSpring.frequency = (this.springFrequenzy + northWestNeighbour.cell.springFrequenzy) / 2f;
-            northSpring.dampingRatio = (this.springDamping + northWestNeighbour.cell.springDamping) / 2f;
+            northSpring.frequency = (this.springFrequenzy + northNeighbour.cell.springFrequenzy) / 2f;
+            northSpring.dampingRatio = (this.springDamping + northNeighbour.cell.springDamping) / 2f;
         }
 
         if (HasNeighbour(CardinalDirectionEnum.southWest)) {
