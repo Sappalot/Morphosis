@@ -98,16 +98,4 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
         }
         ClearSelection();
     }
-
-    public void OnGrowClicked() {
-        for (int index = 0; index < selection.Count; index++) {
-            selection[index].TryGrow();
-        }
-    }
-
-    public void OnShrinkClicked() {
-        for (int index = 0; index < selection.Count; index++) {
-            selection[index].TryShrink();
-        }
-    }
 }
