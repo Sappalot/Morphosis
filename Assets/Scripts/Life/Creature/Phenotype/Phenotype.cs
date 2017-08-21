@@ -75,7 +75,6 @@ public class Phenotype : MonoBehaviour {
 
     public void Generate(Creature creature) {
         if (isDirty) {
-
             Setup(creature, rootCell.transform.position, rootCell.heading);
             TryGrowFully();
             isDirty = false;
@@ -94,7 +93,7 @@ public class Phenotype : MonoBehaviour {
     //Create cellMap so that 
     //SpawnPosition is the position where the center of the root cell wil appear in word space
     private void Setup(Creature creature, Vector3 spawnPosition, float spawnAngle) {
-        timeOffset = Random.Range(0f, 7f); //TODO: Remove
+        timeOffset = 0f; // Random.Range(0f, 7f); //TODO: Remove
 
         Clear();        
 
@@ -119,6 +118,7 @@ public class Phenotype : MonoBehaviour {
             EvoFixedUpdate(creature, 0f);
             rootCell.heading = headingAngleRoot;
             rootCell.angleDiffFromBindpose = headingAngleRoot - 90f;
+            rootCell.triangleTransform.localRotation = Quaternion.Euler(0f, 0f, rootCell.heading); // Just updating graphics
             growCellCount++;
         }
         genotype.geneCellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
@@ -142,14 +142,15 @@ public class Phenotype : MonoBehaviour {
                     }
                 }
                 Cell newCell = SpawnCell(geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, creature, averagePosition / positionCount, false);
-                //EvoFixedUpdate(creature, 0f);
-                newCell.UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
+                ConnectCells(false, false); //We need to know our neighbours in order to update vectors correctly 
+                newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
                 newCell.UpdateRotation(); //costy, update only if cell has direction and is in frustum
+                newCell.UpdateFlipSide();
                 growCellCount++;
             }
         }
 
-        ConnectCells();
+        ConnectCells(true, true);
         edges.GenerateWings(cellList);
         UpdateSpringsFrequenze();
         SetHighlite(CreatureSelectionPanel.instance.IsSelected(creature));
@@ -167,13 +168,17 @@ public class Phenotype : MonoBehaviour {
 
     public void TryShrink(int cellCount) {
         int shrinkCellCount = 0;
-        if (this.cellCount == 1) {
-            return;
-        }
         cellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
-
-        DeleteCell(cellList[cellList.Count - 1]);
-        shrinkCellCount++;
+        for (int count = 0; count < cellCount; count++) {
+            if (this.cellCount == 1) {
+                return;
+            }
+            DeleteCell(cellList[cellList.Count - 1]);
+            shrinkCellCount++;
+        }
+        ConnectCells(true, true);
+        edges.GenerateWings(cellList);
+        UpdateSpringsFrequenze();
     }
 
     private bool IsCellBuiltForGene(Cell gene) {
@@ -204,9 +209,6 @@ public class Phenotype : MonoBehaviour {
         cellMap.RemoveCellAtGridPosition(cell.mapPosition);
         cellList.Remove(cell);
         Destroy(cell.gameObject);
-
-        ConnectCells();
-        edges.GenerateWings(cellList);
     }
 
     // 1 Spawn cell from prefab
@@ -245,7 +247,7 @@ public class Phenotype : MonoBehaviour {
         return cell;
     }
 
-    private void ConnectCells() {
+    private void ConnectCells(bool connectSprings, bool updateGroups) {
         for (int index = 0; index < cellList.Count; index++) {
             Cell cell = cellList[index];
             Vector2i center = cell.mapPosition;
@@ -257,8 +259,10 @@ public class Phenotype : MonoBehaviour {
                     cell.SetNeighbourCell(AngleUtil.ToCardinalDirection(direction), null);
                 }
             }
-            cell.UpdateSpringConnections();
-            cell.UpdateGroups();
+            if (connectSprings)
+                cell.UpdateSpringConnections();
+            if (updateGroups)
+                cell.UpdateGroups();
         }
     }
 

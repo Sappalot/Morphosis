@@ -8,9 +8,10 @@ public class MuscleCell : Cell {
         springDamping = 11f;
     }
 
-    float modularTime = 0f;
+    private float modularTime = 0f;
+    private float lastTime = 0;
+    private bool isContracting;
 
-    float lastTime = 0;
     public override void UpdateRadius(float fixedTime) {
         float muscleSpeed = creature.muscleSpeed;
         float radiusDiff = creature.muscleRadiusDiff;
@@ -35,7 +36,8 @@ public class MuscleCell : Cell {
         float deltaTime = fixedTime - lastTime;
         lastTime = fixedTime;
 
-        float radiusGoal = 0.5f - 0.5f * radiusDiff + 0.5f * radiusDiff * Mathf.Sign(curveOffset + Mathf.Cos(timeOffset + modularTime / (2f * Mathf.PI)));
+        float expandContract = Mathf.Sign(curveOffset + Mathf.Cos(timeOffset + modularTime / (2f * Mathf.PI)));
+        float radiusGoal = 0.5f - 0.5f * radiusDiff + 0.5f * radiusDiff * expandContract;
 
         float goingSmallSpeed = 0.5f; //units per second
         float goingBigSpeed = 0.02f;
@@ -43,11 +45,13 @@ public class MuscleCell : Cell {
         //float goingBigSpeed = 0.5f;
 
         if (radiusGoal > radius) {
+            isContracting = false;
             radius = radius + goingBigSpeed * deltaTime;
             if (radius > radiusGoal)
                 radius = radiusGoal;
         }
         else {
+            isContracting = true;
             radius = radius - goingSmallSpeed * deltaTime;
             if (radius < radiusGoal)
                 radius = radiusGoal;
@@ -101,6 +105,10 @@ public class MuscleCell : Cell {
 
             gameObject.transform.localScale = new Vector3(radius * 2, radius * 2, 1f); //costy
         }*/
+    }
+    
+    public override bool IsContracting() {
+        return isContracting;
     }
 
     long seldom = 0;

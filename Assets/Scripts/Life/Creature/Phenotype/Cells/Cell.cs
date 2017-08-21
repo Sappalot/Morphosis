@@ -55,7 +55,7 @@ public abstract class Cell : MonoBehaviour {
     }
 
     public void SetTringleFlipSide(FlipSideEnum flip) {
-        triangleSprite.flipX = flip == FlipSideEnum.WhiteBlack;
+        triangleSprite.flipX = (flip == FlipSideEnum.WhiteBlack);
     }
 
     public Vector3 velocity {
@@ -151,6 +151,10 @@ public abstract class Cell : MonoBehaviour {
     virtual public void UpdateSpringLengths() { }
 
     virtual public void UpdateSpringFrequenzy() { }
+
+    virtual public bool IsContracting() {
+        return false;
+    }
 
     public void TurnHingeNeighboursInPlace() {
         //TODO Update turn springs only when nessesary 
@@ -342,7 +346,7 @@ public abstract class Cell : MonoBehaviour {
         }
     }
 
-    private void UpdateFlipSide() {
+    public void UpdateFlipSide() {
         SetTringleFlipSide(flipSide);
     }
 
