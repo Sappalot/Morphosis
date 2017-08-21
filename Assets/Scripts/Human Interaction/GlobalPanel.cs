@@ -18,7 +18,7 @@ public class GlobalPanel : MonoBehaviour {
         updateTimeCount += Time.unscaledDeltaTime;
         if (updateTimeCount > updatePeriod) {
             updateTimeCount = 0;
-            fps.text = string.Format("FPS: {0:F1}", frameCount / timeCount);
+            fps.text = timeCount > 0 ? string.Format("FPS: {0:F1}", frameCount / timeCount) : "FPS: ---";
             frameCount = 0;
             timeCount = 0;
         }        
