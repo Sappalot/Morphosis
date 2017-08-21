@@ -31,7 +31,9 @@ public class MuscleCell : Cell {
 
         //--------------------
 
-        modularTime += Time.fixedDeltaTime * muscleSpeed;
+        //modularTime += Time.fixedDeltaTime * muscleSpeed;
+
+        modularTime = fixedTime * muscleSpeed;
 
         float deltaTime = fixedTime - lastTime;
         lastTime = fixedTime;

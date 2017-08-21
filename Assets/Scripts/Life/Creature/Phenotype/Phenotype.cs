@@ -93,7 +93,7 @@ public class Phenotype : MonoBehaviour {
     //Create cellMap so that 
     //SpawnPosition is the position where the center of the root cell wil appear in word space
     private void Setup(Creature creature, Vector3 spawnPosition, float spawnAngle) {
-        timeOffset = 0f; // Random.Range(0f, 7f); //TODO: Remove
+        timeOffset =  Random.Range(0f, 7f); //TODO: Remove
 
         Clear();        
 
@@ -144,8 +144,8 @@ public class Phenotype : MonoBehaviour {
                 Cell newCell = SpawnCell(geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, creature, averagePosition / positionCount, false);
                 ConnectCells(false, false); //We need to know our neighbours in order to update vectors correctly 
                 newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
-                newCell.UpdateRotation(); //costy, update only if cell has direction and is in frustum
-                newCell.UpdateFlipSide();
+                newCell.UpdateRotation(); //Rotation is needed in order to place subsequent cells right
+                newCell.UpdateFlipSide(); // Just graphics
                 growCellCount++;
             }
         }
