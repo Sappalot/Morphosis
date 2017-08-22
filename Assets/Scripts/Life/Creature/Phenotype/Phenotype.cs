@@ -153,7 +153,8 @@ public class Phenotype : MonoBehaviour {
         ConnectCells(true, true);
         edges.GenerateWings(cellList);
         UpdateSpringsFrequenze();
-        SetHighlite(CreatureSelectionPanel.instance.IsSelected(creature));
+        ShowHighlite(CreatureSelectionPanel.instance.IsSelected(creature));
+        ShowTriangle(false);
     }
 
     private int CardinaIndexToNeighbour(Cell from, Cell to) {
@@ -291,9 +292,16 @@ public class Phenotype : MonoBehaviour {
         }
     }
 
-    public void SetHighlite(bool on) {
+    public void ShowHighlite(bool on) {
         for (int index = 0; index < cellList.Count; index++) {
             cellList[index].ShowSelection(on);
         }
     }
+
+    public void ShowTriangle(bool on) {
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].ShowTriangle(on);
+        }
+    }
+
 }

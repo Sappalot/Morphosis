@@ -28,26 +28,32 @@ public abstract class Cell : MonoBehaviour {
     [HideInInspector]
     public Creature creature;
 
-    public SpriteRenderer phenotypeSprite;
-    public SpriteRenderer genotypeSprite;
-    public SpriteRenderer selectionSprite;
-    public Transform triangleTransform;
     public SpriteRenderer triangleSprite;
+    public SpriteRenderer openCircleSprite;
+    public SpriteRenderer filledCircleSprite;
+    public SpriteRenderer selectionSprite;
+    public SpriteRenderer shadowSprite;
 
-    public void ShowPhenotype(bool show) {
-        phenotypeSprite.enabled = show;
+    public Transform triangleTransform;
+
+    public void ShowTriangle(bool show) {
+        triangleSprite.enabled = show;
     }
 
-    public void ShowGenotype(bool show) {
-        genotypeSprite.enabled = show;
+    public void ShowOpenCircle(bool show) {
+        openCircleSprite.enabled = show;
+    }
+
+    public void ShowFilledCircle(bool show) {
+        filledCircleSprite.enabled = show;
     }
 
     public void ShowSelection(bool on) {
         selectionSprite.enabled = on;
     }
 
-    public void ShowTriangle(bool show) {
-        triangleSprite.enabled = show;
+    public void ShowShadow(bool on) {
+        shadowSprite.enabled = on;
     }
 
     public void SetTringleHeadingAngle(float angle) {

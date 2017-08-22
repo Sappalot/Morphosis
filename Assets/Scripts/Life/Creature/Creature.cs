@@ -48,6 +48,7 @@ public class Creature : MonoBehaviour {
 
     public void SwitchToGenotype() {
         phenotype.gameObject.SetActive(false);
+        
         genotype.UpdateTransformAndHighlite(this);
         genotype.gameObject.SetActive(true);
     }
@@ -80,8 +81,8 @@ public class Creature : MonoBehaviour {
     }
 
     public void SetHighlite(bool on) {
-        phenotype.SetHighlite(on);
-        genotype.SetHighlite(on);
+        phenotype.ShowHighlite(on);
+        genotype.ShowSelectedGraphics(on);
     }
 }
 
