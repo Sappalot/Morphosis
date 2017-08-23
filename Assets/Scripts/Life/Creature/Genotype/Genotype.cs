@@ -41,6 +41,23 @@ public class Genotype : MonoBehaviour {
         return genes[index];
     }
 
+    public void ShowGeneCellsSelectedWithGene(Gene gene, bool on) {
+        List<Cell> geneCellsWithGene = GetGeneCellsWithGene(gene);
+        foreach (Cell cell in geneCellsWithGene) {
+            cell.ShowCellSelected(on);
+        }
+    }
+
+    public List<Cell> GetGeneCellsWithGene(Gene gene) {
+        List<Cell> cells = new List<Cell>();
+        foreach (Cell cell in geneCellList) {
+            if (cell.gene == gene) {
+                cells.Add(cell);
+            }
+        }
+        return cells;
+    }
+
     private void CreateJellyfish() {
         //Simple Jellyfish (FPS Reference creature, Don't ever change!!)
         //New Jellyfish using Arrangements
@@ -80,7 +97,7 @@ public class Genotype : MonoBehaviour {
         }
     }
 
-    public void ShowCellSelected(bool on) {
+    public void ShowGeneCellsSelected(bool on) {
         for (int index = 0; index < geneCellList.Count; index++) {
             geneCellList[index].ShowCellSelected(on);
         }
@@ -113,7 +130,7 @@ public class Genotype : MonoBehaviour {
                                     //only time we spawn a cell if there is a vacant spot
                                     Cell newCell = SpawnGeneCell(referenceGene, referenceCellMapPosition, buildOrderIndex, referenceBindHeading, geneReference.flipSide, creature);
                                     nextSpawningFromCells.Add(newCell);
-                                    geneCellList.Add(spawningFromCell);
+                                    //geneCellList.Add(spawningFromCell); //Why was this line typed, Removed 2017-08-23??
                                 } else {
                                     if (residentCell.buildOrderIndex > buildOrderIndex) {
                                         throw new System.Exception("Trying to spawn a cell at a location where a cell of higher build order are allready present.");
@@ -139,6 +156,7 @@ public class Genotype : MonoBehaviour {
                     throw new System.Exception("Creature generation going on for too long");
                 }
             }
+            ShowGeneCellsSelected(false);
             isDirty = false;
         }
     }
@@ -148,7 +166,6 @@ public class Genotype : MonoBehaviour {
         cells.localRotation = Quaternion.identity;
         cells.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
         ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
-        ShowCellSelected(false);
 
         for (int index = 0; index < geneCellList.Count; index++) {
             geneCellList[index].EvoFixedUpdate(0);

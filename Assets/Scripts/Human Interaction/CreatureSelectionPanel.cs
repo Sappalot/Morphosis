@@ -55,15 +55,18 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
         selection.Clear();
 
         creature.ShowCreatureSelected(true);
-        if (cell != null) {
-            creature.ShowCellSelected(cell, true);
-            PhenotypePanel.instance.cell = cell;
-        }
         selection.Add(creature);
         UpdateGUI();
-
-        UpdateGenotypePanel();
-        UpdatePhenotypePanel();
+        if (cell != null) {
+            if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+                GenePanel.instance.gene = cell.gene;
+                UpdateGenotypePanel();
+            } else if(CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+                creature.ShowCellSelected(cell, true);
+                PhenotypePanel.instance.cell = cell;
+                UpdatePhenotypePanel();
+            }
+        }
     }
 
     public void AddToSelection(Creature creature) {
@@ -92,6 +95,16 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
         UpdateGenotypePanel();
         UpdatePhenotypePanel();
+
+        SelectDefaultGeneCell();
+    }
+
+    private void SelectDefaultGeneCell() {
+        Creature creature = CreatureSelectionPanel.instance.selectedCreature;
+        if (creature != null) {
+            GenePanel.instance.gene = creature.genotype.geneCellList[0].gene;
+            GenotypePanel.instance.genotype = creature.genotype;
+        }
     }
 
     private void UpdateGenotypePanel() {

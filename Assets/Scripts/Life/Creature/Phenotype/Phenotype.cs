@@ -215,6 +215,7 @@ public class Phenotype : MonoBehaviour {
         Destroy(cell.gameObject);
         if (PhenotypePanel.instance.cell == cell) {
             PhenotypePanel.instance.cell = null;
+            PhenotypePanel.instance.UpdateRepresentation();
         }
     }
 

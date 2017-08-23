@@ -18,9 +18,6 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
         }
         set {
             m_genotype = value;
-            if (value != null) {
-                genePanel.gene = m_genotype.GetGeneAt(0);
-            }
             UpdateRepresentation(false);
         }
     }

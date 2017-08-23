@@ -48,7 +48,6 @@ public class Creature : MonoBehaviour {
 
     public void SwitchToGenotype() {
         phenotype.gameObject.SetActive(false);
-        
         genotype.UpdateTransformAndHighlite(this);
         genotype.gameObject.SetActive(true);
     }
@@ -87,6 +86,7 @@ public class Creature : MonoBehaviour {
 
     public void ShowCellsSelected(bool on) {
         phenotype.ShowCellsSelected(on);
+        genotype.ShowGeneCellsSelected(on);
     }
 
     public void ShowCellSelected(Cell cell, bool on) {

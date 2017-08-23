@@ -18,6 +18,10 @@ public class GenePanel : MonoSingleton<GenePanel> {
         set {
             m_gene = value;
             UpdateRepresentation(false);
+            if (CreatureSelectionPanel.instance.selectedCreature != null) {
+                CreatureSelectionPanel.instance.selectedCreature.genotype.ShowGeneCellsSelected(false);
+                CreatureSelectionPanel.instance.selectedCreature.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
+            }
         }
     }
     public ReferenceGraphics[] referenceGraphics;
@@ -92,16 +96,13 @@ public class GenePanel : MonoSingleton<GenePanel> {
         }
 
         //Hack
-        if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+        if (changeToGenomeMade && CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
             CreatureSelectionPanel.instance.selectedCreature.genotype.Generate(CreatureSelectionPanel.instance.selectedCreature);
+            CreatureSelectionPanel.instance.selectedCreature.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
             CreatureSelectionPanel.instance.selectedCreature.genotype.UpdateTransformAndHighlite(CreatureSelectionPanel.instance.selectedCreature);
 
             CreatureSelectionPanel.instance.selectedCreature.phenotype.isDirty = true;
         } 
-    }
-
-    public void SetDropDownValue(int value) {
-
     }
 
     //----
