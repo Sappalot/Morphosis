@@ -9,6 +9,7 @@ public class GenomeGene : MonoBehaviour {
     public Image geneReferenceImage;
     public Image flipBlackWhite;
     public Image flipWhiteBlack;
+    public Image grayOut;
     public Text geneReferenceText;
     public ReferenceGraphics[] referenceGraphics;
 
@@ -35,6 +36,7 @@ public class GenomeGene : MonoBehaviour {
         } else if (MouseAction.instance.actionState == MouseActionStateEnum.selectGene) {
             GenePanel.instance.GiveAnswerGeneReference(gene);
             MouseAction.instance.actionState = MouseActionStateEnum.free;
+            GenomePanel.instance.UpdateRepresentation();
         }
     }
 
@@ -60,12 +62,12 @@ public class GenomeGene : MonoBehaviour {
         flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
         geneReferenceText.text = gene.index.ToString();
 
-
         if (gene == GenotypePanel.instance.genePanel.gene) {
             backgroundImage.color = GenotypePanel.instance.selectedGeneColor;
         } else {
             backgroundImage.color = GenotypePanel.instance.unSelectedGeneColor;
         }
-    }
 
+        grayOut.enabled = !GenomePanel.instance.genotype.IsGeneReferencedTo(gene);
+    }
 }

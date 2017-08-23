@@ -8,6 +8,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
     public Color unSelectedGeneColor;
     public Color selectedGeneColor;
+    public Color unUsedGeneColor;
 
     public FlipSideEnum viewedFlipSide { get; private set; }
 

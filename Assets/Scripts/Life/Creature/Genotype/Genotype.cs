@@ -17,6 +17,14 @@ public class Genotype : MonoBehaviour {
 
     public bool isDirty = true;
 
+    public bool IsGeneReferencedTo(Gene gene) {
+        foreach (Cell geneCell in geneCellList) {
+            if (geneCell.gene == gene)
+                return true;
+        }
+        return false;
+    }
+
     public int geneCellCount {
         get {
             return geneCellList.Count;
