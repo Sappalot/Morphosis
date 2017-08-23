@@ -72,11 +72,17 @@ public class Genotype : MonoBehaviour {
         genes[2].type = CellTypeEnum.Muscle;
     }
 
-    public void ShowSelectedGraphics(bool on) {
+    public void ShowCreatureSelected(bool on) {
         for (int index = 0; index < geneCellList.Count; index++) {
-            geneCellList[index].ShowSelection(on);
+            geneCellList[index].ShowCreatureSelected(on);
             geneCellList[index].ShowShadow(on);
             transform.localPosition = new Vector3(0f, 0f, on ? -8f : 0f);
+        }
+    }
+
+    public void ShowCellSelected(bool on) {
+        for (int index = 0; index < geneCellList.Count; index++) {
+            geneCellList[index].ShowCellSelected(on);
         }
     }
 
@@ -141,7 +147,8 @@ public class Genotype : MonoBehaviour {
         cells.localPosition = creature.phenotype.rootCell.transform.position;
         cells.localRotation = Quaternion.identity;
         cells.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
-        ShowSelectedGraphics(CreatureSelectionPanel.instance.IsSelected(creature));
+        ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
+        ShowCellSelected(false);
 
         for (int index = 0; index < geneCellList.Count; index++) {
             geneCellList[index].EvoFixedUpdate(0);

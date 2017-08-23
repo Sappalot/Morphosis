@@ -153,8 +153,11 @@ public class Phenotype : MonoBehaviour {
         ConnectCells(true, true);
         edges.GenerateWings(cellList);
         UpdateSpringsFrequenze();
-        ShowHighlite(CreatureSelectionPanel.instance.IsSelected(creature));
+        ShowCellsSelected(false);
+        ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(creature));
+        ShowShadow(false);
         ShowTriangle(false);
+        
     }
 
     private int CardinaIndexToNeighbour(Cell from, Cell to) {
@@ -210,6 +213,9 @@ public class Phenotype : MonoBehaviour {
         cellMap.RemoveCellAtGridPosition(cell.mapPosition);
         cellList.Remove(cell);
         Destroy(cell.gameObject);
+        if (PhenotypePanel.instance.cell == cell) {
+            PhenotypePanel.instance.cell = null;
+        }
     }
 
     // 1 Spawn cell from prefab
@@ -292,9 +298,23 @@ public class Phenotype : MonoBehaviour {
         }
     }
 
-    public void ShowHighlite(bool on) {
+    public void ShowSelectedCreature(bool on) {
         for (int index = 0; index < cellList.Count; index++) {
-            cellList[index].ShowSelection(on);
+            cellList[index].ShowCreatureSelected(on);
+        }
+    }
+
+    public void ShowCellsSelected(bool on) {
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].ShowCellSelected(on);
+        }
+    }
+
+    public void ShowCellSelected(Cell cell, bool on) {
+        for (int index = 0; index < cellList.Count; index++) {
+            if (cellList[index] == cell) {
+                cellList[index].ShowCellSelected(on);
+            }
         }
     }
 
@@ -304,4 +324,9 @@ public class Phenotype : MonoBehaviour {
         }
     }
 
+    public void ShowShadow(bool on) {
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].ShowShadow(on);
+        }
+    }
 }

@@ -3,13 +3,20 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
-
     public Life life;
     public PhenotypePanel phenotypePanel;
 
     public Text selectedCreatureText;
 
     public List<Creature> selection { get; private set; }
+
+    public Creature selectedCreature {
+        get {
+            if (selection.Count != 1)
+                return null;
+            return selection[0];
+        }    
+    }
 
     public int selectionCount {
         get {
@@ -30,49 +37,73 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
     public void ClearSelection() {
         for (int index = 0; index < selection.Count; index++) {
-            selection[index].SetHighlite(false);
+            selection[index].ShowCreatureSelected(false);
+            selection[index].ShowCellsSelected(false);
         }
         selection.Clear();
         UpdateGUI();
 
         UpdateGenotypePanel();
+        UpdatePhenotypePanel();
     }
 
-    public void SelectOnly(Creature creature) {
+    public void SelectOnly(Creature creature, Cell cell = null) {
         for (int index = 0; index < selection.Count; index++) {
-            selection[index].SetHighlite(false);
+            selection[index].ShowCreatureSelected(false);
+            selection[index].ShowCellsSelected(false);
         }
         selection.Clear();
 
-        creature.SetHighlite(true);
+        creature.ShowCreatureSelected(true);
+        if (cell != null) {
+            creature.ShowCellSelected(cell, true);
+            PhenotypePanel.instance.cell = cell;
+        }
         selection.Add(creature);
         UpdateGUI();
 
         UpdateGenotypePanel();
+        UpdatePhenotypePanel();
     }
 
     public void AddToSelection(Creature creature) {
-        creature.SetHighlite(true);
+        for (int index = 0; index < selection.Count; index++) {
+            selection[index].ShowCellsSelected(false);
+        }
+        PhenotypePanel.instance.cell = null;
+
+        creature.ShowCreatureSelected(true);
         selection.Add(creature);
         UpdateGUI();
 
         UpdateGenotypePanel();
+        UpdatePhenotypePanel();
     }
 
     public void RemoveFromSelection(Creature creature) {
-        creature.SetHighlite(false);
+        for (int index = 0; index < selection.Count; index++) {
+            selection[index].ShowCellsSelected(false);
+        }
+        PhenotypePanel.instance.cell = null;
+
+        creature.ShowCreatureSelected(false);
         selection.Remove(creature);
         UpdateGUI();
 
         UpdateGenotypePanel();
+        UpdatePhenotypePanel();
     }
 
     private void UpdateGenotypePanel() {
         if (selection.Count == 1) {
-            GenotypePanel.instance.genotype = selection[0].genotype;
+            GenotypePanel.instance.genotype = selectedCreature.genotype;
         } else {
             GenotypePanel.instance.genotype = null;
         }
+    }
+
+    private void UpdatePhenotypePanel() {
+        PhenotypePanel.instance.UpdateRepresentation();
     }
 
     private void UpdateGUI() {
@@ -82,7 +113,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
             //phenotypePanel.gameObject.SetActive(false);
         } else if (selection.Count == 1) {
             //gameObject.SetActive(true);
-            selectedCreatureText.text = selection[0].nickname;
+            selectedCreatureText.text = selectedCreature.nickname;
             //phenotypePanel.gameObject.SetActive(true);
         } else {
             //gameObject.SetActive(true);

@@ -28,10 +28,11 @@ public abstract class Cell : MonoBehaviour {
     [HideInInspector]
     public Creature creature;
 
+    public SpriteRenderer cellSelectedSprite; //transparent
     public SpriteRenderer triangleSprite;
-    public SpriteRenderer openCircleSprite;
-    public SpriteRenderer filledCircleSprite;
-    public SpriteRenderer selectionSprite;
+    public SpriteRenderer openCircleSprite; //cell type colour
+    public SpriteRenderer filledCircleSprite; //cell type colour
+    public SpriteRenderer creatureSelectedSprite;
     public SpriteRenderer shadowSprite;
 
     public Transform triangleTransform;
@@ -48,8 +49,12 @@ public abstract class Cell : MonoBehaviour {
         filledCircleSprite.enabled = show;
     }
 
-    public void ShowSelection(bool on) {
-        selectionSprite.enabled = on;
+    public void ShowCreatureSelected(bool on) {
+        creatureSelectedSprite.enabled = on;
+    }
+
+    public void ShowCellSelected(bool on) {
+        cellSelectedSprite.enabled = on;
     }
 
     public void ShowShadow(bool on) {
@@ -110,7 +115,7 @@ public abstract class Cell : MonoBehaviour {
         springList.Add(southEastSpring);
         springList.Add(southWestSpring);
 
-        ShowSelection(false);
+        ShowCreatureSelected(false);
     }
 
     public void EvoUpdate() {
@@ -449,7 +454,7 @@ public abstract class Cell : MonoBehaviour {
                     CreatureSelectionPanel.instance.AddToSelection(creature);
                 }
             } else {
-                CreatureSelectionPanel.instance.SelectOnly(creature);
+                CreatureSelectionPanel.instance.SelectOnly(creature, this);
             }
         }
     }

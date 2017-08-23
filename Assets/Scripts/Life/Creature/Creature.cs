@@ -80,9 +80,17 @@ public class Creature : MonoBehaviour {
         phenotype.EvoFixedUpdate(this, fixedTime);
     }
 
-    public void SetHighlite(bool on) {
-        phenotype.ShowHighlite(on);
-        genotype.ShowSelectedGraphics(on);
+    public void ShowCreatureSelected(bool on) {
+        phenotype.ShowSelectedCreature(on);
+        genotype.ShowCreatureSelected(on);
+    }
+
+    public void ShowCellsSelected(bool on) {
+        phenotype.ShowCellsSelected(on);
+    }
+
+    public void ShowCellSelected(Cell cell, bool on) {
+        phenotype.ShowCellSelected(cell, on);
     }
 }
 

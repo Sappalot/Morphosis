@@ -93,10 +93,10 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
         //Hack
         if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
-            CreatureSelectionPanel.instance.selection[0].genotype.Generate(CreatureSelectionPanel.instance.selection[0]);
-            CreatureSelectionPanel.instance.selection[0].genotype.UpdateTransformAndHighlite(CreatureSelectionPanel.instance.selection[0]);
+            CreatureSelectionPanel.instance.selectedCreature.genotype.Generate(CreatureSelectionPanel.instance.selectedCreature);
+            CreatureSelectionPanel.instance.selectedCreature.genotype.UpdateTransformAndHighlite(CreatureSelectionPanel.instance.selectedCreature);
 
-            CreatureSelectionPanel.instance.selection[0].phenotype.isDirty = true;
+            CreatureSelectionPanel.instance.selectedCreature.phenotype.isDirty = true;
         } 
     }
 
