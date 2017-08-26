@@ -330,4 +330,10 @@ public class Phenotype : MonoBehaviour {
             cellList[index].ShowShadow(on);
         }
     }
+
+    public void Show(bool on) {
+        for (int index = 0; index < cellList.Count; index++) {
+            cellList[index].Show(on);
+        }
+    }
 }

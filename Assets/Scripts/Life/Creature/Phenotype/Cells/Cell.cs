@@ -37,6 +37,12 @@ public abstract class Cell : MonoBehaviour {
 
     public Transform triangleTransform;
 
+    public void Show(bool show) {
+        for (int index = 0; index < transform.childCount; index++) {
+            transform.GetChild(index).gameObject.SetActive(show);
+        }
+    }
+
     public void ShowTriangle(bool show) {
         triangleSprite.enabled = show;
     }

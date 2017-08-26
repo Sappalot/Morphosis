@@ -41,13 +41,14 @@ public class Creature : MonoBehaviour {
     private static int number = 0;
 
     public void SwitchToPhenotype() {
-        phenotype.gameObject.SetActive(true);
+        //phenotype.gameObject.SetActive(true);
+        phenotype.Show(true); //Don't use SetActive() since it clears rigigdBody velocity
         genotype.gameObject.SetActive(false);
         phenotype.Generate(this);
     }
 
     public void SwitchToGenotype() {
-        phenotype.gameObject.SetActive(false);
+        phenotype.Show(false); //Don't use SetActive() since it clears rigigdBody velocity
         genotype.UpdateTransformAndHighlite(this);
         genotype.gameObject.SetActive(true);
     }
