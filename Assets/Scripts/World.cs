@@ -30,8 +30,8 @@ public class World : MonoSingleton<World> {
 
     public void Restart() {
         KillAllCreatures();
-        for (int y = 1; y <= 2; y++) {
-            for (int x = 1; x <= 2; x++) {
+        for (int y = 1; y <= 10; y++) {
+            for (int x = 1; x <= 10; x++) {
                 life.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f));
             }
         }
@@ -61,7 +61,7 @@ public class World : MonoSingleton<World> {
 
     private void FixedUpdate() {
         if (HUD.instance.timeControllValue > 0) {
-            fixedTime += Time.fixedDeltaTime;
+            fixedTime += Time.fixedDeltaTime * Time.timeScale;
             life.EvoFixedUpdate(fixedTime);
         }
     }
@@ -69,6 +69,7 @@ public class World : MonoSingleton<World> {
     //Sava load
 
     public void Load() {
+        Time.timeScale = 0;
         // Open the file to read from.
         string serializedString = File.ReadAllText(path + "save.txt");
 
@@ -77,10 +78,12 @@ public class World : MonoSingleton<World> {
 
         CreatureSelectionPanel.instance.ClearSelection();
         CreatureEditModePanel.instance.Restart();
+        Time.timeScale = 1;
     }
 
     private string path = "F:/Morfosis/";
     public void Save() {
+        Time.timeScale = 0;
         //lifeData.StoreLifeData(null);
         UpdateData();
 
@@ -90,6 +93,7 @@ public class World : MonoSingleton<World> {
             Directory.CreateDirectory(path);
         }
         File.WriteAllText(path + "save.txt", worldToSave);
+        Time.timeScale = 1;
     }
 
     private WorldData worldData = new WorldData();
@@ -97,19 +101,17 @@ public class World : MonoSingleton<World> {
     //data
     private void UpdateData() {
         worldData.worldName = worldName;
-        worldData.fixedTime = fixedTime;
 
         worldData.lifeData = life.UpdateData();
+        worldData.fixedTime = fixedTime;
     }
 
     private void ApplyData(WorldData worldData) {
         worldName = worldData.worldName;
-        fixedTime = worldData.fixedTime;
+        
         
         life.ApplyData(worldData.lifeData);
 
+        fixedTime = worldData.fixedTime;
     }
-
-
-
 }

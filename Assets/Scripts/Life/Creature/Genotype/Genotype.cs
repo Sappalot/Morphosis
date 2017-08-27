@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Genotype : MonoBehaviour {
-    private Gene[] genes = new Gene[genomeLength]; //One gene can give rise to many geneCells
+    public Gene[] genes = new Gene[genomeLength]; //One gene can give rise to many geneCells
 
     //-------------------------
     public JawCell jawCellPrefab;

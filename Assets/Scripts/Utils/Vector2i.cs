@@ -1,4 +1,7 @@
-﻿public class Vector2i {
+﻿using System;
+
+[Serializable]
+public class Vector2i {
     public int x;
     public int y;
 

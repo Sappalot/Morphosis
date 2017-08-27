@@ -7,6 +7,7 @@ public abstract class Cell : MonoBehaviour {
     public FlipSideEnum flipSide;
     public Vector2i mapPosition = new Vector2i();
     public int buildOrderIndex = 0;
+    public float lastTime = 0; //Last time muscle cell was updated
 
     //  The direction the cell is facing in creature space
     public int bindCardinalIndex;
@@ -466,4 +467,34 @@ public abstract class Cell : MonoBehaviour {
             }
         }
     }
+
+    //data
+    private CellData cellData = new CellData();
+    public CellData UpdateData() {
+        cellData.position = transform.position;
+        cellData.heading = heading;
+        cellData.bindCardinalIndex = bindCardinalIndex;
+        cellData.geneIndex = gene.index;
+        cellData.mapPosition = mapPosition;
+        cellData.buildOrderIndex = buildOrderIndex;
+        cellData.flipSide = flipSide;
+        cellData.timeOffset = timeOffset;
+        cellData.lastTime = lastTime;
+        return cellData;
+    }
+
+    public void ApplyData(CellData cellData, Creature creature) {
+        transform.position = cellData.position;
+        heading = cellData.heading;
+        bindCardinalIndex = cellData.bindCardinalIndex;
+        gene = creature.genotype.genes[cellData.geneIndex];
+        mapPosition = cellData.mapPosition;
+        buildOrderIndex = cellData.buildOrderIndex;
+        flipSide = cellData.flipSide;
+        timeOffset = cellData.timeOffset;
+        lastTime = cellData.lastTime;
+        this.creature = creature;
+
+    }
+
 }

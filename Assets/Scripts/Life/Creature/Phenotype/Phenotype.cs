@@ -5,7 +5,11 @@ using System.Collections.Generic;
 
 public class Phenotype : MonoBehaviour {
     [HideInInspector]
-    public Cell rootCell;
+    public Cell rootCell {
+        get {
+            return cellList[0];
+        }
+    }
 
     //-----------------------------------
 
@@ -24,8 +28,6 @@ public class Phenotype : MonoBehaviour {
     //public Wings wings;
     public Edges edges;
 
-
-
     private Vector3 velocity = new Vector3();
     private List<Cell> cellList = new List<Cell>();
     private Genotype genotype;
@@ -34,8 +36,10 @@ public class Phenotype : MonoBehaviour {
     private Creature creature;
     private CellMap cellMap = new CellMap();
 
-    public int cellCount {
-        get {
+    public int cellCount
+    {
+        get
+        {
             return cellList.Count;
         }
     }
@@ -70,7 +74,6 @@ public class Phenotype : MonoBehaviour {
         for (int index = 0; index < cellList.Count; index++) {
             cellList[index].EvoFixedUpdate(fixedTime);
         }
-
     }
 
     public void ShuffleCellUpdateOrder() {
@@ -88,7 +91,7 @@ public class Phenotype : MonoBehaviour {
     public void GenerateCells(Creature creature, Vector3 position) {
         if (isDirty) {
             Setup(creature, position, 90f);
-            
+
             TryGrowFully();
             isDirty = false;
         }
@@ -97,12 +100,12 @@ public class Phenotype : MonoBehaviour {
     //Create cellMap so that 
     //SpawnPosition is the position where the center of the root cell wil appear in word space
     private void Setup(Creature creature, Vector3 spawnPosition, float spawnAngle) {
-        timeOffset =  Random.Range(0f, 7f); //TODO: Remove
+        timeOffset = 0f; //Random.Range(0f, 7f); //TODO: Remove
 
-        Clear();        
+        Clear();
 
         this.creature = creature;
-        genotype = creature.genotype; 
+        genotype = creature.genotype;
         spawnPositionRoot = spawnPosition;
         headingAngleRoot = spawnAngle;
     }
@@ -117,8 +120,8 @@ public class Phenotype : MonoBehaviour {
             return;
         }
         if (cellList.Count == 0) {
-            rootCell = SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature, spawnPositionRoot, true);
-            
+            SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature, spawnPositionRoot, true);
+
             EvoFixedUpdate(creature, 0f);
             rootCell.heading = headingAngleRoot;
             rootCell.angleDiffFromBindpose = headingAngleRoot - 90f;
@@ -161,7 +164,6 @@ public class Phenotype : MonoBehaviour {
         ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(creature));
         ShowShadow(false);
         ShowTriangle(false);
-        
     }
 
     private int CardinaIndexToNeighbour(Cell from, Cell to) {
@@ -226,10 +228,10 @@ public class Phenotype : MonoBehaviour {
     // 1 Spawn cell from prefab
     // 2 Setup its properties according to parameters
     // 3 Add cell to list and CellMap
-    private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature, Vector3 position, bool useMapPosition) {
+    private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature, Vector3 position, bool modelSpace) {
         Cell cell = null;
 
-        Vector3 spawnPosition = (useMapPosition ? genotype.geneCellMap.ToPosition(mapPosition) : Vector3.zero) + position;
+        Vector3 spawnPosition = (modelSpace ? genotype.geneCellMap.ToPosition(mapPosition) : Vector3.zero) + position;
 
         if (gene.type == CellTypeEnum.Jaw) {
             cell = (Instantiate(jawCellPrefab, spawnPosition, Quaternion.identity) as Cell);
@@ -250,11 +252,32 @@ public class Phenotype : MonoBehaviour {
         cell.gene = gene;
         cell.bindCardinalIndex = bindHeading;
         cell.flipSide = flipSide;
-        cell.timeOffset = this.timeOffset;
+        cell.timeOffset = timeOffset;
         cell.creature = creature;
 
         cellMap.SetCell(mapPosition, cell);
         cellList.Add(cell);
+
+        return cell;
+    }
+
+    private Cell InstantiateCell(CellTypeEnum type, Vector2i mapPosition) {
+        Cell cell = null;
+        if (type == CellTypeEnum.Jaw) {
+            cell = (Instantiate(jawCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
+        } else if (type == CellTypeEnum.Leaf) {
+            cell = (Instantiate(leafCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
+        } else if (type == CellTypeEnum.Muscle) {
+            cell = (Instantiate(muscleCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
+        } else if (type == CellTypeEnum.Vein) {
+            cell = (Instantiate(veinCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
+        }
+        if (cell == null) {
+            throw new System.Exception("Could not create Cell out of type defined in gene");
+        }
+        cellMap.SetCell(mapPosition, cell);
+        cellList.Add(cell);
+        cell.transform.parent = cells.transform;
 
         return cell;
     }
@@ -343,9 +366,34 @@ public class Phenotype : MonoBehaviour {
 
     //data
 
-    private PhenotypeData phenotypeData  = new PhenotypeData();
+    private PhenotypeData phenotypeData = new PhenotypeData();
     public PhenotypeData UpdateData() {
-        phenotypeData.rootCellPosition = rootCell.position;
+        phenotypeData.timeOffset = timeOffset;
+        phenotypeData.cellDataList.Clear();
+        for (int index = 0; index < cellList.Count; index++) {
+            Cell cell = cellList[index];
+            phenotypeData.cellDataList.Add(cell.UpdateData());
+        }
+        //phenotypeData.rootCellPosition = rootCell.position;
         return phenotypeData;
+    }
+
+    public void ApplyData(PhenotypeData phenotypeData, Creature creature) {
+        timeOffset = phenotypeData.timeOffset;
+        Setup(creature, phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
+        for (int index = 0; index < phenotypeData.cellDataList.Count; index++) {
+            CellData cellData = phenotypeData.cellDataList[index];
+            Cell cell = InstantiateCell(creature.genotype.genes[cellData.geneIndex].type, cellData.mapPosition);
+            cell.ApplyData(cellData, creature);
+        }
+
+        ConnectCells(true, true);
+        edges.GenerateWings(cellList);
+        UpdateSpringsFrequenze();
+        ShowCellsSelected(false);
+        ShowShadow(false);
+        ShowTriangle(false);
+
+        isDirty = false; //prevent regeneration on genotype -> Phenotype switch
     }
 }

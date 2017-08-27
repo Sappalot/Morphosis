@@ -116,14 +116,12 @@ public class Creature : MonoBehaviour {
         nickname = creatureData.nickname;
 
         genotype.ApplyData(creatureData.genotypeData);
-
         genotype.isDirty = true;
         genotype.GenerateGeneCells(this); // Generating genotype here caused Unity freeze ;/
 
-        phenotype.isDirty = true;
-        phenotype.GenerateCells(this, creatureData.phenotypeData.rootCellPosition);
-
-        //GenerateMinimalistic(creatureData.phenotypeData.rootCellPosition);
+        phenotype.ApplyData(creatureData.phenotypeData, this);
+        //phenotype.isDirty = true;
+        //phenotype.GenerateCells(this, creatureData.phenotypeData.rootCellPosition);
 
     }
 }

@@ -9,7 +9,6 @@ public class MuscleCell : Cell {
     }
 
     private float modularTime = 0f;
-    private float lastTime = 0;
     private bool isContracting;
 
     public override void UpdateRadius(float fixedTime) {
