@@ -1,13 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class Life : MonoBehaviour {
+    
 
     public Creature creaturePrefab;
 
     private IdGenerator idGenerator = new IdGenerator();
     private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
     private List<Creature> creatureList = new List<Creature>();
+
+    public void EvoUpdate() {
+        for (int index = 0; index < creatureList.Count; index++) {
+            creatureList[index].EvoUpdate();
+        }
+    }
+
+    public void EvoFixedUpdate(float fixedTime) {
+        for (int index = 0; index < creatureList.Count; index++) {
+            creatureList[index].EvoFixedUpdate(fixedTime);
+        }
+    }
 
     public void KillAll() {
         foreach (Creature creature in creatureList) {
@@ -31,56 +45,41 @@ public class Life : MonoBehaviour {
         }
     }
 
-    public void EvoUpdate() {
-        for (int index = 0; index < creatureList.Count; index++) {
-            creatureList[index].EvoUpdate();
-        }
+    public Creature SpawnCreatureJellyfish(Vector3 position) {
+        Creature creature = InstantiateCreature();
+        creature.GenerateJellyfish(position);
+        return creature;
     }
 
-    public void EvoFixedUpdate(float fixedTime) {
-        for (int index = 0; index < creatureList.Count; index++) {
-            creatureList[index].EvoFixedUpdate(fixedTime);
-        }
+    public Creature SpawnCreatureMinimalistic(Vector3 position) {
+        Creature creature = InstantiateCreature();
+        creature.GenerateMinimalistic(position);
+        return creature;
     }
 
-    //int test = 0;
-    //makes a minimal new creature with blank genotype
-    public string SpawnCreatureEmbryo(Vector3 position) {
-        // TODO creatre a copy
+    //public Creature SpawnCeratureFromData(CreatureData creatureData) {
+    //    Creature creature = InstantiateCreature();
+    //    creature.GenerateMinimalistic(creatureData.phenotypeData.rootCellPosition);
+    //    return creature;
+    //}
 
-        Creature creature = (GameObject.Instantiate(creaturePrefab, position, Quaternion.identity) as Creature);
+    private Creature InstantiateCreature() {
+        Creature creature = (GameObject.Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity) as Creature);
         string id = idGenerator.GetUniqueId();
         if (creatureDictionary.ContainsKey(id)) {
             throw new System.Exception("Generated ID was not unique.");
         }
-        creature.id = id;
-        creature.nickname = "Nick " + id;
+        return InstantiateCreature(id);
+    }
+
+    private Creature InstantiateCreature(String id) {
+        Creature creature = (GameObject.Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity) as Creature);
         creature.transform.parent = this.transform;
-        creature.transform.position = Vector3.zero;
         creatureDictionary.Add(id, creature);
         creatureList.Add(creature);
-
-        creature.GenerateGenotypeAndPhenotype(position);
-
-        //if (test == 0) {
-        //    CreatureSelectionPanel.instance.SelectOnly(creature);
-        //}
-        //test++;
-        return id;
-    }
-
-    public string SpawnCreatureClone(Vector3 position, float rotation, Creature original) {
-        //genotype = same
-        //phenotype = same everything, except velocities
-
-        return "not done";
-    }
-
-    public string SpawnCreatureCrossbreed(Vector3 position, float rotation, Creature[] originals) {
-        //genome = mix
-        //phenotype = fully grown;
-
-        return "not done";
+        creature.id = id;
+        creature.nickname = "Nick " + id; //dafault
+        return creature;
     }
 
     public void DeleteCreature(Creature creature) {
@@ -90,5 +89,33 @@ public class Life : MonoBehaviour {
         creatureList.Remove(creature);
     }
 
+    //data
 
+    private LifeData lifeData = new LifeData();
+
+    public LifeData UpdateData() {
+        lifeData.lastId = idGenerator.number;
+        lifeData.creatureList.Clear();
+        lifeData.creatureDictionary.Clear();
+
+        for (int index = 0; index < creatureList.Count; index++) {
+            Creature creature = creatureList[index];
+            CreatureData data = creature.UpdateData();
+            lifeData.creatureList.Add(data);
+            lifeData.creatureDictionary.Add(data.id, data);
+        }
+
+        return lifeData;
+    }
+
+    public void ApplyData(LifeData lifeData) {
+        idGenerator.number = lifeData.lastId;
+        
+        KillAll();
+        for (int index = 0; index < lifeData.creatureList.Count; index++) {
+            CreatureData creatureData = lifeData.creatureList[index];
+            Creature creature = InstantiateCreature(creatureData.id);
+            creature.ApplyData(creatureData);
+        }
+    }
 }

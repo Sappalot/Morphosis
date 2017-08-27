@@ -1,6 +1,6 @@
 ﻿public class Gene {
     public CellTypeEnum type = CellTypeEnum.Leaf; // + this vein cell's settings 
-    public readonly int index;
+    public int index;
 
     public readonly Arrangement[] arrangements = new Arrangement[3];
     //------------------old shit ---------------------
@@ -21,6 +21,12 @@
         //referenceDeprecated[3] = null;
         //referenceDeprecated[4] = null;
         //referenceDeprecated[5] = null;
+    }
+
+    public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
+        arrangements[0].SetReferenceGeneFromReferenceGeneIndex(genes);
+        arrangements[1].SetReferenceGeneFromReferenceGeneIndex(genes);
+        arrangements[2].SetReferenceGeneFromReferenceGeneIndex(genes);
     }
 
     public GeneReference GetFlippableReference(int referenceCardinalIndex, FlipSideEnum flipSide) {
@@ -45,21 +51,25 @@
         arrangements[2].isEnabled = false;
     }
 
-    //------------------------ Deprecated
+    private GeneData geneData = new GeneData();
+    public GeneData UpdateData() {
+        geneData.type = type;
+        geneData.index = index;
 
-    //public void setReferenceDeprecated(int direction, int reference) {
-    //    this.referenceDeprecated[direction] = reference;
-    //}
+        geneData.arrangementData[0] = arrangements[0].UpdateData();
+        geneData.arrangementData[1] = arrangements[1].UpdateData();
+        geneData.arrangementData[2] = arrangements[2].UpdateData();
 
-    //public int? getReferenceDeprecated(int direction) {
-    //    return referenceDeprecated[direction];
-    //}
+        return geneData;
+    }
 
-    //public void ClearDeprecated() {
-    //    for (int i = 0; i < 6; i++) {
-    //        referenceDeprecated[0] = null;
-    //    }
-    //    type = CellTypeEnum.Vein;
-    //}   
+    public void ApplyData(GeneData geneData) {
+        type = geneData.type;
+        index = geneData.index;
+
+        arrangements[0].ApplyData(geneData.arrangementData[0]);
+        arrangements[1].ApplyData(geneData.arrangementData[1]);
+        arrangements[2].ApplyData(geneData.arrangementData[2]);
+    }
 }
 

@@ -3,7 +3,19 @@ using UnityEngine;
 
 public class Arrangement {
     public bool isEnabled = true;
-    public Gene referenceGene;
+    public int referenceGeneIndex;
+
+    private Gene m_referenceGene;
+    public Gene referenceGene {
+        get {
+            return m_referenceGene;
+        }
+        set {
+            m_referenceGene = value;
+            referenceGeneIndex = m_referenceGene.index;
+        }
+    }
+
     public ArrangementFlipSmOpTypeEnum flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same; // SIDE and STAR use Same/Opposite, Mirror use BlackToArrow/WhiteToArrow 
     public ArrangementFlipBtaWtaTypeEnum flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow;
     public bool flipPairsEnabled = false; //MIRROR4 & STAR6
@@ -50,6 +62,10 @@ public class Arrangement {
             m_gap = value;
             SnapToLegalValues();
         }
+    }
+
+    public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
+        referenceGene = genes[referenceGeneIndex];
     }
 
     public void CycleArrangementType() {
@@ -353,5 +369,33 @@ public class Arrangement {
         if (Mathf.Abs(m_arrowIndex) % 2 == 1) {
             m_arrowIndex = AngleUtil.WarpArrowIndex(m_arrowIndex - 1);
         }
+    }
+
+    //data
+    private ArrangementData arrangementData = new ArrangementData();
+    public ArrangementData UpdateData() { // Save: We have all genes and their data allready
+        arrangementData.isEnabled = isEnabled;
+        arrangementData.referenceGeneIndex = referenceGene.index; //Have to use index cant use reference
+        arrangementData.flipTypeSameOpposite = flipTypeSameOpposite; // SIDE and STAR use Same/Opposite, Mirror use BlackToArrow/WhiteToArrow 
+        arrangementData.flipTypeBlackWhiteToArrow = flipTypeBlackWhiteToArrow;
+        arrangementData.flipPairsEnabled = flipPairsEnabled; //MIRROR4 & STAR6        
+        arrangementData.type = type;
+        arrangementData.referenceCount = referenceCount;
+        arrangementData.arrowIndex = arrowIndex;
+        arrangementData.gap = gap;
+        return arrangementData;
+    }
+
+    public void ApplyData(ArrangementData arrangementData) {
+        isEnabled = arrangementData.isEnabled;
+        referenceGeneIndex = arrangementData.referenceGeneIndex;
+        //referenceGene = arrangementData.referenceGene; //Cant set it here
+        flipTypeSameOpposite = arrangementData.flipTypeSameOpposite;
+        flipTypeBlackWhiteToArrow = arrangementData.flipTypeBlackWhiteToArrow;
+        flipPairsEnabled = arrangementData.flipPairsEnabled;
+        type = arrangementData.type;
+        referenceCount = arrangementData.referenceCount;
+        arrowIndex = arrangementData.arrowIndex;
+        gap = arrangementData.gap;
     }
 }

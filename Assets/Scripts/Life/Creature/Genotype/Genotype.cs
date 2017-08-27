@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Genotype : MonoBehaviour {
+    private Gene[] genes = new Gene[genomeLength]; //One gene can give rise to many geneCells
+
+    //-------------------------
     public JawCell jawCellPrefab;
     public LeafCell leafCellPrefab;
     public MuscleCell muscleCellPrefab;
@@ -11,7 +14,6 @@ public class Genotype : MonoBehaviour {
 
     public static int root = 0;
     public static int genomeLength = 21;
-    private Gene[] genes = new Gene[genomeLength]; //One gene can give rise to many geneCells
     public CellMap geneCellMap = new CellMap();
     public List<Cell> geneCellList = new List<Cell>();
 
@@ -31,42 +33,9 @@ public class Genotype : MonoBehaviour {
         }
     }
 
-    public void GenerateJellyfish() {
-        CreateEmptyGenome();
-        CreateJellyfish();
-    }
+    public void GenerateGenomeJellyfish() {
+        GenerateGenomeEmpty();
 
-    private void CreateEmptyGenome() {
-        for (int index = 0; index < genomeLength; index++) {
-            genes[index] = new Gene(index);
-        }
-        for (int index = 0; index < genomeLength; index++) {
-            genes[index].SetDefault(genes);
-        }
-    }
-
-    public Gene GetGeneAt(int index) {
-        return genes[index];
-    }
-
-    public void ShowGeneCellsSelectedWithGene(Gene gene, bool on) {
-        List<Cell> geneCellsWithGene = GetGeneCellsWithGene(gene);
-        foreach (Cell cell in geneCellsWithGene) {
-            cell.ShowCellSelected(on);
-        }
-    }
-
-    public List<Cell> GetGeneCellsWithGene(Gene gene) {
-        List<Cell> cells = new List<Cell>();
-        foreach (Cell cell in geneCellList) {
-            if (cell.gene == gene) {
-                cells.Add(cell);
-            }
-        }
-        return cells;
-    }
-
-    private void CreateJellyfish() {
         //Simple Jellyfish (FPS Reference creature, Don't ever change!!)
         //New Jellyfish using Arrangements
         genes[0].type = CellTypeEnum.Vein;
@@ -97,21 +66,16 @@ public class Genotype : MonoBehaviour {
         genes[2].type = CellTypeEnum.Muscle;
     }
 
-    public void ShowCreatureSelected(bool on) {
-        for (int index = 0; index < geneCellList.Count; index++) {
-            geneCellList[index].ShowCreatureSelected(on);
-            geneCellList[index].ShowShadow(on);
-            transform.localPosition = new Vector3(0f, 0f, on ? -8f : 0f);
+    public void GenerateGenomeEmpty() {
+        for (int index = 0; index < genomeLength; index++) {
+            genes[index] = new Gene(index);
+        }
+        for (int index = 0; index < genomeLength; index++) {
+            genes[index].SetDefault(genes);
         }
     }
 
-    public void ShowGeneCellsSelected(bool on) {
-        for (int index = 0; index < geneCellList.Count; index++) {
-            geneCellList[index].ShowCellSelected(on);
-        }
-    }
-
-    public void Generate(Creature creature) {
+    public void GenerateGeneCells(Creature creature) {
         if (isDirty) {
             const int maxSize = 6;
 
@@ -169,17 +133,6 @@ public class Genotype : MonoBehaviour {
         }
     }
 
-    public void UpdateTransformAndHighlite(Creature creature) {
-        cells.localPosition = creature.phenotype.rootCell.transform.position;
-        cells.localRotation = Quaternion.identity;
-        cells.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
-        ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
-
-        for (int index = 0; index < geneCellList.Count; index++) {
-            geneCellList[index].EvoFixedUpdate(0);
-        }
-    }
-
     // 1 Spawn cell from prefab
     // 2 Setup its properties according to parameters
     // 3 Add cell to list and CellMap
@@ -216,6 +169,52 @@ public class Genotype : MonoBehaviour {
         return cell;
     }
 
+    public void UpdateTransformAndHighlite(Creature creature) {
+        cells.localPosition = creature.phenotype.rootCell.transform.position;
+        cells.localRotation = Quaternion.identity;
+        cells.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
+        ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
+
+        for (int index = 0; index < geneCellList.Count; index++) {
+            geneCellList[index].EvoFixedUpdate(0);
+        }
+    }
+
+    public Gene GetGeneAt(int index) {
+        return genes[index];
+    }
+
+    public void ShowGeneCellsSelectedWithGene(Gene gene, bool on) {
+        List<Cell> geneCellsWithGene = GetGeneCellsWithGene(gene);
+        foreach (Cell cell in geneCellsWithGene) {
+            cell.ShowCellSelected(on);
+        }
+    }
+
+    public List<Cell> GetGeneCellsWithGene(Gene gene) {
+        List<Cell> cells = new List<Cell>();
+        foreach (Cell cell in geneCellList) {
+            if (cell.gene == gene) {
+                cells.Add(cell);
+            }
+        }
+        return cells;
+    }
+
+    public void ShowCreatureSelected(bool on) {
+        for (int index = 0; index < geneCellList.Count; index++) {
+            geneCellList[index].ShowCreatureSelected(on);
+            geneCellList[index].ShowShadow(on);
+            transform.localPosition = new Vector3(0f, 0f, on ? -8f : 0f);
+        }
+    }
+
+    public void ShowGeneCellsSelected(bool on) {
+        for (int index = 0; index < geneCellList.Count; index++) {
+            geneCellList[index].ShowCellSelected(on);
+        }
+    }
+
     private void Clear() {
         for (int index = 0; index < geneCellList.Count; index++) {
             Destroy(geneCellList[index].gameObject);
@@ -228,5 +227,25 @@ public class Genotype : MonoBehaviour {
 
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
+    }
+
+    //data
+
+    private GenotypeData genotypeData = new GenotypeData();
+    public GenotypeData UpdateData() { // Save: We have all genes and their data allready
+        for (int index = 0; index < genes.Length; index++) {
+            genotypeData.geneData[index] = genes[index].UpdateData();
+        }
+        return genotypeData;
+    }
+
+    public void ApplyData(GenotypeData genotypeData) {
+        for (int index = 0; index < genomeLength; index++) {
+            genes[index] = new Gene(index);
+            genes[index].ApplyData(genotypeData.geneData[index]);
+        }
+        for (int index = 0; index < genomeLength; index++) {
+            genes[index].SetReferenceGeneFromReferenceGeneIndex(genes);
+        }
     }
 }

@@ -24,7 +24,15 @@ public class GlobalPanel : MonoBehaviour {
         }        
 	}
 
-    public void OnLoadWorldClicked() {
+    public void OnRestartClicked() {
         World.instance.Restart();
+    }
+
+    public void OnLoadClicked() {
+        World.instance.Load();
+    }
+
+    public void OnSaveClicked() {
+        World.instance.Save();
     }
 }

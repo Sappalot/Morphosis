@@ -5,7 +5,6 @@ using UnityEngine;
 // Holds information that does not fit into genes or body 
 
 public class Creature : MonoBehaviour {
-
     public string id;
     public string nickname;
 
@@ -37,14 +36,12 @@ public class Creature : MonoBehaviour {
 
     public Genotype genotype;
     public Phenotype phenotype;
-    
-    private static int number = 0;
 
     public void SwitchToPhenotype() {
         //phenotype.gameObject.SetActive(true);
         phenotype.Show(true); //Don't use SetActive() since it clears rigigdBody velocity
         genotype.gameObject.SetActive(false);
-        phenotype.Generate(this);
+        phenotype.GenerateCells(this);
     }
 
     public void SwitchToGenotype() {
@@ -53,15 +50,22 @@ public class Creature : MonoBehaviour {
         genotype.gameObject.SetActive(true);
     }
 
-    public void GenerateGenotypeAndPhenotype(Vector3 position) {
-
-        genotype.GenerateJellyfish(); // TODO: Load from disc
+    public void GenerateJellyfish(Vector3 position) {
+        genotype.GenerateGenomeJellyfish();
         genotype.isDirty = true;
-        genotype.Generate(this); // Generating genotype here caused Unity freeze ;/
+        genotype.GenerateGeneCells(this); // Generating genotype here caused Unity freeze ;/
 
         phenotype.isDirty = true;
-        phenotype.Generate(this, position);
-        number++;
+        phenotype.GenerateCells(this, position);
+    }
+
+    public void GenerateMinimalistic(Vector3 position) {
+        genotype.GenerateGenomeEmpty();
+        genotype.isDirty = true;
+        genotype.GenerateGeneCells(this); // Generating genotype here caused Unity freeze ;/
+
+        phenotype.isDirty = true;
+        phenotype.GenerateCells(this, position);
     }
 
     public void TryGrow(int cellCount = 1) {
@@ -92,6 +96,35 @@ public class Creature : MonoBehaviour {
 
     public void ShowCellSelected(Cell cell, bool on) {
         phenotype.ShowCellSelected(cell, on);
+    }
+
+    //data
+    private CreatureData creatureData = new CreatureData();
+
+    public CreatureData UpdateData() {
+        creatureData.id = id;
+        creatureData.nickname = nickname;
+        //todo: spieces
+
+        creatureData.genotypeData = genotype.UpdateData();
+        creatureData.phenotypeData = phenotype.UpdateData();
+
+        return creatureData;
+    }
+
+    public void ApplyData(CreatureData creatureData) {
+        nickname = creatureData.nickname;
+
+        genotype.ApplyData(creatureData.genotypeData);
+
+        genotype.isDirty = true;
+        genotype.GenerateGeneCells(this); // Generating genotype here caused Unity freeze ;/
+
+        phenotype.isDirty = true;
+        phenotype.GenerateCells(this, creatureData.phenotypeData.rootCellPosition);
+
+        //GenerateMinimalistic(creatureData.phenotypeData.rootCellPosition);
+
     }
 }
 

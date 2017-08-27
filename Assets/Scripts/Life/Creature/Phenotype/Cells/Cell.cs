@@ -37,6 +37,13 @@ public abstract class Cell : MonoBehaviour {
 
     public Transform triangleTransform;
 
+    //  World space position
+    public Vector3 position {
+        get {
+            return transform.position;
+        }
+    }
+
     public void Show(bool show) {
         for (int index = 0; index < transform.childCount; index++) {
             transform.GetChild(index).gameObject.SetActive(show);
@@ -315,11 +322,6 @@ public abstract class Cell : MonoBehaviour {
         return index_Neighbour[index % 6];
     }
 
-    //  World space position
-    public Vector3 GetPosition() {
-        return transform.position;
-    }
-
     public float GetRotation() {
         return transform.rotation.z;
     }
@@ -378,7 +380,7 @@ public abstract class Cell : MonoBehaviour {
     public void UpdateNeighbourVectors() {
         for (int index = 0; index < 6; index++) {
             if (HasNeighbourCell(index)) {
-                GetNeighbour(index).coreToThis = GetNeighbourCell(index).GetPosition() - transform.position;
+                GetNeighbour(index).coreToThis = GetNeighbourCell(index).position - position;
             }
         }
     }

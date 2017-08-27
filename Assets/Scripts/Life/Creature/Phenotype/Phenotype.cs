@@ -4,6 +4,11 @@ using System.Collections.Generic;
 // The physical creature defined by all its cells
 
 public class Phenotype : MonoBehaviour {
+    [HideInInspector]
+    public Cell rootCell;
+
+    //-----------------------------------
+
     public int model = 0;
     //public Cell cellPrefab;
 
@@ -19,8 +24,7 @@ public class Phenotype : MonoBehaviour {
     //public Wings wings;
     public Edges edges;
 
-    [HideInInspector]
-    public Cell rootCell;
+
 
     private Vector3 velocity = new Vector3();
     private List<Cell> cellList = new List<Cell>();
@@ -73,7 +77,7 @@ public class Phenotype : MonoBehaviour {
         ListUtils.Shuffle(cellList);
     }
 
-    public void Generate(Creature creature) {
+    public void GenerateCells(Creature creature) {
         if (isDirty) {
             Setup(creature, rootCell.transform.position, rootCell.heading);
             TryGrowFully();
@@ -81,7 +85,7 @@ public class Phenotype : MonoBehaviour {
         }
     }
 
-    public void Generate(Creature creature, Vector3 position) {
+    public void GenerateCells(Creature creature, Vector3 position) {
         if (isDirty) {
             Setup(creature, position, 90f);
             
@@ -335,5 +339,13 @@ public class Phenotype : MonoBehaviour {
         for (int index = 0; index < cellList.Count; index++) {
             cellList[index].Show(on);
         }
+    }
+
+    //data
+
+    private PhenotypeData phenotypeData  = new PhenotypeData();
+    public PhenotypeData UpdateData() {
+        phenotypeData.rootCellPosition = rootCell.position;
+        return phenotypeData;
     }
 }

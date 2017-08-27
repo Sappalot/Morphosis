@@ -1,4 +1,7 @@
-﻿public enum CellTypeEnum {
+﻿using System;
+
+[Serializable]
+public enum CellTypeEnum {
     Jaw,
     Leaf,
     Muscle,

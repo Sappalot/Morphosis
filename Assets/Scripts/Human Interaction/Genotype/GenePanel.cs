@@ -97,7 +97,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
         //Hack
         if (changeToGenomeMade && CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
-            CreatureSelectionPanel.instance.selectedCreature.genotype.Generate(CreatureSelectionPanel.instance.selectedCreature);
+            CreatureSelectionPanel.instance.selectedCreature.genotype.GenerateGeneCells(CreatureSelectionPanel.instance.selectedCreature);
             CreatureSelectionPanel.instance.selectedCreature.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
             CreatureSelectionPanel.instance.selectedCreature.genotype.UpdateTransformAndHighlite(CreatureSelectionPanel.instance.selectedCreature);
 
