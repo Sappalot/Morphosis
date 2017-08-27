@@ -57,14 +57,7 @@ public class Life : MonoBehaviour {
         return creature;
     }
 
-    //public Creature SpawnCeratureFromData(CreatureData creatureData) {
-    //    Creature creature = InstantiateCreature();
-    //    creature.GenerateMinimalistic(creatureData.phenotypeData.rootCellPosition);
-    //    return creature;
-    //}
-
     private Creature InstantiateCreature() {
-        Creature creature = (GameObject.Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity) as Creature);
         string id = idGenerator.GetUniqueId();
         if (creatureDictionary.ContainsKey(id)) {
             throw new System.Exception("Generated ID was not unique.");

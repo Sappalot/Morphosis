@@ -30,8 +30,8 @@ public class World : MonoSingleton<World> {
 
     public void Restart() {
         KillAllCreatures();
-        for (int y = 1; y <= 1; y++) {
-            for (int x = 1; x <= 1; x++) {
+        for (int y = 1; y <= 2; y++) {
+            for (int x = 1; x <= 2; x++) {
                 life.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f));
             }
         }
@@ -74,7 +74,9 @@ public class World : MonoSingleton<World> {
 
         WorldData loadedWorld = Serializer.Deserialize<WorldData>(serializedString, new UnityJsonSerializer());
         ApplyData(loadedWorld);
+
         CreatureSelectionPanel.instance.ClearSelection();
+        CreatureEditModePanel.instance.Restart();
     }
 
     private string path = "F:/Morfosis/";
