@@ -100,7 +100,7 @@ public class Phenotype : MonoBehaviour {
     //Create cellMap so that 
     //SpawnPosition is the position where the center of the root cell wil appear in word space
     private void Setup(Creature creature, Vector3 spawnPosition, float spawnAngle) {
-        timeOffset = 0f; //Random.Range(0f, 7f); //TODO: Remove
+        timeOffset = Random.Range(0f, 7f); //TODO: Remove
 
         Clear();
 
@@ -144,7 +144,7 @@ public class Phenotype : MonoBehaviour {
                         float meFromNeightbourBindPose = AngleUtil.ToAngle(indexToMe);
                         float meFromNeighbour = (neighbour.angleDiffFromBindpose + meFromNeightbourBindPose) % 360f;
                         float distance = geneCell.radius + neighbour.radius;
-                        averagePosition += neighbour.transform.position + new Vector3(1f * Mathf.Cos(meFromNeighbour * Mathf.Deg2Rad), 1f * Mathf.Sin(meFromNeighbour * Mathf.Deg2Rad), 0f);
+                        averagePosition += neighbour.transform.position + new Vector3(distance * Mathf.Cos(meFromNeighbour * Mathf.Deg2Rad), distance * Mathf.Sin(meFromNeighbour * Mathf.Deg2Rad), 0f);
                         positionCount++;
                     }
                 }

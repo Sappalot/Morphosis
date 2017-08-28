@@ -78,8 +78,6 @@ public class Genotype : MonoBehaviour {
     public void GenerateGeneCells(Creature creature) {
         if (isDirty) {
             const int maxSize = 6;
-
-            Debug.Log("Generating CellGenes for: " + creature.nickname);
             Clear();
 
             List<Cell> spawningFromCells = new List<Cell>();

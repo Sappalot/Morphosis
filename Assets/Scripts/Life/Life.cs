@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System;
 
 public class Life : MonoBehaviour {
-    
-
     public Creature creaturePrefab;
 
     private IdGenerator idGenerator = new IdGenerator();
@@ -29,6 +27,13 @@ public class Life : MonoBehaviour {
         }
         creatureDictionary.Clear();
         creatureList.Clear();
+    }
+
+    public void GeneratePhenotypeCells() {
+        for (int index = 0; index < creatureList.Count; index++) {
+            Creature creature = creatureList[index];
+            creature.GeneratePhenotypeCells();
+        }
     }
 
     public void SwitchToPhenotypes() {

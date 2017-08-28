@@ -3,11 +3,20 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 public abstract class Cell : MonoBehaviour {
+    [HideInInspector]
     public Gene gene;
+    [HideInInspector]
     public FlipSideEnum flipSide;
+    [HideInInspector]
     public Vector2i mapPosition = new Vector2i();
+    [HideInInspector]
     public int buildOrderIndex = 0;
+    [HideInInspector]
     public float lastTime = 0; //Last time muscle cell was updated
+    [HideInInspector]
+    public float radius = 0.5f;
+    [HideInInspector]
+    public float timeOffset;
 
     //  The direction the cell is facing in creature space
     public int bindCardinalIndex;
@@ -16,7 +25,7 @@ public abstract class Cell : MonoBehaviour {
 
     public string id;
     public int groups = 0;
-    public float radius = 0.5f;
+   
 
     public SpringJoint2D northSpring;
     public SpringJoint2D southEastSpring;
@@ -24,7 +33,7 @@ public abstract class Cell : MonoBehaviour {
     public float springFrequenzy = 5f;
     public float springDamping = 11f;
 
-    public float timeOffset;
+    
 
     [HideInInspector]
     public Creature creature;
@@ -480,6 +489,8 @@ public abstract class Cell : MonoBehaviour {
         cellData.flipSide = flipSide;
         cellData.timeOffset = timeOffset;
         cellData.lastTime = lastTime;
+        cellData.radius = radius;
+        cellData.velocity = transform.GetComponent<Rigidbody2D>().velocity;
         return cellData;
     }
 
@@ -493,6 +504,8 @@ public abstract class Cell : MonoBehaviour {
         flipSide = cellData.flipSide;
         timeOffset = cellData.timeOffset;
         lastTime = cellData.lastTime;
+        radius = cellData.radius;
+        transform.GetComponent<Rigidbody2D>().velocity = cellData.velocity;
         this.creature = creature;
 
     }

@@ -37,8 +37,11 @@ public class Creature : MonoBehaviour {
     public Genotype genotype;
     public Phenotype phenotype;
 
+    public void GeneratePhenotypeCells() {
+        phenotype.GenerateCells(this);
+    }
+
     public void SwitchToPhenotype() {
-        //phenotype.gameObject.SetActive(true);
         phenotype.Show(true); //Don't use SetActive() since it clears rigigdBody velocity
         genotype.gameObject.SetActive(false);
         phenotype.GenerateCells(this);
@@ -120,9 +123,6 @@ public class Creature : MonoBehaviour {
         genotype.GenerateGeneCells(this); // Generating genotype here caused Unity freeze ;/
 
         phenotype.ApplyData(creatureData.phenotypeData, this);
-        //phenotype.isDirty = true;
-        //phenotype.GenerateCells(this, creatureData.phenotypeData.rootCellPosition);
-
     }
 }
 

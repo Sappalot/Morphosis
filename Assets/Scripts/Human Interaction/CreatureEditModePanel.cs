@@ -40,6 +40,13 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
         SelectDefaultCell();
     }
 
+    public void OnClickedGenotypeEditMode() {
+        World.instance.ShowGenotypes();
+        m_editMode = CretureEditMode.genotype;
+        UpdateHUD();
+        SelectDefaultGeneCell();
+    }
+
     private void SelectDefaultCell() {
         Creature creature = CreatureSelectionPanel.instance.selectedCreature;
         if (creature != null) {
@@ -48,13 +55,6 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
             creature.ShowCellsSelected(false);
             creature.ShowCellSelected(creature.phenotype.rootCell, true);
         }
-    }
-
-    public void OnClickedGenotypeEditMode() {
-        World.instance.ShowGenotypes();
-        m_editMode = CretureEditMode.genotype;
-        UpdateHUD();
-        SelectDefaultGeneCell();
     }
 
     private void SelectDefaultGeneCell() {

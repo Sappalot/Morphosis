@@ -2,18 +2,11 @@
 using SerializerFree;
 using SerializerFree.Serializers;
 using System.IO;
-using System;
 
 public class World : MonoSingleton<World> {
     private string worldName = "Gaia";
     private float fixedTime;
     public Life life;
- 
-    //public Savable savable;
-
-    //public SavableSimple savableSimple = new SavableSimple();
-
-
 
     public void ShowPhenotypes() {
         life.SwitchToPhenotypes();
@@ -26,16 +19,6 @@ public class World : MonoSingleton<World> {
     public void KillAllCreatures() {
         life.KillAll();
         CreatureSelectionPanel.instance.ClearSelection();
-    }
-
-    public void Restart() {
-        KillAllCreatures();
-        for (int y = 1; y <= 10; y++) {
-            for (int x = 1; x <= 10; x++) {
-                life.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f));
-            }
-        }
-        CreatureEditModePanel.instance.Restart();
     }
 
     private void Start () {
@@ -63,10 +46,24 @@ public class World : MonoSingleton<World> {
         if (HUD.instance.timeControllValue > 0) {
             fixedTime += Time.fixedDeltaTime * Time.timeScale;
             life.EvoFixedUpdate(fixedTime);
+            GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
         }
     }
 
     //Sava load
+    public void Restart() {
+        Time.timeScale = 0;
+        KillAllCreatures();
+        fixedTime = 0f;
+        GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
+        for (int y = 1; y <= 10; y++) {
+            for (int x = 1; x <= 10; x++) {
+                life.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f));
+            }
+        }
+        CreatureEditModePanel.instance.Restart();
+        Time.timeScale = HUD.instance.timeControllValue;
+    }
 
     public void Load() {
         Time.timeScale = 0;
@@ -77,14 +74,20 @@ public class World : MonoSingleton<World> {
         ApplyData(loadedWorld);
 
         CreatureSelectionPanel.instance.ClearSelection();
-        CreatureEditModePanel.instance.Restart();
-        Time.timeScale = 1;
+        GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
+        
+        if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+            life.SwitchToGenotypes();
+        } else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+            life.SwitchToPhenotypes();
+        }
+
+        Time.timeScale = HUD.instance.timeControllValue;
     }
 
     private string path = "F:/Morfosis/";
     public void Save() {
-        Time.timeScale = 0;
-        //lifeData.StoreLifeData(null);
+        life.GeneratePhenotypeCells(); // In case we are still in Genotype view, Phenotypes are not updated
         UpdateData();
 
         string worldToSave = Serializer.Serialize(worldData, new UnityJsonSerializer());
@@ -93,7 +96,6 @@ public class World : MonoSingleton<World> {
             Directory.CreateDirectory(path);
         }
         File.WriteAllText(path + "save.txt", worldToSave);
-        Time.timeScale = 1;
     }
 
     private WorldData worldData = new WorldData();
