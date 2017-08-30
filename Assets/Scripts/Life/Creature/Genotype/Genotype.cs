@@ -202,6 +202,7 @@ public class Genotype : MonoBehaviour {
     public void ShowCreatureSelected(bool on) {
         for (int index = 0; index < geneCellList.Count; index++) {
             geneCellList[index].ShowCreatureSelected(on);
+            geneCellList[index].ShowTriangle(on);
             geneCellList[index].ShowShadow(on);
             transform.localPosition = new Vector3(0f, 0f, on ? -8f : 0f);
         }

@@ -225,28 +225,11 @@ public class Phenotype : MonoBehaviour {
         }
     }
 
-    // 1 Spawn cell from prefab
-    // 2 Setup its properties according to parameters
-    // 3 Add cell to list and CellMap
     private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature, Vector3 position, bool modelSpace) {
-        Cell cell = null;
-
+        Cell cell = InstantiateCell(gene.type, mapPosition);
         Vector3 spawnPosition = (modelSpace ? genotype.geneCellMap.ToPosition(mapPosition) : Vector3.zero) + position;
+        cell.transform.position = spawnPosition;
 
-        if (gene.type == CellTypeEnum.Jaw) {
-            cell = (Instantiate(jawCellPrefab, spawnPosition, Quaternion.identity) as Cell);
-        } else if (gene.type == CellTypeEnum.Leaf) {
-            cell = (Instantiate(leafCellPrefab, spawnPosition, Quaternion.identity) as Cell);
-        } else if (gene.type == CellTypeEnum.Muscle) {
-            cell = (Instantiate(muscleCellPrefab, spawnPosition, Quaternion.identity) as Cell);
-        } else if (gene.type == CellTypeEnum.Vein) {
-            cell = (Instantiate(veinCellPrefab, spawnPosition, Quaternion.identity) as Cell);
-        }
-
-        if (cell == null) {
-            throw new System.Exception("Could not create Cell out of type defined in gene");
-        }
-        cell.transform.parent = cells.transform;
         cell.mapPosition = mapPosition;
         cell.buildOrderIndex = buildOrderIndex;
         cell.gene = gene;
@@ -254,9 +237,6 @@ public class Phenotype : MonoBehaviour {
         cell.flipSide = flipSide;
         cell.timeOffset = timeOffset;
         cell.creature = creature;
-
-        cellMap.SetCell(mapPosition, cell);
-        cellList.Add(cell);
 
         return cell;
     }

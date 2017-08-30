@@ -25,7 +25,7 @@ public class CameraController : MouseDrag {
 
     public override void OnDragging(int mouseButton) {
         // implement this for dragging
-        if (mouseButton == 2 && !EventSystem.current.IsPointerOverGameObject() && isDragging) {
+        if (mouseButton == 2 && isDragging) {
             float pixels = camera.pixelHeight;
             float units = camera.orthographicSize * 2f;
             float unitsPerPixel = units / pixels;
