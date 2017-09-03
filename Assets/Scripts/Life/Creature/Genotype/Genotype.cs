@@ -19,7 +19,20 @@ public class Genotype : MonoBehaviour {
 
     public bool isDirty = true;
 
-    public bool IsGeneReferencedTo(Gene gene) {
+	public bool IsInside(Rect area) {
+		float top = area.y + area.height / 2f;
+		float bottom = area.y - area.height / 2f;
+		float left = area.x - area.width / 2f;
+		float right = area.x + area.width / 2f;
+		foreach (Cell cell in geneCellList) {
+			if (cell.position.x < right + cell.radius && cell.position.x > left - cell.radius && cell.position.y < top + cell.radius && cell.position.y > bottom - cell.radius) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public bool IsGeneReferencedTo(Gene gene) {
         foreach (Cell geneCell in geneCellList) {
             if (geneCell.gene == gene)
                 return true;

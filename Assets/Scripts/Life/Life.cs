@@ -50,12 +50,27 @@ public class Life : MonoBehaviour {
 		}
 	}
 
-	public void ClearSelectionRectangleCells() {
-		for (int index = 0; index < creatureList.Count; index++) {
-			Creature creature = creatureList[index];
-			creature.ClearSelectionRectangleCells();
+	public List<Creature> GetPhenotypesInside(Rect area) {
+		List<Creature> insideList = new List<Creature>();
+		foreach (Creature c in creatureList) {
+			if (c.IsPhenotypeInside(area)) {
+				insideList.Add(c);
+			}
 		}
+		return insideList;
 	}
+
+	public List<Creature> GetGenotypesInside(Rect area) {
+		List<Creature> insideList = new List<Creature>();
+		foreach (Creature c in creatureList) {
+			if (c.IsGenotypeInside(area)) {
+				insideList.Add(c);
+			}
+		}
+		return insideList;
+	}
+
+
 
 	public Creature SpawnCreatureJellyfish(Vector3 position) {
 		Creature creature = InstantiateCreature();

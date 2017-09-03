@@ -56,8 +56,8 @@ public class World : MonoSingleton<World> {
         KillAllCreatures();
         fixedTime = 0f;
         GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
-        for (int y = 1; y <= 4; y++) {
-            for (int x = 1; x <= 4; x++) {
+        for (int y = 1; y <= 1; y++) {
+            for (int x = 1; x <= 1; x++) {
                 life.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f));
             }
         }

@@ -69,7 +69,17 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 	}
 
+	public void AddToSelection(List<Creature> creatures) {
+		for (int index = 0; index < creatures.Count; index++) {
+			AddToSelection(creatures[index]);
+		}
+	}
+
 	public void AddToSelection(Creature creature) {
+		if (selection.Contains(creature)) {
+			return;
+		}
+
 		for (int index = 0; index < selection.Count; index++) {
 			selection[index].ShowCellsSelected(false);
 		}
