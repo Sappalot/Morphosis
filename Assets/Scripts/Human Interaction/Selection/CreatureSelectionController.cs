@@ -38,7 +38,6 @@ public class CreatureSelectionController : MouseDrag {
 
 			downPositionMouse = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 			rectangle.transform.localScale = new Vector3(0.1f, 0.1f, 0f);
-			rectangle.gameObject.SetActive(true);
 			//Debug.Log("MouseButton @ " + downPositionMouse);
 		}
 	}
@@ -49,14 +48,20 @@ public class CreatureSelectionController : MouseDrag {
 			Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 			Vector3 rectPosition = (downPositionMouse + mousePosition) / 2f;
 			Vector2 rectScale = new Vector2(Mathf.Abs(downPositionMouse.x - mousePosition.x), Mathf.Abs(downPositionMouse.y - mousePosition.y));
-			
-			Rect area = new Rect(rectPosition, rectScale);
 
-			rectangle.transform.position = new Vector3(area.x, area.y, 0f);
-			rectangle.transform.localScale = new Vector3(area.width, area.height, 0f);
+			Rect area = new Rect(rectPosition, rectScale);
+			rectangle.transform.position = new Vector3(area.x, area.y, -20f);
+			rectangle.transform.localScale = new Vector3(area.width, area.height, -20f);
+			rectangle.gameObject.SetActive(true);
+
+			const float largeThreshold = 1f;
+			if (!(rectScale.x > largeThreshold || rectScale.y > largeThreshold)) {
+				return;
+			}
+
+
 
 			List<Creature> inside = null;
-
 			if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
 				inside  = World.instance.life.GetPhenotypesInside(area);
 			} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
@@ -91,4 +96,5 @@ public class CreatureSelectionController : MouseDrag {
 			rectangle.gameObject.SetActive(false);
 		}
 	}
+
 }
