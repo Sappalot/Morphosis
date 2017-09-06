@@ -95,9 +95,13 @@ public class Creature : MonoBehaviour {
 		phenotype.EvoFixedUpdate(this, fixedTime);
 	}
 
+	private bool isShowCreatureSelected = false;
 	public void ShowCreatureSelected(bool on) {
-		phenotype.ShowSelectedCreature(on);
-		genotype.ShowCreatureSelected(on);
+		if (on != isShowCreatureSelected) {
+			phenotype.ShowSelectedCreature(on);
+			genotype.ShowCreatureSelected(on);
+			isShowCreatureSelected = on;
+		}
 	}
 
 	public void ShowCellsSelected(bool on) {

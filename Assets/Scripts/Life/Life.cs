@@ -9,6 +9,12 @@ public class Life : MonoBehaviour {
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
 	private List<Creature> creatureList = new List<Creature>();
 
+	public List<Creature> creatures	{
+		get {
+			return creatureList;
+		}
+	}
+
 	public void EvoUpdate() {
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].EvoUpdate();

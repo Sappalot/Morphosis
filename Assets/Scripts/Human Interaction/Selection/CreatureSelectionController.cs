@@ -42,6 +42,40 @@ public class CreatureSelectionController : MouseDrag {
 		}
 	}
 
+	private List<Creature> oldSelection = new List<Creature>();
+
+	private bool AreSelectionsSame(List<Creature> s1, List<Creature> s2) {
+		if (s1.Count == s2.Count) {
+			foreach (Creature c in s1) {
+				if (!s2.Contains(c)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private List<Creature> ToAdd(List<Creature> oldSelection, List<Creature> newSelection) {
+		List<Creature> extra = new List<Creature>();
+		foreach (Creature c in newSelection) {
+			if (!oldSelection.Contains(c)) {
+				extra.Add(c);
+			}
+		}
+		return extra;
+	}
+
+	private List<Creature> ToRemove(List<Creature> oldSelection, List<Creature> newSelection) {
+		List<Creature> remove = new List<Creature>();
+		foreach (Creature c in oldSelection) {
+			if (!newSelection.Contains(c)) {
+				remove.Add(c);
+			}
+		}
+		return remove;
+	}
+
 	public override void OnDragging(int mouseButton) {
 		// implement this for dragging
 		if (mouseButton == 0 && selectingMode != SelectingMode.idle) {
@@ -59,8 +93,6 @@ public class CreatureSelectionController : MouseDrag {
 				return;
 			}
 
-
-
 			List<Creature> inside = null;
 			if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
 				inside  = World.instance.life.GetPhenotypesInside(area);
@@ -69,21 +101,23 @@ public class CreatureSelectionController : MouseDrag {
 			}
 
 			if (selectingMode == SelectingMode.fresh) {
-				CreatureSelectionPanel.instance.ClearSelection();
-				CreatureSelectionPanel.instance.AddToSelection(inside);
+				CreatureSelectionPanel.instance.Select(inside);
 			} else if (selectingMode == SelectingMode.add) {
-				CreatureSelectionPanel.instance.ClearSelection();
-				CreatureSelectionPanel.instance.AddToSelection(inside);
-				CreatureSelectionPanel.instance.AddToSelection(alreadySelected);
+				List<Creature> sumList = new List<Creature>();
+				sumList.AddRange(inside);
+				sumList.AddRange(alreadySelected);
+				CreatureSelectionPanel.instance.Select(sumList);
 			} else if (selectingMode == SelectingMode.subtract) {
-				List<Creature> rest = new List<Creature>();
-				foreach (Creature c in alreadySelected) {
-					if (!inside.Contains(c)) {
-						rest.Add(c);
+				List<Creature> subList = new List<Creature>();
+				subList.AddRange(alreadySelected);
+				for (int index = 0; index < inside.Count; index++) {
+					Creature creature = inside[index];
+					if (subList.Contains(creature)) {
+						subList.Remove(creature);
 					}
 				}
-				CreatureSelectionPanel.instance.ClearSelection();
-				CreatureSelectionPanel.instance.AddToSelection(rest);
+
+				CreatureSelectionPanel.instance.Select(subList);
 			}
 		}
 	}

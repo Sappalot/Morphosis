@@ -47,7 +47,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		UpdatePhenotypePanel();
 	}
 
-	public void SelectOnly(Creature creature, Cell cell = null) {
+	public void Select(Creature creature, Cell cell = null) {
 		for (int index = 0; index < selection.Count; index++) {
 			selection[index].ShowCreatureSelected(false);
 			selection[index].ShowCellsSelected(false);
@@ -67,6 +67,25 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				UpdatePhenotypePanel();
 			}
 		}
+	}
+
+	public void Select(List<Creature> creatures) {
+		List<Creature> allCreatures = life.creatures;
+		for (int index = 0; index < allCreatures.Count; index++) {
+			Creature creature = allCreatures[index];
+			if (creatures.Contains(creature)) {
+				creature.ShowCreatureSelected(true);
+			} else {
+				creature.ShowCreatureSelected(false);
+			}
+		}
+
+		selection.Clear();
+		selection.AddRange(creatures);
+
+		UpdateGUI();
+		UpdateGenotypePanel();
+		UpdatePhenotypePanel();
 	}
 
 	public void AddToSelection(List<Creature> creatures) {
@@ -93,7 +112,16 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		UpdatePhenotypePanel();
 	}
 
+	public void RemoveFromSelection(List<Creature> creatures) {
+		for (int index = 0; index < creatures.Count; index++) {
+			RemoveFromSelection(creatures[index]);
+		}
+	}
+
 	public void RemoveFromSelection(Creature creature) {
+		if (!selection.Contains(creature)) {
+			return;
+		}
 		for (int index = 0; index < selection.Count; index++) {
 			selection[index].ShowCellsSelected(false);
 		}

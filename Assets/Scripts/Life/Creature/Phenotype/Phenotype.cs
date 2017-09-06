@@ -45,10 +45,11 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public bool IsInside(Rect area) {
-		float top = area.y + area.height / 2f;
-		float bottom = area.y - area.height / 2f;
-		float left = area.x - area.width / 2f;
-		float right = area.x + area.width / 2f;
+		float cellRadius = 0.5f;
+		float top = area.y + cellRadius + area.height / 2f;
+		float bottom = area.y - cellRadius - area.height / 2f;
+		float left = area.x - cellRadius - area.width / 2f;
+		float right = area.x + cellRadius + area.width / 2f;
 		foreach (Cell cell in cellList) {
 			if (cell.position.x < right + cell.radius && cell.position.x > left - cell.radius && cell.position.y < top + cell.radius && cell.position.y > bottom - cell.radius) {
 				return true;

@@ -472,7 +472,7 @@ public abstract class Cell : MonoBehaviour {
                     CreatureSelectionPanel.instance.AddToSelection(creature);
                 }
             } else {
-                CreatureSelectionPanel.instance.SelectOnly(creature, this);
+                CreatureSelectionPanel.instance.Select(creature, this);
             }
         }
     }
