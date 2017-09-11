@@ -30,7 +30,7 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
             genomeGenes[index].gameObject.SetActive(true);
             genomeGenes[index].name = "Gene " + index;
             RectTransform spawnTransform = genomeGenes[index].GetComponent<RectTransform>();
-            spawnTransform.position = originalTransform.position + Vector3.down * index * (originalTransform.rect.height + 2);
+            spawnTransform.position = originalTransform.position + Vector3.right * index * (originalTransform.rect.width + 2);
 
             //genomeGenes[index].index = index;
             //genomeGenes[index].text.text = "Gene " + index;
