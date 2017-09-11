@@ -104,7 +104,7 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public void ShowCellsSelected(bool on) {
+	public void ShowCellsAndGeneCellsSelected(bool on) {
 		phenotype.ShowCellsSelected(on);
 		genotype.ShowGeneCellsSelected(on);
 	}

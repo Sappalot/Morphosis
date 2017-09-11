@@ -38,7 +38,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public void ClearSelection() {
 		for (int index = 0; index < selection.Count; index++) {
 			selection[index].ShowCreatureSelected(false);
-			selection[index].ShowCellsSelected(false);
+			selection[index].ShowCellsAndGeneCellsSelected(false);
 		}
 		selection.Clear();
 		UpdateGUI();
@@ -50,23 +50,14 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public void Select(Creature creature, Cell cell = null) {
 		for (int index = 0; index < selection.Count; index++) {
 			selection[index].ShowCreatureSelected(false);
-			selection[index].ShowCellsSelected(false);
+			selection[index].ShowCellsAndGeneCellsSelected(false);
 		}
 		selection.Clear();
 
 		creature.ShowCreatureSelected(true);
 		selection.Add(creature);
+		SelectedCellAndGene(cell);
 		UpdateGUI();
-		if (cell != null) {
-			if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
-				GenePanel.instance.gene = cell.gene;
-				UpdateGenotypePanel();
-			} else if(CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
-				creature.ShowCellSelected(cell, true);
-				PhenotypePanel.instance.cell = cell;
-				UpdatePhenotypePanel();
-			}
-		}
 	}
 
 	public void Select(List<Creature> creatures) {
@@ -77,15 +68,38 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				creature.ShowCreatureSelected(true);
 			} else {
 				creature.ShowCreatureSelected(false);
+				creature.ShowCellsAndGeneCellsSelected(false);
+			}
+			if (creatures.Count > 1) {
+				creature.ShowCellsAndGeneCellsSelected(false);
 			}
 		}
 
 		selection.Clear();
 		selection.AddRange(creatures);
+		SelectedCellAndGene(null);
 
 		UpdateGUI();
 		UpdateGenotypePanel();
 		UpdatePhenotypePanel();
+	}
+
+	private void SelectedCellAndGene(Cell cell) {
+		if (cell == null) {
+			if (selectedCreature == null) {
+				return;
+			}
+			cell = selectedCreature.phenotype.rootCell;
+		}
+
+		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+			GenePanel.instance.gene = cell.gene;
+			UpdateGenotypePanel();
+		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+			selectedCreature.ShowCellSelected(cell, true);
+			PhenotypePanel.instance.cell = cell;
+			UpdatePhenotypePanel();
+		}
 	}
 
 	public void AddToSelection(List<Creature> creatures) {
@@ -100,12 +114,13 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 
 		for (int index = 0; index < selection.Count; index++) {
-			selection[index].ShowCellsSelected(false);
+			selection[index].ShowCellsAndGeneCellsSelected(false);
 		}
 		PhenotypePanel.instance.cell = null;
 
 		creature.ShowCreatureSelected(true);
 		selection.Add(creature);
+		SelectedCellAndGene(null);
 		UpdateGUI();
 
 		UpdateGenotypePanel();
@@ -123,18 +138,19 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			return;
 		}
 		for (int index = 0; index < selection.Count; index++) {
-			selection[index].ShowCellsSelected(false);
+			selection[index].ShowCellsAndGeneCellsSelected(false);
 		}
 		PhenotypePanel.instance.cell = null;
 
 		creature.ShowCreatureSelected(false);
 		selection.Remove(creature);
+		SelectedCellAndGene(null);
 		UpdateGUI();
 
 		UpdateGenotypePanel();
 		UpdatePhenotypePanel();
 
-		SelectDefaultGeneCell();
+		//SelectDefaultGeneCell();
 	}
 
 	private void SelectDefaultGeneCell() {

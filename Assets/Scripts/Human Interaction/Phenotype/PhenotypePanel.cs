@@ -47,10 +47,8 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
         creatureEnergy.text = "Energy: 100%";
 
         if (cell == null) {
-            cellType.text = "Type:";
-            cellEnergy.text = "Energy:";
-            return;
-        }
+			cell = CreatureSelectionPanel.instance.selectedCreature.phenotype.rootCell;
+		}
 
         cellType.text = "Type: " + cell.gene.type.ToString();
         cellEnergy.text = "Energy: 100%";

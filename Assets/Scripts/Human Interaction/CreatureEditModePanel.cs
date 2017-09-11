@@ -52,7 +52,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
         if (creature != null) {
             PhenotypePanel.instance.cell = creature.phenotype.rootCell;
             PhenotypePanel.instance.UpdateRepresentation();
-            creature.ShowCellsSelected(false);
+            creature.ShowCellsAndGeneCellsSelected(false);
             creature.ShowCellSelected(creature.phenotype.rootCell, true);
         }
     }

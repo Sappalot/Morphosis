@@ -116,7 +116,6 @@ public class CreatureSelectionController : MouseDrag {
 						subList.Remove(creature);
 					}
 				}
-
 				CreatureSelectionPanel.instance.Select(subList);
 			}
 		}
