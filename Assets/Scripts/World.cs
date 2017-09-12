@@ -50,7 +50,7 @@ public class World : MonoSingleton<World> {
         }
     }
 
-    //Sava load
+    //Save load
     public void Restart() {
         Time.timeScale = 0;
         KillAllCreatures();
@@ -62,7 +62,9 @@ public class World : MonoSingleton<World> {
             }
         }
         CreatureEditModePanel.instance.Restart();
-        Time.timeScale = HUD.instance.timeControllValue;
+		RMBToolModePanel.instance.Restart();
+
+		Time.timeScale = HUD.instance.timeControllValue;
     }
 
     public void Load() {
