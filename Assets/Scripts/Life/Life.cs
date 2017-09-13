@@ -76,8 +76,6 @@ public class Life : MonoBehaviour {
 		return insideList;
 	}
 
-
-
 	public Creature SpawnCreatureJellyfish(Vector3 position) {
 		Creature creature = InstantiateCreature();
 		creature.GenerateJellyfish(position);
@@ -145,5 +143,13 @@ public class Life : MonoBehaviour {
 		}
 	}
 
-
+	public Cell GetCellAt(Vector2 position) {
+		foreach (Creature creature in creatureList) {
+			Cell found =  creature.GetCellAt(position);
+			if (found != null) {
+				return found;
+			}
+		}
+		return null;
+	}
 }

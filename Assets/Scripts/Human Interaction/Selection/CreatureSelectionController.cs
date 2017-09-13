@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
 public class CreatureSelectionController : MouseDrag {
-	public Camera camera;
+	public new Camera camera;
 	public Transform rectangle;
 
 	private Vector3 dragVector = new Vector3();

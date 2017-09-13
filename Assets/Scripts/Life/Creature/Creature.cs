@@ -113,6 +113,10 @@ public class Creature : MonoBehaviour {
 		phenotype.ShowCellSelected(cell, on);
 	}
 
+	public Cell GetCellAt(Vector2 position) {
+		return phenotype.GetCellAt(position);
+	}
+
 	//data
 	private CreatureData creatureData = new CreatureData();
 

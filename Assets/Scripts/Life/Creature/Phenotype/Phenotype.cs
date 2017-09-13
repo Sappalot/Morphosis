@@ -390,4 +390,17 @@ public class Phenotype : MonoBehaviour {
 
 		isDirty = false; //prevent regeneration on genotype -> Phenotype switch
 	}
+
+	public Cell GetCellAt(Vector2 position) {
+		foreach (Cell cell in cellList) {
+			if (IsPointInsideCircle(position, cell.position, cell.radius + 0.2f)) {
+				return cell;
+			}
+		}
+		return null;
+	}
+
+	private bool IsPointInsideCircle(Vector2 point, Vector2 center, float radius) {
+		return Mathf.Pow((point.x - center.x), 2) + Mathf.Pow((point.y - center.y), 2) < Mathf.Pow(radius, 2);
+	}
 }
