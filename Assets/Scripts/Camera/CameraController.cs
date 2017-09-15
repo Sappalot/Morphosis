@@ -88,13 +88,4 @@ public class CameraController : MouseDrag {
             verticalMove * cameraMoveSpeed * 2f * camera.orthographicSize * Time.deltaTime,
             0f);
     }
-
-	private void OnMouseDown() {
-		if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject()) {
-			if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftShift)) {
-				return;
-			}
-			CreatureSelectionPanel.instance.ClearSelection();
-		}
-	}
 }
