@@ -10,7 +10,7 @@ public class RMBToolModePanel : MonoSingleton<RMBToolModePanel> {
 		spring,
 		attract,
 		repell,
-		spawn,
+		embryo,
 	}
 
 	private RMBToolMode m_toolMode;
@@ -21,12 +21,12 @@ public class RMBToolModePanel : MonoSingleton<RMBToolModePanel> {
 	}
 
 	public override void Init() {
-		m_toolMode = RMBToolMode.spawn;
+		m_toolMode = RMBToolMode.embryo;
 		UpdateHUD();
 	}
 
 	public void Restart() {
-		m_toolMode = RMBToolMode.spawn;
+		m_toolMode = RMBToolMode.embryo;
 		UpdateHUD();
 	}
 
@@ -46,7 +46,7 @@ public class RMBToolModePanel : MonoSingleton<RMBToolModePanel> {
 	}
 
 	public void OnClickedSpawn() {
-		m_toolMode = RMBToolMode.spawn;
+		m_toolMode = RMBToolMode.embryo;
 		UpdateHUD();
 	}
 
@@ -54,6 +54,6 @@ public class RMBToolModePanel : MonoSingleton<RMBToolModePanel> {
 		springImage.color = (toolMode == RMBToolMode.spring) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 		attractImage.color = (toolMode == RMBToolMode.attract) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 		repellImage.color = (toolMode == RMBToolMode.repell) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-		spawnImage.color = (toolMode == RMBToolMode.spawn) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+		spawnImage.color = (toolMode == RMBToolMode.embryo) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 	}
 }

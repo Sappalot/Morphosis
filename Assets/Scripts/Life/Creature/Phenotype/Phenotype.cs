@@ -242,7 +242,7 @@ public class Phenotype : MonoBehaviour {
 	private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature, Vector3 position, bool modelSpace) {
 		Cell cell = InstantiateCell(gene.type, mapPosition);
 		Vector3 spawnPosition = (modelSpace ? genotype.geneCellMap.ToPosition(mapPosition) : Vector3.zero) + position;
-		cell.transform.position = spawnPosition;
+		cell.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, 0f);
 
 		cell.mapPosition = mapPosition;
 		cell.buildOrderIndex = buildOrderIndex;

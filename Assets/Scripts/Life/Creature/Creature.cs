@@ -70,7 +70,7 @@ public class Creature : MonoBehaviour {
 		phenotype.GenerateCells(this, position);
 	}
 
-	public void GenerateMinimalistic(Vector3 position) {
+	public void GenerateEmbryo(Vector3 position) {
 		genotype.GenerateGenomeEmpty();
 		genotype.isDirty = true;
 		genotype.GenerateGeneCells(this); // Generating genotype here caused Unity freeze ;/

@@ -82,9 +82,9 @@ public class Life : MonoBehaviour {
 		return creature;
 	}
 
-	public Creature SpawnCreatureMinimalistic(Vector3 position) {
+	public Creature SpawnCreatureEmbryo(Vector3 position) {
 		Creature creature = InstantiateCreature();
-		creature.GenerateMinimalistic(position);
+		creature.GenerateEmbryo(position);
 		return creature;
 	}
 

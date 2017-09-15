@@ -14,9 +14,10 @@ public class RMBToolController : MouseDrag {
 
 	public override void OnDraggingStart(int mouseButton) {
 		// implement this for start of dragging
-		if (mouseButton == 1 && CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype && !EventSystem.current.IsPointerOverGameObject()) {
-			if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spring) {
-				downPositionMouse = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+		if (mouseButton == 1 && !EventSystem.current.IsPointerOverGameObject()) {
+			downPositionMouse = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+			if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spring && CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+				
 				Cell cell = World.instance.life.GetCellAt(downPositionMouse);
 				Debug.Log("Found: " + cell);
 				if (cell != null) {
@@ -27,6 +28,8 @@ public class RMBToolController : MouseDrag {
 					spring.GetComponent<LineRenderer>().SetPosition(0, spring.connectedBody.transform.position);
 					spring.GetComponent<LineRenderer>().enabled = true;
 				}
+			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.embryo) {
+				World.instance.life.SpawnCreatureEmbryo(downPositionMouse);
 			}
 		}
 	}
