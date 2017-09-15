@@ -1,4 +1,5 @@
 ﻿public enum MouseActionStateEnum {
-    free,
-    selectGene,
+	free,
+	selectGene,
+	moveCreatures,
 }

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class MouseAction : MonoSingleton<MouseAction> {
 
-    public Text text;
+    public Text mouseText;
     public Canvas myCanvas;
     private MouseActionStateEnum m_actionState = MouseActionStateEnum.free;
     public MouseActionStateEnum actionState {
@@ -33,10 +33,14 @@ public class MouseAction : MonoSingleton<MouseAction> {
 
     private void UpdateText() {
         if (m_actionState == MouseActionStateEnum.free) {
-            text.text = string.Empty;
+            mouseText.text = string.Empty;
         } else if (m_actionState == MouseActionStateEnum.selectGene) {
-            text.text = "Select gene reference!";
-        }
-    }
+            mouseText.text = "Select Gene Reference";
+		} else if (m_actionState == MouseActionStateEnum.moveCreatures) {
+			mouseText.text = "Move Creatures"; ;
+		}
+
+		
+	}
 
 }

@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public Life life;
 	public PhenotypePanel phenotypePanel;
+	public Camera camera;
 
 	public Text selectedCreatureText;
 
@@ -22,6 +24,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		get {
 			return selection.Count;
 		}        
+	}
+
+	public bool hasSelection { 
+		get {
+			return selection.Count > 0;
+		}
 	}
 
 	public bool IsSelected(Creature creature) {
@@ -186,14 +194,35 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			//gameObject.SetActive(true);
 			selectedCreatureText.text = selection.Count + " Creatures";
 			//phenotypePanel.gameObject.SetActive(false);
-		}            
+		}
 	}
 
-	//Buttons
+	//Actions
+	private void Update() {
+		if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures) {
+
+		}
+	}
+
+	// Delete
 	public void OnDeleteClicked() {
 		for (int index = 0; index < selection.Count; index++) {
 			life.DeleteCreature(selection[index]);
 		}
 		ClearSelection();
+	}
+
+	// Move
+	public void OnMoveClicked() {
+		if (!hasSelection) {
+			return;
+		}
+
+		MouseAction.instance.actionState = MouseActionStateEnum.moveCreatures;
+	}
+
+	public void PlaceHoveringCreatures() {
+		Debug.Log("Placing");
+		MouseAction.instance.actionState = MouseActionStateEnum.free;
 	}
 }
