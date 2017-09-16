@@ -64,7 +64,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		}
 
 		if (GenomePanel.instance.genotype != null)
-			GenomePanel.instance.genotype.isDirty |= changeToGenomeMade;
+			GenomePanel.instance.genotype.hasDirtyGenes |= changeToGenomeMade;
 
 		circles.SetActive(true);
 
@@ -99,7 +99,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		if (changeToGenomeMade && CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
 			CreatureSelectionPanel.instance.selectedCreature.genotype.GenerateGeneCells(CreatureSelectionPanel.instance.selectedCreature);
 			CreatureSelectionPanel.instance.selectedCreature.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
-			CreatureSelectionPanel.instance.selectedCreature.genotype.UpdateTransformAndHighlite(CreatureSelectionPanel.instance.selectedCreature);
+			CreatureSelectionPanel.instance.selectedCreature.genotype.MoveToPhenotypeAndUpdateHighlite(CreatureSelectionPanel.instance.selectedCreature);
 
 			CreatureSelectionPanel.instance.selectedCreature.phenotype.isDirty = true;
 		} 

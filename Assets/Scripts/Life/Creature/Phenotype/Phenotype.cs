@@ -37,6 +37,7 @@ public class Phenotype : MonoBehaviour {
 	private CellMap cellMap = new CellMap();
 
 	private bool isGrabbed;
+	public bool hasDirtyPosition = false;
 
 	public int cellCount
 	{
@@ -399,7 +400,16 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public void MoveToGenotype() {
+		Vector2 moveVector = creature.genotype.rootCell.transform.position - rootCell.transform.position;
+		MoveCells(moveVector);
+	}
 
+	public void MoveCells(Vector2 vector) {
+		foreach (Cell cell in cellList) {
+			cell.transform.position += (Vector3)vector;
+		}
+	}
 
 	//data
 

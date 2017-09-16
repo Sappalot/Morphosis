@@ -10,14 +10,14 @@ public class Genotype : MonoBehaviour {
 	public LeafCell leafCellPrefab;
 	public MuscleCell muscleCellPrefab;
 	public VeinCell veinCellPrefab;
-	public Transform cells;
+	public Transform cellsTransform;
 
 	public static int root = 0;
 	public static int genomeLength = 21;
 	public CellMap geneCellMap = new CellMap();
 	public List<Cell> geneCellList = new List<Cell>();
 
-	public bool isDirty = true;
+	public bool hasDirtyGenes = true;
 
 	[HideInInspector]
 	public Cell rootCell {
@@ -97,7 +97,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void GenerateGeneCells(Creature creature) {
-		if (isDirty) {
+		if (hasDirtyGenes) {
 			const int maxSize = 6;
 			Clear();
 
@@ -148,7 +148,7 @@ public class Genotype : MonoBehaviour {
 				}
 			}
 			ShowGeneCellsSelected(false);
-			isDirty = false;
+			hasDirtyGenes = false;
 		}
 	}
 
@@ -174,7 +174,7 @@ public class Genotype : MonoBehaviour {
 		if (cell == null) {
 			throw new System.Exception("Could not create Cell out of type defined in gene");
 		}
-		cell.transform.parent = cells;
+		cell.transform.parent = cellsTransform;
 		cell.mapPosition = mapPosition;
 		cell.buildOrderIndex = buildOrderIndex;
 		cell.gene = gene;
@@ -188,15 +188,29 @@ public class Genotype : MonoBehaviour {
 		return cell;
 	}
 
-	public void UpdateTransformAndHighlite(Creature creature) {
-		cells.localPosition = creature.phenotype.rootCell.transform.position;
-		cells.localRotation = Quaternion.identity;
-		cells.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
-		ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
+	public void MoveToPhenotypeAndUpdateHighlite(Creature creature) {
+		MoveRootToOrigo();
+
+		cellsTransform.localPosition = creature.phenotype.rootCell.transform.position;
+		cellsTransform.localRotation = Quaternion.identity;
+		cellsTransform.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
+
+		for (int index = 0; index < geneCellList.Count; index++) {
+			geneCellList[index].transform.parent = null;
+		}
+
+		cellsTransform.position = Vector3.zero;
+		//cellsTransform.localRotation = Quaternion.identity; //bugger
+
+		for (int index = 0; index < geneCellList.Count; index++) {
+			geneCellList[index].transform.parent = cellsTransform;
+		}
 
 		for (int index = 0; index < geneCellList.Count; index++) {
 			geneCellList[index].EvoFixedUpdate(0);
 		}
+
+		ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
 	}
 
 	public Gene GetGeneAt(int index) {
@@ -242,8 +256,8 @@ public class Genotype : MonoBehaviour {
 		geneCellList.Clear();
 		geneCellMap.Clear();
 
-		cells.localPosition = Vector3.zero;
-		cells.localRotation = Quaternion.identity;
+		cellsTransform.localPosition = Vector3.zero;
+		cellsTransform.localRotation = Quaternion.identity;
 
 		transform.localPosition = Vector3.zero;
 		transform.localRotation = Quaternion.identity;
@@ -258,10 +272,26 @@ public class Genotype : MonoBehaviour {
 
 	public void Grab() {
 		MoveRootToOrigo();
+		foreach (Cell cell in geneCellList) {
+			cell.GetComponent<Collider2D>().enabled = false;
+		}
 	}
 
-	public void Release() {
+	public void Release(Creature creature) {
+		foreach (Cell cell in geneCellList) {
+			cell.GetComponent<Collider2D>().enabled = true;
+		}
 
+		foreach (Cell cell in geneCellList) {
+			cell.transform.parent = null;
+		}
+		creature.transform.position = Vector3.zero;
+		cellsTransform.transform.position = Vector3.zero;
+		transform.position = Vector3.zero;
+
+		foreach (Cell cell in geneCellList) {
+			cell.transform.parent = cellsTransform.transform;
+		}
 	}
 
 	//data

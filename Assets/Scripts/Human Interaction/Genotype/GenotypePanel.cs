@@ -57,7 +57,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
             return;
         }
 
-        genotype.isDirty |= changeToGenomeMade;
+        genotype.hasDirtyGenes |= changeToGenomeMade;
         genePanel.UpdateRepresentation(changeToGenomeMade);
         GenomePanel.instance.genotype = genotype;
     }

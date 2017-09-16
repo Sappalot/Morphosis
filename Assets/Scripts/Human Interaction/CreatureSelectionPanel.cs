@@ -197,11 +197,21 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 	}
 
-	public Vector2 SelectionPointOfWeight {
+	public Vector2 SelectionPointOfWeightPhenotype {
 		get	{
 			Vector2 pow = Vector2.zero;
 			foreach (Creature c in selection) {
 				pow += (Vector2)c.phenotype.rootCell.position;
+			}
+			return pow / selectionCount;
+		}
+	}
+
+	public Vector2 SelectionPointOfWeightGenotype {
+		get	{
+			Vector2 pow = Vector2.zero;
+			foreach (Creature c in selection) {
+				pow += (Vector2)c.genotype.rootCell.position;
 			}
 			return pow / selectionCount;
 		}
@@ -226,14 +236,22 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 		Debug.Log("Grabbing");
 		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+			foreach (Creature c in selection) {
+				c.Grab(PhenotypeGenotypeEnum.Phenotype);
+			}
 
-		foreach (Creature c in selection) {
-			c.Grab(PhenotypeGenotypeEnum.Phenotype);
-		}
-
-		//Offset
-		foreach (Creature c in selection) {
-			moveOffset.Add(c, (Vector2)c.transform.position - SelectionPointOfWeight);
+			//Offset
+			foreach (Creature c in selection) {
+				moveOffset.Add(c, (Vector2)c.transform.position - SelectionPointOfWeightPhenotype);
+			}
+		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+			foreach (Creature c in selection) {
+				c.Grab(PhenotypeGenotypeEnum.Genotype);
+			}
+			foreach (Creature c in selection) {
+				moveOffset.Add(c, (Vector2)c.transform.position - SelectionPointOfWeightGenotype);
+			}
 		}
 
 		MouseAction.instance.actionState = MouseActionStateEnum.moveCreatures;
@@ -254,8 +272,14 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	public void PlaceHoveringCreatures() {
 		Debug.Log("Releasing");
-		foreach (Creature c in selection) {
-			c.Release(PhenotypeGenotypeEnum.Phenotype);
+		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+			foreach (Creature c in selection) {
+				c.Release(PhenotypeGenotypeEnum.Phenotype);
+			}
+		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+			foreach (Creature c in selection) {
+				c.Release(PhenotypeGenotypeEnum.Genotype);
+			}
 		}
 
 		//Offset

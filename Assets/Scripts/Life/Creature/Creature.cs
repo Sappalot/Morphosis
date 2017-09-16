@@ -58,18 +58,22 @@ public class Creature : MonoBehaviour {
 	public void SwitchToPhenotype() {
 		phenotype.Show(true); //Don't use SetActive() since it clears rigigdBody velocity
 		genotype.gameObject.SetActive(false);
+		if (phenotype.hasDirtyPosition) {
+			phenotype.MoveToGenotype();
+			phenotype.hasDirtyPosition = false;
+		}		
 		phenotype.GenerateCells(this);
 	}
 
 	public void SwitchToGenotype() {
 		phenotype.Show(false); //Don't use SetActive() since it clears rigigdBody velocity
-		genotype.UpdateTransformAndHighlite(this);
+		genotype.MoveToPhenotypeAndUpdateHighlite(this);
 		genotype.gameObject.SetActive(true);
 	}
 
 	public void GenerateJellyfish(Vector3 position) {
 		genotype.GenerateGenomeJellyfish();
-		genotype.isDirty = true;
+		genotype.hasDirtyGenes = true;
 		genotype.GenerateGeneCells(this); // Generating genotype here caused Unity freeze ;/
 
 		phenotype.isDirty = true;
@@ -78,7 +82,7 @@ public class Creature : MonoBehaviour {
 
 	public void GenerateEmbryo(Vector3 position) {
 		genotype.GenerateGenomeEmpty();
-		genotype.isDirty = true;
+		genotype.hasDirtyGenes = true;
 		genotype.GenerateGeneCells(this); // Generating genotype here caused Unity freeze ;/
 
 		phenotype.isDirty = true;
@@ -131,6 +135,15 @@ public class Creature : MonoBehaviour {
 			transform.parent = null;
 			transform.position = rootCellPosition;
 			transform.parent = World.instance.life.transform;
+		} else if (type == PhenotypeGenotypeEnum.Genotype) {
+			phenotype.hasDirtyPosition = true;
+
+			Vector2 rootCellPosition = genotype.rootCell.position;
+			genotype.Grab();
+
+			transform.parent = null;
+			transform.position = rootCellPosition;
+			transform.parent = World.instance.life.transform;
 		}
 	}
 
@@ -138,15 +151,18 @@ public class Creature : MonoBehaviour {
 		if (type == PhenotypeGenotypeEnum.Phenotype) {
 			phenotype.Release();
 			//transform.position = Vector3.zero;
+		} else if (type == PhenotypeGenotypeEnum.Genotype) {
+			genotype.Release(this);
+			//transform.position = Vector3.zero;
 		}
 	}
 
 	public void ShowMarkers(bool show) {
-		creturePosition.enabled = show;
-		phenotypePosition.enabled = show;
-		phenotypeCellsPosition.enabled = show;
-		genotypePosition.enabled = show;
-		genotypeCellsPosition.enabled = show;
+		creturePosition.enabled =			show;
+		phenotypePosition.enabled =			show;
+		phenotypeCellsPosition.enabled =	show;
+		genotypePosition.enabled =			show;
+		genotypeCellsPosition.enabled =		show;
 	}
 
 	//data
@@ -167,7 +183,7 @@ public class Creature : MonoBehaviour {
 		nickname = creatureData.nickname;
 
 		genotype.ApplyData(creatureData.genotypeData);
-		genotype.isDirty = true;
+		genotype.hasDirtyGenes = true;
 		genotype.GenerateGeneCells(this); // Generating genotype here caused Unity freeze ;/
 
 		phenotype.ApplyData(creatureData.phenotypeData, this);
