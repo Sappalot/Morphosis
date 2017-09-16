@@ -2,4 +2,5 @@
 	free,
 	selectGene,
 	moveCreatures,
+	rotateCreatures,
 }

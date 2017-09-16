@@ -11,6 +11,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public Transform cellsTransform;
 	//-----------------------------------
 
 	public int model = 0;
@@ -184,7 +185,7 @@ public class Phenotype : MonoBehaviour {
 		ShowCellsSelected(false);
 		ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(creature));
 		ShowShadow(false);
-		ShowTriangle(false);
+		ShowTriangle(true);
 	}
 
 	private int CardinaIndexToNeighbour(Cell from, Cell to) {
@@ -393,16 +394,34 @@ public class Phenotype : MonoBehaviour {
 			cell.transform.parent = null;
 		}
 		creature.transform.position = Vector3.zero;
+		creature.transform.rotation = Quaternion.identity;
 		transform.position = Vector3.zero;
+		transform.rotation = Quaternion.identity;
 
 		foreach (Cell cell in cellList) {
 			cell.transform.parent = cells.transform;
 		}
+
+		//foreach (Cell cell in cellList) {
+		//	cell.EvoFixedUpdate(0);
+		//}		
 	}
 
 	public void MoveToGenotype() {
-		Vector2 moveVector = creature.genotype.rootCell.transform.position - rootCell.transform.position;
-		MoveCells(moveVector);
+		MoveCells(creature.genotype.rootCell.position - rootCell.position);
+
+		float angle = genotype.rootCell.heading - rootCell.heading;
+		foreach (Cell cell in cellList) {
+			float originalHeading = cell.heading;
+			Vector3 rootToCell = cell.transform.position - rootCell.position;
+			Vector3 turnedVector = Quaternion.Euler(0, 0, angle) * rootToCell;
+			cell.transform.position = (Vector2)rootCell.position + (Vector2)turnedVector;
+			//float heading = originalHeading - angle;
+			//cell.heading = heading;
+			///cell.SetTringleHeadingAngle(heading);
+		}
+
+		//EvoFixedUpdate(creature, 0);
 	}
 
 	public void MoveCells(Vector2 vector) {
@@ -439,7 +458,7 @@ public class Phenotype : MonoBehaviour {
 		UpdateSpringsFrequenze();
 		ShowCellsSelected(false);
 		ShowShadow(false);
-		ShowTriangle(false);
+		ShowTriangle(true);
 
 		isDirty = false; //prevent regeneration on genotype -> Phenotype switch
 	}

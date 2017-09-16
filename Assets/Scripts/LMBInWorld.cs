@@ -13,7 +13,7 @@ public class LMBInWorld : MonoBehaviour {
 					return;
 				}
 				CreatureSelectionPanel.instance.ClearSelection();
-			} else if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures) {
+			} else if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures) {
 				CreatureSelectionPanel.instance.PlaceHoveringCreatures();
 			}
 		}

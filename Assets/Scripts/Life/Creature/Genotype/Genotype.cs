@@ -102,7 +102,9 @@ public class Genotype : MonoBehaviour {
 			Clear();
 
 			List<Cell> spawningFromCells = new List<Cell>();
-			spawningFromCells.Add(SpawnGeneCell(GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature)); //root
+			Cell root = SpawnGeneCell(GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature);
+			root.heading = 90f;
+			spawningFromCells.Add(root);
 
 			List<Cell> nextSpawningFromCells = new List<Cell>();
 			for (int buildOrderIndex = 1; spawningFromCells.Count != 0 && buildOrderIndex < maxSize; buildOrderIndex++) {
@@ -189,29 +191,82 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void MoveToPhenotypeAndUpdateHighlite(Creature creature) {
-		MoveRootToOrigo();
+		//MoveRootToOrigo();
 
-		cellsTransform.localPosition = creature.phenotype.rootCell.transform.position;
-		cellsTransform.localRotation = Quaternion.identity;
-		cellsTransform.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
+		//creature.transform.rotation = Quaternion.identity;
+		//creature.transform.position = Vector3.zero;
+		//cellsTransform.position = creature.phenotype.rootCell.transform.position;
+		//Debug.Log("Move genotype to phenotype, heading: " + (creature.phenotype.rootCell.heading));
+		//cellsTransform.rotation = Quaternion.Euler(0f, 0f, creature.phenotype.rootCell.heading - 90f);
 
-		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].transform.parent = null;
+		////rotarion
+		//for (int index = 0; index < geneCellList.Count; index++) {
+		//	geneCellList[index].transform.parent = null;
+		//}
+
+		////creature.transform.position = Vector3.zero; ;
+		////creature.transform.rotation = Quaternion.identity;
+
+		//cellsTransform.position = Vector3.zero;
+		////cellsTransform.localRotation = Quaternion.identity; //bugger... seems to accumulate an angle whel changing pheno - geno
+
+
+		//for (int index = 0; index < geneCellList.Count; index++) {
+		//	geneCellList[index].transform.parent = cellsTransform; 
+		//}
+
+		//for (int index = 0; index < geneCellList.Count; index++) {
+		//	geneCellList[index].EvoFixedUpdate(0);
+		//}
+
+		MoveCells(creature.phenotype.rootCell.position - rootCell.position);
+		float angle = creature.phenotype.rootCell.heading - rootCell.heading;
+		Debug.Log("To genotype, pheno heading: " + creature.phenotype.rootCell.heading + ", geno heading: " + rootCell.heading + ", change: + " + angle);
+		foreach (Cell cell in geneCellList) {
+			float originalHeading = cell.heading;
+			Vector3 rootToCell = cell.transform.position - rootCell.position;
+			Vector3 turnedVector = Quaternion.Euler(0, 0, angle) * rootToCell;
+			cell.transform.position = (Vector2)rootCell.position + (Vector2)turnedVector;
+			float heading = AngleUtil.ToAngle(cell.bindCardinalIndex) + creature.phenotype.rootCell.heading - 90f;
+			cell.heading = heading;
+			cell.SetTringleHeadingAngle(heading);
 		}
-
-		cellsTransform.position = Vector3.zero;
-		//cellsTransform.localRotation = Quaternion.identity; //bugger
-
-		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].transform.parent = cellsTransform;
-		}
-
-		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].EvoFixedUpdate(0);
-		}
-
+		rootCell.heading = creature.phenotype.rootCell.heading;
 		ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
 	}
+
+	public void MoveCells(Vector2 vector) {
+		foreach (Cell cell in geneCellList) {
+			cell.transform.position += (Vector3)vector;
+		}
+	}
+
+	//public void MoveToPhenotypeAndUpdateHighlite(Creature creature) {
+	//	MoveRootToOrigo();
+
+	//	cellsTransform.localPosition = creature.phenotype.rootCell.transform.position;
+	//	cellsTransform.localRotation = Quaternion.identity;
+	//	cellsTransform.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
+
+	//	Vector3 pos = cellsTransform.position;
+
+	//	for (int index = 0; index < geneCellList.Count; index++) {
+	//		geneCellList[index].transform.parent = null;
+	//	}
+
+	//	cellsTransform.position = Vector3.zero;
+	//	//cellsTransform.localRotation = Quaternion.identity; //bugger
+
+	//	for (int index = 0; index < geneCellList.Count; index++) {
+	//		geneCellList[index].transform.parent = cellsTransform;
+	//	}
+
+	//	for (int index = 0; index < geneCellList.Count; index++) {
+	//		geneCellList[index].EvoFixedUpdate(0);
+	//	}
+
+	//	ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
+	//}
 
 	public Gene GetGeneAt(int index) {
 		return genes[index];
@@ -286,8 +341,9 @@ public class Genotype : MonoBehaviour {
 			cell.transform.parent = null;
 		}
 		creature.transform.position = Vector3.zero;
-		cellsTransform.transform.position = Vector3.zero;
+		creature.transform.rotation = Quaternion.identity;
 		transform.position = Vector3.zero;
+		transform.rotation = Quaternion.identity;
 
 		foreach (Cell cell in geneCellList) {
 			cell.transform.parent = cellsTransform.transform;

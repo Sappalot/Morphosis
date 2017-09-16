@@ -38,9 +38,11 @@ public class MouseAction : MonoSingleton<MouseAction> {
             mouseText.text = "Select Gene Reference";
 		} else if (m_actionState == MouseActionStateEnum.moveCreatures) {
 			mouseText.text = "Move Creatures"; ;
+		} else if (m_actionState == MouseActionStateEnum.rotateCreatures) {
+			mouseText.text = "Rotate Creatures"; ;
 		}
 
-		
+
 	}
 
 }

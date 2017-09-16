@@ -7,6 +7,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public Life life;
 	public PhenotypePanel phenotypePanel;
 	public Camera camera;
+	public LineRenderer lineRenderer; 
 
 	public Text selectedCreatureText;
 
@@ -39,8 +40,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public override void Init() {
 		base.Init();
 		selection = new List<Creature>();
-
 		ClearSelection();
+
+		lineRenderer.enabled = false;
 	}
 
 	public void ClearSelection() {
@@ -234,7 +236,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (!hasSelection) {
 			return;
 		}
-		Debug.Log("Grabbing");
 		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
 			foreach (Creature c in selection) {
@@ -257,21 +258,100 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		MouseAction.instance.actionState = MouseActionStateEnum.moveCreatures;
 	}
 
+	//Rotate
+	private Vector2 taraRotationVector;
+	private Vector2 rotationCenter;
+	private Dictionary<Creature, float> startCreatureHeading = new Dictionary<Creature, float>();
+
+	public void OnRotateClicked() {
+		if (!hasSelection) {
+			return;
+		}
+
+		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+			foreach (Creature c in selection) {
+				c.Grab(PhenotypeGenotypeEnum.Phenotype);
+			}
+
+			foreach (Creature c in selection) {
+				moveOffset.Add(c, (Vector2)c.transform.position - SelectionPointOfWeightPhenotype);
+			}
+			taraRotationVector = (Vector2)mousePosition - SelectionPointOfWeightPhenotype;
+			rotationCenter = SelectionPointOfWeightPhenotype;
+		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+			foreach (Creature c in selection) {
+				c.Grab(PhenotypeGenotypeEnum.Genotype);
+			}
+			foreach (Creature c in selection) {
+				moveOffset.Add(c, (Vector2)c.transform.position - SelectionPointOfWeightGenotype);
+			}
+
+			taraRotationVector = (Vector2)mousePosition - SelectionPointOfWeightGenotype;
+			rotationCenter = SelectionPointOfWeightGenotype;
+
+			foreach (Creature c in selection) {
+				startCreatureHeading.Add(c, c.genotype.rootCell.heading);
+			}
+		}
+		lineRenderer.GetComponent<LineRenderer>().SetPosition(1, mousePosition);
+		lineRenderer.GetComponent<LineRenderer>().SetPosition(0, rotationCenter);
+		lineRenderer.enabled = true;
+
+		MouseAction.instance.actionState = MouseActionStateEnum.rotateCreatures;
+	}
+
+	float angle;
+
 	private void Update() {
+		//Keys
+		if (Input.GetKeyDown(KeyCode.M)) {
+			OnMoveClicked();
+		}
+		if (Input.GetKeyDown(KeyCode.R)) {
+			OnRotateClicked();
+		}
+		if (Input.GetKeyDown(KeyCode.Delete)) {
+			OnDeleteClicked();
+		}
+
+		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+
+		//move
 		if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures) {
-			Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 			foreach (Creature c in selection) {
 				c.transform.position = (Vector2)mousePosition + moveOffset[c];
 			}
 		}
 
+		//rotate
+		if (MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures) {
+			lineRenderer.GetComponent<LineRenderer>().SetPosition(1, mousePosition);
+			lineRenderer.GetComponent<LineRenderer>().SetPosition(0, rotationCenter);
+
+			angle = Vector2.SignedAngle(taraRotationVector, (Vector2)mousePosition - rotationCenter);
+
+			foreach (Creature c in selection) {
+				//Rotate around main center
+				Vector3 turnedVector = Quaternion.Euler(0, 0, angle) * moveOffset[c];
+				c.transform.position = (Vector2)rotationCenter + (Vector2)turnedVector;
+
+				//rotate around own center
+				c.transform.localRotation = Quaternion.Euler(0, 0, angle);
+
+				if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+					c.genotype.rootCell.heading = startCreatureHeading[c] + angle;
+				}
+			}
+		}
+
+		//debug markers
 		foreach (Creature c in World.instance.life.creatures) {
 			c.ShowMarkers(IsSelected(c));
 		}
 	}
 
 	public void PlaceHoveringCreatures() {
-		Debug.Log("Releasing");
 		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
 			foreach (Creature c in selection) {
 				c.Release(PhenotypeGenotypeEnum.Phenotype);
@@ -281,6 +361,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				c.Release(PhenotypeGenotypeEnum.Genotype);
 			}
 		}
+
+		//rotate
+		lineRenderer.enabled = false;
+		startCreatureHeading.Clear();
 
 		//Offset
 		moveOffset.Clear();

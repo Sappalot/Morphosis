@@ -20,7 +20,7 @@ public abstract class Cell : MonoBehaviour {
 
 	//  The direction the cell is facing in creature space
 	public int bindCardinalIndex;
-	public float heading;// where the cells flip triangle is pointing at the moment
+	public float heading;// where the cells flip triangle is pointing at the moment (0 is north??)
 	public float angleDiffFromBindpose;
 
 	public string id;
@@ -145,6 +145,8 @@ public abstract class Cell : MonoBehaviour {
 
 	public void EvoFixedUpdate(float fixedTime) {
 		//Optimize further
+		transform.rotation = Quaternion.identity; //dont turn the cells
+
 		if (groups > 1) {
 			UpdateNeighbourVectors(); //optimize further
 			TurnHingeNeighboursInPlace(); //optimize further

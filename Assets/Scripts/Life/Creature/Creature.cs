@@ -61,7 +61,8 @@ public class Creature : MonoBehaviour {
 		if (phenotype.hasDirtyPosition) {
 			phenotype.MoveToGenotype();
 			phenotype.hasDirtyPosition = false;
-		}		
+		}
+		//phenotype.isDirty = true;
 		phenotype.GenerateCells(this);
 	}
 
