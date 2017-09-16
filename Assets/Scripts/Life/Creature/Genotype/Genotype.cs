@@ -215,9 +215,7 @@ public class Genotype : MonoBehaviour {
 		//	geneCellList[index].transform.parent = cellsTransform; 
 		//}
 
-		//for (int index = 0; index < geneCellList.Count; index++) {
-		//	geneCellList[index].EvoFixedUpdate(0);
-		//}
+
 
 		MoveCells(creature.phenotype.rootCell.position - rootCell.position);
 		float angle = creature.phenotype.rootCell.heading - rootCell.heading;
@@ -233,6 +231,10 @@ public class Genotype : MonoBehaviour {
 		}
 		rootCell.heading = creature.phenotype.rootCell.heading;
 		ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
+
+		for (int index = 0; index < geneCellList.Count; index++) {
+			geneCellList[index].UpdateFlipSide();
+		}
 	}
 
 	public void MoveCells(Vector2 vector) {
