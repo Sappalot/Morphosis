@@ -56,11 +56,12 @@ public class World : MonoSingleton<World> {
 		KillAllCreatures();
 		fixedTime = 0f;
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
-		for (int y = 1; y <= 1; y++) {
-			for (int x = 1; x <= 1; x++) {
-				life.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f));
-			}
-		}
+		//for (int y = 1; y <= 1; y++) {
+		//	for (int x = 1; x <= 1; x++) {
+		//		life.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f));
+		//	}
+		//}
+		life.SpawnCreatureJellyfish(new Vector3(0f, 0f, 0f));
 		CreatureEditModePanel.instance.Restart();
 		RMBToolModePanel.instance.Restart();
 

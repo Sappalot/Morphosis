@@ -36,6 +36,8 @@ public class Phenotype : MonoBehaviour {
 	private Creature creature;
 	private CellMap cellMap = new CellMap();
 
+	private bool isGrabbed;
+
 	public int cellCount
 	{
 		get
@@ -64,6 +66,10 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public void EvoFixedUpdate(Creature creature, float fixedTime) {
+		if (isGrabbed) {
+			return;
+		}
+		
 		//if (update % 50 == 0) {
 		//    edges.ShuffleEdgeUpdateOrder();
 		//    ShuffleCellUpdateOrder();
@@ -357,6 +363,43 @@ public class Phenotype : MonoBehaviour {
 			cellList[index].Show(on);
 		}
 	}
+
+	
+	public void MoveRootToOrigo() {
+		Vector3 rootCellPosition = rootCell.position;
+		foreach (Cell cell in cellList) {
+			cell.transform.position -= rootCellPosition;
+		}
+	}
+
+	public void Grab() {
+		isGrabbed = true;
+		foreach (Cell cell in cellList) {
+			cell.GetComponent<Rigidbody2D>().isKinematic = true;
+			cell.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+			cell.GetComponent<Collider2D>().enabled = false;
+		}
+		MoveRootToOrigo();
+	}
+
+	public void Release() {
+		isGrabbed = false;
+		foreach (Cell cell in cellList) {
+			cell.GetComponent<Rigidbody2D>().isKinematic = false;
+			cell.GetComponent<Collider2D>().enabled = true;
+		}
+		foreach (Cell cell in cellList) {
+			cell.transform.parent = null;
+		}
+		creature.transform.position = Vector3.zero;
+		transform.position = Vector3.zero;
+
+		foreach (Cell cell in cellList) {
+			cell.transform.parent = cells.transform;
+		}
+	}
+
+
 
 	//data
 

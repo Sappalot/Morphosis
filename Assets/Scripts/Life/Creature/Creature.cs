@@ -8,6 +8,12 @@ public class Creature : MonoBehaviour {
 	public string id;
 	public string nickname;
 
+	public SpriteRenderer creturePosition;
+	public SpriteRenderer phenotypePosition;
+	public SpriteRenderer phenotypeCellsPosition;
+	public SpriteRenderer genotypePosition;
+	public SpriteRenderer genotypeCellsPosition;
+
 	//wing force
 	[Range(0f, 1f)]
 	public float wingDrag = 1f;
@@ -115,6 +121,32 @@ public class Creature : MonoBehaviour {
 
 	public Cell GetCellAt(Vector2 position) {
 		return phenotype.GetCellAt(position);
+	}
+
+	public void Grab(PhenotypeGenotypeEnum type) {
+		if (type ==PhenotypeGenotypeEnum.Phenotype) {
+			Vector2 rootCellPosition = phenotype.rootCell.position;
+			phenotype.Grab();
+
+			transform.parent = null;
+			transform.position = rootCellPosition;
+			transform.parent = World.instance.life.transform;
+		}
+	}
+
+	public void Release(PhenotypeGenotypeEnum type) {
+		if (type == PhenotypeGenotypeEnum.Phenotype) {
+			phenotype.Release();
+			//transform.position = Vector3.zero;
+		}
+	}
+
+	public void ShowMarkers(bool show) {
+		creturePosition.enabled = show;
+		phenotypePosition.enabled = show;
+		phenotypeCellsPosition.enabled = show;
+		genotypePosition.enabled = show;
+		genotypeCellsPosition.enabled = show;
 	}
 
 	//data

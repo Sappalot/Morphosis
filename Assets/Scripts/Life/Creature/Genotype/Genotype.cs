@@ -19,6 +19,13 @@ public class Genotype : MonoBehaviour {
 
 	public bool isDirty = true;
 
+	[HideInInspector]
+	public Cell rootCell {
+		get {
+			return geneCellList[0];
+		}
+	}
+
 	public bool IsInside(Rect area) {
 		float cellRadius = 0.5f;
 		float top = area.y + cellRadius + area.height / 2f;
@@ -240,6 +247,21 @@ public class Genotype : MonoBehaviour {
 
 		transform.localPosition = Vector3.zero;
 		transform.localRotation = Quaternion.identity;
+	}
+
+	public void MoveRootToOrigo() {
+		Vector3 rootCellPosition = rootCell.position;
+		foreach (Cell cell in geneCellList) {
+			cell.transform.position -= rootCellPosition;
+		}
+	}
+
+	public void Grab() {
+		MoveRootToOrigo();
+	}
+
+	public void Release() {
+
 	}
 
 	//data

@@ -197,12 +197,18 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 	}
 
-	//Actions
-	private void Update() {
-		if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures) {
-
+	public Vector2 SelectionPointOfWeight {
+		get	{
+			Vector2 pow = Vector2.zero;
+			foreach (Creature c in selection) {
+				pow += (Vector2)c.phenotype.rootCell.position;
+			}
+			return pow / selectionCount;
 		}
 	}
+
+	//Actions
+
 
 	// Delete
 	public void OnDeleteClicked() {
@@ -213,16 +219,48 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	// Move
+	private Dictionary<Creature, Vector2> moveOffset = new Dictionary<Creature, Vector2>();
 	public void OnMoveClicked() {
 		if (!hasSelection) {
 			return;
+		}
+		Debug.Log("Grabbing");
+		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+
+		foreach (Creature c in selection) {
+			c.Grab(PhenotypeGenotypeEnum.Phenotype);
+		}
+
+		//Offset
+		foreach (Creature c in selection) {
+			moveOffset.Add(c, (Vector2)c.transform.position - SelectionPointOfWeight);
 		}
 
 		MouseAction.instance.actionState = MouseActionStateEnum.moveCreatures;
 	}
 
+	private void Update() {
+		if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures) {
+			Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+			foreach (Creature c in selection) {
+				c.transform.position = (Vector2)mousePosition + moveOffset[c];
+			}
+		}
+
+		foreach (Creature c in World.instance.life.creatures) {
+			c.ShowMarkers(IsSelected(c));
+		}
+	}
+
 	public void PlaceHoveringCreatures() {
-		Debug.Log("Placing");
+		Debug.Log("Releasing");
+		foreach (Creature c in selection) {
+			c.Release(PhenotypeGenotypeEnum.Phenotype);
+		}
+
+		//Offset
+		moveOffset.Clear();
+
 		MouseAction.instance.actionState = MouseActionStateEnum.free;
 	}
 }
