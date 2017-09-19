@@ -22,7 +22,7 @@ public class Phenotype : MonoBehaviour {
 	public MuscleCell muscleCellPrefab;
 	public VeinCell veinCellPrefab;
 
-	public bool isDirty = true;
+	public bool hasDirtyCellGrowth = true;
 	public float timeOffset;
 
 	public GameObject cells;
@@ -33,7 +33,7 @@ public class Phenotype : MonoBehaviour {
 	private List<Cell> cellList = new List<Cell>();
 	private Genotype genotype;
 	private Vector3 spawnPositionRoot;
-	private float headingAngleRoot;
+	private float spawnHeadingRoot;
 	private Creature creature;
 	private CellMap cellMap = new CellMap();
 
@@ -94,6 +94,9 @@ public class Phenotype : MonoBehaviour {
 		edges.EvoFixedUpdate(velocity, creature);
 
 		for (int index = 0; index < cellList.Count; index++) {
+			if (cellList.Count == 1) {
+				break;
+			}
 			cellList[index].EvoFixedUpdate(fixedTime);
 		}
 	}
@@ -103,19 +106,19 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public void GenerateCells(Creature creature) {
-		if (isDirty) {
+		if (hasDirtyCellGrowth) {
 			Setup(creature, rootCell.transform.position, rootCell.heading);
 			TryGrowFully();
-			isDirty = false;
+			hasDirtyCellGrowth = false;
 		}
 	}
 
-	public void GenerateCells(Creature creature, Vector3 position) {
-		if (isDirty) {
-			Setup(creature, position, 90f);
+	public void GenerateCells(Creature creature, Vector3 position, float heading) {
+		if (hasDirtyCellGrowth) {
+			Setup(creature, position, heading);
 
 			TryGrowFully();
-			isDirty = false;
+			hasDirtyCellGrowth = false;
 		}
 	}
 
@@ -129,7 +132,7 @@ public class Phenotype : MonoBehaviour {
 		this.creature = creature;
 		genotype = creature.genotype;
 		spawnPositionRoot = spawnPosition;
-		headingAngleRoot = spawnAngle;
+		spawnHeadingRoot = spawnAngle;
 	}
 
 	public void TryGrowFully() {
@@ -145,8 +148,8 @@ public class Phenotype : MonoBehaviour {
 			SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature, spawnPositionRoot, true);
 
 			EvoFixedUpdate(creature, 0f);
-			rootCell.heading = headingAngleRoot;
-			rootCell.angleDiffFromBindpose = headingAngleRoot - 90f;
+			rootCell.heading = spawnHeadingRoot;
+			rootCell.angleDiffFromBindpose = spawnHeadingRoot - 90f;
 			rootCell.triangleTransform.localRotation = Quaternion.Euler(0f, 0f, rootCell.heading); // Just updating graphics
 			growCellCount++;
 		}
@@ -185,7 +188,7 @@ public class Phenotype : MonoBehaviour {
 		ShowCellsSelected(false);
 		ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(creature));
 		ShowShadow(false);
-		ShowTriangle(true);
+		ShowTriangles(false);
 	}
 
 	private int CardinaIndexToNeighbour(Cell from, Cell to) {
@@ -348,7 +351,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public void ShowTriangle(bool on) {
+	public void ShowTriangles(bool on) {
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].ShowTriangle(on);
 		}
@@ -371,6 +374,12 @@ public class Phenotype : MonoBehaviour {
 		Vector3 rootCellPosition = rootCell.position;
 		foreach (Cell cell in cellList) {
 			cell.transform.position -= rootCellPosition;
+		}
+	}
+
+	public void Halt() {
+		foreach (Cell cell in cellList) {
+			cell.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 		}
 	}
 
@@ -402,31 +411,40 @@ public class Phenotype : MonoBehaviour {
 			cell.transform.parent = cells.transform;
 		}
 
-		//foreach (Cell cell in cellList) {
-		//	cell.EvoFixedUpdate(0);
-		//}		
+		//rootCell.EvoFixedUpdate(0); //We need to know where it is heading uppon release
+
 	}
 
 	public void MoveToGenotype() {
-		MoveCells(creature.genotype.rootCell.position - rootCell.position);
-
-		float angle = genotype.rootCell.heading - rootCell.heading;
-		foreach (Cell cell in cellList) {
-			float originalHeading = cell.heading;
-			Vector3 rootToCell = cell.transform.position - rootCell.position;
-			Vector3 turnedVector = Quaternion.Euler(0, 0, angle) * rootToCell;
-			cell.transform.position = (Vector2)rootCell.position + (Vector2)turnedVector;
-			//float heading = originalHeading - angle;
-			//cell.heading = heading;
-			///cell.SetTringleHeadingAngle(heading);
+		if (hasDirtyPosition) {
+			MoveTo(creature.genotype.rootCell.position);
+			TurnTo(creature.genotype.rootCell.heading);
+			hasDirtyPosition = false;
 		}
-
-		//EvoFixedUpdate(creature, 0);
 	}
 
-	public void MoveCells(Vector2 vector) {
+	public void Move(Vector2 vector) {
 		foreach (Cell cell in cellList) {
 			cell.transform.position += (Vector3)vector;
+		}
+	}
+
+	public void MoveTo(Vector2 vector) {
+		Move(vector - rootCell.position);
+	}
+
+	//Make root cell point in this direction while the rest of the cells tags along
+	//Angle = 0 ==> root cell pointing east
+	//Angle = 90 ==> root cell pointing north
+	private void TurnTo(float targetAngle) {
+		float deltaAngle = targetAngle - rootCell.heading;
+		foreach (Cell cell in cellList) {
+			Vector3 rootToCell = cell.transform.position - (Vector3)rootCell.position;
+			Vector3 turnedVector = Quaternion.Euler(0, 0, deltaAngle) * rootToCell;
+			cell.transform.position = (Vector2)rootCell.position + (Vector2)turnedVector;
+			float heading = AngleUtil.ToAngle(cell.bindCardinalIndex) + targetAngle - 90f;
+			cell.heading = heading;
+			cell.SetTringleHeadingAngle(heading);
 		}
 	}
 
@@ -458,9 +476,9 @@ public class Phenotype : MonoBehaviour {
 		UpdateSpringsFrequenze();
 		ShowCellsSelected(false);
 		ShowShadow(false);
-		ShowTriangle(true);
+		ShowTriangles(false);
 
-		isDirty = false; //prevent regeneration on genotype -> Phenotype switch
+		hasDirtyCellGrowth = false; //prevent regeneration on genotype -> Phenotype switch
 	}
 
 	public Cell GetCellAt(Vector2 position) {

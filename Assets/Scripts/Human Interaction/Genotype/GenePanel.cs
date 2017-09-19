@@ -97,11 +97,12 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
 		//Hack
 		if (changeToGenomeMade && CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
-			CreatureSelectionPanel.instance.selectedCreature.genotype.GenerateGeneCells(CreatureSelectionPanel.instance.selectedCreature);
+			CreatureSelectionPanel.instance.selectedCreature.genotype.GenerateGeneCells(CreatureSelectionPanel.instance.selectedCreature, CreatureSelectionPanel.instance.selectedCreature.genotype.rootCell.position, CreatureSelectionPanel.instance.selectedCreature.genotype.rootCell.heading);
 			CreatureSelectionPanel.instance.selectedCreature.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
-			CreatureSelectionPanel.instance.selectedCreature.genotype.MoveToPhenotypeAndUpdateHighlite(CreatureSelectionPanel.instance.selectedCreature);
+			CreatureSelectionPanel.instance.selectedCreature.genotype.ShowCreatureSelected(true);
+			//CreatureSelectionPanel.instance.selectedCreature.genotype.MoveToPhenotypeAndUpdateHighlite(CreatureSelectionPanel.instance.selectedCreature);
 
-			CreatureSelectionPanel.instance.selectedCreature.phenotype.isDirty = true;
+			CreatureSelectionPanel.instance.selectedCreature.phenotype.hasDirtyCellGrowth = true;
 		} 
 	}
 

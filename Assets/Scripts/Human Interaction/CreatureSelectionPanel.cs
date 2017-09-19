@@ -47,7 +47,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	public void ClearSelection() {
 		for (int index = 0; index < selection.Count; index++) {
-			selection[index].ShowCreatureSelected(false);
+			selection[index].ShowSelected(false);
 			selection[index].ShowCellsAndGeneCellsSelected(false);
 		}
 		selection.Clear();
@@ -59,12 +59,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	public void Select(Creature creature, Cell cell = null) {
 		for (int index = 0; index < selection.Count; index++) {
-			selection[index].ShowCreatureSelected(false);
+			selection[index].ShowSelected(false);
 			selection[index].ShowCellsAndGeneCellsSelected(false);
 		}
 		selection.Clear();
 
-		creature.ShowCreatureSelected(true);
+		creature.ShowSelected(true);
 		selection.Add(creature);
 		SelectedCellAndGene(cell);
 		UpdateGUI();
@@ -75,9 +75,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		for (int index = 0; index < allCreatures.Count; index++) {
 			Creature creature = allCreatures[index];
 			if (creatures.Contains(creature)) {
-				creature.ShowCreatureSelected(true);
+				creature.ShowSelected(true);
 			} else {
-				creature.ShowCreatureSelected(false);
+				creature.ShowSelected(false);
 				creature.ShowCellsAndGeneCellsSelected(false);
 			}
 			if (creatures.Count > 1) {
@@ -128,7 +128,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 		PhenotypePanel.instance.cell = null;
 
-		creature.ShowCreatureSelected(true);
+		creature.ShowSelected(true);
 		selection.Add(creature);
 		SelectedCellAndGene(null);
 		UpdateGUI();
@@ -152,7 +152,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 		PhenotypePanel.instance.cell = null;
 
-		creature.ShowCreatureSelected(false);
+		creature.ShowSelected(false);
 		selection.Remove(creature);
 		SelectedCellAndGene(null);
 		UpdateGUI();
@@ -289,11 +289,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 			taraRotationVector = (Vector2)mousePosition - SelectionPointOfWeightGenotype;
 			rotationCenter = SelectionPointOfWeightGenotype;
-
-			foreach (Creature c in selection) {
-				startCreatureHeading.Add(c, c.genotype.rootCell.heading);
-			}
+}
+		foreach (Creature c in selection) {
+			startCreatureHeading.Add(c, c.genotype.rootCell.heading);
 		}
+
 		lineRenderer.GetComponent<LineRenderer>().SetPosition(1, mousePosition);
 		lineRenderer.GetComponent<LineRenderer>().SetPosition(0, rotationCenter);
 		lineRenderer.enabled = true;
@@ -339,7 +339,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				//rotate around own center
 				c.transform.localRotation = Quaternion.Euler(0, 0, angle);
 
-				if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+				if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+					c.phenotype.rootCell.heading = startCreatureHeading[c] + angle;
+				} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
 					c.genotype.rootCell.heading = startCreatureHeading[c] + angle;
 				}
 			}
@@ -347,7 +349,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		//debug markers
 		foreach (Creature c in World.instance.life.creatures) {
-			c.ShowMarkers(IsSelected(c));
+			//c.ShowMarkers(IsSelected(c));
+			c.ShowMarkers(false);
 		}
 	}
 

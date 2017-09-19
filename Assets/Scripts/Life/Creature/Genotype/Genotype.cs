@@ -96,8 +96,9 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	public void GenerateGeneCells(Creature creature) {
+	public void GenerateGeneCells(Creature creature, Vector2 position, float heading) { // heading 90 ==> root is pointing north
 		if (hasDirtyGenes) {
+			Debug.Log("h: " + heading);
 			const int maxSize = 6;
 			Clear();
 
@@ -150,7 +151,17 @@ public class Genotype : MonoBehaviour {
 				}
 			}
 			ShowGeneCellsSelected(false);
+			TurnTo(heading); //is at 90 allready
+			MoveTo(position);
+			UpdateFlipSides();
+
 			hasDirtyGenes = false;
+		}
+	}
+
+	public void UpdateFlipSides() {
+		for (int index = 0; index < geneCellList.Count; index++) {
+			geneCellList[index].UpdateFlipSide();
 		}
 	}
 
@@ -191,56 +202,35 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void MoveToPhenotypeAndUpdateHighlite(Creature creature) {
-		//MoveRootToOrigo();
+		MoveTo(creature.phenotype.rootCell.position);
+		TurnTo(creature.phenotype.rootCell.heading);
+		ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
+		UpdateFlipSides();
+	}
 
-		//creature.transform.rotation = Quaternion.identity;
-		//creature.transform.position = Vector3.zero;
-		//cellsTransform.position = creature.phenotype.rootCell.transform.position;
-		//Debug.Log("Move genotype to phenotype, heading: " + (creature.phenotype.rootCell.heading));
-		//cellsTransform.rotation = Quaternion.Euler(0f, 0f, creature.phenotype.rootCell.heading - 90f);
-
-		////rotarion
-		//for (int index = 0; index < geneCellList.Count; index++) {
-		//	geneCellList[index].transform.parent = null;
-		//}
-
-		////creature.transform.position = Vector3.zero; ;
-		////creature.transform.rotation = Quaternion.identity;
-
-		//cellsTransform.position = Vector3.zero;
-		////cellsTransform.localRotation = Quaternion.identity; //bugger... seems to accumulate an angle whel changing pheno - geno
-
-
-		//for (int index = 0; index < geneCellList.Count; index++) {
-		//	geneCellList[index].transform.parent = cellsTransform; 
-		//}
-
-
-
-		MoveCells(creature.phenotype.rootCell.position - rootCell.position);
-		float angle = creature.phenotype.rootCell.heading - rootCell.heading;
-		Debug.Log("To genotype, pheno heading: " + creature.phenotype.rootCell.heading + ", geno heading: " + rootCell.heading + ", change: + " + angle);
+	//Make root cell point in this direction while the rest of the cells tags along
+	//Angle = 0 ==> root cell pointing east
+	//Angle = 90 ==> root cell pointing north
+	private void TurnTo(float targetAngle) {
+		float deltaAngle = targetAngle - rootCell.heading;
 		foreach (Cell cell in geneCellList) {
-			float originalHeading = cell.heading;
-			Vector3 rootToCell = cell.transform.position - rootCell.position;
-			Vector3 turnedVector = Quaternion.Euler(0, 0, angle) * rootToCell;
+			Vector3 rootToCell = cell.transform.position - (Vector3)rootCell.position;
+			Vector3 turnedVector = Quaternion.Euler(0, 0, deltaAngle) * rootToCell;
 			cell.transform.position = (Vector2)rootCell.position + (Vector2)turnedVector;
-			float heading = AngleUtil.ToAngle(cell.bindCardinalIndex) + creature.phenotype.rootCell.heading - 90f;
+			float heading = AngleUtil.ToAngle(cell.bindCardinalIndex) + targetAngle - 90f;
 			cell.heading = heading;
 			cell.SetTringleHeadingAngle(heading);
 		}
-		rootCell.heading = creature.phenotype.rootCell.heading;
-		ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
-
-		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].UpdateFlipSide();
-		}
 	}
 
-	public void MoveCells(Vector2 vector) {
+	public void Move(Vector2 vector) {
 		foreach (Cell cell in geneCellList) {
 			cell.transform.position += (Vector3)vector;
 		}
+	}
+
+	public void MoveTo(Vector2 vector) {
+		Move(vector - rootCell.position);
 	}
 
 	//public void MoveToPhenotypeAndUpdateHighlite(Creature creature) {
@@ -296,13 +286,19 @@ public class Genotype : MonoBehaviour {
 			geneCellList[index].ShowCreatureSelected(on);
 			geneCellList[index].ShowTriangle(on);
 			geneCellList[index].ShowShadow(on);
-			transform.localPosition = new Vector3(0f, 0f, on ? -8f : 0f);
+			//transform.localPosition = new Vector3(0f, 0f, on ? -8f : 0f);
 		}
 	}
 
 	public void ShowGeneCellsSelected(bool on) {
 		for (int index = 0; index < geneCellList.Count; index++) {
 			geneCellList[index].ShowCellSelected(on);
+		}
+	}
+
+	public void ShowTriangles(bool on) {
+		for (int index = 0; index < geneCellList.Count; index++) {
+			geneCellList[index].ShowTriangle(on);
 		}
 	}
 

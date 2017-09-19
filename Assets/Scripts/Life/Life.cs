@@ -78,13 +78,13 @@ public class Life : MonoBehaviour {
 
 	public Creature SpawnCreatureJellyfish(Vector3 position) {
 		Creature creature = InstantiateCreature();
-		creature.GenerateJellyfish(position);
+		creature.GenerateJellyfish(position, 90f);
 		return creature;
 	}
 
-	public Creature SpawnCreatureEmbryo(Vector3 position) {
+	public Creature SpawnCreatureEmbryo(Vector3 position, PhenotypeGenotypeEnum showType) {
 		Creature creature = InstantiateCreature();
-		creature.GenerateEmbryo(position);
+		creature.GenerateEmbryo(position, 90f, showType);
 		return creature;
 	}
 
