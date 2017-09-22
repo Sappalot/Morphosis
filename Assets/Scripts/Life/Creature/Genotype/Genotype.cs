@@ -54,6 +54,35 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
+	public void GenerateGenomeEdgeFailure() {
+		GenerateGenomeEmpty();
+
+		//Simple Jellyfish (FPS Reference creature, Don't ever change!!)
+		//New Jellyfish using Arrangements
+		genes[0].type = CellTypeEnum.Jaw;
+		genes[0].arrangements[0].isEnabled = true;
+		genes[0].arrangements[0].type = ArrangementTypeEnum.Side;
+		genes[0].arrangements[0].referenceCount = 1;
+		genes[0].arrangements[0].referenceGene = genes[1];
+		genes[0].arrangements[0].arrowIndex = 4;
+
+		genes[0].arrangements[1].isEnabled = true;
+		genes[0].arrangements[1].type = ArrangementTypeEnum.Side;
+		genes[0].arrangements[1].referenceCount = 1;
+		genes[0].arrangements[1].referenceGene = genes[2];
+		genes[0].arrangements[1].arrowIndex = 6;
+
+		genes[0].arrangements[2].isEnabled = true;
+		genes[0].arrangements[2].type = ArrangementTypeEnum.Side;
+		genes[0].arrangements[2].referenceCount = 1;
+		genes[0].arrangements[2].referenceGene = genes[3];
+		genes[0].arrangements[2].arrowIndex = -4;
+
+		genes[1].type = CellTypeEnum.Vein;
+		genes[2].type = CellTypeEnum.Leaf;
+		genes[3].type = CellTypeEnum.Muscle;
+	}
+
 	public void GenerateGenomeJellyfish() {
 		GenerateGenomeEmpty();
 
@@ -98,12 +127,11 @@ public class Genotype : MonoBehaviour {
 
 	public void GenerateGeneCells(Creature creature, Vector2 position, float heading) { // heading 90 ==> root is pointing north
 		if (hasDirtyGenes) {
-			Debug.Log("h: " + heading);
 			const int maxSize = 6;
 			Clear();
 
 			List<Cell> spawningFromCells = new List<Cell>();
-			Cell root = SpawnGeneCell(GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature);
+			Cell root = SpawnGeneCell(GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, creature);
 			root.heading = 90f;
 			spawningFromCells.Add(root);
 
@@ -172,13 +200,13 @@ public class Genotype : MonoBehaviour {
 		Cell cell = null;
 
 		if (gene.type == CellTypeEnum.Jaw) {
-			cell = (Instantiate(jawCellPrefab, geneCellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
+			cell = (Instantiate(jawCellPrefab, geneCellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Leaf) {
-			cell = (Instantiate(leafCellPrefab, geneCellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
+			cell = (Instantiate(leafCellPrefab, geneCellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Muscle) {
-			cell = (Instantiate(muscleCellPrefab, geneCellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
+			cell = (Instantiate(muscleCellPrefab, geneCellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Vein) {
-			cell = (Instantiate(veinCellPrefab, geneCellMap.ToPosition(mapPosition), Quaternion.identity) as Cell);
+			cell = (Instantiate(veinCellPrefab, geneCellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		}
 
 		cell.RemovePhysicsComponents();
@@ -217,7 +245,7 @@ public class Genotype : MonoBehaviour {
 			Vector3 rootToCell = cell.transform.position - (Vector3)rootCell.position;
 			Vector3 turnedVector = Quaternion.Euler(0, 0, deltaAngle) * rootToCell;
 			cell.transform.position = (Vector2)rootCell.position + (Vector2)turnedVector;
-			float heading = AngleUtil.ToAngle(cell.bindCardinalIndex) + targetAngle - 90f;
+			float heading = AngleUtil.CardinalIndexToAngle(cell.bindCardinalIndex) + targetAngle - 90f;
 			cell.heading = heading;
 			cell.SetTringleHeadingAngle(heading);
 		}

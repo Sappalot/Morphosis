@@ -1,4 +1,4 @@
-﻿public enum CardinalDirectionEnum {
+﻿public enum CardinalEnum {
     northEast,
     north,
     northWest,

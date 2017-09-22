@@ -52,6 +52,9 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
+	//Set only once, when adding cell to CellMap
+	public Vector2 modelSpacePosition;
+
 	public void Show(bool show) {
 		for (int index = 0; index < transform.childCount; index++) {
 			transform.GetChild(index).gameObject.SetActive(show);
@@ -300,32 +303,32 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public SpringJoint2D GetSpring(Cell askingCell) {
-		if (HasNeighbour(CardinalDirectionEnum.north) && askingCell == northNeighbour.cell) {
+		if (HasNeighbour(CardinalEnum.north) && askingCell == northNeighbour.cell) {
 			return northSpring;
 		}
-		else if (HasNeighbour(CardinalDirectionEnum.southEast) && askingCell == southEastNeighbour.cell) {
+		else if (HasNeighbour(CardinalEnum.southEast) && askingCell == southEastNeighbour.cell) {
 			return southEastSpring;
 		}
-		else if (HasNeighbour(CardinalDirectionEnum.southWest) && askingCell == southWestNeighbour.cell) {
+		else if (HasNeighbour(CardinalEnum.southWest) && askingCell == southWestNeighbour.cell) {
 			return southWestSpring;
 		}
 		return null;
 	}
 
-	public void SetNeighbourCell(CardinalDirectionEnum direction, Cell cell) {
-		index_Neighbour[AngleUtil.ToCardinalDirectionIndex(direction)].cell = cell;
+	public void SetNeighbourCell(CardinalEnum direction, Cell cell) {
+		index_Neighbour[AngleUtil.CardinalEnumToCardinalIndex(direction)].cell = cell;
 	}
 
-	public Cell GetNeighbourCell(CardinalDirectionEnum direction) {
-		return GetNeighbourCell(AngleUtil.ToCardinalDirectionIndex(direction));
+	public Cell GetNeighbourCell(CardinalEnum direction) {
+		return GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(direction));
 	}
 
 	public Cell GetNeighbourCell(int cardinalDirectionIndex) {
 		return index_Neighbour[cardinalDirectionIndex % 6].cell;
 	}
 
-	public CellNeighbour GetNeighbour(CardinalDirectionEnum direction) {
-		return GetNeighbour(AngleUtil.ToCardinalDirectionIndex(direction));
+	public CellNeighbour GetNeighbour(CardinalEnum direction) {
+		return GetNeighbour(AngleUtil.CardinalEnumToCardinalIndex(direction));
 	}
 
 	public CellNeighbour GetNeighbour(int index) {
@@ -345,8 +348,8 @@ public abstract class Cell : MonoBehaviour {
 		return count;
 	}
 
-	public bool HasNeighbour(CardinalDirectionEnum direction) {
-		return HasNeighbourCell(AngleUtil.ToCardinalDirectionIndex(direction));
+	public bool HasNeighbour(CardinalEnum direction) {
+		return HasNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(direction));
 	}
 
 	public bool HasNeighbourCell(int index) {
@@ -365,10 +368,10 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 		if (GetNeighbourCount() > 0) {
-			heading = AngleUtil.ToAngle(bindCardinalIndex) + angleDiffFromBindpose;
+			heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex) + angleDiffFromBindpose;
 			triangleTransform.localRotation = Quaternion.Euler(0f, 0f, heading); 
 		} else {
-			heading = AngleUtil.ToAngle(bindCardinalIndex);
+			heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex);
 			triangleTransform.localRotation = Quaternion.Euler(0f, 0f, heading); //Random.Range(0f, 360f)
 		}
 	}

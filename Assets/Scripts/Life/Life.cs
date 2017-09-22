@@ -76,6 +76,12 @@ public class Life : MonoBehaviour {
 		return insideList;
 	}
 
+	public Creature SpawnCreatureEdgeFailure(Vector3 position) {
+		Creature creature = InstantiateCreature();
+		creature.GenerateEdgeFailure(position, 90f);
+		return creature;
+	}
+
 	public Creature SpawnCreatureJellyfish(Vector3 position) {
 		Creature creature = InstantiateCreature();
 		creature.GenerateJellyfish(position, 90f);

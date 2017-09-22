@@ -70,6 +70,15 @@ public class Creature : MonoBehaviour {
 		genotype.gameObject.SetActive(true);
 	}
 
+	public void GenerateEdgeFailure(Vector3 position, float heading) {
+		genotype.GenerateGenomeEdgeFailure();
+		genotype.hasDirtyGenes = true;
+		genotype.GenerateGeneCells(this, position, 0); // Generating genotype here caused Unity freeze ;/
+
+		phenotype.hasDirtyCellGrowth = true;
+		phenotype.GenerateCells(this, position, heading);
+	}
+
 	public void GenerateJellyfish(Vector3 position, float heading) {
 		genotype.GenerateGenomeJellyfish();
 		genotype.hasDirtyGenes = true;

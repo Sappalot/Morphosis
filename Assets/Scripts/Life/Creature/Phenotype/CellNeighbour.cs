@@ -4,7 +4,7 @@ public class CellNeighbour
 {
     public CellNeighbour(int cardinalIndex) {
         this.cardinalIndex = cardinalIndex;
-        bindAngle = AngleUtil.ToAngle(cardinalIndex);
+        bindAngle = AngleUtil.CardinalIndexToAngle(cardinalIndex);
     }
 
     public Cell cell;

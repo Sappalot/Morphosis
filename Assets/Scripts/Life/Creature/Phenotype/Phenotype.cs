@@ -145,7 +145,7 @@ public class Phenotype : MonoBehaviour {
 			return;
 		}
 		if (cellList.Count == 0) {
-			SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.ToCardinalDirectionIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, creature, spawnPositionRoot, true);
+			SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, creature, spawnPositionRoot, true);
 
 			EvoFixedUpdate(creature, 0f);
 			rootCell.heading = spawnHeadingRoot;
@@ -166,7 +166,7 @@ public class Phenotype : MonoBehaviour {
 					Cell neighbour = cellMap.GetGridNeighbourCell(geneCell.mapPosition, neighbourIndex);
 					if (neighbour != null) {
 						int indexToMe = CardinaIndexToNeighbour(neighbour, geneCell);
-						float meFromNeightbourBindPose = AngleUtil.ToAngle(indexToMe);
+						float meFromNeightbourBindPose = AngleUtil.CardinalIndexToAngle(indexToMe);
 						float meFromNeighbour = (neighbour.angleDiffFromBindpose + meFromNeightbourBindPose) % 360f;
 						float distance = geneCell.radius + neighbour.radius;
 						averagePosition += neighbour.transform.position + new Vector3(distance * Mathf.Cos(meFromNeighbour * Mathf.Deg2Rad), distance * Mathf.Sin(meFromNeighbour * Mathf.Deg2Rad), 0f);
@@ -183,12 +183,16 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		ConnectCells(true, true);
-		edges.GenerateWings(cellList);
+		
 		UpdateSpringsFrequenze();
 		ShowCellsSelected(false);
 		ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(creature));
 		ShowShadow(false);
 		ShowTriangles(false);
+
+		//float heading = rootCell.heading;
+
+		edges.GenerateWings(cellMap);
 	}
 
 	private int CardinaIndexToNeighbour(Cell from, Cell to) {
@@ -212,7 +216,7 @@ public class Phenotype : MonoBehaviour {
 			shrinkCellCount++;
 		}
 		ConnectCells(true, true);
-		edges.GenerateWings(cellList);
+		edges.GenerateWings(cellMap);
 		UpdateSpringsFrequenze();
 	}
 
@@ -250,9 +254,9 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature, Vector3 position, bool modelSpace) {
+	private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature, Vector2 position, bool modelSpace) {
 		Cell cell = InstantiateCell(gene.type, mapPosition);
-		Vector3 spawnPosition = (modelSpace ? genotype.geneCellMap.ToPosition(mapPosition) : Vector3.zero) + position;
+		Vector2 spawnPosition = (modelSpace ? genotype.geneCellMap.ToModelSpacePosition(mapPosition) : Vector2.zero) + position;
 		cell.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, 0f);
 
 		cell.mapPosition = mapPosition;
@@ -294,9 +298,9 @@ public class Phenotype : MonoBehaviour {
 			for (int direction = 0; direction < 6; direction++) {
 				Vector2i gridNeighbourPos = cellMap.GetGridNeighbourGridPosition(center, direction); // GetGridNeighbour(center, CardinalDirectionHelper.ToCardinalDirection(direction));
 				if (gridNeighbourPos != null) {
-					cell.SetNeighbourCell(AngleUtil.ToCardinalDirection(direction), cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
+					cell.SetNeighbourCell(AngleUtil.CardinalIndexToCardinalEnum(direction), cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
 				} else {
-					cell.SetNeighbourCell(AngleUtil.ToCardinalDirection(direction), null);
+					cell.SetNeighbourCell(AngleUtil.CardinalIndexToCardinalEnum(direction), null);
 				}
 			}
 			if (connectSprings)
@@ -442,7 +446,7 @@ public class Phenotype : MonoBehaviour {
 			Vector3 rootToCell = cell.transform.position - (Vector3)rootCell.position;
 			Vector3 turnedVector = Quaternion.Euler(0, 0, deltaAngle) * rootToCell;
 			cell.transform.position = (Vector2)rootCell.position + (Vector2)turnedVector;
-			float heading = AngleUtil.ToAngle(cell.bindCardinalIndex) + targetAngle - 90f;
+			float heading = AngleUtil.CardinalIndexToAngle(cell.bindCardinalIndex) + targetAngle - 90f;
 			cell.heading = heading;
 			cell.SetTringleHeadingAngle(heading);
 		}
@@ -472,7 +476,7 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		ConnectCells(true, true);
-		edges.GenerateWings(cellList);
+		edges.GenerateWings(cellMap);
 		UpdateSpringsFrequenze();
 		ShowCellsSelected(false);
 		ShowShadow(false);

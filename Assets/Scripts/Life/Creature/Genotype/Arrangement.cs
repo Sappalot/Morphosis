@@ -143,7 +143,7 @@ public class Arrangement {
         } else if (m_type == ArrangementTypeEnum.Star) {
             m_arrowIndex += 2;
         }
-        m_arrowIndex = AngleUtil.WarpArrowIndex(m_arrowIndex);
+        m_arrowIndex = AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex);
     }
 
     public void TurnArrowClowkwise() {
@@ -154,7 +154,7 @@ public class Arrangement {
         } else if (m_type == ArrangementTypeEnum.Star) {
             m_arrowIndex -= 2;
         }
-        m_arrowIndex = AngleUtil.WarpArrowIndex(m_arrowIndex);
+        m_arrowIndex = AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex);
     }
 
     public void IncreaseGap() {
@@ -179,107 +179,107 @@ public class Arrangement {
 
         if (m_type == ArrangementTypeEnum.Side) {
             for (int index = 0; index < Mathf.Abs(m_referenceCount); index++) {
-                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + ((m_referenceCount > 0) ? index * 2 : -index * 2))) {
+                if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + ((m_referenceCount > 0) ? index * 2 : -index * 2))) {
                     return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                 }
             }
         } else if (m_type == ArrangementTypeEnum.Mirror) {
             if (m_referenceCount == 2) {
-                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + m_gap + 1)) {
+                if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + m_gap + 1)) {
                     return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - m_gap - 1)) {
+                } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - m_gap - 1)) {
                     return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                 }
             } else if (m_referenceCount == 4) {
                 if (flipPairsEnabled) {
-                    if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + m_gap + 1)) {
+                    if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + m_gap + 1)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - m_gap - 1)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - m_gap - 1)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + m_gap + 3)) {
+                    } if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + m_gap + 3)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - m_gap - 3)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - m_gap - 3)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
                     }
                 } else {
-                    if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + m_gap + 1)) {
+                    if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + m_gap + 1)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - m_gap - 1)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - m_gap - 1)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + m_gap + 3)) {
+                    } if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + m_gap + 3)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - m_gap - 3)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - m_gap - 3)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                     }
                 }
             } else if (m_referenceCount == 6) {
-                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 1)) {
+                if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 1)) {
                     return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 1)) {
+                } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 1)) {
                     return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 3)) {
+                } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 3)) {
                     return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 3)) {
+                } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 3)) {
                     return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 5)) {
+                } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 5)) {
                     return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 5)) {
+                } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 5)) {
                     return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                 }
             }
         } else if (m_type == ArrangementTypeEnum.Star) {
             if (m_referenceCount == 2) {
-                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 3)) {
+                if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 3)) {
                     return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 3)) {
+                } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 3)) {
                     return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                 }
             }
             else if (m_referenceCount == 3) {
-                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 2)) {
+                if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 2)) {
                     return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 2)) {
+                } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 2)) {
                     return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 6)) {
+                } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 6)) {
                     return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                 }
             } else if (m_referenceCount == 4) {
-                if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 2)) {
+                if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 2)) {
                     return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 4)) {
+                } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 4)) {
                     return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 2)) {
+                } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 2)) {
                     return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 4)) {
+                } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 4)) {
                     return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                 }
             } else if (m_referenceCount == 6) {
                 if (flipPairsEnabled) {
-                    if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 1)) {
+                    if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 1)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 1)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 1)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 3)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 3)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 3)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 3)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 5)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 5)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 5)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 5)) {
                         return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
                     }
                 } else { 
-                    if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 1)) {
+                    if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 1)) {
                         return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 1)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 1)) {
                         return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 3)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 3)) {
                         return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 3)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 3)) {
                         return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex - 5)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 5)) {
                         return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
-                    } else if (AngleUtil.ToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.WarpArrowIndex(m_arrowIndex + 5)) {
+                    } else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 5)) {
                         return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
                     }
                 }
@@ -360,14 +360,14 @@ public class Arrangement {
     //even ==> odd: snap towards black
     private void SnapArrowToOddAngles() {
         if (Mathf.Abs(m_arrowIndex) % 2 == 0) {
-            m_arrowIndex = AngleUtil.WarpArrowIndex(m_arrowIndex + 1);
+            m_arrowIndex = AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 1);
         }
     }
 
     //odd ==> even: snap towards white
     private void SnapArrowToEvenAngles() {
         if (Mathf.Abs(m_arrowIndex) % 2 == 1) {
-            m_arrowIndex = AngleUtil.WarpArrowIndex(m_arrowIndex - 1);
+            m_arrowIndex = AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 1);
         }
     }
 

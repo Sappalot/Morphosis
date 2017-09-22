@@ -61,6 +61,7 @@ public class World : MonoSingleton<World> {
 		//		life.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f));
 		//	}
 		//}
+		//life.SpawnCreatureEdgeFailure(new Vector3(100f, 200f, 0f)); //Fixed :)
 		life.SpawnCreatureJellyfish(new Vector3(100f, 100f, 0f));
 		CreatureEditModePanel.instance.Restart();
 		RMBToolModePanel.instance.Restart();

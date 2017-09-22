@@ -6,17 +6,17 @@
 	}
 
 	public override void UpdateSpringFrequenzy() {
-		if (HasNeighbour(CardinalDirectionEnum.north)) {
+		if (HasNeighbour(CardinalEnum.north)) {
 			northSpring.frequency = (this.springFrequenzy + northNeighbour.cell.springFrequenzy) / 2f;
 			northSpring.dampingRatio = (this.springDamping + northNeighbour.cell.springDamping) / 2f;
 		}
 
-		if (HasNeighbour(CardinalDirectionEnum.southWest)) {
+		if (HasNeighbour(CardinalEnum.southWest)) {
 			southWestSpring.frequency = (this.springFrequenzy + southWestNeighbour.cell.springFrequenzy) / 2f;
 			southWestSpring.dampingRatio = (this.springDamping + southWestNeighbour.cell.springDamping) / 2f;
 		}
 
-		if (HasNeighbour(CardinalDirectionEnum.southEast)) {
+		if (HasNeighbour(CardinalEnum.southEast)) {
 			southEastSpring.frequency = (this.springFrequenzy + southEastNeighbour.cell.springFrequenzy) / 2f;
 			southEastSpring.dampingRatio = (this.springDamping + southEastNeighbour.cell.springDamping) / 2f;
 		}
