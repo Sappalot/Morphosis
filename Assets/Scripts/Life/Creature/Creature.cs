@@ -79,7 +79,7 @@ public class Creature : MonoBehaviour {
 		phenotype.GenerateCells(this, position, heading);
 	}
 
-	public void GenerateJellyfish(Vector3 position, float heading) {
+	public void GenerateJellyfish(Vector2 position, float heading) {
 		genotype.GenerateGenomeJellyfish();
 		genotype.hasDirtyGenes = true;
 		genotype.GenerateGeneCells(this, position, 0); // Generating genotype here caused Unity freeze ;/

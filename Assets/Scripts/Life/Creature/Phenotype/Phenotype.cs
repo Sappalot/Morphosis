@@ -32,7 +32,7 @@ public class Phenotype : MonoBehaviour {
 	private Vector3 velocity = new Vector3();
 	private List<Cell> cellList = new List<Cell>();
 	private Genotype genotype;
-	private Vector3 spawnPositionRoot;
+	private Vector2 spawnPositionRoot;
 	private float spawnHeadingRoot;
 	private Creature creature;
 	private CellMap cellMap = new CellMap();
@@ -113,7 +113,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public void GenerateCells(Creature creature, Vector3 position, float heading) {
+	public void GenerateCells(Creature creature, Vector2 position, float heading) {
 		if (hasDirtyCellGrowth) {
 			Setup(creature, position, heading);
 
@@ -124,7 +124,7 @@ public class Phenotype : MonoBehaviour {
 
 	//Create cellMap so that 
 	//SpawnPosition is the position where the center of the root cell wil appear in word space
-	private void Setup(Creature creature, Vector3 spawnPosition, float spawnAngle) {
+	private void Setup(Creature creature, Vector2 spawnPosition, float spawnAngle) {
 		timeOffset = Random.Range(0f, 7f); //TODO: Remove
 
 		Clear();

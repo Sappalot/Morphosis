@@ -84,7 +84,7 @@ public class Edge : MonoBehaviour {
 
 	public void EvoUpdate() {
 		//TODO: If draw wings && inside frustum
-		if (HUD.instance.isEdgesEnabled || true) {
+		if (HUD.instance.shouldRenderEdges) {
 			if (frontCell != null && backCell != null) {
 
 				mainArrow.SetActive(true);
@@ -108,7 +108,7 @@ public class Edge : MonoBehaviour {
 				velocityArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
 
 				//draw force
-				forceArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + force * 100f);
+				forceArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + force * 10f);
 				forceArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
 			}
 		} else {
