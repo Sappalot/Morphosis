@@ -357,6 +357,8 @@ public class Genotype : MonoBehaviour {
 		for (int index = 0; index < genes.Length; index++) {
 			genotypeData.geneData[index] = genes[index].UpdateData();
 		}
+		genotypeData.rootPosition = rootCell.position;
+		genotypeData.rootHeading = rootCell.heading;
 		return genotypeData;
 	}
 
@@ -368,5 +370,7 @@ public class Genotype : MonoBehaviour {
 		for (int index = 0; index < genomeLength; index++) {
 			genes[index].SetReferenceGeneFromReferenceGeneIndex(genes);
 		}
+		//genotypeData.rootPosition is used from creature
+		//genotypeData.rootHeading is used from creature
 	}
 }

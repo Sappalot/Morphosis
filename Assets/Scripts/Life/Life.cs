@@ -88,9 +88,18 @@ public class Life : MonoBehaviour {
 		return creature;
 	}
 
-	public Creature SpawnCreatureEmbryo(Vector3 position, float heading, PhenotypeGenotypeEnum showType) {
+	public Creature SpawnCreatureEmbryo(Vector3 position, float heading, PhenoGenoEnum showType) {
 		Creature creature = InstantiateCreature();
 		creature.GenerateEmbryo(position, heading, showType);
+		return creature;
+	}
+
+	public Creature SpawnCreatureCopy(Creature original, PhenoGenoEnum showType) {
+		Creature creature = InstantiateCreature();
+		//creature.GenerateCopy(original, showType);
+		creature.Clone(original);
+		creature.ShowType(showType);
+		creature.nickname += " (Copy)";
 		return creature;
 	}
 

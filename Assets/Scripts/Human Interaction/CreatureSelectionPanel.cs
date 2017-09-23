@@ -259,10 +259,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	private void AddCoppiesToMoveCreature(List<Creature> originals) {
 		foreach (Creature original in originals) {
 			if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
-				Creature copy = World.instance.life.SpawnCreatureEmbryo(original.phenotype.rootCell.position, original.phenotype.rootCell.heading, PhenotypeGenotypeEnum.Phenotype);
+				Creature copy = World.instance.life.SpawnCreatureCopy(original, PhenoGenoEnum.Phenotype);
 				moveCreatures.Add(copy);
 			} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
-				Creature copy = World.instance.life.SpawnCreatureEmbryo(original.genotype.rootCell.position, original.genotype.rootCell.heading, PhenotypeGenotypeEnum.Genotype);
+				Creature copy = World.instance.life.SpawnCreatureCopy(original, PhenoGenoEnum.Genotype);
 				moveCreatures.Add(copy);
 			}
 		}
@@ -272,7 +272,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
 			foreach (Creature c in moveCreatures) {
-				c.Grab(PhenotypeGenotypeEnum.Phenotype);
+				c.Grab(PhenoGenoEnum.Phenotype);
 			}
 
 			//Offset
@@ -281,7 +281,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			}
 		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
 			foreach (Creature c in moveCreatures) {
-				c.Grab(PhenotypeGenotypeEnum.Genotype);
+				c.Grab(PhenoGenoEnum.Genotype);
 			}
 			foreach (Creature c in moveCreatures) {
 				moveOffset.Add(c, (Vector2)c.transform.position - MoveCreaturesCenterGenotype);
@@ -359,7 +359,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
 			foreach (Creature c in moveCreatures) {
-				c.Grab(PhenotypeGenotypeEnum.Phenotype);
+				c.Grab(PhenoGenoEnum.Phenotype);
 			}
 
 			foreach (Creature c in moveCreatures) {
@@ -369,7 +369,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			rotationCenter = MoveCreaturesCenterPhenotype;
 		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
 			foreach (Creature c in moveCreatures) {
-				c.Grab(PhenotypeGenotypeEnum.Genotype);
+				c.Grab(PhenoGenoEnum.Genotype);
 			}
 			foreach (Creature c in moveCreatures) {
 				moveOffset.Add(c, (Vector2)c.transform.position - MoveCreaturesCenterGenotype);
@@ -407,8 +407,13 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		List<Creature> continueMoveCopy = new List<Creature>();
 		continueMoveCopy.AddRange(moveCreatures);
 
-		PlaceHoveringCreatures();
+		ReleaseMoveCreatures();
+		startCreatureHeading.Clear();
 
+		lineRenderer.enabled = false;
+		moveOffset.Clear();
+
+		moveCreatures.Clear();
 		AddCoppiesToMoveCreature(continueMoveCopy);
 		StartMoveCreatures();
 		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
@@ -418,11 +423,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	private void ReleaseMoveCreatures() {
 		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
 			foreach (Creature c in moveCreatures) {
-				c.Release(PhenotypeGenotypeEnum.Phenotype);
+				c.Release(PhenoGenoEnum.Phenotype);
 			}
 		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
 			foreach (Creature c in moveCreatures) {
-				c.Release(PhenotypeGenotypeEnum.Genotype);
+				c.Release(PhenoGenoEnum.Genotype);
 			}
 		}
 	}

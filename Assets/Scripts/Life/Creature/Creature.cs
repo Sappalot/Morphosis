@@ -48,6 +48,22 @@ public class Creature : MonoBehaviour {
 		phenotype.GenerateCells(this);
 	}
 
+	public Vector2 GetRootPosition(PhenoGenoEnum type) {
+		if (type == PhenoGenoEnum.Phenotype) {
+			return phenotype.rootCell.position;
+		} else {
+			return genotype.rootCell.position;
+		}
+	}
+
+	public float GetRootHeading(PhenoGenoEnum type) {
+		if (type == PhenoGenoEnum.Phenotype) {
+			return phenotype.rootCell.heading;
+		} else {
+			return genotype.rootCell.heading;
+		}
+	}
+
 	public bool IsPhenotypeInside(Rect area) {
 		return phenotype.IsInside(area);
 	}
@@ -57,13 +73,13 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void SwitchToPhenotype() {
-		ShowType(PhenotypeGenotypeEnum.Phenotype);
+		ShowType(PhenoGenoEnum.Phenotype);
 		phenotype.MoveToGenotype(this);
 		phenotype.GenerateCells(this);
 	}
 
 	public void SwitchToGenotype() {
-		ShowType(PhenotypeGenotypeEnum.Genotype);
+		ShowType(PhenoGenoEnum.Genotype);
 		genotype.MoveToPhenotype(this);
 		genotype.UpdateGraphics(this);
 	}
@@ -78,9 +94,15 @@ public class Creature : MonoBehaviour {
 		GenerateGenotypeAndPhenotype(position, heading);
 	}
 
-	public void GenerateEmbryo(Vector3 position, float heading, PhenotypeGenotypeEnum showType) {
+	public void GenerateEmbryo(Vector3 position, float heading, PhenoGenoEnum showType) {
 		genotype.GenerateGenomeEmpty();
 		GenerateGenotypeAndPhenotype(position, heading);
+		ShowType(showType);
+	}
+
+	public void GenerateCopy(Creature creature, PhenoGenoEnum showType) {
+		genotype.GenerateGenomeEmpty();
+		GenerateGenotypeAndPhenotype(creature.GetRootPosition(showType), creature.GetRootHeading(showType));
 		ShowType(showType);
 	}
 
@@ -88,15 +110,16 @@ public class Creature : MonoBehaviour {
 		genotype.hasDirtyGenes = true;
 		genotype.GenerateGeneCells(this, position, heading); // Generating genotype here caused Unity freeze ;/
 
-		phenotype.hasDirtyCellGrowth = true;
+		phenotype.differsFromGenotype = true;
 		phenotype.GenerateCells(this, position, heading);
 
 		ShowSelected(false, true);
 	}
 
-	private void ShowType(PhenotypeGenotypeEnum showType) {
-		phenotype.Show(showType == PhenotypeGenotypeEnum.Phenotype); //Don't use SetActive() since it clears rigigdBody velocity
-		genotype.gameObject.SetActive(showType == PhenotypeGenotypeEnum.Genotype);
+	//Make show type a member ??
+	public void ShowType(PhenoGenoEnum showType) {
+		phenotype.Show(showType == PhenoGenoEnum.Phenotype); //Don't use SetActive() since it clears rigigdBody velocity
+		genotype.gameObject.SetActive(showType == PhenoGenoEnum.Genotype);
 	}
 
 	public void TryGrow(int cellCount = 1) {
@@ -137,15 +160,15 @@ public class Creature : MonoBehaviour {
 		return phenotype.GetCellAt(position);
 	}
 
-	public void Grab(PhenotypeGenotypeEnum type) {
-		if (type ==PhenotypeGenotypeEnum.Phenotype) {
+	public void Grab(PhenoGenoEnum type) {
+		if (type ==PhenoGenoEnum.Phenotype) {
 			Vector2 rootCellPosition = phenotype.rootCell.position;
 			phenotype.Grab();
 
 			transform.parent = null;
 			transform.position = rootCellPosition;
 			transform.parent = World.instance.life.transform;
-		} else if (type == PhenotypeGenotypeEnum.Genotype) {
+		} else if (type == PhenoGenoEnum.Genotype) {
 			phenotype.hasDirtyPosition = true;
 
 			Vector2 rootCellPosition = genotype.rootCell.position;
@@ -158,10 +181,10 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public void Release(PhenotypeGenotypeEnum type) {
-		if (type == PhenotypeGenotypeEnum.Phenotype) {
+	public void Release(PhenoGenoEnum type) {
+		if (type == PhenoGenoEnum.Phenotype) {
 			phenotype.Release(this);
-		} else if (type == PhenotypeGenotypeEnum.Genotype) {
+		} else if (type == PhenoGenoEnum.Genotype) {
 			genotype.Release(this);
 		}
 	}
@@ -173,6 +196,10 @@ public class Creature : MonoBehaviour {
 		genotypePosition.enabled =			show;
 		genotypeCellsPosition.enabled =		show;
 	}
+
+	public void Clone(Creature original) {
+		ApplyData(original.UpdateData());
+	} 
 
 	//data
 	private CreatureData creatureData = new CreatureData();
@@ -193,7 +220,9 @@ public class Creature : MonoBehaviour {
 
 		genotype.ApplyData(creatureData.genotypeData);
 		genotype.hasDirtyGenes = true;
-		genotype.GenerateGeneCells(this, Vector2.zero, 90f); // Generating genotype here caused Unity freeze ;/
+		Vector2 position = creatureData.genotypeData.rootPosition;
+		float heading = creatureData.genotypeData.rootHeading;
+		genotype.GenerateGeneCells(this, position, heading); // Generating genotype here caused Unity freeze ;/
 
 		phenotype.ApplyData(creatureData.phenotypeData, this);
 	}

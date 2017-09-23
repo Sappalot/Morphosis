@@ -22,7 +22,7 @@ public class Phenotype : MonoBehaviour {
 	public MuscleCell muscleCellPrefab;
 	public VeinCell veinCellPrefab;
 
-	public bool hasDirtyCellGrowth = true;
+	public bool differsFromGenotype = true;
 	public float timeOffset;
 
 	public GameObject cells;
@@ -105,19 +105,19 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public void GenerateCells(Creature creature) {
-		if (hasDirtyCellGrowth) {
+		if (differsFromGenotype) {
 			Setup(creature, rootCell.transform.position, rootCell.heading);
 			TryGrowFully(creature);
-			hasDirtyCellGrowth = false;
+			differsFromGenotype = false;
 		}
 	}
 
 	public void GenerateCells(Creature creature, Vector2 position, float heading) {
-		if (hasDirtyCellGrowth) {
+		if (differsFromGenotype) {
 			Setup(creature, position, heading);
 
 			TryGrowFully(creature);
-			hasDirtyCellGrowth = false;
+			differsFromGenotype = false;
 		}
 	}
 
@@ -455,12 +455,14 @@ public class Phenotype : MonoBehaviour {
 			Cell cell = cellList[index];
 			phenotypeData.cellDataList.Add(cell.UpdateData());
 		}
+		phenotypeData.differsFromGenotype = differsFromGenotype;
 		//phenotypeData.rootCellPosition = rootCell.position;
 		return phenotypeData;
 	}
 
 	public void ApplyData(PhenotypeData phenotypeData, Creature creature) {
 		timeOffset = phenotypeData.timeOffset;
+		
 		Setup(creature, phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
 		for (int index = 0; index < phenotypeData.cellDataList.Count; index++) {
 			CellData cellData = phenotypeData.cellDataList[index];
@@ -474,8 +476,8 @@ public class Phenotype : MonoBehaviour {
 		ShowCellsSelected(false);
 		ShowShadow(false);
 		ShowTriangles(true);
+		differsFromGenotype = phenotypeData.differsFromGenotype; //prevent regeneration on genotype -> Phenotype switch
 
-		hasDirtyCellGrowth = false; //prevent regeneration on genotype -> Phenotype switch
 	}
 
 	//TODO: Remove

@@ -100,9 +100,8 @@ public class GenePanel : MonoSingleton<GenePanel> {
 			CreatureSelectionPanel.instance.soloSelected.genotype.GenerateGeneCells(CreatureSelectionPanel.instance.soloSelected, CreatureSelectionPanel.instance.soloSelected.genotype.rootCell.position, CreatureSelectionPanel.instance.soloSelected.genotype.rootCell.heading);
 			CreatureSelectionPanel.instance.soloSelected.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
 			CreatureSelectionPanel.instance.soloSelected.genotype.ShowCreatureSelected(true);
-			//CreatureSelectionPanel.instance.selectedCreature.genotype.MoveToPhenotypeAndUpdateHighlite(CreatureSelectionPanel.instance.selectedCreature);
-
-			CreatureSelectionPanel.instance.soloSelected.phenotype.hasDirtyCellGrowth = true;
+			
+			CreatureSelectionPanel.instance.soloSelected.phenotype.differsFromGenotype = true;
 		} 
 	}
 
