@@ -21,7 +21,7 @@ public abstract class Cell : MonoBehaviour {
 	//  The direction the cell is facing in creature space
 	public int bindCardinalIndex;
 	public float heading; // where the cells flip triangle is pointing at the moment (0 is east, 90 is north ...)
-	public float angleDiffFromBindpose;
+	//public float angleDiffFromBindpose;
 
 	public string id;
 	public int groups = 0;
@@ -360,7 +360,7 @@ public abstract class Cell : MonoBehaviour {
 	public void UpdateRotation() {
 		UpdateNeighbourAngles();
 
-		angleDiffFromBindpose = 0; 
+		float angleDiffFromBindpose = 0; 
 		for (int index = 0; index < 6; index++) {
 			if (HasNeighbourCell(index)) {
 				angleDiffFromBindpose = AngleUtil.GetAngleDifference(index_Neighbour[index].bindAngle, index_Neighbour[index].angle);
@@ -373,6 +373,12 @@ public abstract class Cell : MonoBehaviour {
 		} else {
 			heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex);
 			triangleTransform.localRotation = Quaternion.Euler(0f, 0f, heading); //Random.Range(0f, 360f)
+		}
+	}
+
+	public float angleDiffFromBindpose {
+		get {
+			return heading - AngleUtil.CardinalIndexToAngle(bindCardinalIndex);
 		}
 	}
 

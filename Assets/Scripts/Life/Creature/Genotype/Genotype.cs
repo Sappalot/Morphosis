@@ -131,7 +131,7 @@ public class Genotype : MonoBehaviour {
 			Clear();
 
 			List<Cell> spawningFromCells = new List<Cell>();
-			Cell root = SpawnGeneCell(GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, creature);
+			Cell root = SpawnGeneCell(creature, GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite);
 			root.heading = 90f;
 			spawningFromCells.Add(root);
 
@@ -150,13 +150,12 @@ public class Genotype : MonoBehaviour {
 								Cell residentCell = geneCellMap.GetCell(referenceCellMapPosition);
 								if (residentCell == null) {
 									//only time we spawn a cell if there is a vacant spot
-									Cell newCell = SpawnGeneCell(referenceGene, referenceCellMapPosition, buildOrderIndex, referenceBindHeading, geneReference.flipSide, creature);
+									Cell newCell = SpawnGeneCell(creature, referenceGene, referenceCellMapPosition, buildOrderIndex, referenceBindHeading, geneReference.flipSide);
 									nextSpawningFromCells.Add(newCell);
 									//geneCellList.Add(spawningFromCell); //Why was this line typed, Removed 2017-08-23??
 								} else {
-									if (residentCell.buildOrderIndex > buildOrderIndex) {
-										throw new System.Exception("Trying to spawn a cell at a location where a cell of higher build order are allready present.");
-									} else if (residentCell.buildOrderIndex == buildOrderIndex) {
+									Debug.Assert(residentCell.buildOrderIndex <= buildOrderIndex, "Trying to spawn a cell at a location where a cell of higher build order are allready present.");
+									if (residentCell.buildOrderIndex == buildOrderIndex) {
 										//trying to spawn a cell where ther is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
 										GameObject.Destroy(residentCell.gameObject);
 										geneCellList.Remove(residentCell);
@@ -196,7 +195,7 @@ public class Genotype : MonoBehaviour {
 	// 1 Spawn cell from prefab
 	// 2 Setup its properties according to parameters
 	// 3 Add cell to list and CellMap
-	private Cell SpawnGeneCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature) {
+	private Cell SpawnGeneCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide) {
 		Cell cell = null;
 
 		if (gene.type == CellTypeEnum.Jaw) {
@@ -229,9 +228,12 @@ public class Genotype : MonoBehaviour {
 		return cell;
 	}
 
-	public void MoveToPhenotypeAndUpdateHighlite(Creature creature) {
+	public void MoveToPhenotype(Creature creature) {
 		MoveTo(creature.phenotype.rootCell.position);
 		TurnTo(creature.phenotype.rootCell.heading);
+	}
+
+	public void UpdateGraphics(Creature creature) {
 		ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
 		UpdateFlipSides();
 	}
@@ -261,42 +263,8 @@ public class Genotype : MonoBehaviour {
 		Move(vector - rootCell.position);
 	}
 
-	//public void MoveToPhenotypeAndUpdateHighlite(Creature creature) {
-	//	MoveRootToOrigo();
-
-	//	cellsTransform.localPosition = creature.phenotype.rootCell.transform.position;
-	//	cellsTransform.localRotation = Quaternion.identity;
-	//	cellsTransform.Rotate(0f, 0f, creature.phenotype.rootCell.heading - 90f);
-
-	//	Vector3 pos = cellsTransform.position;
-
-	//	for (int index = 0; index < geneCellList.Count; index++) {
-	//		geneCellList[index].transform.parent = null;
-	//	}
-
-	//	cellsTransform.position = Vector3.zero;
-	//	//cellsTransform.localRotation = Quaternion.identity; //bugger
-
-	//	for (int index = 0; index < geneCellList.Count; index++) {
-	//		geneCellList[index].transform.parent = cellsTransform;
-	//	}
-
-	//	for (int index = 0; index < geneCellList.Count; index++) {
-	//		geneCellList[index].EvoFixedUpdate(0);
-	//	}
-
-	//	ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
-	//}
-
 	public Gene GetGeneAt(int index) {
 		return genes[index];
-	}
-
-	public void ShowGeneCellsSelectedWithGene(Gene gene, bool on) {
-		List<Cell> geneCellsWithGene = GetGeneCellsWithGene(gene);
-		foreach (Cell cell in geneCellsWithGene) {
-			cell.ShowCellSelected(on);
-		}
 	}
 
 	public List<Cell> GetGeneCellsWithGene(Gene gene) {
@@ -309,12 +277,18 @@ public class Genotype : MonoBehaviour {
 		return cells;
 	}
 
+	public void ShowGeneCellsSelectedWithGene(Gene gene, bool on) {
+		List<Cell> geneCellsWithGene = GetGeneCellsWithGene(gene);
+		foreach (Cell cell in geneCellsWithGene) {
+			cell.ShowCellSelected(on);
+		}
+	}
+
 	public void ShowCreatureSelected(bool on) {
 		for (int index = 0; index < geneCellList.Count; index++) {
 			geneCellList[index].ShowCreatureSelected(on);
 			geneCellList[index].ShowTriangle(on);
 			geneCellList[index].ShowShadow(on);
-			//transform.localPosition = new Vector3(0f, 0f, on ? -8f : 0f);
 		}
 	}
 

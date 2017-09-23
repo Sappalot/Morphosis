@@ -8,6 +8,7 @@ public class Creature : MonoBehaviour {
 	public string id;
 	public string nickname;
 
+	//debug
 	public SpriteRenderer creturePosition;
 	public SpriteRenderer phenotypePosition;
 	public SpriteRenderer phenotypeCellsPosition;
@@ -56,49 +57,41 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void SwitchToPhenotype() {
-		phenotype.Show(true); //Don't use SetActive() since it clears rigigdBody velocity
-		genotype.gameObject.SetActive(false);
-		phenotype.MoveToGenotype();
-
-		//phenotype.isDirty = true;
+		ShowType(PhenotypeGenotypeEnum.Phenotype);
+		phenotype.MoveToGenotype(this);
 		phenotype.GenerateCells(this);
 	}
 
 	public void SwitchToGenotype() {
-		phenotype.Show(false); //Don't use SetActive() since it clears rigigdBody velocity
-		genotype.MoveToPhenotypeAndUpdateHighlite(this);
-		genotype.gameObject.SetActive(true);
+		ShowType(PhenotypeGenotypeEnum.Genotype);
+		genotype.MoveToPhenotype(this);
+		genotype.UpdateGraphics(this);
 	}
 
 	public void GenerateEdgeFailure(Vector3 position, float heading) {
 		genotype.GenerateGenomeEdgeFailure();
-		genotype.hasDirtyGenes = true;
-		genotype.GenerateGeneCells(this, position, 0); // Generating genotype here caused Unity freeze ;/
-
-		phenotype.hasDirtyCellGrowth = true;
-		phenotype.GenerateCells(this, position, heading);
+		GenerateGenotypeAndPhenotype(position, heading);
 	}
 
 	public void GenerateJellyfish(Vector2 position, float heading) {
 		genotype.GenerateGenomeJellyfish();
-		genotype.hasDirtyGenes = true;
-		genotype.GenerateGeneCells(this, position, 0); // Generating genotype here caused Unity freeze ;/
-
-		phenotype.hasDirtyCellGrowth = true;
-		phenotype.GenerateCells(this, position, heading);
+		GenerateGenotypeAndPhenotype(position, heading);
 	}
 
 	public void GenerateEmbryo(Vector3 position, float heading, PhenotypeGenotypeEnum showType) {
 		genotype.GenerateGenomeEmpty();
+		GenerateGenotypeAndPhenotype(position, heading);
+		ShowType(showType);
+	}
+
+	private void GenerateGenotypeAndPhenotype(Vector2 position, float heading) {
 		genotype.hasDirtyGenes = true;
 		genotype.GenerateGeneCells(this, position, heading); // Generating genotype here caused Unity freeze ;/
-		genotype.ShowTriangles(false);
 
 		phenotype.hasDirtyCellGrowth = true;
 		phenotype.GenerateCells(this, position, heading);
 
-		ShowType(showType);
-		ShowSelected(false);
+		ShowSelected(false, true);
 	}
 
 	private void ShowType(PhenotypeGenotypeEnum showType) {
@@ -107,7 +100,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void TryGrow(int cellCount = 1) {
-		phenotype.TryGrow(cellCount);
+		phenotype.TryGrow(this, cellCount);
 	}
 
 	public void TryShrink(int cellCount = 1) {
@@ -123,8 +116,8 @@ public class Creature : MonoBehaviour {
 	}
 
 	private bool isShowCreatureSelected = false;
-	public void ShowSelected(bool on) {
-		if (on != isShowCreatureSelected) {
+	public void ShowSelected(bool on, bool force = false) {
+		if (on != isShowCreatureSelected || force) {
 			phenotype.ShowSelectedCreature(on);
 			genotype.ShowCreatureSelected(on);
 			isShowCreatureSelected = on;
@@ -167,7 +160,7 @@ public class Creature : MonoBehaviour {
 
 	public void Release(PhenotypeGenotypeEnum type) {
 		if (type == PhenotypeGenotypeEnum.Phenotype) {
-			phenotype.Release();
+			phenotype.Release(this);
 		} else if (type == PhenotypeGenotypeEnum.Genotype) {
 			genotype.Release(this);
 		}

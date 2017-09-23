@@ -31,10 +31,9 @@ public class Phenotype : MonoBehaviour {
 
 	private Vector3 velocity = new Vector3();
 	private List<Cell> cellList = new List<Cell>();
-	private Genotype genotype;
-	private Vector2 spawnPositionRoot;
-	private float spawnHeadingRoot;
-	private Creature creature;
+	private Vector2 spawnPosition;
+	private float spawnHeading;
+	//private Creature creature;
 	private CellMap cellMap = new CellMap();
 
 	private bool isGrabbed;
@@ -108,7 +107,7 @@ public class Phenotype : MonoBehaviour {
 	public void GenerateCells(Creature creature) {
 		if (hasDirtyCellGrowth) {
 			Setup(creature, rootCell.transform.position, rootCell.heading);
-			TryGrowFully();
+			TryGrowFully(creature);
 			hasDirtyCellGrowth = false;
 		}
 	}
@@ -117,39 +116,36 @@ public class Phenotype : MonoBehaviour {
 		if (hasDirtyCellGrowth) {
 			Setup(creature, position, heading);
 
-			TryGrowFully();
+			TryGrowFully(creature);
 			hasDirtyCellGrowth = false;
 		}
 	}
 
-	//Create cellMap so that 
-	//SpawnPosition is the position where the center of the root cell wil appear in word space
-	private void Setup(Creature creature, Vector2 spawnPosition, float spawnAngle) {
+	//SpawnPosition is the position where the center of the root cell will appear in word space
+	private void Setup(Creature creature, Vector2 spawnPosition, float spawnHeading) {
 		timeOffset = Random.Range(0f, 7f); //TODO: Remove
 
 		Clear();
-
-		this.creature = creature;
-		genotype = creature.genotype;
-		spawnPositionRoot = spawnPosition;
-		spawnHeadingRoot = spawnAngle;
+		this.spawnPosition = spawnPosition;
+		this.spawnHeading = spawnHeading;
 	}
 
-	public void TryGrowFully() {
-		TryGrow(genotype.geneCellCount);
+	public void TryGrowFully(Creature creature) {
+		TryGrow(creature, creature.genotype.geneCellCount);
 	}
 
-	public void TryGrow(int cellCount) {
+	public void TryGrow(Creature creature, int cellCount) {
 		int growCellCount = 0;
+		Genotype genotype  = creature.genotype;
 		if (cellCount < 1 || this.cellCount >= genotype.geneCellCount) {
 			return;
 		}
 		if (cellList.Count == 0) {
-			SpawnCell(genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, creature, spawnPositionRoot, true);
+			SpawnCell(creature, genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, spawnPosition, true);
 
 			EvoFixedUpdate(creature, 0f);
-			rootCell.heading = spawnHeadingRoot;
-			rootCell.angleDiffFromBindpose = spawnHeadingRoot - 90f;
+			rootCell.heading = spawnHeading;
+			//rootCell.angleDiffFromBindpose = spawnHeadingRoot - 90f;
 			rootCell.triangleTransform.localRotation = Quaternion.Euler(0f, 0f, rootCell.heading); // Just updating graphics
 			growCellCount++;
 		}
@@ -173,7 +169,7 @@ public class Phenotype : MonoBehaviour {
 						positionCount++;
 					}
 				}
-				Cell newCell = SpawnCell(geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, creature, averagePosition / positionCount, false);
+				Cell newCell = SpawnCell(creature, geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, averagePosition / positionCount, false);
 				ConnectCells(false, false); //We need to know our neighbours in order to update vectors correctly 
 				newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
 				newCell.UpdateRotation(); //Rotation is needed in order to place subsequent cells right
@@ -254,15 +250,15 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	private Cell SpawnCell(Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide, Creature creature, Vector2 position, bool modelSpace) {
+	private Cell SpawnCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindCardinalIndex, FlipSideEnum flipSide, Vector2 position, bool modelSpace) {
 		Cell cell = InstantiateCell(gene.type, mapPosition);
-		Vector2 spawnPosition = (modelSpace ? genotype.geneCellMap.ToModelSpacePosition(mapPosition) : Vector2.zero) + position;
+		Vector2 spawnPosition = (modelSpace ? creature.genotype.geneCellMap.ToModelSpacePosition(mapPosition) : Vector2.zero) + position;
 		cell.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, 0f);
 
 		cell.mapPosition = mapPosition;
 		cell.buildOrderIndex = buildOrderIndex;
 		cell.gene = gene;
-		cell.bindCardinalIndex = bindHeading;
+		cell.bindCardinalIndex = bindCardinalIndex;
 		cell.flipSide = flipSide;
 		cell.timeOffset = timeOffset;
 		cell.creature = creature;
@@ -397,7 +393,7 @@ public class Phenotype : MonoBehaviour {
 		MoveRootToOrigo();
 	}
 
-	public void Release() {
+	public void Release(Creature creature) {
 		isGrabbed = false;
 		foreach (Cell cell in cellList) {
 			cell.GetComponent<Rigidbody2D>().isKinematic = false;
@@ -414,12 +410,9 @@ public class Phenotype : MonoBehaviour {
 		foreach (Cell cell in cellList) {
 			cell.transform.parent = cells.transform;
 		}
-
-		//rootCell.EvoFixedUpdate(0); //We need to know where it is heading uppon release
-
 	}
 
-	public void MoveToGenotype() {
+	public void MoveToGenotype(Creature creature) {
 		if (hasDirtyPosition) {
 			MoveTo(creature.genotype.rootCell.position);
 			TurnTo(creature.genotype.rootCell.heading);
@@ -480,9 +473,14 @@ public class Phenotype : MonoBehaviour {
 		UpdateSpringsFrequenze();
 		ShowCellsSelected(false);
 		ShowShadow(false);
-		ShowTriangles(false);
+		ShowTriangles(true);
 
 		hasDirtyCellGrowth = false; //prevent regeneration on genotype -> Phenotype switch
+	}
+
+	//TODO: Remove
+	private void Update() {
+		ShowTriangles(true);
 	}
 
 	public Cell GetCellAt(Vector2 position) {
