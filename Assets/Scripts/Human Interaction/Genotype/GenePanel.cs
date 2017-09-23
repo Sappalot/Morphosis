@@ -18,9 +18,9 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		set {
 			m_gene = value;
 			UpdateRepresentation(false);
-			if (CreatureSelectionPanel.instance.selectedCreature != null) {
-				CreatureSelectionPanel.instance.selectedCreature.genotype.ShowGeneCellsSelected(false);
-				CreatureSelectionPanel.instance.selectedCreature.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
+			if (CreatureSelectionPanel.instance.soloSelected != null) {
+				CreatureSelectionPanel.instance.soloSelected.genotype.ShowGeneCellsSelected(false);
+				CreatureSelectionPanel.instance.soloSelected.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
 			}
 		}
 	}
@@ -97,12 +97,12 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
 		//Hack
 		if (changeToGenomeMade && CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
-			CreatureSelectionPanel.instance.selectedCreature.genotype.GenerateGeneCells(CreatureSelectionPanel.instance.selectedCreature, CreatureSelectionPanel.instance.selectedCreature.genotype.rootCell.position, CreatureSelectionPanel.instance.selectedCreature.genotype.rootCell.heading);
-			CreatureSelectionPanel.instance.selectedCreature.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
-			CreatureSelectionPanel.instance.selectedCreature.genotype.ShowCreatureSelected(true);
+			CreatureSelectionPanel.instance.soloSelected.genotype.GenerateGeneCells(CreatureSelectionPanel.instance.soloSelected, CreatureSelectionPanel.instance.soloSelected.genotype.rootCell.position, CreatureSelectionPanel.instance.soloSelected.genotype.rootCell.heading);
+			CreatureSelectionPanel.instance.soloSelected.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
+			CreatureSelectionPanel.instance.soloSelected.genotype.ShowCreatureSelected(true);
 			//CreatureSelectionPanel.instance.selectedCreature.genotype.MoveToPhenotypeAndUpdateHighlite(CreatureSelectionPanel.instance.selectedCreature);
 
-			CreatureSelectionPanel.instance.selectedCreature.phenotype.hasDirtyCellGrowth = true;
+			CreatureSelectionPanel.instance.soloSelected.phenotype.hasDirtyCellGrowth = true;
 		} 
 	}
 

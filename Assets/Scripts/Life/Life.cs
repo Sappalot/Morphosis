@@ -88,9 +88,9 @@ public class Life : MonoBehaviour {
 		return creature;
 	}
 
-	public Creature SpawnCreatureEmbryo(Vector3 position, PhenotypeGenotypeEnum showType) {
+	public Creature SpawnCreatureEmbryo(Vector3 position, float heading, PhenotypeGenotypeEnum showType) {
 		Creature creature = InstantiateCreature();
-		creature.GenerateEmbryo(position, 90f, showType);
+		creature.GenerateEmbryo(position, heading, showType);
 		return creature;
 	}
 

@@ -46,7 +46,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	}
 
 	private void SelectDefaultCell() {
-		Creature creature = CreatureSelectionPanel.instance.selectedCreature;
+		Creature creature = CreatureSelectionPanel.instance.soloSelected;
 		if (creature != null) {
 			PhenotypePanel.instance.cell = creature.phenotype.rootCell;
 			PhenotypePanel.instance.UpdateRepresentation();
@@ -56,7 +56,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	}
 
 	private void SelectDefaultGeneCell() {
-		Creature creature = CreatureSelectionPanel.instance.selectedCreature;
+		Creature creature = CreatureSelectionPanel.instance.soloSelected;
 		if (creature != null) {
 			GenePanel.instance.gene = creature.genotype.geneCellList[0].gene;
 			GenotypePanel.instance.genotype = creature.genotype;

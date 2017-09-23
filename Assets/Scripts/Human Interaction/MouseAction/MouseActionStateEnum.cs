@@ -3,4 +3,5 @@
 	selectGene,
 	moveCreatures,
 	rotateCreatures,
+	copyMoveCreatures,
 }
