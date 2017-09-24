@@ -25,6 +25,14 @@ public class Genotype : MonoBehaviour {
 			return geneCellList[0];
 		}
 	}
+
+	public void Scramble() {
+		for (int index = 0; index < genomeLength; index++) {
+			genes[index].Scramble();
+		}
+		SetReferenceGenesFromReferenceGeneIndices();
+	}
+
 	public void SetReferenceGenesFromReferenceGeneIndices() {
 		for (int index = 0; index < genomeLength; index++) {
 			genes[index].SetReferenceGeneFromReferenceGeneIndex(genes);

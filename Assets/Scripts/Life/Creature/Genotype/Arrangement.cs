@@ -2,6 +2,25 @@
 using UnityEngine;
 
 public class Arrangement {
+	public void Scramble() {
+		isEnabled = Random.Range(0, 2) == 0;
+		referenceGeneIndex = Random.Range(1, Genotype.genomeLength);
+		flipTypeSameOpposite = Random.Range(0, 2) == 0 ? ArrangementFlipSmOpTypeEnum.Same : ArrangementFlipSmOpTypeEnum.Opposite;
+		flipTypeBlackWhiteToArrow = Random.Range(0, 2) == 0 ? ArrangementFlipBtaWtaTypeEnum.BlackToArrow : ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
+		flipPairsEnabled = Random.Range(0, 2) == 0;
+		type = (ArrangementTypeEnum)Random.Range(0, 3);
+		if (type == ArrangementTypeEnum.Side) {
+			referenceCount = Random.Range(-5, 4);
+			if (referenceCount >= -1) {
+				referenceCount += 2;
+			}
+		} else {
+			referenceCount = Random.Range(1, 7);
+		}
+		arrowIndex = Random.Range(-5, 7);
+		gap = Random.Range(0, 5);
+	}
+
 	public bool isEnabled = true;
 	public int referenceGeneIndex;
 
@@ -63,6 +82,8 @@ public class Arrangement {
 			SnapToLegalValues();
 		}
 	}
+
+
 
 	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
 		referenceGene = genes[referenceGeneIndex];

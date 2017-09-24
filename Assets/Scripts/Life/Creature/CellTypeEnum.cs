@@ -2,10 +2,10 @@
 
 [Serializable]
 public enum CellTypeEnum {
-    Jaw,
-    Leaf,
-    Muscle,
-    Vein,
+	Jaw,
+	Leaf,
+	Muscle,
+	Vein,
 }
 /*
 Void,

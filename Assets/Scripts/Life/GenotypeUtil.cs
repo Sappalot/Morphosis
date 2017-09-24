@@ -16,4 +16,13 @@ public static class GenotypeUtil {
 		}
 		return combination;
 	}
+
+	public static Gene[] Freak() {
+		Gene[] combination = new Gene[Genotype.genomeLength];
+
+
+		return combination;
+	}
+
+
 }

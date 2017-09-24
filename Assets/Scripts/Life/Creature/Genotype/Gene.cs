@@ -1,4 +1,6 @@
-﻿public class Gene {
+﻿using UnityEngine;
+
+public class Gene {
 	public CellTypeEnum type = CellTypeEnum.Leaf; // + this vein cell's settings 
 	public int index;
 
@@ -27,6 +29,13 @@
 		arrangements[0].SetReferenceGeneFromReferenceGeneIndex(genes);
 		arrangements[1].SetReferenceGeneFromReferenceGeneIndex(genes);
 		arrangements[2].SetReferenceGeneFromReferenceGeneIndex(genes);
+	}
+
+	public void Scramble() {
+		type = (CellTypeEnum)Random.Range(0, 4);
+		arrangements[0].Scramble();
+		arrangements[1].Scramble();
+		arrangements[2].Scramble();
 	}
 
 	public GeneReference GetFlippableReference(int referenceCardinalIndex, FlipSideEnum flipSide) {

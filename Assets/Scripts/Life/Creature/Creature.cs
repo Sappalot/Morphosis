@@ -96,6 +96,7 @@ public class Creature : MonoBehaviour {
 
 	public void GenerateEmbryo(Vector3 position, float heading, PhenoGenoEnum showType) {
 		genotype.GenerateGenomeEmpty();
+		genotype.Scramble();
 		GenerateGenotypeAndPhenotype(position, heading);
 		ShowType(showType);
 	}
