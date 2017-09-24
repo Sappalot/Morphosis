@@ -25,6 +25,11 @@ public class Genotype : MonoBehaviour {
 			return geneCellList[0];
 		}
 	}
+	public void SetReferenceGenesFromReferenceGeneIndices() {
+		for (int index = 0; index < genomeLength; index++) {
+			genes[index].SetReferenceGeneFromReferenceGeneIndex(genes);
+		}
+	}
 
 	public bool IsInside(Rect area) {
 		float cellRadius = 0.5f;
@@ -123,6 +128,13 @@ public class Genotype : MonoBehaviour {
 		for (int index = 0; index < genomeLength; index++) {
 			genes[index].SetDefault(genes);
 		}
+	}
+
+	public void SetGenome(Gene[] genome) {
+		for (int index = 0; index < genomeLength; index++) {
+			genes[index] = genome[index].GetClone();
+		}
+		SetReferenceGenesFromReferenceGeneIndices();
 	}
 
 	public void GenerateGeneCells(Creature creature, Vector2 position, float heading) { // heading 90 ==> root is pointing north
@@ -348,6 +360,8 @@ public class Genotype : MonoBehaviour {
 		foreach (Cell cell in geneCellList) {
 			cell.transform.parent = cellsTransform.transform;
 		}
+
+		creature.phenotype.MoveToGenotype(creature);
 	}
 
 	//data
@@ -367,9 +381,7 @@ public class Genotype : MonoBehaviour {
 			genes[index] = new Gene(index);
 			genes[index].ApplyData(genotypeData.geneData[index]);
 		}
-		for (int index = 0; index < genomeLength; index++) {
-			genes[index].SetReferenceGeneFromReferenceGeneIndex(genes);
-		}
+		SetReferenceGenesFromReferenceGeneIndices();
 		//genotypeData.rootPosition is used from creature
 		//genotypeData.rootHeading is used from creature
 	}

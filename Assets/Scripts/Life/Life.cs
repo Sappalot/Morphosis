@@ -94,6 +94,12 @@ public class Life : MonoBehaviour {
 		return creature;
 	}
 
+	public Creature SpawnCreatureMergling(List<Gene[]> genomes, Vector3 position, float heading, PhenoGenoEnum showType) {
+		Creature creature = InstantiateCreature();
+		creature.GenerateMergling(genomes, position, heading, showType);
+		return creature;
+	}
+
 	public Creature SpawnCreatureCopy(Creature original, PhenoGenoEnum showType) {
 		Creature creature = InstantiateCreature();
 		//creature.GenerateCopy(original, showType);

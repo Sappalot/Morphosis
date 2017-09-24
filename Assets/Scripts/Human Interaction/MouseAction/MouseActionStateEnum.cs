@@ -4,4 +4,5 @@
 	moveCreatures,
 	rotateCreatures,
 	copyMoveCreatures,
+	combineMoveCreatures,
 }

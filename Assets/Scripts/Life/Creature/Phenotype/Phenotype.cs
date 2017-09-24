@@ -93,9 +93,6 @@ public class Phenotype : MonoBehaviour {
 		edges.EvoFixedUpdate(velocity, creature);
 
 		for (int index = 0; index < cellList.Count; index++) {
-			if (cellList.Count == 1) {
-				break;
-			}
 			cellList[index].EvoFixedUpdate(fixedTime);
 		}
 	}
@@ -146,7 +143,7 @@ public class Phenotype : MonoBehaviour {
 			EvoFixedUpdate(creature, 0f);
 			rootCell.heading = spawnHeading;
 			//rootCell.angleDiffFromBindpose = spawnHeadingRoot - 90f;
-			rootCell.triangleTransform.localRotation = Quaternion.Euler(0f, 0f, rootCell.heading); // Just updating graphics
+			rootCell.triangleTransform.rotation = Quaternion.Euler(0f, 0f, rootCell.heading); // Just updating graphics
 			growCellCount++;
 		}
 		genotype.geneCellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
@@ -365,7 +362,7 @@ public class Phenotype : MonoBehaviour {
 
 	public void Show(bool on) {
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].Show(on);
+			cellList[index].ShowAndCollide(on);
 		}
 	}
 
@@ -407,6 +404,7 @@ public class Phenotype : MonoBehaviour {
 		transform.position = Vector3.zero;
 		transform.rotation = Quaternion.identity;
 
+		Halt();
 		foreach (Cell cell in cellList) {
 			cell.transform.parent = cells.transform;
 		}

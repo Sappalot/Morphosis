@@ -55,9 +55,10 @@ public abstract class Cell : MonoBehaviour {
 	//Set only once, when adding cell to CellMap
 	public Vector2 modelSpacePosition;
 
-	public void Show(bool show) {
+	public void ShowAndCollide(bool show) {
 		for (int index = 0; index < transform.childCount; index++) {
 			transform.GetChild(index).gameObject.SetActive(show);
+			transform.GetComponent<Collider2D>().enabled = show;
 		}
 	}
 
@@ -105,7 +106,7 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public CellNeighbour northWestNeighbour =   new CellNeighbour(2);
 	[HideInInspector]
-	public CellNeighbour southWestNeighbour =   new CellNeighbour(3);
+	public CellNeighbour southWestNeighbour =   new CellNeighbour(3); 
 	[HideInInspector]
 	public CellNeighbour southNeighbour =       new CellNeighbour(4);
 	[HideInInspector]
@@ -143,22 +144,18 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void EvoUpdate() {
-		//spriteTransform.localRotation = Quaternion.Euler(0f, 0f, CardinalDirectionHelper.ToAngle(heading));
+
 	}
 
 	public void EvoFixedUpdate(float fixedTime) {
 		//Optimize further
 		transform.rotation = Quaternion.identity; //dont turn the cells
 
+		UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
 		if (groups > 1) {
-			UpdateNeighbourVectors(); //optimize further
 			TurnHingeNeighboursInPlace(); //optimize further
-
-			UpdateRotation(); //costy, update only if cell has direction and is in frustum
-		} else {
-			UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
-			UpdateRotation(); //costy, update only if cell has direction and is in frustum
 		}
+		UpdateRotation(); //costy, update only if cell has direction and is in frustum
 		UpdateFlipSide();
 
 		UpdateRadius(fixedTime);
@@ -360,20 +357,15 @@ public abstract class Cell : MonoBehaviour {
 	public void UpdateRotation() {
 		UpdateNeighbourAngles();
 
-		float angleDiffFromBindpose = 0; 
+		float angleDiffFromBindpose = 0f; 
 		for (int index = 0; index < 6; index++) {
 			if (HasNeighbourCell(index)) {
 				angleDiffFromBindpose = AngleUtil.GetAngleDifference(index_Neighbour[index].bindAngle, index_Neighbour[index].angle);
 				break;
 			}
 		}
-		if (GetNeighbourCount() > 0) {
-			heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex) + angleDiffFromBindpose;
-			triangleTransform.localRotation = Quaternion.Euler(0f, 0f, heading); 
-		} else {
-			heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex);
-			triangleTransform.localRotation = Quaternion.Euler(0f, 0f, heading); //Random.Range(0f, 360f)
-		}
+		heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex) + angleDiffFromBindpose;
+		triangleTransform.localRotation = Quaternion.Euler(0f, 0f, heading);
 	}
 
 	public float angleDiffFromBindpose {
@@ -472,7 +464,8 @@ public abstract class Cell : MonoBehaviour {
 
 	// Only for LMB
 	private void OnMouseDown() {
-		if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject()) {
+		bool e = GetComponent<Collider2D>().enabled;
+		if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject() && MouseAction.instance.actionState == MouseActionStateEnum.free) {
 			if (Input.GetKey(KeyCode.LeftControl)) {
 				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
 					CreatureSelectionPanel.instance.RemoveFromSelection(creature);

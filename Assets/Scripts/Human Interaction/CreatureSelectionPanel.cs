@@ -244,6 +244,28 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		MouseAction.instance.actionState = MouseActionStateEnum.moveCreatures;
 	}
 
+	// Combine
+	public void OnCombineClicked() {
+		if (!hasSelection) {
+			return;
+		}
+		List<Gene[]> genomes = new List<Gene[]>();
+		foreach (Creature source in selection) {
+			genomes.Add(source.genotype.genes);
+		}
+
+		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+			Creature mergeling = World.instance.life.SpawnCreatureMergling(genomes, Vector2.zero, 90f, PhenoGenoEnum.Phenotype);
+			moveCreatures.Add(mergeling);
+		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+			Creature mergeling = World.instance.life.SpawnCreatureMergling(genomes, Vector2.zero, 90f, PhenoGenoEnum.Genotype);
+			moveCreatures.Add(mergeling);
+		}
+
+		StartMoveCreatures();
+		MouseAction.instance.actionState = MouseActionStateEnum.combineMoveCreatures;
+	}
+
 	// Copy
 	public void OnCopyClicked() {
 		if (!hasSelection) {
@@ -290,6 +312,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	private void Update() {
+
 		//Keys
 		if (Input.GetKeyDown(KeyCode.M)) {
 			OnMoveClicked();
@@ -303,11 +326,17 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (Input.GetKeyDown(KeyCode.Delete)) {
 			OnDeleteClicked();
 		}
+		if (Input.GetKeyDown(KeyCode.B)) {
+			OnCombineClicked();
+		}
 
 		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 
 		//move
-		if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures) {
+		if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures ||
+			MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures ||
+			MouseAction.instance.actionState == MouseActionStateEnum.combineMoveCreatures) {
+
 			foreach (Creature c in moveCreatures) {
 				c.transform.position = (Vector2)mousePosition + moveOffset[c];
 			}
@@ -419,6 +448,17 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
 	}
 
+	public void PasteHoveringMergling() {
+		ReleaseMoveCreatures();
+
+		startCreatureHeading.Clear();
+		lineRenderer.enabled = false;
+		moveOffset.Clear();
+
+		moveCreatures.Clear();
+
+		OnCombineClicked();
+	}
 
 	private void ReleaseMoveCreatures() {
 		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {

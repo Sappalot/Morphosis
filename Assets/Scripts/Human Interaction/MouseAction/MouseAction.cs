@@ -41,7 +41,9 @@ public class MouseAction : MonoSingleton<MouseAction> {
 		} else if (m_actionState == MouseActionStateEnum.rotateCreatures) {
 			mouseText.text = "Rotate Creatures"; ;
 		} else if (m_actionState == MouseActionStateEnum.copyMoveCreatures) {
-			mouseText.text = "Place Copy";
+			mouseText.text = "Place Copies";
+		} else if (m_actionState == MouseActionStateEnum.combineMoveCreatures) {
+			mouseText.text = "Place Mergeling";
 		}
 	}
 }

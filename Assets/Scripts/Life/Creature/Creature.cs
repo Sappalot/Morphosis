@@ -100,6 +100,12 @@ public class Creature : MonoBehaviour {
 		ShowType(showType);
 	}
 
+	public void GenerateMergling(List<Gene[]> genomes, Vector3 position, float heading, PhenoGenoEnum showType) {
+		genotype.SetGenome(GenotypeUtil.Combine(genomes));
+		GenerateGenotypeAndPhenotype(position, heading);
+		ShowType(showType);
+	}
+
 	public void GenerateCopy(Creature creature, PhenoGenoEnum showType) {
 		genotype.GenerateGenomeEmpty();
 		GenerateGenotypeAndPhenotype(creature.GetRootPosition(showType), creature.GetRootHeading(showType));
