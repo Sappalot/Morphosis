@@ -96,13 +96,19 @@ public class Creature : MonoBehaviour {
 
 	public void GenerateEmbryo(Vector3 position, float heading, PhenoGenoEnum showType) {
 		genotype.GenerateGenomeEmpty();
+		GenerateGenotypeAndPhenotype(position, heading);
+		ShowType(showType);
+	}
+
+	public void GenerateFreak(Vector3 position, float heading, PhenoGenoEnum showType) {
+		genotype.GenerateGenomeEmpty();
 		genotype.Scramble();
 		GenerateGenotypeAndPhenotype(position, heading);
 		ShowType(showType);
 	}
 
 	public void GenerateMergling(List<Gene[]> genomes, Vector3 position, float heading, PhenoGenoEnum showType) {
-		genotype.SetGenome(GenotypeUtil.Combine(genomes));
+		genotype.SetGenome(GenotypeUtil.CombineGenomeFine(genomes));
 		GenerateGenotypeAndPhenotype(position, heading);
 		ShowType(showType);
 	}

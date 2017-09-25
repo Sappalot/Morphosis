@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Arrangement {
 	public void Scramble() {
-		isEnabled = Random.Range(0, 2) == 0;
+		isEnabled = Random.Range(0, 4) == 0;
 		referenceGeneIndex = Random.Range(1, Genotype.genomeLength);
 		flipTypeSameOpposite = Random.Range(0, 2) == 0 ? ArrangementFlipSmOpTypeEnum.Same : ArrangementFlipSmOpTypeEnum.Opposite;
 		flipTypeBlackWhiteToArrow = Random.Range(0, 2) == 0 ? ArrangementFlipBtaWtaTypeEnum.BlackToArrow : ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
