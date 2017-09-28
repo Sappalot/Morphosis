@@ -2,293 +2,323 @@
 using UnityEngine.UI;
 
 public class ArrangementPanel : MonoBehaviour {
-    public GameObject enableToggle;
-    public GameObject circles;
-    [HideInInspector]
-    public GenePanel genePanel;
+	public GameObject enableToggle;
+	public GameObject circles;
+	[HideInInspector]
+	public GenePanel genePanel;
 
-    public Image grayOut;
-    public GameObject arrangementButtons;
+	public Image grayOut;
+	public GameObject arrangementButtons;
 
-    public GameObject angleButtons;
-    public GameObject referenceCountButtons;
-    public GameObject pairsToggle;
-    public GameObject flipOppositeSameButtons;
-    public GameObject flipWhiteBlackToArrowButtons;
-    public GameObject gapSizeButtons;
+	public GameObject angleButtons;
+	public GameObject referenceCountButtons;
+	public GameObject pairsToggle;
+	public GameObject flipOppositeSameButtons;
+	public GameObject flipWhiteBlackToArrowButtons;
+	public GameObject gapSizeButtons;
+	public GameObject referenceSideButtions;
 
-    public Text arrangementTypeText;
+	public Text arrangementTypeText;
 
-    public Image centerCircleFlipBlackWhiteImage;
-    public Image centerCircleFlipWhiteBlack;
+	public Image centerCircleFlipBlackWhiteImage;
+	public Image centerCircleFlipWhiteBlack;
 
-    public Image flipSameButtonImage;
-    public Image flipOppositeButtonImage;
-    public Image flipBlackToArrowButtonImage;
-    public Image flipWhiteToArrowButtonImage;
+	public Image flipSameButtonImage;
+	public Image flipOppositeButtonImage;
+	public Image flipBlackToArrowButtonImage;
+	public Image flipWhiteToArrowButtonImage;
 
-    public Toggle togglePair;
+	public Toggle togglePair;
 
-    public RectTransform arrowTransform;
+	public Image buildSideBlack;
+	public Image buildSideWhite;
 
-    public ReferenceGraphics[] referenceGraphics = new ReferenceGraphics[6];
+	public RectTransform arrowTransform;
 
-    private bool isMouseHoverng;
+	public ReferenceGraphics[] referenceGraphics = new ReferenceGraphics[6];
 
-    private Arrangement m_arrangement;
-    public Arrangement arrangement {
-        get {
-            return m_arrangement;
-        }
-        set {
-            m_arrangement = value;
-            UpdateRepresentation();
-        }
-    }
+	private bool isMouseHoverng;
 
-    public bool isValid {
-        get {
-            return m_arrangement != null;
-        }
-    }
+	private Arrangement m_arrangement;
+	public Arrangement arrangement {
+		get {
+			return m_arrangement;
+		}
+		set {
+			m_arrangement = value;
+			UpdateRepresentation();
+		}
+	}
 
-    private void Awake() {
-        arrangementButtons.SetActive(false);
-    }
+	public bool isValid {
+		get {
+			return m_arrangement != null;
+		}
+	}
 
-    public bool isEnabled {
-        get {
-            return arrangement.isEnabled;
-        }
-    }
+	private void Awake() {
+		arrangementButtons.SetActive(false);
+	}
 
-    public void UpdateRepresentation() {
-        FlipSideEnum viewedFlipSide = GenotypePanel.instance.viewedFlipSide;
+	public bool isEnabled {
+		get {
+			return arrangement.isEnabled;
+		}
+	}
 
-        //Nothing to represent
-        if (arrangement == null) {
-            for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
-                referenceGraphics[cardinalIndex].reference = null;
-            }
-            arrangementButtons.SetActive(false);
+	public void UpdateRepresentation() {
+		FlipSideEnum viewedFlipSide = GenotypePanel.instance.viewedFlipSide;
 
-            grayOut.gameObject.SetActive(false);
-            circles.SetActive(false);
-            arrowTransform.gameObject.SetActive(false);
-            enableToggle.SetActive(false);
-            return;
-        }
-        grayOut.gameObject.SetActive(true);
-        circles.SetActive(true);
-        arrowTransform.gameObject.SetActive(true);
-        enableToggle.SetActive(true);
+		//Nothing to represent
+		if (arrangement == null) {
+			for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+				referenceGraphics[cardinalIndex].reference = null;
+			}
+			arrangementButtons.SetActive(false);
 
-        arrangementButtons.SetActive(isEnabled && isMouseHoverng);
+			grayOut.gameObject.SetActive(false);
+			circles.SetActive(false);
+			arrowTransform.gameObject.SetActive(false);
+			enableToggle.SetActive(false);
+			return;
+		}
+		grayOut.gameObject.SetActive(true);
+		circles.SetActive(true);
+		arrowTransform.gameObject.SetActive(true);
+		enableToggle.SetActive(true);
 
-        //grey out
-        UpdateIsUsed();
+		arrangementButtons.SetActive(isEnabled && isMouseHoverng);
 
-        //Center
-        arrangementTypeText.text = arrangement.type.ToString();
-        centerCircleFlipBlackWhiteImage.enabled = viewedFlipSide == FlipSideEnum.BlackWhite;
-        centerCircleFlipWhiteBlack.enabled = viewedFlipSide == FlipSideEnum.WhiteBlack;
+		//grey out
+		UpdateIsUsed();
 
-        if (arrangement.type == ArrangementTypeEnum.Side) {
-            angleButtons.SetActive(true);
-            referenceCountButtons.SetActive(true);
-            pairsToggle.SetActive(false);
-            flipOppositeSameButtons.SetActive(true);
-            flipWhiteBlackToArrowButtons.SetActive(false);
-            gapSizeButtons.SetActive(false);
-       
-            //Main Arrow
-            arrowTransform.gameObject.SetActive(true);
-            arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableArrowAngle(GenotypePanel.instance.viewedFlipSide));
+		//Center
+		arrangementTypeText.text = arrangement.type.ToString();
+		centerCircleFlipBlackWhiteImage.enabled = viewedFlipSide == FlipSideEnum.BlackWhite;
+		centerCircleFlipWhiteBlack.enabled = viewedFlipSide == FlipSideEnum.WhiteBlack;
 
-            //Flip Buttons
-            UpdateFlipButtonColors();
-        } else if (arrangement.type == ArrangementTypeEnum.Mirror) {
-            angleButtons.SetActive(true);
-            referenceCountButtons.SetActive(true);
-            pairsToggle.SetActive(arrangement.referenceCount == 4);
-            flipOppositeSameButtons.SetActive(false);
-            flipWhiteBlackToArrowButtons.SetActive(true);
-            gapSizeButtons.SetActive(arrangement.referenceCount <= 4);
+		if (arrangement.type == ArrangementTypeEnum.Side) {
+			angleButtons.SetActive(true);
+			referenceCountButtons.SetActive(true);
+			pairsToggle.SetActive(false);
+			flipOppositeSameButtons.SetActive(true);
+			flipWhiteBlackToArrowButtons.SetActive(false);
+			gapSizeButtons.SetActive(false);
+			referenceSideButtions.SetActive(true);
 
-            arrowTransform.gameObject.SetActive(true);
-            arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableArrowAngle(GenotypePanel.instance.viewedFlipSide));
+			//Main Arrow
+			arrowTransform.gameObject.SetActive(true);
+			arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableArrowAngle(GenotypePanel.instance.viewedFlipSide));
 
-            //Flip Buttons
-            UpdateFlipButtonColors();
+			//Flip Buttons
+			UpdateFlipButtonColors();
 
-            //Checkmark
-            UpdatePairCheckmark();
-        } else if (arrangement.type == ArrangementTypeEnum.Star) {
-            angleButtons.SetActive(arrangement.referenceCount < 6 || arrangement.flipPairsEnabled);
-            referenceCountButtons.SetActive(true);
-            pairsToggle.SetActive(arrangement.referenceCount == 6);
-            flipOppositeSameButtons.SetActive(arrangement.referenceCount < 6 || !arrangement.flipPairsEnabled);
-            flipWhiteBlackToArrowButtons.SetActive(arrangement.referenceCount == 6 && arrangement.flipPairsEnabled);
-            gapSizeButtons.SetActive(false);
+			//reference side
+			UpdateBuildSideButtonColors();
 
-            //Arrow
-            arrowTransform.gameObject.SetActive(arrangement.referenceCount < 6 || arrangement.flipPairsEnabled);
-            arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableArrowAngle(GenotypePanel.instance.viewedFlipSide));
+		} else if (arrangement.type == ArrangementTypeEnum.Mirror) {
+			angleButtons.SetActive(true);
+			referenceCountButtons.SetActive(true);
+			pairsToggle.SetActive(arrangement.referenceCount == 4);
+			flipOppositeSameButtons.SetActive(false);
+			flipWhiteBlackToArrowButtons.SetActive(true);
+			gapSizeButtons.SetActive(arrangement.referenceCount <= 4);
+			referenceSideButtions.SetActive(false);
+
+			arrowTransform.gameObject.SetActive(true);
+			arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableArrowAngle(GenotypePanel.instance.viewedFlipSide));
+
+			//Flip Buttons
+			UpdateFlipButtonColors();
+
+			//Checkmark
+			UpdatePairCheckmark();
+		} else if (arrangement.type == ArrangementTypeEnum.Star) {
+			angleButtons.SetActive(arrangement.referenceCount < 6 || arrangement.flipPairsEnabled);
+			referenceCountButtons.SetActive(true);
+			pairsToggle.SetActive(arrangement.referenceCount == 6);
+			flipOppositeSameButtons.SetActive(arrangement.referenceCount < 6 || !arrangement.flipPairsEnabled);
+			flipWhiteBlackToArrowButtons.SetActive(arrangement.referenceCount == 6 && arrangement.flipPairsEnabled);
+			gapSizeButtons.SetActive(false);
+			referenceSideButtions.SetActive(false);
+
+			//Arrow
+			arrowTransform.gameObject.SetActive(arrangement.referenceCount < 6 || arrangement.flipPairsEnabled);
+			arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableArrowAngle(GenotypePanel.instance.viewedFlipSide));
             
-            //Flip Buttons
-            UpdateFlipButtonColors();
+			//Flip Buttons
+			UpdateFlipButtonColors();
 
-            //Checkmark
-            UpdatePairCheckmark();
-        }
+			//Checkmark
+			UpdatePairCheckmark();
+		}
 
-        //Perifier
-        for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+		//Perifier
+		for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 
-            //referenceGraphics[cardinalIndex].SetGeneReference(arrangement.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide), genePanel.testCreature.genotype.genome);
-            referenceGraphics[cardinalIndex].reference = arrangement.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
-        }
-    }
+			//referenceGraphics[cardinalIndex].SetGeneReference(arrangement.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide), genePanel.testCreature.genotype.genome);
+			referenceGraphics[cardinalIndex].reference = arrangement.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
+		}
+	}
 
-    public void OnClickEnabledToggle(bool value) {
-        bool trueChange = arrangement.isEnabled != value;
-        arrangement.isEnabled = value;
-        //arrangementButtons.SetActive(value);
+	public void OnClickEnabledToggle(bool value) {
+		bool trueChange = arrangement.isEnabled != value;
+		arrangement.isEnabled = value;
+		//arrangementButtons.SetActive(value);
 
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(trueChange);
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(trueChange);
 
-        GenomePanel.instance.UpdateRepresentation();
-    }
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnClickedCenterCircle() {
-        arrangement.CycleArrangementType();
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(true);
-        GenomePanel.instance.UpdateRepresentation();
-    }
+	public void OnClickedCenterCircle() {
+		arrangement.CycleArrangementType();
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnClickIncreaseGap() {
-        arrangement.IncreaseGap();
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(true);
-        GenomePanel.instance.UpdateRepresentation();
-    }
+	public void OnClickIncreaseGap() {
+		arrangement.IncreaseGap();
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnClickDecreseGap() {
-        arrangement.DecreseGap();
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(true);
-        GenomePanel.instance.UpdateRepresentation();
-    }
+	public void OnClickDecreseGap() {
+		arrangement.DecreseGap();
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnClickedIncreasRefCount() {
-        arrangement.IncreasRefCount();
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(true);
-        GenomePanel.instance.UpdateRepresentation();
-    }
+	public void OnClickedIncreasRefCount() {
+		arrangement.IncreasRefCount();
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnClickedDecreasseRefCount() {
-        arrangement.DecreasseRefCount();
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(true);
-        GenomePanel.instance.UpdateRepresentation();
-    }
+	public void OnClickedDecreasseRefCount() {
+		arrangement.DecreasseRefCount();
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnClickedAngleCounterClowkwise() {
-        arrangement.TurnArrowCounterClowkwise();
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(true);
-        GenomePanel.instance.UpdateRepresentation();
-    }
+	public void OnClickedAngleCounterClowkwise() {
+		arrangement.TurnArrowCounterClowkwise();
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnClickedAngleClowkwise() {
-        arrangement.TurnArrowClowkwise();
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(true);
-        GenomePanel.instance.UpdateRepresentation();
-    }
+	public void OnClickedAngleClowkwise() {
+		arrangement.TurnArrowClowkwise();
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnClickedFlipSame() {
-        arrangement.flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same;
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(true);
-        GenomePanel.instance.UpdateRepresentation();
-    }
+	public void OnClickedFlipSame() {
+		arrangement.flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same;
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnClickedFlipOpposite() {
-        arrangement.flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Opposite;
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(true);
-        GenomePanel.instance.UpdateRepresentation();
-    }
+	public void OnClickedFlipOpposite() {
+		arrangement.flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Opposite;
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnClickedFlipBlackToArrow() {
-        arrangement.flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow;
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(true);
-        GenomePanel.instance.UpdateRepresentation();
-    }
+	public void OnClickedFlipBlackToArrow() {
+		arrangement.flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow;
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnClickedFlipWhiteToArrow() {
-        arrangement.flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(true);
-        GenomePanel.instance.UpdateRepresentation();
-    }
+	public void OnClickedFlipWhiteToArrow() {
+		arrangement.flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnTogglePairs(bool value) {
-        bool trueChange = arrangement.flipPairsEnabled != value;
-        arrangement.flipPairsEnabled = value;
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(trueChange);
-        GenomePanel.instance.UpdateRepresentation();
-    }
+	public void OnTogglePairs(bool value) {
+		bool trueChange = arrangement.flipPairsEnabled != value;
+		arrangement.flipPairsEnabled = value;
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(trueChange);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnClickedPerifierCircle() {
-        Debug.Log("TODO: select the gene this reference is pointing to?");
-    }
+	public void OnClickedBuildSideBlack() {
+		arrangement.buildSide = ArrangementBuildSideEnum.Black;
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnPointerEnterArea() {
-        if (isValid) {
-            isMouseHoverng = true;
-            UpdateRepresentation();
-        }
-    }
+	public void OnClickedBuildSideWhite() {
+		arrangement.buildSide = ArrangementBuildSideEnum.White;
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+		GenomePanel.instance.UpdateRepresentation();
+	}
 
-    public void OnPointerExitArea() {
-        if (isValid) {
-            isMouseHoverng = false;
-            UpdateRepresentation();
-        }
-    }
+	public void OnClickedPerifierCircle() {
+		Debug.Log("TODO: select the gene this reference is pointing to?");
+	}
 
-    public void OnClickedSetReference() {
-        GenePanel.instance.SetAskingForGeneReference(this);
-        MouseAction.instance.actionState = MouseActionStateEnum.selectGene;
-    }
+	public void OnPointerEnterArea() {
+		if (isValid) {
+			isMouseHoverng = true;
+			UpdateRepresentation();
+		}
+	}
 
-    public void SetGeneReference(Gene gene) {
-        arrangement.referenceGene = gene;
-        UpdateRepresentation();
-        genePanel.UpdateRepresentation(true);
-    }
+	public void OnPointerExitArea() {
+		if (isValid) {
+			isMouseHoverng = false;
+			UpdateRepresentation();
+		}
+	}
 
-    private void UpdateFlipButtonColors() {
-        flipSameButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-        flipOppositeButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Opposite) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+	public void OnClickedSetReference() {
+		GenePanel.instance.SetAskingForGeneReference(this);
+		MouseAction.instance.actionState = MouseActionStateEnum.selectGene;
+	}
 
-        flipBlackToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-        flipWhiteToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.WhiteToArrow) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-    }
+	public void SetGeneReference(Gene gene) {
+		arrangement.referenceGene = gene;
+		UpdateRepresentation();
+		genePanel.UpdateRepresentation(true);
+	}
 
-    private void UpdatePairCheckmark() {
-        togglePair.isOn = arrangement.flipPairsEnabled;
-    }
+	private void UpdateFlipButtonColors() {
+		flipSameButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+		flipOppositeButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Opposite) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 
-    private void UpdateIsUsed() {
-        grayOut.enabled = !isEnabled;
-        enableToggle.GetComponent<Toggle>().isOn = isEnabled;
-    }    
+		flipBlackToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+		flipWhiteToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.WhiteToArrow) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+	}
+
+	private void UpdatePairCheckmark() {
+		togglePair.isOn = arrangement.flipPairsEnabled;
+	}
+
+	private void UpdateBuildSideButtonColors() {
+		buildSideBlack.color = (arrangement.buildSide == ArrangementBuildSideEnum.Black) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+		buildSideWhite.color = (arrangement.buildSide == ArrangementBuildSideEnum.White) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+	}
+
+	private void UpdateIsUsed() {
+		grayOut.enabled = !isEnabled;
+		enableToggle.GetComponent<Toggle>().isOn = isEnabled;
+	}
 }

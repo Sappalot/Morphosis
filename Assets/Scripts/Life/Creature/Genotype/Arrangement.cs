@@ -2,24 +2,7 @@
 using UnityEngine;
 
 public class Arrangement {
-	public void Scramble() {
-		isEnabled = Random.Range(0, 4) == 0;
-		referenceGeneIndex = Random.Range(1, Genotype.genomeLength);
-		flipTypeSameOpposite = Random.Range(0, 2) == 0 ? ArrangementFlipSmOpTypeEnum.Same : ArrangementFlipSmOpTypeEnum.Opposite;
-		flipTypeBlackWhiteToArrow = Random.Range(0, 2) == 0 ? ArrangementFlipBtaWtaTypeEnum.BlackToArrow : ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
-		flipPairsEnabled = Random.Range(0, 2) == 0;
-		type = (ArrangementTypeEnum)Random.Range(0, 3);
-		if (type == ArrangementTypeEnum.Side) {
-			referenceCount = Random.Range(-5, 4);
-			if (referenceCount >= -1) {
-				referenceCount += 2;
-			}
-		} else {
-			referenceCount = Random.Range(1, 7);
-		}
-		arrowIndex = Random.Range(-5, 7);
-		gap = Random.Range(0, 5);
-	}
+
 
 	public bool isEnabled = true;
 	public int referenceGeneIndex;
@@ -35,9 +18,10 @@ public class Arrangement {
 		}
 	}
 
-	public ArrangementFlipSmOpTypeEnum flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same; // SIDE and STAR use Same/Opposite, Mirror use BlackToArrow/WhiteToArrow 
-	public ArrangementFlipBtaWtaTypeEnum flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow;
+	public ArrangementFlipSmOpTypeEnum flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same; // SIDE and STAR use Same/Opposite
+	public ArrangementFlipBtaWtaTypeEnum flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow; // MIRROR
 	public bool flipPairsEnabled = false; //MIRROR4 & STAR6
+	public ArrangementBuildSideEnum buildSide = ArrangementBuildSideEnum.Black;
 
 	private ArrangementTypeEnum m_type = ArrangementTypeEnum.Side;
 	public ArrangementTypeEnum type {
@@ -83,6 +67,24 @@ public class Arrangement {
 		}
 	}
 
+	//-------------------------------------
+
+	public void Scramble() {
+		isEnabled = Random.Range(0, 3) == 0;
+		referenceGeneIndex = Random.Range(1, Genotype.genomeLength);
+		flipTypeSameOpposite = Random.Range(0, 2) == 0 ? ArrangementFlipSmOpTypeEnum.Same : ArrangementFlipSmOpTypeEnum.Opposite;
+		flipTypeBlackWhiteToArrow = Random.Range(0, 2) == 0 ? ArrangementFlipBtaWtaTypeEnum.BlackToArrow : ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
+		flipPairsEnabled = Random.Range(0, 2) == 0;
+		type = (ArrangementTypeEnum)Random.Range(0, 3);
+		if (type == ArrangementTypeEnum.Side) {
+			referenceCount = Random.Range(1, 6);
+		} else {
+			referenceCount = Random.Range(1, 7);
+		}
+		arrowIndex = Random.Range(-5, 7);
+		gap = Random.Range(0, 5);
+		buildSide = Random.Range(0, 2) == 0 ? ArrangementBuildSideEnum.Black : ArrangementBuildSideEnum.White;
+	}
 
 
 	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
@@ -104,11 +106,7 @@ public class Arrangement {
 
 	public void IncreasRefCount() {
 		if (m_type == ArrangementTypeEnum.Side) {
-			if (m_referenceCount == -2) {
-				m_referenceCount = 1;
-			} else {
-				m_referenceCount++;
-			}
+			m_referenceCount++;
 			if (m_referenceCount > 5) {
 				m_referenceCount = 5;
 			}
@@ -132,13 +130,9 @@ public class Arrangement {
 
 	public void DecreasseRefCount() {
 		if (m_type == ArrangementTypeEnum.Side) {
-			if (m_referenceCount == 1) {
-				m_referenceCount = -2;
-			} else {
-				m_referenceCount--;
-			}
-			if (m_referenceCount < -5) {
-				m_referenceCount = -5;
+			m_referenceCount--;
+			if (m_referenceCount < 1) {
+				m_referenceCount = 1;
 			}
 		} else if (m_type == ArrangementTypeEnum.Mirror) {
 			if (m_referenceCount > 4) {
@@ -199,11 +193,16 @@ public class Arrangement {
 		int referenceCardinalIndexFlippable = AngleUtil.GetFlipableCardinalIndex(referenceCardinalIndex, viewedFlipSide); // look on flipped side if nessesary
 
 		if (m_type == ArrangementTypeEnum.Side) {
-			for (int index = 0; index < Mathf.Abs(m_referenceCount); index++) {
-				if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + ((m_referenceCount > 0) ? index * 2 : -index * 2))) {
+			for (int index = 0; index < referenceCount; index++) {
+				if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + ((buildSide == ArrangementBuildSideEnum.Black) ? index * 2 : -index * 2))) {
 					return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
 				}
 			}
+			//for (int index = 0; index < Mathf.Abs(m_referenceCount); index++) {
+			//	if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + ((m_referenceCount > 0) ? index * 2 : -index * 2))) {
+			//		return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
+			//	}
+			//}
 		} else if (m_type == ArrangementTypeEnum.Mirror) {
 			if (m_referenceCount == 2) {
 				if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + m_gap + 1)) {
@@ -334,7 +333,7 @@ public class Arrangement {
 
 	private void SnapToLegalSide() {
 		SnapArrowToEvenAngles();
-		m_referenceCount = Mathf.Clamp(m_referenceCount, -5, 5);
+		m_referenceCount = Mathf.Clamp(m_referenceCount, 1, 5);
 	}
 
 	private void SnapToLegalMirror() {

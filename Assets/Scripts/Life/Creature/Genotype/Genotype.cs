@@ -27,11 +27,17 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void Scramble() {
-		for (int index = 0; index < genomeLength; index++) {
-			genes[index].Scramble();
+		for (int chance = 0; chance < 3; chance++) {
+			for (int index = 0; index < genomeLength; index++) {
+				genes[index].Scramble();
+			}
+			if (genes[0].arrangements[0].isEnabled || genes[0].arrangements[1].isEnabled || genes[0].arrangements[2].isEnabled) {
+				break;
+			}
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
 	}
+
 
 	public void SetReferenceGenesFromReferenceGeneIndices() {
 		for (int index = 0; index < genomeLength; index++) {

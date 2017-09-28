@@ -480,7 +480,7 @@ public class Phenotype : MonoBehaviour {
 
 	//TODO: Remove
 	private void Update() {
-		ShowTriangles(true);
+		ShowTriangles(false);
 	}
 
 	public Cell GetCellAt(Vector2 position) {
