@@ -30,8 +30,8 @@ public class ArrangementPanel : MonoBehaviour {
 
 	public Toggle togglePair;
 
-	public Image buildSideBlack;
-	public Image buildSideWhite;
+	public Image referenceSideBlack;
+	public Image referenceSideWhite;
 
 	public RectTransform arrowTransform;
 
@@ -114,7 +114,7 @@ public class ArrangementPanel : MonoBehaviour {
 			UpdateFlipButtonColors();
 
 			//reference side
-			UpdateBuildSideButtonColors();
+			UpdateReferenceSideButtonColors();
 
 		} else if (arrangement.type == ArrangementTypeEnum.Mirror) {
 			angleButtons.SetActive(true);
@@ -258,14 +258,14 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	public void OnClickedBuildSideBlack() {
-		arrangement.buildSide = ArrangementBuildSideEnum.Black;
+		arrangement.referenceSide = ArrangementReferenceSideEnum.Black;
 		UpdateRepresentation();
 		genePanel.UpdateRepresentation(true);
 		GenomePanel.instance.UpdateRepresentation();
 	}
 
 	public void OnClickedBuildSideWhite() {
-		arrangement.buildSide = ArrangementBuildSideEnum.White;
+		arrangement.referenceSide = ArrangementReferenceSideEnum.White;
 		UpdateRepresentation();
 		genePanel.UpdateRepresentation(true);
 		GenomePanel.instance.UpdateRepresentation();
@@ -312,9 +312,9 @@ public class ArrangementPanel : MonoBehaviour {
 		togglePair.isOn = arrangement.flipPairsEnabled;
 	}
 
-	private void UpdateBuildSideButtonColors() {
-		buildSideBlack.color = (arrangement.buildSide == ArrangementBuildSideEnum.Black) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-		buildSideWhite.color = (arrangement.buildSide == ArrangementBuildSideEnum.White) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+	private void UpdateReferenceSideButtonColors() {
+		referenceSideBlack.color = (arrangement.referenceSide == ArrangementReferenceSideEnum.Black) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+		referenceSideWhite.color = (arrangement.referenceSide == ArrangementReferenceSideEnum.White) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 	}
 
 	private void UpdateIsUsed() {

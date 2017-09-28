@@ -18,10 +18,10 @@ public class Arrangement {
 		}
 	}
 
-	public ArrangementFlipSmOpTypeEnum flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same; // SIDE and STAR use Same/Opposite
+	public ArrangementFlipSmOpTypeEnum flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same; // SIDE & STAR
 	public ArrangementFlipBtaWtaTypeEnum flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow; // MIRROR
 	public bool flipPairsEnabled = false; //MIRROR4 & STAR6
-	public ArrangementBuildSideEnum buildSide = ArrangementBuildSideEnum.Black;
+	public ArrangementReferenceSideEnum referenceSide = ArrangementReferenceSideEnum.Black; //SIDE
 
 	private ArrangementTypeEnum m_type = ArrangementTypeEnum.Side;
 	public ArrangementTypeEnum type {
@@ -83,7 +83,7 @@ public class Arrangement {
 		}
 		arrowIndex = Random.Range(-5, 7);
 		gap = Random.Range(0, 5);
-		buildSide = Random.Range(0, 2) == 0 ? ArrangementBuildSideEnum.Black : ArrangementBuildSideEnum.White;
+		referenceSide = Random.Range(0, 2) == 0 ? ArrangementReferenceSideEnum.Black : ArrangementReferenceSideEnum.White;
 	}
 
 
@@ -194,7 +194,7 @@ public class Arrangement {
 
 		if (m_type == ArrangementTypeEnum.Side) {
 			for (int index = 0; index < referenceCount; index++) {
-				if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + ((buildSide == ArrangementBuildSideEnum.Black) ? index * 2 : -index * 2))) {
+				if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + ((referenceSide == ArrangementReferenceSideEnum.Black) ? index * 2 : -index * 2))) {
 					return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
 				}
 			}
@@ -337,7 +337,6 @@ public class Arrangement {
 	}
 
 	private void SnapToLegalMirror() {
-		m_referenceCount = Mathf.Abs(m_referenceCount);
 		if (m_referenceCount == 1 || m_referenceCount == 3 || m_referenceCount == 5) {
 			m_referenceCount++;
 		}
@@ -359,7 +358,6 @@ public class Arrangement {
 
 	private void SnapToLegalStar() {
 		//Adjust Reference Count if nessesary
-		m_referenceCount = Mathf.Abs(m_referenceCount);
 		if (m_referenceCount == 1) {
 			m_referenceCount = 2;
 		}
@@ -409,6 +407,7 @@ public class Arrangement {
 		arrangementData.referenceCount = referenceCount;
 		arrangementData.arrowIndex = arrowIndex;
 		arrangementData.gap = gap;
+		arrangementData.referenceSide = referenceSide; //SIDE
 		return arrangementData;
 	}
 
@@ -423,5 +422,6 @@ public class Arrangement {
 		referenceCount = arrangementData.referenceCount;
 		arrowIndex = arrangementData.arrowIndex;
 		gap = arrangementData.gap;
+		referenceSide = arrangementData.referenceSide; //SIDE
 	}
 }

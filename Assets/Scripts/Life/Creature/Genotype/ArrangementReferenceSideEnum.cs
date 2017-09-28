@@ -1,6 +1,6 @@
 ﻿using System;
 [Serializable]
-public enum ArrangementBuildSideEnum {
+public enum ArrangementReferenceSideEnum {
 	Black, //SIDE
 	White, //SIDE
 }

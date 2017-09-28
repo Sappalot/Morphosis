@@ -5,9 +5,6 @@ public class Gene {
 	public int index;
 
 	public readonly Arrangement[] arrangements = new Arrangement[3];
-	//------------------old shit ---------------------
-
-	//private int?[] referenceDeprecated = new int?[6];
 
 	public Gene(int index) {
 		this.index = index;
@@ -15,14 +12,6 @@ public class Gene {
 		arrangements[0] = new Arrangement();
 		arrangements[1] = new Arrangement();
 		arrangements[2] = new Arrangement();
-
-		////--------------old 
-		//referenceDeprecated[0] = null;
-		//referenceDeprecated[1] = null;
-		//referenceDeprecated[2] = null;
-		//referenceDeprecated[3] = null;
-		//referenceDeprecated[4] = null;
-		//referenceDeprecated[5] = null;
 	}
 
 	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {

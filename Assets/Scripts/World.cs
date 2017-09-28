@@ -79,19 +79,24 @@ public class World : MonoSingleton<World> {
 
 		CreatureSelectionPanel.instance.ClearSelection();
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
-        
+
+		SwitchAllCreaturesToCurrentMode();
+
+		Time.timeScale = HUD.instance.timeControllValue;
+	}
+
+	private void SwitchAllCreaturesToCurrentMode() {
 		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
 			life.SwitchToGenotypes();
 		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
 			life.SwitchToPhenotypes();
 		}
-
-		Time.timeScale = HUD.instance.timeControllValue;
 	}
 
 	private string path = "F:/Morfosis/";
 	public void Save() {
 		life.GeneratePhenotypeCells(); // In case we are still in Genotype view, Phenotypes are not updated
+		SwitchAllCreaturesToCurrentMode();
 		UpdateData();
 
 		string worldToSave = Serializer.Serialize(worldData, new UnityJsonSerializer());

@@ -38,7 +38,6 @@ public class Genotype : MonoBehaviour {
 		SetReferenceGenesFromReferenceGeneIndices();
 	}
 
-
 	public void SetReferenceGenesFromReferenceGeneIndices() {
 		for (int index = 0; index < genomeLength; index++) {
 			genes[index].SetReferenceGeneFromReferenceGeneIndex(genes);
