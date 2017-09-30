@@ -8,7 +8,6 @@ public class Edge : MonoBehaviour {
 	public GameObject forceArrow;
 
 	public float mEnergyTransfer = 0.5f; //directional ?
-	public bool mIsBranch = false; //if branch then A is mother
 
 	private bool mIsWing = false;
 	private EdgeAttachment attachmentParent;
@@ -30,10 +29,9 @@ public class Edge : MonoBehaviour {
 		forceArrow.SetActive(false);
 	}
 
-	public void Setup(Cell parentCell, Cell childCell, int directionChildToParentCell, bool isBranch) {
+	public void Setup(Cell parentCell, Cell childCell, int directionChildToParentCell) {
 		attachmentParent = new EdgeAttachment(parentCell, (directionChildToParentCell + 3 ) % 6);
 		attachmentChild = new EdgeAttachment(childCell, directionChildToParentCell);
-		this.mIsBranch = isBranch;
 	}
 
 	public bool IsWing { 
@@ -72,14 +70,6 @@ public class Edge : MonoBehaviour {
 			throw new Exception("Trying to make a wing, with frontCell wich is not present in edge");
 		}
 		this.mIsWing = true;
-
-		if (frontCell is MuscleCell && backCell is MuscleCell) {
-			strength = 1f;
-		} else if (frontCell is MuscleCell || backCell is MuscleCell) {
-			strength = 3f;
-		} else {
-			strength = 0f;
-		}
 	}
 
 	public void EvoUpdate() {
@@ -137,10 +127,11 @@ public class Edge : MonoBehaviour {
 	// use normal and velocity to calculate force
 	public void UpdateForce(Vector3 creatureVelocity, Creature creature) {
 		//Don't give up on Pow!
-		float contract = (frontCell.IsContracting() || backCell.IsContracting()) ? 1f : 0f; 
+		float contract = (frontCell.IsContracting() || backCell.IsContracting()) ? 3f : 0f;
 
+		//Should we include creatureVelocity in this calculation, really?
 		float velocityInNormalDirection = Math.Max(0f, Vector3.Dot(normal, velocity - creatureVelocity * (1f - creature.wingDrag)));
-		force = contract * strength * -normal * Math.Min(creature.wingMax, (creature.f1 * velocityInNormalDirection + creature.wingF2 * Mathf.Pow(velocityInNormalDirection, creature.wingPow)));
+		force = contract * -normal * Math.Min(creature.wingMax, (creature.f1 * velocityInNormalDirection + creature.wingF2 * Mathf.Pow(velocityInNormalDirection, creature.wingPow)));
 	}
 
 	//Apply current force as an impulse on cells

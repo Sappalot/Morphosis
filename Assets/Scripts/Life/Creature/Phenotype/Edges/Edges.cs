@@ -70,7 +70,7 @@ public class Edges : MonoBehaviour {
 			//edge.frontCell = nextCell;
 			//edge.backCell = currentCell;
 			edgeList.Add(edge);
-			edge.Setup(currentCell, nextCell, currentCell.GetDirectionOfNeighbourCell(nextCell), false );
+			edge.Setup(currentCell, nextCell, currentCell.GetDirectionOfNeighbourCell(nextCell));
 			edge.MakeWing(nextCell);
 			if (nextCell == firstCell) {
 				break;
