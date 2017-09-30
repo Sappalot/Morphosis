@@ -11,7 +11,6 @@
 	public float referenceLeave = 100f;
 	public float referenceRandom = 1f;
 
-
 	public float flipTypeSameOppositeLeave = 100f;
 	public float flipTypeSameOppositeToggle = 1f;
 
