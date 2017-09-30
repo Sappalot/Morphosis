@@ -58,7 +58,7 @@ public class World : MonoSingleton<World> {
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
 		for (int y = 1; y <= 10; y++) {
 			for (int x = 1; x <= 10; x++) {
-				life.SpawnCreatureFreak(new Vector3(x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f), PhenoGenoEnum.Phenotype);
+				life.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f));
 			}
 		}
 		//life.SpawnCreatureEdgeFailure(new Vector3(100f, 200f, 0f)); //Fixed :)

@@ -134,16 +134,16 @@ public class ArrangementPanel : MonoBehaviour {
 			//Checkmark
 			UpdatePairCheckmark();
 		} else if (arrangement.type == ArrangementTypeEnum.Star) {
-			angleButtons.SetActive(arrangement.referenceCount < 6 || arrangement.flipPairsEnabled);
+			angleButtons.SetActive(arrangement.referenceCount < 6 || arrangement.isFlipPairsEnabled);
 			referenceCountButtons.SetActive(true);
 			pairsToggle.SetActive(arrangement.referenceCount == 6);
-			flipOppositeSameButtons.SetActive(arrangement.referenceCount < 6 || !arrangement.flipPairsEnabled);
-			flipWhiteBlackToArrowButtons.SetActive(arrangement.referenceCount == 6 && arrangement.flipPairsEnabled);
+			flipOppositeSameButtons.SetActive(arrangement.referenceCount < 6 || !arrangement.isFlipPairsEnabled);
+			flipWhiteBlackToArrowButtons.SetActive(arrangement.referenceCount == 6 && arrangement.isFlipPairsEnabled);
 			gapSizeButtons.SetActive(false);
 			referenceSideButtions.SetActive(false);
 
 			//Arrow
-			arrowTransform.gameObject.SetActive(arrangement.referenceCount < 6 || arrangement.flipPairsEnabled);
+			arrowTransform.gameObject.SetActive(arrangement.referenceCount < 6 || arrangement.isFlipPairsEnabled);
 			arrowTransform.transform.eulerAngles = new Vector3(0, 0, arrangement.GetFlipableArrowAngle(GenotypePanel.instance.viewedFlipSide));
             
 			//Flip Buttons
@@ -201,7 +201,7 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	public void OnClickedDecreasseRefCount() {
-		arrangement.DecreasseRefCount();
+		arrangement.DecreaseRefCount();
 		UpdateRepresentation();
 		genePanel.UpdateRepresentation(true);
 		GenomePanel.instance.UpdateRepresentation();
@@ -250,8 +250,8 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	public void OnTogglePairs(bool value) {
-		bool trueChange = arrangement.flipPairsEnabled != value;
-		arrangement.flipPairsEnabled = value;
+		bool trueChange = arrangement.isFlipPairsEnabled != value;
+		arrangement.isFlipPairsEnabled = value;
 		UpdateRepresentation();
 		genePanel.UpdateRepresentation(trueChange);
 		GenomePanel.instance.UpdateRepresentation();
@@ -309,7 +309,7 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	private void UpdatePairCheckmark() {
-		togglePair.isOn = arrangement.flipPairsEnabled;
+		togglePair.isOn = arrangement.isFlipPairsEnabled;
 	}
 
 	private void UpdateReferenceSideButtonColors() {

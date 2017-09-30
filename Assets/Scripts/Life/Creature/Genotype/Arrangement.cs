@@ -2,8 +2,6 @@
 using UnityEngine;
 
 public class Arrangement {
-
-
 	public bool isEnabled = true;
 	public int referenceGeneIndex;
 
@@ -20,7 +18,7 @@ public class Arrangement {
 
 	public ArrangementFlipSmOpTypeEnum flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same; // SIDE & STAR
 	public ArrangementFlipBtaWtaTypeEnum flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow; // MIRROR
-	public bool flipPairsEnabled = false; //MIRROR4 & STAR6
+	public bool isFlipPairsEnabled = false; //MIRROR4 & STAR6
 	public ArrangementReferenceSideEnum referenceSide = ArrangementReferenceSideEnum.Black; //SIDE
 
 	private ArrangementTypeEnum m_type = ArrangementTypeEnum.Side;
@@ -68,13 +66,204 @@ public class Arrangement {
 	}
 
 	//-------------------------------------
+	public void Mutate(float strength) {
+		GlobalSettings gs = GlobalSettings.instance;
+		float rnd;
+
+		// isEnabled
+		rnd = Random.Range(0, gs.isEnabledToggle * strength + gs.isEnabledLeave);
+		if (rnd < gs.isEnabledToggle * strength) {
+			isEnabled = !isEnabled;
+		}
+
+		// reference
+		rnd = Random.Range(0, gs.referenceRandom * strength + gs.referenceCountLeave);
+		if (rnd < gs.referenceRandom * strength) {
+			referenceGeneIndex = Random.Range(1, Genotype.genomeLength);
+		}
+
+		// flipTypeSameOpposite
+		rnd = Random.Range(0, gs.flipTypeSameOppositeToggle * strength + gs.flipTypeSameOppositeLeave);
+		if (rnd < gs.flipTypeSameOppositeToggle * strength) {
+			if (flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same) {
+				flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Opposite;
+			} else {
+				flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same;
+			}
+		}
+
+		// flipTypeBlackWhiteToArrow
+		rnd = Random.Range(0, gs.flipTypeBlackWhiteToArrowToggle * strength + gs.flipTypeBlackWhiteToArrowLeave);
+		if (rnd < gs.flipTypeBlackWhiteToArrowToggle * strength) {
+			if (flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow) {
+				flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
+			} else {
+				flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow;
+			}
+		}
+
+		// flipPairsEnabled
+		rnd = Random.Range(0, gs.isflipPairsEnabledToggle * strength + gs.isflipPairsEnabledLeave);
+		if (rnd < gs.isflipPairsEnabledToggle * strength) {
+			isFlipPairsEnabled = !isFlipPairsEnabled;
+		}
+
+		// type
+		rnd = Random.Range(0, gs.typeChange * strength + gs.typeLeave);
+		if (rnd < gs.typeChange * strength) {
+			int t = Random.Range(0, 2);
+			if (type == ArrangementTypeEnum.Side) {
+				if (t == 0) {
+					type = ArrangementTypeEnum.Mirror;
+				} else {
+					type = ArrangementTypeEnum.Star;
+				}
+			} else if (type == ArrangementTypeEnum.Mirror) {
+				if (t == 0) {
+					type = ArrangementTypeEnum.Side;
+				} else {
+					type = ArrangementTypeEnum.Star;
+				}
+			} else if (type == ArrangementTypeEnum.Star) {
+				if (t == 0) {
+					type = ArrangementTypeEnum.Side;
+				} else {
+					type = ArrangementTypeEnum.Mirror;
+				}
+			}
+		}
+
+		// referenceCount
+		float referenceChange =
+			  gs.referenceCountDecrease1 * strength
+			+ gs.referenceCountDecrease2 * strength
+			+ gs.referenceCountDecrease3 * strength
+			+ gs.referenceCountIncrease1 * strength
+			+ gs.referenceCountIncrease2 * strength
+			+ gs.referenceCountIncrease3 * strength;
+		rnd = Random.Range(0, referenceChange * strength + gs.referenceCountLeave);
+
+		// -1
+		float ra =     gs.referenceCountDecrease1 * strength;
+		// -2
+		float rb = ra + gs.referenceCountDecrease2 * strength;
+		// -3
+		float rc = rb + gs.referenceCountDecrease3 * strength;
+		// +1
+		float rd = rc + gs.referenceCountIncrease1 * strength;
+		// +2
+		float re = rd + gs.referenceCountIncrease2 * strength;
+		// +3
+		float rf = re + gs.referenceCountIncrease3 * strength;
+
+		if (rnd < ra) {
+			referenceCount -= 1;
+		} else if (rnd >= ra && rnd < rb) {
+			referenceCount -= 2;
+		} else if (rnd >= rb && rnd < rc) {
+			referenceCount -= 3;
+		} else if (rnd >= rc && rnd < rd) {
+			referenceCount += 1;
+		} else if (rnd >= rd && rnd < re) {
+			referenceCount += 2;
+		} else if (rnd >= re && rnd < rf) {
+			referenceCount += 3;
+		}
+
+		// Arrow Index
+		float arrowIndexChange =
+			  gs.arrowIndexDecrease1 * strength
+			+ gs.arrowIndexDecrease2 * strength
+			+ gs.arrowIndexDecrease3 * strength
+			+ gs.arrowIndexIncrease1 * strength
+			+ gs.arrowIndexIncrease2 * strength
+			+ gs.arrowIndexIncrease3 * strength;
+		rnd = Random.Range(0, arrowIndexChange * strength + gs.arrowIndexLeave);
+
+		// -1
+		float aa = gs.arrowIndexDecrease1 * strength;
+		// -2
+		float ab = ra + gs.arrowIndexDecrease2 * strength;
+		// -3
+		float ac = rb + gs.arrowIndexDecrease3 * strength;
+		// +1
+		float ad = rc + gs.arrowIndexIncrease1 * strength;
+		// +2
+		float ae = rd + gs.arrowIndexIncrease2 * strength;
+		// +3
+		float af = re + gs.arrowIndexIncrease3 * strength;
+
+		if (rnd < aa) {
+			arrowIndex -= 1;
+		} else if (rnd >= aa && rnd < ab) {
+			arrowIndex -= 2;
+		} else if (rnd >= ab && rnd < ac) {
+			arrowIndex -= 3;
+		} else if (rnd >= ac && rnd < ad) {
+			arrowIndex += 1;
+		} else if (rnd >= ad && rnd < ae) {
+			arrowIndex += 2;
+		} else if (rnd >= ae && rnd < af) {
+			arrowIndex += 3;
+		}
+		arrowIndex = AngleUtil.ArrowIndexRawToArrowIndexSafe(arrowIndex);
+
+		// gap
+		float gapChange =
+			  gs.gapDecrease1 * strength
+			+ gs.gapDecrease2 * strength
+			+ gs.gapDecrease3 * strength
+			+ gs.gapIncrease1 * strength
+			+ gs.gapIncrease2 * strength
+			+ gs.gapIncrease3 * strength;
+		rnd = Random.Range(0, gapChange * strength + gs.gapLeave);
+
+		// -1
+		float ga = gs.gapDecrease1 * strength;
+		// -2
+		float gb = ra + gs.gapDecrease2 * strength;
+		// -3
+		float gc = rb + gs.gapDecrease3 * strength;
+		// +1
+		float gd = rc + gs.gapIncrease1 * strength;
+		// +2
+		float ge = rd + gs.gapIncrease2 * strength;
+		// +3
+		float gf = re + gs.gapIncrease3 * strength;
+
+		if (rnd < ga) {
+			gap -= 1;
+		} else if (rnd >= ga && rnd < gb) {
+			gap -= 2;
+		} else if (rnd >= gb && rnd < gc) {
+			gap -= 3;
+		} else if (rnd >= gc && rnd < gd) {
+			gap += 1;
+		} else if (rnd >= gd && rnd < ge) {
+			gap += 2;
+		} else if (rnd >= ge && rnd < gf) {
+			gap += 3;
+		}
+
+		// referenceSide
+		rnd = Random.Range(0, gs.referenceSideToggle * strength + gs.referenceSideLeave);
+		if (rnd < gs.referenceSideToggle * strength) {
+			if (referenceSide == ArrangementReferenceSideEnum.Black) {
+				referenceSide = ArrangementReferenceSideEnum.White;
+			} else {
+				referenceSide = ArrangementReferenceSideEnum.Black;
+			}
+		}
+
+		SnapToLegalValues();
+	}
 
 	public void Scramble() {
 		isEnabled = Random.Range(0, 3) == 0;
 		referenceGeneIndex = Random.Range(1, Genotype.genomeLength);
 		flipTypeSameOpposite = Random.Range(0, 2) == 0 ? ArrangementFlipSmOpTypeEnum.Same : ArrangementFlipSmOpTypeEnum.Opposite;
 		flipTypeBlackWhiteToArrow = Random.Range(0, 2) == 0 ? ArrangementFlipBtaWtaTypeEnum.BlackToArrow : ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
-		flipPairsEnabled = Random.Range(0, 2) == 0;
+		isFlipPairsEnabled = Random.Range(0, 2) == 0;
 		type = (ArrangementTypeEnum)Random.Range(0, 3);
 		if (type == ArrangementTypeEnum.Side) {
 			referenceCount = Random.Range(1, 6);
@@ -128,7 +317,7 @@ public class Arrangement {
 		SnapToLegalValues();
 	}
 
-	public void DecreasseRefCount() {
+	public void DecreaseRefCount() {
 		if (m_type == ArrangementTypeEnum.Side) {
 			m_referenceCount--;
 			if (m_referenceCount < 1) {
@@ -211,7 +400,7 @@ public class Arrangement {
 					return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
 				}
 			} else if (m_referenceCount == 4) {
-				if (flipPairsEnabled) {
+				if (isFlipPairsEnabled) {
 					if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + m_gap + 1)) {
 						return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? GetOppositeFlipSide(viewedFlipSide) : viewedFlipSide);
 					} else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - m_gap - 1)) {
@@ -274,7 +463,7 @@ public class Arrangement {
 					return new GeneReference(referenceGene, flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
 				}
 			} else if (m_referenceCount == 6) {
-				if (flipPairsEnabled) {
+				if (isFlipPairsEnabled) {
 					if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex - 1)) {
 						return new GeneReference(referenceGene, flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow ? viewedFlipSide : GetOppositeFlipSide(viewedFlipSide));
 					} else if (AngleUtil.CardinalIndexToArrowIndex(referenceCardinalIndexFlippable) == AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex + 1)) {
@@ -337,6 +526,7 @@ public class Arrangement {
 	}
 
 	private void SnapToLegalMirror() {
+		m_referenceCount = (int)Mathf.Clamp(m_referenceCount, 1, 6);
 		if (m_referenceCount == 1 || m_referenceCount == 3 || m_referenceCount == 5) {
 			m_referenceCount++;
 		}
@@ -358,10 +548,10 @@ public class Arrangement {
 
 	private void SnapToLegalStar() {
 		//Adjust Reference Count if nessesary
-		if (m_referenceCount == 1) {
+		if (m_referenceCount <= 1) {
 			m_referenceCount = 2;
 		}
-		else if (m_referenceCount == 5) {
+		else if (m_referenceCount >= 5) {
 			m_referenceCount = 4;
 		}
 
@@ -402,7 +592,7 @@ public class Arrangement {
 		arrangementData.referenceGeneIndex = referenceGeneIndex; // referenceGene.index; //Have to use index cant use reference
 		arrangementData.flipTypeSameOpposite = flipTypeSameOpposite; // SIDE and STAR use Same/Opposite, Mirror use BlackToArrow/WhiteToArrow 
 		arrangementData.flipTypeBlackWhiteToArrow = flipTypeBlackWhiteToArrow;
-		arrangementData.flipPairsEnabled = flipPairsEnabled; //MIRROR4 & STAR6        
+		arrangementData.flipPairsEnabled = isFlipPairsEnabled; //MIRROR4 & STAR6        
 		arrangementData.type = type;
 		arrangementData.referenceCount = referenceCount;
 		arrangementData.arrowIndex = arrowIndex;
@@ -417,7 +607,7 @@ public class Arrangement {
 		//referenceGene = arrangementData.referenceGene; //Cant set it here
 		flipTypeSameOpposite = arrangementData.flipTypeSameOpposite;
 		flipTypeBlackWhiteToArrow = arrangementData.flipTypeBlackWhiteToArrow;
-		flipPairsEnabled = arrangementData.flipPairsEnabled;
+		isFlipPairsEnabled = arrangementData.flipPairsEnabled;
 		type = arrangementData.type;
 		referenceCount = arrangementData.referenceCount;
 		arrowIndex = arrangementData.arrowIndex;

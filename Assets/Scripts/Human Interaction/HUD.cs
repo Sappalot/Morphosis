@@ -20,7 +20,4 @@ public class HUD : MonoSingleton<HUD> {
 	public void OnClickToggleEdges(bool isEnabled) {
 		isEdgesEnabled = isEnabled;
 	}
-
-	
-
 }

@@ -81,7 +81,6 @@ public class Creature : MonoBehaviour {
 	public void SwitchToGenotype() {
 		ShowType(PhenoGenoEnum.Genotype);
 		genotype.MoveToPhenotype(this);
-		genotype.UpdateGraphics(this);
 	}
 
 	public void GenerateEdgeFailure(Vector3 position, float heading) {
@@ -95,26 +94,26 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void GenerateEmbryo(Vector3 position, float heading, PhenoGenoEnum showType) {
-		genotype.GenerateGenomeEmpty();
+		genotype.GenomeEmpty();
 		GenerateGenotypeAndPhenotype(position, heading);
 		ShowType(showType);
 	}
 
 	public void GenerateFreak(Vector3 position, float heading, PhenoGenoEnum showType) {
-		genotype.GenerateGenomeEmpty();
-		genotype.Scramble();
+		genotype.GenomeEmpty();
+		genotype.GenomeScramble();
 		GenerateGenotypeAndPhenotype(position, heading);
 		ShowType(showType);
 	}
 
 	public void GenerateMergling(List<Gene[]> genomes, Vector3 position, float heading, PhenoGenoEnum showType) {
-		genotype.SetGenome(GenotypeUtil.CombineGenomeFine(genomes));
+		genotype.GenomeSet(GenotypeUtil.CombineGenomeFine(genomes));
 		GenerateGenotypeAndPhenotype(position, heading);
 		ShowType(showType);
 	}
 
 	public void GenerateCopy(Creature creature, PhenoGenoEnum showType) {
-		genotype.GenerateGenomeEmpty();
+		genotype.GenomeEmpty();
 		GenerateGenotypeAndPhenotype(creature.GetRootPosition(showType), creature.GetRootHeading(showType));
 		ShowType(showType);
 	}
@@ -135,6 +134,36 @@ public class Creature : MonoBehaviour {
 		genotype.gameObject.SetActive(showType == PhenoGenoEnum.Genotype);
 	}
 
+	public void ShowType() {
+		phenotype.Show(CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype); //Don't use SetActive() since it clears rigigdBody velocity
+		genotype.gameObject.SetActive(CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype);
+	}
+
+	// Apply on genotype ==> Phenotype
+	public void Clear() {
+		genotype.GenomeEmpty();
+		genotype.GenerateGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
+		phenotype.differsFromGenotype = true;
+	}
+
+	public void MutateAbsolute(float strength) {
+		RestoreState();
+		MutateCummulative(strength);
+	}
+
+	public void MutateCummulative(float strength) {
+		genotype.GenomeMutate(strength);
+		genotype.GenerateGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
+		phenotype.differsFromGenotype = true;
+	}
+
+	public void Scramble() {
+		genotype.GenomeScramble();
+		genotype.GenerateGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
+		phenotype.differsFromGenotype = true;
+	}
+
+	// Apply on Phenotype
 	public void TryGrow(int cellCount = 1) {
 		phenotype.TryGrow(this, cellCount);
 	}
@@ -142,6 +171,8 @@ public class Creature : MonoBehaviour {
 	public void TryShrink(int cellCount = 1) {
 		phenotype.TryShrink(cellCount);
 	}
+
+	// --
 
 	public void EvoUpdate() {
 		phenotype.EvoUpdate();
@@ -210,9 +241,27 @@ public class Creature : MonoBehaviour {
 		genotypeCellsPosition.enabled =		show;
 	}
 
+	public void StoreState() {
+		SyncGenoPhenoSpatial();
+		UpdateData();
+	}
+
+	public void RestoreState() {
+		ApplyData(creatureData);
+		ShowType();
+	}
+
 	public void Clone(Creature original) {
 		ApplyData(original.UpdateData());
 	} 
+
+	private void SyncGenoPhenoSpatial() {
+		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+			genotype.MoveToPhenotype(this);
+		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+			phenotype.MoveToGenotype(this);
+		}
+	}
 
 	//data
 	private CreatureData creatureData = new CreatureData();

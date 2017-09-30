@@ -20,6 +20,17 @@ public class Gene {
 		arrangements[2].SetReferenceGeneFromReferenceGeneIndex(genes);
 	}
 
+	public void Mutate(float strength) {
+		GlobalSettings gs = GlobalSettings.instance;
+		float mut = Random.Range(0, gs.cellTypeLeave + gs.cellTypeRandom * strength);
+		if (mut < gs.cellTypeRandom * strength) {
+			type = (CellTypeEnum)Random.Range(0, 4);
+		}
+		arrangements[0].Mutate(strength);
+		arrangements[1].Mutate(strength);
+		arrangements[2].Mutate(strength);
+	}
+
 	public void Scramble() {
 		type = (CellTypeEnum)Random.Range(0, 4);
 		arrangements[0].Scramble();

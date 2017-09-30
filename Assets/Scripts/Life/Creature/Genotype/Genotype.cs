@@ -17,7 +17,7 @@ public class Genotype : MonoBehaviour {
 	public CellMap geneCellMap = new CellMap();
 	public List<Cell> geneCellList = new List<Cell>();
 
-	public bool hasDirtyGenes = true;
+	public bool hasDirtyGenes = true; // Cell List and Cell Map needs to be updates
 
 	[HideInInspector]
 	public Cell rootCell {
@@ -26,7 +26,15 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	public void Scramble() {
+	public void GenomeMutate(float strength) {
+		for (int index = 0; index < genomeLength; index++) {
+			genes[index].Mutate(strength);
+		}
+		SetReferenceGenesFromReferenceGeneIndices();
+		hasDirtyGenes = true;
+	}
+
+	public void GenomeScramble() {
 		for (int chance = 0; chance < 3; chance++) {
 			for (int index = 0; index < genomeLength; index++) {
 				genes[index].Scramble();
@@ -36,6 +44,25 @@ public class Genotype : MonoBehaviour {
 			}
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
+		hasDirtyGenes = true;
+	}
+
+	public void GenomeEmpty() {
+		for (int index = 0; index < genomeLength; index++) {
+			genes[index] = new Gene(index);
+		}
+		for (int index = 0; index < genomeLength; index++) {
+			genes[index].SetDefault(genes);
+		}
+		hasDirtyGenes = true;
+	}
+
+	public void GenomeSet(Gene[] genome) {
+		for (int index = 0; index < genomeLength; index++) {
+			genes[index] = genome[index].GetClone();
+		}
+		SetReferenceGenesFromReferenceGeneIndices();
+		hasDirtyGenes = true;
 	}
 
 	public void SetReferenceGenesFromReferenceGeneIndices() {
@@ -73,7 +100,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void GenerateGenomeEdgeFailure() {
-		GenerateGenomeEmpty();
+		GenomeEmpty();
 
 		//Simple Jellyfish (FPS Reference creature, Don't ever change!!)
 		//New Jellyfish using Arrangements
@@ -102,7 +129,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void GenerateGenomeJellyfish() {
-		GenerateGenomeEmpty();
+		GenomeEmpty();
 
 		//Simple Jellyfish (FPS Reference creature, Don't ever change!!)
 		//New Jellyfish using Arrangements
@@ -132,22 +159,6 @@ public class Genotype : MonoBehaviour {
 		genes[1].arrangements[1].arrowIndex = 0;
 
 		genes[2].type = CellTypeEnum.Muscle;
-	}
-
-	public void GenerateGenomeEmpty() {
-		for (int index = 0; index < genomeLength; index++) {
-			genes[index] = new Gene(index);
-		}
-		for (int index = 0; index < genomeLength; index++) {
-			genes[index].SetDefault(genes);
-		}
-	}
-
-	public void SetGenome(Gene[] genome) {
-		for (int index = 0; index < genomeLength; index++) {
-			genes[index] = genome[index].GetClone();
-		}
-		SetReferenceGenesFromReferenceGeneIndices();
 	}
 
 	public void GenerateGeneCells(Creature creature, Vector2 position, float heading) { // heading 90 ==> root is pointing north
@@ -205,8 +216,7 @@ public class Genotype : MonoBehaviour {
 			ShowGeneCellsSelected(false);
 			TurnTo(heading); //is at 90 allready
 			MoveTo(position);
-			UpdateFlipSides();
-
+			UpdateGraphics(creature);
 			hasDirtyGenes = false;
 		}
 	}
@@ -256,9 +266,10 @@ public class Genotype : MonoBehaviour {
 	public void MoveToPhenotype(Creature creature) {
 		MoveTo(creature.phenotype.rootCell.position);
 		TurnTo(creature.phenotype.rootCell.heading);
+		UpdateGraphics(creature);
 	}
 
-	public void UpdateGraphics(Creature creature) {
+	private void UpdateGraphics(Creature creature) {
 		ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
 		UpdateFlipSides();
 	}
