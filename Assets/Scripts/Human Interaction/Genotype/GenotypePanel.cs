@@ -54,6 +54,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.Clear();
 		}
+		genePanel.gene = genotype.genes[0];
 		UpdateRepresentation(true);
 	}
 
@@ -61,6 +62,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.MutateAbsolute(GlobalSettings.instance.mutationStrength);
 		}
+		genePanel.gene = genotype.genes[0];
 		UpdateRepresentation(true);
 	}
 
@@ -68,6 +70,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.MutateCummulative(GlobalSettings.instance.mutationStrength);
 		}
+		genePanel.gene = genotype.genes[0];
 		UpdateRepresentation(true);
 	}
 
@@ -75,6 +78,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.Scramble();
 		}
+		genePanel.gene = genotype.genes[0];
 		UpdateRepresentation(true);
 	}
 
@@ -82,6 +86,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.RestoreState();
 		}
+		genePanel.gene = genotype.genes[0];
 		UpdateRepresentation(true);
 	}
 
