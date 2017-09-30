@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Genotype : MonoBehaviour {
 	public Gene[] genes = new Gene[genomeLength]; //One gene can give rise to many geneCells
 
-	//-------------------------
+	public EggCell eggCellPrefab;
 	public JawCell jawCellPrefab;
 	public LeafCell leafCellPrefab;
 	public MuscleCell muscleCellPrefab;
@@ -233,7 +233,9 @@ public class Genotype : MonoBehaviour {
 	private Cell SpawnGeneCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide) {
 		Cell cell = null;
 
-		if (gene.type == CellTypeEnum.Jaw) {
+		if (gene.type == CellTypeEnum.Egg) {
+			cell = (Instantiate(eggCellPrefab, geneCellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
+		} else if (gene.type == CellTypeEnum.Jaw) {
 			cell = (Instantiate(jawCellPrefab, geneCellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Leaf) {
 			cell = (Instantiate(leafCellPrefab, geneCellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);

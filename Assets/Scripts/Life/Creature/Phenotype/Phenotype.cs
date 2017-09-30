@@ -12,11 +12,10 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public Transform cellsTransform;
-	//-----------------------------------
 
 	public int model = 0;
-	//public Cell cellPrefab;
 
+	public EggCell eggCellPrefab;
 	public JawCell jawCellPrefab;
 	public LeafCell leafCellPrefab;
 	public MuscleCell muscleCellPrefab;
@@ -142,7 +141,6 @@ public class Phenotype : MonoBehaviour {
 
 			EvoFixedUpdate(creature, 0f);
 			rootCell.heading = spawnHeading;
-			//rootCell.angleDiffFromBindpose = spawnHeadingRoot - 90f;
 			rootCell.triangleTransform.rotation = Quaternion.Euler(0f, 0f, rootCell.heading); // Just updating graphics
 			growCellCount++;
 		}
@@ -182,8 +180,6 @@ public class Phenotype : MonoBehaviour {
 		ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(creature));
 		ShowShadow(false);
 		ShowTriangles(false);
-
-		//float heading = rootCell.heading;
 
 		edges.GenerateWings(cellMap);
 	}
@@ -265,7 +261,9 @@ public class Phenotype : MonoBehaviour {
 
 	private Cell InstantiateCell(CellTypeEnum type, Vector2i mapPosition) {
 		Cell cell = null;
-		if (type == CellTypeEnum.Jaw) {
+		if (type == CellTypeEnum.Egg) {
+			cell = (Instantiate(eggCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
+		} else if (type == CellTypeEnum.Jaw) {
 			cell = (Instantiate(jawCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
 		} else if (type == CellTypeEnum.Leaf) {
 			cell = (Instantiate(leafCellPrefab, Vector3.zero, Quaternion.identity) as Cell);

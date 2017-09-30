@@ -56,7 +56,7 @@ public class GenomeGene : MonoBehaviour {
 			referenceGraphics[cardinalIndex].reference = gene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
 		}
 
-		geneReferenceImage.color = CellTypeUtil.ToColor(gene.type);
+		geneReferenceImage.color = ColorScheme.instance.ToColor(gene.type);
 		flipBlackWhite.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.BlackWhite;
 		flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
 		geneReferenceText.text = gene.index.ToString();

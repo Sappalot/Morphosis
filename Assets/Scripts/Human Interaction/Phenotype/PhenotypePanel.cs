@@ -4,17 +4,14 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public Text creatureAge;
 	public Text creatureCellCount;
 	public Text creatureEnergy;
+	public CellPanel cellPanel;
 
-	public Text cellType;
-	public Text cellEnergy;
-
-	private Cell m_cell;
 	public Cell cell {
 		get {
-			return m_cell;
+			return cellPanel.cell;
 		}
 		set {
-			m_cell = value;
+			cellPanel.cell = value;
 		}
 	}
 
@@ -37,8 +34,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			creatureCellCount.text = "Cells:";
 			creatureEnergy.text = "Energy:";
 
-			cellType.text = "Type:";
-			cellEnergy.text = "Energy:";
+			cellPanel.cell = null;
 			return;
 		}
 
@@ -49,8 +45,5 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 		if (cell == null) {
 			cell = CreatureSelectionPanel.instance.soloSelected.phenotype.rootCell;
 		}
-
-		cellType.text = "Type: " + cell.gene.type.ToString();
-		cellEnergy.text = "Energy: 100%";
 	}
 }

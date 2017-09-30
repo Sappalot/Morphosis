@@ -421,7 +421,6 @@ public abstract class Cell : MonoBehaviour {
 			southEastSpring.connectedBody = null;
 			southEastSpring.enabled = false;
 		}
-
 	}
 
 	public void UpdateGroups() {

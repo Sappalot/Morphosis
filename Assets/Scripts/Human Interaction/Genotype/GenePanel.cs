@@ -79,20 +79,22 @@ public class GenePanel : MonoSingleton<GenePanel> {
 			referenceGraphics[cardinalIndex].reference = gene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
 		}
 
-		geneReferenceImage.color = CellTypeUtil.ToColor(gene.type);
+		geneReferenceImage.color = ColorScheme.instance.ToColor(gene.type);
 		flipBlackWhite.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.BlackWhite;
 		flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
 		geneReferenceText.text = gene.index.ToString();
 
 		//Gene Settings
-		if (gene.type == CellTypeEnum.Jaw) {
+		if (gene.type == CellTypeEnum.Egg) {
 			cellTypeDropdown.value = 0;
-		} else if (gene.type == CellTypeEnum.Leaf) {
+		} else if (gene.type == CellTypeEnum.Jaw) {
 			cellTypeDropdown.value = 1;
-		} else if (gene.type == CellTypeEnum.Muscle) {
+		} else if (gene.type == CellTypeEnum.Leaf) {
 			cellTypeDropdown.value = 2;
-		} else if (gene.type == CellTypeEnum.Vein) {
+		} else if (gene.type == CellTypeEnum.Muscle) {
 			cellTypeDropdown.value = 3;
+		} else if (gene.type == CellTypeEnum.Vein) {
+			cellTypeDropdown.value = 4;
 		}
 
 		//Hack
@@ -110,12 +112,14 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		bool trueChange = (int)gene.type != cellTypeDropdown.value;
 
 		if (cellTypeDropdown.value == 0) {
-			gene.type = CellTypeEnum.Jaw;
+			gene.type = CellTypeEnum.Egg;
 		} else if (cellTypeDropdown.value == 1) {
-			gene.type = CellTypeEnum.Leaf;
+			gene.type = CellTypeEnum.Jaw;
 		} else if (cellTypeDropdown.value == 2) {
-			gene.type = CellTypeEnum.Muscle;
+			gene.type = CellTypeEnum.Leaf;
 		} else if (cellTypeDropdown.value == 3) {
+			gene.type = CellTypeEnum.Muscle;
+		} else if (cellTypeDropdown.value == 4) {
 			gene.type = CellTypeEnum.Vein;
 		}
         
