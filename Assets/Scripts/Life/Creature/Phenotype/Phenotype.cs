@@ -237,8 +237,8 @@ public class Phenotype : MonoBehaviour {
 		cellMap.RemoveCellAtGridPosition(cell.mapPosition);
 		cellList.Remove(cell);
 		Destroy(cell.gameObject);
-		if (PhenotypePanel.instance.cell == cell) {
-			PhenotypePanel.instance.cell = null;
+		if (PhenotypePanel.instance.selectedCell == cell) {
+			PhenotypePanel.instance.selectedCell = null;
 			PhenotypePanel.instance.UpdateRepresentation();
 		}
 	}
@@ -329,6 +329,7 @@ public class Phenotype : MonoBehaviour {
 	public void ShowSelectedCreature(bool on) {
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].ShowCreatureSelected(on);
+			cellList[index].ShowTriangle(on); // Debug
 		}
 	}
 
@@ -477,9 +478,9 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	//TODO: Remove
-	private void Update() {
-		ShowTriangles(false);
-	}
+	//private void Update() {
+		
+	//}
 
 	public Cell GetCellAt(Vector2 position) {
 		foreach (Cell cell in cellList) {
@@ -492,5 +493,14 @@ public class Phenotype : MonoBehaviour {
 
 	private bool IsPointInsideCircle(Vector2 point, Vector2 center, float radius) {
 		return Mathf.Pow((point.x - center.x), 2) + Mathf.Pow((point.y - center.y), 2) < Mathf.Pow(radius, 2);
+	}
+
+	public bool isDirty = true;
+	private void Update() {
+		if (isDirty) {
+			ShowTriangles(false);
+
+			isDirty = false;
+		}
 	}
 }

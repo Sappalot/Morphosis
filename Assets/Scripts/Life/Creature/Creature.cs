@@ -135,8 +135,8 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void ShowType() {
-		phenotype.Show(CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype); //Don't use SetActive() since it clears rigigdBody velocity
-		genotype.gameObject.SetActive(CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype);
+		phenotype.Show(CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype); //Don't use SetActive() since it clears rigigdBody velocity
+		genotype.gameObject.SetActive(CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype);
 	}
 
 	// Apply on genotype ==> Phenotype
@@ -183,18 +183,6 @@ public class Creature : MonoBehaviour {
 	}
 
 	private bool isShowCreatureSelected = false;
-	public void ShowSelected(bool on, bool force = false) {
-		if (on != isShowCreatureSelected || force) {
-			phenotype.ShowSelectedCreature(on);
-			genotype.ShowCreatureSelected(on);
-			isShowCreatureSelected = on;
-		}
-	}
-
-	public void ShowCellsAndGeneCellsSelected(bool on) {
-		phenotype.ShowCellsSelected(on);
-		genotype.ShowGeneCellsSelected(on);
-	}
 
 	public void ShowCellSelected(Cell cell, bool on) {
 		phenotype.ShowCellSelected(cell, on);
@@ -256,9 +244,9 @@ public class Creature : MonoBehaviour {
 	} 
 
 	private void SyncGenoPhenoSpatial() {
-		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+		if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype) {
 			genotype.MoveToPhenotype(this);
-		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
 			phenotype.MoveToGenotype(this);
 		}
 	}
@@ -288,4 +276,46 @@ public class Creature : MonoBehaviour {
 
 		phenotype.ApplyData(creatureData.phenotypeData, this);
 	}
+
+	//--
+	public void ShowCellsAndGeneCellsSelected(bool on) {
+		phenotype.ShowCellsSelected(on);
+		genotype.ShowGeneCellsSelected(on);
+	}
+
+	public void ShowSelected(bool on, bool force = false) {
+		if (on != isShowCreatureSelected || force) {
+			phenotype.ShowSelectedCreature(on);
+			genotype.ShowCreatureSelected(on);
+			isShowCreatureSelected = on;
+		}
+	}
+
+	//-------------------------------
+	public bool isDirty = true;
+	private PhenoGenoEnum isShowingType = PhenoGenoEnum.Void;
+
+	private void Update() {
+		if (isDirty) {
+			bool isCreatureSelected = CreatureSelectionPanel.instance.IsSelected(this);
+			if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype) {
+				phenotype.ShowSelectedCreature(isCreatureSelected);
+
+				phenotype.ShowCellsSelected(false);
+				if (CreatureSelectionPanel.instance.soloSelected == this) {
+					phenotype.ShowCellSelected(PhenotypePanel.instance.selectedCell, true);
+				}
+			} else if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
+				genotype.ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(this));
+
+				genotype.ShowGeneCellsSelected(false);
+				if (CreatureSelectionPanel.instance.soloSelected == this) {
+					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
+				}
+			}
+			isDirty = false;
+		}
+	}
+
+
 }

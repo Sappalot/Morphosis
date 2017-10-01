@@ -179,4 +179,11 @@ public class Life : MonoBehaviour {
 		}
 		return null;
 	}
+
+	//----------------
+	public void MakeAllCreaturesDirty() {
+		for (int index = 0; index < creatures.Count; index++) {
+			creatures[index].isDirty = true;
+		}
+	}
 }

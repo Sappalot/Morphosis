@@ -40,7 +40,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 	public void UpdateRepresentation(bool changeToGenomeMade) {
 		//Nothing to represent
 		if (genotype == null) {
-			genePanel.gene = null;
+			genePanel.selectedGene = null;
 			GenomePanel.instance.genotype = null;
 			return;
 		}
@@ -54,7 +54,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.Clear();
 		}
-		genePanel.gene = genotype.genes[0];
+		genePanel.selectedGene = genotype.genes[0];
 		UpdateRepresentation(true);
 	}
 
@@ -62,7 +62,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.MutateAbsolute(GlobalSettings.instance.mutationStrength);
 		}
-		genePanel.gene = genotype.genes[0];
+		genePanel.selectedGene = genotype.genes[0];
 		UpdateRepresentation(true);
 	}
 
@@ -70,7 +70,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.MutateCummulative(GlobalSettings.instance.mutationStrength);
 		}
-		genePanel.gene = genotype.genes[0];
+		genePanel.selectedGene = genotype.genes[0];
 		UpdateRepresentation(true);
 	}
 
@@ -78,7 +78,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.Scramble();
 		}
-		genePanel.gene = genotype.genes[0];
+		genePanel.selectedGene = genotype.genes[0];
 		UpdateRepresentation(true);
 	}
 
@@ -86,7 +86,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.RestoreState();
 		}
-		genePanel.gene = genotype.genes[0];
+		genePanel.selectedGene = genotype.genes[0];
 		UpdateRepresentation(true);
 	}
 

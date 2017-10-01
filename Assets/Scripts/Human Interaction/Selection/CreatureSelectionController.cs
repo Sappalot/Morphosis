@@ -94,9 +94,9 @@ public class CreatureSelectionController : MouseDrag {
 			}
 
 			List<Creature> inside = null;
-			if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+			if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype) {
 				inside  = World.instance.life.GetPhenotypesInside(area);
-			} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+			} else if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
 				inside  = World.instance.life.GetGenotypesInside(area);
 			}
 
@@ -104,8 +104,13 @@ public class CreatureSelectionController : MouseDrag {
 				CreatureSelectionPanel.instance.Select(inside);
 			} else if (selectingMode == SelectingMode.add) {
 				List<Creature> sumList = new List<Creature>();
-				sumList.AddRange(inside);
 				sumList.AddRange(alreadySelected);
+				for (int index = 0; index < inside.Count; index++) {
+					Creature creature = inside[index];
+					if (!sumList.Contains(creature)) {
+						sumList.Add(creature);
+					}
+				}
 				CreatureSelectionPanel.instance.Select(sumList);
 			} else if (selectingMode == SelectingMode.subtract) {
 				List<Creature> subList = new List<Creature>();

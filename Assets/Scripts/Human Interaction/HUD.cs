@@ -8,7 +8,7 @@ public class HUD : MonoSingleton<HUD> {
 	public int timeControllValue = 1;
 	public bool shouldRenderEdges {
 		get {
-			return isEdgesEnabled && CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype;
+			return isEdgesEnabled && CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype;
 		}
 	}
 

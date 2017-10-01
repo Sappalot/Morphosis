@@ -30,7 +30,7 @@ public class World : MonoSingleton<World> {
 
 	private void Update() {
 		//Handle time from here to not get locked out
-		if (HUD.instance.timeControllValue == 0 || CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+		if (HUD.instance.timeControllValue == 0 || CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
 			Time.timeScale = 0;
 			life.EvoUpdate();
 		} else if (HUD.instance.timeControllValue == 1) {
@@ -78,6 +78,7 @@ public class World : MonoSingleton<World> {
 		ApplyData(loadedWorld);
 
 		CreatureSelectionPanel.instance.ClearSelection();
+
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
 
 		SwitchAllCreaturesToCurrentMode();
@@ -86,9 +87,9 @@ public class World : MonoSingleton<World> {
 	}
 
 	private void SwitchAllCreaturesToCurrentMode() {
-		if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+		if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
 			life.SwitchToGenotypes();
-		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.phenotype) {
+		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype) {
 			life.SwitchToPhenotypes();
 		}
 	}

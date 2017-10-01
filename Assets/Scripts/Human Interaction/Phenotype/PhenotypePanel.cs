@@ -6,7 +6,8 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public Text creatureEnergy;
 	public CellPanel cellPanel;
 
-	public Cell cell {
+	//TODO move selected cell to CellPanel
+	public Cell selectedCell {
 		get {
 			return cellPanel.cell;
 		}
@@ -42,8 +43,8 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 		creatureCellCount.text = "Cells: 10 (20)";
 		creatureEnergy.text = "Energy: 100%";
 
-		if (cell == null) {
-			cell = CreatureSelectionPanel.instance.soloSelected.phenotype.rootCell;
+		if (selectedCell == null) {
+			selectedCell = CreatureSelectionPanel.instance.soloSelected.phenotype.rootCell;
 		}
 	}
 }

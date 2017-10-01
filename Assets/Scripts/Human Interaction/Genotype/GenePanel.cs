@@ -11,7 +11,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 	public Text geneReferenceText;
 
 	private Gene m_gene;
-	public Gene gene {
+	public Gene selectedGene {
 		get {
 			return m_gene;
 		}
@@ -52,7 +52,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 	public void UpdateRepresentation(bool changeToGenomeMade) {
 
 		//Nothing to represent
-		if (gene == null) {
+		if (selectedGene == null) {
 			for (int index = 0; index < arrangementPanels.Length; index++) {
 				if (arrangementPanels[index] != null) {
 					arrangementPanels[index].arrangement = null;
@@ -70,35 +70,35 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
 		for (int index = 0; index < arrangementPanels.Length; index++) {
 			if (arrangementPanels[index] != null) {
-				arrangementPanels[index].arrangement = gene.arrangements[index];
+				arrangementPanels[index].arrangement = selectedGene.arrangements[index];
 			}
 		}
 
 		//perifier
 		for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
-			referenceGraphics[cardinalIndex].reference = gene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
+			referenceGraphics[cardinalIndex].reference = selectedGene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
 		}
 
-		geneReferenceImage.color = ColorScheme.instance.ToColor(gene.type);
+		geneReferenceImage.color = ColorScheme.instance.ToColor(selectedGene.type);
 		flipBlackWhite.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.BlackWhite;
 		flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
-		geneReferenceText.text = gene.index.ToString();
+		geneReferenceText.text = selectedGene.index.ToString();
 
 		//Gene Settings
-		if (gene.type == CellTypeEnum.Egg) {
+		if (selectedGene.type == CellTypeEnum.Egg) {
 			cellTypeDropdown.value = 0;
-		} else if (gene.type == CellTypeEnum.Jaw) {
+		} else if (selectedGene.type == CellTypeEnum.Jaw) {
 			cellTypeDropdown.value = 1;
-		} else if (gene.type == CellTypeEnum.Leaf) {
+		} else if (selectedGene.type == CellTypeEnum.Leaf) {
 			cellTypeDropdown.value = 2;
-		} else if (gene.type == CellTypeEnum.Muscle) {
+		} else if (selectedGene.type == CellTypeEnum.Muscle) {
 			cellTypeDropdown.value = 3;
-		} else if (gene.type == CellTypeEnum.Vein) {
+		} else if (selectedGene.type == CellTypeEnum.Vein) {
 			cellTypeDropdown.value = 4;
 		}
 
 		//Hack
-		if (changeToGenomeMade && CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+		if (changeToGenomeMade && CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.GenerateGeneCells(CreatureSelectionPanel.instance.soloSelected, CreatureSelectionPanel.instance.soloSelected.genotype.rootCell.position, CreatureSelectionPanel.instance.soloSelected.genotype.rootCell.heading);
 			CreatureSelectionPanel.instance.soloSelected.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
 			CreatureSelectionPanel.instance.soloSelected.genotype.ShowCreatureSelected(true);
@@ -109,21 +109,21 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
 	//----
 	public void OnCellTypeDropdownChanged() {
-		bool trueChange = (int)gene.type != cellTypeDropdown.value;
+		bool trueChange = (int)selectedGene.type != cellTypeDropdown.value;
 
 		if (cellTypeDropdown.value == 0) {
-			gene.type = CellTypeEnum.Egg;
+			selectedGene.type = CellTypeEnum.Egg;
 		} else if (cellTypeDropdown.value == 1) {
-			gene.type = CellTypeEnum.Jaw;
+			selectedGene.type = CellTypeEnum.Jaw;
 		} else if (cellTypeDropdown.value == 2) {
-			gene.type = CellTypeEnum.Leaf;
+			selectedGene.type = CellTypeEnum.Leaf;
 		} else if (cellTypeDropdown.value == 3) {
-			gene.type = CellTypeEnum.Muscle;
+			selectedGene.type = CellTypeEnum.Muscle;
 		} else if (cellTypeDropdown.value == 4) {
-			gene.type = CellTypeEnum.Vein;
+			selectedGene.type = CellTypeEnum.Vein;
 		}
         
-		if (trueChange && CreatureEditModePanel.instance.editMode == CreatureEditModePanel.CretureEditMode.genotype) {
+		if (trueChange && CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
 			GenotypePanel.instance.UpdateRepresentation(trueChange);
 		}
 	}
