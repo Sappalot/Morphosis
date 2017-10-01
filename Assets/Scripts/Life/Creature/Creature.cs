@@ -231,6 +231,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void Clone(Creature original) {
+
 		ApplyData(original.UpdateData());
 	} 
 
@@ -246,6 +247,8 @@ public class Creature : MonoBehaviour {
 	private CreatureData creatureData = new CreatureData();
 
 	public CreatureData UpdateData() {
+		SyncGenoPhenoSpatial();
+
 		creatureData.id = id;
 		creatureData.nickname = nickname;
 		//todo: spieces
@@ -297,7 +300,16 @@ public class Creature : MonoBehaviour {
 	}
 
 	//-------------------------------
-	public bool isDirty = true;
+	private bool m_isDirty;
+	public bool isDirty {
+		get {
+			return m_isDirty;
+		}
+		set {
+			m_isDirty = value;
+		}
+	}
+	
 	private PhenoGenoEnum showingType = PhenoGenoEnum.Void;
 
 	private void Update() {

@@ -230,6 +230,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		AddCoppiesToMoveCreature(selection);
 
 		StartMoveCreatures();
+		
 		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
 	}
 
@@ -449,7 +450,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		//debug markers
 		foreach (Creature c in World.instance.life.creatures) {
 			//c.ShowMarkers(IsSelected(c));
-			c.ShowMarkers(false);
+			c.ShowMarkers(true);
 		}
 	}
 }

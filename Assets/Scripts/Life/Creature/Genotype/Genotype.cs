@@ -364,10 +364,10 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void Grab() {
-		MoveRootToOrigo();
 		foreach (Cell cell in geneCellList) {
 			cell.GetComponent<Collider2D>().enabled = false;
 		}
+		MoveRootToOrigo();
 	}
 
 	public void Release(Creature creature) {
