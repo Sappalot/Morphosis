@@ -94,9 +94,9 @@ public class CreatureSelectionController : MouseDrag {
 			}
 
 			List<Creature> inside = null;
-			if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype) {
+			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 				inside  = World.instance.life.GetPhenotypesInside(area);
-			} else if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
+			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 				inside  = World.instance.life.GetGenotypesInside(area);
 			}
 

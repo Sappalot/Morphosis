@@ -42,20 +42,6 @@ public class Life : MonoBehaviour {
 		}
 	}
 
-	public void SwitchToPhenotypes() {
-		for (int index = 0; index < creatureList.Count; index++) {
-			Creature creature = creatureList[index];
-			creature.SwitchToPhenotype();
-		}
-	}
-
-	public void SwitchToGenotypes() {
-		for (int index = 0; index < creatureList.Count; index++) {
-			Creature creature = creatureList[index];
-			creature.SwitchToGenotype();
-		}
-	}
-
 	public List<Creature> GetPhenotypesInside(Rect area) {
 		List<Creature> insideList = new List<Creature>();
 		foreach (Creature c in creatureList) {

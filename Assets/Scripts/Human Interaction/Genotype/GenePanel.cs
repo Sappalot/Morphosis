@@ -98,7 +98,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		}
 
 		//Hack
-		if (changeToGenomeMade && CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
+		if (changeToGenomeMade && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.GenerateGeneCells(CreatureSelectionPanel.instance.soloSelected, CreatureSelectionPanel.instance.soloSelected.genotype.rootCell.position, CreatureSelectionPanel.instance.soloSelected.genotype.rootCell.heading);
 			CreatureSelectionPanel.instance.soloSelected.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
 			CreatureSelectionPanel.instance.soloSelected.genotype.ShowCreatureSelected(true);
@@ -123,7 +123,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 			selectedGene.type = CellTypeEnum.Vein;
 		}
         
-		if (trueChange && CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
+		if (trueChange && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			GenotypePanel.instance.UpdateRepresentation(trueChange);
 		}
 	}

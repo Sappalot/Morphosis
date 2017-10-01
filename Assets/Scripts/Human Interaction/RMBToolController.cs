@@ -16,7 +16,7 @@ public class RMBToolController : MouseDrag {
 		// implement this for start of dragging
 		if (mouseButton == 1 && !EventSystem.current.IsPointerOverGameObject()) {
 			downPositionMouse = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
-			if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spring && CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype) {
+			if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spring && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 				
 				Cell cell = World.instance.life.GetCellAt(downPositionMouse);
 				Debug.Log("Found: " + cell);
@@ -29,15 +29,15 @@ public class RMBToolController : MouseDrag {
 					spring.GetComponent<LineRenderer>().enabled = true;
 				}
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.embryo) {
-				if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype) {
+				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 					World.instance.life.SpawnCreatureEmbryo(downPositionMouse, 90f, PhenoGenoEnum.Phenotype);
-				} else if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
+				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 					World.instance.life.SpawnCreatureEmbryo(downPositionMouse, 90f, PhenoGenoEnum.Genotype);
 				}				
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.freak) {
-				if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype) {
+				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, PhenoGenoEnum.Phenotype);
-				} else if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
+				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, PhenoGenoEnum.Genotype);
 				}
 			}

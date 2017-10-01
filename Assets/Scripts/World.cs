@@ -8,14 +8,6 @@ public class World : MonoSingleton<World> {
 	private float fixedTime;
 	public Life life;
 
-	public void ShowPhenotypes() {
-		life.SwitchToPhenotypes();
-	}
-
-	public void ShowGenotypes() {
-		life.SwitchToGenotypes();
-	}
-
 	public void KillAllCreatures() {
 		life.KillAll();
 		CreatureSelectionPanel.instance.ClearSelection();
@@ -30,7 +22,7 @@ public class World : MonoSingleton<World> {
 
 	private void Update() {
 		//Handle time from here to not get locked out
-		if (HUD.instance.timeControllValue == 0 || CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
+		if (HUD.instance.timeControllValue == 0 || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			Time.timeScale = 0;
 			life.EvoUpdate();
 		} else if (HUD.instance.timeControllValue == 1) {
@@ -81,23 +73,12 @@ public class World : MonoSingleton<World> {
 
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
 
-		SwitchAllCreaturesToCurrentMode();
-
 		Time.timeScale = HUD.instance.timeControllValue;
-	}
-
-	private void SwitchAllCreaturesToCurrentMode() {
-		if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
-			life.SwitchToGenotypes();
-		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype) {
-			life.SwitchToPhenotypes();
-		}
 	}
 
 	private string path = "F:/Morfosis/";
 	public void Save() {
 		life.GeneratePhenotypeCells(); // In case we are still in Genotype view, Phenotypes are not updated
-		SwitchAllCreaturesToCurrentMode();
 		UpdateData();
 
 		string worldToSave = Serializer.Serialize(worldData, new UnityJsonSerializer());

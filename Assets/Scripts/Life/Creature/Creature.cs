@@ -72,16 +72,7 @@ public class Creature : MonoBehaviour {
 		return genotype.IsInside(area);
 	}
 
-	public void SwitchToPhenotype() {
-		ShowType(PhenoGenoEnum.Phenotype);
-		phenotype.MoveToGenotype(this);
-		phenotype.GenerateCells(this);
-	}
 
-	public void SwitchToGenotype() {
-		ShowType(PhenoGenoEnum.Genotype);
-		genotype.MoveToPhenotype(this);
-	}
 
 	public void GenerateEdgeFailure(Vector3 position, float heading) {
 		genotype.GenerateGenomeEdgeFailure();
@@ -135,8 +126,8 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void ShowType() {
-		phenotype.Show(CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype); //Don't use SetActive() since it clears rigigdBody velocity
-		genotype.gameObject.SetActive(CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype);
+		phenotype.Show(CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype); //Don't use SetActive() since it clears rigigdBody velocity
+		genotype.gameObject.SetActive(CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype);
 	}
 
 	// Apply on genotype ==> Phenotype
@@ -244,9 +235,9 @@ public class Creature : MonoBehaviour {
 	} 
 
 	private void SyncGenoPhenoSpatial() {
-		if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype) {
+		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 			genotype.MoveToPhenotype(this);
-		} else if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
+		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			phenotype.MoveToGenotype(this);
 		}
 	}
@@ -291,23 +282,52 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
+
+	public void SwitchToPhenotype() {
+		ShowType(PhenoGenoEnum.Phenotype);
+		phenotype.MoveToGenotype(this);
+		phenotype.GenerateCells(this);
+		isDirty = true;
+	}
+
+	public void SwitchToGenotype() {
+		ShowType(PhenoGenoEnum.Genotype);
+		genotype.MoveToPhenotype(this);
+		isDirty = true;
+	}
+
 	//-------------------------------
 	public bool isDirty = true;
-	private PhenoGenoEnum isShowingType = PhenoGenoEnum.Void;
+	private PhenoGenoEnum showingType = PhenoGenoEnum.Void;
 
 	private void Update() {
 		if (isDirty) {
 			bool isCreatureSelected = CreatureSelectionPanel.instance.IsSelected(this);
-			if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.phenotype) {
-				phenotype.ShowSelectedCreature(isCreatureSelected);
+			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+				// Switch show phenotype ==> genotype
+				if (showingType != PhenoGenoEnum.Phenotype) {
+					ShowType(PhenoGenoEnum.Phenotype);
+					phenotype.MoveToGenotype(this);
+					phenotype.GenerateCells(this);
+					showingType = PhenoGenoEnum.Phenotype;
+				}
 
+				// Update selection
+				phenotype.ShowSelectedCreature(isCreatureSelected);
 				phenotype.ShowCellsSelected(false);
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
 					phenotype.ShowCellSelected(PhenotypePanel.instance.selectedCell, true);
 				}
-			} else if (CreatureEditModePanel.instance.editMode == CreatureEditModeEnum.genotype) {
-				genotype.ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(this));
+			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+				// Switch show genotype ==> phenotype
+				if (showingType != PhenoGenoEnum.Genotype) {
+					ShowType(PhenoGenoEnum.Genotype);
+					genotype.MoveToPhenotype(this);
+					showingType = PhenoGenoEnum.Genotype;
+				}
 
+				// Update selection
+				genotype.ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(this));
 				genotype.ShowGeneCellsSelected(false);
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
 					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
@@ -316,6 +336,4 @@ public class Creature : MonoBehaviour {
 			isDirty = false;
 		}
 	}
-
-
 }
