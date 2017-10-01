@@ -68,27 +68,31 @@ public class Life : MonoBehaviour {
 		return creature;
 	}
 
-	public Creature SpawnCreatureJellyfish(Vector2 position, float heading) {
+	public Creature SpawnCreatureJellyfish(Vector2 position, float heading, PhenoGenoEnum showType) {
 		Creature creature = InstantiateCreature();
-		creature.GenerateJellyfish(position, heading);
+		creature.GenerateJellyfish(position, heading, showType);
+		creature.ShowType(showType);
 		return creature;
 	}
 
 	public Creature SpawnCreatureEmbryo(Vector3 position, float heading, PhenoGenoEnum showType) {
 		Creature creature = InstantiateCreature();
 		creature.GenerateEmbryo(position, heading, showType);
+		creature.ShowType(showType);
 		return creature;
 	}
 
 	public Creature SpawnCreatureFreak(Vector3 position, float heading, PhenoGenoEnum showType) {
 		Creature creature = InstantiateCreature();
 		creature.GenerateFreak(position, heading, showType);
+		creature.ShowType(showType);
 		return creature;
 	}
 
 	public Creature SpawnCreatureMergling(List<Gene[]> genomes, Vector3 position, float heading, PhenoGenoEnum showType) {
 		Creature creature = InstantiateCreature();
 		creature.GenerateMergling(genomes, position, heading, showType);
+		creature.ShowType(showType);
 		return creature;
 	}
 

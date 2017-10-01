@@ -79,9 +79,10 @@ public class Creature : MonoBehaviour {
 		GenerateGenotypeAndPhenotype(position, heading);
 	}
 
-	public void GenerateJellyfish(Vector2 position, float heading) {
+	public void GenerateJellyfish(Vector2 position, float heading, PhenoGenoEnum showType) {
 		genotype.GenerateGenomeJellyfish();
 		GenerateGenotypeAndPhenotype(position, heading);
+		ShowType(showType);
 	}
 
 	public void GenerateEmbryo(Vector3 position, float heading, PhenoGenoEnum showType) {
@@ -117,6 +118,7 @@ public class Creature : MonoBehaviour {
 		phenotype.GenerateCells(this, position, heading);
 
 		ShowSelected(false, true);
+		isDirty = true;
 	}
 
 	//Make show type a member ??
@@ -310,7 +312,7 @@ public class Creature : MonoBehaviour {
 		}
 	}
 	
-	private PhenoGenoEnum showingType = PhenoGenoEnum.Void;
+	private PhenoGenoEnum showingType = PhenoGenoEnum.Phenotype;
 
 	private void Update() {
 		if (isDirty) {
