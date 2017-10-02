@@ -344,7 +344,7 @@ public class Creature : MonoBehaviour {
 
 	public bool isDirty = false;
 	
-	private PhenoGenoEnum showingType = PhenoGenoEnum.Void;
+	//private PhenoGenoEnum showingType = PhenoGenoEnum.Void;
 
 	// if we update as creature copy is born we'll run into copy creture offset problems
 	private void Update() {
@@ -352,12 +352,12 @@ public class Creature : MonoBehaviour {
 			bool isCreatureSelected = CreatureSelectionPanel.instance.IsSelected(this);
 			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 				// Switch show phenotype ==> genotype
-				if (showingType != PhenoGenoEnum.Phenotype) {
-					ShowType(PhenoGenoEnum.Phenotype);
-					//phenotype.MoveToGenotype(this);
-					phenotype.GenerateCells(this);
-					showingType = PhenoGenoEnum.Phenotype;
-				}
+				//if (showingType != PhenoGenoEnum.Phenotype) {
+				ShowType(PhenoGenoEnum.Phenotype);
+				//phenotype.MoveToGenotype(this);
+				phenotype.GenerateCells(this);
+				//showingType = PhenoGenoEnum.Phenotype;
+				//}
 
 				// Update selection
 				phenotype.ShowSelectedCreature(isCreatureSelected);
@@ -367,11 +367,11 @@ public class Creature : MonoBehaviour {
 				}
 			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 				// Switch show genotype ==> phenotype
-				if (showingType != PhenoGenoEnum.Genotype) {
-					ShowType(PhenoGenoEnum.Genotype);
-					//genotype.MoveToPhenotype(this);
-					showingType = PhenoGenoEnum.Genotype;
-				}
+				//if (showingType != PhenoGenoEnum.Genotype) {
+				ShowType(PhenoGenoEnum.Genotype);
+				//genotype.MoveToPhenotype(this);
+				//showingType = PhenoGenoEnum.Genotype;
+				//}
 
 				// Update selection
 				genotype.ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(this));
