@@ -501,7 +501,7 @@ public class Phenotype : MonoBehaviour {
 	public bool isDirty = true;
 	private void Update() {
 		if (isDirty) {
-			ShowTriangles(false);
+
 			isDirty = false;
 		}
 	}

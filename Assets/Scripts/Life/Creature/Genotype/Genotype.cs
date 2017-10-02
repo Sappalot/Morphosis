@@ -419,4 +419,12 @@ public class Genotype : MonoBehaviour {
 			cell.GetComponent<Collider2D>().enabled = on;
 		}
 	}
+
+	public bool isDirty = true;
+	private void Update() {
+		if (isDirty) {
+
+			isDirty = false;
+		}
+	}
 }

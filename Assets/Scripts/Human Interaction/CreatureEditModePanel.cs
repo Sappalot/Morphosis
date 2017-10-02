@@ -31,6 +31,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 		foreach (Creature c in World.instance.life.creatures) {
 			c.hasPhenotypeCollider = true;
 			c.hasGenotypeCollider = false;
+			c.phenotype.MoveToGenotype(c);
 		}
 		isDirty = true;
 	}
@@ -43,6 +44,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 		foreach (Creature c in World.instance.life.creatures) {
 			c.hasPhenotypeCollider = false;
 			c.hasGenotypeCollider = true;
+			c.genotype.MoveToPhenotype(c);
 		}
 		isDirty = true;
 	}
