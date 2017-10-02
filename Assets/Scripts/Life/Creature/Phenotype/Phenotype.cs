@@ -25,23 +25,19 @@ public class Phenotype : MonoBehaviour {
 	public float timeOffset;
 
 	public GameObject cells;
-	//public Wings wings;
 	public Edges edges;
 
 	private Vector3 velocity = new Vector3();
 	private List<Cell> cellList = new List<Cell>();
 	private Vector2 spawnPosition;
 	private float spawnHeading;
-	//private Creature creature;
 	private CellMap cellMap = new CellMap();
 
 	private bool isGrabbed;
 	public bool hasDirtyPosition = false;
 
-	public int cellCount
-	{
-		get
-		{
+	public int cellCount {
+		get {
 			return cellList.Count;
 		}
 	}
@@ -361,10 +357,9 @@ public class Phenotype : MonoBehaviour {
 
 	public void Show(bool on) {
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].ShowAndCollide(on);
+			cellList[index].Show(on);
 		}
 	}
-
 	
 	public void MoveRootToOrigo() {
 		Vector3 rootCellPosition = rootCell.position;
@@ -384,7 +379,7 @@ public class Phenotype : MonoBehaviour {
 		foreach (Cell cell in cellList) {
 			cell.GetComponent<Rigidbody2D>().isKinematic = true;
 			cell.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-			cell.GetComponent<Collider2D>().enabled = false;
+			//cell.GetComponent<Collider2D>().enabled = false;
 		}
 		MoveRootToOrigo();
 	}
@@ -393,7 +388,7 @@ public class Phenotype : MonoBehaviour {
 		isGrabbed = false;
 		foreach (Cell cell in cellList) {
 			cell.GetComponent<Rigidbody2D>().isKinematic = false;
-			cell.GetComponent<Collider2D>().enabled = true;
+			//cell.GetComponent<Collider2D>().enabled = true;
 		}
 		foreach (Cell cell in cellList) {
 			cell.transform.parent = null;
@@ -479,9 +474,8 @@ public class Phenotype : MonoBehaviour {
 
 	//TODO: Remove
 	//private void Update() {
-		
-	//}
 
+	//}
 	public Cell GetCellAt(Vector2 position) {
 		foreach (Cell cell in cellList) {
 			if (IsPointInsideCircle(position, cell.position, cell.radius + 0.2f)) {
@@ -495,11 +489,19 @@ public class Phenotype : MonoBehaviour {
 		return Mathf.Pow((point.x - center.x), 2) + Mathf.Pow((point.y - center.y), 2) < Mathf.Pow(radius, 2);
 	}
 
+
+
+	//--------
+	public void SetCollider(bool on) {
+		foreach (Cell cell in cellList) {
+			cell.GetComponent<Collider2D>().enabled = on;
+		}
+	}
+
 	public bool isDirty = true;
 	private void Update() {
 		if (isDirty) {
 			ShowTriangles(false);
-
 			isDirty = false;
 		}
 	}

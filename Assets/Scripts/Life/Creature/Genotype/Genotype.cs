@@ -411,4 +411,12 @@ public class Genotype : MonoBehaviour {
 		//genotypeData.rootPosition is used from creature
 		//genotypeData.rootHeading is used from creature
 	}
+
+	//------
+
+	public void SetCollider(bool on) {
+		foreach (Cell cell in geneCellList) {
+			cell.GetComponent<Collider2D>().enabled = on;
+		}
+	}
 }

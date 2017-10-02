@@ -55,10 +55,9 @@ public abstract class Cell : MonoBehaviour {
 	//Set only once, when adding cell to CellMap
 	public Vector2 modelSpacePosition;
 
-	public void ShowAndCollide(bool show) {
+	public void Show(bool show) {
 		for (int index = 0; index < transform.childCount; index++) {
 			transform.GetChild(index).gameObject.SetActive(show);
-			transform.GetComponent<Collider2D>().enabled = show;
 		}
 	}
 

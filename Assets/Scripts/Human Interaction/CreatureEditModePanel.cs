@@ -28,6 +28,10 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 		m_mode = CreatureEditModeEnum.Phenotype;
 		World.instance.life.MakeAllCreaturesDirty();
 		CreatureSelectionPanel.instance.SetCellAndGeneSelectionToRoot();
+		foreach (Creature c in World.instance.life.creatures) {
+			c.hasPhenotypeCollider = true;
+			c.hasGenotypeCollider = false;
+		}
 		isDirty = true;
 	}
 
@@ -36,6 +40,10 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 		m_mode = CreatureEditModeEnum.Genotype;
 		World.instance.life.MakeAllCreaturesDirty();
 		CreatureSelectionPanel.instance.SetCellAndGeneSelectionToRoot();
+		foreach (Creature c in World.instance.life.creatures) {
+			c.hasPhenotypeCollider = false;
+			c.hasGenotypeCollider = true;
+		}
 		isDirty = true;
 	}
 

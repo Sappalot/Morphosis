@@ -226,11 +226,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (!hasSelection) {
 			return;
 		}
-
 		AddCoppiesToMoveCreature(selection);
-
 		StartMoveCreatures();
-		
 		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
 	}
 
@@ -249,8 +246,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public void StartMoveCreatures() {
 		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+
 			foreach (Creature c in moveCreatures) {
 				c.Grab(PhenoGenoEnum.Phenotype);
+				//c.isDirty = false;
 			}
 
 			//Offset

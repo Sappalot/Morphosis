@@ -71,7 +71,6 @@ public class Life : MonoBehaviour {
 	public Creature SpawnCreatureJellyfish(Vector2 position, float heading, PhenoGenoEnum showType) {
 		Creature creature = InstantiateCreature();
 		creature.GenerateJellyfish(position, heading, showType);
-		creature.ShowType(showType);
 		return creature;
 	}
 
@@ -79,6 +78,7 @@ public class Life : MonoBehaviour {
 		Creature creature = InstantiateCreature();
 		creature.GenerateEmbryo(position, heading, showType);
 		creature.ShowType(showType);
+		creature.hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
 		return creature;
 	}
 
@@ -86,6 +86,7 @@ public class Life : MonoBehaviour {
 		Creature creature = InstantiateCreature();
 		creature.GenerateFreak(position, heading, showType);
 		creature.ShowType(showType);
+		creature.hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
 		return creature;
 	}
 
@@ -93,6 +94,7 @@ public class Life : MonoBehaviour {
 		Creature creature = InstantiateCreature();
 		creature.GenerateMergling(genomes, position, heading, showType);
 		creature.ShowType(showType);
+		creature.hasPhenotypeCollider = false;
 		return creature;
 	}
 
@@ -102,6 +104,7 @@ public class Life : MonoBehaviour {
 		creature.Clone(original);
 		creature.ShowType(showType);
 		creature.nickname += " (Copy)";
+		creature.hasPhenotypeCollider = false;
 		return creature;
 	}
 

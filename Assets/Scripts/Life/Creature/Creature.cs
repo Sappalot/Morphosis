@@ -72,8 +72,6 @@ public class Creature : MonoBehaviour {
 		return genotype.IsInside(area);
 	}
 
-
-
 	public void GenerateEdgeFailure(Vector3 position, float heading) {
 		genotype.GenerateGenomeEdgeFailure();
 		GenerateGenotypeAndPhenotype(position, heading);
@@ -83,12 +81,16 @@ public class Creature : MonoBehaviour {
 		genotype.GenerateGenomeJellyfish();
 		GenerateGenotypeAndPhenotype(position, heading);
 		ShowType(showType);
+		hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
+		hasGenotypeCollider = showType == PhenoGenoEnum.Genotype;
 	}
 
 	public void GenerateEmbryo(Vector3 position, float heading, PhenoGenoEnum showType) {
 		genotype.GenomeEmpty();
 		GenerateGenotypeAndPhenotype(position, heading);
 		ShowType(showType);
+		hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
+		hasGenotypeCollider = showType == PhenoGenoEnum.Genotype;
 	}
 
 	public void GenerateFreak(Vector3 position, float heading, PhenoGenoEnum showType) {
@@ -96,18 +98,24 @@ public class Creature : MonoBehaviour {
 		genotype.GenomeScramble();
 		GenerateGenotypeAndPhenotype(position, heading);
 		ShowType(showType);
+		hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
+		hasGenotypeCollider = showType == PhenoGenoEnum.Genotype;
 	}
 
 	public void GenerateMergling(List<Gene[]> genomes, Vector3 position, float heading, PhenoGenoEnum showType) {
 		genotype.GenomeSet(GenotypeUtil.CombineGenomeFine(genomes));
 		GenerateGenotypeAndPhenotype(position, heading);
 		ShowType(showType);
+		hasPhenotypeCollider = false;
+		hasGenotypeCollider = false;
 	}
 
 	public void GenerateCopy(Creature creature, PhenoGenoEnum showType) {
 		genotype.GenomeEmpty();
 		GenerateGenotypeAndPhenotype(creature.GetRootPosition(showType), creature.GetRootHeading(showType));
 		ShowType(showType);
+		hasPhenotypeCollider = false;
+		hasGenotypeCollider = false;
 	}
 
 	private void GenerateGenotypeAndPhenotype(Vector2 position, float heading) {
@@ -117,7 +125,6 @@ public class Creature : MonoBehaviour {
 		phenotype.differsFromGenotype = true;
 		phenotype.GenerateCells(this, position, heading);
 
-		ShowSelected(false, true);
 		isDirty = true;
 	}
 
@@ -186,9 +193,12 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void Grab(PhenoGenoEnum type) {
-		if (type ==PhenoGenoEnum.Phenotype) {
+		if (type == PhenoGenoEnum.Phenotype) {
 			Vector2 rootCellPosition = phenotype.rootCell.position;
+
 			phenotype.Grab();
+			hasPhenotypeCollider = false;
+			isDirty = true;
 
 			transform.parent = null;
 			transform.position = rootCellPosition;
@@ -197,7 +207,11 @@ public class Creature : MonoBehaviour {
 			phenotype.hasDirtyPosition = true;
 
 			Vector2 rootCellPosition = genotype.rootCell.position;
+
 			genotype.Grab();
+			hasGenotypeCollider = false;
+			isDirty = true;
+
 			phenotype.Halt();
 
 			transform.parent = null;
@@ -209,8 +223,12 @@ public class Creature : MonoBehaviour {
 	public void Release(PhenoGenoEnum type) {
 		if (type == PhenoGenoEnum.Phenotype) {
 			phenotype.Release(this);
+			hasPhenotypeCollider = true;
+			isDirty = true;
 		} else if (type == PhenoGenoEnum.Genotype) {
 			genotype.Release(this);
+			hasGenotypeCollider = true;
+			isDirty = true;
 		}
 	}
 
@@ -288,32 +306,47 @@ public class Creature : MonoBehaviour {
 	}
 
 
-	public void SwitchToPhenotype() {
-		ShowType(PhenoGenoEnum.Phenotype);
-		phenotype.MoveToGenotype(this);
-		phenotype.GenerateCells(this);
-		isDirty = true;
-	}
+	//public void SwitchToPhenotype() {
+	//	ShowType(PhenoGenoEnum.Phenotype);
+	//	phenotype.MoveToGenotype(this);
+	//	phenotype.GenerateCells(this);
+	//	isDirty = true;
+	//}
 
-	public void SwitchToGenotype() {
-		ShowType(PhenoGenoEnum.Genotype);
-		genotype.MoveToPhenotype(this);
-		isDirty = true;
-	}
+	//public void SwitchToGenotype() {
+	//	ShowType(PhenoGenoEnum.Genotype);
+	//	genotype.MoveToPhenotype(this);
+	//	isDirty = true;
+	//}
 
 	//-------------------------------
-	private bool m_isDirty;
-	public bool isDirty {
+	private bool m_hasPhenotypeCollider = false;
+	public bool hasPhenotypeCollider {
 		get {
-			return m_isDirty;
+			return m_hasPhenotypeCollider;
 		}
 		set {
-			m_isDirty = value;
+			m_hasPhenotypeCollider = value;
+			isDirty = true;
 		}
 	}
-	
-	private PhenoGenoEnum showingType = PhenoGenoEnum.Phenotype;
 
+	private bool m_hasGenotypeCollider = false;
+	public bool hasGenotypeCollider {
+		get {
+			return m_hasGenotypeCollider;
+		}
+		set {
+			m_hasGenotypeCollider = value;
+			isDirty = true;
+		}
+	}
+
+	public bool isDirty = false;
+	
+	private PhenoGenoEnum showingType = PhenoGenoEnum.Void;
+
+	// if we update as creature copy is born we'll run into copy creture offset problems
 	private void Update() {
 		if (isDirty) {
 			bool isCreatureSelected = CreatureSelectionPanel.instance.IsSelected(this);
@@ -321,7 +354,7 @@ public class Creature : MonoBehaviour {
 				// Switch show phenotype ==> genotype
 				if (showingType != PhenoGenoEnum.Phenotype) {
 					ShowType(PhenoGenoEnum.Phenotype);
-					phenotype.MoveToGenotype(this);
+					//phenotype.MoveToGenotype(this);
 					phenotype.GenerateCells(this);
 					showingType = PhenoGenoEnum.Phenotype;
 				}
@@ -336,7 +369,7 @@ public class Creature : MonoBehaviour {
 				// Switch show genotype ==> phenotype
 				if (showingType != PhenoGenoEnum.Genotype) {
 					ShowType(PhenoGenoEnum.Genotype);
-					genotype.MoveToPhenotype(this);
+					//genotype.MoveToPhenotype(this);
 					showingType = PhenoGenoEnum.Genotype;
 				}
 
@@ -347,6 +380,11 @@ public class Creature : MonoBehaviour {
 					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
 				}
 			}
+
+			// Collider
+			phenotype.SetCollider(hasPhenotypeCollider);
+			genotype.SetCollider(hasGenotypeCollider);
+
 			isDirty = false;
 		}
 	}
