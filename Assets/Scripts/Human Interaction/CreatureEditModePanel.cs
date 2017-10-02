@@ -26,25 +26,32 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	public void OnClickedPhenotypeEditMode() {
 		//World.instance.ShowPhenotypes();
 		m_mode = CreatureEditModeEnum.Phenotype;
-		World.instance.life.MakeAllCreaturesDirty();
-		CreatureSelectionPanel.instance.SetCellAndGeneSelectionToRoot();
-		foreach (Creature c in World.instance.life.creatures) {
-			c.hasPhenotypeCollider = true;
-			c.hasGenotypeCollider = false;
-			c.phenotype.MoveToGenotype(c);
-		}
-		isDirty = true;
+		UpdateAllAccordingToEditMode();
 	}
 
 	public void OnClickedGenotypeEditMode() {
 		//World.instance.ShowGenotypes();
 		m_mode = CreatureEditModeEnum.Genotype;
-		World.instance.life.MakeAllCreaturesDirty();
+		UpdateAllAccordingToEditMode();
+	}
+
+	public void UpdateAllAccordingToEditMode() {
 		CreatureSelectionPanel.instance.SetCellAndGeneSelectionToRoot();
-		foreach (Creature c in World.instance.life.creatures) {
-			c.hasPhenotypeCollider = false;
-			c.hasGenotypeCollider = true;
-			c.genotype.MoveToPhenotype(c);
+
+		if (m_mode == CreatureEditModeEnum.Phenotype) {
+			foreach (Creature c in World.instance.life.creatures) {
+				c.hasPhenotypeCollider = true;
+				c.hasGenotypeCollider = false;
+				c.phenotype.MoveToGenotype(c);
+				c.isDirty = true;
+			}
+		} else if (m_mode == CreatureEditModeEnum.Genotype) {
+			foreach (Creature c in World.instance.life.creatures) {
+				c.hasPhenotypeCollider = false;
+				c.hasGenotypeCollider = true;
+				c.genotype.MoveToPhenotype(c);
+				c.isDirty = true;
+			}
 		}
 		isDirty = true;
 	}

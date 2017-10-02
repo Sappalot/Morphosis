@@ -72,23 +72,23 @@ public class Creature : MonoBehaviour {
 		return genotype.IsInside(area);
 	}
 
-	public void GenerateEdgeFailure(Vector3 position, float heading) {
+	public void GenerateEdgeFailure(Vector3 position, float heading, PhenoGenoEnum showType) {
 		genotype.GenerateGenomeEdgeFailure();
-		GenerateGenotypeAndPhenotype(position, heading);
+		GenerateGenotypeAndPhenotype(position, heading, showType);
 	}
 
 	public void GenerateJellyfish(Vector2 position, float heading, PhenoGenoEnum showType) {
 		genotype.GenerateGenomeJellyfish();
-		GenerateGenotypeAndPhenotype(position, heading);
-		ShowType(showType);
+		GenerateGenotypeAndPhenotype(position, heading, showType);
+
 		hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
 		hasGenotypeCollider = showType == PhenoGenoEnum.Genotype;
 	}
 
 	public void GenerateEmbryo(Vector3 position, float heading, PhenoGenoEnum showType) {
 		genotype.GenomeEmpty();
-		GenerateGenotypeAndPhenotype(position, heading);
-		ShowType(showType);
+		GenerateGenotypeAndPhenotype(position, heading, showType);
+
 		hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
 		hasGenotypeCollider = showType == PhenoGenoEnum.Genotype;
 	}
@@ -96,47 +96,35 @@ public class Creature : MonoBehaviour {
 	public void GenerateFreak(Vector3 position, float heading, PhenoGenoEnum showType) {
 		genotype.GenomeEmpty();
 		genotype.GenomeScramble();
-		GenerateGenotypeAndPhenotype(position, heading);
-		ShowType(showType);
+		GenerateGenotypeAndPhenotype(position, heading, showType);
+
 		hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
 		hasGenotypeCollider = showType == PhenoGenoEnum.Genotype;
 	}
 
 	public void GenerateMergling(List<Gene[]> genomes, Vector3 position, float heading, PhenoGenoEnum showType) {
 		genotype.GenomeSet(GenotypeUtil.CombineGenomeFine(genomes));
-		GenerateGenotypeAndPhenotype(position, heading);
-		ShowType(showType);
+		GenerateGenotypeAndPhenotype(position, heading, showType);
+
 		hasPhenotypeCollider = false;
 		hasGenotypeCollider = false;
 	}
 
 	public void GenerateCopy(Creature creature, PhenoGenoEnum showType) {
 		genotype.GenomeEmpty();
-		GenerateGenotypeAndPhenotype(creature.GetRootPosition(showType), creature.GetRootHeading(showType));
-		ShowType(showType);
+		GenerateGenotypeAndPhenotype(creature.GetRootPosition(showType), creature.GetRootHeading(showType), showType);
+
 		hasPhenotypeCollider = false;
 		hasGenotypeCollider = false;
 	}
 
-	private void GenerateGenotypeAndPhenotype(Vector2 position, float heading) {
+	private void GenerateGenotypeAndPhenotype(Vector2 position, float heading, PhenoGenoEnum showType) {
 		genotype.hasDirtyGenes = true;
 		genotype.GenerateGeneCells(this, position, heading); // Generating genotype here caused Unity freeze ;/
 
 		phenotype.differsFromGenotype = true;
 		phenotype.GenerateCells(this, position, heading);
-
 		isDirty = true;
-	}
-
-	//Make show type a member ??
-	public void ShowType(PhenoGenoEnum showType) {
-		phenotype.Show(showType == PhenoGenoEnum.Phenotype); //Don't use SetActive() since it clears rigigdBody velocity
-		genotype.gameObject.SetActive(showType == PhenoGenoEnum.Genotype);
-	}
-
-	public void ShowType() {
-		phenotype.Show(CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype); //Don't use SetActive() since it clears rigigdBody velocity
-		genotype.gameObject.SetActive(CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype);
 	}
 
 	// Apply on genotype ==> Phenotype
@@ -248,10 +236,10 @@ public class Creature : MonoBehaviour {
 	public void RestoreState() {
 		ApplyData(creatureData);
 		ShowType();
+		isDirty = true;
 	}
 
 	public void Clone(Creature original) {
-
 		ApplyData(original.UpdateData());
 	} 
 
@@ -261,6 +249,17 @@ public class Creature : MonoBehaviour {
 		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			phenotype.MoveToGenotype(this);
 		}
+	}
+
+	//Make show type a member ??
+	public void ShowType(PhenoGenoEnum showType) {
+		phenotype.Show(showType == PhenoGenoEnum.Phenotype); //Don't use SetActive() since it clears rigigdBody velocity
+		genotype.gameObject.SetActive(showType == PhenoGenoEnum.Genotype);
+	}
+
+	public void ShowType() {
+		phenotype.Show(CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype); //Don't use SetActive() since it clears rigigdBody velocity
+		genotype.gameObject.SetActive(CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype);
 	}
 
 	//data
@@ -304,60 +303,36 @@ public class Creature : MonoBehaviour {
 			isShowCreatureSelected = on;
 		}
 	}
-
-
-	//public void SwitchToPhenotype() {
-	//	ShowType(PhenoGenoEnum.Phenotype);
-	//	phenotype.MoveToGenotype(this);
-	//	phenotype.GenerateCells(this);
-	//	isDirty = true;
-	//}
-
-	//public void SwitchToGenotype() {
-	//	ShowType(PhenoGenoEnum.Genotype);
-	//	genotype.MoveToPhenotype(this);
-	//	isDirty = true;
-	//}
-
 	//-------------------------------
 	private bool m_hasPhenotypeCollider = false;
 	public bool hasPhenotypeCollider {
 		get {
-			return m_hasPhenotypeCollider;
+			return phenotype.hasCollider;
 		}
 		set {
-			m_hasPhenotypeCollider = value;
-			isDirty = true;
+			phenotype.hasCollider = value;
 		}
 	}
 
 	private bool m_hasGenotypeCollider = false;
 	public bool hasGenotypeCollider {
 		get {
-			return m_hasGenotypeCollider;
+			return genotype.hasCollider;
 		}
 		set {
-			m_hasGenotypeCollider = value;
-			isDirty = true;
+			genotype.hasCollider = value;
 		}
 	}
 
 	public bool isDirty = false;
-	
-	//private PhenoGenoEnum showingType = PhenoGenoEnum.Void;
 
 	// if we update as creature copy is born we'll run into copy creture offset problems
 	private void Update() {
 		if (isDirty) {
 			bool isCreatureSelected = CreatureSelectionPanel.instance.IsSelected(this);
 			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-				// Switch show phenotype ==> genotype
-				//if (showingType != PhenoGenoEnum.Phenotype) {
 				ShowType(PhenoGenoEnum.Phenotype);
-				//phenotype.MoveToGenotype(this);
 				phenotype.GenerateCells(this);
-				//showingType = PhenoGenoEnum.Phenotype;
-				//}
 
 				// Update selection
 				phenotype.ShowSelectedCreature(isCreatureSelected);
@@ -366,12 +341,7 @@ public class Creature : MonoBehaviour {
 					phenotype.ShowCellSelected(PhenotypePanel.instance.selectedCell, true);
 				}
 			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-				// Switch show genotype ==> phenotype
-				//if (showingType != PhenoGenoEnum.Genotype) {
 				ShowType(PhenoGenoEnum.Genotype);
-				//genotype.MoveToPhenotype(this);
-				//showingType = PhenoGenoEnum.Genotype;
-				//}
 
 				// Update selection
 				genotype.ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(this));
@@ -380,11 +350,6 @@ public class Creature : MonoBehaviour {
 					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
 				}
 			}
-
-			// Collider
-			phenotype.SetCollider(hasPhenotypeCollider);
-			genotype.SetCollider(hasGenotypeCollider);
-
 			isDirty = false;
 		}
 	}

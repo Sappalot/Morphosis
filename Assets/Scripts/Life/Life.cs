@@ -62,9 +62,9 @@ public class Life : MonoBehaviour {
 		return insideList;
 	}
 
-	public Creature SpawnCreatureEdgeFailure(Vector3 position) {
+	public Creature SpawnCreatureEdgeFailure(Vector2 position, float heading, PhenoGenoEnum showType) {
 		Creature creature = InstantiateCreature();
-		creature.GenerateEdgeFailure(position, 90f);
+		creature.GenerateEdgeFailure(position, 90f, showType);
 		return creature;
 	}
 
@@ -77,7 +77,7 @@ public class Life : MonoBehaviour {
 	public Creature SpawnCreatureEmbryo(Vector3 position, float heading, PhenoGenoEnum showType) {
 		Creature creature = InstantiateCreature();
 		creature.GenerateEmbryo(position, heading, showType);
-		creature.ShowType(showType);
+
 		creature.hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
 		return creature;
 	}
@@ -85,7 +85,7 @@ public class Life : MonoBehaviour {
 	public Creature SpawnCreatureFreak(Vector3 position, float heading, PhenoGenoEnum showType) {
 		Creature creature = InstantiateCreature();
 		creature.GenerateFreak(position, heading, showType);
-		creature.ShowType(showType);
+
 		creature.hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
 		return creature;
 	}
@@ -93,7 +93,7 @@ public class Life : MonoBehaviour {
 	public Creature SpawnCreatureMergling(List<Gene[]> genomes, Vector3 position, float heading, PhenoGenoEnum showType) {
 		Creature creature = InstantiateCreature();
 		creature.GenerateMergling(genomes, position, heading, showType);
-		creature.ShowType(showType);
+
 		creature.hasPhenotypeCollider = false;
 		return creature;
 	}
@@ -102,7 +102,7 @@ public class Life : MonoBehaviour {
 		Creature creature = InstantiateCreature();
 		//creature.GenerateCopy(original, showType);
 		creature.Clone(original);
-		creature.ShowType(showType);
+		//creature.ShowType(showType);
 		creature.nickname += " (Copy)";
 		creature.hasPhenotypeCollider = false;
 		return creature;

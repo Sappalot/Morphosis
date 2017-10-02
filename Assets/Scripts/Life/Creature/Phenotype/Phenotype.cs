@@ -498,10 +498,21 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	private bool m_hasCollider = false;
+	public bool hasCollider {
+		get {
+			return m_hasCollider;
+		}
+		set {
+			m_hasCollider = value;
+			isDirty = true;
+		}
+	}
+
 	public bool isDirty = true;
 	private void Update() {
 		if (isDirty) {
-
+			SetCollider(hasCollider);
 			isDirty = false;
 		}
 	}

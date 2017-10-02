@@ -68,14 +68,10 @@ public class World : MonoSingleton<World> {
 
 		WorldData loadedWorld = Serializer.Deserialize<WorldData>(serializedString, new UnityJsonSerializer());
 		ApplyData(loadedWorld);
-		foreach (Creature c in life.creatures) {
-			c.ShowType();
-		}
+		CreatureEditModePanel.instance.UpdateAllAccordingToEditMode();
 
 		CreatureSelectionPanel.instance.ClearSelection();
-
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
-
 		Time.timeScale = HUD.instance.timeControllValue;
 	}
 
