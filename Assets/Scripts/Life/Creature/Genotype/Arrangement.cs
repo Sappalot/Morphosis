@@ -551,8 +551,8 @@ public class Arrangement {
 		if (m_referenceCount <= 1) {
 			m_referenceCount = 2;
 		}
-		else if (m_referenceCount >= 5) {
-			m_referenceCount = 4;
+		if (m_referenceCount == 5 || m_referenceCount > 6) {
+			m_referenceCount = 6;
 		}
 
 		//Main Arrow

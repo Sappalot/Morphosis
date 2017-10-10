@@ -10,20 +10,19 @@ public class GenePanel : MonoSingleton<GenePanel> {
 	public Image flipWhiteBlack;
 	public Text geneReferenceText;
 
-	private Gene m_gene;
+	public bool isDirty = true;
+	private Gene m_selectedGene;
 	public Gene selectedGene {
 		get {
-			return m_gene;
+			return m_selectedGene != null ? m_selectedGene : (CreatureSelectionPanel.instance.hasSoloSelected ? CreatureSelectionPanel.instance.soloSelected.genotype.rootCell.gene : null);
 		}
 		set {
-			m_gene = value;
-			UpdateRepresentation(false);
-			if (CreatureSelectionPanel.instance.soloSelected != null) {
-				CreatureSelectionPanel.instance.soloSelected.genotype.ShowGeneCellsSelected(false);
-				CreatureSelectionPanel.instance.soloSelected.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
-			}
+			m_selectedGene = value;
+			isDirty = true;
 		}
 	}
+
+
 	public ReferenceGraphics[] referenceGraphics;
 
 	public ArrangementPanel arrangementPanelTemplate;
@@ -49,64 +48,6 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		arrangementPanelTemplate.arrangementButtons.SetActive(false);
 	}
 
-	public void UpdateRepresentation(bool changeToGenomeMade) {
-
-		//Nothing to represent
-		if (selectedGene == null) {
-			for (int index = 0; index < arrangementPanels.Length; index++) {
-				if (arrangementPanels[index] != null) {
-					arrangementPanels[index].arrangement = null;
-				}
-			}
-
-			circles.SetActive(false);
-			return;
-		}
-
-		if (GenomePanel.instance.genotype != null)
-			GenomePanel.instance.genotype.differsFromGenome |= changeToGenomeMade;
-
-		circles.SetActive(true);
-
-		for (int index = 0; index < arrangementPanels.Length; index++) {
-			if (arrangementPanels[index] != null) {
-				arrangementPanels[index].arrangement = selectedGene.arrangements[index];
-			}
-		}
-
-		//perifier
-		for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
-			referenceGraphics[cardinalIndex].reference = selectedGene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
-		}
-
-		geneReferenceImage.color = ColorScheme.instance.ToColor(selectedGene.type);
-		flipBlackWhite.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.BlackWhite;
-		flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
-		geneReferenceText.text = selectedGene.index.ToString();
-
-		//Gene Settings
-		if (selectedGene.type == CellTypeEnum.Egg) {
-			cellTypeDropdown.value = 0;
-		} else if (selectedGene.type == CellTypeEnum.Jaw) {
-			cellTypeDropdown.value = 1;
-		} else if (selectedGene.type == CellTypeEnum.Leaf) {
-			cellTypeDropdown.value = 2;
-		} else if (selectedGene.type == CellTypeEnum.Muscle) {
-			cellTypeDropdown.value = 3;
-		} else if (selectedGene.type == CellTypeEnum.Vein) {
-			cellTypeDropdown.value = 4;
-		}
-
-		//Hack
-		if (changeToGenomeMade && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-			CreatureSelectionPanel.instance.soloSelected.genotype.GenerateGeneCells(CreatureSelectionPanel.instance.soloSelected, CreatureSelectionPanel.instance.soloSelected.genotype.rootCell.position, CreatureSelectionPanel.instance.soloSelected.genotype.rootCell.heading);
-			CreatureSelectionPanel.instance.soloSelected.genotype.ShowGeneCellsSelectedWithGene(m_gene, true);
-			CreatureSelectionPanel.instance.soloSelected.genotype.ShowCreatureSelected(true);
-			
-			CreatureSelectionPanel.instance.soloSelected.phenotype.differsFromGeneCells = true;
-		} 
-	}
-
 	//----
 	public void OnCellTypeDropdownChanged() {
 		bool trueChange = (int)selectedGene.type != cellTypeDropdown.value;
@@ -122,9 +63,11 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		} else if (cellTypeDropdown.value == 4) {
 			selectedGene.type = CellTypeEnum.Vein;
 		}
-        
+
 		if (trueChange && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-			GenotypePanel.instance.UpdateRepresentation(trueChange);
+			GenotypePanel.instance.isDirty = true;
+			GenomePanel.instance.isDirty = true;
+			isDirty = true;
 		}
 	}
 
@@ -135,5 +78,68 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
 	public void GiveAnswerGeneReference(Gene gene) {
 		arrangementPanelAskingForReference.SetGeneReference(gene);
+	}
+
+	private void Update() {
+		if (isDirty) {
+			//Nothing to represent
+			if (selectedGene == null) {
+				for (int index = 0; index < arrangementPanels.Length; index++) {
+					if (arrangementPanels[index] != null) {
+						arrangementPanels[index].arrangement = null;
+					}
+				}
+
+				circles.SetActive(false);
+
+				cellTypeDropdown.gameObject.SetActive(false);
+				return;
+			}
+
+			//TODO. remove. Dont set stuff in update
+			if (GenomePanel.instance.genotype != null)
+				GenomePanel.instance.genotype.differsFromGenome = true;
+
+			circles.SetActive(true);
+
+			for (int index = 0; index < arrangementPanels.Length; index++) {
+				if (arrangementPanels[index] != null) {
+					arrangementPanels[index].arrangement = selectedGene.arrangements[index];
+				}
+			}
+
+			//perifier
+			for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+				referenceGraphics[cardinalIndex].reference = selectedGene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
+			}
+
+			geneReferenceImage.color = ColorScheme.instance.ToColor(selectedGene.type);
+			flipBlackWhite.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.BlackWhite;
+			flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
+			geneReferenceText.text = selectedGene.index.ToString();
+
+			//Gene Settings
+			cellTypeDropdown.gameObject.SetActive(true);
+
+			if (selectedGene.type == CellTypeEnum.Egg) {
+				cellTypeDropdown.value = 0;
+			} else if (selectedGene.type == CellTypeEnum.Jaw) {
+				cellTypeDropdown.value = 1;
+			} else if (selectedGene.type == CellTypeEnum.Leaf) {
+				cellTypeDropdown.value = 2;
+			} else if (selectedGene.type == CellTypeEnum.Muscle) {
+				cellTypeDropdown.value = 3;
+			} else if (selectedGene.type == CellTypeEnum.Vein) {
+				cellTypeDropdown.value = 4;
+			}
+
+			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+				CreatureSelectionPanel.instance.soloSelected.genotype.differsFromGenome = true;
+				CreatureSelectionPanel.instance.soloSelected.phenotype.differsFromGeneCells = true;
+				CreatureSelectionPanel.instance.soloSelected.isDirty = true;
+			}
+
+			isDirty = false;
+		}
 	}
 }

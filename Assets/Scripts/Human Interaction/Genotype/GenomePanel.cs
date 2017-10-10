@@ -9,11 +9,7 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
 	private Genotype m_genotype;
 	public Genotype genotype {
 		get {
-			return m_genotype;
-		}
-		set {
-			m_genotype = value;
-			UpdateRepresentation();
+			return GenotypePanel.instance.selectedGenotype;
 		}
 	}
 
@@ -37,17 +33,20 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
 		}
 	}
 
-	public void UpdateRepresentation() {
-		//Nothing to represent
-		if (genotype == null) {
-			for (int index = 0; index < genomeGenes.Length; index++) {
-				genomeGenes[index].gene = null;
+	public bool isDirty = true;
+	private void Update() {
+		if (isDirty) {
+			if (genotype == null) {
+				for (int index = 0; index < genomeGenes.Length; index++) {
+					genomeGenes[index].gene = null;
+				}
+				return;
 			}
-			return;
-		}
 
-		for (int index = 0; index < genomeGenes.Length; index++) {
-			genomeGenes[index].gene = genotype.GetGeneAt(index);
+			for (int index = 0; index < genomeGenes.Length; index++) {
+				genomeGenes[index].gene = genotype.GetGeneAt(index);
+			}
+			isDirty = false;
 		}
 	}
 }

@@ -44,6 +44,8 @@ public class Creature : MonoBehaviour {
 	public Genotype genotype;
 	public Phenotype phenotype;
 
+	public bool isDirty = false;
+
 	public int cellsTotalCount {
 		get {
 			return genotype.geneCellCount;
@@ -92,42 +94,22 @@ public class Creature : MonoBehaviour {
 	public void GenerateJellyfish(Vector2 position, float heading) {
 		genotype.GenerateGenomeJellyfish();
 		GenerateGenotypeAndPhenotype(position, heading);
-
-		//hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
-		//hasGenotypeCollider = showType == PhenoGenoEnum.Genotype;
 	}
 
 	public void GenerateEmbryo(Vector3 position, float heading) {
 		genotype.GenomeEmpty();
 		GenerateGenotypeAndPhenotype(position, heading);
-
-		//hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
-		//hasGenotypeCollider = showType == PhenoGenoEnum.Genotype;
 	}
 
 	public void GenerateFreak(Vector3 position, float heading) {
 		genotype.GenomeEmpty();
 		genotype.GenomeScramble();
 		GenerateGenotypeAndPhenotype(position, heading);
-
-		//hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
-		//hasGenotypeCollider = showType == PhenoGenoEnum.Genotype;
 	}
 
 	public void GenerateMergling(List<Gene[]> genomes, Vector3 position, float heading) {
 		genotype.GenomeSet(GenotypeUtil.CombineGenomeFine(genomes));
 		GenerateGenotypeAndPhenotype(position, heading);
-
-		//hasPhenotypeCollider = false;
-		//hasGenotypeCollider = false;
-	}
-
-	public void GenerateCopy(Creature creature, PhenoGenoEnum showType) {
-		genotype.GenomeEmpty();
-		GenerateGenotypeAndPhenotype(creature.GetRootPosition(showType), creature.GetRootHeading(showType));
-
-		//hasPhenotypeCollider = false;
-		//hasGenotypeCollider = false;
 	}
 
 	private void GenerateGenotypeAndPhenotype(Vector2 position, float heading) {
@@ -302,47 +284,6 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public bool isDirty = false;
-
-	// if we update as creature copy is born we'll run into copy creture offset problems
-	private void Update() {
-		if (isDirty) {
-			bool isCreatureSelected = CreatureSelectionPanel.instance.IsSelected(this);
-			ShowCurrentGenoPhenoAndHideOther();
-			EnableCurrentGenoPhenoColliderAndDisableOther();
-
-			//Update to genome ==> genotype.dirtyGeneCellMap & phenotype.dirtyCellMap
-			//if (genotype.dirtyGeneCellMap)
-				//GenerateGeneCells()
-			//if (phenotype.dirtyCellMap)
-				//GenerateCells()
-
-			phenotype.GenerateCells(this);
-
-			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-				// Update selection
-				phenotype.ShowSelectedCreature(isCreatureSelected);
-
-				//Show selected or not
-				phenotype.ShowCellsSelected(false);
-				if (CreatureSelectionPanel.instance.soloSelected == this) {
-					phenotype.ShowCellSelected(CellPanel.instance.selectedCell, true);
-				}
-			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-				
-				// Update selection
-				genotype.ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(this));
-
-				//Show selected or not
-				genotype.ShowGeneCellsSelected(false);
-				if (CreatureSelectionPanel.instance.soloSelected == this) {
-					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
-				}
-			}
-			isDirty = false;
-		}
-	}
-
 	// Update according to type
 	public void BringCurrentGenoPhenoPositionAndRotationToOther() {
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
@@ -369,5 +310,43 @@ public class Creature : MonoBehaviour {
 	private void EnableCurrentGenoPhenoColliderAndDisableOther() {
 		phenotype.hasCollider = CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && !phenotype.isGrabbed;
 		genotype.hasCollider = CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype && !genotype.isGrabbed;
+	}
+
+	// if we update as creature copy is born we'll run into copy creture offset problems
+	private void Update() {
+		if (isDirty) {
+			if (genotype.differsFromGenome) {
+				genotype.GenerateGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
+			}
+
+			if (phenotype.differsFromGeneCells) {
+				phenotype.GenerateCells(this, genotype.rootCell.position, genotype.rootCell.heading);
+			}
+
+			ShowCurrentGenoPhenoAndHideOther();
+			EnableCurrentGenoPhenoColliderAndDisableOther();
+
+			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+				// Update selection
+				phenotype.ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(this));
+
+				//Show selected or not
+				phenotype.ShowCellsSelected(false);
+				if (CreatureSelectionPanel.instance.soloSelected == this) {
+					phenotype.ShowCellSelected(CellPanel.instance.selectedCell, true);
+				}
+			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+
+				// Update selection
+				genotype.ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(this));
+
+				//Show selected or not
+				genotype.ShowGeneCellsSelected(false);
+				if (CreatureSelectionPanel.instance.soloSelected == this) {
+					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
+				}
+			}
+			isDirty = false;
+		}
 	}
 }

@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 
 public class GenotypePanel : MonoSingleton<GenotypePanel> {
-	public GenePanel genePanel;
 	public Image blackWhiteImage;
 	public Image whiteBlackImage;
 
@@ -12,93 +11,82 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 	public FlipSideEnum viewedFlipSide { get; private set; }
 
-	private Genotype m_genotype;
-	public Genotype genotype {
+	public Genotype selectedGenotype {
 		get {
-			return m_genotype;
-		}
-		set {
-			m_genotype = value;
-			UpdateRepresentation(false);
+			return (CreatureSelectionPanel.instance.hasSoloSelected ? CreatureSelectionPanel.instance.soloSelected.genotype : null);
 		}
 	}
 
 	override public void Init() {
 		viewedFlipSide = FlipSideEnum.BlackWhite;
-		UpdateButtonImages();
-	}
-
-	private void Start() {
-		UpdateRepresentation(false);
-	}
-
-	private void UpdateButtonImages() {
-		blackWhiteImage.color = (viewedFlipSide == FlipSideEnum.BlackWhite) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-		whiteBlackImage.color = (viewedFlipSide == FlipSideEnum.WhiteBlack) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-	}
-
-	public void UpdateRepresentation(bool changeToGenomeMade) {
-		//Nothing to represent
-		if (genotype == null) {
-			genePanel.selectedGene = null;
-			GenomePanel.instance.genotype = null;
-			return;
-		}
-
-		genotype.differsFromGenome |= changeToGenomeMade;
-		genePanel.UpdateRepresentation(changeToGenomeMade);
-		GenomePanel.instance.genotype = genotype;
+		isDirty = true;
 	}
 
 	public void OnClickedClear() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.Clear();
 		}
-		genePanel.selectedGene = genotype.genes[0];
-		UpdateRepresentation(true);
+		GenePanel.instance.selectedGene = null;
+		GenePanel.instance.isDirty = true;
+		GenomePanel.instance.isDirty = true;
 	}
 
 	public void OnClickedMutateAbsolute() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.MutateAbsolute(GlobalSettings.instance.mutationStrength);
 		}
-		genePanel.selectedGene = genotype.genes[0];
-		UpdateRepresentation(true);
+		GenePanel.instance.selectedGene = null;
+		GenePanel.instance.isDirty = true;
+		GenomePanel.instance.isDirty = true;
 	}
 
 	public void OnClickedMutateCummulative() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.MutateCummulative(GlobalSettings.instance.mutationStrength);
 		}
-		genePanel.selectedGene = genotype.genes[0];
-		UpdateRepresentation(true);
+		GenePanel.instance.selectedGene = null;
+		GenePanel.instance.isDirty = true;
+		GenomePanel.instance.isDirty = true;
 	}
 
 	public void OnClickedScramble() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.Scramble();
 		}
-		genePanel.selectedGene = genotype.genes[0];
-		UpdateRepresentation(true);
+		GenePanel.instance.selectedGene = null;
+		GenePanel.instance.isDirty = true;
+		GenomePanel.instance.isDirty = true; ;
 	}
 
 	public void OnClickedRevert() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.RestoreState();
 		}
-		genePanel.selectedGene = genotype.genes[0];
-		UpdateRepresentation(true);
+		GenePanel.instance.selectedGene = null;
+		GenePanel.instance.isDirty = true;
+		GenomePanel.instance.isDirty = true;
 	}
 
 	public void OnClickedBlackWhite() {
 		viewedFlipSide = FlipSideEnum.BlackWhite;
-		UpdateButtonImages();
-		UpdateRepresentation(false);
+		isDirty = true;
+		GenePanel.instance.isDirty = true;
+		GenomePanel.instance.isDirty = true;
 	}
 
 	public void OnClickedWhiteBlack() {
 		viewedFlipSide = FlipSideEnum.WhiteBlack;
-		UpdateButtonImages();
-		UpdateRepresentation(false);
+		isDirty = true;
+		GenePanel.instance.isDirty = true;
+		GenomePanel.instance.isDirty = true;
+	}
+
+	public bool isDirty = true;
+	private void Update() {
+		if (isDirty) {
+			blackWhiteImage.color = (viewedFlipSide == FlipSideEnum.BlackWhite) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+			whiteBlackImage.color = (viewedFlipSide == FlipSideEnum.WhiteBlack) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+			isDirty = false;
+		}
 	}
 }
