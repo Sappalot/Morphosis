@@ -9,6 +9,12 @@ public class CellMap {
 	private List<Vector2i> illegalPositions = new List<Vector2i>();
 	public float cellRadius = 0.5f;
 
+	public int cellCount {
+		get {
+			return grid.Count;
+		}
+	}
+
 	public void Clear() {
 		grid.Clear();
 		illegalPositions.Clear();

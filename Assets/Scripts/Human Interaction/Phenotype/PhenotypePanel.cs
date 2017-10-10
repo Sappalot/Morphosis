@@ -6,15 +6,6 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public Text creatureEnergy;
 	public CellPanel cellPanel;
 
-	//TODO move selected cell to CellPanel
-	public Cell selectedCell {
-		get {
-			return cellPanel.cell;
-		}
-		set {
-			cellPanel.cell = value;
-		}
-	}
 
 	public void OnGrowClicked() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
@@ -25,26 +16,32 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public void OnShrinkClicked() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.TryShrink();
+			isDirty = true;
 		}
 	}
 
-	public void UpdateRepresentation() {
-		//Nothing to represent
-		if (CreatureSelectionPanel.instance.soloSelected == null) {
-			creatureAge.text = "Age:";
-			creatureCellCount.text = "Cells:";
-			creatureEnergy.text = "Energy:";
+	public bool isDirty = true;
+	private void Update() {
+		if (isDirty) {
+			//Nothing to represent
+			Creature solo = CreatureSelectionPanel.instance.soloSelected;
+			if (solo == null) {
+				creatureAge.text = "Age:";
+				creatureCellCount.text = "Cells: ";
+				creatureEnergy.text = "Energy:";
 
-			cellPanel.cell = null;
-			return;
-		}
+				cellPanel.selectedCell = null;
+				return;
+			}
 
-		creatureAge.text = "Age: 100 days";
-		creatureCellCount.text = "Cells: 10 (20)";
-		creatureEnergy.text = "Energy: 100%";
+			creatureAge.text = "Age: 100 days";
+			creatureCellCount.text = "Cells: " + solo.cellsCount + " (" + solo.cellsTotalCount + ")";
+			creatureEnergy.text = "Energy: 100%";
 
-		if (selectedCell == null) {
-			selectedCell = CreatureSelectionPanel.instance.soloSelected.phenotype.rootCell;
+			if (CellPanel.instance.selectedCell == null) {
+				CellPanel.instance.selectedCell = solo.phenotype.rootCell;
+			}
+			isDirty = false;
 		}
 	}
 }

@@ -17,9 +17,15 @@ public class Genotype : MonoBehaviour {
 	public CellMap geneCellMap = new CellMap();
 	public List<Cell> geneCellList = new List<Cell>();
 
-	public bool hasDirtyGenes = true; // Cell List and Cell Map needs to be updates
+	public bool differsFromGenome = true; // Cell List and Cell Map needs to be updates
 
 	public bool isGrabbed { get; private set; }
+
+	public int geneCellCount {
+		get {
+			return geneCellList.Count;
+		}
+	}
 
 	[HideInInspector]
 	public Cell rootCell {
@@ -33,7 +39,7 @@ public class Genotype : MonoBehaviour {
 			genes[index].Mutate(strength);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		hasDirtyGenes = true;
+		differsFromGenome = true;
 	}
 
 	public void GenomeScramble() {
@@ -46,7 +52,7 @@ public class Genotype : MonoBehaviour {
 			}
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		hasDirtyGenes = true;
+		differsFromGenome = true;
 	}
 
 	public void GenomeEmpty() {
@@ -56,7 +62,7 @@ public class Genotype : MonoBehaviour {
 		for (int index = 0; index < genomeLength; index++) {
 			genes[index].SetDefault(genes);
 		}
-		hasDirtyGenes = true;
+		differsFromGenome = true;
 	}
 
 	public void GenomeSet(Gene[] genome) {
@@ -64,7 +70,7 @@ public class Genotype : MonoBehaviour {
 			genes[index] = genome[index].GetClone();
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		hasDirtyGenes = true;
+		differsFromGenome = true;
 	}
 
 	public void SetReferenceGenesFromReferenceGeneIndices() {
@@ -93,12 +99,6 @@ public class Genotype : MonoBehaviour {
 				return true;
 		}
 		return false;
-	}
-
-	public int geneCellCount {
-		get {
-			return geneCellList.Count;
-		}
 	}
 
 	public void GenerateGenomeEdgeFailure() {
@@ -164,7 +164,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void GenerateGeneCells(Creature creature, Vector2 position, float heading) { // heading 90 ==> root is pointing north
-		if (hasDirtyGenes) {
+		if (differsFromGenome) {
 			const int maxSize = 6;
 			Clear();
 
@@ -219,7 +219,7 @@ public class Genotype : MonoBehaviour {
 			TurnTo(heading); //is at 90 allready
 			MoveTo(position);
 			UpdateGraphics(creature);
-			hasDirtyGenes = false;
+			differsFromGenome = false;
 		}
 	}
 

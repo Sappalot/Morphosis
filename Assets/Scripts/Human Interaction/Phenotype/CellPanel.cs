@@ -7,32 +7,39 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public EggPanel eggPanel;
 
-	private Cell m_cell;
-	public Cell cell {
+
+	public bool isDirty = true;
+	private Cell m_selectedCell;
+	public Cell selectedCell {
 		get {
-			return m_cell;
+			return m_selectedCell;
 		}
 		set {
-			m_cell = value;
-			UpdateRepresentation();
+			m_selectedCell = value;
+			isDirty = true;
 		}
 	}
 
-	public void UpdateRepresentation() {
-		eggPanel.gameObject.SetActive(false);
+	
+	private void Update() {
+		if (isDirty) {
+			eggPanel.gameObject.SetActive(false);
 
-		//Nothing to represent
-		if (cell == null) {
-			cellType.text = "Type:";
-			cellEnergy.text = "Energy:";
-			return;
+			//Nothing to represent
+			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
+				cellType.text = "Type:";
+				cellEnergy.text = "Energy:";
+
+				eggPanel.gameObject.SetActive(false);
+				return;
+			}
+
+			cellType.text = "Type: " + selectedCell.gene.type.ToString();
+			cellEnergy.text = "Energy: 100%";
+
+			if (selectedCell is EggCell) {
+				eggPanel.gameObject.SetActive(true);
+			}
 		}
-
-		cellType.text = "Type: " + cell.gene.type.ToString();
-		cellEnergy.text = "Energy: 100%";
-
-		if (cell is EggCell) {
-			eggPanel.gameObject.SetActive(true);
-		}  
 	}
 }

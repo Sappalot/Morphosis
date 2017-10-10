@@ -11,6 +11,10 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	//public int cellCount {
+	//	return cellMap.
+	//}
+
 	public Transform cellsTransform;
 
 	public int model = 0;
@@ -21,7 +25,7 @@ public class Phenotype : MonoBehaviour {
 	public MuscleCell muscleCellPrefab;
 	public VeinCell veinCellPrefab;
 
-	public bool differsFromGenotype = true;
+	public bool differsFromGeneCells = true;
 	public float timeOffset;
 
 	public GameObject cells;
@@ -36,9 +40,10 @@ public class Phenotype : MonoBehaviour {
 	public bool isGrabbed { get; private set; }
 	public bool hasDirtyPosition = false;
 
+	//Grown cells
 	public int cellCount {
 		get {
-			return cellList.Count;
+			return cellMap.cellCount;
 		}
 	}
 
@@ -97,19 +102,19 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public void GenerateCells(Creature creature) {
-		if (differsFromGenotype) {
+		if (differsFromGeneCells) {
 			Setup(creature, rootCell.transform.position, rootCell.heading);
 			TryGrowFully(creature);
-			differsFromGenotype = false;
+			differsFromGeneCells = false;
 		}
 	}
 
 	public void GenerateCells(Creature creature, Vector2 position, float heading) {
-		if (differsFromGenotype) {
+		if (differsFromGeneCells) {
 			Setup(creature, position, heading);
 
 			TryGrowFully(creature);
-			differsFromGenotype = false;
+			differsFromGeneCells = false;
 		}
 	}
 
@@ -178,6 +183,8 @@ public class Phenotype : MonoBehaviour {
 		ShowTriangles(false);
 
 		edges.GenerateWings(cellMap);
+
+		PhenotypePanel.instance.isDirty = true;
 	}
 
 	private int CardinaIndexToNeighbour(Cell from, Cell to) {
@@ -197,12 +204,17 @@ public class Phenotype : MonoBehaviour {
 			if (this.cellCount == 1) {
 				return;
 			}
+			if (CellPanel.instance.selectedCell == cellList[cellList.Count - 1]) {
+				CellPanel.instance.selectedCell = null;
+			}
 			DeleteCell(cellList[cellList.Count - 1]);
 			shrinkCellCount++;
 		}
 		ConnectCells(true, true);
 		edges.GenerateWings(cellMap);
 		UpdateSpringsFrequenze();
+
+		PhenotypePanel.instance.isDirty = true;
 	}
 
 	private bool IsCellBuiltForGene(Cell gene) {
@@ -233,9 +245,9 @@ public class Phenotype : MonoBehaviour {
 		cellMap.RemoveCellAtGridPosition(cell.mapPosition);
 		cellList.Remove(cell);
 		Destroy(cell.gameObject);
-		if (PhenotypePanel.instance.selectedCell == cell) {
-			PhenotypePanel.instance.selectedCell = null;
-			PhenotypePanel.instance.UpdateRepresentation();
+		if (CellPanel.instance.selectedCell == cell) {
+			CellPanel.instance.selectedCell = null;
+			//PhenotypePanel.instance.UpdateRepresentation();
 		}
 	}
 
@@ -447,7 +459,7 @@ public class Phenotype : MonoBehaviour {
 			Cell cell = cellList[index];
 			phenotypeData.cellDataList.Add(cell.UpdateData());
 		}
-		phenotypeData.differsFromGenotype = differsFromGenotype;
+		phenotypeData.differsFromGenotype = differsFromGeneCells;
 		//phenotypeData.rootCellPosition = rootCell.position;
 		return phenotypeData;
 	}
@@ -468,7 +480,7 @@ public class Phenotype : MonoBehaviour {
 		ShowCellsSelected(false);
 		ShowShadow(false);
 		ShowTriangles(true);
-		differsFromGenotype = phenotypeData.differsFromGenotype; //prevent regeneration on genotype -> Phenotype switch
+		differsFromGeneCells = phenotypeData.differsFromGenotype; //prevent regeneration on genotype -> Phenotype switch
 
 	}
 

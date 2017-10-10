@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public Life life;
 	public PhenotypePanel phenotypePanel;
-	public Camera camera;
-	public LineRenderer lineRenderer; 
+	public new Camera camera;
+	public LineRenderer lineRenderer;
 
 	public Text selectedCreatureText;
 
@@ -24,6 +24,24 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public bool hasSoloSelected {
 		get {
 			return selection.Count == 1;
+		}
+	}
+
+	public Cell selectedCell {
+		get {
+			return CellPanel.instance.selectedCell;
+		}
+		set {
+			CellPanel.instance.selectedCell = value;
+		}
+	}
+
+	public Gene selectedGene {
+		get {
+			return GenePanel.instance.selectedGene;
+		}
+		set {
+			GenePanel.instance.selectedGene = value;
 		}
 	}
 
@@ -49,6 +67,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		ClearSelection();
 
 		lineRenderer.enabled = false;
+
 	}
 
 	//UI done
@@ -57,11 +76,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		selection.Clear();
 
 		isDirty = true;
-		//TODO: make phenotype and genotype panels dirty
+		phenotypePanel.isDirty = true;
+		//TODO: make genotype panels dirty
 	}
 
 	public void SetCellAndGeneSelectionToRoot() {
-		PhenotypePanel.instance.selectedCell = null;
+		selectedCell = null;
 		GenePanel.instance.selectedGene = null;
 		isDirty = true;
 		//TODO: make phenotype and genotype panels dirty
@@ -72,15 +92,15 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		selection.Clear();
 		selection.Add(creature);
 
-		PhenotypePanel.instance.selectedCell =  cell;
+		selectedCell = cell;
 		GenePanel.instance.selectedGene = cell.gene;
 
 		StoreSelectedState();
 
 		creature.isDirty = true;
 		isDirty = true;
+		phenotypePanel.isDirty = true;
 		//TODO make genotype panel dirty
-		//TODO make phenotype panel dirty
 	}
 
 	public void Select(List<Creature> creatures) {
@@ -92,8 +112,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		life.MakeAllCreaturesDirty();
 		isDirty = true;
+		phenotypePanel.isDirty = true;
 		//TODO make genotype panel dirty
-		//TODO make phenotype panel dirty
 	}
 
 	public void AddToSelection(List<Creature> creatures) {
@@ -107,7 +127,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			return;
 		}
 
-		PhenotypePanel.instance.selectedCell = null;
+		selectedCell = null;
 		selection.Add(creature);
 
 		creature.StoreState();
@@ -115,7 +135,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		DirtyMarkSelected();
 		isDirty = true;
 		//TODO make genotype panel dirty
-		//TODO make phenotype panel dirty
+		phenotypePanel.isDirty = true;
 	}
 
 	public void RemoveFromSelection(List<Creature> creatures) {
@@ -130,13 +150,13 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 		DirtyMarkSelected();
 
-		PhenotypePanel.instance.selectedCell = null;
+		selectedCell = null;
 		selection.Remove(creature);
 		
 
 		isDirty = true;
 		//TODO make genotype panel dirty
-		//TODO make phenotype panel dirty
+		phenotypePanel.isDirty = true;
 	}
 
 	private void DirtyMarkSelected() {
@@ -367,19 +387,20 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public bool isDirty = true;
 
 	private void Update() {
-		if (isDirty) {
-			if (hasSoloSelected) {
-				if (PhenotypePanel.instance.selectedCell == null) {
-					PhenotypePanel.instance.selectedCell = soloSelected.phenotype.rootCell;
-				}
-				if (GenePanel.instance.selectedGene == null) {
-					GenePanel.instance.selectedGene = soloSelected.genotype.rootCell.gene;
-				}
-			} else {
-				PhenotypePanel.instance.selectedCell = null;
-				GenePanel.instance.selectedGene = null;
-			}
 
+		if (hasSoloSelected) {
+			if (selectedCell == null) {
+				selectedCell = soloSelected.phenotype.rootCell;
+			}
+			if (GenePanel.instance.selectedGene == null) {
+				GenePanel.instance.selectedGene = soloSelected.genotype.rootCell.gene;
+			}
+		} else {
+			selectedCell = null;
+			GenePanel.instance.selectedGene = null;
+		}
+
+		if (isDirty) {
 			if (selection.Count == 0) {
 				selectedCreatureText.text = "";
 			} else if (selection.Count == 1) {

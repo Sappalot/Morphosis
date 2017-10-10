@@ -44,6 +44,18 @@ public class Creature : MonoBehaviour {
 	public Genotype genotype;
 	public Phenotype phenotype;
 
+	public int cellsTotalCount {
+		get {
+			return genotype.geneCellCount;
+		}
+	}
+
+	public int cellsCount {
+		get {
+			return phenotype.cellCount;
+		}
+	}
+
 	public void GeneratePhenotypeCells() {
 		phenotype.GenerateCells(this);
 	}
@@ -119,10 +131,10 @@ public class Creature : MonoBehaviour {
 	}
 
 	private void GenerateGenotypeAndPhenotype(Vector2 position, float heading) {
-		genotype.hasDirtyGenes = true;
+		genotype.differsFromGenome = true;
 		genotype.GenerateGeneCells(this, position, heading); // Generating genotype here caused Unity freeze ;/
 
-		phenotype.differsFromGenotype = true;
+		phenotype.differsFromGeneCells = true;
 		phenotype.GenerateCells(this, position, heading);
 		isDirty = true;
 	}
@@ -131,7 +143,7 @@ public class Creature : MonoBehaviour {
 	public void Clear() {
 		genotype.GenomeEmpty();
 		genotype.GenerateGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
-		phenotype.differsFromGenotype = true;
+		phenotype.differsFromGeneCells = true;
 	}
 
 	public void MutateAbsolute(float strength) {
@@ -142,22 +154,24 @@ public class Creature : MonoBehaviour {
 	public void MutateCummulative(float strength) {
 		genotype.GenomeMutate(strength);
 		genotype.GenerateGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
-		phenotype.differsFromGenotype = true;
+		phenotype.differsFromGeneCells = true;
 	}
 
 	public void Scramble() {
 		genotype.GenomeScramble();
 		genotype.GenerateGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
-		phenotype.differsFromGenotype = true;
+		phenotype.differsFromGeneCells = true;
 	}
 
 	// Apply on Phenotype
 	public void TryGrow(int cellCount = 1) {
 		phenotype.TryGrow(this, cellCount);
+		isDirty = true;
 	}
 
 	public void TryShrink(int cellCount = 1) {
 		phenotype.TryShrink(cellCount);
+		isDirty = true;
 	}
 
 	// --
@@ -260,7 +274,7 @@ public class Creature : MonoBehaviour {
 		nickname = creatureData.nickname;
 
 		genotype.ApplyData(creatureData.genotypeData);
-		genotype.hasDirtyGenes = true;
+		genotype.differsFromGenome = true;
 		Vector2 position = creatureData.genotypeData.rootPosition;
 		float heading = creatureData.genotypeData.rootHeading;
 		genotype.GenerateGeneCells(this, position, heading); // Generating genotype here caused Unity freeze ;/
@@ -268,21 +282,7 @@ public class Creature : MonoBehaviour {
 		phenotype.ApplyData(creatureData.phenotypeData, this);
 	}
 
-	//--
-	public void ShowCellsAndGeneCellsSelected(bool on) {
-		phenotype.ShowCellsSelected(on);
-		genotype.ShowGeneCellsSelected(on);
-	}
-
-	public void ShowSelected(bool on, bool force = false) {
-		if (on != isShowCreatureSelected || force) {
-			phenotype.ShowSelectedCreature(on);
-			genotype.ShowCreatureSelected(on);
-			isShowCreatureSelected = on;
-		}
-	}
-
-	//-------------------------------
+	//----------------------
 
 	public bool hasPhenotypeCollider {
 		get {
@@ -326,7 +326,7 @@ public class Creature : MonoBehaviour {
 				//Show selected or not
 				phenotype.ShowCellsSelected(false);
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
-					phenotype.ShowCellSelected(PhenotypePanel.instance.selectedCell, true);
+					phenotype.ShowCellSelected(CellPanel.instance.selectedCell, true);
 				}
 			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 				
