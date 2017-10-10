@@ -30,15 +30,15 @@ public class RMBToolController : MouseDrag {
 				}
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.embryo) {
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-					World.instance.life.SpawnCreatureEmbryo(downPositionMouse, 90f, PhenoGenoEnum.Phenotype);
+					World.instance.life.SpawnCreatureEmbryo(downPositionMouse, 90f);
 				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-					World.instance.life.SpawnCreatureEmbryo(downPositionMouse, 90f, PhenoGenoEnum.Genotype);
+					World.instance.life.SpawnCreatureEmbryo(downPositionMouse, 90f);
 				}				
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.freak) {
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, PhenoGenoEnum.Phenotype);
+					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f);
 				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, PhenoGenoEnum.Genotype);
+					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f);
 				}
 			}
 

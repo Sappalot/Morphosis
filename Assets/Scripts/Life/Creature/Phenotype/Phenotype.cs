@@ -33,7 +33,7 @@ public class Phenotype : MonoBehaviour {
 	private float spawnHeading;
 	private CellMap cellMap = new CellMap();
 
-	private bool isGrabbed;
+	public bool isGrabbed { get; private set; }
 	public bool hasDirtyPosition = false;
 
 	public int cellCount {
@@ -492,7 +492,7 @@ public class Phenotype : MonoBehaviour {
 
 
 	//--------
-	public void SetCollider(bool on) {
+	private void SetCollider(bool on) {
 		foreach (Cell cell in cellList) {
 			cell.GetComponent<Collider2D>().enabled = on;
 		}

@@ -62,39 +62,38 @@ public class Life : MonoBehaviour {
 		return insideList;
 	}
 
-	public Creature SpawnCreatureEdgeFailure(Vector2 position, float heading, PhenoGenoEnum showType) {
+	public Creature SpawnCreatureEdgeFailure(Vector2 position, float heading) {
 		Creature creature = InstantiateCreature();
-		creature.GenerateEdgeFailure(position, 90f, showType);
+		creature.GenerateEdgeFailure(position, 90f);
 		return creature;
 	}
 
-	public Creature SpawnCreatureJellyfish(Vector2 position, float heading, PhenoGenoEnum showType) {
+	public Creature SpawnCreatureJellyfish(Vector2 position, float heading) {
 		Creature creature = InstantiateCreature();
-		creature.GenerateJellyfish(position, heading, showType);
+		creature.GenerateJellyfish(position, heading);
 		return creature;
 	}
 
-	public Creature SpawnCreatureEmbryo(Vector3 position, float heading, PhenoGenoEnum showType) {
+	public Creature SpawnCreatureEmbryo(Vector3 position, float heading) {
 		Creature creature = InstantiateCreature();
-		creature.GenerateEmbryo(position, heading, showType);
+		creature.GenerateEmbryo(position, heading);
 
-		creature.hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
 		return creature;
 	}
 
-	public Creature SpawnCreatureFreak(Vector3 position, float heading, PhenoGenoEnum showType) {
+	public Creature SpawnCreatureFreak(Vector3 position, float heading) {
 		Creature creature = InstantiateCreature();
-		creature.GenerateFreak(position, heading, showType);
+		creature.GenerateFreak(position, heading);
 
-		creature.hasPhenotypeCollider = showType == PhenoGenoEnum.Phenotype;
 		return creature;
 	}
 
-	public Creature SpawnCreatureMergling(List<Gene[]> genomes, Vector3 position, float heading, PhenoGenoEnum showType) {
+	public Creature SpawnCreatureMergling(List<Gene[]> genomes, Vector3 position, float heading) {
 		Creature creature = InstantiateCreature();
-		creature.GenerateMergling(genomes, position, heading, showType);
+		creature.GenerateMergling(genomes, position, heading);
 
 		creature.hasPhenotypeCollider = false;
+		creature.hasGenotypeCollider = false;
 		return creature;
 	}
 
@@ -105,6 +104,7 @@ public class Life : MonoBehaviour {
 		//creature.ShowType(showType);
 		creature.nickname += " (Copy)";
 		creature.hasPhenotypeCollider = false;
+		creature.hasGenotypeCollider = false;
 		return creature;
 	}
 

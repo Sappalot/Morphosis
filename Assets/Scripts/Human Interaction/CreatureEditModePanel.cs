@@ -6,6 +6,8 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	public Image genotypeImage;
 	public Image historyImage;
 
+	private bool isDirty = true;
+
 	private CreatureEditModeEnum m_mode;
 	public CreatureEditModeEnum mode {
 		get {
@@ -24,57 +26,25 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	}
 
 	public void OnClickedPhenotypeEditMode() {
-		//World.instance.ShowPhenotypes();
 		m_mode = CreatureEditModeEnum.Phenotype;
 		UpdateAllAccordingToEditMode();
 	}
 
 	public void OnClickedGenotypeEditMode() {
-		//World.instance.ShowGenotypes();
 		m_mode = CreatureEditModeEnum.Genotype;
 		UpdateAllAccordingToEditMode();
 	}
 
 	public void UpdateAllAccordingToEditMode() {
 		CreatureSelectionPanel.instance.SetCellAndGeneSelectionToRoot();
-
-		if (m_mode == CreatureEditModeEnum.Phenotype) {
-			foreach (Creature c in World.instance.life.creatures) {
-				c.hasPhenotypeCollider = true;
-				c.hasGenotypeCollider = false;
-				c.phenotype.MoveToGenotype(c);
-				c.isDirty = true;
-			}
-		} else if (m_mode == CreatureEditModeEnum.Genotype) {
-			foreach (Creature c in World.instance.life.creatures) {
-				c.hasPhenotypeCollider = false;
-				c.hasGenotypeCollider = true;
-				c.genotype.MoveToPhenotype(c);
-				c.isDirty = true;
-			}
+		foreach (Creature c in World.instance.life.creatures) {
+			c.BringCurrentGenoPhenoPositionAndRotationToOther();
+			c.isDirty = true;
 		}
 		isDirty = true;
 	}
 
-	//private void SelectDefaultCell() {
-	//	Creature creature = CreatureSelectionPanel.instance.soloSelected;
-	//	if (creature != null) {
-	//		PhenotypePanel.instance.selectedCell = creature.phenotype.rootCell;
-	//		PhenotypePanel.instance.UpdateRepresentation();
-	//		creature.ShowCellsAndGeneCellsSelected(false);
-	//		creature.ShowCellSelected(creature.phenotype.rootCell, true);
-	//	}
-	//}
-
-	//private void SelectDefaultGeneCell() {
-	//	Creature creature = CreatureSelectionPanel.instance.soloSelected;
-	//	if (creature != null) {
-	//		GenePanel.instance.selectedGene = creature.genotype.geneCellList[0].gene;
-	//		GenotypePanel.instance.genotype = creature.genotype;
-	//	}
-	//}
-
-	public bool isDirty = true;
+	
 	private void Update() {
 		if (isDirty) {
 			phenotypeImage.color = (mode == CreatureEditModeEnum.Phenotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;

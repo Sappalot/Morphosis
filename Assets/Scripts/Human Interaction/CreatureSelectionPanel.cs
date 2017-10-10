@@ -183,9 +183,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 	}
 
-
-
-
 	// Move
 	private List<Creature> moveCreatures = new List<Creature>();
 
@@ -210,10 +207,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-			Creature mergeling = World.instance.life.SpawnCreatureMergling(genomes, Vector2.zero, 90f, PhenoGenoEnum.Phenotype);
+			Creature mergeling = World.instance.life.SpawnCreatureMergling(genomes, Vector2.zero, 90f);
 			moveCreatures.Add(mergeling);
 		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-			Creature mergeling = World.instance.life.SpawnCreatureMergling(genomes, Vector2.zero, 90f, PhenoGenoEnum.Genotype);
+			Creature mergeling = World.instance.life.SpawnCreatureMergling(genomes, Vector2.zero, 90f);
 			moveCreatures.Add(mergeling);
 		}
 

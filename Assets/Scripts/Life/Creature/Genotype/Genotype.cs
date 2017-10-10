@@ -19,6 +19,8 @@ public class Genotype : MonoBehaviour {
 
 	public bool hasDirtyGenes = true; // Cell List and Cell Map needs to be updates
 
+	public bool isGrabbed { get; private set; }
+
 	[HideInInspector]
 	public Cell rootCell {
 		get {
@@ -364,6 +366,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void Grab() {
+		isGrabbed = true;
 		foreach (Cell cell in geneCellList) {
 			cell.GetComponent<Collider2D>().enabled = false;
 		}
@@ -371,6 +374,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void Release(Creature creature) {
+		isGrabbed = false;
 		foreach (Cell cell in geneCellList) {
 			cell.GetComponent<Collider2D>().enabled = true;
 		}
