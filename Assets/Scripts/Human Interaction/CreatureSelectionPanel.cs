@@ -389,9 +389,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	private void Update() {
 
 		if (hasSoloSelected) {
-			if (selectedCell == null) {
-				selectedCell = soloSelected.phenotype.rootCell;
-			}
+			//if (selectedCell == null) {
+			//	selectedCell = soloSelected.phenotype.rootCell;
+			//}
 			if (GenePanel.instance.selectedGene == null) {
 				GenePanel.instance.selectedGene = soloSelected.genotype.rootCell.gene;
 			}
