@@ -67,7 +67,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		ClearSelection();
 
 		lineRenderer.enabled = false;
-
 	}
 
 	//UI done
@@ -77,14 +76,13 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		isDirty = true;
 		phenotypePanel.isDirty = true;
-		//TODO: make genotype panels dirty
+		GenePanel.instance.selectedGene = null;
 	}
 
 	public void SetCellAndGeneSelectionToRoot() {
 		selectedCell = null;
 		GenePanel.instance.selectedGene = null;
 		isDirty = true;
-		//TODO: make phenotype and genotype panels dirty
 	}
 
 	public void Select(Creature creature, Cell cell = null) {
@@ -95,12 +93,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		selectedCell = cell;
 		GenePanel.instance.selectedGene = cell.gene;
 
-		StoreSelectedState();
-
 		creature.isDirty = true;
 		isDirty = true;
 		phenotypePanel.isDirty = true;
-		//TODO make genotype panel dirty
 	}
 
 	public void Select(List<Creature> creatures) {
@@ -108,12 +103,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		ClearSelection();
 		selection.AddRange(creatures);
-		StoreSelectedState();
 
 		life.MakeAllCreaturesDirty();
 		isDirty = true;
 		phenotypePanel.isDirty = true;
-		//TODO make genotype panel dirty
+
+		StoreAllSelectedsState();
 	}
 
 	public void AddToSelection(List<Creature> creatures) {
@@ -130,11 +125,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		selectedCell = null;
 		selection.Add(creature);
 
-		creature.StoreState();
-
 		DirtyMarkSelected();
 		isDirty = true;
-		//TODO make genotype panel dirty
 		phenotypePanel.isDirty = true;
 	}
 
@@ -155,7 +147,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		
 
 		isDirty = true;
-		//TODO make genotype panel dirty
 		phenotypePanel.isDirty = true;
 	}
 
@@ -165,7 +156,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 	}
 
-	private void StoreSelectedState() {
+	public void StoreAllSelectedsState() {
 		for (int index = 0; index < selection.Count; index++) {
 			selection[index].StoreState();
 		}
@@ -387,19 +378,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public bool isDirty = true;
 
 	private void Update() {
-
-		if (hasSoloSelected) {
-			//if (selectedCell == null) {
-			//	selectedCell = soloSelected.phenotype.rootCell;
-			//}
-			if (GenePanel.instance.selectedGene == null) {
-				GenePanel.instance.selectedGene = soloSelected.genotype.rootCell.gene;
-			}
-		} else {
-			selectedCell = null;
-			GenePanel.instance.selectedGene = null;
-		}
-
 		if (isDirty) {
 			if (selection.Count == 0) {
 				selectedCreatureText.text = "";

@@ -30,7 +30,10 @@ public class GenomeGene : MonoBehaviour {
 		//Debug.Log("Clicked " + index);
 		if (MouseAction.instance.actionState == MouseActionStateEnum.free) {
 			GenePanel.instance.selectedGene = gene;
-
+			GenomePanel.instance.isDirty = true;
+			if (CreatureSelectionPanel.instance.hasSoloSelected) {
+				CreatureSelectionPanel.instance.soloSelected.isDirty = true;
+			}
 		} else if (MouseAction.instance.actionState == MouseActionStateEnum.selectGene) {
 			GenePanel.instance.GiveAnswerGeneReference(gene);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;

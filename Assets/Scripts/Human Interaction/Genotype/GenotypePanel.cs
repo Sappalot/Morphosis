@@ -29,6 +29,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		GenePanel.instance.selectedGene = null;
 		GenePanel.instance.isDirty = true;
 		GenomePanel.instance.isDirty = true;
+
 	}
 
 	public void OnClickedMutateAbsolute() {

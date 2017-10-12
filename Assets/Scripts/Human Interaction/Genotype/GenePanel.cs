@@ -67,6 +67,9 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		if (trueChange && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			GenotypePanel.instance.isDirty = true;
 			GenomePanel.instance.isDirty = true;
+			if (CreatureSelectionPanel.instance.hasSoloSelected) {
+				CreatureSelectionPanel.instance.soloSelected.genotype.differsFromGenome = true;
+			}
 			isDirty = true;
 		}
 	}
@@ -95,10 +98,6 @@ public class GenePanel : MonoSingleton<GenePanel> {
 				cellTypeDropdown.gameObject.SetActive(false);
 				return;
 			}
-
-			//TODO. remove. Dont set stuff in update
-			if (GenomePanel.instance.genotype != null)
-				GenomePanel.instance.genotype.differsFromGenome = true;
 
 			circles.SetActive(true);
 
@@ -131,12 +130,6 @@ public class GenePanel : MonoSingleton<GenePanel> {
 				cellTypeDropdown.value = 3;
 			} else if (selectedGene.type == CellTypeEnum.Vein) {
 				cellTypeDropdown.value = 4;
-			}
-
-			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-				CreatureSelectionPanel.instance.soloSelected.genotype.differsFromGenome = true;
-				CreatureSelectionPanel.instance.soloSelected.phenotype.differsFromGeneCells = true;
-				CreatureSelectionPanel.instance.soloSelected.isDirty = true;
 			}
 
 			isDirty = false;

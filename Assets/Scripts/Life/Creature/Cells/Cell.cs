@@ -469,8 +469,12 @@ public abstract class Cell : MonoBehaviour {
 					CreatureSelectionPanel.instance.RemoveFromSelection(creature);
 				} else {
 					CreatureSelectionPanel.instance.AddToSelection(creature);
+					creature.StoreState();
 				}
 			} else {
+				if (CreatureSelectionPanel.instance.soloSelected != creature) {
+					creature.StoreState();
+				}
 				CreatureSelectionPanel.instance.Select(creature, this);
 			}
 		}

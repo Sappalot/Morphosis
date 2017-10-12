@@ -102,6 +102,7 @@ public class CreatureSelectionController : MouseDrag {
 
 			if (selectingMode == SelectingMode.fresh) {
 				CreatureSelectionPanel.instance.Select(inside);
+
 			} else if (selectingMode == SelectingMode.add) {
 				List<Creature> sumList = new List<Creature>();
 				sumList.AddRange(alreadySelected);
@@ -109,6 +110,7 @@ public class CreatureSelectionController : MouseDrag {
 					Creature creature = inside[index];
 					if (!sumList.Contains(creature)) {
 						sumList.Add(creature);
+
 					}
 				}
 				CreatureSelectionPanel.instance.Select(sumList);
@@ -122,6 +124,7 @@ public class CreatureSelectionController : MouseDrag {
 					}
 				}
 				CreatureSelectionPanel.instance.Select(subList);
+
 			}
 		}
 	}
@@ -130,9 +133,7 @@ public class CreatureSelectionController : MouseDrag {
 		// implement this for end of dragging
 		if (mouseButton == 0) {
 			selectingMode = SelectingMode.idle;
-
 			rectangle.gameObject.SetActive(false);
 		}
 	}
-
 }

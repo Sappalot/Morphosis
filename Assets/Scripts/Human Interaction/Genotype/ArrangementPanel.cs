@@ -67,110 +67,84 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	public void OnClickEnabledToggle(bool value) {
-		bool trueChange = arrangement.isEnabled != value;
+		bool wasChanged = arrangement.isEnabled != value; //To prevent dirtymarking when just setting startup value
 		arrangement.isEnabled = value;
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		if (wasChanged) {
+			MakeAllGenomeStuffDirty();
+		}
 	}
 
 	public void OnClickedCenterCircle() {
 		arrangement.CycleArrangementType();
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnClickIncreaseGap() {
 		arrangement.IncreaseGap();
-		//isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnClickDecreseGap() {
 		arrangement.DecreseGap();
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnClickedIncreasRefCount() {
 		arrangement.IncreasRefCount();
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnClickedDecreasseRefCount() {
 		arrangement.DecreaseRefCount();
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnClickedAngleCounterClowkwise() {
 		arrangement.TurnArrowCounterClowkwise();
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnClickedAngleClowkwise() {
 		arrangement.TurnArrowClowkwise();
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnClickedFlipSame() {
 		arrangement.flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same;
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnClickedFlipOpposite() {
 		arrangement.flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Opposite;
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnClickedFlipBlackToArrow() {
 		arrangement.flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow;
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnClickedFlipWhiteToArrow() {
 		arrangement.flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnTogglePairs(bool value) {
-		bool trueChange = arrangement.isFlipPairsEnabled != value;
+		bool wasChanged = arrangement.isFlipPairsEnabled != value; //To prevent dirtymarking when just setting startup value
 		arrangement.isFlipPairsEnabled = value;
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		if (wasChanged) {
+			MakeAllGenomeStuffDirty();
+		}
 	}
 
 	public void OnClickedBuildSideBlack() {
 		arrangement.referenceSide = ArrangementReferenceSideEnum.Black;
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnClickedBuildSideWhite() {
 		arrangement.referenceSide = ArrangementReferenceSideEnum.White;
-		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		MakeAllGenomeStuffDirty();
 	}
 
 	public void OnClickedPerifierCircle() {
@@ -198,8 +172,16 @@ public class ArrangementPanel : MonoBehaviour {
 
 	public void SetGeneReference(Gene gene) {
 		arrangement.referenceGene = gene;
-		isDirty = true;
+		MakeAllGenomeStuffDirty();
+	}
+
+	private void MakeAllGenomeStuffDirty() {
 		GenePanel.instance.isDirty = true;
+		GenomePanel.instance.isDirty = true;
+		if (CreatureSelectionPanel.instance.hasSoloSelected) {
+			CreatureSelectionPanel.instance.soloSelected.genotype.differsFromGenome = true;
+		}
+		isDirty = true;
 	}
 
 	private void UpdateFlipButtonColors() {
@@ -315,12 +297,10 @@ public class ArrangementPanel : MonoBehaviour {
 
 			//Perifier
 			for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
-
-				//referenceGraphics[cardinalIndex].SetGeneReference(arrangement.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide), genePanel.testCreature.genotype.genome);
 				referenceGraphics[cardinalIndex].reference = arrangement.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
 			}
 
-			isDirty = true;
+			isDirty = false;
 		}
 	}
 }

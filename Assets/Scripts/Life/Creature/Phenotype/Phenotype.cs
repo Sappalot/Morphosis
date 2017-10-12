@@ -112,7 +112,6 @@ public class Phenotype : MonoBehaviour {
 	public void GenerateCells(Creature creature, Vector2 position, float heading) {
 		if (differsFromGeneCells) {
 			Setup(creature, position, heading);
-
 			TryGrowFully(creature);
 			differsFromGeneCells = false;
 		}
@@ -450,7 +449,6 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	//data
-
 	private PhenotypeData phenotypeData = new PhenotypeData();
 	public PhenotypeData UpdateData() {
 		phenotypeData.timeOffset = timeOffset;
@@ -460,7 +458,6 @@ public class Phenotype : MonoBehaviour {
 			phenotypeData.cellDataList.Add(cell.UpdateData());
 		}
 		phenotypeData.differsFromGenotype = differsFromGeneCells;
-		//phenotypeData.rootCellPosition = rootCell.position;
 		return phenotypeData;
 	}
 
@@ -481,7 +478,6 @@ public class Phenotype : MonoBehaviour {
 		ShowShadow(false);
 		ShowTriangles(true);
 		differsFromGeneCells = phenotypeData.differsFromGenotype; //prevent regeneration on genotype -> Phenotype switch
-
 	}
 
 	//TODO: Remove

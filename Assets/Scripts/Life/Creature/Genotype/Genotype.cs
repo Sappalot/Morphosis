@@ -215,11 +215,14 @@ public class Genotype : MonoBehaviour {
 					throw new System.Exception("Creature generation going on for too long");
 				}
 			}
+
 			ShowGeneCellsSelected(false);
 			TurnTo(heading); //is at 90 allready
 			MoveTo(position);
 			UpdateGraphics(creature);
 			differsFromGenome = false;
+
+			creature.phenotype.differsFromGeneCells = true;
 		}
 	}
 
@@ -412,8 +415,6 @@ public class Genotype : MonoBehaviour {
 			genes[index].ApplyData(genotypeData.geneData[index]);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		//genotypeData.rootPosition is used from creature
-		//genotypeData.rootHeading is used from creature
 	}
 
 	//------

@@ -3,7 +3,6 @@ using UnityEngine;
 
 // The container of genotype(genes) and phenotype(body)
 // Holds information that does not fit into genes or body 
-
 public class Creature : MonoBehaviour {
 	public string id;
 	public string nickname;
@@ -86,11 +85,6 @@ public class Creature : MonoBehaviour {
 		return genotype.IsInside(area);
 	}
 
-	public void GenerateEdgeFailure(Vector3 position, float heading) {
-		genotype.GenerateGenomeEdgeFailure();
-		GenerateGenotypeAndPhenotype(position, heading);
-	}
-
 	public void GenerateJellyfish(Vector2 position, float heading) {
 		genotype.GenerateGenomeJellyfish();
 		GenerateGenotypeAndPhenotype(position, heading);
@@ -113,10 +107,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	private void GenerateGenotypeAndPhenotype(Vector2 position, float heading) {
-		genotype.differsFromGenome = true;
 		genotype.GenerateGeneCells(this, position, heading); // Generating genotype here caused Unity freeze ;/
-
-		phenotype.differsFromGeneCells = true;
 		phenotype.GenerateCells(this, position, heading);
 		isDirty = true;
 	}
@@ -125,7 +116,6 @@ public class Creature : MonoBehaviour {
 	public void Clear() {
 		genotype.GenomeEmpty();
 		genotype.GenerateGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
-		phenotype.differsFromGeneCells = true;
 	}
 
 	public void MutateAbsolute(float strength) {
@@ -136,13 +126,11 @@ public class Creature : MonoBehaviour {
 	public void MutateCummulative(float strength) {
 		genotype.GenomeMutate(strength);
 		genotype.GenerateGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
-		phenotype.differsFromGeneCells = true;
 	}
 
 	public void Scramble() {
 		genotype.GenomeScramble();
 		genotype.GenerateGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
-		phenotype.differsFromGeneCells = true;
 	}
 
 	// Apply on Phenotype
@@ -227,8 +215,8 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void RestoreState() {
-		ApplyData(creatureData);
-		ShowCurrentGenoPhenoAndHideOther();
+		genotype.ApplyData(creatureData.genotypeData);
+		genotype.differsFromGenome = true;
 		isDirty = true;
 	}
 
@@ -314,15 +302,10 @@ public class Creature : MonoBehaviour {
 
 	// if we update as creature copy is born we'll run into copy creture offset problems
 	private void Update() {
+		genotype.GenerateGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
+		phenotype.GenerateCells(this, genotype.rootCell.position, genotype.rootCell.heading);
+
 		if (isDirty) {
-			if (genotype.differsFromGenome) {
-				genotype.GenerateGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
-			}
-
-			if (phenotype.differsFromGeneCells) {
-				phenotype.GenerateCells(this, genotype.rootCell.position, genotype.rootCell.heading);
-			}
-
 			ShowCurrentGenoPhenoAndHideOther();
 			EnableCurrentGenoPhenoColliderAndDisableOther();
 
