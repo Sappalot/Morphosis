@@ -47,6 +47,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	
 	private void Update() {
 		if (isDirty) {
+			Debug.Log("Update");
 			phenotypeImage.color = (mode == CreatureEditModeEnum.Phenotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 			genotypeImage.color = (mode == CreatureEditModeEnum.Genotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 			historyImage.color = (mode == CreatureEditModeEnum.History) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;

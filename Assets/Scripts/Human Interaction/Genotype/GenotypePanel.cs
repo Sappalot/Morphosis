@@ -85,6 +85,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 	public bool isDirty = true;
 	private void Update() {
 		if (isDirty) {
+			Debug.Log("Update");
 			blackWhiteImage.color = (viewedFlipSide == FlipSideEnum.BlackWhite) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 			whiteBlackImage.color = (viewedFlipSide == FlipSideEnum.WhiteBlack) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 			isDirty = false;

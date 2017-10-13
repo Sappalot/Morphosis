@@ -35,13 +35,6 @@ public class Life : MonoBehaviour {
 		creatureList.Clear();
 	}
 
-	public void GeneratePhenotypeCells() {
-		for (int index = 0; index < creatureList.Count; index++) {
-			Creature creature = creatureList[index];
-			creature.GeneratePhenotypeCells();
-		}
-	}
-
 	public List<Creature> GetPhenotypesInside(Rect area) {
 		List<Creature> insideList = new List<Creature>();
 		foreach (Creature c in creatureList) {

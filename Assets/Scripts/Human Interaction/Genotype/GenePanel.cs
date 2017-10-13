@@ -85,6 +85,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
 	private void Update() {
 		if (isDirty) {
+			Debug.Log("Update");
 			//Nothing to represent
 			if (selectedGene == null) {
 				for (int index = 0; index < arrangementPanels.Length; index++) {
@@ -96,6 +97,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 				circles.SetActive(false);
 
 				cellTypeDropdown.gameObject.SetActive(false);
+				isDirty = false;
 				return;
 			}
 

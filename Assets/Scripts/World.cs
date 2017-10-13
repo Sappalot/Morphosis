@@ -77,7 +77,7 @@ public class World : MonoSingleton<World> {
 
 	private string path = "F:/Morfosis/";
 	public void Save() {
-		life.GeneratePhenotypeCells(); // In case we are still in Genotype view, Phenotypes are not updated
+		//life.GeneratePhenotypeCells(); // In case we are still in Genotype view, Phenotypes are not updated
 		UpdateData();
 
 		string worldToSave = Serializer.Serialize(worldData, new UnityJsonSerializer());

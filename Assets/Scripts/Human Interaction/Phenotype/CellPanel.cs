@@ -8,7 +8,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public EggPanel eggPanel;
 
 
-	public bool isDirty = true;
+	private bool isDirty = true;
 	private Cell m_selectedCell;
 	public Cell selectedCell {
 		get {
@@ -23,6 +23,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	
 	private void Update() {
 		if (isDirty) {
+			Debug.Log("Update");
 			eggPanel.gameObject.SetActive(false);
 
 			//Nothing to represent
@@ -31,6 +32,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				cellEnergy.text = "Energy:";
 
 				eggPanel.gameObject.SetActive(false);
+				isDirty = false;
 				return;
 			}
 
@@ -40,6 +42,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			if (selectedCell is EggCell) {
 				eggPanel.gameObject.SetActive(true);
 			}
+
+			isDirty = false;
 		}
 	}
 }

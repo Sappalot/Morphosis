@@ -1,4 +1,5 @@
-﻿using UnityEngine.UI;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public Text creatureAge;
@@ -16,13 +17,18 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public void OnShrinkClicked() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.TryShrink();
-			isDirty = true;
+			DirtyMark();
 		}
 	}
 
-	public bool isDirty = true;
+	public void DirtyMark() {
+		isDirty = true;
+	}
+
+	private bool isDirty = true;
 	private void Update() {
 		if (isDirty) {
+			Debug.Log("Update");
 			//Nothing to represent
 			Creature solo = CreatureSelectionPanel.instance.soloSelected;
 			if (solo == null) {
@@ -30,7 +36,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 				creatureCellCount.text = "Cells: ";
 				creatureEnergy.text = "Energy:";
 
-				cellPanel.selectedCell = null;
+				isDirty = false;
 				return;
 			}
 
@@ -38,9 +44,6 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			creatureCellCount.text = "Cells: " + solo.cellsCount + " (" + solo.cellsTotalCount + ")";
 			creatureEnergy.text = "Energy: 100%";
 
-			if (CellPanel.instance.selectedCell == null) {
-				CellPanel.instance.selectedCell = solo.phenotype.rootCell;
-			}
 			isDirty = false;
 		}
 	}

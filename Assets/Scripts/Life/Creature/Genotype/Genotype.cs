@@ -163,7 +163,7 @@ public class Genotype : MonoBehaviour {
 		genes[2].type = CellTypeEnum.Muscle;
 	}
 
-	public void GenerateGeneCells(Creature creature, Vector2 position, float heading) { // heading 90 ==> root is pointing north
+	public void UpdateGeneCellsFromGenome(Creature creature, Vector2 position, float heading) { // heading 90 ==> root is pointing north
 		if (differsFromGenome) {
 			const int maxSize = 6;
 			Clear();
@@ -415,6 +415,7 @@ public class Genotype : MonoBehaviour {
 			genes[index].ApplyData(genotypeData.geneData[index]);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
+		differsFromGenome = true;
 	}
 
 	//------

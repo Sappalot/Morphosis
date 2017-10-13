@@ -46,7 +46,7 @@ public class ArrangementPanel : MonoBehaviour {
 		}
 		set {
 			m_arrangement = value;
-			isDirty = true;
+			MakeDirty();
 		}
 	}
 
@@ -154,14 +154,14 @@ public class ArrangementPanel : MonoBehaviour {
 	public void OnPointerEnterArea() {
 		if (isValid) {
 			isMouseHoverng = true;
-			isDirty = true;
+			MakeDirty();
 		}
 	}
 
 	public void OnPointerExitArea() {
 		if (isValid) {
 			isMouseHoverng = false;
-			isDirty = true;
+			MakeDirty();
 		}
 	}
 
@@ -181,7 +181,7 @@ public class ArrangementPanel : MonoBehaviour {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.differsFromGenome = true;
 		}
-		isDirty = true;
+		MakeDirty();
 	}
 
 	private void UpdateFlipButtonColors() {
@@ -206,9 +206,14 @@ public class ArrangementPanel : MonoBehaviour {
 		enableToggle.GetComponent<Toggle>().isOn = isEnabled;
 	}
 
-	public bool isDirty = true;
+	private bool isDirty = true;
+	public void MakeDirty() {
+		isDirty = true;
+	}
+
 	private void Update() {
 		if (isDirty) {
+			Debug.Log("Update");
 			FlipSideEnum viewedFlipSide = GenotypePanel.instance.viewedFlipSide;
 
 			//Nothing to represent
@@ -222,6 +227,8 @@ public class ArrangementPanel : MonoBehaviour {
 				circles.SetActive(false);
 				arrowTransform.gameObject.SetActive(false);
 				enableToggle.SetActive(false);
+
+				isDirty = false;
 				return;
 			}
 			grayOut.gameObject.SetActive(true);

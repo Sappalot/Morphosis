@@ -6,7 +6,6 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
 
 	private GenomeGene[] genomeGenes = new GenomeGene[Genotype.genomeLength];
 
-	private Genotype m_genotype;
 	public Genotype genotype {
 		get {
 			return GenotypePanel.instance.selectedGenotype;
@@ -36,10 +35,12 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
 	public bool isDirty = true;
 	private void Update() {
 		if (isDirty) {
+			Debug.Log("Update");
 			if (genotype == null) {
 				for (int index = 0; index < genomeGenes.Length; index++) {
 					genomeGenes[index].gene = null;
 				}
+				isDirty = false;
 				return;
 			}
 

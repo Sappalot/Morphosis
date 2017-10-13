@@ -101,15 +101,7 @@ public class Phenotype : MonoBehaviour {
 		ListUtils.Shuffle(cellList);
 	}
 
-	public void GenerateCells(Creature creature) {
-		if (differsFromGeneCells) {
-			Setup(creature, rootCell.transform.position, rootCell.heading);
-			TryGrowFully(creature);
-			differsFromGeneCells = false;
-		}
-	}
-
-	public void GenerateCells(Creature creature, Vector2 position, float heading) {
+	public void UpdateCellsFromGeneCells(Creature creature, Vector2 position, float heading) {
 		if (differsFromGeneCells) {
 			Setup(creature, position, heading);
 			TryGrowFully(creature);
@@ -183,7 +175,7 @@ public class Phenotype : MonoBehaviour {
 
 		edges.GenerateWings(cellMap);
 
-		PhenotypePanel.instance.isDirty = true;
+		PhenotypePanel.instance.DirtyMark();
 	}
 
 	private int CardinaIndexToNeighbour(Cell from, Cell to) {
@@ -213,7 +205,7 @@ public class Phenotype : MonoBehaviour {
 		edges.GenerateWings(cellMap);
 		UpdateSpringsFrequenze();
 
-		PhenotypePanel.instance.isDirty = true;
+		PhenotypePanel.instance.DirtyMark();
 	}
 
 	private bool IsCellBuiltForGene(Cell gene) {
@@ -477,7 +469,7 @@ public class Phenotype : MonoBehaviour {
 		ShowCellsSelected(false);
 		ShowShadow(false);
 		ShowTriangles(true);
-		differsFromGeneCells = phenotypeData.differsFromGenotype; //prevent regeneration on genotype -> Phenotype switch
+		differsFromGeneCells = phenotypeData.differsFromGenotype;
 	}
 
 	//TODO: Remove

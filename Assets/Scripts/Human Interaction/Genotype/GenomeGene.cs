@@ -43,14 +43,15 @@ public class GenomeGene : MonoBehaviour {
 	public bool isDirty = true;
 	private void Update() {
 		if (isDirty) {
+			Debug.Log("Update");
 			//Nothing to represent
 			if (GenomePanel.instance.genotype == null || gene == null) {
 				//text.text = "-";
 				circles.SetActive(false);
+
+				isDirty = false;
 				return;
 			}
-
-			//text.text = gene.index.ToString() + gene.type;
 
 			circles.SetActive(true);
 
@@ -71,6 +72,8 @@ public class GenomeGene : MonoBehaviour {
 			}
 
 			grayOut.enabled = !GenomePanel.instance.genotype.IsGeneReferencedTo(gene);
+
+			isDirty = false;
 		}
 	}
 }
