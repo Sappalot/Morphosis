@@ -78,6 +78,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		phenotypePanel.DirtyMark();
 		GenomePanel.instance.isDirty = true;
 		GenePanel.instance.selectedGene = null;
+
+		SetCellAndGeneSelectionToRoot();
 	}
 
 	public void SetCellAndGeneSelectionToRoot() {

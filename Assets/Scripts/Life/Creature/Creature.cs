@@ -57,10 +57,6 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	//public void GeneratePhenotypeCells() {
-	//	phenotype.GenerateCells(this);
-	//}
-
 	public Vector2 GetRootPosition(PhenoGenoEnum type) {
 		if (type == PhenoGenoEnum.Phenotype) {
 			return phenotype.rootCell.position;
@@ -107,7 +103,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	private void GenerateGenotypeAndPhenotype(Vector2 position, float heading) {
-		genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
+		phenotype.differsFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
 		phenotype.UpdateCellsFromGeneCells(this, position, heading);
 		isDirty = true;
 	}
@@ -115,7 +111,7 @@ public class Creature : MonoBehaviour {
 	// Apply on genotype ==> Phenotype
 	public void Clear() {
 		genotype.GenomeEmpty();
-		genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
+		phenotype.differsFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
 	}
 
 	public void MutateAbsolute(float strength) {
@@ -125,12 +121,12 @@ public class Creature : MonoBehaviour {
 
 	public void MutateCummulative(float strength) {
 		genotype.GenomeMutate(strength);
-		genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
+		phenotype.differsFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
 	}
 
 	public void Scramble() {
 		genotype.GenomeScramble();
-		genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
+		phenotype.differsFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
 	}
 
 	// Apply on Phenotype
@@ -142,6 +138,10 @@ public class Creature : MonoBehaviour {
 	public void TryShrink(int cellCount = 1) {
 		phenotype.TryShrink(cellCount);
 		isDirty = true;
+	}
+
+	public void DeleteCell() {
+
 	}
 
 	// --
@@ -300,8 +300,11 @@ public class Creature : MonoBehaviour {
 
 	// if we update as creature copy is born we'll run into copy creture offset problems
 	private void Update() {
-		genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
-		phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
+		bool geneCelleWasUpdated = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
+		phenotype.differsFromGeneCells |= geneCelleWasUpdated;
+		bool cellsWasUpdatedFromGeneCells = phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
+
+		isDirty = isDirty || geneCelleWasUpdated || cellsWasUpdatedFromGeneCells;
 
 		if (isDirty) {
 			ShowCurrentGenoPhenoAndHideOther();

@@ -11,10 +11,6 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	//public int cellCount {
-	//	return cellMap.
-	//}
-
 	public Transform cellsTransform;
 
 	public int model = 0;
@@ -101,12 +97,14 @@ public class Phenotype : MonoBehaviour {
 		ListUtils.Shuffle(cellList);
 	}
 
-	public void UpdateCellsFromGeneCells(Creature creature, Vector2 position, float heading) {
+	public bool UpdateCellsFromGeneCells(Creature creature, Vector2 position, float heading) {
 		if (differsFromGeneCells) {
 			Setup(creature, position, heading);
 			TryGrowFully(creature);
 			differsFromGeneCells = false;
+			return true;
 		}
+		return false;
 	}
 
 	//SpawnPosition is the position where the center of the root cell will appear in word space
@@ -208,6 +206,14 @@ public class Phenotype : MonoBehaviour {
 		PhenotypePanel.instance.DirtyMark();
 	}
 
+	public void DeleteCell(Vector2i cellPosition) {
+
+	}
+
+	private void IsConnected() {
+
+	}
+
 	private bool IsCellBuiltForGene(Cell gene) {
 		return cellMap.HasCell(gene.mapPosition);
 	}
@@ -232,13 +238,14 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
+	//public void DeleteCell
+
 	private void DeleteCell(Cell cell) {
 		cellMap.RemoveCellAtGridPosition(cell.mapPosition);
 		cellList.Remove(cell);
 		Destroy(cell.gameObject);
 		if (CellPanel.instance.selectedCell == cell) {
 			CellPanel.instance.selectedCell = null;
-			//PhenotypePanel.instance.UpdateRepresentation();
 		}
 	}
 
@@ -469,7 +476,7 @@ public class Phenotype : MonoBehaviour {
 		ShowCellsSelected(false);
 		ShowShadow(false);
 		ShowTriangles(true);
-		differsFromGeneCells = phenotypeData.differsFromGenotype;
+		differsFromGeneCells = false;
 	}
 
 	//TODO: Remove

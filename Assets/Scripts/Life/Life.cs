@@ -27,12 +27,19 @@ public class Life : MonoBehaviour {
 		}
 	}
 
-	public void KillAll() {
+	public void DeleteAll() {
 		foreach (Creature creature in creatureList) {
 			Destroy(creature.gameObject);
 		}
 		creatureDictionary.Clear();
 		creatureList.Clear();
+	}
+
+	public void DeleteCreature(Creature creature) {
+		Destroy(creature.gameObject);
+
+		creatureDictionary.Remove(creature.id);
+		creatureList.Remove(creature);
 	}
 
 	public List<Creature> GetPhenotypesInside(Rect area) {
@@ -113,13 +120,6 @@ public class Life : MonoBehaviour {
 		return creature;
 	}
 
-	public void DeleteCreature(Creature creature) {
-		Destroy(creature.gameObject);
-
-		creatureDictionary.Remove(creature.id);
-		creatureList.Remove(creature);
-	}
-
 	//data
 
 	private LifeData lifeData = new LifeData();
@@ -142,7 +142,7 @@ public class Life : MonoBehaviour {
 	public void ApplyData(LifeData lifeData) {
 		idGenerator.number = lifeData.lastId;
         
-		KillAll();
+		DeleteAll();
 		for (int index = 0; index < lifeData.creatureList.Count; index++) {
 			CreatureData creatureData = lifeData.creatureList[index];
 			Creature creature = InstantiateCreature(creatureData.id);
