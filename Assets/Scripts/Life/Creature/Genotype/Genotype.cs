@@ -220,13 +220,10 @@ public class Genotype : MonoBehaviour {
 				}
 			}
 
-			ShowGeneCellsSelected(false);
 			TurnTo(heading); //is at 90 allready
 			MoveTo(position);
-			UpdateGraphics(creature);
 			geneCellsDiffersFromGenome = false;
-
-			//creature.phenotype.differsFromGeneCells = true;
+			creature.MakeDirty();
 			return true;
 		}
 		return false;
@@ -279,12 +276,6 @@ public class Genotype : MonoBehaviour {
 	public void MoveToPhenotype(Creature creature) {
 		MoveTo(creature.phenotype.rootCell.position);
 		TurnTo(creature.phenotype.rootCell.heading);
-		UpdateGraphics(creature);
-	}
-
-	private void UpdateGraphics(Creature creature) {
-		ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(creature));
-		UpdateFlipSides();
 	}
 
 	//Make root cell point in this direction while the rest of the cells tags along

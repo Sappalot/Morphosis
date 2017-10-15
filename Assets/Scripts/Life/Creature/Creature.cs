@@ -89,7 +89,7 @@ public class Creature : MonoBehaviour {
 		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading);
 		phenotype.InitiateEmbryo(this, position, heading);
 		isDirty = true;
-		Update();
+		Update(); //To avoid occational flicker (shows genotype shortly)
 	}
 
 	public void GenerateSimple(Vector3 position, float heading) {
@@ -308,6 +308,8 @@ public class Creature : MonoBehaviour {
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
 					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
 				}
+
+				genotype.UpdateFlipSides();
 			}
 			isDirty = false;
 		}

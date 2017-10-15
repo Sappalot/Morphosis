@@ -272,10 +272,6 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	//public void DeleteCell
-
-
-
 	private Cell SpawnCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindCardinalIndex, FlipSideEnum flipSide, Vector2 position, bool modelSpace) {
 		Cell cell = InstantiateCell(gene.type, mapPosition);
 		Vector2 spawnPosition = (modelSpace ? creature.genotype.geneCellMap.ToModelSpacePosition(mapPosition) : Vector2.zero) + position;
