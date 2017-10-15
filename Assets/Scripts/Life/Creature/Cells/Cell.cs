@@ -339,6 +339,13 @@ public abstract class Cell : MonoBehaviour {
 		return index_Neighbour[index % 6].cell != null;
 	}
 
+	public void SetOrderInLayer(int order) {
+		SpriteRenderer[] renderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
+		foreach (SpriteRenderer renderer in renderers) {
+			renderer.sortingOrder = order;
+		}
+	}
+
 	////  Updates world space rotation (heading) derived from neighbour position relative to this
 	public void UpdateRotation() {
 		if (mapPosition == new Vector2i() && neighbourCount == 0) {

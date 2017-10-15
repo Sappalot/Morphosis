@@ -328,10 +328,8 @@ public class Genotype : MonoBehaviour {
 			geneCellList[index].ShowCreatureSelected(on);
 			geneCellList[index].ShowTriangle(on);
 			geneCellList[index].ShowShadow(on);
+			geneCellList[index].SetOrderInLayer(on ? 1 : 0);
 		}
-
-		//On top
-		transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, on ? -6f : 0f);
 	}
 
 	public void ShowGeneCellsSelected(bool on) {
