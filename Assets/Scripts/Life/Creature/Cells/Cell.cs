@@ -505,7 +505,7 @@ public abstract class Cell : MonoBehaviour {
 		transform.position = cellData.position;
 		heading = cellData.heading;
 		bindCardinalIndex = cellData.bindCardinalIndex;
-		gene = creature.genotype.genes[cellData.geneIndex];
+		gene = creature.genotype.genome[cellData.geneIndex];
 		mapPosition = cellData.mapPosition;
 		buildOrderIndex = cellData.buildOrderIndex;
 		flipSide = cellData.flipSide;

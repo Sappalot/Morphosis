@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class Genotype : MonoBehaviour {
-	public Gene[] genes = new Gene[genomeLength]; //One gene can give rise to many geneCells
+	public Gene[] genome = new Gene[genomeLength]; //One gene can give rise to many geneCells
 
 	public EggCell eggCellPrefab;
 	public JawCell jawCellPrefab;
@@ -38,7 +37,7 @@ public class Genotype : MonoBehaviour {
 
 	public void GenomeMutate(float strength) {
 		for (int index = 0; index < genomeLength; index++) {
-			genes[index].Mutate(strength);
+			genome[index].Mutate(strength);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
 		geneCellsDiffersFromGenome = true;
@@ -47,9 +46,9 @@ public class Genotype : MonoBehaviour {
 	public void GenomeScramble() {
 		for (int chance = 0; chance < 3; chance++) {
 			for (int index = 0; index < genomeLength; index++) {
-				genes[index].Scramble();
+				genome[index].Scramble();
 			}
-			if (genes[0].arrangements[0].isEnabled || genes[0].arrangements[1].isEnabled || genes[0].arrangements[2].isEnabled) {
+			if (genome[0].arrangements[0].isEnabled || genome[0].arrangements[1].isEnabled || genome[0].arrangements[2].isEnabled) {
 				break;
 			}
 		}
@@ -59,17 +58,17 @@ public class Genotype : MonoBehaviour {
 
 	public void GenomeEmpty() {
 		for (int index = 0; index < genomeLength; index++) {
-			genes[index] = new Gene(index);
+			genome[index] = new Gene(index);
 		}
 		for (int index = 0; index < genomeLength; index++) {
-			genes[index].SetDefault(genes);
+			genome[index].SetDefault(genome);
 		}
 		geneCellsDiffersFromGenome = true;
 	}
 
 	public void GenomeSet(Gene[] genome) {
 		for (int index = 0; index < genomeLength; index++) {
-			genes[index] = genome[index].GetClone();
+			this.genome[index] = genome[index].GetClone();
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
 		geneCellsDiffersFromGenome = true;
@@ -77,7 +76,7 @@ public class Genotype : MonoBehaviour {
 
 	public void SetReferenceGenesFromReferenceGeneIndices() {
 		for (int index = 0; index < genomeLength; index++) {
-			genes[index].SetReferenceGeneFromReferenceGeneIndex(genes);
+			genome[index].SetReferenceGeneFromReferenceGeneIndex(genome);
 		}
 	}
 
@@ -108,28 +107,28 @@ public class Genotype : MonoBehaviour {
 
 		//Simple Jellyfish (FPS Reference creature, Don't ever change!!)
 		//New Jellyfish using Arrangements
-		genes[0].type = CellTypeEnum.Jaw;
-		genes[0].arrangements[0].isEnabled = true;
-		genes[0].arrangements[0].type = ArrangementTypeEnum.Side;
-		genes[0].arrangements[0].referenceCount = 1;
-		genes[0].arrangements[0].referenceGene = genes[1];
-		genes[0].arrangements[0].arrowIndex = 4;
+		genome[0].type = CellTypeEnum.Jaw;
+		genome[0].arrangements[0].isEnabled = true;
+		genome[0].arrangements[0].type = ArrangementTypeEnum.Side;
+		genome[0].arrangements[0].referenceCount = 1;
+		genome[0].arrangements[0].referenceGene = genome[1];
+		genome[0].arrangements[0].arrowIndex = 4;
 
-		genes[0].arrangements[1].isEnabled = true;
-		genes[0].arrangements[1].type = ArrangementTypeEnum.Side;
-		genes[0].arrangements[1].referenceCount = 1;
-		genes[0].arrangements[1].referenceGene = genes[2];
-		genes[0].arrangements[1].arrowIndex = 6;
+		genome[0].arrangements[1].isEnabled = true;
+		genome[0].arrangements[1].type = ArrangementTypeEnum.Side;
+		genome[0].arrangements[1].referenceCount = 1;
+		genome[0].arrangements[1].referenceGene = genome[2];
+		genome[0].arrangements[1].arrowIndex = 6;
 
-		genes[0].arrangements[2].isEnabled = true;
-		genes[0].arrangements[2].type = ArrangementTypeEnum.Side;
-		genes[0].arrangements[2].referenceCount = 1;
-		genes[0].arrangements[2].referenceGene = genes[3];
-		genes[0].arrangements[2].arrowIndex = -4;
+		genome[0].arrangements[2].isEnabled = true;
+		genome[0].arrangements[2].type = ArrangementTypeEnum.Side;
+		genome[0].arrangements[2].referenceCount = 1;
+		genome[0].arrangements[2].referenceGene = genome[3];
+		genome[0].arrangements[2].arrowIndex = -4;
 
-		genes[1].type = CellTypeEnum.Vein;
-		genes[2].type = CellTypeEnum.Leaf;
-		genes[3].type = CellTypeEnum.Muscle;
+		genome[1].type = CellTypeEnum.Vein;
+		genome[2].type = CellTypeEnum.Leaf;
+		genome[3].type = CellTypeEnum.Muscle;
 	}
 
 	public void GenerateGenomeJellyfish() {
@@ -137,32 +136,32 @@ public class Genotype : MonoBehaviour {
 
 		//Simple Jellyfish (FPS Reference creature, Don't ever change!!)
 		//New Jellyfish using Arrangements
-		genes[0].type = CellTypeEnum.Vein;
-		genes[0].arrangements[0].isEnabled = true;
-		genes[0].arrangements[0].type = ArrangementTypeEnum.Mirror;
-		genes[0].arrangements[0].referenceCount = 2;
-		genes[0].arrangements[0].gap = 3;
-		genes[0].arrangements[0].referenceGene = genes[1];
-		genes[0].arrangements[0].arrowIndex = 0;
-		genes[0].arrangements[1].isEnabled = true;
-		genes[0].arrangements[1].type = ArrangementTypeEnum.Side;
-		genes[0].arrangements[1].referenceCount = 1;
-		genes[0].arrangements[1].arrowIndex = 6;
-		genes[0].arrangements[1].referenceGene = genes[2];
+		genome[0].type = CellTypeEnum.Vein;
+		genome[0].arrangements[0].isEnabled = true;
+		genome[0].arrangements[0].type = ArrangementTypeEnum.Mirror;
+		genome[0].arrangements[0].referenceCount = 2;
+		genome[0].arrangements[0].gap = 3;
+		genome[0].arrangements[0].referenceGene = genome[1];
+		genome[0].arrangements[0].arrowIndex = 0;
+		genome[0].arrangements[1].isEnabled = true;
+		genome[0].arrangements[1].type = ArrangementTypeEnum.Side;
+		genome[0].arrangements[1].referenceCount = 1;
+		genome[0].arrangements[1].arrowIndex = 6;
+		genome[0].arrangements[1].referenceGene = genome[2];
 
-		genes[1].type = CellTypeEnum.Leaf;
-		genes[1].arrangements[0].isEnabled = true;
-		genes[1].arrangements[0].type = ArrangementTypeEnum.Side;
-		genes[1].arrangements[0].referenceCount = 1;
-		genes[1].arrangements[0].referenceGene = genes[2];
-		genes[1].arrangements[0].arrowIndex = -2;
-		genes[1].arrangements[1].isEnabled = true;
-		genes[1].arrangements[1].type = ArrangementTypeEnum.Side;
-		genes[1].arrangements[1].referenceCount = 1;
-		genes[1].arrangements[1].referenceGene = genes[1];
-		genes[1].arrangements[1].arrowIndex = 0;
+		genome[1].type = CellTypeEnum.Leaf;
+		genome[1].arrangements[0].isEnabled = true;
+		genome[1].arrangements[0].type = ArrangementTypeEnum.Side;
+		genome[1].arrangements[0].referenceCount = 1;
+		genome[1].arrangements[0].referenceGene = genome[2];
+		genome[1].arrangements[0].arrowIndex = -2;
+		genome[1].arrangements[1].isEnabled = true;
+		genome[1].arrangements[1].type = ArrangementTypeEnum.Side;
+		genome[1].arrangements[1].referenceCount = 1;
+		genome[1].arrangements[1].referenceGene = genome[1];
+		genome[1].arrangements[1].arrowIndex = 0;
 
-		genes[2].type = CellTypeEnum.Muscle;
+		genome[2].type = CellTypeEnum.Muscle;
 	}
 
 	public bool UpdateGeneCellsFromGenome(Creature creature, Vector2 position, float heading) { // heading 90 ==> root is pointing north
@@ -304,7 +303,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public Gene GetGeneAt(int index) {
-		return genes[index];
+		return genome[index];
 	}
 
 	public List<Cell> GetGeneCellsWithGene(Gene gene) {
@@ -401,8 +400,8 @@ public class Genotype : MonoBehaviour {
 
 	private GenotypeData genotypeData = new GenotypeData();
 	public GenotypeData UpdateData() { // Save: We have all genes and their data allready
-		for (int index = 0; index < genes.Length; index++) {
-			genotypeData.geneData[index] = genes[index].UpdateData();
+		for (int index = 0; index < genome.Length; index++) {
+			genotypeData.geneData[index] = genome[index].UpdateData();
 		}
 		genotypeData.rootPosition = rootCell.position;
 		genotypeData.rootHeading = rootCell.heading;
@@ -411,8 +410,8 @@ public class Genotype : MonoBehaviour {
 
 	public void ApplyData(GenotypeData genotypeData) {
 		for (int index = 0; index < genomeLength; index++) {
-			genes[index] = new Gene(index);
-			genes[index].ApplyData(genotypeData.geneData[index]);
+			genome[index] = new Gene(index);
+			genome[index].ApplyData(genotypeData.geneData[index]);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
 		geneCellsDiffersFromGenome = true;

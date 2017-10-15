@@ -118,6 +118,7 @@ public class Creature : MonoBehaviour {
 		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
 		phenotype.connectionsDiffersFromCells = phenotype.UpdateCellsFromGeneCells(this, position, heading);
 		isDirty = true;
+		Update();
 	}
 
 	// Apply on genotype ==> Phenotype

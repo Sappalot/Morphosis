@@ -40,7 +40,7 @@ public class Life : MonoBehaviour {
 
 		// Spawn child at egg cell location
 		Creature child = InstantiateCreature();
-		child.GenerateEmbryo(creature.genotype.genes, eggCell.position, eggCell.heading);
+		child.GenerateEmbryo(creature.genotype.genome, eggCell.position, eggCell.heading);
 
 		// TODO: let child remember where not to grow, in order not to grow over mother
 

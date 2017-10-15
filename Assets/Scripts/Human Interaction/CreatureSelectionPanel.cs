@@ -229,7 +229,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 		List<Gene[]> genomes = new List<Gene[]>();
 		foreach (Creature source in selection) {
-			genomes.Add(source.genotype.genes);
+			genomes.Add(source.genotype.genome);
 		}
 
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
