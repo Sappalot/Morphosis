@@ -339,6 +339,9 @@ public class Genotype : MonoBehaviour {
 			geneCellList[index].ShowTriangle(on);
 			geneCellList[index].ShowShadow(on);
 		}
+
+		//On top
+		transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, on ? -6f : 0f);
 	}
 
 	public void ShowGeneCellsSelected(bool on) {
@@ -426,7 +429,7 @@ public class Genotype : MonoBehaviour {
 
 	//------
 
-	public void SetCollider(bool on) {
+	private void SetCollider(bool on) {
 		foreach (Cell cell in geneCellList) {
 			cell.GetComponent<Collider2D>().enabled = on;
 		}
