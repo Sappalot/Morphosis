@@ -83,50 +83,47 @@ public class Creature : MonoBehaviour {
 
 	public void GenerateJellyfish(Vector2 position, float heading) {
 		genotype.GenerateGenomeJellyfish();
-		GenerateGenotypeAndPhenotype(position, heading);
+		GenerateGenotype(position, heading);
 	}
 
 	public void GenerateEmbryo(Vector3 position, float heading) {
 		genotype.GenomeEmpty();
-		GenerateGenotypeAndPhenotype(position, heading);
+		GenerateGenotype(position, heading);
 	}
 
 	public void GenerateFreak(Vector3 position, float heading) {
 		genotype.GenomeEmpty();
 		genotype.GenomeScramble();
-		GenerateGenotypeAndPhenotype(position, heading);
+		GenerateGenotype(position, heading);
 	}
 
 	public void GenerateMergling(List<Gene[]> genomes, Vector3 position, float heading) {
 		genotype.GenomeSet(GenotypeUtil.CombineGenomeFine(genomes));
-		GenerateGenotypeAndPhenotype(position, heading);
+		GenerateGenotype(position, heading);
 	}
 
-	private void GenerateGenotypeAndPhenotype(Vector2 position, float heading) {
-		phenotype.differsFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
-		phenotype.UpdateCellsFromGeneCells(this, position, heading);
+	private void GenerateGenotype(Vector2 position, float heading) {
+		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
+		phenotype.UpdateCellsFromGeneCells(this, position, heading); //For some reason we need this update to make mergeling show up, creature in update is another one than this
 		isDirty = true;
 	}
 
 	// Apply on genotype ==> Phenotype
 	public void Clear() {
 		genotype.GenomeEmpty();
-		phenotype.differsFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
 	}
 
 	public void MutateAbsolute(float strength) {
 		RestoreState();
-		MutateCummulative(strength);
+		genotype.GenomeMutate(strength);
 	}
 
 	public void MutateCummulative(float strength) {
 		genotype.GenomeMutate(strength);
-		phenotype.differsFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
 	}
 
 	public void Scramble() {
 		genotype.GenomeScramble();
-		phenotype.differsFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
 	}
 
 	// Apply on Phenotype
@@ -219,8 +216,10 @@ public class Creature : MonoBehaviour {
 		isDirty = true;
 	}
 
-	public void Clone(Creature original) {
+	//Everything is deep cloned except the id. The reason is that the id must be unique
+	public void Clone(Creature original, string id) {
 		ApplyData(original.UpdateData());
+		this.id = id;
 	} 
 
 	//data
@@ -232,6 +231,7 @@ public class Creature : MonoBehaviour {
 		creatureData.id = id;
 		creatureData.nickname = nickname;
 		//todo: spieces
+		// TODO: Store kids and parents
 
 		creatureData.genotypeData = genotype.UpdateData();
 		creatureData.phenotypeData = phenotype.UpdateData();
@@ -241,6 +241,9 @@ public class Creature : MonoBehaviour {
 
 	public void ApplyData(CreatureData creatureData) {
 		nickname = creatureData.nickname;
+		id = creatureData.id;
+
+		//TODO: Set kids and parents from stored data
 
 		genotype.ApplyData(creatureData.genotypeData);
 		Vector2 position = creatureData.genotypeData.rootPosition;
@@ -301,10 +304,14 @@ public class Creature : MonoBehaviour {
 	// if we update as creature copy is born we'll run into copy creture offset problems
 	private void Update() {
 		bool geneCelleWasUpdated = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
-		phenotype.differsFromGeneCells |= geneCelleWasUpdated;
-		bool cellsWasUpdatedFromGeneCells = phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
 
-		isDirty = isDirty || geneCelleWasUpdated || cellsWasUpdatedFromGeneCells;
+		phenotype.cellsDiffersFromGeneCells |= geneCelleWasUpdated;
+		bool cellsWereUpdatedFromGeneCells = phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
+
+		phenotype.connectionsDiffersFromCells |= cellsWereUpdatedFromGeneCells;
+		bool connectionsWereUpdatedFromCells = phenotype.UpdateConnectionsFromCells();
+
+		isDirty = isDirty || geneCelleWasUpdated || cellsWereUpdatedFromGeneCells || connectionsWereUpdatedFromCells;
 
 		if (isDirty) {
 			ShowCurrentGenoPhenoAndHideOther();
@@ -313,6 +320,8 @@ public class Creature : MonoBehaviour {
 			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 				// Update selection
 				phenotype.ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(this));
+
+				phenotype.ShowShadow(false);
 
 				//Show selected or not
 				phenotype.ShowCellsSelected(false);

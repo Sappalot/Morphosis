@@ -17,7 +17,7 @@ public class Genotype : MonoBehaviour {
 	public CellMap geneCellMap = new CellMap();
 	public List<Cell> geneCellList = new List<Cell>();
 
-	public bool differsFromGenome = true; // Cell List and Cell Map needs to be updates
+	public bool geneCellsDiffersFromGenome = true; // Cell List and Cell Map needs to be updates
 
 	public bool isGrabbed { get; private set; }
 
@@ -39,7 +39,7 @@ public class Genotype : MonoBehaviour {
 			genes[index].Mutate(strength);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		differsFromGenome = true;
+		geneCellsDiffersFromGenome = true;
 	}
 
 	public void GenomeScramble() {
@@ -52,7 +52,7 @@ public class Genotype : MonoBehaviour {
 			}
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		differsFromGenome = true;
+		geneCellsDiffersFromGenome = true;
 	}
 
 	public void GenomeEmpty() {
@@ -62,7 +62,7 @@ public class Genotype : MonoBehaviour {
 		for (int index = 0; index < genomeLength; index++) {
 			genes[index].SetDefault(genes);
 		}
-		differsFromGenome = true;
+		geneCellsDiffersFromGenome = true;
 	}
 
 	public void GenomeSet(Gene[] genome) {
@@ -70,7 +70,7 @@ public class Genotype : MonoBehaviour {
 			genes[index] = genome[index].GetClone();
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		differsFromGenome = true;
+		geneCellsDiffersFromGenome = true;
 	}
 
 	public void SetReferenceGenesFromReferenceGeneIndices() {
@@ -164,7 +164,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public bool UpdateGeneCellsFromGenome(Creature creature, Vector2 position, float heading) { // heading 90 ==> root is pointing north
-		if (differsFromGenome) {
+		if (geneCellsDiffersFromGenome) {
 			const int maxSize = 6;
 			Clear();
 
@@ -220,7 +220,7 @@ public class Genotype : MonoBehaviour {
 			TurnTo(heading); //is at 90 allready
 			MoveTo(position);
 			UpdateGraphics(creature);
-			differsFromGenome = false;
+			geneCellsDiffersFromGenome = false;
 
 			//creature.phenotype.differsFromGeneCells = true;
 			return true;
@@ -417,7 +417,7 @@ public class Genotype : MonoBehaviour {
 			genes[index].ApplyData(genotypeData.geneData[index]);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		differsFromGenome = true;
+		geneCellsDiffersFromGenome = true;
 	}
 
 	//------

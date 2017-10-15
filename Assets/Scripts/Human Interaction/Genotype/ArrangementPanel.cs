@@ -179,7 +179,7 @@ public class ArrangementPanel : MonoBehaviour {
 		GenePanel.instance.isDirty = true;
 		GenomePanel.instance.isDirty = true;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.genotype.differsFromGenome = true;
+			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
 		}
 		MakeDirty();
 	}

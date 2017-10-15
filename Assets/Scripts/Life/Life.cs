@@ -92,14 +92,13 @@ public class Life : MonoBehaviour {
 	}
 
 	public Creature SpawnCreatureCopy(Creature original, PhenoGenoEnum showType) {
-		Creature creature = InstantiateCreature();
-		//creature.GenerateCopy(original, showType);
-		creature.Clone(original);
-		//creature.ShowType(showType);
-		creature.nickname += " (Copy)";
-		creature.hasPhenotypeCollider = false;
-		creature.hasGenotypeCollider = false;
-		return creature;
+		Creature clone = InstantiateCreature();
+
+		clone.Clone(original, clone.id);
+		clone.nickname += " (Copy)";
+		clone.hasPhenotypeCollider = false;
+		clone.hasGenotypeCollider = false;
+		return clone;
 	}
 
 	private Creature InstantiateCreature() {
@@ -141,7 +140,7 @@ public class Life : MonoBehaviour {
 
 	public void ApplyData(LifeData lifeData) {
 		idGenerator.number = lifeData.lastId;
-        
+
 		DeleteAll();
 		for (int index = 0; index < lifeData.creatureList.Count; index++) {
 			CreatureData creatureData = lifeData.creatureList[index];

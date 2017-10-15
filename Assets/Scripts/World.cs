@@ -9,7 +9,7 @@ public class World : MonoSingleton<World> {
 	public Life life;
 
 	public void KillAllCreatures() {
-		life.KillAll();
+		life.DeleteAll();
 		CreatureSelectionPanel.instance.ClearSelection();
 	}
 

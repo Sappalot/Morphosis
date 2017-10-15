@@ -68,7 +68,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 			GenotypePanel.instance.isDirty = true;
 			GenomePanel.instance.isDirty = true;
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
-				CreatureSelectionPanel.instance.soloSelected.genotype.differsFromGenome = true;
+				CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
 			}
 			isDirty = true;
 		}

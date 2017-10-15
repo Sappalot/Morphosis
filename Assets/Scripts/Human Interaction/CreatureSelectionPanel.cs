@@ -393,7 +393,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			if (selection.Count == 0) {
 				selectedCreatureText.text = "";
 			} else if (selection.Count == 1) {
-				selectedCreatureText.text = soloSelected.nickname;
+				selectedCreatureText.text = soloSelected.id; // soloSelected.nickname;
 			} else {
 				selectedCreatureText.text = selection.Count + " Creatures";
 			}

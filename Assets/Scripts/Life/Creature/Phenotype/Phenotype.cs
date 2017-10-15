@@ -21,7 +21,9 @@ public class Phenotype : MonoBehaviour {
 	public MuscleCell muscleCellPrefab;
 	public VeinCell veinCellPrefab;
 
-	public bool differsFromGeneCells = true;
+	public bool cellsDiffersFromGeneCells = true;
+	public bool connectionsDiffersFromCells = true;
+
 	public float timeOffset;
 
 	public GameObject cells;
@@ -98,10 +100,10 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public bool UpdateCellsFromGeneCells(Creature creature, Vector2 position, float heading) {
-		if (differsFromGeneCells) {
+		if (cellsDiffersFromGeneCells) {
 			Setup(creature, position, heading);
 			TryGrowFully(creature);
-			differsFromGeneCells = false;
+			cellsDiffersFromGeneCells = false;
 			return true;
 		}
 		return false;
@@ -163,17 +165,20 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 
-		ConnectCells(true, true);
-		
-		UpdateSpringsFrequenze();
-		ShowCellsSelected(false);
-		ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(creature));
-		ShowShadow(false);
-		ShowTriangles(false);
+		connectionsDiffersFromCells = true;
+	}
 
-		edges.GenerateWings(cellMap);
+	public bool UpdateConnectionsFromCells() {
+		if (connectionsDiffersFromCells) {
+			ConnectCells(true, true);
+			edges.GenerateWings(cellMap);
+			UpdateSpringsFrequenze(); //testing
+			PhenotypePanel.instance.DirtyMark();
 
-		PhenotypePanel.instance.DirtyMark();
+			connectionsDiffersFromCells = false;
+			return true;
+		}
+		return false;
 	}
 
 	private int CardinaIndexToNeighbour(Cell from, Cell to) {
@@ -305,6 +310,8 @@ public class Phenotype : MonoBehaviour {
 			if (updateGroups)
 				cell.UpdateGroups();
 		}
+
+		// TODO after all creatures are aware of their mothers and children: Connect to them as well
 	}
 
 	private void Clear() {
@@ -359,6 +366,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	//Allways false for phenotype
 	public void ShowShadow(bool on) {
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].ShowShadow(on);
@@ -456,7 +464,7 @@ public class Phenotype : MonoBehaviour {
 			Cell cell = cellList[index];
 			phenotypeData.cellDataList.Add(cell.UpdateData());
 		}
-		phenotypeData.differsFromGenotype = differsFromGeneCells;
+		phenotypeData.differsFromGenotype = cellsDiffersFromGeneCells;
 		return phenotypeData;
 	}
 
@@ -469,14 +477,9 @@ public class Phenotype : MonoBehaviour {
 			Cell cell = InstantiateCell(creature.genotype.genes[cellData.geneIndex].type, cellData.mapPosition);
 			cell.ApplyData(cellData, creature);
 		}
+		cellsDiffersFromGeneCells = false; //This work is done
 
-		ConnectCells(true, true);
-		edges.GenerateWings(cellMap);
-		UpdateSpringsFrequenze();
-		ShowCellsSelected(false);
-		ShowShadow(false);
-		ShowTriangles(true);
-		differsFromGeneCells = false;
+		connectionsDiffersFromCells = true; //We need to connect mothers with children
 	}
 
 	//TODO: Remove
