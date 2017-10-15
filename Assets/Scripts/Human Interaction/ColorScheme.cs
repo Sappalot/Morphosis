@@ -11,7 +11,6 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color muscle;
 	public Color vein;
 
-
 	public Color ToColor(CellTypeEnum cellType) {
 		if (cellType == CellTypeEnum.Egg) {
 			return egg;

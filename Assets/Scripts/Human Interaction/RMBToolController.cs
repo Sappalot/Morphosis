@@ -19,7 +19,6 @@ public class RMBToolController : MouseDrag {
 			if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spring && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 				
 				Cell cell = World.instance.life.GetCellAt(downPositionMouse);
-				Debug.Log("Found: " + cell);
 				if (cell != null) {
 					spring.connectedBody = cell.GetComponent<Rigidbody2D>();
 					spring.anchor = downPositionMouse;
@@ -28,11 +27,11 @@ public class RMBToolController : MouseDrag {
 					spring.GetComponent<LineRenderer>().SetPosition(0, spring.connectedBody.transform.position);
 					spring.GetComponent<LineRenderer>().enabled = true;
 				}
-			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.embryo) {
+			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.simple) {
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-					World.instance.life.SpawnCreatureEmbryo(downPositionMouse, 90f);
+					World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f);
 				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-					World.instance.life.SpawnCreatureEmbryo(downPositionMouse, 90f);
+					World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f);
 				}				
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.freak) {
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {

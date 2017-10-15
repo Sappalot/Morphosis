@@ -70,7 +70,7 @@ public class Phenotype : MonoBehaviour {
 		if (isGrabbed) {
 			return;
 		}
-		
+
 		//if (update % 50 == 0) {
 		//    edges.ShuffleEdgeUpdateOrder();
 		//    ShuffleCellUpdateOrder();
@@ -101,10 +101,17 @@ public class Phenotype : MonoBehaviour {
 		ListUtils.Shuffle(cellList);
 	}
 
+	public void InitiateEmbryo(Creature creature, Vector2 position, float heading) {
+		Setup(creature, position, heading);
+		TryGrow(creature, 1);
+		cellsDiffersFromGeneCells = false;
+	}
+
 	public bool UpdateCellsFromGeneCells(Creature creature, Vector2 position, float heading) {
 		if (cellsDiffersFromGeneCells) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Creature UpdateCellsFromGeneCells");
+			}
 			Setup(creature, position, heading);
 			TryGrowFully(creature);
 			cellsDiffersFromGeneCells = false;

@@ -114,19 +114,6 @@ public abstract class Cell : MonoBehaviour {
 	private Dictionary<int, CellNeighbour> index_Neighbour = new Dictionary<int, CellNeighbour>();
 	private List<SpringJoint2D> springList = new List<SpringJoint2D>();
 
-	public Cell( ) {
-		//index_Neighbour.Add(0, northEastNeighbour);
-		//index_Neighbour.Add(1, northNeighbour);
-		//index_Neighbour.Add(2, northWestNeighbour);
-		//index_Neighbour.Add(3, southWestNeighbour);
-		//index_Neighbour.Add(4, southNeighbour);
-		//index_Neighbour.Add(5, southEastNeighbour);
-
-		//springList.Add( northSpring );
-		//springList.Add( southEastSpring );
-		//springList.Add( southWestSpring );
-	}
-
 	private void Awake() {
 		index_Neighbour.Add(0, northEastNeighbour);
 		index_Neighbour.Add(1, northNeighbour);
@@ -354,6 +341,11 @@ public abstract class Cell : MonoBehaviour {
 
 	////  Updates world space rotation (heading) derived from neighbour position relative to this
 	public void UpdateRotation() {
+		if (mapPosition == new Vector2i() && neighbourCount == 0) {
+			return;
+		}
+			
+
 		UpdateNeighbourAngles();
 
 		float angleDiffFromBindpose = 0f; 
@@ -382,6 +374,18 @@ public abstract class Cell : MonoBehaviour {
 			if (HasNeighbourCell(index)) {
 				GetNeighbour(index).angle = FindAngle(GetNeighbour(index).coreToThis);
 			}
+		}
+	}
+
+	private int neighbourCount {
+		get {
+			int count = 0;
+			for (int index = 0; index < 6; index++) {
+				if (HasNeighbourCell(index)) {
+					count++;
+				}
+			}
+			return count;
 		}
 	}
 

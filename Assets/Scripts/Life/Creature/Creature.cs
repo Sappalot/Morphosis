@@ -84,12 +84,15 @@ public class Creature : MonoBehaviour {
 		return genotype.IsInside(area);
 	}
 
-	public void GenerateJellyfish(Vector2 position, float heading) {
-		genotype.GenerateGenomeJellyfish();
-		UpdateCellsAndGeneCells(position, heading);
+	public void GenerateEmbryo(Gene[] motherGenome, Vector3 position, float heading) {
+		genotype.GenomeSet(motherGenome);
+		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading);
+		phenotype.InitiateEmbryo(this, position, heading);
+		isDirty = true;
+		Update();
 	}
 
-	public void GenerateEmbryo(Vector3 position, float heading) {
+	public void GenerateSimple(Vector3 position, float heading) {
 		genotype.GenomeEmpty();
 		UpdateCellsAndGeneCells(position, heading);
 	}
@@ -102,6 +105,11 @@ public class Creature : MonoBehaviour {
 
 	public void GenerateMergling(List<Gene[]> genomes, Vector3 position, float heading) {
 		genotype.GenomeSet(GenotypeUtil.CombineGenomeFine(genomes));
+		UpdateCellsAndGeneCells(position, heading);
+	}
+
+	public void GenerateJellyfish(Vector2 position, float heading) {
+		genotype.GenerateGenomeJellyfish();
 		UpdateCellsAndGeneCells(position, heading);
 	}
 
@@ -141,13 +149,13 @@ public class Creature : MonoBehaviour {
 		isDirty = true;
 	}
 
+	// Will cut branch as well
 	public void DeleteCell(Cell cell) {
 		if (cell.mapPosition != phenotype.rootCell.mapPosition) {
 			phenotype.DeleteCell(cell, true);
 		} else {
 			Debug.LogError("You are not allowed to Delete root cell");
 		}
-		
 	}
 
 	public void EvoUpdate() {

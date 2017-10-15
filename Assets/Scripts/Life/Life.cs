@@ -27,6 +27,42 @@ public class Life : MonoBehaviour {
 		}
 	}
 
+	public void FertilizeCreature(Cell eggCell) {
+		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
+		Creature creature = eggCell.creature;
+
+		// Q: What happens when 2 children, attatched to same mother, grows into each other (prio??), One big map for all creatures in a cluster?
+
+		// remove cell at childs root location
+		creature.DeleteCell(eggCell);
+
+		// TODO: remember not to try to grow in this position until child is released
+
+		// Spawn child at egg cell location
+		Creature child = InstantiateCreature();
+		child.GenerateEmbryo(creature.genotype.genes, eggCell.position, eggCell.heading);
+
+		// TODO: let child remember where not to grow, in order not to grow over mother
+
+		// TODO: mark mother so that she will connect to child during update
+
+		// TODO: mark child so that it will connect to mother during update 
+	}
+
+	public void ReleaseCreature(Cell rootCell) {
+		Debug.Assert(rootCell is EggCell, "You are not allowed to release child from non Egg cell");
+		Creature creature = rootCell.creature;
+
+		// TODO: remove mother's attatchment to child
+
+		// TODO: remove child's childs attatchment to mother
+
+		// TODO: let mother be able to grow back new egg cell
+
+		// TODO: remove occupied mother spaces from child
+
+	}
+
 	public void DeleteAll() {
 		foreach (Creature creature in creatureList) {
 			Destroy(creature.gameObject);
@@ -68,9 +104,9 @@ public class Life : MonoBehaviour {
 		return creature;
 	}
 
-	public Creature SpawnCreatureEmbryo(Vector3 position, float heading) {
+	public Creature SpawnCreatureSimple(Vector3 position, float heading) {
 		Creature creature = InstantiateCreature();
-		creature.GenerateEmbryo(position, heading);
+		creature.GenerateSimple(position, heading);
 
 		return creature;
 	}
