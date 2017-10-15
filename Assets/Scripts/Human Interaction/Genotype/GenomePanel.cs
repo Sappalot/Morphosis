@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
 public class GenomePanel : MonoSingleton<GenomePanel> {
-	public GenomeGene genomeGeneTemplate;
+	public GenomeGenePanel genomeGeneTemplate;
 	public Transform geneParent;
 
-	private GenomeGene[] genomeGenes = new GenomeGene[Genotype.genomeLength];
+	private GenomeGenePanel[] genomeGenes = new GenomeGenePanel[Genotype.genomeLength];
 
 	private bool isDirty = true;
 	public void MakeDirty() {

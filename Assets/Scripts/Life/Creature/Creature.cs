@@ -141,8 +141,8 @@ public class Creature : MonoBehaviour {
 		isDirty = true;
 	}
 
-	public void DeleteCell() {
-
+	public void DeleteCell(Cell cell) {
+		phenotype.DeleteCell(cell);
 	}
 
 	// --

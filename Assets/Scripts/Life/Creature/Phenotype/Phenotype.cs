@@ -168,7 +168,6 @@ public class Phenotype : MonoBehaviour {
 				growCellCount++;
 			}
 		}
-
 		connectionsDiffersFromCells = true;
 	}
 
@@ -208,15 +207,17 @@ public class Phenotype : MonoBehaviour {
 			DeleteCell(cellList[cellList.Count - 1]);
 			shrinkCellCount++;
 		}
-		ConnectCells(true, true);
-		edges.GenerateWings(cellMap);
-		UpdateSpringsFrequenze();
-
-		PhenotypePanel.instance.DirtyMark();
+		
 	}
 
-	public void DeleteCell(Vector2i cellPosition) {
-
+	public void DeleteCell(Cell cell) {
+		cellMap.RemoveCellAtGridPosition(cell.mapPosition);
+		cellList.Remove(cell);
+		Destroy(cell.gameObject);
+		if (CellPanel.instance.selectedCell == cell) {
+			CellPanel.instance.selectedCell = null;
+		}
+		connectionsDiffersFromCells = true;
 	}
 
 	private void IsConnected() {
@@ -249,14 +250,7 @@ public class Phenotype : MonoBehaviour {
 
 	//public void DeleteCell
 
-	private void DeleteCell(Cell cell) {
-		cellMap.RemoveCellAtGridPosition(cell.mapPosition);
-		cellList.Remove(cell);
-		Destroy(cell.gameObject);
-		if (CellPanel.instance.selectedCell == cell) {
-			CellPanel.instance.selectedCell = null;
-		}
-	}
+
 
 	private Cell SpawnCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindCardinalIndex, FlipSideEnum flipSide, Vector2 position, bool modelSpace) {
 		Cell cell = InstantiateCell(gene.type, mapPosition);
