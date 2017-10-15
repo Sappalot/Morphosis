@@ -33,6 +33,9 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	public void OnClickedGenotypeEditMode() {
 		m_mode = CreatureEditModeEnum.Genotype;
 		UpdateAllAccordingToEditMode();
+		GenePanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
+		GenomePanel.instance.MakeScrollDirty();
 	}
 
 	public void UpdateAllAccordingToEditMode() {

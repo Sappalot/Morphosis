@@ -487,6 +487,10 @@ public abstract class Cell : MonoBehaviour {
 					creature.StoreState();
 				}
 				CreatureSelectionPanel.instance.Select(creature, this);
+				GenePanel.instance.MakeDirty();
+				GenomePanel.instance.MakeDirty();
+				GenomePanel.instance.MakeScrollDirty();
+				CreatureSelectionPanel.instance.soloSelected.MakeDirty();
 			}
 		}
 	}

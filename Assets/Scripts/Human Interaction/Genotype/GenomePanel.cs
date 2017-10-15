@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class GenomePanel : MonoSingleton<GenomePanel> {
 	public GenomeGenePanel genomeGeneTemplate;
 	public Transform geneParent;
+
+	public ScrollRect scrollRect;
 
 	private GenomeGenePanel[] genomeGenes = new GenomeGenePanel[Genotype.genomeLength];
 
@@ -10,6 +13,12 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
 	public void MakeDirty() {
 		isDirty = true;
 	}
+
+	private bool isScrollDirty = true;
+	public void MakeScrollDirty() {
+		isScrollDirty = true;
+	}
+
 
 	public Genotype genotype {
 		get {
@@ -27,6 +36,8 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
 			RectTransform spawnTransform = genomeGenes[index].GetComponent<RectTransform>();
 			spawnTransform.position = originalTransform.position + Vector3.right * index * (originalTransform.rect.width + 2);
 		}
+
+		//scrollRect.horizontalNormalizedPosition = 0f;
 	}
 
 	private void Update() {
@@ -37,6 +48,7 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
 				for (int index = 0; index < genomeGenes.Length; index++) {
 					genomeGenes[index].gene = null;
 				}
+				scrollRect.horizontalNormalizedPosition = 0f;
 				isDirty = false;
 				return;
 			}
@@ -45,6 +57,22 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
 				genomeGenes[index].gene = genotype.GetGeneAt(index);
 			}
 			isDirty = false;
+		}
+
+		if (isScrollDirty) {
+			if (genotype == null) {
+				isScrollDirty = false;
+				return;
+			}
+
+			// horizontalNormalizedPosition causes faulty update. Fix it!! 
+			for (int index = 0; index < genomeGenes.Length; index++) {
+				if (genomeGenes[index].gene == GenePanel.instance.selectedGene) {
+					scrollRect.horizontalNormalizedPosition = (float)index / ((float)genomeGenes.Length - 1f);
+				}
+			}
+
+			isScrollDirty = false;
 		}
 	}
 }

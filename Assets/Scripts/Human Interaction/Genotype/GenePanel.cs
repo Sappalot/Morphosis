@@ -28,6 +28,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
 
 	public ReferenceGraphics[] referenceGraphics;
+	public ReferenceGraphics centerReferenceGraphics;
 
 	public ArrangementPanel arrangementPanelTemplate;
 	private ArrangementPanel[] arrangementPanels = new ArrangementPanel[3];
@@ -85,6 +86,11 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
 	public void GiveAnswerGeneReference(Gene gene) {
 		arrangementPanelAskingForReference.SetGeneReference(gene);
+
+		MakeDirty();
+		GenomePanel.instance.MakeDirty();
+		//GenomePanel.instance.MakeScrollDirty();
+		CreatureSelectionPanel.instance.soloSelected.MakeDirty();
 	}
 
 	private void Update() {
@@ -118,11 +124,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 			for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 				referenceGraphics[cardinalIndex].reference = selectedGene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
 			}
-
-			geneReferenceImage.color = ColorScheme.instance.ToColor(selectedGene.type);
-			flipBlackWhite.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.BlackWhite;
-			flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
-			geneReferenceText.text = selectedGene.index.ToString();
+			centerReferenceGraphics.reference = new GeneReference(selectedGene, GenotypePanel.instance.viewedFlipSide);
 
 			//Gene Settings
 			cellTypeDropdown.gameObject.SetActive(true);

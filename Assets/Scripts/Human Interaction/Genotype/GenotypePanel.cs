@@ -34,7 +34,6 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		GenePanel.instance.selectedGene = null;
 		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
-
 	}
 
 	public void OnClickedMutateAbsolute() {

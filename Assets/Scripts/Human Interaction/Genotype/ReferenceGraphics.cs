@@ -7,6 +7,7 @@ public class ReferenceGraphics : MonoBehaviour {
 	public Image flipWhiteBlack;
 	public Text geneReferenceText;
 
+	Gene gene;
 	public GeneReference reference {
 		set {
 			if (value == null) {
@@ -26,6 +27,16 @@ public class ReferenceGraphics : MonoBehaviour {
 
 			geneReferenceText.enabled = true;
 			geneReferenceText.text = value.gene.index.ToString();
+
+			gene = value.gene;
 		}
+	}
+
+	public void OnClicked() {
+		GenePanel.instance.selectedGene = gene;
+		GenePanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
+		GenomePanel.instance.MakeScrollDirty();
+		CreatureSelectionPanel.instance.soloSelected.MakeDirty();
 	}
 }
