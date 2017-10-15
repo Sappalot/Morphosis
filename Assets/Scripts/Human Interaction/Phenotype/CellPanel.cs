@@ -19,7 +19,15 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			isDirty = true;
 		}
 	}
-	
+
+	public void OnClickDelete() {
+		if (CreatureSelectionPanel.instance.hasSoloSelected) {
+			CreatureSelectionPanel.instance.soloSelected.DeleteCell(selectedCell);
+			PhenotypePanel.instance.MakeDirty();
+			isDirty = true;
+		}
+	}
+
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)

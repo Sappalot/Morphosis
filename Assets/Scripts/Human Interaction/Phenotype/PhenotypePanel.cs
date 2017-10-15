@@ -18,11 +18,11 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public void OnShrinkClicked() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.TryShrink();
-			DirtyMark();
+			MakeDirty();
 		}
 	}
 
-	public void DirtyMark() {
+	public void MakeDirty() {
 		isDirty = true;
 	}
 	

@@ -168,6 +168,7 @@ public class Phenotype : MonoBehaviour {
 				growCellCount++;
 			}
 		}
+		PhenotypePanel.instance.MakeDirty();
 		connectionsDiffersFromCells = true;
 	}
 
@@ -176,7 +177,6 @@ public class Phenotype : MonoBehaviour {
 			ConnectCells(true, true);
 			edges.GenerateWings(cellMap);
 			UpdateSpringsFrequenze(); //testing
-			PhenotypePanel.instance.DirtyMark();
 
 			connectionsDiffersFromCells = false;
 			return true;
@@ -204,24 +204,41 @@ public class Phenotype : MonoBehaviour {
 			if (CellPanel.instance.selectedCell == cellList[cellList.Count - 1]) {
 				CellPanel.instance.selectedCell = null;
 			}
-			DeleteCell(cellList[cellList.Count - 1]);
+			DeleteCell(cellList[cellList.Count - 1], false);
 			shrinkCellCount++;
 		}
 		
 	}
 
-	public void DeleteCell(Cell cell) {
+	public void DeleteCell(Cell cell, bool deleteDebris) {
+		//bool contains = cellMap.IsConnected(rootCell.mapPosition, cell.mapPosition);
+		//Debug.Log(contains);
 		cellMap.RemoveCellAtGridPosition(cell.mapPosition);
 		cellList.Remove(cell);
 		Destroy(cell.gameObject);
 		if (CellPanel.instance.selectedCell == cell) {
 			CellPanel.instance.selectedCell = null;
 		}
+
+		if (deleteDebris) {
+			DeleteDebris();
+		}
+
+		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		connectionsDiffersFromCells = true;
 	}
 
-	private void IsConnected() {
-
+	private void DeleteDebris() {
+		List<Vector2i> keepers = cellMap.IsConnectedTo(rootCell.mapPosition);
+		List<Cell> debris = new List<Cell>();
+		foreach (Cell c in cellList) {
+			if (keepers.Find(p => p == c.mapPosition) == null) {
+				debris.Add(c);
+			}
+		}
+		foreach (Cell c in debris) {
+			DeleteCell(c, false);
+		}
 	}
 
 	private bool IsCellBuiltForGene(Cell gene) {
@@ -476,7 +493,6 @@ public class Phenotype : MonoBehaviour {
 			cell.ApplyData(cellData, creature);
 		}
 		cellsDiffersFromGeneCells = false; //This work is done
-
 		connectionsDiffersFromCells = true; //We need to connect mothers with children
 	}
 

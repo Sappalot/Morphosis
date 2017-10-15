@@ -151,5 +151,49 @@ public class CellMap {
 			return hash;
 		}
 	}
-}
 
+	public List<Vector2i> IsConnectedTo(Vector2i cellAtPosition) {
+		hasBeenAsked.Clear();
+		markCellAtNeighbours(cellAtPosition);
+		return hasBeenAsked;
+	}
+
+	public bool IsConnected(Vector2i cellAtPositionA, Vector2i cellAtPositionB) {
+		hasBeenAsked.Clear();
+		return isCellAtNeighbours(cellAtPositionA, cellAtPositionB);
+	}
+
+	private List<Vector2i> hasBeenAsked = new List<Vector2i>();
+
+	private bool isCellAtNeighbours(Vector2i searchFrom, Vector2i searchGoal) {
+		if (searchFrom == searchGoal) {
+			return true;
+		}
+		if (hasBeenAsked.Find(p => p == searchFrom) == null) {
+			hasBeenAsked.Add(searchFrom);
+		}		
+		for (int direction = 0; direction < 6; direction++) {
+			Vector2i neighbourPosition = GetGridNeighbourGridPosition(searchFrom, direction);
+			if (HasCell(neighbourPosition)) {
+				if (hasBeenAsked.Find(p => p == searchFrom) != null) {
+					if (isCellAtNeighbours(neighbourPosition, searchGoal)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private void markCellAtNeighbours(Vector2i searchFrom) {
+		if (hasBeenAsked.Find(p => p == searchFrom) == null) {
+			hasBeenAsked.Add(searchFrom);
+		}
+		for (int direction = 0; direction < 6; direction++) {
+			Vector2i neighbourPosition = GetGridNeighbourGridPosition(searchFrom, direction);
+			if (HasCell(neighbourPosition) && hasBeenAsked.Find(p => p == neighbourPosition) == null) {
+				markCellAtNeighbours(neighbourPosition);
+			}
+		}
+	}
+}

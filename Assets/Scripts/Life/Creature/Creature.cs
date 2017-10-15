@@ -142,10 +142,14 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void DeleteCell(Cell cell) {
-		phenotype.DeleteCell(cell);
+		if (cell.mapPosition != phenotype.rootCell.mapPosition) {
+			phenotype.DeleteCell(cell, true);
+		} else {
+			Debug.LogError("You are not allowed to Delete root cell");
+		}
+		
 	}
 
-	// --
 	public void EvoUpdate() {
 		phenotype.EvoUpdate();
 	}
@@ -153,8 +157,6 @@ public class Creature : MonoBehaviour {
 	public void EvoFixedUpdate(float fixedTime) {
 		phenotype.EvoFixedUpdate(this, fixedTime);
 	}
-
-	private bool isShowCreatureSelected = false;
 
 	public void ShowCellSelected(Cell cell, bool on) {
 		phenotype.ShowCellSelected(cell, on);
@@ -210,52 +212,7 @@ public class Creature : MonoBehaviour {
 		genotypeCellsPosition.enabled =		show;
 	}
 
-	public void StoreState() {
-		BringOtherGenoPhenoPositionAndRotationToCurrent();
-		UpdateData();
-	}
 
-	public void RestoreState() {
-		genotype.ApplyData(creatureData.genotypeData);
-		isDirty = true;
-	}
-
-	//Everything is deep cloned except the id. The reason is that the id must be unique
-	public void Clone(Creature original, string id) {
-		ApplyData(original.UpdateData());
-		this.id = id;
-	} 
-
-	//data
-	private CreatureData creatureData = new CreatureData();
-
-	public CreatureData UpdateData() {
-		BringOtherGenoPhenoPositionAndRotationToCurrent();
-
-		creatureData.id = id;
-		creatureData.nickname = nickname;
-		//todo: spieces
-		// TODO: Store kids and parents
-
-		creatureData.genotypeData = genotype.UpdateData();
-		creatureData.phenotypeData = phenotype.UpdateData();
-
-		return creatureData;
-	}
-
-	public void ApplyData(CreatureData creatureData) {
-		nickname = creatureData.nickname;
-		id = creatureData.id;
-
-		//TODO: Set kids and parents from stored data
-
-		genotype.ApplyData(creatureData.genotypeData);
-		Vector2 position = creatureData.genotypeData.rootPosition;
-		float heading = creatureData.genotypeData.rootHeading;
-		genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
-
-		phenotype.ApplyData(creatureData.phenotypeData, this);
-	}
 
 	//----------------------
 
@@ -305,7 +262,6 @@ public class Creature : MonoBehaviour {
 		genotype.hasCollider = CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype && !genotype.isGrabbed;
 	}
 
-	// if we update as creature copy is born we'll run into copy creture offset problems
 	private void Update() {
 		bool geneCelleWasUpdated = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
 
@@ -347,5 +303,52 @@ public class Creature : MonoBehaviour {
 			}
 			isDirty = false;
 		}
+	}
+
+	// Save / Load / Clone
+	private CreatureData creatureData = new CreatureData();
+
+	public void StoreState() {
+		BringOtherGenoPhenoPositionAndRotationToCurrent();
+		UpdateData();
+	}
+
+	public void RestoreState() {
+		genotype.ApplyData(creatureData.genotypeData);
+		isDirty = true;
+	}
+
+	//Everything is deep cloned except the id. The reason is that the id must be unique
+	public void Clone(Creature original, string id) {
+		ApplyData(original.UpdateData());
+		this.id = id;
+	}
+
+	public CreatureData UpdateData() {
+		BringOtherGenoPhenoPositionAndRotationToCurrent();
+
+		creatureData.id = id;
+		creatureData.nickname = nickname;
+		//todo: spieces
+		// TODO: Store kids and parents
+
+		creatureData.genotypeData = genotype.UpdateData();
+		creatureData.phenotypeData = phenotype.UpdateData();
+
+		return creatureData;
+	}
+
+	public void ApplyData(CreatureData creatureData) {
+		nickname = creatureData.nickname;
+		id = creatureData.id;
+
+		//TODO: Set kids and parents from stored data
+
+		genotype.ApplyData(creatureData.genotypeData);
+		Vector2 position = creatureData.genotypeData.rootPosition;
+		float heading = creatureData.genotypeData.rootHeading;
+		genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
+
+		phenotype.ApplyData(creatureData.phenotypeData, this);
 	}
 }

@@ -78,7 +78,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		selection.Clear();
 
 		isDirty = true;
-		phenotypePanel.DirtyMark();
+		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.selectedGene = null;
 
@@ -101,7 +101,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		creature.MakeDirty();
 		isDirty = true;
-		phenotypePanel.DirtyMark();
+		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
 	}
@@ -114,7 +114,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		life.MakeAllCreaturesDirty();
 		isDirty = true;
-		phenotypePanel.DirtyMark();
+		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
 
@@ -137,7 +137,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		DirtyMarkSelected();
 		isDirty = true;
-		phenotypePanel.DirtyMark();
+		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
 	}
@@ -156,9 +156,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		selectedCell = null;
 		selection.Remove(creature);
-		
+
+		SetCellAndGeneSelectionToRoot();
+
 		isDirty = true;
-		phenotypePanel.DirtyMark();
+		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
 	}
