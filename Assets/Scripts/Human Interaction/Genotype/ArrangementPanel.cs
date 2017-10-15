@@ -39,6 +39,11 @@ public class ArrangementPanel : MonoBehaviour {
 
 	private bool isMouseHoverng;
 
+	private bool isDirty = true;
+	public void MakeDirty() {
+		isDirty = true;
+	}
+
 	private Arrangement m_arrangement;
 	public Arrangement arrangement {
 		get {
@@ -176,8 +181,8 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	private void MakeAllGenomeStuffDirty() {
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		GenePanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
 		}
@@ -206,14 +211,11 @@ public class ArrangementPanel : MonoBehaviour {
 		enableToggle.GetComponent<Toggle>().isOn = isEnabled;
 	}
 
-	private bool isDirty = true;
-	public void MakeDirty() {
-		isDirty = true;
-	}
-
 	private void Update() {
 		if (isDirty) {
-			Debug.Log("Update");
+			if(GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update ArrangementPanel");
+
 			FlipSideEnum viewedFlipSide = GenotypePanel.instance.viewedFlipSide;
 
 			//Nothing to represent

@@ -10,7 +10,11 @@ public class GenePanel : MonoSingleton<GenePanel> {
 	public Image flipWhiteBlack;
 	public Text geneReferenceText;
 
-	public bool isDirty = true;
+	private bool isDirty = true;
+	public void MakeDirty() {
+		isDirty = true;
+	}
+
 	private Gene m_selectedGene;
 	public Gene selectedGene {
 		get {
@@ -65,8 +69,8 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		}
 
 		if (trueChange && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-			GenotypePanel.instance.isDirty = true;
-			GenomePanel.instance.isDirty = true;
+			GenotypePanel.instance.MakeDirty();
+			GenomePanel.instance.MakeDirty();
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
 				CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
 			}
@@ -85,7 +89,8 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
 	private void Update() {
 		if (isDirty) {
-			Debug.Log("Update");
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update GenePanel");
 			//Nothing to represent
 			if (selectedGene == null) {
 				for (int index = 0; index < arrangementPanels.Length; index++) {

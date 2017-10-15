@@ -1,5 +1,6 @@
 ﻿public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
+	// MUTATION
 	public float mutationStrength = 1f;
 
 	public float cellTypeLeave = 100f;
@@ -49,4 +50,8 @@
 
 	public float referenceSideLeave = 100f;
 	public float referenceSideToggle = 1f;
+
+
+	// DEBUG
+	public bool printoutAtDirtyMarkedUpdate = true;
 }

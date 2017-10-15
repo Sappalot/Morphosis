@@ -13,6 +13,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	public List<Creature> selection { get; private set; }
 
+	private bool isDirty = true;
+
+
 	public Creature soloSelected {
 		get {
 			if (selection.Count != 1)
@@ -76,7 +79,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		isDirty = true;
 		phenotypePanel.DirtyMark();
-		GenomePanel.instance.isDirty = true;
+		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.selectedGene = null;
 
 		SetCellAndGeneSelectionToRoot();
@@ -96,11 +99,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		selectedCell = cell;
 		GenePanel.instance.selectedGene = cell.gene;
 
-		creature.isDirty = true;
+		creature.MakeDirty();
 		isDirty = true;
 		phenotypePanel.DirtyMark();
-		GenomePanel.instance.isDirty = true;
-		GenePanel.instance.isDirty = true;
+		GenomePanel.instance.MakeDirty();
+		GenePanel.instance.MakeDirty();
 	}
 
 	public void Select(List<Creature> creatures) {
@@ -112,8 +115,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		life.MakeAllCreaturesDirty();
 		isDirty = true;
 		phenotypePanel.DirtyMark();
-		GenomePanel.instance.isDirty = true;
-		GenePanel.instance.isDirty = true;
+		GenomePanel.instance.MakeDirty();
+		GenePanel.instance.MakeDirty();
 
 		StoreAllSelectedsState();
 	}
@@ -135,8 +138,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		DirtyMarkSelected();
 		isDirty = true;
 		phenotypePanel.DirtyMark();
-		GenomePanel.instance.isDirty = true;
-		GenePanel.instance.isDirty = true;
+		GenomePanel.instance.MakeDirty();
+		GenePanel.instance.MakeDirty();
 	}
 
 	public void RemoveFromSelection(List<Creature> creatures) {
@@ -156,13 +159,13 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		
 		isDirty = true;
 		phenotypePanel.DirtyMark();
-		GenomePanel.instance.isDirty = true;
-		GenePanel.instance.isDirty = true;
+		GenomePanel.instance.MakeDirty();
+		GenePanel.instance.MakeDirty();
 	}
 
 	private void DirtyMarkSelected() {
 		for (int index = 0; index < selection.Count; index++) {
-			selection[index].isDirty = true;
+			selection[index].MakeDirty();
 		}
 	}
 
@@ -385,11 +388,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	//--------------------------------
-	public bool isDirty = true;
-
 	private void Update() {
 		if (isDirty) {
-			Debug.Log("Update");
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update CreatureSelectionPanel");
 			if (selection.Count == 0) {
 				selectedCreatureText.text = "";
 			} else if (selection.Count == 1) {

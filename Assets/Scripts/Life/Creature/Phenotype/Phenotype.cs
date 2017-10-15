@@ -29,14 +29,16 @@ public class Phenotype : MonoBehaviour {
 	public GameObject cells;
 	public Edges edges;
 
+	public bool isGrabbed { get; private set; }
+	public bool hasDirtyPosition = false;
+
 	private Vector3 velocity = new Vector3();
 	private List<Cell> cellList = new List<Cell>();
 	private Vector2 spawnPosition;
 	private float spawnHeading;
 	private CellMap cellMap = new CellMap();
 
-	public bool isGrabbed { get; private set; }
-	public bool hasDirtyPosition = false;
+	private bool isDirty = true;
 
 	//Grown cells
 	public int cellCount {
@@ -101,6 +103,8 @@ public class Phenotype : MonoBehaviour {
 
 	public bool UpdateCellsFromGeneCells(Creature creature, Vector2 position, float heading) {
 		if (cellsDiffersFromGeneCells) {
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update Creature UpdateCellsFromGeneCells");
 			Setup(creature, position, heading);
 			TryGrowFully(creature);
 			cellsDiffersFromGeneCells = false;
@@ -518,10 +522,12 @@ public class Phenotype : MonoBehaviour {
 			isDirty = true;
 		}
 	}
-
-	public bool isDirty = true;
+	
 	private void Update() {
 		if (isDirty) {
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update Creature Phenotype");
+
 			SetCollider(hasCollider);
 			isDirty = false;
 		}

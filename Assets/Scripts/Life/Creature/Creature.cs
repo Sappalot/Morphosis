@@ -43,7 +43,10 @@ public class Creature : MonoBehaviour {
 	public Genotype genotype;
 	public Phenotype phenotype;
 
-	public bool isDirty = false;
+	private bool isDirty = false;
+	public void MakeDirty() {
+		isDirty = true;
+	}
 
 	public int cellsTotalCount {
 		get {
@@ -83,28 +86,29 @@ public class Creature : MonoBehaviour {
 
 	public void GenerateJellyfish(Vector2 position, float heading) {
 		genotype.GenerateGenomeJellyfish();
-		GenerateGenotype(position, heading);
+		UpdateCellsAndGeneCells(position, heading);
 	}
 
 	public void GenerateEmbryo(Vector3 position, float heading) {
 		genotype.GenomeEmpty();
-		GenerateGenotype(position, heading);
+		UpdateCellsAndGeneCells(position, heading);
 	}
 
 	public void GenerateFreak(Vector3 position, float heading) {
 		genotype.GenomeEmpty();
 		genotype.GenomeScramble();
-		GenerateGenotype(position, heading);
+		UpdateCellsAndGeneCells(position, heading);
 	}
 
 	public void GenerateMergling(List<Gene[]> genomes, Vector3 position, float heading) {
 		genotype.GenomeSet(GenotypeUtil.CombineGenomeFine(genomes));
-		GenerateGenotype(position, heading);
+		UpdateCellsAndGeneCells(position, heading);
 	}
 
-	private void GenerateGenotype(Vector2 position, float heading) {
+	private void UpdateCellsAndGeneCells(Vector2 position, float heading) {
+		//we need to update them allready in order to have rootCell. Root cell is needed for position and heading when updating
 		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
-		phenotype.UpdateCellsFromGeneCells(this, position, heading); //For some reason we need this update to make mergeling show up, creature in update is another one than this
+		phenotype.connectionsDiffersFromCells = phenotype.UpdateCellsFromGeneCells(this, position, heading);
 		isDirty = true;
 	}
 
@@ -314,6 +318,9 @@ public class Creature : MonoBehaviour {
 		isDirty = isDirty || geneCelleWasUpdated || cellsWereUpdatedFromGeneCells || connectionsWereUpdatedFromCells;
 
 		if (isDirty) {
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update Creature (due to user input)");
+
 			ShowCurrentGenoPhenoAndHideOther();
 			EnableCurrentGenoPhenoColliderAndDisableOther();
 

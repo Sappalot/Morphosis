@@ -21,6 +21,8 @@ public class Genotype : MonoBehaviour {
 
 	public bool isGrabbed { get; private set; }
 
+	private bool isDirty = true;
+
 	public int geneCellCount {
 		get {
 			return geneCellList.Count;
@@ -165,6 +167,8 @@ public class Genotype : MonoBehaviour {
 
 	public bool UpdateGeneCellsFromGenome(Creature creature, Vector2 position, float heading) { // heading 90 ==> root is pointing north
 		if (geneCellsDiffersFromGenome) {
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update Creature UpdateGeneCellsFromGenome");
 			const int maxSize = 6;
 			Clear();
 
@@ -439,9 +443,11 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	public bool isDirty = true;
 	private void Update() {
 		if (isDirty) {
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update Creature Genotype");
+
 			SetCollider(hasCollider);
 			isDirty = false;
 		}

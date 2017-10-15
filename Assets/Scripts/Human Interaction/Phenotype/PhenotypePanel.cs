@@ -7,6 +7,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public Text creatureEnergy;
 	public CellPanel cellPanel;
 
+	private bool isDirty = true;
 
 	public void OnGrowClicked() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
@@ -24,11 +25,11 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public void DirtyMark() {
 		isDirty = true;
 	}
-
-	private bool isDirty = true;
+	
 	private void Update() {
 		if (isDirty) {
-			Debug.Log("Update");
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update PhenotypePanel");
 			//Nothing to represent
 			Creature solo = CreatureSelectionPanel.instance.soloSelected;
 			if (solo == null) {

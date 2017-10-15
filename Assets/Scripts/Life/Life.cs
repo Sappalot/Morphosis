@@ -162,7 +162,7 @@ public class Life : MonoBehaviour {
 	//----------------
 	public void MakeAllCreaturesDirty() {
 		for (int index = 0; index < creatures.Count; index++) {
-			creatures[index].isDirty = true;
+			creatures[index].MakeDirty();
 		}
 	}
 }

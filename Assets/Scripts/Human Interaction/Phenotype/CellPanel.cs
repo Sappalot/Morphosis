@@ -7,9 +7,9 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public EggPanel eggPanel;
 
-
 	private bool isDirty = true;
 	private Cell m_selectedCell;
+
 	public Cell selectedCell {
 		get {
 			return m_selectedCell != null ? m_selectedCell : (CreatureSelectionPanel.instance.hasSoloSelected ? CreatureSelectionPanel.instance.soloSelected.phenotype.rootCell : null);
@@ -19,11 +19,11 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			isDirty = true;
 		}
 	}
-
 	
 	private void Update() {
 		if (isDirty) {
-			Debug.Log("Update");
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update CellPanel");
 			eggPanel.gameObject.SetActive(false);
 
 			//Nothing to represent

@@ -39,15 +39,15 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 		CreatureSelectionPanel.instance.SetCellAndGeneSelectionToRoot();
 		foreach (Creature c in World.instance.life.creatures) {
 			c.BringCurrentGenoPhenoPositionAndRotationToOther();
-			c.isDirty = true;
+			c.MakeDirty();
 		}
 		isDirty = true;
 	}
-
 	
 	private void Update() {
 		if (isDirty) {
-			Debug.Log("Update");
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update CreatureEditModePanel");
 			phenotypeImage.color = (mode == CreatureEditModeEnum.Phenotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 			genotypeImage.color = (mode == CreatureEditModeEnum.Genotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 			historyImage.color = (mode == CreatureEditModeEnum.History) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;

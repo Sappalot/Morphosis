@@ -11,6 +11,11 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 	public FlipSideEnum viewedFlipSide { get; private set; }
 
+	private bool isDirty = true;
+	public void MakeDirty() {
+		isDirty = true;
+	}
+
 	public Genotype selectedGenotype {
 		get {
 			return (CreatureSelectionPanel.instance.hasSoloSelected ? CreatureSelectionPanel.instance.soloSelected.genotype : null);
@@ -27,8 +32,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			creature.Clear();
 		}
 		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		GenePanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
 
 	}
 
@@ -37,8 +42,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			creature.MutateAbsolute(GlobalSettings.instance.mutationStrength);
 		}
 		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		GenePanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
 	}
 
 	public void OnClickedMutateCummulative() {
@@ -46,8 +51,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			creature.MutateCummulative(GlobalSettings.instance.mutationStrength);
 		}
 		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		GenePanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
 	}
 
 	public void OnClickedScramble() {
@@ -55,8 +60,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			creature.Scramble();
 		}
 		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true; ;
+		GenePanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
 	}
 
 	public void OnClickedRevert() {
@@ -64,28 +69,28 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			creature.RestoreState();
 		}
 		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		GenePanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
 	}
 
 	public void OnClickedBlackWhite() {
 		viewedFlipSide = FlipSideEnum.BlackWhite;
 		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		GenePanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
 	}
 
 	public void OnClickedWhiteBlack() {
 		viewedFlipSide = FlipSideEnum.WhiteBlack;
 		isDirty = true;
-		GenePanel.instance.isDirty = true;
-		GenomePanel.instance.isDirty = true;
+		GenePanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
 	}
 
-	public bool isDirty = true;
 	private void Update() {
 		if (isDirty) {
-			Debug.Log("Update");
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update GenotypePanel");
 			blackWhiteImage.color = (viewedFlipSide == FlipSideEnum.BlackWhite) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 			whiteBlackImage.color = (viewedFlipSide == FlipSideEnum.WhiteBlack) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 			isDirty = false;

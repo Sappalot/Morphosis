@@ -12,8 +12,7 @@ public class GenomeGene : MonoBehaviour {
 	public Text geneReferenceText;
 	public ReferenceGraphics[] referenceGraphics;
 
-	//public int index;
-	//public Text text;
+	private bool isDirty = true;
 
 	private Gene m_gene;
 	public Gene gene {
@@ -30,20 +29,20 @@ public class GenomeGene : MonoBehaviour {
 		//Debug.Log("Clicked " + index);
 		if (MouseAction.instance.actionState == MouseActionStateEnum.free) {
 			GenePanel.instance.selectedGene = gene;
-			GenomePanel.instance.isDirty = true;
+			GenomePanel.instance.MakeDirty();
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
-				CreatureSelectionPanel.instance.soloSelected.isDirty = true;
+				CreatureSelectionPanel.instance.soloSelected.MakeDirty();
 			}
 		} else if (MouseAction.instance.actionState == MouseActionStateEnum.selectGene) {
 			GenePanel.instance.GiveAnswerGeneReference(gene);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		}
 	}
-
-	public bool isDirty = true;
+	
 	private void Update() {
 		if (isDirty) {
-			Debug.Log("Update");
+			//if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				//Debug.Log("Update GenomeGene");
 			//Nothing to represent
 			if (GenomePanel.instance.genotype == null || gene == null) {
 				//text.text = "-";
