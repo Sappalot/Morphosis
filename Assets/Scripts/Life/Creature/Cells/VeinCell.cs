@@ -6,6 +6,8 @@
 	}
 
 	public override void UpdateSpringFrequenzy() {
+		base.UpdateSpringFrequenzy();
+
 		if (HasNeighbour(CardinalEnum.north)) {
 			northSpring.frequency = (this.springFrequenzy + northNeighbour.cell.springFrequenzy) / 2f;
 			northSpring.dampingRatio = (this.springDamping + northNeighbour.cell.springDamping) / 2f;

@@ -326,10 +326,12 @@ public class Genotype : MonoBehaviour {
 	public void ShowCreatureSelected(bool on) {
 		for (int index = 0; index < geneCellList.Count; index++) {
 			geneCellList[index].ShowCreatureSelected(on);
-			geneCellList[index].ShowTriangle(on);
+			geneCellList[index].ShowTriangle(true);
 			geneCellList[index].ShowShadow(on);
+
 			geneCellList[index].SetOrderInLayer(on ? 1 : 0);
 		}
+		isElevated = on;
 	}
 
 	public void ShowGeneCellsSelected(bool on) {
@@ -434,13 +436,42 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
+	private void SetElevated(bool on) {
+		foreach (Cell cell in geneCellList) {
+			cellsTransform.localPosition = new Vector3(0f, 0f, on ? -1f : 0f);
+		}
+	}
+
+	private bool m_isElevated = false;
+	public bool isElevated {
+		get {
+			return m_isElevated;
+		}
+		set {
+			m_isElevated = value;
+			isDirty = true;
+		}
+	}
+
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature Genotype");
 
 			SetCollider(hasCollider);
+			SetElevated(isElevated);
 			isDirty = false;
 		}
 	}
+
+	//public void EvoUpdate() {
+	//	EvoUpdateCells();
+	//}
+
+	//private void EvoUpdateCells() {
+	//	//TODO: only if creature inside frustum && should be shown
+	//	for (int index = 0; index < geneCellList.Count; index++) {
+	//		geneCellList[index].EvoUpdate();
+	//	}
+	//}
 }

@@ -48,38 +48,52 @@ public class CellMap {
 		illegalPositions.Add(gridPosition);
 	}
 
-	public Cell GetGridNeighbourCell(Vector2i gridPosition, CardinalEnum direction) {
-		return GetGridNeighbourCell(gridPosition, AngleUtil.CardinalEnumToCardinalIndex(direction));
+	public Cell GetGridNeighbourCell(Vector2i gridPosition, CardinalEnum cardinalEnum) {
+		return GetGridNeighbourCell(gridPosition, AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum));
 	}
 
-	public Cell GetGridNeighbourCell(Vector2i gridPosition, int direction) {
-		return GetCell(GetGridNeighbourGridPosition(gridPosition, direction));
+	public Cell GetGridNeighbourCell(Vector2i gridPosition, int cardinalIndex) {
+		return GetCell(GetGridNeighbourGridPosition(gridPosition, cardinalIndex));
 	}
 
-	public Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, CardinalEnum direction) {
-		return GetGridNeighbourGridPosition(gridPosition, AngleUtil.CardinalEnumToCardinalIndex(direction));
+	public bool HasGridNeighbourCell(Vector2i gridPosition, int cardinalIndex) {
+		return GetGridNeighbourCell(gridPosition, cardinalIndex) != null;
 	}
 
-	public Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, int direction) {
+	public List<Cell> GetGridNeighbourCell(Vector2i gridPosition) {
+		List<Cell> retreivedCells = new List<Cell>();
+		for (int i = 0; i < 6; i++) {
+			if (HasGridNeighbourCell(gridPosition, i)) {
+				retreivedCells.Add(GetGridNeighbourCell(gridPosition, i));
+			}
+		}
+		return retreivedCells;
+	}
+
+	public Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, CardinalEnum cardinalenum) {
+		return GetGridNeighbourGridPosition(gridPosition, AngleUtil.CardinalEnumToCardinalIndex(cardinalenum));
+	}
+
+	public Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, int cardinalIndex) {
 		Vector2i neighbour = null;
 		int even = (gridPosition.x % 2 == 0) ? 1 : 0;
 		int odd = (gridPosition.x % 2 == 0) ? 0 : 1;
-		if (direction == 0) {
+		if (cardinalIndex == 0) {
 			neighbour = new Vector2i(gridPosition.x + 1, gridPosition.y + odd);
 		}
-		if (direction == 1) {
+		if (cardinalIndex == 1) {
 			neighbour = new Vector2i(gridPosition.x, gridPosition.y + 1);
 		}
-		if (direction == 2) {
+		if (cardinalIndex == 2) {
 			neighbour = new Vector2i(gridPosition.x - 1, gridPosition.y + odd);
 		}
-		if (direction == 3) {
+		if (cardinalIndex == 3) {
 			neighbour = new Vector2i(gridPosition.x - 1, gridPosition.y - even);
 		}
-		if (direction == 4) {
+		if (cardinalIndex == 4) {
 			neighbour = new Vector2i(gridPosition.x, gridPosition.y - 1);
 		}
-		if (direction == 5) {
+		if (cardinalIndex == 5) {
 			neighbour = new Vector2i(gridPosition.x + 1, gridPosition.y - even);
 		}
 		return neighbour;

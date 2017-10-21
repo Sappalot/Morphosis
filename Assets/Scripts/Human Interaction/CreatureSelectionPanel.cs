@@ -255,15 +255,30 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	private void AddCoppiesToMoveCreature(List<Creature> originals) {
+		List<Creature> copies = new List<Creature>();
+		Dictionary<string, string> originalToCopy = new Dictionary<string, string>();
 		foreach (Creature original in originals) {
-			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-				Creature copy = World.instance.life.SpawnCreatureCopy(original, PhenoGenoEnum.Phenotype);
-				moveCreatures.Add(copy);
-			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-				Creature copy = World.instance.life.SpawnCreatureCopy(original, PhenoGenoEnum.Genotype);
-				moveCreatures.Add(copy);
+			Creature copy = World.instance.life.SpawnCreatureCopy(original);
+			moveCreatures.Add(copy);
+			copies.Add(copy);
+			originalToCopy.Add(original.id, copy.id);
+		}
+
+		//Clean up ids can't have same as original and reftrence ids to children mothers must be right too
+		//name all creatures with new ids, and map the old ones to the new ones (oldID, newID)
+		//Go through all reftrences and update mothers and children id to match the new ones
+		foreach (Creature copy in copies) {
+			foreach (KeyValuePair<string, string> entry in originalToCopy) {
+				copy.TryChangeRelativesId(entry.Key, entry.Value);
 			}
 		}
+
+		//TODO: remove children
+
+
+		//Assume we copy whole cluster or nothing at all
+		//If we copy parts of a cluster we will need to update the references accodingly 
+
 	}
 
 	public void StartMoveCreatures() {
@@ -460,7 +475,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		//debug markers
 		foreach (Creature c in World.instance.life.creatures) {
 			//c.ShowMarkers(IsSelected(c));
-			c.ShowMarkers(true);
+			c.ShowMarkers(false);
 		}
 	}
 }

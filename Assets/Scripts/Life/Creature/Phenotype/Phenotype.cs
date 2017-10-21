@@ -168,7 +168,7 @@ public class Phenotype : MonoBehaviour {
 					}
 				}
 				Cell newCell = SpawnCell(creature, geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, averagePosition / positionCount, false);
-				ConnectCells(false, false); //We need to know our neighbours in order to update vectors correctly 
+				ConnectCellsIntraBody(false, false); //We need to know our neighbours in order to update vectors correctly 
 				newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
 				newCell.UpdateRotation(); //Rotation is needed in order to place subsequent cells right
 				newCell.UpdateFlipSide(); // Just graphics
@@ -179,16 +179,57 @@ public class Phenotype : MonoBehaviour {
 		connectionsDiffersFromCells = true;
 	}
 
-	public bool UpdateConnectionsFromCells() {
+	public bool UpdateConnectionsFromCellsIntraBody() {
 		if (connectionsDiffersFromCells) {
-			ConnectCells(true, true);
+			ConnectCellsIntraBody(true, true);
 			edges.GenerateWings(cellMap);
-			UpdateSpringsFrequenze(); //testing
-
+			UpdateSpringsFrequenze(); //testing only
 			connectionsDiffersFromCells = false;
 			return true;
 		}
 		return false;
+	}
+	
+	private void ConnectCellsIntraBody(bool connectSprings, bool updateGroups) {
+		for (int index = 0; index < cellList.Count; index++) {
+			Cell cell = cellList[index];
+			Vector2i center = cell.mapPosition;
+			for (int direction = 0; direction < 6; direction++) {
+				Vector2i gridNeighbourPos = cellMap.GetGridNeighbourGridPosition(center, direction); // GetGridNeighbour(center, CardinalDirectionHelper.ToCardinalDirection(direction));
+				if (gridNeighbourPos != null) {
+					cell.SetNeighbourCell(direction, cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
+				} else {
+					cell.SetNeighbourCell(direction, null);
+				}
+			}
+			if (connectSprings)
+				cell.UpdateSpringConnections();
+			if (updateGroups)
+				cell.UpdateGroups();
+		}
+	}
+
+	//Creatures will ce connected via Cells but remain unaware of each other in cell maps
+	public void ConnectChildEmbryo(Child child) {
+		Cell childRootCell = child.creature.phenotype.rootCell;
+		List<Cell> motherCells = new List<Cell>();
+		for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) { // Child to mother
+			Vector2i motherSupportCellPosition = cellMap.GetGridNeighbourGridPosition(child.placentaMapPosition, cardinalIndex);
+			Debug.Assert(motherSupportCellPosition != null);
+
+			Cell motherSupportCell = cellMap.GetCell(motherSupportCellPosition);
+			
+			if (motherSupportCell != null) {
+				motherCells.Add(motherSupportCell);
+				//childRootCell.SetNeighbourCell(cardinalIndex, motherSupportCell); // Careful with the direction here!!!
+				//motherSupportCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3), childRootCell);
+			}
+			
+		}
+		childRootCell.CreatePlacentaSprings(motherCells);
+
+		childRootCell.UpdateGroups();
+		childRootCell.UpdateSpringFrequenzy();
 	}
 
 	private int CardinaIndexToNeighbour(Cell from, Cell to) {
@@ -311,27 +352,6 @@ public class Phenotype : MonoBehaviour {
 		return cell;
 	}
 
-	private void ConnectCells(bool connectSprings, bool updateGroups) {
-		for (int index = 0; index < cellList.Count; index++) {
-			Cell cell = cellList[index];
-			Vector2i center = cell.mapPosition;
-			for (int direction = 0; direction < 6; direction++) {
-				Vector2i gridNeighbourPos = cellMap.GetGridNeighbourGridPosition(center, direction); // GetGridNeighbour(center, CardinalDirectionHelper.ToCardinalDirection(direction));
-				if (gridNeighbourPos != null) {
-					cell.SetNeighbourCell(AngleUtil.CardinalIndexToCardinalEnum(direction), cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
-				} else {
-					cell.SetNeighbourCell(AngleUtil.CardinalIndexToCardinalEnum(direction), null);
-				}
-			}
-			if (connectSprings)
-				cell.UpdateSpringConnections();
-			if (updateGroups)
-				cell.UpdateGroups();
-		}
-
-		// TODO after all creatures are aware of their mothers and children: Connect to them as well
-	}
-
 	private void Clear() {
 		for (int index = 0; index < cellList.Count; index++) {
 			Destroy(cellList[index].gameObject);
@@ -360,7 +380,7 @@ public class Phenotype : MonoBehaviour {
 	public void ShowSelectedCreature(bool on) {
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].ShowCreatureSelected(on);
-			cellList[index].ShowTriangle(on); // Debug
+			cellList[index].ShowTriangle(true); // Debug
 		}
 	}
 
@@ -515,8 +535,6 @@ public class Phenotype : MonoBehaviour {
 	private bool IsPointInsideCircle(Vector2 point, Vector2 center, float radius) {
 		return Mathf.Pow((point.x - center.x), 2) + Mathf.Pow((point.y - center.y), 2) < Mathf.Pow(radius, 2);
 	}
-
-
 
 	//--------
 	private void SetCollider(bool on) {

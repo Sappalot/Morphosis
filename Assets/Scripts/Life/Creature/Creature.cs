@@ -43,6 +43,70 @@ public class Creature : MonoBehaviour {
 	public Genotype genotype;
 	public Phenotype phenotype;
 
+	// Relatives ---------------
+	private List<Creature> originals = new List<Creature>();
+	private Mother mother;
+	private List<Child> children = new List<Child>();
+
+	public bool hasMother {
+		get {
+			return mother != null;
+		}
+	}
+
+	public bool isMotherDirty {
+		get {
+			return hasMother && mother.isReferenceDirty;
+		}
+	}
+	
+	public bool hasChild {
+		get {
+			return  children.Count > 0;
+		}
+	}
+
+	public bool isChildDirty {
+		get {
+			if (!hasChild) {
+				return false;
+			}
+			foreach (Child c in children) {
+				if (c.isReferenceDirty) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	public void SetMother(string id, bool isConnected) {
+		Debug.Assert(mother == null, "Creature has allready a mother");
+		mother = new Mother(id);
+		mother.isConnected = isConnected;
+	}
+
+	public void SetChild(string id, Vector2i placentaMapPosition, bool isConnected) {
+		Debug.Assert(children.Find(c => c.id == id) == null, "Creature has allready a child with that id");
+		Child newChild = new Child(id);
+		newChild.placentaMapPosition = placentaMapPosition;
+		newChild.isConnected = isConnected;
+		children.Add(newChild);
+	}
+
+	public void TryChangeRelativesId(string oldId, string newId) {
+		if (mother != null && mother.id == oldId) {
+			mother.id = newId;
+		}
+		foreach (Child child in children) {
+			if (child.id == oldId) {
+				child.id = newId;
+			}
+		}
+	}
+
+	// ^ Relatives ^
+
 	private bool isDirty = false;
 	public void MakeDirty() {
 		isDirty = true;
@@ -74,6 +138,14 @@ public class Creature : MonoBehaviour {
 		} else {
 			return genotype.rootCell.heading;
 		}
+	}
+
+	public void ConnectChild(Creature child) {
+
+	}
+
+	public void ReleaseChild(Creature child) {
+
 	}
 
 	public bool IsPhenotypeInside(Rect area) {
@@ -159,8 +231,14 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
+	//TODO: update graphics not caused by hunman interaction here
 	public void EvoUpdate() {
-		phenotype.EvoUpdate();
+		//if (!phenotype.isGrabbed) {
+		//	phenotype.EvoUpdate();
+		//}
+		//if (!genotype.isGrabbed) {
+		//	genotype.EvoUpdate();
+		//}
 	}
 
 	public void EvoFixedUpdate(float fixedTime) {
@@ -205,6 +283,7 @@ public class Creature : MonoBehaviour {
 	public void Release(PhenoGenoEnum type) {
 		if (type == PhenoGenoEnum.Phenotype) {
 			phenotype.Release(this);
+			genotype.MoveToPhenotype(this);
 			hasPhenotypeCollider = true;
 		} else if (type == PhenoGenoEnum.Genotype) {
 			genotype.Release(this);
@@ -271,6 +350,16 @@ public class Creature : MonoBehaviour {
 		genotype.hasCollider = CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype && !genotype.isGrabbed;
 	}
 
+	public bool isSomethingDirty {
+		get {
+			return genotype.geneCellsDiffersFromGenome ||
+				phenotype.cellsDiffersFromGeneCells ||
+				phenotype.connectionsDiffersFromCells ||
+				isMotherDirty ||
+				isChildDirty;
+		}
+	}
+
 	private void Update() {
 		bool geneCelleWasUpdated = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
 
@@ -278,7 +367,26 @@ public class Creature : MonoBehaviour {
 		bool cellsWereUpdatedFromGeneCells = phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
 
 		phenotype.connectionsDiffersFromCells |= cellsWereUpdatedFromGeneCells;
-		bool connectionsWereUpdatedFromCells = phenotype.UpdateConnectionsFromCells();
+		bool connectionsWereUpdatedFromCells = phenotype.UpdateConnectionsFromCellsIntraBody();
+
+		if (mother != null) {
+			mother.UpdateCreatureFromId();
+		}
+		foreach (Child c in children) {
+			c.UpdateCreatureFromId();
+		}
+
+		//Stitch mother and child together with springs
+		if (!isSomethingDirty) {
+			foreach (Child child in children) {
+				if (child.isConnected && child.isConnectionDirty && !child.creature.isSomethingDirty) {
+					Debug.Log("Connect: mother: " + id + " ==> " + child.id);
+					phenotype.ConnectChildEmbryo(child);
+					child.isConnectionDirty = false;
+				}
+			}
+		}
+
 
 		isDirty = isDirty || geneCelleWasUpdated || cellsWereUpdatedFromGeneCells || connectionsWereUpdatedFromCells;
 
@@ -329,19 +437,37 @@ public class Creature : MonoBehaviour {
 		isDirty = true;
 	}
 
-	//Everything is deep cloned except the id. The reason is that the id must be unique
-	public void Clone(Creature original, string id) {
+	//Everything is deep cloned even the id. Change this not to have trouble
+	public void Clone(Creature original) {
+		// TODO: Make clone of mother with attached child work.... trouble with ids 
 		ApplyData(original.UpdateData());
-		this.id = id;
 	}
 
 	public CreatureData UpdateData() {
-		BringOtherGenoPhenoPositionAndRotationToCurrent();
+		BringOtherGenoPhenoPositionAndRotationToCurrent(); //Do we really need this one??
 
+		//me
 		creatureData.id = id;
 		creatureData.nickname = nickname;
 		//todo: spieces
-		// TODO: Store kids and parents
+
+		//mother
+		if (mother != null) {
+			creatureData.motherId = mother.id;
+			creatureData.isMotherConnected = mother.isConnected;
+		} else {
+			creatureData.motherId = string.Empty;
+		}
+
+		//children
+		creatureData.childrenId = new string[children.Count];
+		creatureData.childrenPlacentaMapPosition = new Vector2i[children.Count];
+		creatureData.isChildrenConnected = new bool[children.Count];
+		for (int i = 0; i < creatureData.childrenId.Length; i++) {
+			creatureData.childrenId[i] = children[i].id;
+			creatureData.childrenPlacentaMapPosition[i] = children[i].placentaMapPosition;
+			creatureData.isChildrenConnected[i] = children[i].isConnected;
+		}
 
 		creatureData.genotypeData = genotype.UpdateData();
 		creatureData.phenotypeData = phenotype.UpdateData();
@@ -350,10 +476,19 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void ApplyData(CreatureData creatureData) {
+		//me
 		nickname = creatureData.nickname;
 		id = creatureData.id;
 
-		//TODO: Set kids and parents from stored data
+		//mother
+		if (creatureData.motherId != string.Empty) {
+			SetMother(creatureData.motherId, creatureData.isMotherConnected);
+		}
+
+		//children
+		for (int i = 0; i < creatureData.childrenId.Length; i++) {
+			SetChild(creatureData.childrenId[i], creatureData.childrenPlacentaMapPosition[i], creatureData.isChildrenConnected[i]);
+		}
 
 		genotype.ApplyData(creatureData.genotypeData);
 		Vector2 position = creatureData.genotypeData.rootPosition;

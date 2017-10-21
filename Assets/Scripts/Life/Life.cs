@@ -9,10 +9,18 @@ public class Life : MonoBehaviour {
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
 	private List<Creature> creatureList = new List<Creature>();
 
+	public string GetUniqueIdStamp() {
+		return idGenerator.GetUniqueId();
+	}
+
 	public List<Creature> creatures	{
 		get {
 			return creatureList;
 		}
+	}
+
+	public Creature GetCreature(string id) {
+		return creatureDictionary[id];
 	}
 
 	public void EvoUpdate() {
@@ -29,24 +37,26 @@ public class Life : MonoBehaviour {
 
 	public void FertilizeCreature(Cell eggCell) {
 		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
-		Creature creature = eggCell.creature;
+		Creature mother = eggCell.creature;
 
-		// Q: What happens when 2 children, attatched to same mother, grows into each other (prio??), One big map for all creatures in a cluster?
+		// Q: What happens when 2 children, attatched to same mother, grows into each other (prio??), Let them grow as long as ther is room for each new cell. Probe for room firstm, then build?
 
 		// remove cell at childs root location
-		creature.DeleteCell(eggCell);
+		mother.DeleteCell(eggCell);
 
-		// TODO: remember not to try to grow in this position until child is released
+		// TODO: ??? remember not to try to grow in this position until child is released
 
 		// Spawn child at egg cell location
 		Creature child = InstantiateCreature();
-		child.GenerateEmbryo(creature.genotype.genome, eggCell.position, eggCell.heading);
+		child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
 
-		// TODO: let child remember where not to grow, in order not to grow over mother
+		// TODO: ??? let child remember where not to grow, in order not to grow over mother
 
 		// TODO: mark mother so that she will connect to child during update
+		mother.SetChild(child.id, eggCell.mapPosition, true);
 
-		// TODO: mark child so that it will connect to mother during update 
+		// TODO: mark child so that it will connect to mother during update
+		child.SetMother(mother.id, true);
 	}
 
 	public void ReleaseCreature(Cell rootCell) {
@@ -127,10 +137,11 @@ public class Life : MonoBehaviour {
 		return creature;
 	}
 
-	public Creature SpawnCreatureCopy(Creature original, PhenoGenoEnum showType) {
+	public Creature SpawnCreatureCopy(Creature original) {
 		Creature clone = InstantiateCreature();
-
-		clone.Clone(original, clone.id);
+		string id = clone.id;
+		clone.Clone(original);
+		clone.id = id;
 		clone.nickname += " (Copy)";
 		clone.hasPhenotypeCollider = false;
 		clone.hasGenotypeCollider = false;
@@ -142,6 +153,7 @@ public class Life : MonoBehaviour {
 		if (creatureDictionary.ContainsKey(id)) {
 			throw new System.Exception("Generated ID was not unique.");
 		}
+
 		return InstantiateCreature(id);
 	}
 

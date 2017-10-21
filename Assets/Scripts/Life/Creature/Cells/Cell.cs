@@ -30,6 +30,9 @@ public abstract class Cell : MonoBehaviour {
 	public SpringJoint2D northSpring;
 	public SpringJoint2D southEastSpring;
 	public SpringJoint2D southWestSpring;
+
+	private SpringJoint2D[] placentaSprings;
+
 	public float springFrequenzy = 5f;
 	public float springDamping = 11f;
 
@@ -170,7 +173,15 @@ public abstract class Cell : MonoBehaviour {
 
 	virtual public void UpdateSpringLengths() { }
 
-	virtual public void UpdateSpringFrequenzy() { }
+	virtual public void UpdateSpringFrequenzy() {
+		if (placentaSprings != null) {
+			for (int i = 0; i < placentaSprings.Length; i++) {
+				SpringJoint2D spring = placentaSprings[i];
+				spring.frequency = springFrequenzy;
+				spring.dampingRatio = springDamping;
+			}
+		}
+	}
 
 	virtual public bool IsContracting() {
 		return false;
@@ -178,7 +189,7 @@ public abstract class Cell : MonoBehaviour {
 
 	public void TurnHingeNeighboursInPlace() {
 		//TODO Update turn springs only when nessesary 
-        
+
 		//CellNeighbour firstNeighbour = null;
 		int springs = 0;
 		Vector3 responceForce = new Vector3();
@@ -212,7 +223,7 @@ public abstract class Cell : MonoBehaviour {
 						{
 							break;
 						}
-                        
+
 						//jump to where spring was attached
 						index += 2; //+1
 						continue;
@@ -243,7 +254,7 @@ public abstract class Cell : MonoBehaviour {
 				} 
 			}
 		}
-        
+
 		GetComponent<Rigidbody2D>().AddForce(responceForce, ForceMode2D.Impulse);
 	}
 
@@ -302,6 +313,10 @@ public abstract class Cell : MonoBehaviour {
 		index_Neighbour[AngleUtil.CardinalEnumToCardinalIndex(direction)].cell = cell;
 	}
 
+	public void SetNeighbourCell(int directionIndex, Cell cell) {
+		index_Neighbour[directionIndex].cell = cell;
+	}
+
 	public Cell GetNeighbourCell(CardinalEnum direction) {
 		return GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(direction));
 	}
@@ -348,21 +363,18 @@ public abstract class Cell : MonoBehaviour {
 
 	////  Updates world space rotation (heading) derived from neighbour position relative to this
 	public void UpdateRotation() {
-		if (mapPosition == new Vector2i() && neighbourCount == 0) {
-			return;
-		}
-			
+		if (!(mapPosition == new Vector2i() && neighbourCount == 0)) {
+			UpdateNeighbourAngles();
 
-		UpdateNeighbourAngles();
-
-		float angleDiffFromBindpose = 0f; 
-		for (int index = 0; index < 6; index++) {
-			if (HasNeighbourCell(index)) {
-				angleDiffFromBindpose = AngleUtil.GetAngleDifference(index_Neighbour[index].bindAngle, index_Neighbour[index].angle);
-				break;
+			float angleDiffFromBindpose = 0f; 
+			for (int index = 0; index < 6; index++) {
+				if (HasNeighbourCell(index)) {
+					angleDiffFromBindpose = AngleUtil.GetAngleDifference(index_Neighbour[index].bindAngle, index_Neighbour[index].angle);
+					break;
+				}
 			}
+			heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex) + angleDiffFromBindpose;
 		}
-		heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex) + angleDiffFromBindpose;
 		triangleTransform.localRotation = Quaternion.Euler(0f, 0f, heading);
 	}
 
@@ -433,6 +445,21 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
+	public void CreatePlacentaSprings(List<Cell> motherCells) {
+		if (placentaSprings != null) {
+			for (int i = 0; i < placentaSprings.Length; i++) {
+				Destroy(placentaSprings[i]);
+			}
+		}
+
+		placentaSprings = new SpringJoint2D[motherCells.Count];
+		
+		for (int i = 0; i < motherCells.Count; i++) {
+			placentaSprings[i] = gameObject.AddComponent(typeof(SpringJoint2D)) as SpringJoint2D;
+			placentaSprings[i].connectedBody = motherCells[i].gameObject.GetComponent<Rigidbody2D>();
+		}
+	}
+
 	public void UpdateGroups() {
 		//TODO check if this cell is a hinge
 		int groups = 0;
@@ -473,7 +500,6 @@ public abstract class Cell : MonoBehaviour {
 
 	// Only for LMB
 	private void OnMouseDown() {
-		bool e = GetComponent<Collider2D>().enabled;
 		if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject() && MouseAction.instance.actionState == MouseActionStateEnum.free) {
 			if (Input.GetKey(KeyCode.LeftControl)) {
 				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
