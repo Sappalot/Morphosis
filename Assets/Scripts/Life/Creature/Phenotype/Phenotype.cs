@@ -61,41 +61,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	public void EvoUpdate() {
-		//EvoUpdateCells();
-		edges.EvoUpdate();
-	}
 
-	public void EvoFixedUpdate(Creature creature, float fixedTime) {
-		if (isGrabbed) {
-			return;
-		}
-
-		//if (update % 50 == 0) {
-		//    edges.ShuffleEdgeUpdateOrder();
-		//    ShuffleCellUpdateOrder();
-		//}
-		//update++;
-
-		// Creature
-		Vector3 averageVelocity = new Vector3();
-		for (int index = 0; index < cellList.Count; index++) {
-			averageVelocity += cellList[index].velocity;
-		}
-		velocity = (cellList.Count > 0f) ? velocity = averageVelocity / cellList.Count : new Vector3();
-
-		//// Cells, turn strings of cells straight
-		//for (int index = 0; index < cellList.Count; index++) {
-		//    cellList[index].TurnNeighboursInPlace();
-		//}
-
-		// Edges, let edge-wings apply proper forces to neighbouring cells
-		edges.EvoFixedUpdate(velocity, creature);
-
-		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].EvoFixedUpdate(fixedTime);
-		}
-	}
 
 	public void ShuffleCellUpdateOrder() {
 		ListUtils.Shuffle(cellList);
@@ -360,13 +326,6 @@ public class Phenotype : MonoBehaviour {
 		cellMap.Clear();
 	}
 
-	private void EvoUpdateCells() {
-		//Todo: only if creature inside frustum && should be shown
-		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].EvoUpdate();
-		}
-	}
-
 	public int GetCellCount() {
 		return cellList.Count;
 	}
@@ -493,36 +452,6 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	//data
-	private PhenotypeData phenotypeData = new PhenotypeData();
-	public PhenotypeData UpdateData() {
-		phenotypeData.timeOffset = timeOffset;
-		phenotypeData.cellDataList.Clear();
-		for (int index = 0; index < cellList.Count; index++) {
-			Cell cell = cellList[index];
-			phenotypeData.cellDataList.Add(cell.UpdateData());
-		}
-		phenotypeData.differsFromGenotype = cellsDiffersFromGeneCells;
-		return phenotypeData;
-	}
-
-	public void ApplyData(PhenotypeData phenotypeData, Creature creature) {
-		timeOffset = phenotypeData.timeOffset;
-		
-		Setup(creature, phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
-		for (int index = 0; index < phenotypeData.cellDataList.Count; index++) {
-			CellData cellData = phenotypeData.cellDataList[index];
-			Cell cell = InstantiateCell(creature.genotype.genome[cellData.geneIndex].type, cellData.mapPosition);
-			cell.ApplyData(cellData, creature);
-		}
-		cellsDiffersFromGeneCells = false; //This work is done
-		connectionsDiffersFromCells = true; //We need to connect mothers with children
-	}
-
-	//TODO: Remove
-	//private void Update() {
-
-	//}
 	public Cell GetCellAt(Vector2 position) {
 		foreach (Cell cell in cellList) {
 			if (IsPointInsideCircle(position, cell.position, cell.radius + 0.2f)) {
@@ -536,7 +465,6 @@ public class Phenotype : MonoBehaviour {
 		return Mathf.Pow((point.x - center.x), 2) + Mathf.Pow((point.y - center.y), 2) < Mathf.Pow(radius, 2);
 	}
 
-	//--------
 	private void SetCollider(bool on) {
 		foreach (Cell cell in cellList) {
 			cell.GetComponent<Collider2D>().enabled = on;
@@ -553,14 +481,86 @@ public class Phenotype : MonoBehaviour {
 			isDirty = true;
 		}
 	}
-	
-	private void Update() {
+
+	// Load / Save
+
+	private PhenotypeData phenotypeData = new PhenotypeData();
+	public PhenotypeData UpdateData() {
+		phenotypeData.timeOffset = timeOffset;
+		phenotypeData.cellDataList.Clear();
+		for (int index = 0; index < cellList.Count; index++) {
+			Cell cell = cellList[index];
+			phenotypeData.cellDataList.Add(cell.UpdateData());
+		}
+		phenotypeData.differsFromGenotype = cellsDiffersFromGeneCells;
+		return phenotypeData;
+	}
+
+	public void ApplyData(PhenotypeData phenotypeData, Creature creature) {
+		timeOffset = phenotypeData.timeOffset;
+
+		Setup(creature, phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
+		for (int index = 0; index < phenotypeData.cellDataList.Count; index++) {
+			CellData cellData = phenotypeData.cellDataList[index];
+			Cell cell = InstantiateCell(creature.genotype.genome[cellData.geneIndex].type, cellData.mapPosition);
+			cell.ApplyData(cellData, creature);
+		}
+		cellsDiffersFromGeneCells = false; //This work is done
+		connectionsDiffersFromCells = true; //We need to connect mothers with children
+	}
+
+	// ^ Load / Save ^
+	// Update
+
+	public void EvoUpdate() {
+		//TODO: Update cells flip triangles here
+
+		edges.EvoUpdate();
+
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature Phenotype");
 
 			SetCollider(hasCollider);
 			isDirty = false;
+		}
+	}
+
+	private void EvoUpdateCells() {
+		//Todo: only if creature inside frustum && should be shown
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].EvoUpdate();
+		}
+	}
+
+	public void EvoFixedUpdate(Creature creature, float fixedTime) {
+		if (isGrabbed) {
+			return;
+		}
+
+		//if (update % 50 == 0) {
+		//    edges.ShuffleEdgeUpdateOrder();
+		//    ShuffleCellUpdateOrder();
+		//}
+		//update++;
+
+		// Creature
+		Vector3 averageVelocity = new Vector3();
+		for (int index = 0; index < cellList.Count; index++) {
+			averageVelocity += cellList[index].velocity;
+		}
+		velocity = (cellList.Count > 0f) ? velocity = averageVelocity / cellList.Count : new Vector3();
+
+		//// Cells, turn strings of cells straight
+		//for (int index = 0; index < cellList.Count; index++) {
+		//    cellList[index].TurnNeighboursInPlace();
+		//}
+
+		// Edges, let edge-wings apply proper forces to neighbouring cells
+		edges.EvoFixedUpdate(velocity, creature);
+
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].EvoFixedUpdate(fixedTime);
 		}
 	}
 }

@@ -396,29 +396,6 @@ public class Genotype : MonoBehaviour {
 		creature.phenotype.MoveToGenotype(creature);
 	}
 
-	//data
-
-	private GenotypeData genotypeData = new GenotypeData();
-	public GenotypeData UpdateData() { // Save: We have all genes and their data allready
-		for (int index = 0; index < genome.Length; index++) {
-			genotypeData.geneData[index] = genome[index].UpdateData();
-		}
-		genotypeData.rootPosition = rootCell.position;
-		genotypeData.rootHeading = rootCell.heading;
-		return genotypeData;
-	}
-
-	public void ApplyData(GenotypeData genotypeData) {
-		for (int index = 0; index < genomeLength; index++) {
-			genome[index] = new Gene(index);
-			genome[index].ApplyData(genotypeData.geneData[index]);
-		}
-		SetReferenceGenesFromReferenceGeneIndices();
-		geneCellsDiffersFromGenome = true;
-	}
-
-	//------
-
 	private void SetCollider(bool on) {
 		foreach (Cell cell in geneCellList) {
 			cell.GetComponent<Collider2D>().enabled = on;
@@ -453,7 +430,32 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	private void Update() {
+	// Load / Save
+
+	private GenotypeData genotypeData = new GenotypeData();
+	public GenotypeData UpdateData() { // Save: We have all genes and their data allready
+		for (int index = 0; index < genome.Length; index++) {
+			genotypeData.geneData[index] = genome[index].UpdateData();
+		}
+		genotypeData.rootPosition = rootCell.position;
+		genotypeData.rootHeading = rootCell.heading;
+		return genotypeData;
+	}
+
+	public void ApplyData(GenotypeData genotypeData) {
+		for (int index = 0; index < genomeLength; index++) {
+			genome[index] = new Gene(index);
+			genome[index].ApplyData(genotypeData.geneData[index]);
+		}
+		SetReferenceGenesFromReferenceGeneIndices();
+		geneCellsDiffersFromGenome = true;
+	}
+
+	// ^ Load / Save ^
+
+	// Update
+
+	public void EvoUpdate() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature Genotype");
@@ -464,14 +466,10 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	//public void EvoUpdate() {
-	//	EvoUpdateCells();
-	//}
-
-	//private void EvoUpdateCells() {
-	//	//TODO: only if creature inside frustum && should be shown
-	//	for (int index = 0; index < geneCellList.Count; index++) {
-	//		geneCellList[index].EvoUpdate();
-	//	}
-	//}
+	private void EvoUpdateCells() {
+		//TODO: only if creature inside frustum && should be shown
+		for (int index = 0; index < geneCellList.Count; index++) {
+			geneCellList[index].EvoUpdate();
+		}
+	}
 }

@@ -132,6 +132,7 @@ public abstract class Cell : MonoBehaviour {
 		ShowCreatureSelected(false);
 	}
 
+	//TODO: update cell graphics from here
 	public void EvoUpdate() {
 
 	}
@@ -346,8 +347,8 @@ public abstract class Cell : MonoBehaviour {
 		return count;
 	}
 
-	public bool HasNeighbour(CardinalEnum direction) {
-		return HasNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(direction));
+	public bool HasNeighbour(CardinalEnum cardinalEnum) {
+		return HasNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum));
 	}
 
 	public bool HasNeighbourCell(int index) {

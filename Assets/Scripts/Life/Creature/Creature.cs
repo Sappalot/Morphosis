@@ -161,7 +161,7 @@ public class Creature : MonoBehaviour {
 		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading);
 		phenotype.InitiateEmbryo(this, position, heading);
 		isDirty = true;
-		Update(); //To avoid occational flicker (shows genotype shortly)
+		EvoUpdate(); //To avoid occational flicker (shows genotype shortly)
 	}
 
 	public void GenerateSimple(Vector3 position, float heading) {
@@ -190,7 +190,7 @@ public class Creature : MonoBehaviour {
 		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
 		phenotype.connectionsDiffersFromCells = phenotype.UpdateCellsFromGeneCells(this, position, heading);
 		isDirty = true;
-		Update();
+		EvoUpdate();
 	}
 
 	// Apply on genotype ==> Phenotype
@@ -229,20 +229,6 @@ public class Creature : MonoBehaviour {
 		} else {
 			Debug.LogError("You are not allowed to Delete root cell");
 		}
-	}
-
-	//TODO: update graphics not caused by hunman interaction here
-	public void EvoUpdate() {
-		//if (!phenotype.isGrabbed) {
-		//	phenotype.EvoUpdate();
-		//}
-		//if (!genotype.isGrabbed) {
-		//	genotype.EvoUpdate();
-		//}
-	}
-
-	public void EvoFixedUpdate(float fixedTime) {
-		phenotype.EvoFixedUpdate(this, fixedTime);
 	}
 
 	public void ShowCellSelected(Cell cell, bool on) {
@@ -360,71 +346,7 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	private void Update() {
-		bool geneCelleWasUpdated = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
-
-		phenotype.cellsDiffersFromGeneCells |= geneCelleWasUpdated;
-		bool cellsWereUpdatedFromGeneCells = phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
-
-		phenotype.connectionsDiffersFromCells |= cellsWereUpdatedFromGeneCells;
-		bool connectionsWereUpdatedFromCells = phenotype.UpdateConnectionsFromCellsIntraBody();
-
-		if (mother != null) {
-			mother.UpdateCreatureFromId();
-		}
-		foreach (Child c in children) {
-			c.UpdateCreatureFromId();
-		}
-
-		//Stitch mother and child together with springs
-		if (!isSomethingDirty) {
-			foreach (Child child in children) {
-				if (child.isConnected && child.isConnectionDirty && !child.creature.isSomethingDirty) {
-					Debug.Log("Connect: mother: " + id + " ==> " + child.id);
-					phenotype.ConnectChildEmbryo(child);
-					child.isConnectionDirty = false;
-				}
-			}
-		}
-
-
-		isDirty = isDirty || geneCelleWasUpdated || cellsWereUpdatedFromGeneCells || connectionsWereUpdatedFromCells;
-
-		if (isDirty) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
-				Debug.Log("Update Creature (due to user input)");
-
-			ShowCurrentGenoPhenoAndHideOther();
-			EnableCurrentGenoPhenoColliderAndDisableOther();
-
-			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-				// Update selection
-				phenotype.ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(this));
-
-				phenotype.ShowShadow(false);
-
-				//Show selected or not
-				phenotype.ShowCellsSelected(false);
-				if (CreatureSelectionPanel.instance.soloSelected == this) {
-					phenotype.ShowCellSelected(CellPanel.instance.selectedCell, true);
-				}
-			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-				// Update selection
-				genotype.ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(this));
-
-				//Show selected or not
-				genotype.ShowGeneCellsSelected(false);
-				if (CreatureSelectionPanel.instance.soloSelected == this) {
-					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
-				}
-
-				genotype.UpdateFlipSides();
-			}
-			isDirty = false;
-		}
-	}
-
-	// Save / Load / Clone
+	// Load / Save
 	private CreatureData creatureData = new CreatureData();
 
 	public void StoreState() {
@@ -496,5 +418,79 @@ public class Creature : MonoBehaviour {
 		genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
 
 		phenotype.ApplyData(creatureData.phenotypeData, this);
+	}
+
+	// ^ Load / Save ^
+
+	// Update
+	public void EvoFixedUpdate(float fixedTime) {
+		phenotype.EvoFixedUpdate(this, fixedTime);
+	}
+
+	public void EvoUpdate() {
+		genotype.EvoUpdate();
+		phenotype.EvoUpdate();
+
+		bool geneCelleWasUpdated = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
+
+		phenotype.cellsDiffersFromGeneCells |= geneCelleWasUpdated;
+		bool cellsWereUpdatedFromGeneCells = phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
+
+		phenotype.connectionsDiffersFromCells |= cellsWereUpdatedFromGeneCells;
+		bool connectionsWereUpdatedFromCells = phenotype.UpdateConnectionsFromCellsIntraBody();
+
+		if (mother != null) {
+			mother.UpdateCreatureFromId();
+		}
+		foreach (Child c in children) {
+			c.UpdateCreatureFromId();
+		}
+
+		//Stitch mother and child together with springs
+		if (!isSomethingDirty) {
+			foreach (Child child in children) {
+				if (child.isConnected && child.isConnectionDirty && !child.creature.isSomethingDirty) {
+					Debug.Log("Connect: mother: " + id + " ==> " + child.id);
+					phenotype.ConnectChildEmbryo(child);
+					child.isConnectionDirty = false;
+				}
+			}
+		}
+
+
+		isDirty = isDirty || geneCelleWasUpdated || cellsWereUpdatedFromGeneCells || connectionsWereUpdatedFromCells;
+
+		if (isDirty) {
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				Debug.Log("Update Creature (due to user input)");
+
+			ShowCurrentGenoPhenoAndHideOther();
+			EnableCurrentGenoPhenoColliderAndDisableOther();
+
+			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+				// Update selection
+				phenotype.ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(this));
+
+				phenotype.ShowShadow(false);
+
+				//Show selected or not
+				phenotype.ShowCellsSelected(false);
+				if (CreatureSelectionPanel.instance.soloSelected == this) {
+					phenotype.ShowCellSelected(CellPanel.instance.selectedCell, true);
+				}
+			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+				// Update selection
+				genotype.ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(this));
+
+				//Show selected or not
+				genotype.ShowGeneCellsSelected(false);
+				if (CreatureSelectionPanel.instance.soloSelected == this) {
+					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
+				}
+
+				genotype.UpdateFlipSides();
+			}
+			isDirty = false;
+		}
 	}
 }
