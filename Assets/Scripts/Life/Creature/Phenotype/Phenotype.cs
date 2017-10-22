@@ -173,18 +173,10 @@ public class Phenotype : MonoBehaviour {
 			UpdateNeighbourReferencesInterBody(creature);
 
 			//Springs
-			UpdateSpringsInterBody();
+			UpdateSpringsInterBody(creature);
 
 			//Groups
 			UpdateGroupsInterBody();
-
-			//foreach (Child child in creature.children) {
-			//	if (child.isConnected && child.isConnectionDirty) {
-			//		Debug.Log("Connect: mother: " + creature.id + " ==> child: " + child.id);
-			//		ConnectChildEmbryo(child);
-			//		child.isConnectionDirty = false;
-			//	}
-			//}
 
 			//Wings
 			//edges.GenerateWings(cellMap); // Wings are only generated from here
@@ -226,11 +218,11 @@ public class Phenotype : MonoBehaviour {
 							if (neighbourMapPosition == child.rootMapPosition) {
 								// My placenta to childs root
 								placentaCell.SetNeighbourCell(cardinalIndex, rootCell);
-								Debug.Log("Me: " + creatureMe.id + ", my Mother :" + creatureMother.id + " Me(root) <==neighbour== Mother(placenta)");
+								Debug.Log("Me(root)" + creatureMe.id + " <==neighbour== Mother(placenta)" + creatureMother.id);
 
 								//childs root to my placenta
 								rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.rootBindCardinalIndex + 1 + 3), placentaCell);
-								Debug.Log("Me: " + creatureMe.id + ", my Mother :" + creatureMother.id + " Me(root) ==neighbour==> Mother(placenta)");
+								Debug.Log("Me(root)" + creatureMe.id + " ==neighbour==> Mother(placenta)" + creatureMother.id);
 							}
 						}
 					}
@@ -267,10 +259,11 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	private void UpdateSpringsInterBody() {
+	private void UpdateSpringsInterBody(Creature creature) {
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
-			cell.UpdateSpringConnections();
+			cell.UpdateSpringConnectionsIntra();
+			cell.UpdateSpringConnectionsInter(creature);
 		}
 	}
 

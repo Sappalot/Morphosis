@@ -86,6 +86,10 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
+	public bool IsSameCreature(Cell other) {
+		return other.creature == creature;
+	}
+
 	//Set only once, when adding cell to CellMap
 	public Vector2 modelSpacePosition;
 
@@ -428,8 +432,10 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public void UpdateSpringConnections() {
-		if (northNeighbour.cell) {
+	//Phenotype
+	public void UpdateSpringConnectionsIntra() {
+		// Intra creatures
+		if (northNeighbour.cell != null && northNeighbour.cell.IsSameCreature(this)) {
 			northSpring.connectedBody = northNeighbour.cell.gameObject.GetComponent<Rigidbody2D>();
 			northSpring.enabled = true;
 		}
@@ -438,7 +444,7 @@ public abstract class Cell : MonoBehaviour {
 			northSpring.enabled = false;
 		}
 
-		if (southWestNeighbour.cell) {
+		if (southWestNeighbour.cell != null && southWestNeighbour.cell.IsSameCreature(this)) {
 			southWestSpring.connectedBody = southWestNeighbour.cell.gameObject.GetComponent<Rigidbody2D>();
 			southWestSpring.enabled = true;
 		}
@@ -447,7 +453,7 @@ public abstract class Cell : MonoBehaviour {
 			southWestSpring.enabled = false;
 		}
 
-		if (southEastNeighbour.cell) {
+		if (southEastNeighbour.cell != null && southEastNeighbour.cell.IsSameCreature(this)) {
 			southEastSpring.connectedBody = southEastNeighbour.cell.gameObject.GetComponent<Rigidbody2D>();
 			southEastSpring.enabled = true;
 		}
@@ -457,21 +463,36 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public void CreatePlacentaSprings(List<Cell> motherCells) {
+	//Phenotype
+	public void UpdateSpringConnectionsInter(Creature creature) {
+		// Here we connect root cell to placenta of mother only
 		if (placentaSprings != null) {
 			for (int i = 0; i < placentaSprings.Length; i++) {
 				Destroy(placentaSprings[i]);
 			}
 		}
 
-		placentaSprings = new SpringJoint2D[motherCells.Count];
-		
-		for (int i = 0; i < motherCells.Count; i++) {
+		if (this != creature.phenotype.rootCell || !creature.hasMother || !creature.mother.isConnected) {
+			return;
+		}
+		//This is creatures root cell and creature has a connected mother
+
+		List<Cell> placentaCells = new List<Cell>();
+		for (int index = 0; index < 6; index++) {
+			Cell neighbour = GetNeighbourCell(index);
+			if (neighbour != null && neighbour.creature == creature.mother.creature) {
+				placentaCells.Add(neighbour);
+			}
+		}
+
+		placentaSprings = new SpringJoint2D[placentaCells.Count];
+		for (int i = 0; i < placentaCells.Count; i++) {
 			placentaSprings[i] = gameObject.AddComponent(typeof(SpringJoint2D)) as SpringJoint2D;
-			placentaSprings[i].connectedBody = motherCells[i].gameObject.GetComponent<Rigidbody2D>();
+			placentaSprings[i].connectedBody = placentaCells[i].gameObject.GetComponent<Rigidbody2D>();
 		}
 	}
 
+	//Phenotype
 	public void UpdateGroups() {
 		//TODO check if this cell is a hinge
 		int groups = 0;

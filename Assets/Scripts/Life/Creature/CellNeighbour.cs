@@ -12,5 +12,9 @@ public class CellNeighbour
 	public float bindAngle; //genomeSpace degrees, from me to this neighbour (as seen in gene view, root points up)
 	public Vector3 coreToThis;
 	public int cardinalIndex; //cardinal direction index
+
+	public bool IsSameCreature(Cell other) {
+		return other.creature == cell.creature;
+	}
 }
 
