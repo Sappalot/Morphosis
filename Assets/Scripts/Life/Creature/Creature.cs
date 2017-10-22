@@ -45,8 +45,8 @@ public class Creature : MonoBehaviour {
 
 	// Relatives ---------------
 	private List<Creature> originals = new List<Creature>();
-	private Mother mother;
-	private List<Child> children = new List<Child>();
+	public Mother mother;
+	public List<Child> children = new List<Child>();
 
 	public bool hasMother {
 		get {
@@ -59,7 +59,7 @@ public class Creature : MonoBehaviour {
 			return hasMother && mother.isReferenceDirty;
 		}
 	}
-	
+
 	public bool hasChild {
 		get {
 			return  children.Count > 0;
@@ -80,19 +80,25 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
+	public Child GetChildById(string id) {
+		return children.Find(c => c.id == id);
+	}
+
 	public void SetMother(string id, bool isConnected) {
 		Debug.Assert(mother == null, "Creature has allready a mother");
 		mother = new Mother(id);
 		mother.isConnected = isConnected;
 	}
 
-	public void SetChild(string id, Vector2i placentaMapPosition, bool isConnected) {
+	public void SetChild(string id, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
 		Debug.Assert(children.Find(c => c.id == id) == null, "Creature has allready a child with that id");
 		Child newChild = new Child(id);
-		newChild.placentaMapPosition = placentaMapPosition;
+		newChild.rootMapPosition = rootMapPosition;
+		newChild.rootBindCardinalIndex = rootBindCardinalIndex;
 		newChild.isConnected = isConnected;
 		children.Add(newChild);
 	}
+
 
 	public void TryChangeRelativesId(string oldId, string newId) {
 		if (mother != null && mother.id == oldId) {
@@ -161,7 +167,7 @@ public class Creature : MonoBehaviour {
 		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading);
 		phenotype.InitiateEmbryo(this, position, heading);
 		isDirty = true;
-		EvoUpdate(); //To avoid occational flicker (shows genotype shortly)
+		//EvoUpdate(); //To avoid occational flicker (shows genotype shortly)
 	}
 
 	public void GenerateSimple(Vector3 position, float heading) {
@@ -383,11 +389,13 @@ public class Creature : MonoBehaviour {
 
 		//children
 		creatureData.childrenId = new string[children.Count];
-		creatureData.childrenPlacentaMapPosition = new Vector2i[children.Count];
+		creatureData.childrenRootMapPosition = new Vector2i[children.Count];
 		creatureData.isChildrenConnected = new bool[children.Count];
+		creatureData.rootBindCardinalIndex = new int[children.Count];
 		for (int i = 0; i < creatureData.childrenId.Length; i++) {
 			creatureData.childrenId[i] = children[i].id;
-			creatureData.childrenPlacentaMapPosition[i] = children[i].placentaMapPosition;
+			creatureData.childrenRootMapPosition[i] = children[i].rootMapPosition;
+			creatureData.rootBindCardinalIndex[i] = children[i].rootBindCardinalIndex;
 			creatureData.isChildrenConnected[i] = children[i].isConnected;
 		}
 
@@ -409,7 +417,7 @@ public class Creature : MonoBehaviour {
 
 		//children
 		for (int i = 0; i < creatureData.childrenId.Length; i++) {
-			SetChild(creatureData.childrenId[i], creatureData.childrenPlacentaMapPosition[i], creatureData.isChildrenConnected[i]);
+			SetChild(creatureData.childrenId[i], creatureData.childrenRootMapPosition[i], creatureData.rootBindCardinalIndex[i], creatureData.isChildrenConnected[i]);
 		}
 
 		genotype.ApplyData(creatureData.genotypeData);
@@ -431,14 +439,6 @@ public class Creature : MonoBehaviour {
 		genotype.EvoUpdate();
 		phenotype.EvoUpdate();
 
-		bool geneCelleWasUpdated = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
-
-		phenotype.cellsDiffersFromGeneCells |= geneCelleWasUpdated;
-		bool cellsWereUpdatedFromGeneCells = phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
-
-		phenotype.connectionsDiffersFromCells |= cellsWereUpdatedFromGeneCells;
-		bool connectionsWereUpdatedFromCells = phenotype.UpdateConnectionsFromCellsIntraBody();
-
 		if (mother != null) {
 			mother.UpdateCreatureFromId();
 		}
@@ -446,17 +446,13 @@ public class Creature : MonoBehaviour {
 			c.UpdateCreatureFromId();
 		}
 
-		//Stitch mother and child together with springs
-		if (!isSomethingDirty) {
-			foreach (Child child in children) {
-				if (child.isConnected && child.isConnectionDirty && !child.creature.isSomethingDirty) {
-					Debug.Log("Connect: mother: " + id + " ==> " + child.id);
-					phenotype.ConnectChildEmbryo(child);
-					child.isConnectionDirty = false;
-				}
-			}
-		}
+		bool geneCelleWasUpdated = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
 
+		phenotype.cellsDiffersFromGeneCells |= geneCelleWasUpdated;
+		bool cellsWereUpdatedFromGeneCells = phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
+
+		phenotype.connectionsDiffersFromCells |= cellsWereUpdatedFromGeneCells;
+		bool connectionsWereUpdatedFromCells = phenotype.UpdateConnectionsFromCellsBody(this);
 
 		isDirty = isDirty || geneCelleWasUpdated || cellsWereUpdatedFromGeneCells || connectionsWereUpdatedFromCells;
 

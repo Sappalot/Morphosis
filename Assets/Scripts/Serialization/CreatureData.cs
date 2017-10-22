@@ -14,5 +14,6 @@ public class CreatureData {
 
 	public string[] childrenId;
 	public bool[] isChildrenConnected;
-	public Vector2i[] childrenPlacentaMapPosition;
+	public Vector2i[] childrenRootMapPosition; //In mothers frame of reference
+	public int[] rootBindCardinalIndex; //In mothers frame of reference
 }

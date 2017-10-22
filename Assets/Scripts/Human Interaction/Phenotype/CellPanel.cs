@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class CellPanel : MonoSingleton<CellPanel> {
 	public Text cellType;
 	public Text cellEnergy;
+	public Text cellNeighbours;
 
 	public EggPanel eggPanel;
 
@@ -38,6 +39,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
 				cellType.text = "Type:";
 				cellEnergy.text = "Energy:";
+				cellNeighbours.text = "Neighbours:";
 
 				eggPanel.gameObject.SetActive(false);
 				isDirty = false;
@@ -46,6 +48,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 			cellType.text = "Type: " + selectedCell.gene.type.ToString();
 			cellEnergy.text = "Energy: 100%";
+			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCount - selectedCell.familyNeighbourCount) + " ("  + selectedCell.familyNeighbourCount + ")";
 
 			if (selectedCell is EggCell) {
 				eggPanel.gameObject.SetActive(true);

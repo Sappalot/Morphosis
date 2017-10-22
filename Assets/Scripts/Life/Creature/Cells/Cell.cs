@@ -19,7 +19,7 @@ public abstract class Cell : MonoBehaviour {
 	public float timeOffset;
 
 	//  The direction the cell is facing in creature space
-	public int bindCardinalIndex;
+	public int bindCardinalIndex; // where cells flip triangle is pointing in gene mode (0 is 30 degrees, N is 30 + N * 60 drgrees)
 	public float heading; // where the cells flip triangle is pointing at the moment (0 is east, 90 is north ...)
 	//public float angleDiffFromBindpose;
 
@@ -52,6 +52,37 @@ public abstract class Cell : MonoBehaviour {
 	public Vector2 position {
 		get {
 			return transform.position;
+		}
+	}
+
+	public bool hasNeighbour {
+		get {
+			return neighbourCount > 0;
+		}
+	}
+
+	// Total
+	public int neighbourCount {
+		get {
+			int count = 0;
+			for (int index = 0; index < 6; index++) {
+				if (HasNeighbourCell(index)) {
+					count++;
+				}
+			}
+			return count;
+		}
+	}
+
+	public int familyNeighbourCount {
+		get {
+			int count = 0;
+			for (int index = 0; index < 6; index++) {
+				if (HasNeighbourCell(index) && GetNeighbourCell(index).creature != creature) {
+					count++;
+				}
+			}
+			return count;
 		}
 	}
 
@@ -310,9 +341,9 @@ public abstract class Cell : MonoBehaviour {
 		return null;
 	}
 
-	public void SetNeighbourCell(CardinalEnum direction, Cell cell) {
-		index_Neighbour[AngleUtil.CardinalEnumToCardinalIndex(direction)].cell = cell;
-	}
+	//public void SetNeighbourCell(CardinalEnum direction, Cell cell) {
+	//	index_Neighbour[AngleUtil.CardinalEnumToCardinalIndex(direction)].cell = cell;
+	//}
 
 	public void SetNeighbourCell(int directionIndex, Cell cell) {
 		index_Neighbour[directionIndex].cell = cell;
@@ -338,15 +369,6 @@ public abstract class Cell : MonoBehaviour {
 		return transform.rotation.z;
 	}
 
-	public int GetNeighbourCount() {
-		int count = 0;
-		for (int index = 0; index < 6; index++) {
-			if (HasNeighbourCell(index))
-				count++;
-		}
-		return count;
-	}
-
 	public bool HasNeighbour(CardinalEnum cardinalEnum) {
 		return HasNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum));
 	}
@@ -364,7 +386,7 @@ public abstract class Cell : MonoBehaviour {
 
 	////  Updates world space rotation (heading) derived from neighbour position relative to this
 	public void UpdateRotation() {
-		if (!(mapPosition == new Vector2i() && neighbourCount == 0)) {
+		if (hasNeighbour) { // !(mapPosition == new Vector2i() && neighbourCount == 0)
 			UpdateNeighbourAngles();
 
 			float angleDiffFromBindpose = 0f; 
@@ -376,6 +398,7 @@ public abstract class Cell : MonoBehaviour {
 			}
 			heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex) + angleDiffFromBindpose;
 		}
+
 		triangleTransform.localRotation = Quaternion.Euler(0f, 0f, heading);
 	}
 
@@ -394,18 +417,6 @@ public abstract class Cell : MonoBehaviour {
 			if (HasNeighbourCell(index)) {
 				GetNeighbour(index).angle = FindAngle(GetNeighbour(index).coreToThis);
 			}
-		}
-	}
-
-	private int neighbourCount {
-		get {
-			int count = 0;
-			for (int index = 0; index < 6; index++) {
-				if (HasNeighbourCell(index)) {
-					count++;
-				}
-			}
-			return count;
 		}
 	}
 

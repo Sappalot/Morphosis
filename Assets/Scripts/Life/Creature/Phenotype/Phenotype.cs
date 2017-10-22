@@ -61,8 +61,6 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-
-
 	public void ShuffleCellUpdateOrder() {
 		ListUtils.Shuffle(cellList);
 	}
@@ -134,7 +132,7 @@ public class Phenotype : MonoBehaviour {
 					}
 				}
 				Cell newCell = SpawnCell(creature, geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, averagePosition / positionCount, false);
-				ConnectCellsIntraBody(false, false); //We need to know our neighbours in order to update vectors correctly 
+				UpdateNeighbourReferencesIntraBody(); //We need to know our neighbours in order to update vectors correctly 
 				newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
 				newCell.UpdateRotation(); //Rotation is needed in order to place subsequent cells right
 				newCell.UpdateFlipSide(); // Just graphics
@@ -145,58 +143,160 @@ public class Phenotype : MonoBehaviour {
 		connectionsDiffersFromCells = true;
 	}
 
-	public bool UpdateConnectionsFromCellsIntraBody() {
-		if (connectionsDiffersFromCells) {
-			ConnectCellsIntraBody(true, true);
-			edges.GenerateWings(cellMap);
-			UpdateSpringsFrequenze(); //testing only
-			connectionsDiffersFromCells = false;
-			return true;
-		}
-		return false;
-	}
-	
-	private void ConnectCellsIntraBody(bool connectSprings, bool updateGroups) {
+	//Only used by grow above (Not taking mother and children into account)
+	private void UpdateNeighbourReferencesIntraBody() {
+		Debug.Log("Updating intER creature neighbours!!");
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
 			Vector2i center = cell.mapPosition;
 			for (int direction = 0; direction < 6; direction++) {
 				Vector2i gridNeighbourPos = cellMap.GetGridNeighbourGridPosition(center, direction); // GetGridNeighbour(center, CardinalDirectionHelper.ToCardinalDirection(direction));
-				if (gridNeighbourPos != null) {
-					cell.SetNeighbourCell(direction, cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
-				} else {
-					cell.SetNeighbourCell(direction, null);
+				Debug.Assert(gridNeighbourPos != null, "Why would this happen?");
+				cell.SetNeighbourCell(direction, cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
+			}
+		}
+		connectionsDiffersFromCells = true;
+	}
+
+	// Update neighbours, even in mother and children
+	// Connect springs in between all connected (special case for mother and child)
+	// Update groups
+	// Update wings
+	public bool UpdateConnectionsFromCellsBody(Creature creature) {
+		if (connectionsDiffersFromCells) {
+			if (creature.isMotherDirty || creature.isChildDirty) {
+				//Wait with all connecting stuff until references are updated 
+				return false;
+			}
+			// We are sure we have all references we need in mother and children (retreived from their ids)
+
+			UpdateNeighbourReferencesInterBody(creature);
+
+			//Springs
+			UpdateSpringsInterBody();
+
+			//Groups
+			UpdateGroupsInterBody();
+
+			//foreach (Child child in creature.children) {
+			//	if (child.isConnected && child.isConnectionDirty) {
+			//		Debug.Log("Connect: mother: " + creature.id + " ==> child: " + child.id);
+			//		ConnectChildEmbryo(child);
+			//		child.isConnectionDirty = false;
+			//	}
+			//}
+
+			//Wings
+			//edges.GenerateWings(cellMap); // Wings are only generated from here
+
+			//Debug
+			UpdateSpringsFrequenze(); //testing only
+
+			//Clean
+			connectionsDiffersFromCells = false;
+			return true;
+		}
+		return false;
+	}
+
+	private void UpdateNeighbourReferencesInterBody(Creature creatureMe) {
+		
+		// All cells within body
+		for (int index = 0; index < cellList.Count; index++) {
+			Cell cell = cellList[index];
+			Vector2i center = cell.mapPosition;
+			for (int direction = 0; direction < 6; direction++) {
+				Vector2i gridNeighbourPos = cellMap.GetGridNeighbourGridPosition(center, direction); 
+				Debug.Assert(gridNeighbourPos != null, "Why would this happen?");
+				
+				cell.SetNeighbourCell(direction, cellMap.GetGridNeighbourCell(center, direction)); // Watch out for child clearing off references to mother
+			}
+		}
+
+		//My(root) <====> Mohther(placenta)
+		if (creatureMe.hasMother && creatureMe.mother.isConnected) {
+			Creature creatureMother = creatureMe.mother.creature;
+			foreach (Child child in creatureMother.children) {
+				if (child.isConnected && child.id == creatureMe.id) {
+					//We are talking about mothers view of me
+					for (int index = 0; index < creatureMother.phenotype.cellList.Count; index++) {
+						Cell placentaCell = creatureMother.phenotype.cellList[index];
+						for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+							Vector2i neighbourMapPosition = creatureMother.phenotype.cellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
+							if (neighbourMapPosition == child.rootMapPosition) {
+								// My placenta to childs root
+								placentaCell.SetNeighbourCell(cardinalIndex, rootCell);
+								Debug.Log("Me: " + creatureMe.id + ", my Mother :" + creatureMother.id + " Me(root) <==neighbour== Mother(placenta)");
+
+								//childs root to my placenta
+								rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.rootBindCardinalIndex + 1 + 3), placentaCell);
+								Debug.Log("Me: " + creatureMe.id + ", my Mother :" + creatureMother.id + " Me(root) ==neighbour==> Mother(placenta)");
+							}
+						}
+					}
 				}
 			}
-			if (connectSprings)
-				cell.UpdateSpringConnections();
-			if (updateGroups)
-				cell.UpdateGroups();
 		}
-	}
 
-	//Creatures will ce connected via Cells but remain unaware of each other in cell maps
-	public void ConnectChildEmbryo(Child child) {
-		Cell childRootCell = child.creature.phenotype.rootCell;
-		List<Cell> motherCells = new List<Cell>();
-		for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) { // Child to mother
-			Vector2i motherSupportCellPosition = cellMap.GetGridNeighbourGridPosition(child.placentaMapPosition, cardinalIndex);
-			Debug.Assert(motherSupportCellPosition != null);
+		//My(placenta) <====> Child(root)
+		foreach (Child child in creatureMe.children) {
+			if (child.isConnected) {
+				for (int index = 0; index < cellList.Count; index++) {
+					Cell placentaCell = cellList[index];
+					for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+						Vector2i neighbourMapPosition = cellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
+						if (neighbourMapPosition == child.rootMapPosition) {
+							// My placenta to childs root
+							placentaCell.SetNeighbourCell(cardinalIndex, child.creature.phenotype.rootCell);
+							Debug.Log("Me: " + creatureMe.id + ", my Child :" + child.id + " Me(placenta) ==neighbour==> Child(root)");
 
-			Cell motherSupportCell = cellMap.GetCell(motherSupportCellPosition);
-			
-			if (motherSupportCell != null) {
-				motherCells.Add(motherSupportCell);
-				//childRootCell.SetNeighbourCell(cardinalIndex, motherSupportCell); // Careful with the direction here!!!
-				//motherSupportCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3), childRootCell);
+							//childs root to my placenta
+							child.creature.phenotype.rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.rootBindCardinalIndex + 1 + 3), placentaCell);
+							Debug.Log("Me: " + creatureMe.id + ", my Child :" + child.id + " Me(placenta) <==neighbour== Child(root)");
+						}
+					}
+				}
 			}
-			
 		}
-		childRootCell.CreatePlacentaSprings(motherCells);
-
-		childRootCell.UpdateGroups();
-		childRootCell.UpdateSpringFrequenzy();
 	}
+
+	private void UpdateGroupsInterBody() {
+		for (int index = 0; index < cellList.Count; index++) {
+			Cell cell = cellList[index];
+			cell.UpdateGroups();
+		}
+	}
+
+	private void UpdateSpringsInterBody() {
+		for (int index = 0; index < cellList.Count; index++) {
+			Cell cell = cellList[index];
+			cell.UpdateSpringConnections();
+		}
+	}
+
+	////Creatures will ce connected via Cells but remain unaware of each other in cell maps
+	//public void ConnectChildEmbryo(Child child) {
+	//	Cell childRootCell = child.creature.phenotype.rootCell;
+	//	List<Cell> motherCells = new List<Cell>();
+	//	for (int motherCardinalIndex = 0; motherCardinalIndex < 6; motherCardinalIndex++) { // Child to mother, mothers frame of reference
+	//		Vector2i motherSupportCellPosition = cellMap.GetGridNeighbourGridPosition(child.rootMapPosition, motherCardinalIndex);
+	//		Debug.Assert(motherSupportCellPosition != null);
+
+	//		Cell motherSupportCell = cellMap.GetCell(motherSupportCellPosition);
+			
+	//		if (motherSupportCell != null) {
+	//			motherCells.Add(motherSupportCell);
+	//			childRootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(motherCardinalIndex - child.rootBindCardinalIndex + 1), motherSupportCell); // Careful with the direction here!!!
+	//			motherSupportCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(motherCardinalIndex + 3), childRootCell);
+	//		}
+	//	}
+	//	childRootCell.CreatePlacentaSprings(motherCells);
+	//	foreach (Cell c in motherCells) {
+	//		c.UpdateGroups();
+	//	}		
+	//	childRootCell.UpdateGroups();
+
+	//}
 
 	private int CardinaIndexToNeighbour(Cell from, Cell to) {
 		for (int index = 0; index < 6; index++) {

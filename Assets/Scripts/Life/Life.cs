@@ -42,18 +42,14 @@ public class Life : MonoBehaviour {
 		// Q: What happens when 2 children, attatched to same mother, grows into each other (prio??), Let them grow as long as ther is room for each new cell. Probe for room firstm, then build?
 
 		// remove cell at childs root location
-		mother.DeleteCell(eggCell);
-
-		// TODO: ??? remember not to try to grow in this position until child is released
+		mother.DeleteCell(eggCell); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
 
 		// Spawn child at egg cell location
 		Creature child = InstantiateCreature();
 		child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
 
-		// TODO: ??? let child remember where not to grow, in order not to grow over mother
-
 		// TODO: mark mother so that she will connect to child during update
-		mother.SetChild(child.id, eggCell.mapPosition, true);
+		mother.SetChild(child.id, eggCell.mapPosition, eggCell.bindCardinalIndex, true);
 
 		// TODO: mark child so that it will connect to mother during update
 		child.SetMother(mother.id, true);
