@@ -76,8 +76,9 @@ public class Life : MonoBehaviour {
 	}
 
 	public void DeleteCreature(Creature creature) {
-		Destroy(creature.gameObject);
+		// Make all other creatures understand that i will be gone now!
 
+		Destroy(creature.gameObject);
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
 	}

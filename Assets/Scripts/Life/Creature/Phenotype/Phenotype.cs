@@ -178,7 +178,7 @@ public class Phenotype : MonoBehaviour {
 			UpdateGroupsInterBody();
 
 			//Wings
-			//edges.GenerateWings(cellMap); // Wings are only generated from here
+			edges.GenerateWings(cellMap); // Wings are only generated from here
 
 			//Debug
 			UpdateSpringsFrequenze(); //testing only
@@ -324,12 +324,7 @@ public class Phenotype : MonoBehaviour {
 
 		List<Cell> neighbourCells = cell.GetNeighbourCells();
 		foreach (Cell c in neighbourCells) {
-			if (c != null && c.creature != null && c.creature.phenotype != null) {
-				c.creature.phenotype.OnNeighbourDeleted(cell);
-			} else {
-				Debug.Log("Oppppps!!!!");
-			}
-			
+			c.creature.phenotype.OnNeighbourDeleted(cell);
 		}
 
 		cellMap.RemoveCellAtGridPosition(cell.mapPosition);

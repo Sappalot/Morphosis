@@ -55,8 +55,8 @@ public class Edges : MonoBehaviour {
 
 	public void GenerateWings(CellMap cellMap) {
 		Clear();
-		List<Cell> cellList = cellMap.GetCells();
-		if (cellList.Count == 1)
+
+		if (cellMap.cellCount == 1)
 			return;
 
 		Cell firstCell = cellMap.GetRightmostCell();
@@ -88,8 +88,9 @@ public class Edges : MonoBehaviour {
 		}
 
 		for (int index = previousDirection + 1; index < previousDirection + 7; index++) {
-			if (currentCell.HasNeighbourCell(index)) {
-				return currentCell.GetNeighbour(index).cell;
+			Cell tryCell = currentCell.GetNeighbour(index).cell;
+			if (tryCell != null && tryCell.creature == currentCell.creature) { // We dont want to trace around connected creatures
+				return tryCell;
 			}
 		}
 
