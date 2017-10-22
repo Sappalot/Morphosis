@@ -48,10 +48,8 @@ public class Life : MonoBehaviour {
 		Creature child = InstantiateCreature();
 		child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
 
-		// TODO: mark mother so that she will connect to child during update
 		mother.SetChild(child.id, eggCell.mapPosition, eggCell.bindCardinalIndex, true);
 
-		// TODO: mark child so that it will connect to mother during update
 		child.SetMother(mother.id, true);
 	}
 

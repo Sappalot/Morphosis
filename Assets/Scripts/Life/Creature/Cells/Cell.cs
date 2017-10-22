@@ -152,6 +152,16 @@ public abstract class Cell : MonoBehaviour {
 	private Dictionary<int, CellNeighbour> index_Neighbour = new Dictionary<int, CellNeighbour>();
 	private List<SpringJoint2D> springList = new List<SpringJoint2D>();
 
+	public List<Cell> GetNeighbourCells() {
+		List<Cell> cells = new List<Cell>();
+		foreach (KeyValuePair<int, CellNeighbour> e in index_Neighbour) {
+			if (e.Value.cell != null) {
+				cells.Add(e.Value.cell);
+			}
+		}
+		return cells;
+	}
+
 	private void Awake() {
 		index_Neighbour.Add(0, northEastNeighbour);
 		index_Neighbour.Add(1, northNeighbour);

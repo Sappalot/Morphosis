@@ -155,7 +155,6 @@ public class Phenotype : MonoBehaviour {
 				cell.SetNeighbourCell(direction, cellMap.GetGridNeighbourCell(center, direction) /*grid[gridNeighbourPos.x, gridNeighbourPos.y].transform.GetComponent<Cell>()*/);
 			}
 		}
-		connectionsDiffersFromCells = true;
 	}
 
 	// Update neighbours, even in mother and children
@@ -317,9 +316,22 @@ public class Phenotype : MonoBehaviour {
 		
 	}
 
+	public void OnNeighbourDeleted(Cell neighbourCell) {
+		connectionsDiffersFromCells = true;
+	}
+
 	public void DeleteCell(Cell cell, bool deleteDebris) {
-		//bool contains = cellMap.IsConnected(rootCell.mapPosition, cell.mapPosition);
-		//Debug.Log(contains);
+
+		List<Cell> neighbourCells = cell.GetNeighbourCells();
+		foreach (Cell c in neighbourCells) {
+			if (c != null && c.creature != null && c.creature.phenotype != null) {
+				c.creature.phenotype.OnNeighbourDeleted(cell);
+			} else {
+				Debug.Log("Oppppps!!!!");
+			}
+			
+		}
+
 		cellMap.RemoveCellAtGridPosition(cell.mapPosition);
 		cellList.Remove(cell);
 		Destroy(cell.gameObject);
