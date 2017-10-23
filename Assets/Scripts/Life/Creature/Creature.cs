@@ -84,6 +84,27 @@ public class Creature : MonoBehaviour {
 		return children.Find(c => c.id == id);
 	}
 
+	public void DetatchFromMother() {
+		if (!hasMother) {
+			Debug.LogError("Creature can't detatch from mother, becaus it is motherless!");
+		} else {
+			if (!mother.isConnected) {
+				Debug.LogError("Creature can't detatch from mother, becaus it is not connected!");
+				return;
+			}
+
+			//me
+			mother.isConnected = false;
+			phenotype.connectionsDiffersFromCells = true;
+
+			//mother
+			mother.creature.children.Find(c => c.id == id).isConnected = false;
+			mother.creature.phenotype.connectionsDiffersFromCells = true;
+
+			CreatureSelectionPanel.instance.MakeDirty();
+		}
+	}
+
 	public void SetMother(string id, bool isConnected) {
 		Debug.Assert(mother == null, "Creature has allready a mother");
 		mother = new Mother(id);

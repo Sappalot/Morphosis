@@ -26,7 +26,6 @@ public abstract class Cell : MonoBehaviour {
 	public string id;
 	public int groups = 0;
    
-
 	public SpringJoint2D northSpring;
 	public SpringJoint2D southEastSpring;
 	public SpringJoint2D southWestSpring;
@@ -58,6 +57,12 @@ public abstract class Cell : MonoBehaviour {
 	public bool hasNeighbour {
 		get {
 			return neighbourCount > 0;
+		}
+	}
+
+	public bool isRoot {
+		get {
+			return mapPosition == new Vector2i(0, 0);
 		}
 	}
 

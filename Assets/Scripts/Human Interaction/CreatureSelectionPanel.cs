@@ -10,11 +10,16 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public LineRenderer lineRenderer;
 
 	public Text selectedCreatureText;
+	public Text motherText;
+	public Text childrenText;
 
 	public List<Creature> selection { get; private set; }
 
 	private bool isDirty = true;
 
+	public void MakeDirty() {
+		isDirty = true;
+	}
 
 	public Creature soloSelected {
 		get {
@@ -411,10 +416,24 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				Debug.Log("Update CreatureSelectionPanel");
 			if (selection.Count == 0) {
 				selectedCreatureText.text = "";
+				motherText.text = "Mother:";
+				childrenText.text = "Offspring:";
 			} else if (selection.Count == 1) {
 				selectedCreatureText.text = soloSelected.id; // soloSelected.nickname;
+				motherText.text = "Mother: " + (soloSelected.hasMother ? (soloSelected.mother.isConnected ? "[" : "") + soloSelected.mother.id + (soloSelected.mother.isConnected ? "]" : "") : "<none>");
+				string childrenString = "";
+				for (int i = 0; i < soloSelected.children.Count; i++) {
+					childrenString += (soloSelected.children[i].isConnected ? "[" : "") + soloSelected.children[i].id + (soloSelected.children[i].isConnected ? "]" : "");
+					if (i < soloSelected.children.Count - 1) {
+						childrenString += ", ";
+					}
+				}
+
+				childrenText.text = "Offspring: " + (soloSelected.hasChild ?  childrenString : "<none>");
 			} else {
 				selectedCreatureText.text = selection.Count + " Creatures";
+				motherText.text = "Mother: -"; //TODO : if all have the same mother - write it
+				childrenText.text = "Offspring: -"; //TODO: if all have the same chilren - write it
 			}
 
 			isDirty = false;

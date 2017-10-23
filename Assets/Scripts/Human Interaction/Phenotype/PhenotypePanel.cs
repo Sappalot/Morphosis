@@ -22,6 +22,12 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 		}
 	}
 
+	public void OnClickDetatchFromMother() {
+		if (CreatureSelectionPanel.instance.hasSoloSelected) {
+			CreatureSelectionPanel.instance.soloSelected.DetatchFromMother(); 
+		}
+	}
+
 	public void MakeDirty() {
 		isDirty = true;
 	}

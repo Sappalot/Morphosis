@@ -46,9 +46,9 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				return;
 			}
 
-			cellType.text = "Type: " + selectedCell.gene.type.ToString();
+			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isRoot ? " (Root)" : "");
 			cellEnergy.text = "Energy: 100%";
-			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCount - selectedCell.familyNeighbourCount) + " ("  + selectedCell.familyNeighbourCount + ")";
+			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCount - selectedCell.familyNeighbourCount) + " + ("  + selectedCell.familyNeighbourCount + ")";
 
 			if (selectedCell is EggCell) {
 				eggPanel.gameObject.SetActive(true);

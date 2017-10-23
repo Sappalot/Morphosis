@@ -51,6 +51,9 @@ public class Life : MonoBehaviour {
 		mother.SetChild(child.id, eggCell.mapPosition, eggCell.bindCardinalIndex, true);
 
 		child.SetMother(mother.id, true);
+
+		PhenotypePanel.instance.MakeDirty();
+		CreatureSelectionPanel.instance.MakeDirty();
 	}
 
 	public void ReleaseCreature(Cell rootCell) {
