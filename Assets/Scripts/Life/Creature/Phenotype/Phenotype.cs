@@ -274,30 +274,6 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	////Creatures will ce connected via Cells but remain unaware of each other in cell maps
-	//public void ConnectChildEmbryo(Child child) {
-	//	Cell childRootCell = child.creature.phenotype.rootCell;
-	//	List<Cell> motherCells = new List<Cell>();
-	//	for (int motherCardinalIndex = 0; motherCardinalIndex < 6; motherCardinalIndex++) { // Child to mother, mothers frame of reference
-	//		Vector2i motherSupportCellPosition = cellMap.GetGridNeighbourGridPosition(child.rootMapPosition, motherCardinalIndex);
-	//		Debug.Assert(motherSupportCellPosition != null);
-
-	//		Cell motherSupportCell = cellMap.GetCell(motherSupportCellPosition);
-			
-	//		if (motherSupportCell != null) {
-	//			motherCells.Add(motherSupportCell);
-	//			childRootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(motherCardinalIndex - child.rootBindCardinalIndex + 1), motherSupportCell); // Careful with the direction here!!!
-	//			motherSupportCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(motherCardinalIndex + 3), childRootCell);
-	//		}
-	//	}
-	//	childRootCell.CreatePlacentaSprings(motherCells);
-	//	foreach (Cell c in motherCells) {
-	//		c.UpdateGroups();
-	//	}		
-	//	childRootCell.UpdateGroups();
-
-	//}
-
 	private int CardinaIndexToNeighbour(Cell from, Cell to) {
 		for (int index = 0; index < 6; index++) {
 			Vector2i neighbourPosition = cellMap.GetGridNeighbourGridPosition(from.mapPosition, index);
@@ -324,21 +300,43 @@ public class Phenotype : MonoBehaviour {
 		
 	}
 
-	public void OnNeighbourDeleted(Cell neighbourCell) {
+	public bool IsRootNeighbouringMothersPlacenta(Creature creature) {
+		Debug.Assert(creature.hasMother);
+
+		List<Cell> neighbours = rootCell.GetNeighbourCells();
+		foreach(Cell motherMai in neighbours) {
+			if (motherMai.creature == creature.mother.creature) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void OnNeighbourDeleted(Creature creature, Cell deletedCell, Cell disturbedCell) {
+		disturbedCell.RemoveNeighbourCell(deletedCell);
+
+		//Check if mothers placenta is gone
+		if (creature.hasMother && disturbedCell.isRoot) {
+			if (!IsRootNeighbouringMothersPlacenta(creature)) {
+				creature.DetatchFromMother();
+			}
+		}
+
 		connectionsDiffersFromCells = true;
 	}
 
-	public void DeleteCell(Cell cell, bool deleteDebris) {
+	public void DeleteCell(Cell deleteCell, bool deleteDebris) {
 
-		List<Cell> neighbourCells = cell.GetNeighbourCells();
-		foreach (Cell c in neighbourCells) {
-			c.creature.phenotype.OnNeighbourDeleted(cell);
+		List<Cell> disturbedCells = deleteCell.GetNeighbourCells();
+		foreach (Cell disturbedCell in disturbedCells) {
+			deleteCell.RemoveNeighbourCell(disturbedCell);
+			disturbedCell.creature.phenotype.OnNeighbourDeleted(disturbedCell.creature, deleteCell, disturbedCell);
 		}
 
-		cellMap.RemoveCellAtGridPosition(cell.mapPosition);
-		cellList.Remove(cell);
-		Destroy(cell.gameObject);
-		if (CellPanel.instance.selectedCell == cell) {
+		cellMap.RemoveCellAtGridPosition(deleteCell.mapPosition);
+		cellList.Remove(deleteCell);
+		Destroy(deleteCell.gameObject);
+		if (CellPanel.instance.selectedCell == deleteCell) {
 			CellPanel.instance.selectedCell = null;
 		}
 

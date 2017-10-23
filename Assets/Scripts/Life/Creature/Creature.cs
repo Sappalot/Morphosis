@@ -167,14 +167,6 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public void ConnectChild(Creature child) {
-
-	}
-
-	public void ReleaseChild(Creature child) {
-
-	}
-
 	public bool IsPhenotypeInside(Rect area) {
 		return phenotype.IsInside(area);
 	}
@@ -251,7 +243,7 @@ public class Creature : MonoBehaviour {
 
 	// Will cut branch as well
 	public void DeleteCell(Cell cell) {
-		if (cell.mapPosition != phenotype.rootCell.mapPosition) {
+		if (!cell.isRoot) {
 			phenotype.DeleteCell(cell, true);
 		} else {
 			Debug.LogError("You are not allowed to Delete root cell");

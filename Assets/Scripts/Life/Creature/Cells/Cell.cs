@@ -360,12 +360,16 @@ public abstract class Cell : MonoBehaviour {
 		return null;
 	}
 
-	//public void SetNeighbourCell(CardinalEnum direction, Cell cell) {
-	//	index_Neighbour[AngleUtil.CardinalEnumToCardinalIndex(direction)].cell = cell;
-	//}
-
 	public void SetNeighbourCell(int directionIndex, Cell cell) {
 		index_Neighbour[directionIndex].cell = cell;
+	}
+
+	public void RemoveNeighbourCell(Cell cell) {
+		for (int i = 0; i < 6; i++) {
+			if (index_Neighbour[i].cell == cell) {
+				index_Neighbour[i].cell = null;
+			}
+		}
 	}
 
 	public Cell GetNeighbourCell(CardinalEnum direction) {
@@ -486,6 +490,7 @@ public abstract class Cell : MonoBehaviour {
 				Destroy(placentaSprings[i]);
 			}
 		}
+		placentaSprings = new SpringJoint2D[0];
 
 		if (this != creature.phenotype.rootCell || !creature.hasMother || !creature.mother.isConnected) {
 			return;
