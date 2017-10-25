@@ -207,7 +207,7 @@ public class Phenotype : MonoBehaviour {
 		//My(root) <====> Mohther(placenta)
 		if (creatureMe.hasMother && creatureMe.mother.isConnected) {
 			Creature creatureMother = creatureMe.mother.creature;
-			foreach (Child child in creatureMother.children) {
+			foreach (Soul child in creatureMother.children) {
 				if (child.isConnected && child.id == creatureMe.id) {
 					ConnectionSanityCheck(creatureMe.mother, child);
 					//We are talking about mothers view of me
@@ -215,13 +215,13 @@ public class Phenotype : MonoBehaviour {
 						Cell placentaCell = creatureMother.phenotype.cellList[index];
 						for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 							Vector2i neighbourMapPosition = creatureMother.phenotype.cellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
-							if (neighbourMapPosition == child.rootMapPosition) {
+							if (neighbourMapPosition == child.childRootMapPosition) {
 								// My placenta to childs root
 								placentaCell.SetNeighbourCell(cardinalIndex, rootCell);
 								Debug.Log("Me(root)" + creatureMe.id + " <==neighbour== Mother(placenta)" + creatureMother.id);
 
 								//childs root to my placenta
-								rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.rootBindCardinalIndex + 1 + 3), placentaCell);
+								rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.childRootBindCardinalIndex + 1 + 3), placentaCell);
 								Debug.Log("Me(root)" + creatureMe.id + " ==neighbour==> Mother(placenta)" + creatureMother.id);
 							}
 						}
@@ -231,20 +231,20 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		//My(placenta) <====> Child(root)
-		foreach (Child child in creatureMe.children) {
+		foreach (Soul child in creatureMe.children) {
 			if (child.isConnected) {
 				ConnectionSanityCheck(child.creature.mother, child);
 				for (int index = 0; index < cellList.Count; index++) {
 					Cell placentaCell = cellList[index];
 					for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 						Vector2i neighbourMapPosition = cellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
-						if (neighbourMapPosition == child.rootMapPosition) {
+						if (neighbourMapPosition == child.childRootMapPosition) {
 							// My placenta to childs root
 							placentaCell.SetNeighbourCell(cardinalIndex, child.creature.phenotype.rootCell);
 							Debug.Log("Me: " + creatureMe.id + ", my Child :" + child.id + " Me(placenta) ==neighbour==> Child(root)");
 
 							//childs root to my placenta
-							child.creature.phenotype.rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.rootBindCardinalIndex + 1 + 3), placentaCell);
+							child.creature.phenotype.rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.childRootBindCardinalIndex + 1 + 3), placentaCell);
 							Debug.Log("Me: " + creatureMe.id + ", my Child :" + child.id + " Me(placenta) <==neighbour== Child(root)");
 						}
 					}
@@ -253,7 +253,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	private void ConnectionSanityCheck(Mother mother, Child child) {
+	private void ConnectionSanityCheck(Soul mother, Soul child) {
 		if (mother != null & child != null) {
 			Debug.Assert((mother.isConnected && child.isConnected) || (!mother.isConnected && !child.isConnected), "Assymetric connection found");
 		}

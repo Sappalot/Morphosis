@@ -4,6 +4,9 @@ using UnityEngine;
 // The container of genotype(genes) and phenotype(body)
 // Holds information that does not fit into genes or body 
 public class Creature : MonoBehaviour {
+	[HideInInspector]
+	public Soul soul = new Soul("no id"); //Empty soul
+
 	public string id;
 	public string nickname;
 
@@ -43,45 +46,44 @@ public class Creature : MonoBehaviour {
 	public Genotype genotype;
 	public Phenotype phenotype;
 
-	// Relatives
-	private List<Creature> originals = new List<Creature>();
-	public Mother mother;
-	public List<Child> children = new List<Child>();
+	public Soul mother {
+		get {
+			return soul.mother;
+		}
+	}
+
+	public List<Soul> children {
+		get {
+			return soul.children;
+		}
+	}
 
 	public bool hasMother {
 		get {
-			return mother != null;
+			return soul.hasMother;
 		}
 	}
 
 	public bool isMotherDirty {
 		get {
-			return hasMother && mother.isReferenceDirty;
+			return hasMother && soul.isMotherDirty;
 		}
 	}
 
 	public bool hasChild {
 		get {
-			return  children.Count > 0;
+			return soul.hasChild;
 		}
 	}
 
 	public bool isChildDirty {
 		get {
-			if (!hasChild) {
-				return false;
-			}
-			foreach (Child c in children) {
-				if (c.isReferenceDirty) {
-					return true;
-				}
-			}
-			return false;
+			return soul.isChildDirty;
 		}
 	}
 
-	public Child GetChildById(string id) {
-		return children.Find(c => c.id == id);
+	public Soul GetChildById(string id) {
+		return soul.GetChildById(id);
 	}
 
 	// ^ Relatives ^
@@ -109,17 +111,17 @@ public class Creature : MonoBehaviour {
 
 	public void SetMother(string id, bool isConnected) {
 		Debug.Assert(mother == null, "Creature has allready a mother");
-		mother = new Mother(id);
+		soul.mother = new Soul(id);
 		mother.isConnected = isConnected;
 	}
 
 	public void SetChild(string id, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
 		Debug.Assert(children.Find(c => c.id == id) == null, "Creature has allready a child with that id");
-		Child newChild = new Child(id);
-		newChild.rootMapPosition = rootMapPosition;
-		newChild.rootBindCardinalIndex = rootBindCardinalIndex;
+		Soul newChild = new Soul(id);
+		newChild.childRootMapPosition = rootMapPosition;
+		newChild.childRootBindCardinalIndex = rootBindCardinalIndex;
 		newChild.isConnected = isConnected;
-		children.Add(newChild);
+		soul.children.Add(newChild);
 	}
 
 
@@ -127,7 +129,7 @@ public class Creature : MonoBehaviour {
 		if (mother != null && mother.id == oldId) {
 			mother.id = newId;
 		}
-		foreach (Child child in children) {
+		foreach (Soul child in children) {
 			if (child.id == oldId) {
 				child.id = newId;
 			}
@@ -398,8 +400,8 @@ public class Creature : MonoBehaviour {
 		creatureData.rootBindCardinalIndex = new int[children.Count];
 		for (int i = 0; i < creatureData.childrenId.Length; i++) {
 			creatureData.childrenId[i] = children[i].id;
-			creatureData.childrenRootMapPosition[i] = children[i].rootMapPosition;
-			creatureData.rootBindCardinalIndex[i] = children[i].rootBindCardinalIndex;
+			creatureData.childrenRootMapPosition[i] = children[i].childRootMapPosition;
+			creatureData.rootBindCardinalIndex[i] = children[i].childRootBindCardinalIndex;
 			creatureData.isChildrenConnected[i] = children[i].isConnected;
 		}
 
@@ -444,10 +446,10 @@ public class Creature : MonoBehaviour {
 		phenotype.EvoUpdate();
 
 		if (mother != null) {
-			mother.UpdateCreatureFromId();
+			mother.UpdateCreatureRefFromId();
 		}
-		foreach (Child c in children) {
-			c.UpdateCreatureFromId();
+		foreach (Soul c in children) {
+			c.UpdateCreatureRefFromId();
 		}
 
 		bool geneCelleWasUpdated = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
