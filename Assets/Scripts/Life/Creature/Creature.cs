@@ -43,7 +43,7 @@ public class Creature : MonoBehaviour {
 	public Genotype genotype;
 	public Phenotype phenotype;
 
-	// Relatives ---------------
+	// Relatives
 	private List<Creature> originals = new List<Creature>();
 	public Mother mother;
 	public List<Child> children = new List<Child>();
@@ -83,6 +83,8 @@ public class Creature : MonoBehaviour {
 	public Child GetChildById(string id) {
 		return children.Find(c => c.id == id);
 	}
+
+	// ^ Relatives ^
 
 	public void DetatchFromMother() {
 		if (!hasMother) {
@@ -355,16 +357,6 @@ public class Creature : MonoBehaviour {
 		genotype.hasCollider = CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype && !genotype.isGrabbed;
 	}
 
-	public bool isSomethingDirty {
-		get {
-			return genotype.geneCellsDiffersFromGenome ||
-				phenotype.cellsDiffersFromGeneCells ||
-				phenotype.connectionsDiffersFromCells ||
-				isMotherDirty ||
-				isChildDirty;
-		}
-	}
-
 	// Load / Save
 	private CreatureData creatureData = new CreatureData();
 
@@ -380,7 +372,6 @@ public class Creature : MonoBehaviour {
 
 	//Everything is deep cloned even the id. Change this not to have trouble
 	public void Clone(Creature original) {
-		// TODO: Make clone of mother with attached child work.... trouble with ids 
 		ApplyData(original.UpdateData());
 	}
 

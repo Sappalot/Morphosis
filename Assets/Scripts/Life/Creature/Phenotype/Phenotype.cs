@@ -316,7 +316,7 @@ public class Phenotype : MonoBehaviour {
 		disturbedCell.RemoveNeighbourCell(deletedCell);
 
 		//Check if mothers placenta is gone
-		if (creature.hasMother && disturbedCell.isRoot) {
+		if (creature.hasMother && disturbedCell.isRoot && !deletedCell.IsSameCreature(disturbedCell)) {
 			if (!IsRootNeighbouringMothersPlacenta(creature)) {
 				creature.DetatchFromMother();
 			}
