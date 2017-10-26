@@ -163,11 +163,6 @@ public class Phenotype : MonoBehaviour {
 	// Update wings
 	public bool UpdateConnectionsFromCellsBody(Creature creature) {
 		if (connectionsDiffersFromCells) {
-			if (creature.isMotherDirty || creature.isChildDirty) {
-				//Wait with all connecting stuff until references are updated 
-				return false;
-			}
-			// We are sure we have all references we need in mother and children (retreived from their ids)
 
 			UpdateNeighbourReferencesInterBody(creature);
 

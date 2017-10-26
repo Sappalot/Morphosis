@@ -7,7 +7,10 @@ public class Life : MonoBehaviour {
 
 	private IdGenerator idGenerator = new IdGenerator();
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
-	private List<Creature> creatureList = new List<Creature>();
+	private List<Creature> creatureList = new List<Creature>(); // All enbodied creatures (the once that we can see and play with)
+
+	//private Dictionary<string, Soul> soulDictionary = new Dictionary<string, Soul>();
+	//private List<Soul> soulList = new List<Soul>(); //All creature containers, count allways >= number of creatures, since each creature has a container
 
 	public string GetUniqueIdStamp() {
 		return idGenerator.GetUniqueId();
@@ -23,7 +26,14 @@ public class Life : MonoBehaviour {
 		return creatureDictionary[id];
 	}
 
+	//public Soul GetSoul(string id) {
+	//	return soulDictionary[id];
+	//}
+
 	public void EvoUpdate() {
+		//for (int index = 0; index < soulList.Count; index++) {
+		//	soulList[index].UpdateRefFromId();
+		//}
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].EvoUpdate();
 		}
@@ -189,6 +199,8 @@ public class Life : MonoBehaviour {
 
 		DeleteAll();
 		for (int index = 0; index < lifeData.creatureList.Count; index++) {
+			// TODO Create soul and ask soul to create creature
+
 			CreatureData creatureData = lifeData.creatureList[index];
 			Creature creature = InstantiateCreature(creatureData.id);
 			creature.ApplyData(creatureData);

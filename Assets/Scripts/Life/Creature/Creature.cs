@@ -64,21 +64,9 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public bool isMotherDirty {
-		get {
-			return hasMother && soul.isMotherDirty;
-		}
-	}
-
 	public bool hasChild {
 		get {
 			return soul.hasChild;
-		}
-	}
-
-	public bool isChildDirty {
-		get {
-			return soul.isChildDirty;
 		}
 	}
 
@@ -109,12 +97,14 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
+	//NOTE: Each creature has a soul with references to mother and child souls, which are not shared among creatures
 	public void SetMother(string id, bool isConnected) {
 		Debug.Assert(mother == null, "Creature has allready a mother");
 		soul.mother = new Soul(id);
 		mother.isConnected = isConnected;
 	}
 
+	//NOTE: Each creature has a soul with references to mother and child souls, which are not shared among creatures
 	public void SetChild(string id, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
 		Debug.Assert(children.Find(c => c.id == id) == null, "Creature has allready a child with that id");
 		Soul newChild = new Soul(id);
@@ -360,6 +350,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	// Load / Save
+
 	private CreatureData creatureData = new CreatureData();
 
 	public void StoreState() {
@@ -446,10 +437,10 @@ public class Creature : MonoBehaviour {
 		phenotype.EvoUpdate();
 
 		if (mother != null) {
-			mother.UpdateCreatureRefFromId();
+			mother.UpdateRefFromId();
 		}
 		foreach (Soul c in children) {
-			c.UpdateCreatureRefFromId();
+			c.UpdateRefFromId();
 		}
 
 		bool geneCelleWasUpdated = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);

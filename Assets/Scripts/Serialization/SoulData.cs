@@ -1,16 +1,19 @@
 ﻿using System;
-using UnityEngine;
+using System.Collections.Generic;
 
 [Serializable]
 public class SoulData {
-	public string id = "no id";
+	//// me 
+	//public string id = "no id";
+	//public bool isConnected; // Should be connected
+	//public Vector2i childRootMapPosition; //As seen from mothers frame of reference
+	//public int childRootBindCardinalIndex; //As seen from mothers frame of reference
 
-	//??
-	public string motherId = string.Empty; //means has no mother
-	public bool isMotherConnected;
+	//public CreatureData creatureData; //Store the entire creature with genotype and phenotype
 
-	public string[] childrenId;
-	public bool[] isChildrenConnected;
-	public Vector2i[] childrenRootMapPosition; //In mothers frame of reference
-	public int[] rootBindCardinalIndex; //In mothers frame of reference
+	//// mother 
+	//public string motherId = string.Empty;
+
+	//// children
+	//public List<string> childrenIds = new List<string>();
 }
