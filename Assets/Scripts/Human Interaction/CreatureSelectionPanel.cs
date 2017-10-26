@@ -238,10 +238,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-			Creature mergeling = World.instance.life.SpawnCreatureMergling(genomes, Vector2.zero, 90f);
+			Creature mergeling = Life.instance.SpawnCreatureMergling(genomes, Vector2.zero, 90f);
 			moveCreatures.Add(mergeling);
 		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-			Creature mergeling = World.instance.life.SpawnCreatureMergling(genomes, Vector2.zero, 90f);
+			Creature mergeling = Life.instance.SpawnCreatureMergling(genomes, Vector2.zero, 90f);
 			moveCreatures.Add(mergeling);
 		}
 
@@ -263,7 +263,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		List<Creature> copies = new List<Creature>();
 		Dictionary<string, string> originalToCopy = new Dictionary<string, string>();
 		foreach (Creature original in originals) {
-			Creature copy = World.instance.life.SpawnCreatureCopy(original);
+			Creature copy = Life.instance.SpawnCreatureCopy(original);
 			moveCreatures.Add(copy);
 			copies.Add(copy);
 			originalToCopy.Add(original.id, copy.id);
@@ -492,7 +492,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 
 		//debug markers
-		foreach (Creature c in World.instance.life.creatures) {
+		foreach (Creature c in Life.instance.creatures) {
 			//c.ShowMarkers(IsSelected(c));
 			c.ShowMarkers(false);
 		}

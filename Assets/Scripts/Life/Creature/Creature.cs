@@ -261,7 +261,7 @@ public class Creature : MonoBehaviour {
 
 			transform.parent = null;
 			transform.position = rootCellPosition;
-			transform.parent = World.instance.life.transform;
+			transform.parent = Life.instance.transform;
 		} else if (type == PhenoGenoEnum.Genotype) {
 			phenotype.hasDirtyPosition = true;
 
@@ -274,7 +274,7 @@ public class Creature : MonoBehaviour {
 
 			transform.parent = null;
 			transform.position = rootCellPosition;
-			transform.parent = World.instance.life.transform;
+			transform.parent = Life.instance.transform;
 		}
 		isDirty = true;
 	}
@@ -406,6 +406,8 @@ public class Creature : MonoBehaviour {
 		//me
 		nickname = creatureData.nickname;
 		id = creatureData.id;
+
+		soul.id = creatureData.id;
 
 		//mother
 		if (creatureData.motherId != string.Empty) {

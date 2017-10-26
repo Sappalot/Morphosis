@@ -6,10 +6,9 @@ using System.IO;
 public class World : MonoSingleton<World> {
 	private string worldName = "Gaia";
 	private float fixedTime;
-	public Life life;
 
 	public void KillAllCreatures() {
-		life.DeleteAll();
+		Life.instance.DeleteAll();
 		CreatureSelectionPanel.instance.ClearSelection();
 	}
 
@@ -17,27 +16,27 @@ public class World : MonoSingleton<World> {
 		//test, OK with 24 * 24 (18 cells per creature) ~ 27 FPS :)
 		//including: turn hinged neighbours to correct angle, just one test string creature
 		//excluding: turn cell graphics to correct angle, scale mussle cells
-		life.EvoFixedUpdate(fixedTime);
+		Life.instance.EvoFixedUpdate(fixedTime);
 	}
 
 	private void Update() {
 		//Handle time from here to not get locked out
 		if (HUD.instance.timeControllValue == 0 || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			Time.timeScale = 0;
-			life.EvoUpdate();
+			Life.instance.EvoUpdate();
 		} else if (HUD.instance.timeControllValue == 1) {
 			Time.timeScale = 1;
-			life.EvoUpdate();
+			Life.instance.EvoUpdate();
 		} else {
 			Time.timeScale = 4;
-			life.EvoUpdate();
+			Life.instance.EvoUpdate();
 		}
 	}
 
 	private void FixedUpdate() {
 		if (HUD.instance.timeControllValue > 0) {
 			fixedTime += Time.fixedDeltaTime * Time.timeScale;
-			life.EvoFixedUpdate(fixedTime);
+			Life.instance.EvoFixedUpdate(fixedTime);
 			GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
 		}
 	}
@@ -50,11 +49,11 @@ public class World : MonoSingleton<World> {
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
 		for (int y = 1; y <= 1; y++) {
 			for (int x = 1; x <= 1; x++) {
-				life.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f));
+				Life.instance.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f));
 			}
 		}
-		//life.SpawnCreatureEdgeFailure(new Vector3(100f, 200f, 0f)); //Fixed :)
-		//life.SpawnCreatureJellyfish(new Vector3(100f, 100f, 0f));
+		//Life.instance.SpawnCreatureEdgeFailure(new Vector3(100f, 200f, 0f)); //Fixed :)
+		//Life.instance.SpawnCreatureJellyfish(new Vector3(100f, 100f, 0f));
 		CreatureEditModePanel.instance.Restart();
 		RMBToolModePanel.instance.Restart();
 
@@ -77,7 +76,7 @@ public class World : MonoSingleton<World> {
 
 	private string path = "F:/Morfosis/";
 	public void Save() {
-		//life.GeneratePhenotypeCells(); // In case we are still in Genotype view, Phenotypes are not updated
+		//Life.instance.GeneratePhenotypeCells(); // In case we are still in Genotype view, Phenotypes are not updated
 		UpdateData();
 
 		string worldToSave = Serializer.Serialize(worldData, new UnityJsonSerializer());
@@ -94,14 +93,14 @@ public class World : MonoSingleton<World> {
 	private void UpdateData() {
 		worldData.worldName = worldName;
 
-		worldData.lifeData = life.UpdateData();
+		worldData.lifeData = Life.instance.UpdateData();
 		worldData.fixedTime = fixedTime;
 	}
 
 	private void ApplyData(WorldData worldData) {
 		worldName = worldData.worldName;
 
-		life.ApplyData(worldData.lifeData);
+		Life.instance.ApplyData(worldData.lifeData);
 
 		fixedTime = worldData.fixedTime;
 	}

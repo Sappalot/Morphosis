@@ -7,10 +7,7 @@ public class RMBToolController : MouseDrag {
 	public new Camera camera;
 	public SpringJoint2D spring;
 
-	private Vector3 dragVector = new Vector3();
 	private Vector3 downPositionMouse; //World space
-
-	private List<Creature> alreadySelected;
 
 	public override void OnDraggingStart(int mouseButton) {
 		// implement this for start of dragging
@@ -18,7 +15,7 @@ public class RMBToolController : MouseDrag {
 			downPositionMouse = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 			if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spring && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 				
-				Cell cell = World.instance.life.GetCellAt(downPositionMouse);
+				Cell cell = Life.instance.GetCellAt(downPositionMouse);
 				if (cell != null) {
 					spring.connectedBody = cell.GetComponent<Rigidbody2D>();
 					spring.anchor = downPositionMouse;
@@ -29,15 +26,15 @@ public class RMBToolController : MouseDrag {
 				}
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.simple) {
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-					World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f);
+					Life.instance.SpawnCreatureSimple(downPositionMouse, 90f);
 				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-					World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f);
+					Life.instance.SpawnCreatureSimple(downPositionMouse, 90f);
 				}				
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.freak) {
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f);
+					Life.instance.SpawnCreatureFreak(downPositionMouse, 90f);
 				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f);
+					Life.instance.SpawnCreatureFreak(downPositionMouse, 90f);
 				}
 			}
 

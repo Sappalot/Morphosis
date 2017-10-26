@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 // TODO: Make the souls connencted. That is: one souls mothers child is the same soul
+// TODO rename: is this a CreatureRecord
 public class Soul {
 	public string id = string.Empty;
 	
@@ -25,7 +26,7 @@ public class Soul {
 
 	public void UpdateRefFromId() {
 		if (creature == null) {
-			creature = World.instance.life.GetCreature(id);
+			creature = Life.instance.GetCreature(id);
 		}
 	}
 
@@ -48,4 +49,6 @@ public class Soul {
 	public Soul GetChildById(string id) {
 		return children.Find(c => c.id == id);
 	}
+
+	//TODO: Store creature Data in this one and create Creature from it
 }

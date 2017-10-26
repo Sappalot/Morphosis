@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System;
 
-public class Life : MonoBehaviour {
+public class Life : MonoSingleton<Life> {
 	public Creature creaturePrefab;
 
 	private IdGenerator idGenerator = new IdGenerator();
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
 	private List<Creature> creatureList = new List<Creature>(); // All enbodied creatures (the once that we can see and play with)
 
-	//private Dictionary<string, Soul> soulDictionary = new Dictionary<string, Soul>();
-	//private List<Soul> soulList = new List<Soul>(); //All creature containers, count allways >= number of creatures, since each creature has a container
+	private Dictionary<string, Soul> soulDictionary = new Dictionary<string, Soul>();
+	private List<Soul> soulList = new List<Soul>(); //All creature containers, count allways >= number of creatures, since each creature has a container
 
 	public string GetUniqueIdStamp() {
 		return idGenerator.GetUniqueId();
@@ -26,14 +26,8 @@ public class Life : MonoBehaviour {
 		return creatureDictionary[id];
 	}
 
-	//public Soul GetSoul(string id) {
-	//	return soulDictionary[id];
-	//}
-
 	public void EvoUpdate() {
-		//for (int index = 0; index < soulList.Count; index++) {
-		//	soulList[index].UpdateRefFromId();
-		//}
+
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].EvoUpdate();
 		}
@@ -49,7 +43,7 @@ public class Life : MonoBehaviour {
 		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
 		Creature mother = eggCell.creature;
 
-		// Q: What happens when 2 children, attatched to same mother, grows into each other (prio??), Let them grow as long as ther is room for each new cell. Probe for room firstm, then build?
+		// Q: What happens when 2 children, attatched to same mother, grows into each other (prio??), A: Let them grow as long as ther is room for each new cell. Probe for room firstm, then build?
 
 		// remove cell at childs root location
 		mother.DeleteCell(eggCell); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
@@ -66,17 +60,7 @@ public class Life : MonoBehaviour {
 		CreatureSelectionPanel.instance.MakeDirty();
 	}
 
-	public void ReleaseCreature(Cell rootCell) {
-		Debug.Assert(rootCell is EggCell, "You are not allowed to release child from non Egg cell");
-		Creature creature = rootCell.creature;
-
-		// TODO: remove mother's attatchment to child
-
-		// TODO: remove child's childs attatchment to mother
-
-		// TODO: let mother be able to grow back new egg cell
-
-		// TODO: remove occupied mother spaces from child
+	public void DetatchCreature() {
 
 	}
 
