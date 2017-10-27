@@ -11,6 +11,8 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public bool isAlive = true;
+
 	public Transform cellsTransform;
 
 	public int model = 0;
@@ -317,6 +319,14 @@ public class Phenotype : MonoBehaviour {
 		connectionsDiffersFromCells = true;
 	}
 
+	//This will make root inaccessible
+	public void DeleteAllCells() {
+		List<Cell> allCells = new List<Cell>(cellList);
+		foreach (Cell c in allCells) {
+			DeleteCell(c, false);
+		}
+	}
+
 	public void DeleteCell(Cell deleteCell, bool deleteDebris) {
 
 		List<Cell> disturbedCells = deleteCell.GetNeighbourCells();
@@ -325,11 +335,15 @@ public class Phenotype : MonoBehaviour {
 			disturbedCell.creature.phenotype.OnNeighbourDeleted(disturbedCell.creature, deleteCell, disturbedCell);
 		}
 
-		cellMap.RemoveCellAtGridPosition(deleteCell.mapPosition);
-		cellList.Remove(deleteCell);
-		Destroy(deleteCell.gameObject);
-		if (CellPanel.instance.selectedCell == deleteCell) {
-			CellPanel.instance.selectedCell = null;
+		if (!deleteCell.isRoot) {
+			cellMap.RemoveCellAtGridPosition(deleteCell.mapPosition);
+			cellList.Remove(deleteCell);
+			Destroy(deleteCell.gameObject);
+			if (CellPanel.instance.selectedCell == deleteCell) {
+				CellPanel.instance.selectedCell = null;
+			}
+		} else {
+			isAlive = false; //Hack
 		}
 
 		if (deleteDebris) {
@@ -337,6 +351,8 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
+		CreatureSelectionPanel.instance.MakeDirty();
+		CellPanel.instance.MakeDirty();
 		connectionsDiffersFromCells = true;
 	}
 

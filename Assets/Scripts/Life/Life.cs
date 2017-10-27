@@ -50,7 +50,7 @@ public class Life : MonoSingleton<Life> {
 		// Q: What happens when 2 children, attatched to same mother, grows into each other (prio??), A: Let them grow as long as ther is room for each new cell. Probe for room firstm, then build?
 
 		// remove cell at childs root location
-		mother.DeleteCell(eggCell); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
+		mother.DeleteCellButRoot(eggCell); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
 
 		// Spawn child at egg cell location
 		Creature child = InstantiateCreature(); // Will create soul as well
@@ -66,10 +66,6 @@ public class Life : MonoSingleton<Life> {
 		CreatureSelectionPanel.instance.MakeDirty();
 	}
 
-	public void DetatchCreature() {
-
-	}
-
 	public void DeleteAll() {
 		foreach (Creature creature in creatureList) {
 			Destroy(creature.gameObject);
@@ -81,6 +77,14 @@ public class Life : MonoSingleton<Life> {
 		soulList.Clear();
 	}
 
+	public void DeleteCell(Cell cell) {
+		if (cell.isRoot) {
+			DeleteCreature(cell.creature);
+		} else {
+			cell.creature.DeleteCellButRoot(cell);
+		}
+	}
+
 	public void DeleteCreature(Creature creature) {
 		creature.DetatchFromMother();
 		foreach(Soul childSoul in creature.childSouls) {
@@ -89,9 +93,16 @@ public class Life : MonoSingleton<Life> {
 			}
 		}
 
+		creature.DeleteAllCells();
+
 		Destroy(creature.gameObject);
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
+
+		CreatureSelectionPanel.instance.ClearSelection();
+		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
+		CreatureSelectionPanel.instance.MakeDirty();
+		CellPanel.instance.MakeDirty();
 
 		// Note the soul will remain :)
 		// Q: will we keep souls forever?

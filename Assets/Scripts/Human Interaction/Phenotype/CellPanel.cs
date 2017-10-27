@@ -11,6 +11,10 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	private bool isDirty = true;
 	private Cell m_selectedCell;
 
+	public void MakeDirty() {
+		isDirty = true;
+	}
+
 	public Cell selectedCell {
 		get {
 			return m_selectedCell != null ? m_selectedCell : (CreatureSelectionPanel.instance.hasSoloSelected ? CreatureSelectionPanel.instance.soloSelected.phenotype.rootCell : null);
@@ -23,7 +27,9 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public void OnClickDelete() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.DeleteCell(selectedCell);
+			Life.instance.DeleteCell(selectedCell);
+
+			CreatureSelectionPanel.instance.MakeDirty();
 			PhenotypePanel.instance.MakeDirty();
 			isDirty = true;
 		}
@@ -36,7 +42,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			eggPanel.gameObject.SetActive(false);
 
 			//Nothing to represent
-			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
+			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected || !selectedCell.creature.phenotype.isAlive) {
 				cellType.text = "Type:";
 				cellEnergy.text = "Energy:";
 				cellNeighbours.text = "Neighbours:";

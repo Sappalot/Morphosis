@@ -17,6 +17,8 @@ public class Creature : MonoBehaviour {
 	public SpriteRenderer genotypePosition;
 	public SpriteRenderer genotypeCellsPosition;
 
+	
+
 	//wing force
 	[Range(0f, 1f)]
 	public float wingDrag = 1f;
@@ -113,14 +115,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void DetatchFromMother() {
-		if (!hasMotherSoul) {
-			Debug.LogError("Creature can't detatch from mother, becaus it is motherless!");
-		} else {
-			if (!soul.isConnectedWithMotherSoul) {
-				Debug.LogError("Creature can't detatch from mother, becaus it is not connected!");
-				return;
-			}
-
+		if (hasMotherSoul && soul.isConnectedWithMotherSoul) {
 			//me
 			soul.SetConnectedWithMotherSoul(false);
 			phenotype.connectionsDiffersFromCells = true;
@@ -241,13 +236,16 @@ public class Creature : MonoBehaviour {
 		isDirty = true;
 	}
 
-	// Will cut branch as well
-	public void DeleteCell(Cell cell) {
+	public void DeleteCellButRoot(Cell cell) {
 		if (!cell.isRoot) {
 			phenotype.DeleteCell(cell, true);
 		} else {
 			Debug.LogError("You are not allowed to Delete root cell");
 		}
+	}
+
+	public void DeleteAllCells() {
+		phenotype.DeleteAllCells();
 	}
 
 	public void ShowCellSelected(Cell cell, bool on) {
@@ -437,15 +435,21 @@ public class Creature : MonoBehaviour {
 			EnableCurrentGenoPhenoColliderAndDisableOther();
 
 			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-				// Update selection
-				phenotype.ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(this));
+				if (phenotype.isAlive) {
+					// Update selection
+					phenotype.ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(this));
 
-				phenotype.ShowShadow(false);
+					phenotype.ShowShadow(false);
 
-				//Show selected or not
-				phenotype.ShowCellsSelected(false);
-				if (CreatureSelectionPanel.instance.soloSelected == this) {
-					phenotype.ShowCellSelected(CellPanel.instance.selectedCell, true);
+					//Show selected or not
+					phenotype.ShowCellsSelected(false);
+					if (CreatureSelectionPanel.instance.soloSelected == this) {
+						phenotype.ShowCellSelected(CellPanel.instance.selectedCell, true);
+					}
+				} else {
+					phenotype.ShowSelectedCreature(false);
+					phenotype.ShowShadow(false);
+					phenotype.ShowCellsSelected(false);
 				}
 			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 				// Update selection
@@ -463,45 +467,3 @@ public class Creature : MonoBehaviour {
 		}
 	}
 }
-
-////mother
-//if (motherSoul != null) {
-//	creatureData.motherId = motherSoul.id;
-//	//creatureData.isMotherConnected = mother.isConnected;
-//	creatureData.isMotherConnected = soul.isConnectedWithMotherSoul;
-//} else {
-//	creatureData.motherId = string.Empty;
-//}
-
-////children
-//creatureData.childrenId = new string[childSouls.Count];
-//creatureData.childrenRootMapPosition = new Vector2i[childSouls.Count];
-//creatureData.isChildrenConnected = new bool[childSouls.Count];
-//creatureData.rootBindCardinalIndex = new int[childSouls.Count];
-//for (int i = 0; i < creatureData.childrenId.Length; i++) {
-//	creatureData.childrenId[i] = childSouls[i].id;
-
-//	//creatureData.childrenRootMapPosition[i] = children[i].childRootMapPosition;
-//	//creatureData.rootBindCardinalIndex[i] = children[i].childRootBindCardinalIndex;
-//	//creatureData.isChildrenConnected[i] = children[i].isConnected;
-
-//	creatureData.childrenRootMapPosition[i] = soul.childSoulRootMapPosition(childSouls[i].id);
-//	creatureData.rootBindCardinalIndex[i] = soul.childSoulRootBindCardinalIndex(childSouls[i].id);
-//	creatureData.isChildrenConnected[i] = soul.isConnectedWithChildSoul(childSouls[i].id);
-//}
-
-	//-------
-
-//soul.id = creatureData.id;
-
-////mother
-//if (creatureData.motherId != string.Empty) {
-//	//SetMother(creatureData.motherId, creatureData.isMotherConnected);
-//	soul.SetMotherSoul(creatureData.motherId);
-//}
-
-////children
-//for (int i = 0; i < creatureData.childrenId.Length; i++) {
-//	//SetChild(creatureData.childrenId[i], creatureData.childrenRootMapPosition[i], creatureData.rootBindCardinalIndex[i], creatureData.isChildrenConnected[i]);
-//	soul.AddChildSoul(creatureData.childrenId[i], creatureData.childrenRootMapPosition[i], creatureData.rootBindCardinalIndex[i], creatureData.isChildrenConnected[i]);
-//}
