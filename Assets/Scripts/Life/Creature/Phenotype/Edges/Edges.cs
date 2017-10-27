@@ -82,6 +82,9 @@ public class Edges : MonoBehaviour {
 
 	private Cell GetNextPeripheryCell(Cell currentCell, Cell previousCell) {
 		int previousDirection = 0; // We need to have a previous direction which is pointing east in world space
+		if (currentCell == null) {
+			Debug.LogError("NULL");
+		}
 
 		if (previousCell != null) {
 			previousDirection = currentCell.GetDirectionOfNeighbourCell(previousCell);

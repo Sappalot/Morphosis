@@ -116,27 +116,27 @@ public class MuscleCell : Cell {
 	public override void UpdateSpringLengths() {
 
 		if (seldom % 5 == 0) {
-			if (HasNeighbour(CardinalEnum.northEast)) {
+			if (HasNeighbourCell(CardinalEnum.northEast, false)) {
 				northEastNeighbour.cell.GetSpring(this).distance = this.radius + northEastNeighbour.cell.radius;
 			}
 
-			if (HasNeighbour(CardinalEnum.north)) {
+			if (HasNeighbourCell(CardinalEnum.north, false)) {
 				northSpring.distance = this.radius + northNeighbour.cell.radius;
 			}
 
-			if (HasNeighbour(CardinalEnum.northWest)) {
+			if (HasNeighbourCell(CardinalEnum.northWest, false)) {
 				northWestNeighbour.cell.GetSpring(this).distance = this.radius + northWestNeighbour.cell.radius;
 			}
 
-			if (HasNeighbour(CardinalEnum.southWest)) {
+			if (HasNeighbourCell(CardinalEnum.southWest, false)) {
 				southWestSpring.distance = this.radius + southWestNeighbour.cell.radius;
 			}
 
-			if (HasNeighbour(CardinalEnum.south)) {
+			if (HasNeighbourCell(CardinalEnum.south, false)) {
 				southNeighbour.cell.GetSpring(this).distance = this.radius + southNeighbour.cell.radius;
 			}
 
-			if (HasNeighbour(CardinalEnum.southEast)) {
+			if (HasNeighbourCell(CardinalEnum.southEast, false)) {
 				southEastSpring.distance = this.radius + southEastNeighbour.cell.radius;
 			}
 		}
@@ -146,17 +146,17 @@ public class MuscleCell : Cell {
 	public override void UpdateSpringFrequenzy() {
 		base.UpdateSpringFrequenzy();
 
-		if (HasNeighbour(CardinalEnum.north)) {
+		if (HasNeighbourCell(CardinalEnum.north, false)) {
 			northSpring.frequency = (this.springFrequenzy + northNeighbour.cell.springFrequenzy) / 2f;
 			northSpring.dampingRatio = (this.springDamping + northNeighbour.cell.springDamping) / 2f;
 		}
 
-		if (HasNeighbour(CardinalEnum.southWest)) {
+		if (HasNeighbourCell(CardinalEnum.southWest, false)) {
 			southWestSpring.frequency = (this.springFrequenzy + southWestNeighbour.cell.springFrequenzy) / 2f;
 			southWestSpring.dampingRatio = (this.springDamping + southWestNeighbour.cell.springDamping) / 2f;
 		}
 
-		if (HasNeighbour(CardinalEnum.southEast)) {
+		if (HasNeighbourCell(CardinalEnum.southEast, false)) {
 			southEastSpring.frequency = (this.springFrequenzy + southEastNeighbour.cell.springFrequenzy) / 2f;
 			southEastSpring.dampingRatio = (this.springDamping + southEastNeighbour.cell.springDamping) / 2f;
 		}

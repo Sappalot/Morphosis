@@ -112,57 +112,23 @@ public class Creature : MonoBehaviour {
 		return soul.HasChild(id);
 	}
 
-	// ^ Relatives ^
-
 	public void DetatchFromMother() {
 		if (!hasMotherSoul) {
 			Debug.LogError("Creature can't detatch from mother, becaus it is motherless!");
 		} else {
-			//if (!mother.isConnected) {
 			if (!soul.isConnectedWithMotherSoul) {
 				Debug.LogError("Creature can't detatch from mother, becaus it is not connected!");
 				return;
 			}
 
 			//me
-			//mother.isConnected = false;
 			soul.SetConnectedWithMotherSoul(false);
 			phenotype.connectionsDiffersFromCells = true;
 
 			//mother
-			//mother.creature.children.Find(c => c.id == id).isConnected = false;
 			motherSoul.creature.phenotype.connectionsDiffersFromCells = true;
 
 			CreatureSelectionPanel.instance.MakeDirty();
-		}
-	}
-
-	//NOTE: Each creature has a soul with references to mother and child souls, which are not shared among creatures
-	//public void SetMother(string id, bool isConnected) {
-	//	Debug.Assert(mother == null, "Creature has allready a mother");
-	//	soul.mother = new Soul(id);
-	//	mother.isConnected = isConnected;
-	//}
-
-	////NOTE: Each creature has a soul with references to mother and child souls, which are not shared among creatures
-	//public void SetChild(string id, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
-	//	Debug.Assert(children.Find(c => c.id == id) == null, "Creature has allready a child with that id");
-	//	Soul newChild = new Soul(id);
-	//	newChild.childRootMapPosition = rootMapPosition;
-	//	newChild.childRootBindCardinalIndex = rootBindCardinalIndex;
-	//	newChild.isConnected = isConnected;
-	//	soul.childReferences.Add(newChild);
-	//}
-
-
-	public void TryChangeRelativesId(string oldId, string newId) {
-		if (motherSoul != null && motherSoul.id == oldId) {
-			motherSoul.id = newId;
-		}
-		foreach (Soul child in childSouls) {
-			if (child.id == oldId) {
-				child.id = newId;
-			}
 		}
 	}
 

@@ -11,20 +11,20 @@ public class Soul {
 	public SoulReference motherSoulReference = new SoulReference(string.Empty); //has no mother per default
 	public List<SoulReference> childSoulReferences = new List<SoulReference>();
 
-	public void TryChangeId(string oldId, string newId) {
-		if (motherSoulReference != null  && motherSoulReference.id == oldId) {
-			motherSoulReference.id = newId;
-			motherSoulReference.soul = null;
-			motherSoulReference.giveUpLooking = false;
-		}
-		for (int i = 0; i < childSoulReferences.Count; i++) {
-			if (childSoulReferences[i] != null && childSoulReferences[i].id == oldId) {
-				childSoulReferences[i].id = newId;
-				childSoulReferences[i].soul = null;
-				childSoulReferences[i].giveUpLooking = false;
-			}
-		}
-	}
+	//public void TryChangeId(string oldId, string newId) {
+	//	if (motherSoulReference != null  && motherSoulReference.id == oldId) {
+	//		motherSoulReference.id = newId;
+	//		motherSoulReference.soul = null;
+	//		//motherSoulReference.giveUpLooking = false;
+	//	}
+	//	for (int i = 0; i < childSoulReferences.Count; i++) {
+	//		if (childSoulReferences[i] != null && childSoulReferences[i].id == oldId) {
+	//			childSoulReferences[i].id = newId;
+	//			childSoulReferences[i].soul = null;
+	//			//childSoulReferences[i].giveUpLooking = false;
+	//		}
+	//	}
+	//}
 
 	// Relatives
 
@@ -32,6 +32,13 @@ public class Soul {
 		get {
 			Debug.Assert(areAllReferencesUpdated, "Update references first!");
 			return creatureReference.creature;
+		}
+	}
+
+	public bool hasCreature {
+		get {
+			Debug.Assert(areAllReferencesUpdated, "Update references first!");
+			return creature != null;
 		}
 	}
 
@@ -80,7 +87,7 @@ public class Soul {
 	public bool hasMother {
 		get {
 			Debug.Assert(motherSoulReference.isReferenceUpdated, "Update references first!");
-			Debug.Assert(motherSoul.areAllReferencesUpdated, "Update references first!");
+			//Debug.Assert(motherSoul != null && motherSoul.areAllReferencesUpdated, "Update references first!");
 			return mother != null;
 		}
 	}

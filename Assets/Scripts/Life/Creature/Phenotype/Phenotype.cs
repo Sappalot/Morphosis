@@ -164,7 +164,7 @@ public class Phenotype : MonoBehaviour {
 	public bool UpdateConnectionsFromCellsBody(Creature creature) {
 		if (connectionsDiffersFromCells) {
 
-			//Fail safe to be removed
+			////Fail safe to be removed
 			for (int index = 0; index < Life.instance.soulList.Count; index++) {
 				Life.instance.soulList[index].UpdateReferences();
 			}

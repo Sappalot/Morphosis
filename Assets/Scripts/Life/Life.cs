@@ -82,10 +82,11 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	public void DeleteCreature(Creature creature) {
-
 		creature.DetatchFromMother();
-		foreach(Creature child in creature.children) {
-			child.DetatchFromMother();
+		foreach(Soul childSoul in creature.childSouls) {
+			if (childSoul.hasCreature) {
+				childSoul.creature.DetatchFromMother();
+			}
 		}
 
 		Destroy(creature.gameObject);

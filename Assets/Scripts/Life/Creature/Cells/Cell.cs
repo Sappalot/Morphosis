@@ -348,20 +348,20 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public SpringJoint2D GetSpring(Cell askingCell) {
-		if (HasNeighbour(CardinalEnum.north) && askingCell == northNeighbour.cell) {
+		if (HasNeighbourCell(CardinalEnum.north) && askingCell == northNeighbour.cell) {
 			return northSpring;
 		}
-		else if (HasNeighbour(CardinalEnum.southEast) && askingCell == southEastNeighbour.cell) {
+		else if (HasNeighbourCell(CardinalEnum.southEast) && askingCell == southEastNeighbour.cell) {
 			return southEastSpring;
 		}
-		else if (HasNeighbour(CardinalEnum.southWest) && askingCell == southWestNeighbour.cell) {
+		else if (HasNeighbourCell(CardinalEnum.southWest) && askingCell == southWestNeighbour.cell) {
 			return southWestSpring;
 		}
 		return null;
 	}
 
-	public void SetNeighbourCell(int directionIndex, Cell cell) {
-		index_Neighbour[directionIndex].cell = cell;
+	public void SetNeighbourCell(int cardinalIndex, Cell cell) {
+		index_Neighbour[cardinalIndex].cell = cell;
 	}
 
 	public void RemoveNeighbourCell(Cell cell) {
@@ -372,32 +372,33 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public Cell GetNeighbourCell(CardinalEnum direction) {
-		return GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(direction));
+	public Cell GetNeighbourCell(CardinalEnum cardinalEnum) {
+		return GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum));
 	}
 
-	public Cell GetNeighbourCell(int cardinalDirectionIndex) {
-		return index_Neighbour[cardinalDirectionIndex % 6].cell;
+	public Cell GetNeighbourCell(int cardinalIndex) {
+		return index_Neighbour[cardinalIndex % 6].cell;
 	}
 
-	public CellNeighbour GetNeighbour(CardinalEnum direction) {
-		return GetNeighbour(AngleUtil.CardinalEnumToCardinalIndex(direction));
+	public CellNeighbour GetNeighbour(CardinalEnum cardinalEnum) {
+		return GetNeighbour(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum));
 	}
 
-	public CellNeighbour GetNeighbour(int index) {
-		return index_Neighbour[index % 6];
+	public CellNeighbour GetNeighbour(int cardinalIndex) {
+		return index_Neighbour[cardinalIndex % 6];
 	}
 
 	public float GetRotation() {
 		return transform.rotation.z;
 	}
 
-	public bool HasNeighbour(CardinalEnum cardinalEnum) {
-		return HasNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum));
+	public bool HasNeighbourCell(CardinalEnum cardinalEnum, bool includeConnected = true) {
+		return HasNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum), includeConnected);
 	}
 
-	public bool HasNeighbourCell(int index) {
-		return index_Neighbour[index % 6].cell != null;
+	public bool HasNeighbourCell(int cardinalIndex, bool includeConnected = true) {
+		Cell neighbourCell = index_Neighbour[cardinalIndex % 6].cell;
+		return neighbourCell != null && (includeConnected || neighbourCell.IsSameCreature(this));
 	}
 
 	public void SetOrderInLayer(int order) {
