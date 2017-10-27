@@ -82,11 +82,18 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	public void DeleteCreature(Creature creature) {
-		// Make all other creatures understand that i will be gone now!
+
+		creature.DetatchFromMother();
+		foreach(Creature child in creature.children) {
+			child.DetatchFromMother();
+		}
 
 		Destroy(creature.gameObject);
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
+
+		// Note the soul will remain :)
+		// Q: will we keep souls forever?
 	}
 
 	public List<Creature> GetPhenotypesInside(Rect area) {
