@@ -259,14 +259,45 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
 	}
 
-	private void AddCoppiesToMoveCreature(List<Creature> originals) {
+	private void AddCoppiesToMoveCreature(List<Creature> originalCreatures) {
 		List<Creature> copies = new List<Creature>();
 		Dictionary<string, string> originalToCopy = new Dictionary<string, string>();
-		foreach (Creature original in originals) {
-			Creature copy = Life.instance.SpawnCreatureCopy(original);
+		Dictionary<string, string> copyToOriginal = new Dictionary<string, string>();
+		foreach (Creature originalCreature in originalCreatures) {
+			Creature copy = Life.instance.SpawnCreatureCopy(originalCreature); // will instantiate souls as well
 			moveCreatures.Add(copy);
 			copies.Add(copy);
-			originalToCopy.Add(original.id, copy.id);
+			originalToCopy.Add(originalCreature.id, copy.id);
+			copyToOriginal.Add(copy.id, originalCreature.id);
+		}
+
+		foreach (Creature copy in copies) {
+			Soul soulCopy = Life.instance.GetSoul(copy.id);
+			Soul soulOriginal = Life.instance.GetSoul(copyToOriginal[copy.id]);
+
+			// me
+			//soulCopy.id = copy.id; //not really needed
+			//soulCopy.creatureReference.id = copy.id;
+			soulCopy.SetCreatureImmediate(copy);
+
+			// mother
+			if (originalCreatures.Find(c => c.id == soulOriginal.motherSoulReference.id)) {
+				//my mother is among the creatures which was coppied
+				string copyId = originalToCopy[soulOriginal.motherSoulReference.id];
+
+				//soulCopy.SetMotherSoul(copyId);
+				soulCopy.SetMotherSoulImmediate(Life.instance.GetSoul(copyId));
+			}
+
+			//children
+			for (int i = 0; i < soulOriginal.childSoulsCount; i++) {
+				SoulReference childReference = soulOriginal.childSoulReferences[i];
+				if (originalCreatures.Find(c => c.id == childReference.id)) {
+					string copyId = originalToCopy[childReference.id];
+					//soulCopy.AddChildSoul(copyId, childReference.childRootMapPosition, childReference.childRootBindCardinalIndex, childReference.isChildConnected);
+					soulCopy.AddChildSoulImmediate(Life.instance.GetSoul(copyId), childReference.childRootMapPosition, childReference.childRootBindCardinalIndex, childReference.isChildConnected);
+				}
+			}
 		}
 
 		//Clean up ids can't have same as original and reftrence ids to children mothers must be right too
@@ -274,7 +305,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		//Go through all reftrences and update mothers and children id to match the new ones
 		foreach (Creature copy in copies) {
 			foreach (KeyValuePair<string, string> entry in originalToCopy) {
-				copy.TryChangeRelativesId(entry.Key, entry.Value);
+				//copy.TryChangeRelativesId(entry.Key, entry.Value);
+				//Life.instance.GetSoul(entry.Value).TryChangeId(entry.Key, entry.Value); //Creature and Soul have allready the new Id
+				//copy.phenotype.connectionsDiffersFromCells = true;
 			}
 		}
 
@@ -420,16 +453,17 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				childrenText.text = "Offspring:";
 			} else if (selection.Count == 1) {
 				selectedCreatureText.text = soloSelected.id; // soloSelected.nickname;
-				motherText.text = "Mother: " + (soloSelected.hasMother ? (soloSelected.mother.isConnected ? "[" : "") + soloSelected.mother.id + (soloSelected.mother.isConnected ? "]" : "") : "<none>");
+				motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
 				string childrenString = "";
-				for (int i = 0; i < soloSelected.children.Count; i++) {
-					childrenString += (soloSelected.children[i].isConnected ? "[" : "") + soloSelected.children[i].id + (soloSelected.children[i].isConnected ? "]" : "");
-					if (i < soloSelected.children.Count - 1) {
+
+				for (int i = 0; i < soloSelected.childSouls.Count; i++) {
+					childrenString += (soloSelected.soul.isConnectedWithChildSoul(soloSelected.childSouls[i].id) ? "[" : "") + soloSelected.childSouls[i].id + (soloSelected.soul.isConnectedWithChildSoul(soloSelected.childSouls[i].id) ? "]" : "");
+					if (i < soloSelected.childSouls.Count - 1) {
 						childrenString += ", ";
 					}
 				}
 
-				childrenText.text = "Offspring: " + (soloSelected.hasChild ?  childrenString : "<none>");
+				childrenText.text = "Offspring: " + (soloSelected.hasChildSoul ?  childrenString : "<none>");
 			} else {
 				selectedCreatureText.text = selection.Count + " Creatures";
 				motherText.text = "Mother: -"; //TODO : if all have the same mother - write it

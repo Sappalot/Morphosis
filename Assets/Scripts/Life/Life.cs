@@ -9,8 +9,20 @@ public class Life : MonoSingleton<Life> {
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
 	private List<Creature> creatureList = new List<Creature>(); // All enbodied creatures (the once that we can see and play with)
 
+	//--
+
 	private Dictionary<string, Soul> soulDictionary = new Dictionary<string, Soul>();
-	private List<Soul> soulList = new List<Soul>(); //All creature containers, count allways >= number of creatures, since each creature has a container
+	public List<Soul> soulList = new List<Soul>(); //All creature containers, count allways >= number of creatures, since each creature has a container
+
+	public Soul GetSoul(string id) {
+		return soulDictionary[id];
+	}
+
+	public bool HasSoul(string id) {
+		return soulDictionary.ContainsKey(id);
+	}
+
+	//--
 
 	public string GetUniqueIdStamp() {
 		return idGenerator.GetUniqueId();
@@ -22,23 +34,15 @@ public class Life : MonoSingleton<Life> {
 		}
 	}
 
+	public bool HasCreature(string id) {
+		return creatureDictionary.ContainsKey(id);
+	}
+
 	public Creature GetCreature(string id) {
 		return creatureDictionary[id];
 	}
 
-	public void EvoUpdate() {
-
-		for (int index = 0; index < creatureList.Count; index++) {
-			creatureList[index].EvoUpdate();
-		}
-	}
-
-	public void EvoFixedUpdate(float fixedTime) {
-		for (int index = 0; index < creatureList.Count; index++) {
-			creatureList[index].EvoFixedUpdate(fixedTime);
-		}
-	}
-
+	// TODO MOve to creature ?
 	public void FertilizeCreature(Cell eggCell) {
 		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
 		Creature mother = eggCell.creature;
@@ -49,12 +53,14 @@ public class Life : MonoSingleton<Life> {
 		mother.DeleteCell(eggCell); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
 
 		// Spawn child at egg cell location
-		Creature child = InstantiateCreature();
+		Creature child = InstantiateCreature(); // Will create soul as well
 		child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
 
-		mother.SetChild(child.id, eggCell.mapPosition, eggCell.bindCardinalIndex, true);
+		Soul motherSoul = GetSoul(mother.id);
+		Soul childSoul = GetSoul(child.id);
 
-		child.SetMother(mother.id, true);
+		motherSoul.AddChildSoulImmediate(childSoul, eggCell.mapPosition, eggCell.bindCardinalIndex, true);
+		childSoul.SetMotherSoulImmediate(motherSoul);
 
 		PhenotypePanel.instance.MakeDirty();
 		CreatureSelectionPanel.instance.MakeDirty();
@@ -70,6 +76,9 @@ public class Life : MonoSingleton<Life> {
 		}
 		creatureDictionary.Clear();
 		creatureList.Clear();
+
+		soulDictionary.Clear();
+		soulList.Clear();
 	}
 
 	public void DeleteCreature(Creature creature) {
@@ -137,6 +146,8 @@ public class Life : MonoSingleton<Life> {
 		clone.nickname += " (Copy)";
 		clone.hasPhenotypeCollider = false;
 		clone.hasGenotypeCollider = false;
+		clone.soul = null;
+
 		return clone;
 	}
 
@@ -156,39 +167,14 @@ public class Life : MonoSingleton<Life> {
 		creatureList.Add(creature);
 		creature.id = id;
 		creature.nickname = "Nick " + id; //dafault
+
+		Soul soul = new Soul(id);
+		
+		soulDictionary.Add(id, soul);
+		soulList.Add(soul);
+
+		//creature.soul = soul; //The right Soul will find its way to the creature during update otherwise, Setting it here will cause troubble!
 		return creature;
-	}
-
-	//data
-
-	private LifeData lifeData = new LifeData();
-
-	public LifeData UpdateData() {
-		lifeData.lastId = idGenerator.number;
-		lifeData.creatureList.Clear();
-		lifeData.creatureDictionary.Clear();
-
-		for (int index = 0; index < creatureList.Count; index++) {
-			Creature creature = creatureList[index];
-			CreatureData data = creature.UpdateData();
-			lifeData.creatureList.Add(data);
-			lifeData.creatureDictionary.Add(data.id, data);
-		}
-
-		return lifeData;
-	}
-
-	public void ApplyData(LifeData lifeData) {
-		idGenerator.number = lifeData.lastId;
-
-		DeleteAll();
-		for (int index = 0; index < lifeData.creatureList.Count; index++) {
-			// TODO Create soul and ask soul to create creature
-
-			CreatureData creatureData = lifeData.creatureList[index];
-			Creature creature = InstantiateCreature(creatureData.id);
-			creature.ApplyData(creatureData);
-		}
 	}
 
 	public Cell GetCellAt(Vector2 position) {
@@ -207,4 +193,84 @@ public class Life : MonoSingleton<Life> {
 			creatures[index].MakeDirty();
 		}
 	}
+
+	// Load Save
+
+	private LifeData lifeData = new LifeData();
+
+	// Save
+	public LifeData UpdateData() {
+		lifeData.lastId = idGenerator.number;
+
+		//Creatures
+		lifeData.creatureList.Clear();
+		lifeData.creatureDictionary.Clear();
+
+		for (int index = 0; index < creatureList.Count; index++) {
+			Creature creature = creatureList[index];
+			CreatureData data = creature.UpdateData();
+			lifeData.creatureList.Add(data);
+			lifeData.creatureDictionary.Add(data.id, data);
+		}
+
+		//Souls
+		lifeData.soulList.Clear();
+		lifeData.soulDictionary.Clear();
+
+		for (int index = 0; index < soulList.Count; index++) {
+			Soul soul = soulList[index];
+			SoulData data = soul.UpdateData();
+			lifeData.soulList.Add(data);
+			lifeData.soulDictionary.Add(data.id, data);
+		}
+
+		return lifeData;
+	}
+
+	// Load
+	public void ApplyData(LifeData lifeData) {
+		idGenerator.number = lifeData.lastId;
+
+		// Create all creatures
+		DeleteAll();
+		for (int index = 0; index < lifeData.creatureList.Count; index++) {
+			CreatureData creatureData = lifeData.creatureList[index];
+			Creature creature = InstantiateCreature(creatureData.id); // Creatres soul as
+			creature.ApplyData(creatureData);
+		}
+
+		// Create all Souls
+		soulDictionary.Clear();
+		soulList.Clear();
+		for (int index = 0; index < lifeData.soulList.Count; index++) {
+			SoulData solulData = lifeData.soulList[index];
+			Soul newSoul = new Soul(solulData.id);
+			newSoul.ApplyData(solulData);
+			soulDictionary.Add(newSoul.id, newSoul);
+			soulList.Add(newSoul);
+		}
+	}
+
+	// ^ Load Save ^
+
+	// Update
+
+	public void EvoUpdate() {
+
+		for (int index = 0; index < soulList.Count; index++) {
+			soulList[index].UpdateReferences();
+		}
+
+		for (int index = 0; index < creatureList.Count; index++) {
+			creatureList[index].EvoUpdate();
+		}
+	}
+
+	public void EvoFixedUpdate(float fixedTime) {
+		for (int index = 0; index < creatureList.Count; index++) {
+			creatureList[index].EvoFixedUpdate(fixedTime);
+		}
+	}
+
+	// ^ Update ^
 }

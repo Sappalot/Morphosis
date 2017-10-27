@@ -48,7 +48,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			}
 
 			creatureAge.text = "Age: 100 days";
-			creatureCellCount.text = "Cells: " + solo.cellsCount + " (" + solo.cellsTotalCount + ")";
+			creatureCellCount.text = "Cells: " + solo.cellsCount + " (" + solo.cellsCountFullyGrown + ")";
 			creatureEnergy.text = "Energy: 100%";
 
 			isDirty = false;

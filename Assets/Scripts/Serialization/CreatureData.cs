@@ -9,11 +9,11 @@ public class CreatureData {
 	public GenotypeData genotypeData = new GenotypeData();
 	public PhenotypeData phenotypeData = new PhenotypeData();
 
-	public string motherId = string.Empty; //means has no mother
-	public bool isMotherConnected;
+	//public string motherId = string.Empty; //means has no mother
+	//public bool isMotherConnected;
 
-	public string[] childrenId;
-	public bool[] isChildrenConnected;
-	public Vector2i[] childrenRootMapPosition; //In mothers frame of reference
-	public int[] rootBindCardinalIndex; //In mothers frame of reference
+	//public string[] childrenId;
+	//public bool[] isChildrenConnected;
+	//public Vector2i[] childrenRootMapPosition; //In mothers frame of reference
+	//public int[] rootBindCardinalIndex; //In mothers frame of reference
 }

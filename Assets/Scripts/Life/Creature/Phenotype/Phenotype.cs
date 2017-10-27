@@ -164,6 +164,11 @@ public class Phenotype : MonoBehaviour {
 	public bool UpdateConnectionsFromCellsBody(Creature creature) {
 		if (connectionsDiffersFromCells) {
 
+			//Fail safe to be removed
+			for (int index = 0; index < Life.instance.soulList.Count; index++) {
+				Life.instance.soulList[index].UpdateReferences();
+			}
+
 			UpdateNeighbourReferencesInterBody(creature);
 
 			//Springs
@@ -185,7 +190,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	private void UpdateNeighbourReferencesInterBody(Creature creatureMe) {
+	private void UpdateNeighbourReferencesInterBody(Creature creature) {
 		
 		// All cells within body
 		for (int index = 0; index < cellList.Count; index++) {
@@ -200,24 +205,23 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		//My(root) <====> Mohther(placenta)
-		if (creatureMe.hasMother && creatureMe.mother.isConnected) {
-			Creature creatureMother = creatureMe.mother.creature;
-			foreach (Soul child in creatureMother.children) {
-				if (child.isConnected && child.id == creatureMe.id) {
-					ConnectionSanityCheck(creatureMe.mother, child);
+		if (creature.hasMotherSoul && creature.soul.isConnectedWithMotherSoul) {
+			Creature creatureMother = creature.mother;
+			foreach (Soul child in creatureMother.childSouls) {
+				if (child.isConnectedWithMotherSoul && child.id == creature.id) {
 					//We are talking about mothers view of me
 					for (int index = 0; index < creatureMother.phenotype.cellList.Count; index++) {
 						Cell placentaCell = creatureMother.phenotype.cellList[index];
 						for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 							Vector2i neighbourMapPosition = creatureMother.phenotype.cellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
-							if (neighbourMapPosition == child.childRootMapPosition) {
+							if (neighbourMapPosition == creature.motherSoul.childSoulRootMapPosition(child.id)) {
 								// My placenta to childs root
 								placentaCell.SetNeighbourCell(cardinalIndex, rootCell);
-								Debug.Log("Me(root)" + creatureMe.id + " <==neighbour== Mother(placenta)" + creatureMother.id);
+								Debug.Log("Me(root)" + creature.id + " <==neighbour== Mother(placenta)" + creatureMother.id);
 
 								//childs root to my placenta
-								rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.childRootBindCardinalIndex + 1 + 3), placentaCell);
-								Debug.Log("Me(root)" + creatureMe.id + " ==neighbour==> Mother(placenta)" + creatureMother.id);
+								rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.creature.motherSoul.childSoulRootBindCardinalIndex(child.id) + 1 + 3), placentaCell);
+								Debug.Log("Me(root)" + creature.id + " ==neighbour==> Mother(placenta)" + creatureMother.id);
 							}
 						}
 					}
@@ -226,31 +230,24 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		//My(placenta) <====> Child(root)
-		foreach (Soul child in creatureMe.children) {
-			if (child.isConnected) {
-				ConnectionSanityCheck(child.creature.mother, child);
+		foreach (Soul child in creature.childSouls) {
+			if (creature.soul.isConnectedWithChildSoul(child.id)) {
 				for (int index = 0; index < cellList.Count; index++) {
 					Cell placentaCell = cellList[index];
 					for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 						Vector2i neighbourMapPosition = cellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
-						if (neighbourMapPosition == child.childRootMapPosition) {
+						if (neighbourMapPosition == creature.soul.childSoulRootMapPosition(child.id)) {
 							// My placenta to childs root
 							placentaCell.SetNeighbourCell(cardinalIndex, child.creature.phenotype.rootCell);
-							Debug.Log("Me: " + creatureMe.id + ", my Child :" + child.id + " Me(placenta) ==neighbour==> Child(root)");
+							Debug.Log("Me: " + creature.id + ", my Child :" + child.id + " Me(placenta) ==neighbour==> Child(root)");
 
 							//childs root to my placenta
-							child.creature.phenotype.rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.childRootBindCardinalIndex + 1 + 3), placentaCell);
-							Debug.Log("Me: " + creatureMe.id + ", my Child :" + child.id + " Me(placenta) <==neighbour== Child(root)");
+							child.creature.phenotype.rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - creature.soul.childSoulRootBindCardinalIndex(child.id) + 1 + 3), placentaCell);
+							Debug.Log("Me: " + creature.id + ", my Child :" + child.id + " Me(placenta) <==neighbour== Child(root)");
 						}
 					}
 				}
 			}
-		}
-	}
-
-	private void ConnectionSanityCheck(Soul mother, Soul child) {
-		if (mother != null & child != null) {
-			Debug.Assert((mother.isConnected && child.isConnected) || (!mother.isConnected && !child.isConnected), "Assymetric connection found");
 		}
 	}
 
@@ -296,11 +293,11 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public bool IsRootNeighbouringMothersPlacenta(Creature creature) {
-		Debug.Assert(creature.hasMother);
+		Debug.Assert(creature.hasMotherSoul);
 
 		List<Cell> neighbours = rootCell.GetNeighbourCells();
 		foreach(Cell motherMai in neighbours) {
-			if (motherMai.creature == creature.mother.creature) {
+			if (motherMai.creature == creature.motherSoul.creature) {
 				return true;
 			}
 		}
@@ -311,7 +308,7 @@ public class Phenotype : MonoBehaviour {
 		disturbedCell.RemoveNeighbourCell(deletedCell);
 
 		//Check if mothers placenta is gone
-		if (creature.hasMother && disturbedCell.isRoot && !deletedCell.IsSameCreature(disturbedCell)) {
+		if (creature.hasMotherSoul && disturbedCell.isRoot && !deletedCell.IsSameCreature(disturbedCell)) {
 			if (!IsRootNeighbouringMothersPlacenta(creature)) {
 				creature.DetatchFromMother();
 			}

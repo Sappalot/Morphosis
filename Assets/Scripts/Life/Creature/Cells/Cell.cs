@@ -492,7 +492,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 		placentaSprings = new SpringJoint2D[0];
 
-		if (this != creature.phenotype.rootCell || !creature.hasMother || !creature.mother.isConnected) {
+		if (this != creature.phenotype.rootCell || !creature.hasMotherSoul || !creature.soul.isConnectedWithMotherSoul) {
 			return;
 		}
 		//This is creatures root cell and creature has a connected mother
@@ -500,7 +500,7 @@ public abstract class Cell : MonoBehaviour {
 		List<Cell> placentaCells = new List<Cell>();
 		for (int index = 0; index < 6; index++) {
 			Cell neighbour = GetNeighbourCell(index);
-			if (neighbour != null && neighbour.creature == creature.mother.creature) {
+			if (neighbour != null && neighbour.creature == creature.motherSoul.creature) {
 				placentaCells.Add(neighbour);
 			}
 		}

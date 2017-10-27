@@ -5,7 +5,7 @@ using UnityEngine;
 // Holds information that does not fit into genes or body 
 public class Creature : MonoBehaviour {
 	[HideInInspector]
-	public Soul soul = new Soul("no id"); //Empty soul
+	public Soul soul; //Born soul-less the soul will find the creature 
 
 	public string id;
 	public string nickname;
@@ -46,15 +46,45 @@ public class Creature : MonoBehaviour {
 	public Genotype genotype;
 	public Phenotype phenotype;
 
-	public Soul mother {
+	public bool hasSoul {
 		get {
-			return soul.mother;
+			return soul != null;
 		}
 	}
 
-	public List<Soul> children {
+	public Soul motherSoul {
+		get {
+			return soul.motherSoul;
+		}
+	}
+
+	public List<Creature> children {
 		get {
 			return soul.children;
+		}
+	}
+
+	public List<Soul> childSouls {
+		get {
+			return soul.childSouls;
+		}
+	}
+
+	public int childSoulCount {
+		get {
+			return soul.childSoulsCount;
+		}
+	}
+
+	public bool hasMotherSoul {
+		get {
+			return soul.hasMotherSoul;
+		}
+	}
+
+	public Creature mother {
+		get {
+			return soul.mother;
 		}
 	}
 
@@ -64,62 +94,72 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public bool hasChild {
+	public bool hasChildSoul {
 		get {
-			return soul.hasChild;
+			return soul.hasChildSoul;
 		}
 	}
 
-	public Soul GetChildById(string id) {
-		return soul.GetChildById(id);
+	public Soul GetChildSoul(string id) {
+		return soul.GetChildSoul(id);
+	}
+
+	public Creature GetChild(string id) {
+		return soul.GetChild(id);
+	}
+
+	public bool HasChild(string id) {
+		return soul.HasChild(id);
 	}
 
 	// ^ Relatives ^
 
 	public void DetatchFromMother() {
-		if (!hasMother) {
+		if (!hasMotherSoul) {
 			Debug.LogError("Creature can't detatch from mother, becaus it is motherless!");
 		} else {
-			if (!mother.isConnected) {
+			//if (!mother.isConnected) {
+			if (!soul.isConnectedWithMotherSoul) {
 				Debug.LogError("Creature can't detatch from mother, becaus it is not connected!");
 				return;
 			}
 
 			//me
-			mother.isConnected = false;
+			//mother.isConnected = false;
+			soul.SetConnectedWithMotherSoul(false);
 			phenotype.connectionsDiffersFromCells = true;
 
 			//mother
-			mother.creature.children.Find(c => c.id == id).isConnected = false;
-			mother.creature.phenotype.connectionsDiffersFromCells = true;
+			//mother.creature.children.Find(c => c.id == id).isConnected = false;
+			motherSoul.creature.phenotype.connectionsDiffersFromCells = true;
 
 			CreatureSelectionPanel.instance.MakeDirty();
 		}
 	}
 
 	//NOTE: Each creature has a soul with references to mother and child souls, which are not shared among creatures
-	public void SetMother(string id, bool isConnected) {
-		Debug.Assert(mother == null, "Creature has allready a mother");
-		soul.mother = new Soul(id);
-		mother.isConnected = isConnected;
-	}
+	//public void SetMother(string id, bool isConnected) {
+	//	Debug.Assert(mother == null, "Creature has allready a mother");
+	//	soul.mother = new Soul(id);
+	//	mother.isConnected = isConnected;
+	//}
 
-	//NOTE: Each creature has a soul with references to mother and child souls, which are not shared among creatures
-	public void SetChild(string id, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
-		Debug.Assert(children.Find(c => c.id == id) == null, "Creature has allready a child with that id");
-		Soul newChild = new Soul(id);
-		newChild.childRootMapPosition = rootMapPosition;
-		newChild.childRootBindCardinalIndex = rootBindCardinalIndex;
-		newChild.isConnected = isConnected;
-		soul.children.Add(newChild);
-	}
+	////NOTE: Each creature has a soul with references to mother and child souls, which are not shared among creatures
+	//public void SetChild(string id, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
+	//	Debug.Assert(children.Find(c => c.id == id) == null, "Creature has allready a child with that id");
+	//	Soul newChild = new Soul(id);
+	//	newChild.childRootMapPosition = rootMapPosition;
+	//	newChild.childRootBindCardinalIndex = rootBindCardinalIndex;
+	//	newChild.isConnected = isConnected;
+	//	soul.childReferences.Add(newChild);
+	//}
 
 
 	public void TryChangeRelativesId(string oldId, string newId) {
-		if (mother != null && mother.id == oldId) {
-			mother.id = newId;
+		if (motherSoul != null && motherSoul.id == oldId) {
+			motherSoul.id = newId;
 		}
-		foreach (Soul child in children) {
+		foreach (Soul child in childSouls) {
 			if (child.id == oldId) {
 				child.id = newId;
 			}
@@ -133,7 +173,7 @@ public class Creature : MonoBehaviour {
 		isDirty = true;
 	}
 
-	public int cellsTotalCount {
+	public int cellsCountFullyGrown {
 		get {
 			return genotype.geneCellCount;
 		}
@@ -299,10 +339,6 @@ public class Creature : MonoBehaviour {
 		genotypeCellsPosition.enabled =		show;
 	}
 
-
-
-	//----------------------
-
 	public bool hasPhenotypeCollider {
 		get {
 			return phenotype.hasCollider;
@@ -368,6 +404,7 @@ public class Creature : MonoBehaviour {
 		ApplyData(original.UpdateData());
 	}
 
+	// Save
 	public CreatureData UpdateData() {
 		BringOtherGenoPhenoPositionAndRotationToCurrent(); //Do we really need this one??
 
@@ -376,48 +413,17 @@ public class Creature : MonoBehaviour {
 		creatureData.nickname = nickname;
 		//todo: spieces
 
-		//mother
-		if (mother != null) {
-			creatureData.motherId = mother.id;
-			creatureData.isMotherConnected = mother.isConnected;
-		} else {
-			creatureData.motherId = string.Empty;
-		}
-
-		//children
-		creatureData.childrenId = new string[children.Count];
-		creatureData.childrenRootMapPosition = new Vector2i[children.Count];
-		creatureData.isChildrenConnected = new bool[children.Count];
-		creatureData.rootBindCardinalIndex = new int[children.Count];
-		for (int i = 0; i < creatureData.childrenId.Length; i++) {
-			creatureData.childrenId[i] = children[i].id;
-			creatureData.childrenRootMapPosition[i] = children[i].childRootMapPosition;
-			creatureData.rootBindCardinalIndex[i] = children[i].childRootBindCardinalIndex;
-			creatureData.isChildrenConnected[i] = children[i].isConnected;
-		}
-
 		creatureData.genotypeData = genotype.UpdateData();
 		creatureData.phenotypeData = phenotype.UpdateData();
 
 		return creatureData;
 	}
 
+	// Load
 	public void ApplyData(CreatureData creatureData) {
 		//me
 		nickname = creatureData.nickname;
 		id = creatureData.id;
-
-		soul.id = creatureData.id;
-
-		//mother
-		if (creatureData.motherId != string.Empty) {
-			SetMother(creatureData.motherId, creatureData.isMotherConnected);
-		}
-
-		//children
-		for (int i = 0; i < creatureData.childrenId.Length; i++) {
-			SetChild(creatureData.childrenId[i], creatureData.childrenRootMapPosition[i], creatureData.rootBindCardinalIndex[i], creatureData.isChildrenConnected[i]);
-		}
 
 		genotype.ApplyData(creatureData.genotypeData);
 		Vector2 position = creatureData.genotypeData.rootPosition;
@@ -435,15 +441,17 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void EvoUpdate() {
+		if (!hasSoul) {
+			if (Life.instance.HasSoul(id)) {
+				soul = Life.instance.GetSoul(id);
+			} else {
+				Debug.LogError("Creature could not find is soul!!");
+				return;
+			}
+		}
+
 		genotype.EvoUpdate();
 		phenotype.EvoUpdate();
-
-		if (mother != null) {
-			mother.UpdateRefFromId();
-		}
-		foreach (Soul c in children) {
-			c.UpdateRefFromId();
-		}
 
 		bool geneCelleWasUpdated = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
 
@@ -489,3 +497,45 @@ public class Creature : MonoBehaviour {
 		}
 	}
 }
+
+////mother
+//if (motherSoul != null) {
+//	creatureData.motherId = motherSoul.id;
+//	//creatureData.isMotherConnected = mother.isConnected;
+//	creatureData.isMotherConnected = soul.isConnectedWithMotherSoul;
+//} else {
+//	creatureData.motherId = string.Empty;
+//}
+
+////children
+//creatureData.childrenId = new string[childSouls.Count];
+//creatureData.childrenRootMapPosition = new Vector2i[childSouls.Count];
+//creatureData.isChildrenConnected = new bool[childSouls.Count];
+//creatureData.rootBindCardinalIndex = new int[childSouls.Count];
+//for (int i = 0; i < creatureData.childrenId.Length; i++) {
+//	creatureData.childrenId[i] = childSouls[i].id;
+
+//	//creatureData.childrenRootMapPosition[i] = children[i].childRootMapPosition;
+//	//creatureData.rootBindCardinalIndex[i] = children[i].childRootBindCardinalIndex;
+//	//creatureData.isChildrenConnected[i] = children[i].isConnected;
+
+//	creatureData.childrenRootMapPosition[i] = soul.childSoulRootMapPosition(childSouls[i].id);
+//	creatureData.rootBindCardinalIndex[i] = soul.childSoulRootBindCardinalIndex(childSouls[i].id);
+//	creatureData.isChildrenConnected[i] = soul.isConnectedWithChildSoul(childSouls[i].id);
+//}
+
+	//-------
+
+//soul.id = creatureData.id;
+
+////mother
+//if (creatureData.motherId != string.Empty) {
+//	//SetMother(creatureData.motherId, creatureData.isMotherConnected);
+//	soul.SetMotherSoul(creatureData.motherId);
+//}
+
+////children
+//for (int i = 0; i < creatureData.childrenId.Length; i++) {
+//	//SetChild(creatureData.childrenId[i], creatureData.childrenRootMapPosition[i], creatureData.rootBindCardinalIndex[i], creatureData.isChildrenConnected[i]);
+//	soul.AddChildSoul(creatureData.childrenId[i], creatureData.childrenRootMapPosition[i], creatureData.rootBindCardinalIndex[i], creatureData.isChildrenConnected[i]);
+//}
