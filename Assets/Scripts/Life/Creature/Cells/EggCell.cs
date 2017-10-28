@@ -5,6 +5,10 @@ public class EggCell : Cell {
 		springDamping = 11f;
 	}
 
+	public override CellTypeEnum GetCellType() {
+		return CellTypeEnum.Egg;
+	}
+
 	public override void UpdateSpringFrequenzy() {
 		base.UpdateSpringFrequenzy();
 

@@ -4,6 +4,10 @@
 		springDamping = 11f;
 	}
 
+	public override CellTypeEnum GetCellType() {
+		return CellTypeEnum.Leaf;
+	}
+
 	public override void UpdateSpringFrequenzy() {
 		base.UpdateSpringFrequenzy();
 

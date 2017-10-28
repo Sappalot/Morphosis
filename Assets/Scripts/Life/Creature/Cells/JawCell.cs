@@ -8,6 +8,10 @@ public class JawCell : Cell {
 		springDamping = 11f;
 	}
 
+	public override CellTypeEnum GetCellType() {
+		return CellTypeEnum.Jaw;
+	}
+
 	public override void UpdateSpringFrequenzy() {
 		base.UpdateSpringFrequenzy();
 

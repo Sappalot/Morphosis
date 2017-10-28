@@ -8,6 +8,10 @@ public class MuscleCell : Cell {
 		springDamping = 11f;
 	}
 
+	public override CellTypeEnum GetCellType() {
+		return CellTypeEnum.Muscle;
+
+	}
 	private float modularTime = 0f;
 	private bool isContracting;
 

@@ -389,6 +389,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void PlaceHoveringCreatures() {
+		Audio.instance.PlaceCreature();
 		ReleaseMoveCreatures();
 		startCreatureHeading.Clear();
 
@@ -403,6 +404,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void PasteHoveringCreatures() {
+		Audio.instance.PlaceCreature();
 		List<Creature> continueMoveCopy = new List<Creature>();
 		continueMoveCopy.AddRange(moveCreatures);
 
@@ -419,6 +421,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void PasteHoveringMergling() {
+		Audio.instance.PlaceCreature();
 		ReleaseMoveCreatures();
 
 		startCreatureHeading.Clear();
@@ -431,6 +434,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	private void ReleaseMoveCreatures() {
+		Audio.instance.PlaceCreature();
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 			foreach (Creature c in moveCreatures) {
 				c.Release(PhenoGenoEnum.Phenotype);

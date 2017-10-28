@@ -47,6 +47,8 @@ public abstract class Cell : MonoBehaviour {
 
 	public Transform triangleTransform;
 
+	abstract public CellTypeEnum GetCellType();
+
 	//  World space position
 	public Vector2 position {
 		get {
@@ -56,7 +58,7 @@ public abstract class Cell : MonoBehaviour {
 
 	public bool hasNeighbour {
 		get {
-			return neighbourCount > 0;
+			return neighbourCountAll > 0;
 		}
 	}
 
@@ -67,11 +69,11 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// Total
-	public int neighbourCount {
+	public int neighbourCountAll {
 		get {
 			int count = 0;
 			for (int index = 0; index < 6; index++) {
-				if (HasNeighbourCell(index)) {
+				if (HasNeighbourCell(index, true)) {
 					count++;
 				}
 			}
@@ -79,15 +81,22 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public int familyNeighbourCount {
+
+	public int neighbourCountOwn {
 		get {
 			int count = 0;
 			for (int index = 0; index < 6; index++) {
-				if (HasNeighbourCell(index) && GetNeighbourCell(index).creature != creature) {
+				if (HasNeighbourCell(index, false)) {
 					count++;
 				}
 			}
 			return count;
+		}
+	}
+
+	public int neighbourCountConnected {
+		get {
+			return neighbourCountAll - neighbourCountOwn;
 		}
 	}
 

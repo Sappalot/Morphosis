@@ -10,12 +10,12 @@ public class Phenotype : MonoBehaviour {
 			return cellList[0];
 		}
 	}
-
+	[HideInInspector]
 	public bool isAlive = true;
 
 	public Transform cellsTransform;
 
-	public int model = 0;
+	public CellDeath cellDeathPrefab;
 
 	public EggCell eggCellPrefab;
 	public JawCell jawCellPrefab;
@@ -99,12 +99,18 @@ public class Phenotype : MonoBehaviour {
 		TryGrow(creature, creature.genotype.geneCellCount);
 	}
 
-	public void TryGrow(Creature creature, int cellCount) {
+	public void TryGrow(Creature creature, int cellCount, bool playEffects = false) {
 		int growCellCount = 0;
 		Genotype genotype  = creature.genotype;
 		if (cellCount < 1 || this.cellCount >= genotype.geneCellCount) {
 			return;
 		}
+
+		if (playEffects) {
+			Audio.instance.CellBirth();
+		}
+		
+
 		if (cellList.Count == 0) {
 			SpawnCell(creature, genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, spawnPosition, true);
 
@@ -288,7 +294,8 @@ public class Phenotype : MonoBehaviour {
 			if (CellPanel.instance.selectedCell == cellList[cellList.Count - 1]) {
 				CellPanel.instance.selectedCell = null;
 			}
-			DeleteCell(cellList[cellList.Count - 1], false);
+
+			DeleteCell(cellList[cellList.Count - 1], false, true);
 			shrinkCellCount++;
 		}
 		
@@ -322,12 +329,24 @@ public class Phenotype : MonoBehaviour {
 	//This will make root inaccessible
 	public void DeleteAllCells() {
 		List<Cell> allCells = new List<Cell>(cellList);
-		foreach (Cell c in allCells) {
-			DeleteCell(c, false);
+
+		for (int i = 0; i < allCells.Count; i++) {
+			DeleteCell(allCells[i], false, true, Random.Range(0f, ExplosionTimeSpan(allCells.Count)));
 		}
 	}
 
-	public void DeleteCell(Cell deleteCell, bool deleteDebris) {
+	private float ExplosionTimeSpan(int cellCount) {
+		return Mathf.Log10(cellCount) * 0.1f;
+	}
+
+	//This is the one and only final place where cell is removed
+	public void DeleteCell(Cell deleteCell, bool deleteDebris, bool playEffects = false, float playEffectDelay = 0f) {
+		if (playEffects) {
+			Audio.instance.CellDeath();
+			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+				SpawnCellDeathEffect(deleteCell, Random.Range(0f, playEffectDelay));
+			}
+		}
 
 		List<Cell> disturbedCells = deleteCell.GetNeighbourCells();
 		foreach (Cell disturbedCell in disturbedCells) {
@@ -356,6 +375,11 @@ public class Phenotype : MonoBehaviour {
 		connectionsDiffersFromCells = true;
 	}
 
+	public void SpawnCellDeathEffect(Cell deleteCell, float explodeAfterTime) {
+		CellDeath death = Instantiate(cellDeathPrefab, deleteCell.transform.position, Quaternion.identity);
+		death.Prime(Color.red, ColorScheme.instance.ToColor(deleteCell.GetCellType()), explodeAfterTime);
+	}
+
 	private void DeleteDebris() {
 		List<Vector2i> keepers = cellMap.IsConnectedTo(rootCell.mapPosition);
 		List<Cell> debris = new List<Cell>();
@@ -364,8 +388,8 @@ public class Phenotype : MonoBehaviour {
 				debris.Add(c);
 			}
 		}
-		foreach (Cell c in debris) {
-			DeleteCell(c, false);
+		for (int i = 0; i < debris.Count; i++) {
+			DeleteCell(debris[i], false);
 		}
 	}
 

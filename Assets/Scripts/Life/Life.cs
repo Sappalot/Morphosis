@@ -43,8 +43,13 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	// TODO MOve to creature ?
-	public void FertilizeCreature(Cell eggCell) {
+	public void FertilizeCreature(Cell eggCell, bool playEffects = false) {
 		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
+
+		if (playEffects) {
+			Audio.instance.EggCellFertilize();
+		}
+
 		Creature mother = eggCell.creature;
 
 		// Q: What happens when 2 children, attatched to same mother, grows into each other (prio??), A: Let them grow as long as ther is room for each new cell. Probe for room firstm, then build?
@@ -81,7 +86,7 @@ public class Life : MonoSingleton<Life> {
 		if (cell.isRoot) {
 			DeleteCreature(cell.creature);
 		} else {
-			cell.creature.DeleteCellButRoot(cell);
+			cell.creature.DeleteCellButRoot(cell, true);
 		}
 	}
 
@@ -93,13 +98,13 @@ public class Life : MonoSingleton<Life> {
 			}
 		}
 
-		creature.DeleteAllCells();
+		creature.DeleteAllCells(); // for the fx :)
 
 		Destroy(creature.gameObject);
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
 
-		CreatureSelectionPanel.instance.ClearSelection();
+
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		CreatureSelectionPanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();

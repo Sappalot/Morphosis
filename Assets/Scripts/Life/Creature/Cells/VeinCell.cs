@@ -5,6 +5,10 @@
 		springDamping = 11f;
 	}
 
+	public override CellTypeEnum GetCellType() {
+		return CellTypeEnum.Vein;
+	}
+
 	public override void UpdateSpringFrequenzy() {
 		base.UpdateSpringFrequenzy();
 

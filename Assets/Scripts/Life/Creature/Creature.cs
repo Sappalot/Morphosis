@@ -114,8 +114,12 @@ public class Creature : MonoBehaviour {
 		return soul.HasChild(id);
 	}
 
-	public void DetatchFromMother() {
+	public void DetatchFromMother(bool playEffects = false) {
 		if (hasMotherSoul && soul.isConnectedWithMotherSoul) {
+			if (playEffects) {
+				Audio.instance.CreatureDetatch();
+			}
+
 			//me
 			soul.SetConnectedWithMotherSoul(false);
 			phenotype.connectionsDiffersFromCells = true;
@@ -226,8 +230,8 @@ public class Creature : MonoBehaviour {
 	}
 
 	// Apply on Phenotype
-	public void TryGrow(int cellCount = 1) {
-		phenotype.TryGrow(this, cellCount);
+	public void TryGrow(int cellCount = 1, bool playEffects = false) {
+		phenotype.TryGrow(this, cellCount, playEffects);
 		isDirty = true;
 	}
 
@@ -236,9 +240,9 @@ public class Creature : MonoBehaviour {
 		isDirty = true;
 	}
 
-	public void DeleteCellButRoot(Cell cell) {
+	public void DeleteCellButRoot(Cell cell, bool playEffects = false) {
 		if (!cell.isRoot) {
-			phenotype.DeleteCell(cell, true);
+			phenotype.DeleteCell(cell, true, playEffects);
 		} else {
 			Debug.LogError("You are not allowed to Delete root cell");
 		}

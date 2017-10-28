@@ -25,12 +25,14 @@ public class RMBToolController : MouseDrag {
 					spring.GetComponent<LineRenderer>().enabled = true;
 				}
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.simple) {
+				Audio.instance.PlaceCreature();
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 					Life.instance.SpawnCreatureSimple(downPositionMouse, 90f);
 				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 					Life.instance.SpawnCreatureSimple(downPositionMouse, 90f);
 				}				
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.freak) {
+				Audio.instance.PlaceCreature();
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 					Life.instance.SpawnCreatureFreak(downPositionMouse, 90f);
 				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
