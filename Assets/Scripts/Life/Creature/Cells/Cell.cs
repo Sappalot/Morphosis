@@ -207,8 +207,8 @@ public abstract class Cell : MonoBehaviour {
 		UpdateRotation(); //costy, update only if cell has direction and is in frustum
 		UpdateFlipSide();
 
-		UpdateRadius(fixedTime);
-		UpdateSpringLengths(); // It is costy to update spring length
+		//UpdateRadius(fixedTime);
+		//UpdateSpringLengths(); // It is costy to update spring length
 	}
 
 	public void RemovePhysicsComponents() {
@@ -220,7 +220,7 @@ public abstract class Cell : MonoBehaviour {
 		Destroy(GetComponent<Rigidbody2D>());
 	}
 
-	public int GetDirectionOfNeighbourCell(Cell cell) {
+	public int GetDirectionOfOwnNeighbourCell(Cell cell) {
 		for (int index = 0; index < 6; index++) {
 			if (HasNeighbourCell(index, false) && GetNeighbour(index).cell == cell) {
 				return index;
@@ -404,6 +404,9 @@ public abstract class Cell : MonoBehaviour {
 	public bool HasNeighbourCell(CardinalEnum cardinalEnum, bool includeConnected = true) {
 		return HasNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum), includeConnected);
 	}
+
+	//TODO: Use OWNneighbourCell for neighbour which is same creature
+	//TODO: Use neighbourCell for neighbour which are connected or same crearture
 
 	public bool HasNeighbourCell(int cardinalIndex, bool includeConnected = true) {
 		Cell neighbourCell = index_Neighbour[cardinalIndex % 6].cell;

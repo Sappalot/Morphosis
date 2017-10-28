@@ -172,7 +172,7 @@ public class Phenotype : MonoBehaviour {
 	public bool UpdateConnectionsFromCellsBody(Creature creature) {
 		if (connectionsDiffersFromCells) {
 
-			////Fail safe to be removed
+			////Fail safe ... to be removed
 			for (int index = 0; index < Life.instance.soulList.Count; index++) {
 				Life.instance.soulList[index].UpdateReferences();
 			}
@@ -186,7 +186,7 @@ public class Phenotype : MonoBehaviour {
 			UpdateGroupsInterBody();
 
 			//Wings
-			edges.GenerateWings(cellMap); // Wings are only generated from here
+			edges.GenerateWings(creature, cellMap); // Wings are only generated from here
 
 			//Debug
 			UpdateSpringsFrequenze(); //testing only

@@ -74,7 +74,7 @@ public class Edge : MonoBehaviour {
 
 	public void EvoUpdate() {
 		//TODO: If draw wings && inside frustum
-		if (HUD.instance.shouldRenderEdges) {
+		if (true || HUD.instance.shouldRenderEdges) {
 			if (frontCell != null && backCell != null) {
 
 				mainArrow.SetActive(true);

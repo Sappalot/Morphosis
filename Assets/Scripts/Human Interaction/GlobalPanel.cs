@@ -27,7 +27,6 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		} else {
 			worldNameAndTimeText.text = string.Format("{0} {1:F0}s", worldName, s);
 		}
-        
 	}
 
 	private void Update () {
@@ -39,7 +38,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			fps.text = timeCount > 0 ? string.Format("FPS: {0:F1}", frameCount / timeCount) : "FPS: ---";
 			frameCount = 0;
 			timeCount = 0;
-		}        
+		}
 	}
 
 	public void OnRestartClicked() {

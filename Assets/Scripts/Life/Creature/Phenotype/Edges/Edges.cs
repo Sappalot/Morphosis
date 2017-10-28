@@ -53,7 +53,7 @@ public class Edges : MonoBehaviour {
 		ListUtils.Shuffle(edgeList);
 	}
 
-	public void GenerateWings(CellMap cellMap) {
+	public void GenerateWings(Creature creature, CellMap cellMap) {
 		Clear();
 
 		if (cellMap.cellCount == 1)
@@ -64,13 +64,11 @@ public class Edges : MonoBehaviour {
 		Cell currentCell = firstCell;
 		Cell previousCell = null;
 		for (int safe = 0; safe < 1000; safe++) {
-			Cell nextCell = GetNextPeripheryCell(currentCell, previousCell);
+			Cell nextCell = GetNextOwnPeripheryCell(creature, currentCell, previousCell);
 			Edge edge = (GameObject.Instantiate(edgePrefab, transform.position, Quaternion.identity) as Edge);
 			edge.transform.parent = transform;
-			//edge.frontCell = nextCell;
-			//edge.backCell = currentCell;
 			edgeList.Add(edge);
-			edge.Setup(currentCell, nextCell, currentCell.GetDirectionOfNeighbourCell(nextCell));
+			edge.Setup(currentCell, nextCell, currentCell.GetDirectionOfOwnNeighbourCell(nextCell));
 			edge.MakeWing(nextCell);
 			if (nextCell == firstCell) {
 				break;
@@ -80,19 +78,19 @@ public class Edges : MonoBehaviour {
 		}
 	}
 
-	private Cell GetNextPeripheryCell(Cell currentCell, Cell previousCell) {
+	private Cell GetNextOwnPeripheryCell(Creature creature, Cell currentCell, Cell previousCell) {
 		int previousDirection = 0; // We need to have a previous direction which is pointing east in world space
 		if (currentCell == null) {
 			Debug.LogError("NULL");
 		}
 
 		if (previousCell != null) {
-			previousDirection = currentCell.GetDirectionOfNeighbourCell(previousCell);
+			previousDirection = currentCell.GetDirectionOfOwnNeighbourCell(previousCell);
 		}
 
 		for (int index = previousDirection + 1; index < previousDirection + 7; index++) {
 			Cell tryCell = currentCell.GetNeighbour(index).cell;
-			if (tryCell != null && tryCell.creature == currentCell.creature) { // We dont want to trace around connected creatures
+			if (tryCell != null && tryCell.creature == creature) { // We dont want to trace around connected creatures
 				return tryCell;
 			}
 		}

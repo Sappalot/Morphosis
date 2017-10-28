@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class HUD : MonoSingleton<HUD> {
 
-	public bool isEdgesEnabled = false;
+	public bool isEdgesEnabled = true;
 	public int timeControllValue = 1;
 	public bool shouldRenderEdges {
 		get {
