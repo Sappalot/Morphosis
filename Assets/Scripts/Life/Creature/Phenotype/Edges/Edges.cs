@@ -59,7 +59,7 @@ public class Edges : MonoBehaviour {
 		if (cellMap.cellCount == 1)
 			return;
 
-		Cell firstCell = cellMap.GetRightmostCell();
+		Cell firstCell = cellMap.GetRightmostCellInModelSpace();
 
 		Cell currentCell = firstCell;
 		Cell previousCell = null;

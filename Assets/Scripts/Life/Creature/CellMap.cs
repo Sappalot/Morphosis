@@ -118,7 +118,7 @@ public class CellMap {
 		return cellList;
 	}
 
-	public Cell GetRightmostCell() {
+	public Cell GetRightmostCellInModelSpace() {
 		List<Cell> cells = GetCells();
 		Cell record = cells[0];
 		foreach (Cell cell in cells) {

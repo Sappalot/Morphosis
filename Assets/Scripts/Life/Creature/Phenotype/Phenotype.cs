@@ -11,7 +11,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 	[HideInInspector]
-	public bool isAlive = true;
+	public bool isAlive = true; // Are we going to use this approach?
 
 	public Transform cellsTransform;
 

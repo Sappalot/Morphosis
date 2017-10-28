@@ -222,7 +222,7 @@ public abstract class Cell : MonoBehaviour {
 
 	public int GetDirectionOfNeighbourCell(Cell cell) {
 		for (int index = 0; index < 6; index++) {
-			if (HasNeighbourCell(index) && GetNeighbour(index).cell == cell) {
+			if (HasNeighbourCell(index, false) && GetNeighbour(index).cell == cell) {
 				return index;
 			}
 		}
