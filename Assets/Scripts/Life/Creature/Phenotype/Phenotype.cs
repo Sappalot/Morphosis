@@ -169,7 +169,7 @@ public class Phenotype : MonoBehaviour {
 	// Connect springs in between all connected (special case for mother and child)
 	// Update groups
 	// Update wings
-	public bool UpdateConnectionsFromCellsBody(Creature creature) {
+	public bool UpdateConnectionsFromCellsBody(Creature creature, string motherId) {
 		if (connectionsDiffersFromCells) {
 
 			////Fail safe ... to be removed
@@ -183,7 +183,7 @@ public class Phenotype : MonoBehaviour {
 			UpdateSpringsInterBody(creature);
 
 			//Groups
-			UpdateGroupsInterBody();
+			UpdateGroupsInterBody(motherId);
 
 			//Wings
 			edges.GenerateWings(creature, cellMap); // Wings are only generated from here
@@ -259,10 +259,10 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	private void UpdateGroupsInterBody() {
+	private void UpdateGroupsInterBody(string motherId) {
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
-			cell.UpdateGroups();
+			cell.UpdateGroups(motherId);
 		}
 	}
 
@@ -331,20 +331,16 @@ public class Phenotype : MonoBehaviour {
 		List<Cell> allCells = new List<Cell>(cellList);
 
 		for (int i = 0; i < allCells.Count; i++) {
-			DeleteCell(allCells[i], false, true, Random.Range(0f, ExplosionTimeSpan(allCells.Count)));
+			DeleteCell(allCells[i], false, true);
 		}
 	}
 
-	private float ExplosionTimeSpan(int cellCount) {
-		return Mathf.Log10(cellCount) * 0.1f;
-	}
-
 	//This is the one and only final place where cell is removed
-	public void DeleteCell(Cell deleteCell, bool deleteDebris, bool playEffects = false, float playEffectDelay = 0f) {
+	public void DeleteCell(Cell deleteCell, bool deleteDebris, bool playEffects = false) {
 		if (playEffects) {
 			Audio.instance.CellDeath();
 			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-				SpawnCellDeathEffect(deleteCell, Random.Range(0f, playEffectDelay));
+				SpawnCellDeathEffect(deleteCell);
 			}
 		}
 
@@ -375,9 +371,9 @@ public class Phenotype : MonoBehaviour {
 		connectionsDiffersFromCells = true;
 	}
 
-	public void SpawnCellDeathEffect(Cell deleteCell, float explodeAfterTime) {
+	public void SpawnCellDeathEffect(Cell deleteCell) {
 		CellDeath death = Instantiate(cellDeathPrefab, deleteCell.transform.position, Quaternion.identity);
-		death.Prime(Color.red, ColorScheme.instance.ToColor(deleteCell.GetCellType()), explodeAfterTime);
+		death.Prime(Color.red, ColorScheme.instance.ToColor(deleteCell.GetCellType()));
 	}
 
 	private void DeleteDebris() {
@@ -389,7 +385,7 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 		for (int i = 0; i < debris.Count; i++) {
-			DeleteCell(debris[i], false);
+			DeleteCell(debris[i], false, true);
 		}
 	}
 

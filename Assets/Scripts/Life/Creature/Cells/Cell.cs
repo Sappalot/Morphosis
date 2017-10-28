@@ -207,8 +207,8 @@ public abstract class Cell : MonoBehaviour {
 		UpdateRotation(); //costy, update only if cell has direction and is in frustum
 		UpdateFlipSide();
 
-		//UpdateRadius(fixedTime);
-		//UpdateSpringLengths(); // It is costy to update spring length
+		UpdateRadius(fixedTime);
+		UpdateSpringLengths(); // It is costy to update spring length
 	}
 
 	public void RemovePhysicsComponents() {

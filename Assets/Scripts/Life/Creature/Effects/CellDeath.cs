@@ -5,28 +5,15 @@ public class CellDeath : MonoBehaviour {
 
 	public ParticleSystem particles;
 	public AudioSource player;
-	public SpriteRenderer filedCircleSprite;
 
-	private void Start() {
-		filedCircleSprite.enabled = true;
-	}
-
-	public void Prime(Color cellColor, Color explosionColor, float explodeAfterTime = 0f) {
-		filedCircleSprite.color = cellColor;
+	public void Prime(Color cellColor, Color explosionColor) {
 		particles.startColor = cellColor;
-		filedCircleSprite.enabled = true;
-		StartCoroutine(Explode(explodeAfterTime));
+		particles.Play();
 		StartCoroutine(RemoveSelf());
 	}
 
-	private IEnumerator Explode(float time) {
-		yield return new WaitForSeconds(time);
-		particles.Play();
-		filedCircleSprite.enabled = false;
-	}
-
 	private IEnumerator RemoveSelf() {
-		yield return new WaitForSeconds(10);
+		yield return new WaitForSeconds(2);
 		Destroy(gameObject);
 	}
 }
