@@ -250,33 +250,36 @@ public abstract class Cell : MonoBehaviour {
 	public void TurnHingeNeighboursInPlace() {
 		//TODO Update turn springs only when nessesary 
 
+
+		//return;
+
+
 		//CellNeighbour firstNeighbour = null;
 		int springs = 0;
 		Vector3 responceForce = new Vector3();
-		for (int index = 0; index < 12; index++) {
-			if(!HasNeighbourCell(index)) {
+		for (int cardinalIndex = 0; cardinalIndex < 12; cardinalIndex++) {
+			if(!HasNeighbourCell(cardinalIndex)) {
 				continue;
 			}
-			if (!HasNeighbourCell(index + 1)) {
+			if (!HasNeighbourCell(cardinalIndex + 1)) {
 				//this(0)...empty(1)
-				if (HasNeighbourCell(index + 2)) {
+				if (HasNeighbourCell(cardinalIndex + 2)) {
 					//this(0)...empty(1)...full(2)
-					responceForce += ApplyTorqueToPair(index, index+2);
+					responceForce += ApplyTorqueToPair(cardinalIndex, cardinalIndex+2);
 					springs++;
 					//if (springs >= groups - 1) {
-					if (springs >= groups)
-					{
+					if (springs >= groups) {
 						break;
 					}
 					//jump to where spring was attached
-					index++; //+1
+					cardinalIndex++; //+1
 					continue;
 				}
 				else {
 					//this(0)...empty(1)...empty(2)
-					if (HasNeighbourCell(index + 3)) {
+					if (HasNeighbourCell(cardinalIndex + 3)) {
 						//this(0)...empty(1)...empty(2)...full(3)
-						responceForce += ApplyTorqueToPair(index, index + 3);
+						responceForce += ApplyTorqueToPair(cardinalIndex, cardinalIndex + 3);
 						springs++;
 						//if (springs >= groups - 1) {
 						if (springs >= groups)
@@ -285,15 +288,15 @@ public abstract class Cell : MonoBehaviour {
 						}
 
 						//jump to where spring was attached
-						index += 2; //+1
+						cardinalIndex += 2; //+1
 						continue;
 					}
 					else {
 						//this(0)...empty(1)...empty(2)...empty(3)
-						if (HasNeighbourCell(index + 4))
+						if (HasNeighbourCell(cardinalIndex + 4))
 						{
 							//this(0)...empty(1)...empty(2)...empty(3)...full(4)
-							responceForce += ApplyTorqueToPair(index, index + 4);
+							responceForce += ApplyTorqueToPair(cardinalIndex, cardinalIndex + 4);
 							springs++;
 							//if (springs >= groups - 1) {
 							if (springs >= groups)
@@ -302,7 +305,7 @@ public abstract class Cell : MonoBehaviour {
 							}
 
 							//jump to where spring was attached
-							index += 3; //+1
+							cardinalIndex += 3; //+1
 							continue;
 						}
 						else
@@ -526,17 +529,29 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	//Phenotype
-	public void UpdateGroups() {
+	public void UpdateGroups(string motherId) {
 		//TODO check if this cell is a hinge
 		int groups = 0;
 		bool lastWasNeighbor = false;
 		bool neighbourFound = false;
+
+		Creature lastHost = null;
+
 		for (int index = 0; index < 7; index++) {
-			if (HasNeighbourCell(index)) {
+			if (HasNeighbourCell(index)) { // including connected
+				Creature neighbourCreature = GetNeighbourCell(index).creature;
+
+				if (lastWasNeighbor && isRoot && ((neighbourCreature.id == motherId && lastHost == creature) || neighbourCreature == creature && lastHost.id == motherId)) {
+					// When the mother root is finding an adjacent child neighbour, she should just ignore it when it comes to groups
+					groups++;
+				}
+
+				lastHost = neighbourCreature;
+
 				neighbourFound = true;
 				lastWasNeighbor = true;
 			} else {
-				if (lastWasNeighbor) { //down flank detected
+				if (lastWasNeighbor) { // down flank detected
 					groups++;
 				}
 				lastWasNeighbor = false;

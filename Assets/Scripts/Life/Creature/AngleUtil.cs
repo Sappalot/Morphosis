@@ -37,6 +37,13 @@ public static class AngleUtil {
 		cardinalIndexToAngle.Add(9, 570f);
 		cardinalIndexToAngle.Add(10, 630f);
 		cardinalIndexToAngle.Add(11, 690f);
+		cardinalIndexToAngle.Add(12, 750f);
+		cardinalIndexToAngle.Add(13, 810f);
+		cardinalIndexToAngle.Add(14, 870f);
+		cardinalIndexToAngle.Add(15, 930f);
+		cardinalIndexToAngle.Add(16, 990f);
+		cardinalIndexToAngle.Add(17, 1050f);
+		//How many do we need?
 
 		cardinalIndexToArrowIndex.Add(0, -2);
 		cardinalIndexToArrowIndex.Add(1, 0);

@@ -418,6 +418,11 @@ public class Creature : MonoBehaviour {
 			}
 		}
 
+		////Fail safe ... to be removed
+		for (int index = 0; index < Life.instance.soulList.Count; index++) {
+			Life.instance.soulList[index].UpdateReferences();
+		}
+
 		genotype.EvoUpdate();
 		phenotype.EvoUpdate();
 
@@ -427,7 +432,7 @@ public class Creature : MonoBehaviour {
 		bool cellsWereUpdatedFromGeneCells = phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
 
 		phenotype.connectionsDiffersFromCells |= cellsWereUpdatedFromGeneCells;
-		bool connectionsWereUpdatedFromCells = phenotype.UpdateConnectionsFromCellsBody(this);
+		bool connectionsWereUpdatedFromCells = phenotype.UpdateConnectionsFromCellsBody(this, soul.motherSoulReference.id);
 
 		isDirty = isDirty || geneCelleWasUpdated || cellsWereUpdatedFromGeneCells || connectionsWereUpdatedFromCells;
 
