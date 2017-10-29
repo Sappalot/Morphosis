@@ -59,7 +59,10 @@ public class Life : MonoSingleton<Life> {
 
 		// Spawn child at egg cell location
 		Creature child = InstantiateCreature(); // Will create soul as well
-		child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
+
+		// Let there be evolution, and ther ewas evolution
+		//child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
+		child.GenerateEmbryo(mother.genotype.GetMutatedClone(0.2f), eggCell.position, eggCell.heading); //HAck
 
 		Soul motherSoul = GetSoul(mother.id);
 		Soul childSoul = GetSoul(child.id);
@@ -91,10 +94,10 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	public void DeleteCreature(Creature creature) {
-		creature.DetatchFromMother();
+		creature.DetatchFromMother(true);
 		foreach(Soul childSoul in creature.childSouls) {
 			if (childSoul.hasCreature) {
-				childSoul.creature.DetatchFromMother();
+				childSoul.creature.DetatchFromMother(true);
 			}
 		}
 

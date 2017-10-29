@@ -6,8 +6,8 @@ public class CellDeath : MonoBehaviour {
 	public ParticleSystem particles;
 	public AudioSource player;
 
-	public void Prime(Color cellColor, Color explosionColor) {
-		particles.startColor = cellColor;
+	public void Prime(Color explosionColor) {
+		particles.startColor = explosionColor;
 		particles.Play();
 		StartCoroutine(RemoveSelf());
 	}

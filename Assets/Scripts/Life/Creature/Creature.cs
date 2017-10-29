@@ -102,6 +102,57 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
+	public List<Creature> creaturesInCluster {
+		get {
+			List<Creature> allreadyInList = new List<Creature>();
+			AddConnectedCreatures(this, null,  allreadyInList);
+			return allreadyInList;
+		}
+	}
+
+	private List<Creature> AddConnectedCreatures(Creature creature, Creature callCreature, List<Creature> allreadyInList) {
+		//me
+		if (allreadyInList.Contains(creature) || (!IsConnected(creature, callCreature) && callCreature != null)) {
+			return allreadyInList;
+		} else {
+			allreadyInList.Add(creature);
+		}
+
+		// mother
+		if (creature.hasMother && !allreadyInList.Contains(creature.mother)) {
+			AddConnectedCreatures(creature.mother, creature, allreadyInList);
+		}
+
+		//children
+		foreach (Creature child in creature.children) {
+			AddConnectedCreatures(child, creature, allreadyInList);
+		}
+
+		return allreadyInList;
+	}
+
+	public static bool IsConnected(Creature alpha, Creature beta) {
+		return IsConnectedHelper(alpha, beta) || IsConnectedHelper(beta, alpha);
+	}
+
+	//PANIC!! clear up
+	private static bool IsConnectedHelper(Creature from, Creature to) {
+		if (from == null || from.soul == null && to == null) {
+			return false;
+		}
+
+		if (from.hasMother && from.mother == to && from.soul.isConnectedWithMotherSoul) {
+			return true;
+		}
+
+		foreach (Creature child in from.children) {
+			if (child != null && from != null && from.soul != null && to != null && from.soul.areAllReferencesUpdated && from.soul.isConnectedWithChildSoul(to.id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public Soul GetChildSoul(string id) {
 		return soul.GetChildSoul(id);
 	}
@@ -115,20 +166,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void DetatchFromMother(bool playEffects = false) {
-		if (hasMotherSoul && soul.isConnectedWithMotherSoul) {
-			if (playEffects) {
-				Audio.instance.CreatureDetatch();
-			}
-
-			//me
-			soul.SetConnectedWithMotherSoul(false);
-			phenotype.connectionsDiffersFromCells = true;
-
-			//mother
-			motherSoul.creature.phenotype.connectionsDiffersFromCells = true;
-
-			CreatureSelectionPanel.instance.MakeDirty();
-		}
+		phenotype.DetatchFromMother(this, playEffects);
 	}
 
 	// ^ Relatives ^
@@ -230,8 +268,8 @@ public class Creature : MonoBehaviour {
 	}
 
 	// Apply on Phenotype
-	public void TryGrow(int cellCount = 1, bool playEffects = false) {
-		phenotype.TryGrow(this, cellCount, playEffects);
+	public void TryGrow(bool forceGrow, int cellCount = 1, bool playEffects = false) {
+		phenotype.TryGrow(this, forceGrow, cellCount, playEffects);
 		isDirty = true;
 	}
 
@@ -406,6 +444,8 @@ public class Creature : MonoBehaviour {
 	// Update
 	public void EvoFixedUpdate(float fixedTime) {
 		phenotype.EvoFixedUpdate(this, fixedTime);
+
+
 	}
 
 	public void EvoUpdate() {

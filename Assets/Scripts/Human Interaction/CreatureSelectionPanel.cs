@@ -214,6 +214,23 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 	}
 
+	private void DetatchAllUnselectedRelatives() {
+		List<Creature> attachedUnselectedChildren = new List<Creature>();
+		foreach (Creature creature in selection) {
+			//mother
+			if (creature.soul.motherSoulReference.id != string.Empty && !selection.Contains(creature.mother)) {
+				creature.DetatchFromMother(true);
+			}
+
+			//children
+			foreach (Creature child in creature.children) {
+				if (!selection.Contains(child)) {
+					child.DetatchFromMother(true);
+				}
+			}
+		}
+	}
+
 	// Move
 	private List<Creature> moveCreatures = new List<Creature>();
 
@@ -222,6 +239,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (!hasSelection) {
 			return;
 		}
+
+		DetatchAllUnselectedRelatives();
+
 		moveCreatures.AddRange(selection);
 		StartMoveCreatures();
 		MouseAction.instance.actionState = MouseActionStateEnum.moveCreatures;
@@ -352,6 +372,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (!hasSelection) {
 			return;
 		}
+
+		DetatchAllUnselectedRelatives();
 
 		moveCreatures.AddRange(selection);
 

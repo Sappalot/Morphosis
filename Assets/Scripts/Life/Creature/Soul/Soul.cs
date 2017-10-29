@@ -11,21 +11,6 @@ public class Soul {
 	public SoulReference motherSoulReference = new SoulReference(string.Empty); //has no mother per default
 	public List<SoulReference> childSoulReferences = new List<SoulReference>();
 
-	//public void TryChangeId(string oldId, string newId) {
-	//	if (motherSoulReference != null  && motherSoulReference.id == oldId) {
-	//		motherSoulReference.id = newId;
-	//		motherSoulReference.soul = null;
-	//		//motherSoulReference.giveUpLooking = false;
-	//	}
-	//	for (int i = 0; i < childSoulReferences.Count; i++) {
-	//		if (childSoulReferences[i] != null && childSoulReferences[i].id == oldId) {
-	//			childSoulReferences[i].id = newId;
-	//			childSoulReferences[i].soul = null;
-	//			//childSoulReferences[i].giveUpLooking = false;
-	//		}
-	//	}
-	//}
-
 	// Relatives
 
 	public Creature creature {
@@ -78,16 +63,26 @@ public class Soul {
 
 	public Creature mother {
 		get {
+			if (motherSoulReference.isReferenceUpdated && motherSoulReference.id == string.Empty) {
+				return null;
+			}
 			Debug.Assert(motherSoulReference.isReferenceUpdated, "Update references first!");
 			Debug.Assert(motherSoul.areAllReferencesUpdated, "Update references first!");
 			return motherSoul.creature;
 		}
 	}
 
+	public bool hasUnfetchedMother() {
+		return motherSoulReference.id != string.Empty;
+	}
+
 	public bool hasMother {
 		get {
+			if (motherSoulReference.isReferenceUpdated && motherSoulReference.id == string.Empty) {
+				return false;
+			}
 			Debug.Assert(motherSoulReference.isReferenceUpdated, "Update references first!");
-			//Debug.Assert(motherSoul != null && motherSoul.areAllReferencesUpdated, "Update references first!");
+			Debug.Assert(motherSoul != null && motherSoul.areAllReferencesUpdated, "Update references first!");
 			return mother != null;
 		}
 	}
@@ -181,7 +176,15 @@ public class Soul {
 
 	public bool isConnectedWithChildSoul(string childSoulId) {
 		Debug.Assert(areAllReferencesUpdated, "Update references first!");
-		return childSoulReferences.Find(c => c.id == childSoulId).isChildConnected;
+		for (int i = 0; i < childSoulReferences.Count; i++) {
+			if (childSoulReferences[i] != null && childSoulReferences[i].id == childSoulId) {
+				if (childSoulReferences[i].isChildConnected) {
+					return true;
+				}
+			}
+		}
+		return false;
+		//return childSoulReferences.Find(c => c != null && c.id == childSoulId).isChildConnected; // Didn't work!!
 	}
 
 	public bool setConnectedWithChildSoul(string childSoulId, bool connected) {
@@ -235,7 +238,6 @@ public class Soul {
 		this.id = id;
 		creatureReference = new CreatureReference(id);
 	}
-
 
 	//TODO: Store creature Data in this one and create Creature from it
 

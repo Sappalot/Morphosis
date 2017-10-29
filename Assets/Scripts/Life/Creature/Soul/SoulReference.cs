@@ -3,7 +3,6 @@
 public class SoulReference {
 	public string id = string.Empty;
 	public Soul soul;
-	//public bool giveUpLooking = false;
 
 	public SoulReference(string id) {
 		this.id = id;
@@ -16,7 +15,6 @@ public class SoulReference {
 					soul = Life.instance.GetSoul(id);
 				} else {
 					Debug.LogError("Soul Reference: Can't find soul in Life");
-					//giveUpLooking = true;
 				}
 			}
 		}
@@ -24,7 +22,7 @@ public class SoulReference {
 
 	public bool isReferenceUpdated {
 		get {
-			return id == string.Empty || soul != null; //|| giveUpLooking;
+			return id == string.Empty || soul != null;
 		}
 	}
 

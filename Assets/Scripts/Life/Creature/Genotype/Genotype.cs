@@ -35,6 +35,16 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
+	//Hack
+	public Gene[] GetMutatedClone(float strength) {
+		Gene[] temporary = new Gene[genomeLength];
+		for (int index = 0; index < genomeLength; index++) {
+			temporary[index] = genome[index].GetClone();
+			temporary[index].Mutate(strength);
+		}
+		return temporary;
+	}
+
 	public void GenomeMutate(float strength) {
 		for (int index = 0; index < genomeLength; index++) {
 			genome[index].Mutate(strength);

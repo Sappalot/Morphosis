@@ -11,7 +11,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 	public void OnGrowClicked() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
-			creature.TryGrow(1, true);
+			creature.TryGrow(false, 1, true);
 		}
 	}
 
@@ -23,8 +23,8 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	}
 
 	public void OnClickDetatchFromMother() {
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.DetatchFromMother(true); 
+		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
+			creature.DetatchFromMother(true);
 		}
 	}
 
