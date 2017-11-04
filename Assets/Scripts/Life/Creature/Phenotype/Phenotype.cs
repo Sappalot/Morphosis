@@ -150,7 +150,7 @@ public class Phenotype : MonoBehaviour {
 				}
 
 				Vector2 spawnPosition = averagePosition / positionCount;
-				if (!allowOvergrowth && !CanGrowAtPosition(spawnPosition, 0.25f)) {
+				if (!allowOvergrowth && !CanGrowAtPosition(spawnPosition, 0.33f)) {
 					continue;
 				}
 
@@ -797,7 +797,7 @@ public class Phenotype : MonoBehaviour {
 	public void UpdateGraphics() {
 		//TODO: Update cells flip triangles here
 
-		edges.EvoUpdate();
+		edges.UpdateGraphics();
 
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
@@ -843,7 +843,7 @@ public class Phenotype : MonoBehaviour {
 		edges.EvoFixedUpdate(velocity, creature);
 
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].EvoFixedUpdate(fixedTime);
+			cellList[index].UpdatePhysics(fixedTime);
 		}
 	}
 }

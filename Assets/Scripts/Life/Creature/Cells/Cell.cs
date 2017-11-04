@@ -196,7 +196,7 @@ public abstract class Cell : MonoBehaviour {
 
 	}
 
-	public void EvoFixedUpdate(float fixedTime) {
+	public void UpdatePhysics(float fixedTime) {
 		//Optimize further
 		transform.rotation = Quaternion.identity; //dont turn the cells
 

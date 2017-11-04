@@ -519,9 +519,12 @@ public class Creature : MonoBehaviour {
 
 	bool lowFPS = false;
 	float growthCooldown = 1f;
-	public bool UpdatePhysics(float fixedTime) {
+	public bool UpdatePhysics(float fixedTime, bool isTask) {
 
 		phenotype.UpdatePhysics(this, fixedTime);
+
+		if (!isTask)
+			return false;
 
 		// Life cycle hack HACK
 		growthCooldown -= Time.deltaTime;

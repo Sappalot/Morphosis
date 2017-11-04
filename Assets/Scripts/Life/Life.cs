@@ -290,8 +290,6 @@ public class Life : MonoSingleton<Life> {
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdateGraphics();
 		}
-
-		canGrow--;
 	}
 
 	// If (editPhenotype) updated from FixedUpdate
@@ -310,20 +308,17 @@ public class Life : MonoSingleton<Life> {
 	}
 
 
-	private int canGrow = 0;
+	private int canDoTaskCoolDown = 0;
 	// Phenotype only, updated from FixedUpdate
 	// Everything that needs to be updated as the biological clock is ticking, wings, cell tasks, energy
 	public void UpdatePhysics(float fixedTime) {
-		//if (canGrow < 0) {
-
-			for (int index = 0; index < creatureList.Count; index++) {
-				if (creatureList[index].UpdatePhysics(fixedTime)) {
-					//canGrow = 10;
-					return; //MAx one growth per frame
-				}
+		canDoTaskCoolDown--;
+		for (int index = 0; index < creatureList.Count; index++) {
+			if (creatureList[index].UpdatePhysics(fixedTime, canDoTaskCoolDown < 0)) {
+				canDoTaskCoolDown = 10;
+				return; //Max one growth per frame
 			}
-		//}
-		
+		}
 	}
 
 	// ^ Update ^

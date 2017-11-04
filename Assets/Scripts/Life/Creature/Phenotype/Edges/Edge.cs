@@ -72,7 +72,7 @@ public class Edge : MonoBehaviour {
 		this.mIsWing = true;
 	}
 
-	public void EvoUpdate() {
+	public void UpdateGraphics() {
 		//TODO: If draw wings && inside frustum
 		if (HUD.instance.shouldRenderEdges) {
 			if (frontCell != null && backCell != null) {

@@ -40,11 +40,11 @@ public class Edges : MonoBehaviour {
 		}
 	}
 
-	public void EvoUpdate() {
+	public void UpdateGraphics() {
 		for (int index = 0; index < edgeList.Count; index++) {
 			Edge edge = edgeList[index];
 			if (edge.IsWing) {
-				edge.EvoUpdate();
+				edge.UpdateGraphics();
 			}
 		}
 	} 
