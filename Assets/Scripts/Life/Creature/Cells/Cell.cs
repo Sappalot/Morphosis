@@ -220,12 +220,16 @@ public abstract class Cell : MonoBehaviour {
 		Destroy(GetComponent<Rigidbody2D>());
 	}
 
-	public int GetDirectionOfOwnNeighbourCell(Cell cell) {
+	public int GetDirectionOfOwnNeighbourCell(Creature me, Cell cell) {
+		if (cell.creature != me) {
+			Debug.LogError("Asking for neighbours on a cell outside of body");
+		}
 		for (int index = 0; index < 6; index++) {
 			if (HasNeighbourCell(index, false) && GetNeighbour(index).cell == cell) {
 				return index;
 			}
 		}
+		Debug.LogError("Could not find own of previous cell");
 		return -1;
 	}
 
@@ -597,7 +601,7 @@ public abstract class Cell : MonoBehaviour {
 				GenePanel.instance.MakeDirty();
 				GenomePanel.instance.MakeDirty();
 				GenomePanel.instance.MakeScrollDirty();
-				CreatureSelectionPanel.instance.soloSelected.MakeDirty();
+				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 			}
 		}
 	}

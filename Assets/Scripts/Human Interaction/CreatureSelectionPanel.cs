@@ -104,7 +104,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		selectedCell = cell;
 		GenePanel.instance.selectedGene = cell.gene;
 
-		creature.MakeDirty();
+		creature.MakeDirtyGraphics();
 		isDirty = true;
 		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -172,7 +172,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	private void DirtyMarkSelected() {
 		for (int index = 0; index < selection.Count; index++) {
-			selection[index].MakeDirty();
+			selection[index].MakeDirtyGraphics();
 		}
 	}
 

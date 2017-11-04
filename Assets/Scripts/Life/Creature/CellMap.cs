@@ -70,11 +70,11 @@ public class CellMap {
 		return retreivedCells;
 	}
 
-	public Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, CardinalEnum cardinalenum) {
+	public static Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, CardinalEnum cardinalenum) {
 		return GetGridNeighbourGridPosition(gridPosition, AngleUtil.CardinalEnumToCardinalIndex(cardinalenum));
 	}
 
-	public Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, int cardinalIndex) {
+	public static Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, int cardinalIndex) {
 		Vector2i neighbour = null;
 		int even = (gridPosition.x % 2 == 0) ? 1 : 0;
 		int odd = (gridPosition.x % 2 == 0) ? 0 : 1;

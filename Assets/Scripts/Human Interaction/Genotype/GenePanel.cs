@@ -90,7 +90,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		//GenomePanel.instance.MakeScrollDirty();
-		CreatureSelectionPanel.instance.soloSelected.MakeDirty();
+		CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 	}
 
 	private void Update() {

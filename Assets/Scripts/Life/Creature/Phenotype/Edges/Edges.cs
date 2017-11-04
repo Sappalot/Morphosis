@@ -65,10 +65,13 @@ public class Edges : MonoBehaviour {
 		Cell previousCell = null;
 		for (int safe = 0; safe < 1000; safe++) {
 			Cell nextCell = GetNextOwnPeripheryCell(creature, currentCell, previousCell);
+			if (nextCell == null) {
+				Debug.Log("We don't have a next periphery cell");
+			}
 			Edge edge = (GameObject.Instantiate(edgePrefab, transform.position, Quaternion.identity) as Edge);
 			edge.transform.parent = transform;
 			edgeList.Add(edge);
-			edge.Setup(currentCell, nextCell, currentCell.GetDirectionOfOwnNeighbourCell(nextCell));
+			edge.Setup(currentCell, nextCell, currentCell.GetDirectionOfOwnNeighbourCell(creature, nextCell));
 			edge.MakeWing(nextCell);
 			if (nextCell == firstCell) {
 				break;
@@ -81,11 +84,11 @@ public class Edges : MonoBehaviour {
 	private Cell GetNextOwnPeripheryCell(Creature creature, Cell currentCell, Cell previousCell) {
 		int previousDirection = 0; // We need to have a previous direction which is pointing east in world space
 		if (currentCell == null) {
-			Debug.LogError("NULL");
+			Debug.LogError("currentCell = NULL");
 		}
 
 		if (previousCell != null) {
-			previousDirection = currentCell.GetDirectionOfOwnNeighbourCell(previousCell);
+			previousDirection = currentCell.GetDirectionOfOwnNeighbourCell(creature, previousCell);
 		}
 
 		for (int index = previousDirection + 1; index < previousDirection + 7; index++) {

@@ -16,29 +16,29 @@ public class World : MonoSingleton<World> {
 		//test, OK with 24 * 24 (18 cells per creature) ~ 27 FPS :)
 		//including: turn hinged neighbours to correct angle, just one test string creature
 		//excluding: turn cell graphics to correct angle, scale mussle cells
-		Life.instance.EvoFixedUpdate(fixedTime);
+		//Life.instance.EvoFixedUpdate(fixedTime);
 	}
 
 	private void Update() {
 		//Handle time from here to not get locked out
 		if (HUD.instance.timeControllValue == 0 || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			Time.timeScale = 0;
-			Life.instance.EvoUpdate();
+			Life.instance.UpdateStructure();
 		} else if (HUD.instance.timeControllValue == 1) {
 			Time.timeScale = 1;
-			Life.instance.EvoUpdate();
 		} else {
 			Time.timeScale = 4;
-			Life.instance.EvoUpdate();
-		}
+		}		
+		Life.instance.UpdateGraphics();
 	}
 
 	private void FixedUpdate() {
-		if (HUD.instance.timeControllValue > 0) {
-			fixedTime += Time.fixedDeltaTime * Time.timeScale;
-			Life.instance.EvoFixedUpdate(fixedTime);
-			GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
-		}
+		Life.instance.UpdateStructure();
+
+		fixedTime += Time.fixedDeltaTime * Time.timeScale;
+		Life.instance.UpdatePhysics(fixedTime);
+
+		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
 	}
 
 	//Save load

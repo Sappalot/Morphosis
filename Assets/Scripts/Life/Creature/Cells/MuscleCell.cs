@@ -118,7 +118,6 @@ public class MuscleCell : Cell {
 
 	long seldom = 0;
 	public override void UpdateSpringLengths() {
-
 		if (seldom % 5 == 0) {
 			if (HasNeighbourCell(CardinalEnum.northEast, false)) {
 				northEastNeighbour.cell.GetSpring(this).distance = this.radius + northEastNeighbour.cell.radius;

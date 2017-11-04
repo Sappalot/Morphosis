@@ -24,7 +24,7 @@ public class CellPicker : MonoBehaviour {
 				GenePanel.instance.MakeDirty();
 				GenomePanel.instance.MakeDirty();
 				GenomePanel.instance.MakeScrollDirty();
-				CreatureSelectionPanel.instance.soloSelected.MakeDirty();
+				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 			}
 		}
 	}

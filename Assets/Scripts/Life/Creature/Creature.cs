@@ -17,7 +17,7 @@ public class Creature : MonoBehaviour {
 	public SpriteRenderer genotypePosition;
 	public SpriteRenderer genotypeCellsPosition;
 
-	
+
 
 	//wing force
 	[Range(0f, 1f)]
@@ -105,7 +105,7 @@ public class Creature : MonoBehaviour {
 	public List<Creature> creaturesInCluster {
 		get {
 			List<Creature> allreadyInList = new List<Creature>();
-			AddConnectedCreatures(this, null,  allreadyInList);
+			AddConnectedCreatures(this, null, allreadyInList);
 			return allreadyInList;
 		}
 	}
@@ -171,9 +171,9 @@ public class Creature : MonoBehaviour {
 
 	// ^ Relatives ^
 
-	private bool isDirty = false;
-	public void MakeDirty() {
-		isDirty = true;
+	private bool isDirtyGraphics = false;
+	public void MakeDirtyGraphics() {
+		isDirtyGraphics = true;
 	}
 
 	public int cellsCountFullyGrown {
@@ -216,7 +216,7 @@ public class Creature : MonoBehaviour {
 		genotype.GenomeSet(motherGenome);
 		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading);
 		phenotype.InitiateEmbryo(this, position, heading);
-		isDirty = true;
+		isDirtyGraphics = true;
 		//EvoUpdate(); //To avoid occational flicker (shows genotype shortly)
 	}
 
@@ -245,8 +245,8 @@ public class Creature : MonoBehaviour {
 		//we need to update them allready in order to have rootCell. Root cell is needed for position and heading when updating
 		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
 		phenotype.connectionsDiffersFromCells = phenotype.UpdateCellsFromGeneCells(this, position, heading);
-		isDirty = true;
-		EvoUpdate();
+		isDirtyGraphics = true;
+		UpdateGraphics();
 	}
 
 	// Apply on genotype ==> Phenotype
@@ -270,12 +270,12 @@ public class Creature : MonoBehaviour {
 	// Apply on Phenotype
 	public void TryGrow(bool forceGrow, int cellCount = 1, bool playEffects = false) {
 		phenotype.TryGrow(this, forceGrow, cellCount, playEffects);
-		isDirty = true;
+		isDirtyGraphics = true;
 	}
 
 	public void TryShrink(int cellCount = 1) {
 		phenotype.TryShrink(cellCount);
-		isDirty = true;
+		isDirtyGraphics = true;
 	}
 
 	public void DeleteCellButRoot(Cell cell, bool playEffects = false) {
@@ -322,7 +322,7 @@ public class Creature : MonoBehaviour {
 			transform.position = rootCellPosition;
 			transform.parent = Life.instance.transform;
 		}
-		isDirty = true;
+		isDirtyGraphics = true;
 	}
 
 	public void Release(PhenoGenoEnum type) {
@@ -334,15 +334,15 @@ public class Creature : MonoBehaviour {
 			genotype.Release(this);
 			hasGenotypeCollider = true;
 		}
-		isDirty = true;
+		isDirtyGraphics = true;
 	}
 
 	public void ShowMarkers(bool show) {
-		creturePosition.enabled =			show;
-		phenotypePosition.enabled =			show;
-		phenotypeCellsPosition.enabled =	show;
-		genotypePosition.enabled =			show;
-		genotypeCellsPosition.enabled =		show;
+		creturePosition.enabled = show;
+		phenotypePosition.enabled = show;
+		phenotypeCellsPosition.enabled = show;
+		genotypePosition.enabled = show;
+		genotypeCellsPosition.enabled = show;
 	}
 
 	public bool hasPhenotypeCollider {
@@ -391,6 +391,17 @@ public class Creature : MonoBehaviour {
 		genotype.hasCollider = CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype && !genotype.isGrabbed;
 	}
 
+	public void FetchSoul() {
+		if (!hasSoul) {
+			if (Life.instance.HasSoul(id)) {
+				soul = Life.instance.GetSoul(id);
+			} else {
+				Debug.LogError("Creature could not find is soul!!");
+				return;
+			}
+		}
+	}
+
 	// Load / Save
 
 	private CreatureData creatureData = new CreatureData();
@@ -402,7 +413,7 @@ public class Creature : MonoBehaviour {
 
 	public void RestoreState() {
 		genotype.ApplyData(creatureData.genotypeData);
-		isDirty = true;
+		isDirtyGraphics = true;
 	}
 
 	//Everything is deep cloned even the id. Change this not to have trouble
@@ -442,41 +453,15 @@ public class Creature : MonoBehaviour {
 	// ^ Load / Save ^
 
 	// Update
-	public void EvoFixedUpdate(float fixedTime) {
-		phenotype.EvoFixedUpdate(this, fixedTime);
-
-
-	}
-
-	public void EvoUpdate() {
+	public void UpdateGraphics() {
 		if (!hasSoul) {
-			if (Life.instance.HasSoul(id)) {
-				soul = Life.instance.GetSoul(id);
-			} else {
-				Debug.LogError("Creature could not find is soul!!");
-				return;
-			}
+			return;
 		}
 
-		////Fail safe ... to be removed
-		for (int index = 0; index < Life.instance.soulList.Count; index++) {
-			Life.instance.soulList[index].UpdateReferences();
-		}
+		genotype.UpdateGraphics();
+		phenotype.UpdateGraphics();
 
-		genotype.EvoUpdate();
-		phenotype.EvoUpdate();
-
-		bool geneCelleWasUpdated = genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading);
-
-		phenotype.cellsDiffersFromGeneCells |= geneCelleWasUpdated;
-		bool cellsWereUpdatedFromGeneCells = phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading);
-
-		phenotype.connectionsDiffersFromCells |= cellsWereUpdatedFromGeneCells;
-		bool connectionsWereUpdatedFromCells = phenotype.UpdateConnectionsFromCellsBody(this, soul.motherSoulReference.id);
-
-		isDirty = isDirty || geneCelleWasUpdated || cellsWereUpdatedFromGeneCells || connectionsWereUpdatedFromCells;
-
-		if (isDirty) {
+		if (isDirtyGraphics) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature (due to user input)");
 
@@ -512,7 +497,58 @@ public class Creature : MonoBehaviour {
 
 				genotype.UpdateFlipSides();
 			}
-			isDirty = false;
+			isDirtyGraphics = false;
 		}
+	}
+
+	public void UpdateStructure() {
+		if (genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading)) {
+			phenotype.cellsDiffersFromGeneCells = true;
+			isDirtyGraphics = true;
+		}
+
+		if (phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading)) {
+			phenotype.connectionsDiffersFromCells = true;
+			isDirtyGraphics = true;
+		}
+
+		if (phenotype.UpdateConnectionsFromCellsBody(this, soul.motherSoulReference.id) ) {
+			isDirtyGraphics = true;
+		}
+	}
+
+	bool lowFPS = false;
+	float growthCooldown = 1f;
+	public bool UpdatePhysics(float fixedTime) {
+
+		phenotype.UpdatePhysics(this, fixedTime);
+
+		// Life cycle hack HACK
+		growthCooldown -= Time.deltaTime;
+		if (GlobalPanel.instance.hackFps < 2) {
+			lowFPS = true;
+		}
+		if (true || !lowFPS) {
+			if (growthCooldown < 0f) {
+				growthCooldown = 0.5f;
+				int grown = phenotype.TryGrow(this, false, 1, true);
+				if (grown == 0) {
+					if (phenotype.DetatchFromMother(this, true)) {
+						return true;
+					}
+					foreach (Cell eggCell in phenotype.cellList) {
+						if (eggCell.GetCellType() == CellTypeEnum.Egg) {
+							if (Random.Range(0, 100) == 0) {
+								Life.instance.FertilizeCreature(eggCell, true);
+								return true;
+							}
+						}
+					}
+				} else {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

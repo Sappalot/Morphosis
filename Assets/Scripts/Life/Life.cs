@@ -62,13 +62,17 @@ public class Life : MonoSingleton<Life> {
 
 		// Let there be evolution, and ther ewas evolution
 		//child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
-		child.GenerateEmbryo(mother.genotype.GetMutatedClone(0.2f), eggCell.position, eggCell.heading); //HAck
+		//.GetMutatedClone(0.2f)
+		child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading); //HAck
 
 		Soul motherSoul = GetSoul(mother.id);
 		Soul childSoul = GetSoul(child.id);
 
 		motherSoul.AddChildSoulImmediate(childSoul, eggCell.mapPosition, eggCell.bindCardinalIndex, true);
 		childSoul.SetMotherSoulImmediate(motherSoul);
+
+		//eggCell.creature.DetatchFromMother(); //HACK detatch when born test
+
 
 		PhenotypePanel.instance.MakeDirty();
 		CreatureSelectionPanel.instance.MakeDirty();
@@ -217,7 +221,7 @@ public class Life : MonoSingleton<Life> {
 	//----------------
 	public void MakeAllCreaturesDirty() {
 		for (int index = 0; index < creatures.Count; index++) {
-			creatures[index].MakeDirty();
+			creatures[index].MakeDirtyGraphics();
 		}
 	}
 
@@ -280,23 +284,46 @@ public class Life : MonoSingleton<Life> {
 
 	// ^ Load Save ^
 
-	// Update
+	// Allways, updated from Update
+	// Keeping graphics up to date, creature selection, cell selection, flipArrows, edges
+	public void UpdateGraphics() {
+		for (int index = 0; index < creatureList.Count; index++) {
+			creatureList[index].UpdateGraphics();
+		}
 
-	public void EvoUpdate() {
+		canGrow--;
+	}
 
+	// If (editPhenotype) updated from FixedUpdate
+	// If (editGenotype) updated from FixedUpdate
+	// Everything that needs to be updated when genome is changed, cells are removed, cells are added, creatures are spawned, creatures die
+	public void UpdateStructure() {
 		for (int index = 0; index < soulList.Count; index++) {
 			soulList[index].UpdateReferences();
 		}
 
-		for (int index = 0; index < creatureList.Count; index++) {
-			creatureList[index].EvoUpdate();
+		foreach (Creature c in creatureList) {
+			c.FetchSoul();
+			c.UpdateStructure();
 		}
+		
 	}
 
-	public void EvoFixedUpdate(float fixedTime) {
-		for (int index = 0; index < creatureList.Count; index++) {
-			creatureList[index].EvoFixedUpdate(fixedTime);
-		}
+
+	private int canGrow = 0;
+	// Phenotype only, updated from FixedUpdate
+	// Everything that needs to be updated as the biological clock is ticking, wings, cell tasks, energy
+	public void UpdatePhysics(float fixedTime) {
+		//if (canGrow < 0) {
+
+			for (int index = 0; index < creatureList.Count; index++) {
+				if (creatureList[index].UpdatePhysics(fixedTime)) {
+					//canGrow = 10;
+					return; //MAx one growth per frame
+				}
+			}
+		//}
+		
 	}
 
 	// ^ Update ^

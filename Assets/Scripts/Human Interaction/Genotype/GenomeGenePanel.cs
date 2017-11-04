@@ -31,7 +31,7 @@ public class GenomeGenePanel : MonoBehaviour {
 			GenePanel.instance.selectedGene = gene;
 			GenomePanel.instance.MakeDirty();
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
-				CreatureSelectionPanel.instance.soloSelected.MakeDirty();
+				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 			}
 		} else if (MouseAction.instance.actionState == MouseActionStateEnum.selectGene) {
 			GenePanel.instance.GiveAnswerGeneReference(gene);

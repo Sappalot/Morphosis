@@ -195,7 +195,7 @@ public class Genotype : MonoBehaviour {
 						if (geneReference != null) {
 							int referenceBindHeading = (spawningFromCell.bindCardinalIndex + referenceCardinalIndex + 5) % 6; //!!
 							Gene referenceGene = geneReference.gene;
-							Vector2i referenceCellMapPosition = geneCellMap.GetGridNeighbourGridPosition(spawningFromCell.mapPosition, referenceBindHeading);
+							Vector2i referenceCellMapPosition = CellMap.GetGridNeighbourGridPosition(spawningFromCell.mapPosition, referenceBindHeading);
 
 							if (geneCellMap.IsLegalPosition(referenceCellMapPosition)) {
 								Cell residentCell = geneCellMap.GetCell(referenceCellMapPosition);
@@ -232,7 +232,7 @@ public class Genotype : MonoBehaviour {
 			TurnTo(heading); //is at 90 allready
 			MoveTo(position);
 			geneCellsDiffersFromGenome = false;
-			creature.MakeDirty();
+			creature.MakeDirtyGraphics();
 			return true;
 		}
 		return false;
@@ -465,7 +465,7 @@ public class Genotype : MonoBehaviour {
 
 	// Update
 
-	public void EvoUpdate() {
+	public void UpdateGraphics() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature Genotype");

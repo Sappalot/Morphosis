@@ -230,7 +230,6 @@ public class Soul {
 		for (int i = 0; i < childSoulReferences.Count; i++) {
 			childSoulReferences[i].TryGetReference();
 		}
-
 	}
 
 	// ^ Update ^

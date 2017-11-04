@@ -11,6 +11,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	private float updateTimeCount;
 	private float updatePeriod = 1f;
 
+	public float hackFps;
+
 	public void UpdateWorldNameAndTime(string worldName, float fixedTime) {
 		TimeSpan t = TimeSpan.FromSeconds(fixedTime);
 		int d = t.Days;
@@ -36,6 +38,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		if (updateTimeCount > updatePeriod) {
 			updateTimeCount = 0;
 			fps.text = timeCount > 0 ? string.Format("FPS: {0:F1}", frameCount / timeCount) : "FPS: ---";
+			hackFps = frameCount / timeCount;
 			frameCount = 0;
 			timeCount = 0;
 		}

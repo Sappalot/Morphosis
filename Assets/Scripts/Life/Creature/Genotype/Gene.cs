@@ -1,7 +1,23 @@
 ﻿using UnityEngine;
 
 public class Gene {
-	public CellTypeEnum type = CellTypeEnum.Leaf; // + this vein cell's settings 
+	public CellTypeEnum m_type = CellTypeEnum.Leaf; // + this vein cell's settings 
+	public CellTypeEnum type {
+		get {
+			if (index == 0 && m_type == CellTypeEnum.Egg) {
+				return CellTypeEnum.Vein;
+			}
+			return m_type;
+		}
+		set {
+			if (index == 0 && value == CellTypeEnum.Egg) {
+				m_type = CellTypeEnum.Vein;
+			} else {
+				m_type = value;
+			}
+			
+		}
+	}
 	public int index;
 
 	public readonly Arrangement[] arrangements = new Arrangement[3];
