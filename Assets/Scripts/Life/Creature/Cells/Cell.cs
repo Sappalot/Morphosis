@@ -73,7 +73,7 @@ public abstract class Cell : MonoBehaviour {
 		get {
 			int count = 0;
 			for (int index = 0; index < 6; index++) {
-				if (HasNeighbourCell(index, true)) {
+				if (HasNeighbourCell(index)) {
 					count++;
 				}
 			}
@@ -86,7 +86,7 @@ public abstract class Cell : MonoBehaviour {
 		get {
 			int count = 0;
 			for (int index = 0; index < 6; index++) {
-				if (HasNeighbourCell(index, false)) {
+				if (HasOwnNeighbourCell(index)) {
 					count++;
 				}
 			}
@@ -163,12 +163,12 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public CellNeighbour southEastNeighbour =   new CellNeighbour(5);
    
-	private Dictionary<int, CellNeighbour> index_Neighbour = new Dictionary<int, CellNeighbour>();
+	private Dictionary<int, CellNeighbour> cellNeighbourDictionary = new Dictionary<int, CellNeighbour>();
 	private List<SpringJoint2D> springList = new List<SpringJoint2D>();
 
 	public List<Cell> GetNeighbourCells() {
 		List<Cell> cells = new List<Cell>();
-		foreach (KeyValuePair<int, CellNeighbour> e in index_Neighbour) {
+		foreach (KeyValuePair<int, CellNeighbour> e in cellNeighbourDictionary) {
 			if (e.Value.cell != null) {
 				cells.Add(e.Value.cell);
 			}
@@ -177,12 +177,12 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	private void Awake() {
-		index_Neighbour.Add(0, northEastNeighbour);
-		index_Neighbour.Add(1, northNeighbour);
-		index_Neighbour.Add(2, northWestNeighbour);
-		index_Neighbour.Add(3, southWestNeighbour);
-		index_Neighbour.Add(4, southNeighbour);
-		index_Neighbour.Add(5, southEastNeighbour);
+		cellNeighbourDictionary.Add(0, northEastNeighbour);
+		cellNeighbourDictionary.Add(1, northNeighbour);
+		cellNeighbourDictionary.Add(2, northWestNeighbour);
+		cellNeighbourDictionary.Add(3, southWestNeighbour);
+		cellNeighbourDictionary.Add(4, southNeighbour);
+		cellNeighbourDictionary.Add(5, southEastNeighbour);
 
 		springList.Add(northSpring);
 		springList.Add(southEastSpring);
@@ -225,7 +225,7 @@ public abstract class Cell : MonoBehaviour {
 			Debug.LogError("Asking for neighbours on a cell outside of body");
 		}
 		for (int index = 0; index < 6; index++) {
-			if (HasNeighbourCell(index, false) && GetNeighbour(index).cell == cell) {
+			if (HasOwnNeighbourCell(index) && GetNeighbour(index).cell == cell) {
 				return index;
 			}
 		}
@@ -364,60 +364,50 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public SpringJoint2D GetSpring(Cell askingCell) {
-		if (HasNeighbourCell(CardinalEnum.north) && askingCell == northNeighbour.cell) {
+		if (HasOwnNeighbourCell(CardinalEnum.north) && askingCell == northNeighbour.cell) {
 			return northSpring;
 		}
-		else if (HasNeighbourCell(CardinalEnum.southEast) && askingCell == southEastNeighbour.cell) {
+		else if (HasOwnNeighbourCell(CardinalEnum.southEast) && askingCell == southEastNeighbour.cell) {
 			return southEastSpring;
 		}
-		else if (HasNeighbourCell(CardinalEnum.southWest) && askingCell == southWestNeighbour.cell) {
+		else if (HasOwnNeighbourCell(CardinalEnum.southWest) && askingCell == southWestNeighbour.cell) {
 			return southWestSpring;
 		}
 		return null;
 	}
 
 	public void SetNeighbourCell(int cardinalIndex, Cell cell) {
-		index_Neighbour[cardinalIndex].cell = cell;
+		cellNeighbourDictionary[cardinalIndex].cell = cell;
 	}
 
 	public void RemoveNeighbourCell(Cell cell) {
 		for (int i = 0; i < 6; i++) {
-			if (index_Neighbour[i].cell == cell) {
-				index_Neighbour[i].cell = null;
+			if (cellNeighbourDictionary[i].cell == cell) {
+				cellNeighbourDictionary[i].cell = null;
 			}
 		}
 	}
 
-	public Cell GetNeighbourCell(CardinalEnum cardinalEnum) {
-		return GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum));
-	}
-
 	public Cell GetNeighbourCell(int cardinalIndex) {
-		return index_Neighbour[cardinalIndex % 6].cell;
+		return cellNeighbourDictionary[cardinalIndex % 6].cell;
 	}
 
-	public CellNeighbour GetNeighbour(CardinalEnum cardinalEnum) {
-		return GetNeighbour(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum));
+	private CellNeighbour GetNeighbour(int cardinalIndex) {
+		return cellNeighbourDictionary[cardinalIndex % 6];
 	}
 
-	public CellNeighbour GetNeighbour(int cardinalIndex) {
-		return index_Neighbour[cardinalIndex % 6];
+	protected bool HasOwnNeighbourCell(CardinalEnum cardinalEnum) {
+		return HasOwnNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum));
 	}
 
-	public float GetRotation() {
-		return transform.rotation.z;
+	public bool HasNeighbourCell(int cardinalIndex) {
+		Cell neighbourCell = cellNeighbourDictionary[cardinalIndex % 6].cell;
+		return neighbourCell != null;
 	}
 
-	public bool HasNeighbourCell(CardinalEnum cardinalEnum, bool includeConnected = true) {
-		return HasNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum), includeConnected);
-	}
-
-	//TODO: Use OWNneighbourCell for neighbour which is same creature
-	//TODO: Use neighbourCell for neighbour which are connected or same crearture
-
-	public bool HasNeighbourCell(int cardinalIndex, bool includeConnected = true) {
-		Cell neighbourCell = index_Neighbour[cardinalIndex % 6].cell;
-		return neighbourCell != null && (includeConnected || neighbourCell.IsSameCreature(this));
+	private bool HasOwnNeighbourCell(int cardinalIndex) {
+		Cell neighbourCell = cellNeighbourDictionary[cardinalIndex % 6].cell;
+		return neighbourCell != null && neighbourCell.IsSameCreature(this);
 	}
 
 	public void SetOrderInLayer(int order) {
@@ -435,7 +425,7 @@ public abstract class Cell : MonoBehaviour {
 			float angleDiffFromBindpose = 0f; 
 			for (int index = 0; index < 6; index++) {
 				if (HasNeighbourCell(index)) {
-					angleDiffFromBindpose = AngleUtil.GetAngleDifference(index_Neighbour[index].bindAngle, index_Neighbour[index].angle);
+					angleDiffFromBindpose = AngleUtil.GetAngleDifference(cellNeighbourDictionary[index].bindAngle, cellNeighbourDictionary[index].angle);
 					break;
 				}
 			}
@@ -474,7 +464,7 @@ public abstract class Cell : MonoBehaviour {
 	//Phenotype
 	public void UpdateSpringConnectionsIntra() {
 		// Intra creatures
-		if (northNeighbour.cell != null && northNeighbour.cell.IsSameCreature(this)) {
+		if (HasOwnNeighbourCell(CardinalEnum.north)) {
 			northSpring.connectedBody = northNeighbour.cell.gameObject.GetComponent<Rigidbody2D>();
 			northSpring.enabled = true;
 		}
@@ -483,7 +473,7 @@ public abstract class Cell : MonoBehaviour {
 			northSpring.enabled = false;
 		}
 
-		if (southWestNeighbour.cell != null && southWestNeighbour.cell.IsSameCreature(this)) {
+		if (HasOwnNeighbourCell(CardinalEnum.southWest)) {
 			southWestSpring.connectedBody = southWestNeighbour.cell.gameObject.GetComponent<Rigidbody2D>();
 			southWestSpring.enabled = true;
 		}
@@ -492,7 +482,7 @@ public abstract class Cell : MonoBehaviour {
 			southWestSpring.enabled = false;
 		}
 
-		if (southEastNeighbour.cell != null && southEastNeighbour.cell.IsSameCreature(this)) {
+		if (HasOwnNeighbourCell(CardinalEnum.southEast)) {
 			southEastSpring.connectedBody = southEastNeighbour.cell.gameObject.GetComponent<Rigidbody2D>();
 			southEastSpring.enabled = true;
 		}
@@ -542,7 +532,7 @@ public abstract class Cell : MonoBehaviour {
 		Creature lastHost = null;
 
 		for (int index = 0; index < 7; index++) {
-			if (HasNeighbourCell(index)) { // including connected
+			if (HasNeighbourCell(index)) {
 				Creature neighbourCreature = GetNeighbourCell(index).creature;
 
 				if (lastWasNeighbor && isRoot && ((neighbourCreature.id == motherId && lastHost == creature) || neighbourCreature == creature && lastHost.id == motherId)) {

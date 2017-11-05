@@ -13,7 +13,7 @@ public class Genotype : MonoBehaviour {
 
 	public static int root = 0;
 	public static int genomeLength = 21;
-	public CellMap geneCellMap = new CellMap();
+	private CellMap geneCellMap = new CellMap();
 	public List<Cell> geneCellList = new List<Cell>();
 
 	public bool geneCellsDiffersFromGenome = true; // Cell List and Cell Map needs to be updates
@@ -251,15 +251,15 @@ public class Genotype : MonoBehaviour {
 		Cell cell = null;
 
 		if (gene.type == CellTypeEnum.Egg) {
-			cell = (Instantiate(eggCellPrefab, geneCellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
+			cell = (Instantiate(eggCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Jaw) {
-			cell = (Instantiate(jawCellPrefab, geneCellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
+			cell = (Instantiate(jawCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Leaf) {
-			cell = (Instantiate(leafCellPrefab, geneCellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
+			cell = (Instantiate(leafCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Muscle) {
-			cell = (Instantiate(muscleCellPrefab, geneCellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
+			cell = (Instantiate(muscleCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Vein) {
-			cell = (Instantiate(veinCellPrefab, geneCellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
+			cell = (Instantiate(veinCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		}
 
 		cell.RemovePhysicsComponents();

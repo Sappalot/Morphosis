@@ -92,7 +92,7 @@ public class Edges : MonoBehaviour {
 		}
 
 		for (int index = previousDirection + 1; index < previousDirection + 7; index++) {
-			Cell tryCell = currentCell.GetNeighbour(index).cell;
+			Cell tryCell = currentCell.GetNeighbourCell(index);
 			if (tryCell != null && tryCell.creature == creature) { // We dont want to trace around connected creatures
 				return tryCell;
 			}

@@ -100,11 +100,13 @@ public class CellMap {
 	}
 
 	//returned position is in creature space
-	public Vector2 ToModelSpacePosition(Vector2i gridPosition) {
-		float xStride = Mathf.Sqrt(Mathf.Pow(cellRadius * 2, 2) - Mathf.Pow(cellRadius, 2));
-		float yStride = cellRadius * 2;
+	public static Vector2 ToModelSpacePosition(Vector2i gridPosition) {
+		float defaultCellRadius = 0.5f;
 
-		float displace = (gridPosition.x % 2 == 0) ? 0f : cellRadius;
+		float xStride = Mathf.Sqrt(Mathf.Pow(defaultCellRadius * 2, 2) - Mathf.Pow(defaultCellRadius, 2));
+		float yStride = defaultCellRadius * 2;
+
+		float displace = (gridPosition.x % 2 == 0) ? 0f : defaultCellRadius;
 		return new Vector2(xStride * gridPosition.x, yStride * gridPosition.y + displace);
 	}
 

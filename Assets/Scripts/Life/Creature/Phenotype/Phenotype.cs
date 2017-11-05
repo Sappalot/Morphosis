@@ -40,7 +40,7 @@ public class Phenotype : MonoBehaviour {
 	public List<Cell> cellList = new List<Cell>();
 	private Vector2 spawnPosition;
 	private float spawnHeading;
-	public CellMap cellMap = new CellMap();
+	private CellMap cellMap = new CellMap();
 
 	private bool isDirty = true;
 
@@ -132,7 +132,7 @@ public class Phenotype : MonoBehaviour {
 
 			if (!IsCellBuiltForGeneCell(geneCell)
 				&& IsCellBuiltAtNeighbourPosition(geneCell.mapPosition)
-				&& (allowOvergrowth || !(IsMotherPlacentaPosition(creature, geneCell.mapPosition) || IsChildRootPosition(creature, geneCell.mapPosition)))) {
+				&& (allowOvergrowth || !(IsMotherPlacentaLocation(creature, geneCell.mapPosition) || IsChildRootLocation(creature, geneCell.mapPosition)))) {
 				Vector3 averagePosition = Vector3.zero;
 				int positionCount = 0;
 
@@ -173,7 +173,7 @@ public class Phenotype : MonoBehaviour {
 		return growCellCount;
 	}
 
-	private bool IsChildRootPosition(Creature creature, Vector2i mapPosition) {
+	private bool IsChildRootLocation(Creature creature, Vector2i mapPosition) {
 		//My(placenta) <====> Child(root)
 		foreach (Soul child in creature.childSouls) {
 			if (creature.soul.isConnectedWithChildSoul(child.id) && creature.soul.childSoulRootMapPosition(child.id) == mapPosition) {
@@ -183,7 +183,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	private bool IsMotherPlacentaPosition(Creature creature, Vector2i mapPosition) {
+	private bool IsMotherPlacentaLocation(Creature creature, Vector2i mapPosition) {
 		//My(root) <====> Mohther(placenta)
 		if (creature.soul.motherSoulReference.id != string.Empty && creature.soul.isConnectedWithMotherSoul) {
 			Creature creatureMother = creature.mother;
@@ -563,7 +563,7 @@ public class Phenotype : MonoBehaviour {
 
 	private Cell SpawnCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindCardinalIndex, FlipSideEnum flipSide, Vector2 position, bool modelSpace) {
 		Cell cell = InstantiateCell(gene.type, mapPosition);
-		Vector2 spawnPosition = (modelSpace ? creature.genotype.geneCellMap.ToModelSpacePosition(mapPosition) : Vector2.zero) + position;
+		Vector2 spawnPosition = (modelSpace ? CellMap.ToModelSpacePosition(mapPosition) : Vector2.zero) + position;
 		cell.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, 0f);
 
 		cell.mapPosition = mapPosition;
@@ -621,7 +621,7 @@ public class Phenotype : MonoBehaviour {
 	public void ShowSelectedCreature(bool on) {
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].ShowCreatureSelected(on);
-			cellList[index].ShowTriangle(false); // Debug
+			cellList[index].ShowTriangle(true); // Debug
 		}
 	}
 
