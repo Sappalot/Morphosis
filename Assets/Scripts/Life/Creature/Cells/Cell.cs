@@ -116,6 +116,56 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
+	virtual public void UpdateMetabolism(float deltaTime) {
+		//energy = Mathf.Min(energy + effect * deltaTime, maxEnergy);
+
+		//make poores neighbour and me have same amount of energy, by sharing
+		//Cell cellPoorest = null;
+		//float meMoreEnergyPoorest = 0f;
+		foreach (Cell neighbour in GetNeighbourCells()) { //Connected as well
+			float meMoreEnergy = energy - neighbour.energy;
+			if (meMoreEnergy > 0f) {
+				float slowness = 200;
+				if (this is VeinCell) {
+					slowness = 1;
+				}
+				float flowEffect = (energy - neighbour.energy) / slowness;
+				energy -=           flowEffect * deltaTime;
+				neighbour.energy += flowEffect * deltaTime;
+			}
+
+			//if (meMoreEnergy > 0 && meMoreEnergy > meMoreEnergyPoorest) {
+			//	meMoreEnergyPoorest = meMoreEnergy;
+			//	cellPoorest = neighbour;
+			//}
+		}
+		
+		//if (cellPoorest != null) {
+		//	float flowMaxEffect = 0.5f; // W
+		//	float flowEffect = (energy - cellPoorest.energy) / 200f;
+		//	energy             -= flowEffect * deltaTime;
+		//	cellPoorest.energy += flowEffect * deltaTime;
+		//}
+	}
+
+	virtual public void UpdateRadius(float fixedTime) { }
+
+	virtual public void UpdateSpringLengths() { }
+
+	virtual public void UpdateSpringFrequenzy() {
+		if (placentaSprings != null) {
+			for (int i = 0; i < placentaSprings.Length; i++) {
+				SpringJoint2D spring = placentaSprings[i];
+				spring.frequency = springFrequenzy;
+				spring.dampingRatio = springDamping;
+			}
+		}
+	}
+
+	virtual public bool IsContracting() {
+		return false;
+	}
+
 	public bool IsSameCreature(Cell other) {
 		return other.creature == creature;
 	}
@@ -231,30 +281,6 @@ public abstract class Cell : MonoBehaviour {
 		}
 		Debug.LogError("Could not find own of previous cell");
 		return -1;
-	}
-
-	virtual public void UpdateMetabolism(float deltaTime) {
-		energy = Mathf.Min(energy + effect * deltaTime, maxEnergy);
-
-
-	}
-
-	virtual public void UpdateRadius(float fixedTime) { }
-
-	virtual public void UpdateSpringLengths() { }
-
-	virtual public void UpdateSpringFrequenzy() {
-		if (placentaSprings != null) {
-			for (int i = 0; i < placentaSprings.Length; i++) {
-				SpringJoint2D spring = placentaSprings[i];
-				spring.frequency = springFrequenzy;
-				spring.dampingRatio = springDamping;
-			}
-		}
-	}
-
-	virtual public bool IsContracting() {
-		return false;
 	}
 
 	public void TurnHingeNeighboursInPlace() {
