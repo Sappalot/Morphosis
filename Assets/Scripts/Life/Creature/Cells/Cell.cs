@@ -26,9 +26,9 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public float effectProduction = 0f;
 	[HideInInspector]
-	public float effectConsumption = 0;
+	public float effectConsumption = 1; // wont update when changed???
 
-	public float netEffect {
+	public float effect {
 		get {
 			return effectProduction - effectConsumption;
 		}
@@ -206,7 +206,9 @@ public abstract class Cell : MonoBehaviour {
 
 		ShowCreatureSelected(false);
 
-		energy = 88f;
+		energy = 100f;
+		effectConsumption = 1;
+		effectProduction = 0f;
 	}
 
 	public void RemovePhysicsComponents() {
@@ -229,6 +231,12 @@ public abstract class Cell : MonoBehaviour {
 		}
 		Debug.LogError("Could not find own of previous cell");
 		return -1;
+	}
+
+	virtual public void UpdateMetabolism(float deltaTime) {
+		energy = Mathf.Min(energy + effect * deltaTime, maxEnergy);
+
+
 	}
 
 	virtual public void UpdateRadius(float fixedTime) { }
@@ -635,11 +643,20 @@ public abstract class Cell : MonoBehaviour {
 	// Update
 
 	//TODO: update cell graphics from here
-	public void EvoUpdate() {
-
+	public void UpdateGraphics() {
+		if (HUD.instance.shouldRenderEnergy) {
+			float life = energy / 100f;
+			filledCircleSprite.color = new Color((1f - life) * 0.5f, life, 0f);
+		} else {
+			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
+		}
 	}
 
-	public void UpdatePhysics(float fixedTime) {
+	public void ResetMetabolismUpdate() {
+		lastUpdateMetabolismTime = -1f;
+	}
+	private float lastUpdateMetabolismTime;
+	public void UpdatePhysics(float fixedTime, bool updateMetabolism) {
 		//Optimize further
 		transform.rotation = Quaternion.identity; //dont turn the cells
 
@@ -652,6 +669,17 @@ public abstract class Cell : MonoBehaviour {
 
 		UpdateRadius(fixedTime);
 		UpdateSpringLengths(); // It is costy to update spring length
+
+		if (updateMetabolism) {
+			if (lastUpdateMetabolismTime < 0) { //dirty
+				lastUpdateMetabolismTime = fixedTime;
+			} else {
+				float deltaTime = fixedTime - lastUpdateMetabolismTime;
+				lastUpdateMetabolismTime = fixedTime;
+				UpdateMetabolism(deltaTime);
+				
+			}
+		}
 	}
 
 	// ^ Update ^

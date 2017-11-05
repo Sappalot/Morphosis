@@ -21,6 +21,33 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public float effectProduction {
+		get {
+			float effect = 0;
+			foreach (Cell cell in cellList) {
+				effect += cell.effectProduction;
+			}
+			return effect;
+		}
+	}
+
+	public float effectConsumption {
+		get {
+			float effect = 0;
+			foreach (Cell cell in cellList) {
+				effect += cell.effectConsumption;
+			}
+			return effect;
+		}
+	}
+
+	public float effect {
+		get {
+			return effectProduction - effectConsumption;
+		}
+	}
+
+
 	[HideInInspector]
 	public bool isAlive = true; // Are we going to use this approach?
 
@@ -591,6 +618,9 @@ public class Phenotype : MonoBehaviour {
 		cell.timeOffset = timeOffset;
 		cell.creature = creature;
 
+		cell.energy = 100f;
+		cell.ResetMetabolismUpdate();
+
 		return cell;
 	}
 
@@ -823,12 +853,11 @@ public class Phenotype : MonoBehaviour {
 			SetCollider(hasCollider);
 			isDirty = false;
 		}
-	}
 
-	private void EvoUpdateCells() {
+		//TODO Check if dirty
 		//Todo: only if creature inside frustum && should be shown
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].EvoUpdate();
+			cellList[index].UpdateGraphics();
 		}
 	}
 
@@ -844,7 +873,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	public void UpdatePhysics(Creature creature, float fixedTime) {
+	public void UpdatePhysics(Creature creature, float fixedTime, bool updateMetabolism) {
 		if (isGrabbed) {
 			return;
 		}
@@ -871,7 +900,7 @@ public class Phenotype : MonoBehaviour {
 		edges.EvoFixedUpdate(velocity, creature);
 
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdatePhysics(fixedTime);
+			cellList[index].UpdatePhysics(fixedTime, updateMetabolism);
 		}
 	}
 }

@@ -107,11 +107,12 @@ public class Life : MonoSingleton<Life> {
 
 		creature.DeleteAllCells(); // for the fx :)
 
+		CreatureSelectionPanel.instance.RemoveFromSelection(creature);
+
 		Destroy(creature.gameObject);
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
-
-
+		
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		CreatureSelectionPanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
@@ -326,8 +327,9 @@ public class Life : MonoSingleton<Life> {
 			DeleteCreature(killCreatureList[index]);
 		}
 
+		//
 		for (int index = 0; index < creatureList.Count; index++) {
-			creatureList[index].UpdatePhysics(fixedTime, false);
+			creatureList[index].UpdatePhysics(fixedTime);
 		}
 		
 	}

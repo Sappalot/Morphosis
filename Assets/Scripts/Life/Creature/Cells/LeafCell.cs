@@ -1,7 +1,14 @@
-﻿public class LeafCell : Cell {
+﻿using UnityEngine;
+
+public class LeafCell : Cell {
 	public LeafCell() : base() {
 		springFrequenzy = 5f;
 		springDamping = 11f;
+	}
+
+	public override void UpdateMetabolism(float deltaTime) {
+		effectProduction = 2f;
+		base.UpdateMetabolism(deltaTime);
 	}
 
 	public override CellTypeEnum GetCellType() {

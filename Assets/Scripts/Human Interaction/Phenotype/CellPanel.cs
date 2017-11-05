@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class CellPanel : MonoSingleton<CellPanel> {
 	public Text cellType;
 	public Text cellEnergy;
+	public Text cellEffect;
 	public Text cellNeighbours;
 	public Text connectionGroupCount;
 
@@ -64,6 +65,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected || !selectedCell.creature.phenotype.isAlive) {
 				cellType.text = "Type:";
 				cellEnergy.text = "Energy:";
+				cellEffect.text = "Effect:";
 				cellNeighbours.text = "Neighbours:";
 				connectionGroupCount.text = "Con. Groups: ";
 
@@ -72,8 +74,9 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				return;
 			}
 
-			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isRoot ? " (R)" : "");
-			cellEnergy.text = "Energy: " + selectedCell.energy + " J";
+			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isRoot ? " (Rt)" : "");
+			cellEnergy.text = string.Format("Energy: {0:F1}J", selectedCell.energy);
+			cellEffect.text = string.Format("Effect: {0:F1} - {1:F1} = {2:F1}W", selectedCell.effectProduction, selectedCell.effectConsumption, selectedCell.effect);
 			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnected) + " + ("  + selectedCell.neighbourCountConnected + ")";
 			connectionGroupCount.text = "Con. Groups: " + selectedCell.groups;
 			if (selectedCell is EggCell) {

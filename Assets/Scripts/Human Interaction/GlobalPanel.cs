@@ -6,6 +6,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Text fps;
 	public Text worldNameAndTimeText;
 
+
 	private int frameCount;
 	private float timeCount;
 	private float updateTimeCount;

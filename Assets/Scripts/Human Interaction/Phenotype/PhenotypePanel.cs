@@ -5,6 +5,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public Text creatureAge;
 	public Text creatureCellCount;
 	public Text creatureEnergy;
+	public Text creatureEffect;
 	public CellPanel cellPanel;
 
 	private bool isDirty = true;
@@ -58,6 +59,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 				creatureAge.text = "Age:";
 				creatureCellCount.text = "Cells: ";
 				creatureEnergy.text = "Energy:";
+				creatureEffect.text = "<Effect>:";
 
 				isDirty = false;
 				return;
@@ -65,7 +67,8 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 			creatureAge.text = "Age: 100 days";
 			creatureCellCount.text = "Cells: " + solo.cellsCount + " (" + solo.cellsCountFullyGrown + ")";
-			creatureEnergy.text = string.Format("Energy: {0:F0}%", solo.phenotype.energy / solo.phenotype.cellCount);
+			creatureEnergy.text = string.Format("Energy: {0:F1}%", solo.phenotype.energy / solo.phenotype.cellCount);
+			creatureEffect.text = string.Format("<Effect>: {0:F1} - {1:F1} = {2:F1}W", solo.phenotype.effectProduction / solo.phenotype.cellCount, solo.phenotype.effectConsumption / solo.phenotype.cellCount, solo.phenotype.effect / solo.phenotype.cellCount);
 
 			isDirty = false;
 		}

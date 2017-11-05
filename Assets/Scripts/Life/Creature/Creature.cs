@@ -532,41 +532,50 @@ public class Creature : MonoBehaviour {
 		return phenotype.UpdateKillWeakCells();
 	}
 
-	bool lowFPS = false;
-	float growthCooldown = 1f;
-	public bool UpdatePhysics(float fixedTime, bool updateMetabolism) {
 
-		phenotype.UpdatePhysics(this, fixedTime);
+	float updateMetabolismCooldown = 0f;
+	public bool UpdatePhysics(float fixedTime) {
 
-		if (!updateMetabolism)
-			return false;
-
-		// Life cycle hack HACK
-		growthCooldown -= Time.deltaTime;
-		if (GlobalPanel.instance.hackFps < 2) {
-			lowFPS = true;
+		updateMetabolismCooldown -= Time.fixedDeltaTime;
+		bool updateMetabolism = false;
+		if (updateMetabolismCooldown <= 0f) {
+			updateMetabolism = true;
+			updateMetabolismCooldown = 0.1f;
 		}
-		if (true || !lowFPS) {
-			if (growthCooldown < 0f) {
-				growthCooldown = 0.5f;
-				int grown = phenotype.TryGrow(this, false, 1, true);
-				if (grown == 0) {
-					if (phenotype.DetatchFromMother(this, true)) {
-						return true;
-					}
-					foreach (Cell eggCell in phenotype.cellList) {
-						if (eggCell.GetCellType() == CellTypeEnum.Egg) {
-							if (Random.Range(0, 100) == 0) {
-								Life.instance.FertilizeCreature(eggCell, true);
-								return true;
-							}
-						}
-					}
-				} else {
-					return true;
-				}
-			}
+		phenotype.UpdatePhysics(this, fixedTime, updateMetabolism);
+		if (updateMetabolism) {
+			PhenotypePanel.instance.MakeDirty();
+			CellPanel.instance.MakeDirty();
 		}
+		//if (!updateMetabolism)
+		//	return false;
+
+		//// Life cycle hack HACK
+		//growthCooldown -= Time.deltaTime;
+		//if (GlobalPanel.instance.hackFps < 2) {
+		//	lowFPS = true;
+		//}
+		//if (true || !lowFPS) {
+		//	if (growthCooldown < 0f) {
+		//		growthCooldown = 0.5f;
+		//		int grown = phenotype.TryGrow(this, false, 1, true);
+		//		if (grown == 0) {
+		//			if (phenotype.DetatchFromMother(this, true)) {
+		//				return true;
+		//			}
+		//			foreach (Cell eggCell in phenotype.cellList) {
+		//				if (eggCell.GetCellType() == CellTypeEnum.Egg) {
+		//					if (Random.Range(0, 100) == 0) {
+		//						Life.instance.FertilizeCreature(eggCell, true);
+		//						return true;
+		//					}
+		//				}
+		//			}
+		//		} else {
+		//			return true;
+		//		}
+		//	}
+		//}
 		return false;
 	}
 
