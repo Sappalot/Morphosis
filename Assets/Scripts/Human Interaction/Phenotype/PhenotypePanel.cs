@@ -28,6 +28,22 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 		}
 	}
 
+	public void OnClickHeal() {
+		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
+			creature.ChangeEnergy(5f);
+			CellPanel.instance.MakeDirty();
+			MakeDirty();
+		}
+	}
+
+	public void OnClickHurt() {
+		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
+			creature.ChangeEnergy(-5f);
+			CellPanel.instance.MakeDirty();
+			MakeDirty();
+		}
+	}
+
 	public void MakeDirty() {
 		isDirty = true;
 	}
@@ -49,7 +65,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 			creatureAge.text = "Age: 100 days";
 			creatureCellCount.text = "Cells: " + solo.cellsCount + " (" + solo.cellsCountFullyGrown + ")";
-			creatureEnergy.text = "Energy: 100%";
+			creatureEnergy.text = string.Format("Energy: {0:F0}%", solo.phenotype.energy / solo.phenotype.cellCount);
 
 			isDirty = false;
 		}

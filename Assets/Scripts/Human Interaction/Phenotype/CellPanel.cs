@@ -36,6 +36,24 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		}
 	}
 
+	public void OnClickHeal() {
+		if (CreatureSelectionPanel.instance.hasSoloSelected) {
+			selectedCell.energy = Mathf.Min(selectedCell.energy + 5f, Cell.maxEnergy);
+
+			PhenotypePanel.instance.MakeDirty();
+			isDirty = true;
+		}
+	}
+
+	public void OnClickHurt() {
+		if (CreatureSelectionPanel.instance.hasSoloSelected) {
+			selectedCell.energy -= 5f;
+
+			PhenotypePanel.instance.MakeDirty();
+			isDirty = true;
+		}
+	}
+
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
@@ -54,8 +72,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				return;
 			}
 
-			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isRoot ? " (Root)" : "");
-			cellEnergy.text = "Energy: 100%";
+			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isRoot ? " (R)" : "");
+			cellEnergy.text = "Energy: " + selectedCell.energy + " J";
 			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnected) + " + ("  + selectedCell.neighbourCountConnected + ")";
 			connectionGroupCount.text = "Con. Groups: " + selectedCell.groups;
 			if (selectedCell is EggCell) {

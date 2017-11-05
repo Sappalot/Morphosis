@@ -10,6 +10,17 @@ public class Phenotype : MonoBehaviour {
 			return cellList[0];
 		}
 	}
+
+	public float energy {
+		get {
+			float energy = 0;
+			foreach (Cell cell in cellList) {
+				energy += cell.energy;
+			}
+			return energy;
+		}
+	}
+
 	[HideInInspector]
 	public bool isAlive = true; // Are we going to use this approach?
 
@@ -382,6 +393,12 @@ public class Phenotype : MonoBehaviour {
 			shrinkCellCount++;
 		}
 		
+	}
+
+	public void ChangeEnergy(float amount) {
+		for (int count = 0; count < cellCount; count++) {
+			cellList[count].energy = Mathf.Min(cellList[count].energy + amount, Cell.maxEnergy);
+		}
 	}
 
 	public bool IsRootNeighbouringMothersPlacenta(Creature creature) {
@@ -815,7 +832,18 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	
+	public bool UpdateKillWeakCells() {
+		if (rootCell.energy <= 0f) {
+			return true;
+		}
+		for (int index = 1; index < cellList.Count; index++) {
+			if (cellList[index].energy <= 0f) {
+				DeleteCell(cellList[index], true, true);
+			}
+		}
+		return false;
+	}
+
 	public void UpdatePhysics(Creature creature, float fixedTime) {
 		if (isGrabbed) {
 			return;

@@ -18,6 +18,22 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public float timeOffset;
 
+	// metabolism
+	[HideInInspector]
+	public static float maxEnergy = 100f;
+	[HideInInspector]
+	public float energy;
+	[HideInInspector]
+	public float effectProduction = 0f;
+	[HideInInspector]
+	public float effectConsumption = 0;
+
+	public float netEffect {
+		get {
+			return effectProduction - effectConsumption;
+		}
+	}
+
 	//  The direction the cell is facing in creature space
 	public int bindCardinalIndex; // where cells flip triangle is pointing in gene mode (0 is 30 degrees, N is 30 + N * 60 drgrees)
 	public float heading; // where the cells flip triangle is pointing at the moment (0 is east, 90 is north ...)
@@ -189,26 +205,8 @@ public abstract class Cell : MonoBehaviour {
 		springList.Add(southWestSpring);
 
 		ShowCreatureSelected(false);
-	}
 
-	//TODO: update cell graphics from here
-	public void EvoUpdate() {
-
-	}
-
-	public void UpdatePhysics(float fixedTime) {
-		//Optimize further
-		transform.rotation = Quaternion.identity; //dont turn the cells
-
-		UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
-		if (groups > 1) {
-			TurnHingeNeighboursInPlace(); //optimize further
-		}
-		UpdateRotation(); //costy, update only if cell has direction and is in frustum
-		UpdateFlipSide();
-
-		UpdateRadius(fixedTime);
-		UpdateSpringLengths(); // It is costy to update spring length
+		energy = 88f;
 	}
 
 	public void RemovePhysicsComponents() {
@@ -462,6 +460,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	//Phenotype
+
 	public void UpdateSpringConnectionsIntra() {
 		// Intra creatures
 		if (HasOwnNeighbourCell(CardinalEnum.north)) {
@@ -596,8 +595,10 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	//data
+	// Load / Save
+
 	private CellData cellData = new CellData();
+
 	public CellData UpdateData() {
 		cellData.position = transform.position;
 		cellData.heading = heading;
@@ -628,5 +629,31 @@ public abstract class Cell : MonoBehaviour {
 		this.creature = creature;
 
 	}
+
+	// ^ Load Save ^
+
+	// Update
+
+	//TODO: update cell graphics from here
+	public void EvoUpdate() {
+
+	}
+
+	public void UpdatePhysics(float fixedTime) {
+		//Optimize further
+		transform.rotation = Quaternion.identity; //dont turn the cells
+
+		UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
+		if (groups > 1) {
+			TurnHingeNeighboursInPlace(); //optimize further
+		}
+		UpdateRotation(); //costy, update only if cell has direction and is in frustum
+		UpdateFlipSide();
+
+		UpdateRadius(fixedTime);
+		UpdateSpringLengths(); // It is costy to update spring length
+	}
+
+	// ^ Update ^
 
 }

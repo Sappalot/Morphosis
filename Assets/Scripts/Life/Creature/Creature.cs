@@ -48,6 +48,12 @@ public class Creature : MonoBehaviour {
 	public Genotype genotype;
 	public Phenotype phenotype;
 
+	public float energy {
+		get {
+			return phenotype.energy;
+		}
+	}
+
 	public bool hasSoul {
 		get {
 			return soul != null;
@@ -275,6 +281,11 @@ public class Creature : MonoBehaviour {
 
 	public void TryShrink(int cellCount = 1) {
 		phenotype.TryShrink(cellCount);
+		isDirtyGraphics = true;
+	}
+
+	public void ChangeEnergy(float amount) {
+		phenotype.ChangeEnergy(amount);
 		isDirtyGraphics = true;
 	}
 
@@ -517,13 +528,17 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
+	public bool UpdateKillWeakCells() {
+		return phenotype.UpdateKillWeakCells();
+	}
+
 	bool lowFPS = false;
 	float growthCooldown = 1f;
-	public bool UpdatePhysics(float fixedTime, bool isTask) {
+	public bool UpdatePhysics(float fixedTime, bool updateMetabolism) {
 
 		phenotype.UpdatePhysics(this, fixedTime);
 
-		if (!isTask)
+		if (!updateMetabolism)
 			return false;
 
 		// Life cycle hack HACK
@@ -554,4 +569,6 @@ public class Creature : MonoBehaviour {
 		}
 		return false;
 	}
+
+
 }

@@ -63,7 +63,7 @@ public class Life : MonoSingleton<Life> {
 		// Let there be evolution, and ther ewas evolution
 		//child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
 		//.GetMutatedClone(0.2f)
-		child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading); //HAck
+		child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading); //Mutation Hack
 
 		Soul motherSoul = GetSoul(mother.id);
 		Soul childSoul = GetSoul(child.id);
@@ -284,6 +284,8 @@ public class Life : MonoSingleton<Life> {
 
 	// ^ Load Save ^
 
+	// Update
+
 	// Allways, updated from Update
 	// Keeping graphics up to date, creature selection, cell selection, flipArrows, edges
 	public void UpdateGraphics() {
@@ -308,17 +310,26 @@ public class Life : MonoSingleton<Life> {
 	}
 
 
-	private int canDoTaskCoolDown = 0;
 	// Phenotype only, updated from FixedUpdate
 	// Everything that needs to be updated as the biological clock is ticking, wings, cell tasks, energy
+	private List<Creature> killCreatureList = new List<Creature>();
+
 	public void UpdatePhysics(float fixedTime) {
-		canDoTaskCoolDown--;
+		//kill of weak cells / creatures
+		killCreatureList.Clear();
 		for (int index = 0; index < creatureList.Count; index++) {
-			if (creatureList[index].UpdatePhysics(fixedTime, canDoTaskCoolDown < 0)) {
-				canDoTaskCoolDown = 10;
-				return; //Max one growth per frame
+			if (creatureList[index].UpdateKillWeakCells()) {
+				killCreatureList.Add(creatureList[index]);
 			}
 		}
+		for (int index = 0; index < killCreatureList.Count; index++) {
+			DeleteCreature(killCreatureList[index]);
+		}
+
+		for (int index = 0; index < creatureList.Count; index++) {
+			creatureList[index].UpdatePhysics(fixedTime, false);
+		}
+		
 	}
 
 	// ^ Update ^
