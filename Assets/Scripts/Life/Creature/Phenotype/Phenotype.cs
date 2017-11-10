@@ -68,7 +68,8 @@ public class Phenotype : MonoBehaviour {
 	public float timeOffset;
 
 	public GameObject cells;
-	public Edges edges;
+	public Edges edges; //Wings
+	public Veins veins;
 
 	public bool isGrabbed { get; private set; }
 	[HideInInspector]
@@ -111,7 +112,7 @@ public class Phenotype : MonoBehaviour {
 
 	public void InitiateEmbryo(Creature creature, Vector2 position, float heading) {
 		Setup(creature, position, heading);
-		TryGrow(creature, true, 1);
+		TryGrow(creature, true, 1, true, false);
 		cellsDiffersFromGeneCells = false;
 	}
 
@@ -138,10 +139,10 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public int TryGrowFully(Creature creature, bool forceGrow) {
-		return TryGrow(creature, forceGrow, creature.genotype.geneCellCount);
+		return TryGrow(creature, forceGrow, creature.genotype.geneCellCount, true, false);
 	}
 
-	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool playEffects = false) {
+	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects) {
 		////Fail safe ... to be removed
 		for (int index = 0; index < Life.instance.soulList.Count; index++) {
 			Life.instance.soulList[index].UpdateReferences();
@@ -154,7 +155,7 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		if (cellList.Count == 0) {
-			SpawnCell(creature, genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, spawnPosition, true);
+			SpawnCell(creature, genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, spawnPosition, true, 100f);
 
 			//EvoFixedUpdate(creature, 0f); //Do we really need to do this here?
 			rootCell.heading = spawnHeading;
@@ -175,9 +176,11 @@ public class Phenotype : MonoBehaviour {
 				int positionCount = 0;
 
 				//find neighbours around cell to build
+				List<Cell> builderCells = new List<Cell>();
 				for (int neighbourIndex = 0; neighbourIndex < 6; neighbourIndex++) {
 					Cell gridNeighbourBuilder = cellMap.GetGridNeighbourCell(geneCell.mapPosition, neighbourIndex);
 					if (gridNeighbourBuilder != null) {
+						builderCells.Add(gridNeighbourBuilder);
 						int indexToMe = CardinaIndexToNeighbour(gridNeighbourBuilder, geneCell);
 						float meFromNeightbourBindPose = AngleUtil.CardinalIndexToAngle(indexToMe);
 						float meFromNeighbour = (gridNeighbourBuilder.angleDiffFromBindpose + meFromNeightbourBindPose) % 360f;
@@ -187,12 +190,36 @@ public class Phenotype : MonoBehaviour {
 					}
 				}
 
+				// test if the position is free to grow on
 				Vector2 spawnPosition = averagePosition / positionCount;
 				if (!allowOvergrowth && !CanGrowAtPosition(spawnPosition, 0.33f)) {
 					continue;
 				}
 
-				Cell newCell = SpawnCell(creature, geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, spawnPosition, false);
+				// test if neighbours can afford to build cell
+				float newCellEnergy = 100f;
+				const float buildBaseEnergy = 10f;
+				if (!free) {
+					float sumExtraEnergy = 0f;
+					foreach (Cell builder in builderCells) {
+						if (builder.energy > buildBaseEnergy) {
+							sumExtraEnergy += builder.energy - buildBaseEnergy;
+						}
+					}
+					if (sumExtraEnergy >= buildBaseEnergy) {
+						float giftFactor = buildBaseEnergy / sumExtraEnergy;
+						foreach (Cell builder in builderCells) {
+							if (builder.energy > buildBaseEnergy) {
+								builder.energy -= (builder.energy - buildBaseEnergy) * giftFactor;
+							}
+						}
+						newCellEnergy = buildBaseEnergy;
+					} else {
+						continue;
+					}
+				}
+
+				Cell newCell = SpawnCell(creature, geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, spawnPosition, false, newCellEnergy);
 				UpdateNeighbourReferencesIntraBody(); //We need to know our neighbours in order to update vectors correctly 
 				newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
 				newCell.UpdateRotation(); //Rotation is needed in order to place subsequent cells right
@@ -202,7 +229,7 @@ public class Phenotype : MonoBehaviour {
 		}
 		if (growCellCount > 0) {
 			if (playEffects) {
-				//Audio.instance.CellBirth();
+				Audio.instance.CellBirth();
 			}
 
 			PhenotypePanel.instance.MakeDirty();
@@ -308,6 +335,9 @@ public class Phenotype : MonoBehaviour {
 
 			//Wings
 			edges.GenerateWings(creature, cellMap); // Wings are only generated from here
+
+			//Veins
+			veins.GenerateVeins(creature, cellMap);
 
 			//Debug
 			UpdateSpringsFrequenze(); //testing only
@@ -605,7 +635,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	private Cell SpawnCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindCardinalIndex, FlipSideEnum flipSide, Vector2 position, bool modelSpace) {
+	private Cell SpawnCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindCardinalIndex, FlipSideEnum flipSide, Vector2 position, bool modelSpace, float energy) {
 		Cell cell = InstantiateCell(gene.type, mapPosition);
 		Vector2 spawnPosition = (modelSpace ? CellMap.ToModelSpacePosition(mapPosition) : Vector2.zero) + position;
 		cell.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, 0f);
@@ -618,8 +648,7 @@ public class Phenotype : MonoBehaviour {
 		cell.timeOffset = timeOffset;
 		cell.creature = creature;
 
-		cell.energy = 100f;
-		cell.ResetMetabolismUpdate();
+		cell.energy = energy;
 
 		return cell;
 	}
@@ -668,7 +697,7 @@ public class Phenotype : MonoBehaviour {
 	public void ShowSelectedCreature(bool on) {
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].ShowCreatureSelected(on);
-			cellList[index].ShowTriangle(true); // Debug
+			cellList[index].ShowTriangle(false); // Debug
 		}
 	}
 
@@ -845,6 +874,7 @@ public class Phenotype : MonoBehaviour {
 		//TODO: Update cells flip triangles here
 
 		edges.UpdateGraphics();
+		veins.UpdateGraphics();
 
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
@@ -873,7 +903,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	public void UpdatePhysics(Creature creature, float fixedTime, bool updateMetabolism) {
+	public void UpdatePhysics(Creature creature, float fixedTime, float deltaTickTime, bool isTick) {
 		if (isGrabbed) {
 			return;
 		}
@@ -897,10 +927,12 @@ public class Phenotype : MonoBehaviour {
 		//}
 
 		// Edges, let edge-wings apply proper forces to neighbouring cells
-		edges.EvoFixedUpdate(velocity, creature);
+		edges.UpdatePhysics(velocity, creature);
+
+		veins.UpdatePhysics(deltaTickTime);
 
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdatePhysics(fixedTime, updateMetabolism);
+			cellList[index].UpdatePhysics(fixedTime, deltaTickTime, isTick);
 		}
 	}
 }

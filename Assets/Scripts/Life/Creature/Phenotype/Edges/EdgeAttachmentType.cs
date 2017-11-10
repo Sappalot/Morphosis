@@ -1,6 +1,5 @@
 ﻿public enum EdgeAttachmentType {
-    unassigned,
-    front,
-    back,
+	unassigned,
+	front,
+	back,
 }
-

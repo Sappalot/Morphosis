@@ -26,7 +26,7 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public float effectProduction = 0f;
 	[HideInInspector]
-	public float effectConsumption = 1; // wont update when changed???
+	public float effectConsumption = 0; // wont update when changed???
 
 	public float effect {
 		get {
@@ -117,35 +117,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	virtual public void UpdateMetabolism(float deltaTime) {
-		//energy = Mathf.Min(energy + effect * deltaTime, maxEnergy);
-
-		//make poores neighbour and me have same amount of energy, by sharing
-		//Cell cellPoorest = null;
-		//float meMoreEnergyPoorest = 0f;
-		foreach (Cell neighbour in GetNeighbourCells()) { //Connected as well
-			float meMoreEnergy = energy - neighbour.energy;
-			if (meMoreEnergy > 0f) {
-				float slowness = 200;
-				if (this is VeinCell) {
-					slowness = 1;
-				}
-				float flowEffect = (energy - neighbour.energy) / slowness;
-				energy -=           flowEffect * deltaTime;
-				neighbour.energy += flowEffect * deltaTime;
-			}
-
-			//if (meMoreEnergy > 0 && meMoreEnergy > meMoreEnergyPoorest) {
-			//	meMoreEnergyPoorest = meMoreEnergy;
-			//	cellPoorest = neighbour;
-			//}
-		}
-		
-		//if (cellPoorest != null) {
-		//	float flowMaxEffect = 0.5f; // W
-		//	float flowEffect = (energy - cellPoorest.energy) / 200f;
-		//	energy             -= flowEffect * deltaTime;
-		//	cellPoorest.energy += flowEffect * deltaTime;
-		//}
+		energy = Mathf.Min(energy + effect * deltaTime, maxEnergy);
 	}
 
 	virtual public void UpdateRadius(float fixedTime) { }
@@ -219,13 +191,13 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public CellNeighbour northEastNeighbour =   new CellNeighbour(0);
 	[HideInInspector]
-	public CellNeighbour northNeighbour =       new CellNeighbour(1);
+	public CellNeighbour northNeighbour     =   new CellNeighbour(1);
 	[HideInInspector]
 	public CellNeighbour northWestNeighbour =   new CellNeighbour(2);
 	[HideInInspector]
 	public CellNeighbour southWestNeighbour =   new CellNeighbour(3); 
 	[HideInInspector]
-	public CellNeighbour southNeighbour =       new CellNeighbour(4);
+	public CellNeighbour southNeighbour     =   new CellNeighbour(4);
 	[HideInInspector]
 	public CellNeighbour southEastNeighbour =   new CellNeighbour(5);
    
@@ -257,7 +229,7 @@ public abstract class Cell : MonoBehaviour {
 		ShowCreatureSelected(false);
 
 		energy = 100f;
-		effectConsumption = 1;
+		effectConsumption = 0;
 		effectProduction = 0f;
 	}
 
@@ -678,11 +650,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public void ResetMetabolismUpdate() {
-		lastUpdateMetabolismTime = -1f;
-	}
-	private float lastUpdateMetabolismTime;
-	public void UpdatePhysics(float fixedTime, bool updateMetabolism) {
+	public void UpdatePhysics(float fixedTime, float deltaTickTime, bool isTick) {
 		//Optimize further
 		transform.rotation = Quaternion.identity; //dont turn the cells
 
@@ -696,16 +664,10 @@ public abstract class Cell : MonoBehaviour {
 		UpdateRadius(fixedTime);
 		UpdateSpringLengths(); // It is costy to update spring length
 
-		if (updateMetabolism) {
-			if (lastUpdateMetabolismTime < 0) { //dirty
-				lastUpdateMetabolismTime = fixedTime;
-			} else {
-				float deltaTime = fixedTime - lastUpdateMetabolismTime;
-				lastUpdateMetabolismTime = fixedTime;
-				UpdateMetabolism(deltaTime);
-				
-			}
+		if (isTick) {
+			UpdateMetabolism(deltaTickTime);
 		}
+
 	}
 
 	// ^ Update ^

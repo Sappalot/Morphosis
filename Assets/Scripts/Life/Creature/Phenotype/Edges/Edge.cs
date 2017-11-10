@@ -49,14 +49,6 @@ public class Edge : MonoBehaviour {
 		return null;
 	}
 
-	public void UpdateSpring() {
-
-	}
-
-	public void UpdateEnergyTransfer() {
-
-	}
-
 	public void MakeWing(Cell frontCell) {
 		if (frontCell == attachmentParent.cell) {
 			this.frontCell = frontCell;

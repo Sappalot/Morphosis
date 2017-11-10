@@ -274,8 +274,8 @@ public class Creature : MonoBehaviour {
 	}
 
 	// Apply on Phenotype
-	public void TryGrow(bool forceGrow, int cellCount = 1, bool playEffects = false) {
-		phenotype.TryGrow(this, forceGrow, cellCount, playEffects);
+	public void TryGrow(bool forceGrow, int cellCount, bool playEffects) {
+		phenotype.TryGrow(this, forceGrow, cellCount, true, playEffects);
 		isDirtyGraphics = true;
 	}
 
@@ -533,17 +533,23 @@ public class Creature : MonoBehaviour {
 	}
 
 
-	float updateMetabolismCooldown = 0f;
+	float tickCoolDown = 0f;
+	float lastTickTimeStamp = 0f;
 	public bool UpdatePhysics(float fixedTime) {
 
-		updateMetabolismCooldown -= Time.fixedDeltaTime;
-		bool updateMetabolism = false;
-		if (updateMetabolismCooldown <= 0f) {
-			updateMetabolism = true;
-			updateMetabolismCooldown = 0.1f;
+		tickCoolDown -= Time.fixedDeltaTime;
+		float deltaTickTime = 0f;
+		bool isTick = false;
+		if (tickCoolDown <= 0f) {
+			isTick = true;
+			tickCoolDown = 0.1f;
+			deltaTickTime = fixedTime - lastTickTimeStamp;
+			lastTickTimeStamp = fixedTime;
 		}
-		phenotype.UpdatePhysics(this, fixedTime, updateMetabolism);
-		if (updateMetabolism) {
+		phenotype.UpdatePhysics(this, fixedTime, deltaTickTime, isTick);
+		if (isTick) {
+			phenotype.TryGrow(this, false, 1, false, true);
+
 			PhenotypePanel.instance.MakeDirty();
 			CellPanel.instance.MakeDirty();
 		}

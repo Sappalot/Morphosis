@@ -73,7 +73,6 @@ public class Life : MonoSingleton<Life> {
 
 		//eggCell.creature.DetatchFromMother(); //HACK detatch when born test
 
-
 		PhenotypePanel.instance.MakeDirty();
 		CreatureSelectionPanel.instance.MakeDirty();
 	}
@@ -98,6 +97,7 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	public void DeleteCreature(Creature creature) {
+		Debug.Log("Kill Creature: " + creature.id);
 		creature.DetatchFromMother(true);
 		foreach(Soul childSoul in creature.childSouls) {
 			if (childSoul.hasCreature) {

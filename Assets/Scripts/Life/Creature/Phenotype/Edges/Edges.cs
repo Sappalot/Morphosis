@@ -22,7 +22,7 @@ public class Edges : MonoBehaviour {
 	}
 
 	//All wings will apply forces to their cells 
-	public void EvoFixedUpdate(Vector3 creatureVelocity, Creature creature) {
+	public void UpdatePhysics(Vector3 creatureVelocity, Creature creature) {
 		//Todo do this more seldom
 		for (int index = 0; index < edgeList.Count; index++) {
 			Edge edge = edgeList[index];
