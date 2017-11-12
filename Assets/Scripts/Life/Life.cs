@@ -55,6 +55,7 @@ public class Life : MonoSingleton<Life> {
 		// Q: What happens when 2 children, attatched to same mother, grows into each other (prio??), A: Let them grow as long as ther is room for each new cell. Probe for room firstm, then build?
 
 		// remove cell at childs root location
+		float eggEnergy = eggCell.energy;
 		mother.DeleteCellButRoot(eggCell); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
 
 		// Spawn child at egg cell location
@@ -63,7 +64,8 @@ public class Life : MonoSingleton<Life> {
 		// Let there be evolution, and ther ewas evolution
 		//child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
 		//.GetMutatedClone(0.2f)
-		child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading); //Mutation Hack
+		child.GenerateEmbryo(mother.genotype.GetMutatedClone(0.2f), eggCell.position, eggCell.heading); //Mutation Hack
+		child.phenotype.rootCell.energy = eggEnergy;
 
 		Soul motherSoul = GetSoul(mother.id);
 		Soul childSoul = GetSoul(child.id);

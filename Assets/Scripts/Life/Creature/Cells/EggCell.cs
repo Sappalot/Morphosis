@@ -5,6 +5,16 @@ public class EggCell : Cell {
 		springDamping = 11f;
 	}
 
+	public bool shouldFertilize = false;
+
+	public override void UpdateMetabolism(float deltaTime) {
+		base.UpdateMetabolism(deltaTime);
+
+		if (energy > 40) {
+			shouldFertilize = true;
+		}
+	}
+
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Egg;
 	}

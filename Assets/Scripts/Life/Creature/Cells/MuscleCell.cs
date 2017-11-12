@@ -8,6 +8,11 @@ public class MuscleCell : Cell {
 		springDamping = 11f;
 	}
 
+	public override void UpdateMetabolism(float deltaTime) {
+		effectConsumptionInternal = 1f;
+		base.UpdateMetabolism(deltaTime);
+	}
+
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Muscle;
 

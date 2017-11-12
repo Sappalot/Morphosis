@@ -534,21 +534,49 @@ public class Creature : MonoBehaviour {
 
 
 	float tickCoolDown = 0f;
-	float lastTickTimeStamp = 0f;
-	public bool UpdatePhysics(float fixedTime) {
+	float lastTickTimeStamp = -1f;
+	public void UpdatePhysics(float fixedTime) {
+		if (!hasSoul) {
+			return;
+		}
 
 		tickCoolDown -= Time.fixedDeltaTime;
 		float deltaTickTime = 0f;
 		bool isTick = false;
 		if (tickCoolDown <= 0f) {
-			isTick = true;
-			tickCoolDown = 0.1f;
-			deltaTickTime = fixedTime - lastTickTimeStamp;
-			lastTickTimeStamp = fixedTime;
+			if (lastTickTimeStamp < 0) {
+				lastTickTimeStamp = fixedTime;
+			} else {
+				isTick = true;
+				tickCoolDown = 1f;
+				deltaTickTime = fixedTime - lastTickTimeStamp;
+				lastTickTimeStamp = fixedTime;
+			}
 		}
-		phenotype.UpdatePhysics(this, fixedTime, deltaTickTime, isTick);
+		phenotype.UpdatePhysics(this, fixedTime, 1f, isTick);
 		if (isTick) {
 			phenotype.TryGrow(this, false, 1, false, true);
+
+			//Detatch ?
+			if (phenotype.rootCell.energy > 45f) {
+				DetatchFromMother(true);
+			}
+
+			//Fertilize ?
+			Cell fertilizeCell = null;
+			foreach (Cell c in phenotype.cellList) {
+				if (c is EggCell) {
+					EggCell eggCell = c as EggCell;
+					if (eggCell.shouldFertilize) {
+						fertilizeCell = eggCell;
+						eggCell.shouldFertilize = false;
+						break;
+					}
+				}
+			}
+			if (fertilizeCell != null) {
+				Life.instance.FertilizeCreature(fertilizeCell, true);
+			}
 
 			PhenotypePanel.instance.MakeDirty();
 			CellPanel.instance.MakeDirty();
@@ -582,7 +610,7 @@ public class Creature : MonoBehaviour {
 		//		}
 		//	}
 		//}
-		return false;
+		return;
 	}
 
 

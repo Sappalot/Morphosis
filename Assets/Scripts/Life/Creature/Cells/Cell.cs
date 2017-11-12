@@ -18,15 +18,57 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public float timeOffset;
 
+	[HideInInspector]
+	private List<Cell> predators = new List<Cell>();
+
+	//How many cells are eating on me
+	private int predatorCount {
+		get {
+			return predators.Count;
+		}
+	}
+
+	public void AddPredator(Cell predator) {
+		if (!predators.Contains(predator)) {
+			predators.Add(predator);
+		}
+	}
+
+	public void RemovePredator(Cell predator) {
+		if (!predators.Contains(predator)) {
+			predators.Remove(predator);
+		}
+	}
+
 	// metabolism
 	[HideInInspector]
 	public static float maxEnergy = 100f;
 	[HideInInspector]
-	public float energy;
+	private float m_energy;
+	public float energy {
+		get {
+			return m_energy;
+		}
+		set {
+			m_energy = value;
+		}
+	}
 	[HideInInspector]
 	public float effectProduction = 0f;
 	[HideInInspector]
-	public float effectConsumption = 0; // wont update when changed???
+	public float effectConsumptionInternal = 0;
+	[HideInInspector]
+	public float effectConsumptionExternal {
+		get {
+			return predatorCount * GlobalSettings.instance.jawCellEatEffect;
+		}
+	}
+
+	public float effectConsumption {
+		get {
+			return effectConsumptionInternal + effectConsumptionExternal;
+		}
+	}
 
 	public float effect {
 		get {
@@ -52,7 +94,17 @@ public abstract class Cell : MonoBehaviour {
 	public float springDamping = 11f;
 
 	[HideInInspector]
-	public Creature creature;
+	public Creature m_creature;
+
+	virtual public Creature creature {
+		get {
+			return m_creature;
+		}
+		set {
+			m_creature = value;
+		}
+	}
+
 
 	public SpriteRenderer cellSelectedSprite; //transparent
 	public SpriteRenderer triangleSprite;
@@ -228,8 +280,7 @@ public abstract class Cell : MonoBehaviour {
 
 		ShowCreatureSelected(false);
 
-		energy = 100f;
-		effectConsumption = 0;
+		effectConsumptionInternal = 0.5f;
 		effectProduction = 0f;
 	}
 
@@ -617,6 +668,7 @@ public abstract class Cell : MonoBehaviour {
 		cellData.lastTime = lastTime;
 		cellData.radius = radius;
 		cellData.velocity = transform.GetComponent<Rigidbody2D>().velocity;
+		cellData.energy = energy;
 		return cellData;
 	}
 
@@ -632,8 +684,8 @@ public abstract class Cell : MonoBehaviour {
 		lastTime = cellData.lastTime;
 		radius = cellData.radius;
 		transform.GetComponent<Rigidbody2D>().velocity = cellData.velocity;
+		energy = cellData.energy;
 		this.creature = creature;
-
 	}
 
 	// ^ Load Save ^

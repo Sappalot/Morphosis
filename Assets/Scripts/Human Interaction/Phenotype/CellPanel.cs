@@ -8,7 +8,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public Text cellNeighbours;
 	public Text connectionGroupCount;
 
-	public EggPanel eggPanel;
+	public EggCellPanel eggCellPanel;
+	public JawCellPanel jawCellPanel;
 
 	private bool isDirty = true;
 	private Cell m_selectedCell;
@@ -57,9 +58,12 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	private void Update() {
 		if (isDirty) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update CellPanel");
-			eggPanel.gameObject.SetActive(false);
+			}
+
+			eggCellPanel.gameObject.SetActive(false);
+			jawCellPanel.gameObject.SetActive(false);
 
 			//Nothing to represent
 			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected || !selectedCell.creature.phenotype.isAlive) {
@@ -69,7 +73,6 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				cellNeighbours.text = "Neighbours:";
 				connectionGroupCount.text = "Con. Groups: ";
 
-				eggPanel.gameObject.SetActive(false);
 				isDirty = false;
 				return;
 			}
@@ -80,7 +83,9 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnected) + " + ("  + selectedCell.neighbourCountConnected + ")";
 			connectionGroupCount.text = "Con. Groups: " + selectedCell.groups;
 			if (selectedCell is EggCell) {
-				eggPanel.gameObject.SetActive(true);
+				eggCellPanel.gameObject.SetActive(true);
+			} else if (selectedCell is JawCell) {
+				jawCellPanel.gameObject.SetActive(true);
 			}
 
 			isDirty = false;

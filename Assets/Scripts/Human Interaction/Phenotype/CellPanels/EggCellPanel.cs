@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class EggPanel : MonoBehaviour {
+public class EggCellPanel : MonoSingleton<EggCellPanel> {
 
 	public void OnClickFertilize() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {

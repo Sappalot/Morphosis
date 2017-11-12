@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class LeafCell : Cell {
+﻿public class LeafCell : Cell {
 	public LeafCell() : base() {
 		springFrequenzy = 5f;
 		springDamping = 11f;

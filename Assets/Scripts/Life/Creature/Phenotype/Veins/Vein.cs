@@ -114,19 +114,20 @@ public class Vein : MonoBehaviour {
 	private float flowEffectFactor {
 		get {
 			if (effectType == EffectEnum.LowLow) {
-				return 0.01f;
+				return 0.005f;
 			} else if (effectType == EffectEnum.LowHigh) {
-				return 0.05f;
+				return 0.025f;
 			} else {
 				// HighHigh
-				return 0.1f;
+				return 0.05f;
 			}
 		}
 	}
 
+	private const float lowestGivingCellEnergy = 5f;
 	public void UpdateEnergy(float deltaTickTime) {
 		float deltaEnergyBack = flowEffectFrontToBack * deltaTickTime;
-		if (backCell.energy + deltaEnergyBack > 0f && frontCell.energy - deltaEnergyBack > 0f) {
+		if (backCell.energy + deltaEnergyBack > 0f && frontCell.energy - deltaEnergyBack > lowestGivingCellEnergy) {
 			backCell.energy += deltaEnergyBack;
 			frontCell.energy -= deltaEnergyBack;
 		}

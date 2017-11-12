@@ -155,7 +155,7 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		if (cellList.Count == 0) {
-			SpawnCell(creature, genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, spawnPosition, true, 100f);
+			SpawnCell(creature, genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, spawnPosition, true, 30f);
 
 			//EvoFixedUpdate(creature, 0f); //Do we really need to do this here?
 			rootCell.heading = spawnHeading;
@@ -197,13 +197,13 @@ public class Phenotype : MonoBehaviour {
 				}
 
 				// test if neighbours can afford to build cell
-				float newCellEnergy = 100f;
+				float newCellEnergy = 30f;
 				const float buildBaseEnergy = 10f;
 				if (!free) {
 					float sumExtraEnergy = 0f;
 					foreach (Cell builder in builderCells) {
 						if (builder.energy > buildBaseEnergy) {
-							sumExtraEnergy += builder.energy - buildBaseEnergy;
+							sumExtraEnergy += (builder.energy - buildBaseEnergy);
 						}
 					}
 					if (sumExtraEnergy >= buildBaseEnergy) {
@@ -228,9 +228,9 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 		if (growCellCount > 0) {
-			if (playEffects) {
-				Audio.instance.CellBirth();
-			}
+			//if (playEffects) {
+			//	Audio.instance.CellBirth();
+			//}
 
 			PhenotypePanel.instance.MakeDirty();
 			connectionsDiffersFromCells = true;
@@ -250,7 +250,7 @@ public class Phenotype : MonoBehaviour {
 
 	private bool IsMotherPlacentaLocation(Creature creature, Vector2i mapPosition) {
 		//My(root) <====> Mohther(placenta)
-		if (creature.soul.motherSoulReference.id != string.Empty && creature.soul.isConnectedWithMotherSoul) {
+		if (creature.soul != null && creature.soul.motherSoulReference.id != string.Empty && creature.soul.isConnectedWithMotherSoul) {
 			Creature creatureMother = creature.mother;
 			foreach (Soul child in creatureMother.childSouls) {
 				if (child.isConnectedWithMotherSoul && child.id == creature.id) {
@@ -350,7 +350,6 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	private void UpdateNeighbourReferencesInterBody(Creature creature) {
-		
 		// All cells within body
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
@@ -635,7 +634,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	private Cell SpawnCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindCardinalIndex, FlipSideEnum flipSide, Vector2 position, bool modelSpace, float energy) {
+	private Cell SpawnCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindCardinalIndex, FlipSideEnum flipSide, Vector2 position, bool modelSpace, float spawnEnergy) {
 		Cell cell = InstantiateCell(gene.type, mapPosition);
 		Vector2 spawnPosition = (modelSpace ? CellMap.ToModelSpacePosition(mapPosition) : Vector2.zero) + position;
 		cell.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, 0f);
@@ -648,7 +647,7 @@ public class Phenotype : MonoBehaviour {
 		cell.timeOffset = timeOffset;
 		cell.creature = creature;
 
-		cell.energy = energy;
+		cell.energy = spawnEnergy;
 
 		return cell;
 	}

@@ -1,11 +1,33 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿public class JawCell : Cell {
 
-public class JawCell : Cell {
+	public JawCellMouth mouth;
 
 	public JawCell() : base() {
 		springFrequenzy = 5f;
 		springDamping = 11f;
+	}
+
+	public override void UpdateMetabolism(float deltaTime) {
+		//const float eatEffect = 3f;
+		//float deltaEnergyPrayToPredator = eatEffect * deltaTime;
+		//foreach (Cell prayCell in mouth.prayCells) {
+		//	prayCell.energy -= deltaEnergyPrayToPredator;
+		//	energy += deltaEnergyPrayToPredator;
+		//}
+
+		effectProduction = mouth.prayCount * GlobalSettings.instance.jawCellEatEffect;
+
+		base.UpdateMetabolism(deltaTime);
+	}
+
+	override public Creature creature {
+		get {
+			return m_creature;
+		}
+		set {
+			m_creature = value;
+			mouth.creature = value;
+		}
 	}
 
 	public override CellTypeEnum GetCellType() {

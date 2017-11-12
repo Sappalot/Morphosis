@@ -51,6 +51,8 @@
 	public float referenceSideLeave = 100f;
 	public float referenceSideToggle = 1f;
 
+	//Jaw Cell
+	public float jawCellEatEffect = 5f;
 
 	// DEBUG
 	public bool printoutAtDirtyMarkedUpdate = true;
