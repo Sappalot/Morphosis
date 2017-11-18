@@ -5,6 +5,13 @@
 		springDamping = 11f;
 	}
 
+	public override void UpdateMetabolism(float deltaTime) {
+		effectConsumptionInternal = GlobalSettings.instance.veinCellEffectCost;
+		effectProduction = 0f;
+
+		base.UpdateMetabolism(deltaTime);
+	}
+
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Vein;
 	}

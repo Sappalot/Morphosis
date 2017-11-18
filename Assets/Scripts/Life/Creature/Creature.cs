@@ -17,8 +17,6 @@ public class Creature : MonoBehaviour {
 	public SpriteRenderer genotypePosition;
 	public SpriteRenderer genotypeCellsPosition;
 
-
-
 	//wing force
 	[Range(0f, 1f)]
 	public float wingDrag = 1f;
@@ -470,7 +468,7 @@ public class Creature : MonoBehaviour {
 		}
 
 		genotype.UpdateGraphics();
-		phenotype.UpdateGraphics();
+		phenotype.UpdateGraphics(this);
 
 		if (isDirtyGraphics) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
@@ -532,7 +530,6 @@ public class Creature : MonoBehaviour {
 		return phenotype.UpdateKillWeakCells();
 	}
 
-
 	float tickCoolDown = 0f;
 	float lastTickTimeStamp = -1f;
 	public void UpdatePhysics(float fixedTime) {
@@ -545,20 +542,22 @@ public class Creature : MonoBehaviour {
 		bool isTick = false;
 		if (tickCoolDown <= 0f) {
 			if (lastTickTimeStamp < 0) {
+				//initialize
 				lastTickTimeStamp = fixedTime;
+				tickCoolDown = Random.Range(0f, GlobalSettings.instance.metabolismPeriod);
 			} else {
 				isTick = true;
-				tickCoolDown = 1f;
+				tickCoolDown = GlobalSettings.instance.metabolismPeriod;
 				deltaTickTime = fixedTime - lastTickTimeStamp;
 				lastTickTimeStamp = fixedTime;
 			}
 		}
-		phenotype.UpdatePhysics(this, fixedTime, 1f, isTick);
+		phenotype.UpdatePhysics(this, fixedTime, deltaTickTime, isTick);
 		if (isTick) {
 			phenotype.TryGrow(this, false, 1, false, true);
 
 			//Detatch ?
-			if (phenotype.rootCell.energy > 45f) {
+			if (phenotype.rootCell.energy > GlobalSettings.instance.eggCellRootDetatchThresholdEnergy) {
 				DetatchFromMother(true);
 			}
 

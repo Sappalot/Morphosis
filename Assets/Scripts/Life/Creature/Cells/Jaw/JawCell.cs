@@ -8,26 +8,13 @@
 	}
 
 	public override void UpdateMetabolism(float deltaTime) {
-		//const float eatEffect = 3f;
-		//float deltaEnergyPrayToPredator = eatEffect * deltaTime;
-		//foreach (Cell prayCell in mouth.prayCells) {
-		//	prayCell.energy -= deltaEnergyPrayToPredator;
-		//	energy += deltaEnergyPrayToPredator;
-		//}
-
+		effectConsumptionInternal = GlobalSettings.instance.jawCellEffectCost;
 		effectProduction = mouth.prayCount * GlobalSettings.instance.jawCellEatEffect;
 
-		base.UpdateMetabolism(deltaTime);
-	}
+		//Hack release pray
+		mouth.RemoveNullPrays();
 
-	override public Creature creature {
-		get {
-			return m_creature;
-		}
-		set {
-			m_creature = value;
-			mouth.creature = value;
-		}
+		base.UpdateMetabolism(deltaTime);
 	}
 
 	public override CellTypeEnum GetCellType() {

@@ -61,7 +61,7 @@ public class Edge : MonoBehaviour {
 		else {
 			throw new Exception("Trying to make a wing, with frontCell wich is not present in edge");
 		}
-		this.mIsWing = true;
+		mIsWing = (frontCell.GetCellType() == CellTypeEnum.Muscle || backCell.GetCellType() == CellTypeEnum.Muscle);
 	}
 
 	public void UpdateGraphics() {

@@ -16,6 +16,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public void MakeDirty() {
 		isDirty = true;
+
+		JawCellPanel.instance.MakeDirty();
 	}
 
 	public Cell selectedCell {
@@ -24,7 +26,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		}
 		set {
 			m_selectedCell = value;
-			isDirty = true;
+			MakeDirty();
 		}
 	}
 
@@ -34,7 +36,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 			CreatureSelectionPanel.instance.MakeDirty();
 			PhenotypePanel.instance.MakeDirty();
-			isDirty = true;
+			MakeDirty();
 		}
 	}
 
@@ -43,7 +45,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			selectedCell.energy = Mathf.Min(selectedCell.energy + 5f, Cell.maxEnergy);
 
 			PhenotypePanel.instance.MakeDirty();
-			isDirty = true;
+			MakeDirty();
 		}
 	}
 
@@ -52,7 +54,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			selectedCell.energy -= 5f;
 
 			PhenotypePanel.instance.MakeDirty();
-			isDirty = true;
+			MakeDirty();
 		}
 	}
 
@@ -78,8 +80,13 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			}
 
 			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isRoot ? " (Rt)" : "");
-			cellEnergy.text = string.Format("Energy: {0:F1}J", selectedCell.energy);
-			cellEffect.text = string.Format("Effect: {0:F1} - {1:F1} = {2:F1}W", selectedCell.effectProduction, selectedCell.effectConsumption, selectedCell.effect);
+			cellEnergy.text = string.Format("Energy: {0:F2}J", selectedCell.energy);
+			if (HUD.instance.shouldUpdateMetabolism) {
+				cellEffect.text = string.Format("Effect: {0:F3} - {1:F3} = {2:F3}W", selectedCell.effectProduction, selectedCell.effectConsumption, selectedCell.effect);
+			} else {
+				cellEffect.text = "Effect: -";
+			}
+			
 			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnected) + " + ("  + selectedCell.neighbourCountConnected + ")";
 			connectionGroupCount.text = "Con. Groups: " + selectedCell.groups;
 			if (selectedCell is EggCell) {

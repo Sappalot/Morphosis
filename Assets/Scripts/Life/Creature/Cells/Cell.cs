@@ -19,7 +19,7 @@ public abstract class Cell : MonoBehaviour {
 	public float timeOffset;
 
 	[HideInInspector]
-	private List<Cell> predators = new List<Cell>();
+	private List<JawCell> predators = new List<JawCell>(); //Who is eating on me
 
 	//How many cells are eating on me
 	private int predatorCount {
@@ -28,14 +28,14 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public void AddPredator(Cell predator) {
+	public void AddPredator(JawCell predator) {
 		if (!predators.Contains(predator)) {
 			predators.Add(predator);
 		}
 	}
 
-	public void RemovePredator(Cell predator) {
-		if (!predators.Contains(predator)) {
+	public void RemovePredator(JawCell predator) {
+		if (predators.Contains(predator)) {
 			predators.Remove(predator);
 		}
 	}
@@ -279,9 +279,14 @@ public abstract class Cell : MonoBehaviour {
 		springList.Add(southWestSpring);
 
 		ShowCreatureSelected(false);
+	}
 
-		effectConsumptionInternal = 0.5f;
-		effectProduction = 0f;
+	public void OnDelete() {
+		foreach(JawCell predator in predators) {
+			//Debug.Log("Removeing pray: " + this.creature.id + ", Cell: " + GetCellType() + " from " + predator);
+			predator.mouth.RemovePray(this);
+			//predators.Remove(predator);
+		}
 	}
 
 	public void RemovePhysicsComponents() {
@@ -697,6 +702,16 @@ public abstract class Cell : MonoBehaviour {
 		if (HUD.instance.shouldRenderEnergy) {
 			float life = energy / 100f;
 			filledCircleSprite.color = new Color((1f - life) * 0.5f, life, 0f);
+
+			//float e = effectProduction;
+			//if (e >= -0.01 && e <= 0.01) {
+			//	filledCircleSprite.color = Color.yellow;
+			//} else if (e > 0.01) {
+			//	filledCircleSprite.color = Color.green;
+			//} else {
+			//	filledCircleSprite.color = Color.red;
+			//}
+
 		} else {
 			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
 		}
@@ -716,10 +731,9 @@ public abstract class Cell : MonoBehaviour {
 		UpdateRadius(fixedTime);
 		UpdateSpringLengths(); // It is costy to update spring length
 
-		if (isTick) {
+		if (isTick && HUD.instance.shouldUpdateMetabolism) {
 			UpdateMetabolism(deltaTickTime);
 		}
-
 	}
 
 	// ^ Update ^

@@ -13,7 +13,8 @@ public class HUD : MonoSingleton<HUD> {
 	}
 
 	private bool isShowEnergy = false;
-	
+
+	private bool isUpdatingMetabolism = true;
 
 	public int timeControllValue = 1;
 	public bool shouldRenderEdges {
@@ -28,6 +29,12 @@ public class HUD : MonoSingleton<HUD> {
 		}
 	}
 
+	public bool shouldUpdateMetabolism {
+		get {
+			return isUpdatingMetabolism;
+		}
+	}
+
 	//Global
 	public void OnTimeControllChanged(float value) {
 		timeControllValue = (int)value;
@@ -39,5 +46,9 @@ public class HUD : MonoSingleton<HUD> {
 
 	public void OnClickToggleShowEnergy() {
 		isShowEnergy = !isShowEnergy;
+	}
+
+	public void OnClickIsUpdatingMetabolism() {
+		isUpdatingMetabolism = !isUpdatingMetabolism;
 	}
 }

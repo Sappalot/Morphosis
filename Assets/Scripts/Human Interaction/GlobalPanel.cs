@@ -3,8 +3,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class GlobalPanel : MonoSingleton<GlobalPanel> {
-	public Text fps;
+	
 	public Text worldNameAndTimeText;
+	public Text fps;
+	public Text population;
+	public Text souls;
 
 
 	private int frameCount;
@@ -42,6 +45,9 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			hackFps = frameCount / timeCount;
 			frameCount = 0;
 			timeCount = 0;
+
+			population.text = "Population: " + Life.instance.creatureCount;
+			souls.text = "Souls: updated: " + Life.instance.soulUpdatedCount + ", un-updated: " + Life.instance.soulUnupdatedCount;
 		}
 	}
 

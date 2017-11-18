@@ -306,7 +306,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				string copyId = originalToCopy[soulOriginal.motherSoulReference.id];
 
 				//soulCopy.SetMotherSoul(copyId);
-				soulCopy.SetMotherSoulImmediate(Life.instance.GetSoul(copyId));
+				Life.instance.SetMotherSoulImmediateSafe(soulCopy, Life.instance.GetSoul(copyId));
+				//soulCopy.SetMotherSoulImmediate(Life.instance.GetSoul(copyId));
 			}
 
 			//children
@@ -314,29 +315,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				SoulReference childReference = soulOriginal.childSoulReferences[i];
 				if (originalCreatures.Find(c => c.id == childReference.id)) {
 					string copyId = originalToCopy[childReference.id];
-					//soulCopy.AddChildSoul(copyId, childReference.childRootMapPosition, childReference.childRootBindCardinalIndex, childReference.isChildConnected);
-					soulCopy.AddChildSoulImmediate(Life.instance.GetSoul(copyId), childReference.childRootMapPosition, childReference.childRootBindCardinalIndex, childReference.isChildConnected);
+					Life.instance.AddChildSoulImmediateSafe(soulCopy, Life.instance.GetSoul(copyId), childReference.childRootMapPosition, childReference.childRootBindCardinalIndex, childReference.isChildConnected);
 				}
 			}
 		}
-
-		//Clean up ids can't have same as original and reftrence ids to children mothers must be right too
-		//name all creatures with new ids, and map the old ones to the new ones (oldID, newID)
-		//Go through all reftrences and update mothers and children id to match the new ones
-		foreach (Creature copy in copies) {
-			foreach (KeyValuePair<string, string> entry in originalToCopy) {
-				//copy.TryChangeRelativesId(entry.Key, entry.Value);
-				//Life.instance.GetSoul(entry.Value).TryChangeId(entry.Key, entry.Value); //Creature and Soul have allready the new Id
-				//copy.phenotype.connectionsDiffersFromCells = true;
-			}
-		}
-
-		//TODO: remove children
-
-
-		//Assume we copy whole cluster or nothing at all
-		//If we copy parts of a cluster we will need to update the references accodingly 
-
 	}
 
 	public void StartMoveCreatures() {

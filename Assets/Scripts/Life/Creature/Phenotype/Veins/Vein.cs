@@ -36,24 +36,15 @@ public class Vein : MonoBehaviour {
 		attachmentFront = new EdgeAttachment(parentCell, (directionChildToParentCell + 3) % 6);
 		attachmentBack = new EdgeAttachment(childCell, directionChildToParentCell);
 
-		if (!IsHighEfficiency(parentCell.GetCellType()) && !IsHighEfficiency(childCell.GetCellType())) {
+		if (parentCell.isRoot || childCell.isRoot) {
+			effectType = EffectEnum.HighHigh;
+		} else if (!IsHighEfficiency(parentCell.GetCellType()) && !IsHighEfficiency(childCell.GetCellType())) {
 			effectType = EffectEnum.LowLow;
 		} else if ((!IsHighEfficiency(parentCell.GetCellType()) && IsHighEfficiency(childCell.GetCellType())) || (IsHighEfficiency(parentCell.GetCellType()) && !IsHighEfficiency(childCell.GetCellType()))) {
 			effectType = EffectEnum.LowHigh;
 		} else if (IsHighEfficiency(parentCell.GetCellType()) && IsHighEfficiency(childCell.GetCellType())) {
 			effectType = EffectEnum.HighHigh;
 		}
-
-		//if (effectType == EffectEnum.LowLow) {
-		//	mainArrow.GetComponent<LineRenderer>().startWidth = 0.1f;
-		//	mainArrow.GetComponent<LineRenderer>().endWidth = 0.1f;
-		//} else if (effectType == EffectEnum.LowHigh) {
-		//	mainArrow.GetComponent<LineRenderer>().startWidth = 0.2f;
-		//	mainArrow.GetComponent<LineRenderer>().endWidth = 0.2f;
-		//} else if (effectType == EffectEnum.HighHigh) {
-		//	mainArrow.GetComponent<LineRenderer>().startWidth = 0.3f;
-		//	mainArrow.GetComponent<LineRenderer>().endWidth = 0.3f;
-		//}
 	}
 
 
@@ -62,9 +53,9 @@ public class Vein : MonoBehaviour {
 		return (cellType == CellTypeEnum.Egg || cellType == CellTypeEnum.Vein);
 	}
 
-	public void UpdateGraphics() {
+	public void UpdateGraphics(bool showVeins) {
 		//TODO: If draw wings && inside frustum
-		if (HUD.instance.shouldRenderEnergy) {
+		if (HUD.instance.shouldRenderEnergy && showVeins) {
 			if (frontCell != null && backCell != null) {
 				mainArrow.SetActive(true);
 				//draw main
@@ -92,6 +83,7 @@ public class Vein : MonoBehaviour {
 			mainArrow.SetActive(false);
 		}
 	}
+
 	private float width {
 		get {
 			if (effectType == EffectEnum.LowLow) {
@@ -105,7 +97,6 @@ public class Vein : MonoBehaviour {
 		}
 	}
 
-
 	private float flowEffectFrontToBack;
 	public void UpdateEnergyFluxEffect() {
 		float moreEnergyFront = frontCell.energy - backCell.energy;
@@ -114,22 +105,19 @@ public class Vein : MonoBehaviour {
 	private float flowEffectFactor {
 		get {
 			if (effectType == EffectEnum.LowLow) {
-				return 0.005f;
+				return GlobalSettings.instance.weakVeinFluxEffect;
 			} else if (effectType == EffectEnum.LowHigh) {
-				return 0.025f;
+				return GlobalSettings.instance.mediumVeinFluxEffect;
 			} else {
 				// HighHigh
-				return 0.05f;
+				return GlobalSettings.instance.strongVeinFluxEffect;
 			}
 		}
 	}
 
-	private const float lowestGivingCellEnergy = 5f;
 	public void UpdateEnergy(float deltaTickTime) {
 		float deltaEnergyBack = flowEffectFrontToBack * deltaTickTime;
-		if (backCell.energy + deltaEnergyBack > 0f && frontCell.energy - deltaEnergyBack > lowestGivingCellEnergy) {
-			backCell.energy += deltaEnergyBack;
-			frontCell.energy -= deltaEnergyBack;
-		}
+		backCell.energy += deltaEnergyBack;
+		frontCell.energy -= deltaEnergyBack;
 	}
 }

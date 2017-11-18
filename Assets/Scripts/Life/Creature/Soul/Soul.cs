@@ -44,12 +44,14 @@ public class Soul {
 		}
 	}
 
+	//We run into trouble if we set mother here, while we still have this one in lifes list of souls with updated refrernces
+	//Call this function from AddMotherSoulImmediateSafe in life only
 	public void SetMotherSoulImmediate(Soul motherSoul) {
 		SetMotherSoul(motherSoul.id);
 		motherSoulReference.soul = motherSoul;
 	}
 
-	public void SetMotherSoul(string id) {
+	private void SetMotherSoul(string id) {
 		Debug.Assert(motherSoulReference.id == string.Empty, "We shouldn't change the id of mother");
 		motherSoulReference.id = id;
 	}
@@ -66,14 +68,10 @@ public class Soul {
 			if (motherSoulReference.isReferenceUpdated && motherSoulReference.id == string.Empty) {
 				return null;
 			}
-			Debug.Assert(motherSoulReference.isReferenceUpdated, "Update references first!");
-			Debug.Assert(motherSoul.areAllReferencesUpdated, "Update references first!");
+			Debug.Assert(motherSoulReference.isReferenceUpdated, "Update mother reference first!");
+			Debug.Assert(motherSoul.areAllReferencesUpdated, "Update mother's references first!");
 			return motherSoul.creature;
 		}
-	}
-
-	public bool hasUnfetchedMother() {
-		return motherSoulReference.id != string.Empty;
 	}
 
 	public bool hasMother {
@@ -87,12 +85,14 @@ public class Soul {
 		}
 	}
 
+	//We run into trouble if we add children here, while we still have this one in lifes list of souls with updated refrernces
+	//Call this function from AddChildSoulImmediateSafe in life only
 	public void AddChildSoulImmediate(Soul childSoul, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
 		SoulReference reference = AddChildSoul(childSoul.id, rootMapPosition, rootBindCardinalIndex, isConnected);
 		reference.soul = childSoul;
 	}
 
-	public SoulReference AddChildSoul(string id, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
+	private SoulReference AddChildSoul(string id, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
 		Debug.Assert(childSouls.Find(s => s.id == id) == null, "Creature has allready a child with that id");
 		// This soul will be created as the child is created, just fetch teh reference
 		SoulReference childSoulReference = new SoulReference(id);
@@ -224,12 +224,13 @@ public class Soul {
 		}
 	}
 
-	public void UpdateReferences() {
+	public bool UpdateReferences() {
 		creatureReference.TryGetReference();
 		motherSoulReference.TryGetReference();
 		for (int i = 0; i < childSoulReferences.Count; i++) {
 			childSoulReferences[i].TryGetReference();
 		}
+		return areAllReferencesUpdated;
 	}
 
 	// ^ Update ^

@@ -8,9 +8,12 @@ public class EggCell : Cell {
 	public bool shouldFertilize = false;
 
 	public override void UpdateMetabolism(float deltaTime) {
+		effectConsumptionInternal = GlobalSettings.instance.eggCellEffectCost;
+		effectProduction = 0f;
+
 		base.UpdateMetabolism(deltaTime);
 
-		if (energy > 40) {
+		if (energy > GlobalSettings.instance.eggCellFertilizeThresholdEnergy) {
 			shouldFertilize = true;
 		}
 	}

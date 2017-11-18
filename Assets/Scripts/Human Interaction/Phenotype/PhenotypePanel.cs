@@ -67,8 +67,12 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 			creatureAge.text = "Age: 100 days";
 			creatureCellCount.text = "Cells: " + solo.cellsCount + " (" + solo.cellsCountFullyGrown + ")";
-			creatureEnergy.text = string.Format("Energy: {0:F1}%", solo.phenotype.energy / solo.phenotype.cellCount);
-			creatureEffect.text = string.Format("<Effect>: {0:F1} - {1:F1} = {2:F1}W", solo.phenotype.effectProduction / solo.phenotype.cellCount, solo.phenotype.effectConsumption / solo.phenotype.cellCount, solo.phenotype.effect / solo.phenotype.cellCount);
+			creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energy / solo.phenotype.cellCount);
+			if (HUD.instance.shouldUpdateMetabolism) {
+				creatureEffect.text = string.Format("<Effect>: {0:F3} - {1:F3} = {2:F3}W", solo.phenotype.effectProduction / solo.phenotype.cellCount, solo.phenotype.effectConsumption / solo.phenotype.cellCount, solo.phenotype.effect / solo.phenotype.cellCount);
+			} else {
+				creatureEffect.text = "<Effect>: -";
+			}
 
 			isDirty = false;
 		}

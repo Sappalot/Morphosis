@@ -17,7 +17,9 @@ public class JawCellPanel : MonoSingleton<JawCellPanel> {
 				Debug.Log("Update CellPanel");
 			}
 
-			prayCellCount.text = "Pray count: " + (CellPanel.instance.selectedCell as JawCell).mouth.prayCount;
+			if (CellPanel.instance.selectedCell != null) {
+				prayCellCount.text = "Pray count: " + (CellPanel.instance.selectedCell as JawCell).mouth.prayCount;
+			}
 
 			isDirty = false;
 		}

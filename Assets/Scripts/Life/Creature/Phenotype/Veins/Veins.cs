@@ -24,9 +24,9 @@ public class Veins : MonoBehaviour {
 		veinList.Clear();
 	}
 
-	public void UpdateGraphics() {
+	public void UpdateGraphics(bool showVeins) {
 		for (int index = 0; index < veinList.Count; index++) {
-			veinList[index].UpdateGraphics();
+			veinList[index].UpdateGraphics(showVeins);
 		}
 	}
 
@@ -47,6 +47,10 @@ public class Veins : MonoBehaviour {
 			for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) { //Including attached
 				if (cell.HasNeighbourCell(cardinalIndex)) {
 					Cell neighbour = cell.GetNeighbourCell(cardinalIndex);
+					// dont build veins to mother placnta, beacuse she builds to me and we dont want to double build
+					if (creature.soul.motherSoulReference.id == neighbour.creature.id) {
+						continue;
+					}
 					if (!HasVein(cell, neighbour)) {
 						Vein vein = (Instantiate(veinPrefab, transform.position, Quaternion.identity) as Vein);
 						vein.transform.parent = transform;

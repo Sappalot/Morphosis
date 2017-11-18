@@ -2,10 +2,7 @@
 using UnityEngine;
 
 public class JawCellMouth : MonoBehaviour {
-	[HideInInspector]
-	public Creature creature;
-
-	private List<Cell> prays = new List<Cell>();
+	private List<Cell> prays = new List<Cell>(); //Who am i eating on
 
 	public int prayCount {
 		get {
@@ -14,35 +11,83 @@ public class JawCellMouth : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
-		Cell prayCell = other.GetComponent<Cell>();
-		Cell predatorCell = transform.parent.GetComponent<Cell>();
-		if (prayCell != null && prayCell.creature != creature) {
-			PairPredatorPray(predatorCell, prayCell);
-
-			PhenotypePanel.instance.MakeDirty();
-			CellPanel.instance.MakeDirty();
-			JawCellPanel.instance.MakeDirty();
+		if (other.gameObject.layer == 2) { //dont trigger other's mouth colliders, only on cells
+			return;
 		}
+
+		Life.instance.UpdateSoulReferences();
+
+		Cell prayCell = other.GetComponent<Cell>();
+		JawCell predatorCell = transform.parent.GetComponent<JawCell>();
+
+		Creature creature = predatorCell.creature;
+		if (!creature.hasSoul) {
+			return;
+		}
+
+		if (prayCell != null && prayCell.creature != creature) {
+			// dont eat mother, grandma is OK 
+			if (creature.soul.motherSoulReference.id == prayCell.creature.id) {
+				return;
+			}
+			// dont eat children, frandchildren is OK
+			foreach (Creature child in creature.children) {
+				if (prayCell.creature == child) {
+					return;
+				}
+			}
+
+			PairPredatorPray(predatorCell, prayCell);
+		}
+		PhenotypePanel.instance.MakeDirty();
+		CellPanel.instance.MakeDirty();
+		JawCellPanel.instance.MakeDirty();
 	}
 
 	void OnTriggerExit2D(Collider2D other) {
-		Cell prayCell = other.GetComponent<Cell>();
-		Cell predatorCell = transform.parent.GetComponent<Cell>();
-		if (prayCell != null && prayCell.creature != creature) {
-			UnpairPredatorPray(predatorCell, prayCell);
-
-			PhenotypePanel.instance.MakeDirty();
-			CellPanel.instance.MakeDirty();
-			JawCellPanel.instance.MakeDirty();
+		if (other.gameObject.layer == 2) { //dont trigger other's mouth colliders, only on cells
+			return;
 		}
+		Life.instance.UpdateSoulReferences();
+
+		Cell prayCell = other.GetComponent<Cell>();
+		JawCell predatorCell = transform.parent.GetComponent<JawCell>();
+
+		Creature creature = predatorCell.creature;
+
+		if (prayCell != null) {
+			UnpairPredatorPray(predatorCell, prayCell);
+		} else {
+			//Debug.Log("Ooops!");
+			RemoveNullPrays();
+		}
+		PhenotypePanel.instance.MakeDirty();
+		CellPanel.instance.MakeDirty();
+		JawCellPanel.instance.MakeDirty();
 	}
 
-	private void PairPredatorPray(Cell predator, Cell pray) {
+	public void RemoveNullPrays() {
+		List<Cell> keep = new List<Cell>();
+		foreach (Cell pray in prays) {
+			if (pray == null) {
+				foreach (Cell keepPray in prays) {
+					if (keepPray != null) {
+						keep.Add(keepPray);
+					}
+				}
+			}
+		}
+
+		prays.Clear();
+		prays.AddRange(keep);
+	}
+
+	private void PairPredatorPray(JawCell predator, Cell pray) {
 		AddPray(pray);
 		pray.AddPredator(predator);
 	}
 
-	private void UnpairPredatorPray(Cell predator, Cell pray) {
+	private void UnpairPredatorPray(JawCell predator, Cell pray) {
 		RemovePray(pray);
 		pray.RemovePredator(predator);
 	}
@@ -53,7 +98,7 @@ public class JawCellMouth : MonoBehaviour {
 		}
 	}
 
-	private void RemovePray(Cell pray) {
+	public void RemovePray(Cell pray) {
 		if (prays.Contains(pray)) {
 			prays.Remove(pray);
 		}

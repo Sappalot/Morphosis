@@ -9,7 +9,8 @@ public class MuscleCell : Cell {
 	}
 
 	public override void UpdateMetabolism(float deltaTime) {
-		effectConsumptionInternal = 1f;
+		effectConsumptionInternal = GlobalSettings.instance.muscleCellEffectCost;
+		effectProduction = 0f;
 		base.UpdateMetabolism(deltaTime);
 	}
 

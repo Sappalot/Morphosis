@@ -12,7 +12,71 @@ public class Life : MonoSingleton<Life> {
 	//--
 
 	private Dictionary<string, Soul> soulDictionary = new Dictionary<string, Soul>();
-	public List<Soul> soulList = new List<Soul>(); //All creature containers, count allways >= number of creatures, since each creature has a container
+	private List<Soul> soulListUnupdated = new List<Soul>(); //All creature containers, count allways >= number of creatures, since each creature has a container
+	private List<Soul> soulListUpdated = new List<Soul>();
+
+	public int soulUpdatedCount {
+		get {
+			return soulListUpdated.Count;
+		}
+	}
+
+	public int soulUnupdatedCount {
+		get {
+			return soulListUnupdated.Count;
+		}
+	}
+
+	public int creatureCount {
+		get {
+			return creatureList.Count;
+		}
+	}
+
+	public void UpdateSoulReferences() {
+		List<Soul> moveSouls = new List<Soul>();
+		moveSouls.Clear();
+		for (int index = 0; index < soulListUnupdated.Count; index++) {
+			if (soulListUnupdated[index].UpdateReferences()) {
+				moveSouls.Add(soulListUnupdated[index]);
+			}
+		}
+		foreach (Soul s in moveSouls) {
+			MoveToUpdated(s);
+		}
+	}
+
+	private void MoveToUpdated(Soul soul) {
+		
+		if (soulListUpdated.Contains(soul)) {
+			//Debug.Log("Ooops! Trying to move soul: " + soul.id + " to soulListUpdated when it's allready there!");
+		} else {
+			soulListUnupdated.Remove(soul);
+			soulListUpdated.Add(soul);
+		}
+	}
+
+	private void MoveToUnupdated(Soul soul) {
+		
+		if (soulListUnupdated.Contains(soul)) {
+			//Debug.Log("Ooops! Trying to move soul: " + soul.id + " to soulListUnupdated when it's allready there!");
+		} else {
+			soulListUpdated.Remove(soul);
+			soulListUnupdated.Add(soul);
+		}
+	}
+
+	public void SetMotherSoulImmediateSafe(Soul childSoul, Soul motherSoul) {
+		childSoul.SetMotherSoulImmediate(motherSoul);
+		MoveToUnupdated(motherSoul);
+		MoveToUnupdated(childSoul);
+	}
+
+	public void AddChildSoulImmediateSafe(Soul motherSoul, Soul childSoul, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
+		motherSoul.AddChildSoulImmediate(childSoul, rootMapPosition, rootBindCardinalIndex, isConnected);
+		MoveToUnupdated(motherSoul);
+		MoveToUnupdated(childSoul);
+	}
 
 	public Soul GetSoul(string id) {
 		return soulDictionary[id];
@@ -70,10 +134,8 @@ public class Life : MonoSingleton<Life> {
 		Soul motherSoul = GetSoul(mother.id);
 		Soul childSoul = GetSoul(child.id);
 
-		motherSoul.AddChildSoulImmediate(childSoul, eggCell.mapPosition, eggCell.bindCardinalIndex, true);
-		childSoul.SetMotherSoulImmediate(motherSoul);
-
-		//eggCell.creature.DetatchFromMother(); //HACK detatch when born test
+		AddChildSoulImmediateSafe(motherSoul, childSoul, eggCell.mapPosition, eggCell.bindCardinalIndex, true);
+		SetMotherSoulImmediateSafe(childSoul, motherSoul);
 
 		PhenotypePanel.instance.MakeDirty();
 		CreatureSelectionPanel.instance.MakeDirty();
@@ -87,7 +149,8 @@ public class Life : MonoSingleton<Life> {
 		creatureList.Clear();
 
 		soulDictionary.Clear();
-		soulList.Clear();
+		soulListUnupdated.Clear();
+		soulListUpdated.Clear();
 	}
 
 	public void DeleteCell(Cell cell) {
@@ -99,7 +162,6 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	public void DeleteCreature(Creature creature) {
-		Debug.Log("Kill Creature: " + creature.id);
 		creature.DetatchFromMother(true);
 		foreach(Soul childSoul in creature.childSouls) {
 			if (childSoul.hasCreature) {
@@ -120,7 +182,7 @@ public class Life : MonoSingleton<Life> {
 		CellPanel.instance.MakeDirty();
 
 		// Note the soul will remain :)
-		// Q: will we keep souls forever?
+		// Q: will we keep souls forever? This will cause a really slow application over night
 	}
 
 	public List<Creature> GetPhenotypesInside(Rect area) {
@@ -205,7 +267,7 @@ public class Life : MonoSingleton<Life> {
 		Soul soul = new Soul(id);
 		
 		soulDictionary.Add(id, soul);
-		soulList.Add(soul);
+		soulListUnupdated.Add(soul);
 
 		//creature.soul = soul; //The right Soul will find its way to the creature during update otherwise, Setting it here will cause troubble!
 		return creature;
@@ -234,6 +296,8 @@ public class Life : MonoSingleton<Life> {
 
 	// Save
 	public LifeData UpdateData() {
+		UpdateSoulReferences();
+
 		lifeData.lastId = idGenerator.number;
 
 		//Creatures
@@ -251,8 +315,8 @@ public class Life : MonoSingleton<Life> {
 		lifeData.soulList.Clear();
 		lifeData.soulDictionary.Clear();
 
-		for (int index = 0; index < soulList.Count; index++) {
-			Soul soul = soulList[index];
+		for (int index = 0; index < soulListUpdated.Count; index++) {
+			Soul soul = soulListUpdated[index];
 			SoulData data = soul.UpdateData();
 			lifeData.soulList.Add(data);
 			lifeData.soulDictionary.Add(data.id, data);
@@ -275,13 +339,14 @@ public class Life : MonoSingleton<Life> {
 
 		// Create all Souls
 		soulDictionary.Clear();
-		soulList.Clear();
+		soulListUnupdated.Clear();
+		soulListUpdated.Clear();
 		for (int index = 0; index < lifeData.soulList.Count; index++) {
 			SoulData solulData = lifeData.soulList[index];
 			Soul newSoul = new Soul(solulData.id);
 			newSoul.ApplyData(solulData);
 			soulDictionary.Add(newSoul.id, newSoul);
-			soulList.Add(newSoul);
+			soulListUnupdated.Add(newSoul);
 		}
 	}
 
@@ -301,9 +366,7 @@ public class Life : MonoSingleton<Life> {
 	// If (editGenotype) updated from FixedUpdate
 	// Everything that needs to be updated when genome is changed, cells are removed, cells are added, creatures are spawned, creatures die
 	public void UpdateStructure() {
-		for (int index = 0; index < soulList.Count; index++) {
-			soulList[index].UpdateReferences();
-		}
+		UpdateSoulReferences();
 
 		foreach (Creature c in creatureList) {
 			c.FetchSoul();

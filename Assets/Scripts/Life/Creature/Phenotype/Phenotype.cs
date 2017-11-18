@@ -144,9 +144,7 @@ public class Phenotype : MonoBehaviour {
 
 	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects) {
 		////Fail safe ... to be removed
-		for (int index = 0; index < Life.instance.soulList.Count; index++) {
-			Life.instance.soulList[index].UpdateReferences();
-		}
+		Life.instance.UpdateSoulReferences();
 
 		int growCellCount = 0;
 		Genotype genotype  = creature.genotype;
@@ -321,9 +319,7 @@ public class Phenotype : MonoBehaviour {
 		if (connectionsDiffersFromCells) {
 
 			////Fail safe ... to be removed
-			for (int index = 0; index < Life.instance.soulList.Count; index++) {
-				Life.instance.soulList[index].UpdateReferences();
-			}
+			Life.instance.UpdateSoulReferences();
 
 			UpdateNeighbourReferencesInterBody(creature);
 
@@ -462,7 +458,8 @@ public class Phenotype : MonoBehaviour {
 
 		List<Cell> neighbours = rootCell.GetNeighbourCells();
 		foreach(Cell motherMai in neighbours) {
-			if (motherMai.creature == creature.motherSoul.creature) {
+			//if (motherMai.creature == creature.motherSoul.creature) {
+			if (motherMai.creature.id == creature.soul.motherSoulReference.id) {
 				return true;
 			}
 		}
@@ -495,12 +492,14 @@ public class Phenotype : MonoBehaviour {
 	public void DeleteCell(Cell deleteCell, bool deleteDebris, bool playEffects = false) {
 		if (playEffects) {
 			Audio.instance.CellDeath();
-			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalSettings.instance.playVisualEffects) {
 				SpawnCellDeathEffect(deleteCell.position, Color.red);
 				SpawnCellDeleteBloodEffect(deleteCell);
 			}
 		}
 
+		// Clean up
+		deleteCell.OnDelete();
 		List<Cell> disturbedCells = deleteCell.GetNeighbourCells();
 		foreach (Cell disturbedCell in disturbedCells) {
 			deleteCell.RemoveNeighbourCell(disturbedCell);
@@ -589,7 +588,7 @@ public class Phenotype : MonoBehaviour {
 
 	public bool DetatchFromMother(Creature creature, bool playEffects = false) {
 		if (creature.hasMotherSoul && creature.soul.isConnectedWithMotherSoul) {
-			if (playEffects) {
+			if (playEffects && GlobalSettings.instance.playVisualEffects) {
 				Audio.instance.CreatureDetatch();
 				Cell rootCell = creature.phenotype.rootCell;
 				SpawnCellDetatchBloodEffect(rootCell);
@@ -869,11 +868,11 @@ public class Phenotype : MonoBehaviour {
 	// ^ Load / Save ^
 	// Update
 
-	public void UpdateGraphics() {
+	public void UpdateGraphics(Creature creature) {
 		//TODO: Update cells flip triangles here
 
 		edges.UpdateGraphics();
-		veins.UpdateGraphics();
+		veins.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(creature));
 
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
@@ -928,10 +927,12 @@ public class Phenotype : MonoBehaviour {
 		// Edges, let edge-wings apply proper forces to neighbouring cells
 		edges.UpdatePhysics(velocity, creature);
 
-		veins.UpdatePhysics(deltaTickTime);
-
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].UpdatePhysics(fixedTime, deltaTickTime, isTick);
+		}
+
+		if (isTick) {
+			veins.UpdatePhysics(deltaTickTime);
 		}
 	}
 }

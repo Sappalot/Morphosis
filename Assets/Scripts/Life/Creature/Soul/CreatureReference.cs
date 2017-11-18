@@ -5,6 +5,8 @@ public class CreatureReference {
 	public Creature creature;
 	public bool giveUpLooking = false;
 
+	private bool hadReference = false; // We might had it and lost it as creature dies
+
 	public CreatureReference(string id) {
 		this.id = id;
 	}
@@ -13,9 +15,9 @@ public class CreatureReference {
 		if (!isCreatureReferenceUpdated) {
 			if (Life.instance.HasCreature(id)) {
 				creature = Life.instance.GetCreature(id);
-				//creature.soul = soul;
+				hadReference = true;
 			} else {
-				Debug.Log("Can't find creature");
+				//Debug.Log("Can't find creature");
 				giveUpLooking = true;
 			}
 		}
@@ -23,7 +25,7 @@ public class CreatureReference {
 
 	public bool isCreatureReferenceUpdated {
 		get {
-			return creature != null || giveUpLooking;
+			return creature != null || giveUpLooking || hadReference;
 		}
 	}
 
