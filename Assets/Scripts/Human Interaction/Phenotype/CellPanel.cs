@@ -22,7 +22,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public Cell selectedCell {
 		get {
-			return m_selectedCell != null ? m_selectedCell : (CreatureSelectionPanel.instance.hasSoloSelected ? CreatureSelectionPanel.instance.soloSelected.phenotype.rootCell : null);
+			return m_selectedCell != null ? m_selectedCell : (CreatureSelectionPanel.instance.hasSoloSelected ? CreatureSelectionPanel.instance.soloSelected.phenotype.originCell : null);
 		}
 		set {
 			m_selectedCell = value;
@@ -32,7 +32,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public void OnClickDelete() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			Life.instance.DeleteCell(selectedCell);
+			Life.instance.KillCellSafe(selectedCell);
 
 			CreatureSelectionPanel.instance.MakeDirty();
 			PhenotypePanel.instance.MakeDirty();
@@ -68,7 +68,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			jawCellPanel.gameObject.SetActive(false);
 
 			//Nothing to represent
-			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected || !selectedCell.creature.phenotype.isAlive) {
+			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
 				cellType.text = "Type:";
 				cellEnergy.text = "Energy:";
 				cellEffect.text = "Effect:";
@@ -79,7 +79,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				return;
 			}
 
-			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isRoot ? " (Rt)" : "");
+			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isOrigin ? " (Rt)" : "");
 			cellEnergy.text = string.Format("Energy: {0:F2}J", selectedCell.energy);
 			if (HUD.instance.shouldUpdateMetabolism) {
 				cellEffect.text = string.Format("Effect: {0:F3} - {1:F3} = {2:F3}W", selectedCell.effectProduction, selectedCell.effectConsumption, selectedCell.effect);
@@ -94,6 +94,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			} else if (selectedCell is JawCell) {
 				jawCellPanel.gameObject.SetActive(true);
 			}
+
+
 
 			isDirty = false;
 		}

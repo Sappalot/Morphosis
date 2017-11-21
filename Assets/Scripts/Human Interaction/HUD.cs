@@ -1,9 +1,10 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
-
-public class HUD : MonoSingleton<HUD> {
-	[HideInInspector]
+﻿public class HUD : MonoSingleton<HUD> {
+	private bool isShowEnergy = false;
+	public bool shouldRenderEnergy {
+		get {
+			return isShowEnergy && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype;
+		}
+	}
 
 	private bool m_isShowEdges = false;
 	public bool isShowEdges {
@@ -12,26 +13,17 @@ public class HUD : MonoSingleton<HUD> {
 		}
 	}
 
-	private bool isShowEnergy = false;
-
 	private bool isUpdatingMetabolism = true;
+	public bool shouldUpdateMetabolism {
+		get {
+			return isUpdatingMetabolism;
+		}
+	}
 
 	public int timeControllValue = 1;
 	public bool shouldRenderEdges {
 		get {
 			return m_isShowEdges && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype;
-		}
-	}
-
-	public bool shouldRenderEnergy {
-		get {
-			return isShowEnergy && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype;
-		}
-	}
-
-	public bool shouldUpdateMetabolism {
-		get {
-			return isUpdatingMetabolism;
 		}
 	}
 

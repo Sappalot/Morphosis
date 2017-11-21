@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public class JawCellMouth : MonoBehaviour {
-	private List<Cell> prays = new List<Cell>(); //Who am i eating on
+	public List<Cell> prays = new List<Cell>(); //Who am i eating on
 
 	public int prayCount {
 		get {
@@ -30,8 +30,8 @@ public class JawCellMouth : MonoBehaviour {
 			if (creature.soul.motherSoulReference.id == prayCell.creature.id) {
 				return;
 			}
-			// dont eat children, frandchildren is OK
-			foreach (Creature child in creature.children) {
+			// don't eat children, grandchildren is OK
+			foreach (Creature child in creature.children) { //Note: all references in children are not updated at this point
 				if (prayCell.creature == child) {
 					return;
 				}
@@ -48,7 +48,7 @@ public class JawCellMouth : MonoBehaviour {
 		if (other.gameObject.layer == 2) { //dont trigger other's mouth colliders, only on cells
 			return;
 		}
-		Life.instance.UpdateSoulReferences();
+		//Life.instance.UpdateSoulReferences();
 
 		Cell prayCell = other.GetComponent<Cell>();
 		JawCell predatorCell = transform.parent.GetComponent<JawCell>();
@@ -69,15 +69,10 @@ public class JawCellMouth : MonoBehaviour {
 	public void RemoveNullPrays() {
 		List<Cell> keep = new List<Cell>();
 		foreach (Cell pray in prays) {
-			if (pray == null) {
-				foreach (Cell keepPray in prays) {
-					if (keepPray != null) {
-						keep.Add(keepPray);
-					}
-				}
+			if (pray != null) {
+				keep.Add(pray);
 			}
 		}
-
 		prays.Clear();
 		prays.AddRange(keep);
 	}

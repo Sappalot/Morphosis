@@ -10,7 +10,6 @@ public class JawCellPanel : MonoSingleton<JawCellPanel> {
 		isDirty = true;
 	}
 
-
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {

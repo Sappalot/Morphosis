@@ -11,7 +11,7 @@ public class Genotype : MonoBehaviour {
 	public VeinCell veinCellPrefab;
 	public Transform cellsTransform;
 
-	public static int root = 0;
+	public static int origin = 0;
 	public static int genomeLength = 21;
 	private CellMap geneCellMap = new CellMap();
 	public List<Cell> geneCellList = new List<Cell>();
@@ -29,7 +29,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	[HideInInspector]
-	public Cell rootCell {
+	public Cell originCell {
 		get {
 			return geneCellList[0];
 		}
@@ -174,7 +174,7 @@ public class Genotype : MonoBehaviour {
 		genome[2].type = CellTypeEnum.Muscle;
 	}
 
-	public bool UpdateGeneCellsFromGenome(Creature creature, Vector2 position, float heading) { // heading 90 ==> root is pointing north
+	public bool UpdateGeneCellsFromGenome(Creature creature, Vector2 position, float heading) { // heading 90 ==> origin is pointing north
 		if (geneCellsDiffersFromGenome) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature UpdateGeneCellsFromGenome");
@@ -182,9 +182,9 @@ public class Genotype : MonoBehaviour {
 			Clear();
 
 			List<Cell> spawningFromCells = new List<Cell>();
-			Cell root = SpawnGeneCell(creature, GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite);
-			root.heading = 90f;
-			spawningFromCells.Add(root);
+			Cell origin = SpawnGeneCell(creature, GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite);
+			origin.heading = 90f;
+			spawningFromCells.Add(origin);
 
 			List<Cell> nextSpawningFromCells = new List<Cell>();
 			for (int buildOrderIndex = 1; spawningFromCells.Count != 0 && buildOrderIndex < maxSize; buildOrderIndex++) {
@@ -283,19 +283,19 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void MoveToPhenotype(Creature creature) {
-		MoveTo(creature.phenotype.rootCell.position);
-		TurnTo(creature.phenotype.rootCell.heading);
+		MoveTo(creature.phenotype.originCell.position);
+		TurnTo(creature.phenotype.originCell.heading);
 	}
 
-	//Make root cell point in this direction while the rest of the cells tags along
-	//Angle = 0 ==> root cell pointing east
-	//Angle = 90 ==> root cell pointing north
+	//Make origin cell point in this direction while the rest of the cells tags along
+	//Angle = 0 ==> origin cell pointing east
+	//Angle = 90 ==> origin cell pointing north
 	private void TurnTo(float targetAngle) {
-		float deltaAngle = targetAngle - rootCell.heading;
+		float deltaAngle = targetAngle - originCell.heading;
 		foreach (Cell cell in geneCellList) {
-			Vector3 rootToCell = cell.transform.position - (Vector3)rootCell.position;
-			Vector3 turnedVector = Quaternion.Euler(0, 0, deltaAngle) * rootToCell;
-			cell.transform.position = (Vector2)rootCell.position + (Vector2)turnedVector;
+			Vector3 originToCell = cell.transform.position - (Vector3)originCell.position;
+			Vector3 turnedVector = Quaternion.Euler(0, 0, deltaAngle) * originToCell;
+			cell.transform.position = (Vector2)originCell.position + (Vector2)turnedVector;
 			float heading = AngleUtil.CardinalIndexToAngle(cell.bindCardinalIndex) + targetAngle - 90f;
 			cell.heading = heading;
 			cell.SetTringleHeadingAngle(heading);
@@ -309,7 +309,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void MoveTo(Vector2 vector) {
-		Move(vector - rootCell.position);
+		Move(vector - originCell.position);
 	}
 
 	public Gene GetGeneAt(int index) {
@@ -370,10 +370,10 @@ public class Genotype : MonoBehaviour {
 		transform.localRotation = Quaternion.identity;
 	}
 
-	public void MoveRootToOrigo() {
-		Vector3 rootCellPosition = rootCell.position;
+	public void MoveOriginToOrigo() {
+		Vector3 originCellPosition = originCell.position;
 		foreach (Cell cell in geneCellList) {
-			cell.transform.position -= rootCellPosition;
+			cell.transform.position -= originCellPosition;
 		}
 	}
 
@@ -382,7 +382,7 @@ public class Genotype : MonoBehaviour {
 		foreach (Cell cell in geneCellList) {
 			cell.GetComponent<Collider2D>().enabled = false;
 		}
-		MoveRootToOrigo();
+		MoveOriginToOrigo();
 	}
 
 	public void Release(Creature creature) {
@@ -447,8 +447,8 @@ public class Genotype : MonoBehaviour {
 		for (int index = 0; index < genome.Length; index++) {
 			genotypeData.geneData[index] = genome[index].UpdateData();
 		}
-		genotypeData.rootPosition = rootCell.position;
-		genotypeData.rootHeading = rootCell.heading;
+		genotypeData.originPosition = originCell.position;
+		genotypeData.originHeading = originCell.heading;
 		return genotypeData;
 	}
 

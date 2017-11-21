@@ -9,7 +9,12 @@
 
 	public override void UpdateMetabolism(float deltaTime) {
 		effectConsumptionInternal = GlobalSettings.instance.jawCellEffectCost;
-		effectProduction = mouth.prayCount * GlobalSettings.instance.jawCellEatEffect;
+
+		float weightedPrayCount = 0f;
+		foreach (Cell pray in mouth.prays) {
+			weightedPrayCount += (pray.GetCellType() == CellTypeEnum.Jaw ? GlobalSettings.instance.jawCellEatEffectFactorOnOtherJaw : 1f); //It's not easy to eat somebodey elses jaw, jaws will eat through each other
+		}
+		effectProduction = weightedPrayCount * GlobalSettings.instance.jawCellEatEffect;
 
 		//Hack release pray
 		mouth.RemoveNullPrays();

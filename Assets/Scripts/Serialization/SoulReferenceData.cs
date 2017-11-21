@@ -8,6 +8,6 @@ public class SoulReferenceData {
 	
 	// As seen from mother:
 	public bool isChildConnected; // Should be connected
-	public Vector2i childRootMapPosition; //As seen from mothers frame of reference
-	public int childRootBindCardinalIndex; //As seen from mothers frame of reference
+	public Vector2i childOriginMapPosition; //As seen from mothers frame of reference
+	public int childOriginBindCardinalIndex; //As seen from mothers frame of reference
 }

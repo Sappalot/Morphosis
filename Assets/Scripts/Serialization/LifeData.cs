@@ -12,5 +12,5 @@ public class LifeData {
 	//Souls
 	public Dictionary<string, SoulData> soulDictionary = new Dictionary<string, SoulData>();
 	public List<SoulData> soulList = new List<SoulData>();
-
+	public int soulsLostCount;
 }

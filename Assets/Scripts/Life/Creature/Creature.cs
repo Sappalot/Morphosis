@@ -192,19 +192,19 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public Vector2 GetRootPosition(PhenoGenoEnum type) {
+	public Vector2 GetOriginPosition(PhenoGenoEnum type) {
 		if (type == PhenoGenoEnum.Phenotype) {
-			return phenotype.rootCell.position;
+			return phenotype.originCell.position;
 		} else {
-			return genotype.rootCell.position;
+			return genotype.originCell.position;
 		}
 	}
 
-	public float GetRootHeading(PhenoGenoEnum type) {
+	public float GetOriginHeading(PhenoGenoEnum type) {
 		if (type == PhenoGenoEnum.Phenotype) {
-			return phenotype.rootCell.heading;
+			return phenotype.originCell.heading;
 		} else {
-			return genotype.rootCell.heading;
+			return genotype.originCell.heading;
 		}
 	}
 
@@ -246,7 +246,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	private void UpdateCellsAndGeneCells(Vector2 position, float heading) {
-		//we need to update them allready in order to have rootCell. Root cell is needed for position and heading when updating
+		//we need to update them allready in order to have originCell. Origin cell is needed for position and heading when updating
 		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
 		phenotype.connectionsDiffersFromCells = phenotype.UpdateCellsFromGeneCells(this, position, heading);
 		isDirtyGraphics = true;
@@ -287,16 +287,12 @@ public class Creature : MonoBehaviour {
 		isDirtyGraphics = true;
 	}
 
-	public void DeleteCellButRoot(Cell cell, bool playEffects = false) {
-		if (!cell.isRoot) {
-			phenotype.DeleteCell(cell, true, playEffects);
-		} else {
-			Debug.LogError("You are not allowed to Delete root cell");
-		}
+	public void KillCell(Cell cell, bool playEffects) {
+		phenotype.KillCell(cell, true, playEffects);
 	}
 
-	public void DeleteAllCells() {
-		phenotype.DeleteAllCells();
+	public void KillAllCells() {
+		phenotype.KillAllCells();
 	}
 
 	public void ShowCellSelected(Cell cell, bool on) {
@@ -309,18 +305,18 @@ public class Creature : MonoBehaviour {
 
 	public void Grab(PhenoGenoEnum type) {
 		if (type == PhenoGenoEnum.Phenotype) {
-			Vector2 rootCellPosition = phenotype.rootCell.position;
+			Vector2 originCellPosition = phenotype.originCell.position;
 
 			phenotype.Grab();
 			hasPhenotypeCollider = false;
 
 			transform.parent = null;
-			transform.position = rootCellPosition;
+			transform.position = originCellPosition;
 			transform.parent = Life.instance.transform;
 		} else if (type == PhenoGenoEnum.Genotype) {
 			phenotype.hasDirtyPosition = true;
 
-			Vector2 rootCellPosition = genotype.rootCell.position;
+			Vector2 originCellPosition = genotype.originCell.position;
 
 			genotype.Grab();
 			hasGenotypeCollider = false;
@@ -328,7 +324,7 @@ public class Creature : MonoBehaviour {
 			phenotype.Halt();
 
 			transform.parent = null;
-			transform.position = rootCellPosition;
+			transform.position = originCellPosition;
 			transform.parent = Life.instance.transform;
 		}
 		isDirtyGraphics = true;
@@ -452,8 +448,8 @@ public class Creature : MonoBehaviour {
 		id = creatureData.id;
 
 		genotype.ApplyData(creatureData.genotypeData);
-		Vector2 position = creatureData.genotypeData.rootPosition;
-		float heading = creatureData.genotypeData.rootHeading;
+		Vector2 position = creatureData.genotypeData.originPosition;
+		float heading = creatureData.genotypeData.originHeading;
 		genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
 
 		phenotype.ApplyData(creatureData.phenotypeData, this);
@@ -478,22 +474,18 @@ public class Creature : MonoBehaviour {
 			EnableCurrentGenoPhenoColliderAndDisableOther();
 
 			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-				if (phenotype.isAlive) {
-					// Update selection
-					phenotype.ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(this));
 
-					phenotype.ShowShadow(false);
+				// Update selection
+				phenotype.ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(this));
 
-					//Show selected or not
-					phenotype.ShowCellsSelected(false);
-					if (CreatureSelectionPanel.instance.soloSelected == this) {
-						phenotype.ShowCellSelected(CellPanel.instance.selectedCell, true);
-					}
-				} else {
-					phenotype.ShowSelectedCreature(false);
-					phenotype.ShowShadow(false);
-					phenotype.ShowCellsSelected(false);
+				phenotype.ShowShadow(false);
+
+				//Show selected or not
+				phenotype.ShowCellsSelected(false);
+				if (CreatureSelectionPanel.instance.soloSelected == this) {
+					phenotype.ShowCellSelected(CellPanel.instance.selectedCell, true);
 				}
+
 			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 				// Update selection
 				genotype.ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(this));
@@ -511,12 +503,12 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void UpdateStructure() {
-		if (genotype.UpdateGeneCellsFromGenome(this, genotype.rootCell.position, genotype.rootCell.heading)) {
+		if (genotype.UpdateGeneCellsFromGenome(this, genotype.originCell.position, genotype.originCell.heading)) {
 			phenotype.cellsDiffersFromGeneCells = true;
 			isDirtyGraphics = true;
 		}
 
-		if (phenotype.UpdateCellsFromGeneCells(this, genotype.rootCell.position, genotype.rootCell.heading)) {
+		if (phenotype.UpdateCellsFromGeneCells(this, genotype.originCell.position, genotype.originCell.heading)) {
 			phenotype.connectionsDiffersFromCells = true;
 			isDirtyGraphics = true;
 		}
@@ -557,7 +549,7 @@ public class Creature : MonoBehaviour {
 			phenotype.TryGrow(this, false, 1, false, true);
 
 			//Detatch ?
-			if (phenotype.rootCell.energy > GlobalSettings.instance.eggCellRootDetatchThresholdEnergy) {
+			if (phenotype.originCell.energy > GlobalSettings.instance.eggCellOriginDetatchThresholdEnergy) {
 				DetatchFromMother(true);
 			}
 

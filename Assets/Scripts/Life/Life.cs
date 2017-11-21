@@ -9,11 +9,11 @@ public class Life : MonoSingleton<Life> {
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
 	private List<Creature> creatureList = new List<Creature>(); // All enbodied creatures (the once that we can see and play with)
 
-	//--
-
 	private Dictionary<string, Soul> soulDictionary = new Dictionary<string, Soul>();
 	private List<Soul> soulListUnupdated = new List<Soul>(); //All creature containers, count allways >= number of creatures, since each creature has a container
 	private List<Soul> soulListUpdated = new List<Soul>();
+	public int soulsLostCount { get; private set; }
+	public int soulsDeadButUsedCount { get; private set; }
 
 	public int soulUpdatedCount {
 		get {
@@ -31,6 +31,46 @@ public class Life : MonoSingleton<Life> {
 		get {
 			return creatureList.Count;
 		}
+	}
+
+	public void KillSoulIfUnneeded(Soul soul) {
+		if (!IsAnyOfMyCloseRelativesAlive(soul)) {
+			KillSoul(soul);
+			soulsLostCount++;
+		}
+	}
+
+	private bool IsAnyOfMyCloseRelativesAlive(Soul soul) {
+		//is living mother refering to me
+		if (HasCreature(soul.motherSoulReference.id)) {
+			return true;
+		}
+
+		//child living child refering to me
+		foreach (SoulReference child in soul.childSoulReferences) {
+			if (HasCreature(child.id)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private void KillSoul(Soul soul) {
+		//remove all references to me
+		soul.OnKill();
+
+		if (soulDictionary.ContainsValue(soul)) {
+			soulDictionary.Remove(soul.id);
+		}
+		if (soulListUnupdated.Contains(soul)) {
+			soulListUnupdated.Remove(soul);
+		}
+		if (soulListUpdated.Contains(soul)) {
+			soulListUpdated.Remove(soul);
+		}
+
+		//Note soul sill remains in other souls refering to it
 	}
 
 	public void UpdateSoulReferences() {
@@ -72,8 +112,8 @@ public class Life : MonoSingleton<Life> {
 		MoveToUnupdated(childSoul);
 	}
 
-	public void AddChildSoulImmediateSafe(Soul motherSoul, Soul childSoul, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
-		motherSoul.AddChildSoulImmediate(childSoul, rootMapPosition, rootBindCardinalIndex, isConnected);
+	public void AddChildSoulImmediateSafe(Soul motherSoul, Soul childSoul, Vector2i originMapPosition, int originBindCardinalIndex, bool isConnected) {
+		motherSoul.AddChildSoulImmediate(childSoul, originMapPosition, originBindCardinalIndex, isConnected);
 		MoveToUnupdated(motherSoul);
 		MoveToUnupdated(childSoul);
 	}
@@ -118,9 +158,9 @@ public class Life : MonoSingleton<Life> {
 
 		// Q: What happens when 2 children, attatched to same mother, grows into each other (prio??), A: Let them grow as long as ther is room for each new cell. Probe for room firstm, then build?
 
-		// remove cell at childs root location
+		// remove cell at childs origin location
 		float eggEnergy = eggCell.energy;
-		mother.DeleteCellButRoot(eggCell); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
+		mother.KillCell(eggCell, false); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
 
 		// Spawn child at egg cell location
 		Creature child = InstantiateCreature(); // Will create soul as well
@@ -129,7 +169,7 @@ public class Life : MonoSingleton<Life> {
 		//child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
 		//.GetMutatedClone(0.2f)
 		child.GenerateEmbryo(mother.genotype.GetMutatedClone(0.2f), eggCell.position, eggCell.heading); //Mutation Hack
-		child.phenotype.rootCell.energy = eggEnergy;
+		child.phenotype.originCell.energy = eggEnergy;
 
 		Soul motherSoul = GetSoul(mother.id);
 		Soul childSoul = GetSoul(child.id);
@@ -141,7 +181,7 @@ public class Life : MonoSingleton<Life> {
 		CreatureSelectionPanel.instance.MakeDirty();
 	}
 
-	public void DeleteAll() {
+	public void KillAllCreaturesAndSouls() {
 		foreach (Creature creature in creatureList) {
 			Destroy(creature.gameObject);
 		}
@@ -151,38 +191,72 @@ public class Life : MonoSingleton<Life> {
 		soulDictionary.Clear();
 		soulListUnupdated.Clear();
 		soulListUpdated.Clear();
+
+		soulsLostCount = 0;
+		soulsDeadButUsedCount = 0;
 	}
 
-	public void DeleteCell(Cell cell) {
-		if (cell.isRoot) {
-			DeleteCreature(cell.creature);
+	public void KillCellSafe(Cell cell) {
+		if (cell.isOrigin) {
+			KillCreatureSafe(cell.creature);
 		} else {
-			cell.creature.DeleteCellButRoot(cell, true);
+			cell.creature.KillCell(cell, true);
 		}
 	}
 
-	public void DeleteCreature(Creature creature) {
+	//This is the only way, where the creature GO is deleted
+	public void KillCreatureSafe(Creature creature) {
 		creature.DetatchFromMother(true);
 		foreach(Soul childSoul in creature.childSouls) {
-			if (childSoul.hasCreature) {
-				childSoul.creature.DetatchFromMother(true);
+			if (childSoul.creatureReference.creature != null) {
+				childSoul.creatureReference.creature.DetatchFromMother(true);
 			}
 		}
 
-		creature.DeleteAllCells(); // for the fx :)
-
-		CreatureSelectionPanel.instance.RemoveFromSelection(creature);
+		creature.KillAllCells(); // for the fx :)
 
 		Destroy(creature.gameObject);
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
-		
+
+		////remove my soul, if unused
+		//KillSoulIfUnneeded(GetSoul(creature.soul.id));
+
+		////remove mother's soul, if unused
+		//if (creature.soul.motherSoulReference.id != string.Empty && HasSoul(creature.soul.motherSoulReference.id)) {
+		//	KillSoulIfUnneeded(GetSoul(creature.soul.motherSoulReference.id));
+		//}
+
+		//remove children's souls if unused
+
+		RemoveUnusedSouls();
+
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		CreatureSelectionPanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
 
 		// Note the soul will remain :)
 		// Q: will we keep souls forever? This will cause a really slow application over night
+	}
+
+	List<Soul> unusedSoulsToKill = new List<Soul>();
+	private void RemoveUnusedSouls() {
+		UpdateSoulReferences();
+
+		unusedSoulsToKill.Clear();
+		soulsDeadButUsedCount = 0;
+		foreach (Soul soul in soulListUpdated) {
+			if (!HasCreature(soul.id)) {
+				if (!IsAnyOfMyCloseRelativesAlive(soul)) {
+					unusedSoulsToKill.Add(soul);
+				} else {
+					soulsDeadButUsedCount++;
+				}
+			} 
+		}
+		foreach (Soul soul in unusedSoulsToKill) {
+			KillSoulIfUnneeded(soul);
+		}		
 	}
 
 	public List<Creature> GetPhenotypesInside(Rect area) {
@@ -314,6 +388,8 @@ public class Life : MonoSingleton<Life> {
 		//Souls
 		lifeData.soulList.Clear();
 		lifeData.soulDictionary.Clear();
+		lifeData.soulsLostCount = soulsLostCount;
+
 
 		for (int index = 0; index < soulListUpdated.Count; index++) {
 			Soul soul = soulListUpdated[index];
@@ -330,7 +406,7 @@ public class Life : MonoSingleton<Life> {
 		idGenerator.number = lifeData.lastId;
 
 		// Create all creatures
-		DeleteAll();
+		KillAllCreaturesAndSouls();
 		for (int index = 0; index < lifeData.creatureList.Count; index++) {
 			CreatureData creatureData = lifeData.creatureList[index];
 			Creature creature = InstantiateCreature(creatureData.id); // Creatres soul as
@@ -341,6 +417,7 @@ public class Life : MonoSingleton<Life> {
 		soulDictionary.Clear();
 		soulListUnupdated.Clear();
 		soulListUpdated.Clear();
+
 		for (int index = 0; index < lifeData.soulList.Count; index++) {
 			SoulData solulData = lifeData.soulList[index];
 			Soul newSoul = new Soul(solulData.id);
@@ -348,6 +425,10 @@ public class Life : MonoSingleton<Life> {
 			soulDictionary.Add(newSoul.id, newSoul);
 			soulListUnupdated.Add(newSoul);
 		}
+		soulsLostCount = lifeData.soulsLostCount;
+
+		RemoveUnusedSouls();
+		UpdateSoulReferences();
 	}
 
 	// ^ Load Save ^
@@ -384,12 +465,12 @@ public class Life : MonoSingleton<Life> {
 		//kill of weak cells / creatures
 		killCreatureList.Clear();
 		for (int index = 0; index < creatureList.Count; index++) {
-			if (creatureList[index].UpdateKillWeakCells()) {
+			if (creatureList[index].UpdateKillWeakCells() || !creatureList[index].phenotype.isAlive) {
 				killCreatureList.Add(creatureList[index]);
 			}
 		}
 		for (int index = 0; index < killCreatureList.Count; index++) {
-			DeleteCreature(killCreatureList[index]);
+			KillCreatureSafe(killCreatureList[index]);
 		}
 
 		//

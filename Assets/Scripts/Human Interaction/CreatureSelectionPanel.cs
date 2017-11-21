@@ -87,10 +87,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.selectedGene = null;
 
-		SetCellAndGeneSelectionToRoot();
+		SetCellAndGeneSelectionToOrigin();
 	}
 
-	public void SetCellAndGeneSelectionToRoot() {
+	public void SetCellAndGeneSelectionToOrigin() {
 		selectedCell = null;
 		GenePanel.instance.selectedGene = null;
 		isDirty = true;
@@ -162,7 +162,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		selectedCell = null;
 		selection.Remove(creature);
 
-		SetCellAndGeneSelectionToRoot();
+		SetCellAndGeneSelectionToOrigin();
 
 		isDirty = true;
 		phenotypePanel.MakeDirty();
@@ -188,7 +188,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	// Delete
 	public void OnDeleteClicked() {
 		for (int index = 0; index < selection.Count; index++) {
-			life.DeleteCreature(selection[index]);
+			life.KillCreatureSafe(selection[index]);
 		}
 		ClearSelection();
 	}
@@ -198,7 +198,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		get	{
 			Vector2 pow = Vector2.zero;
 			foreach (Creature c in moveCreatures) {
-				pow += (Vector2)c.phenotype.rootCell.position;
+				pow += (Vector2)c.phenotype.originCell.position;
 			}
 			return pow / selectionCount;
 		}
@@ -208,7 +208,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		get	{
 			Vector2 pow = Vector2.zero;
 			foreach (Creature c in moveCreatures) {
-				pow += (Vector2)c.genotype.rootCell.position;
+				pow += (Vector2)c.genotype.originCell.position;
 			}
 			return pow / selectionCount;
 		}
@@ -224,7 +224,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 			//children
 			foreach (Creature child in creature.children) {
-				if (!selection.Contains(child)) {
+				if (!selection.Contains(child) && child != null) {
 					child.DetatchFromMother(true);
 				}
 			}
@@ -315,7 +315,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				SoulReference childReference = soulOriginal.childSoulReferences[i];
 				if (originalCreatures.Find(c => c.id == childReference.id)) {
 					string copyId = originalToCopy[childReference.id];
-					Life.instance.AddChildSoulImmediateSafe(soulCopy, Life.instance.GetSoul(copyId), childReference.childRootMapPosition, childReference.childRootBindCardinalIndex, childReference.isChildConnected);
+					Life.instance.AddChildSoulImmediateSafe(soulCopy, Life.instance.GetSoul(copyId), childReference.childOriginMapPosition, childReference.childOriginBindCardinalIndex, childReference.isChildConnected);
 				}
 			}
 		}
@@ -382,7 +382,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			rotationCenter = MoveCreaturesCenterGenotype;
 		}
 		foreach (Creature c in moveCreatures) {
-			startCreatureHeading.Add(c, c.genotype.rootCell.heading);
+			startCreatureHeading.Add(c, c.genotype.originCell.heading);
 		}
 
 		lineRenderer.GetComponent<LineRenderer>().SetPosition(1, mousePosition);
@@ -450,11 +450,25 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 	}
 
+	public void RemoveNullCreaturesFromSelection() {
+		List<Creature> keepers = new List<Creature>();
+		foreach (Creature enbodied in selection) {
+			if (enbodied != null) {
+				keepers.Add(enbodied);
+			}
+		}
+		selection.Clear();
+		selection.AddRange(keepers);
+	}
+
 	//--------------------------------
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update CreatureSelectionPanel");
+
+			RemoveNullCreaturesFromSelection();
+
 			if (selection.Count == 0) {
 				selectedCreatureText.text = "";
 				motherText.text = "Mother:";
@@ -526,9 +540,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				c.transform.localRotation = Quaternion.Euler(0, 0, RotateCreaturesAngle);
 
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-					c.phenotype.rootCell.heading = startCreatureHeading[c] + RotateCreaturesAngle;
+					c.phenotype.originCell.heading = startCreatureHeading[c] + RotateCreaturesAngle;
 				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-					c.genotype.rootCell.heading = startCreatureHeading[c] + RotateCreaturesAngle;
+					c.genotype.originCell.heading = startCreatureHeading[c] + RotateCreaturesAngle;
 				}
 			}
 		}

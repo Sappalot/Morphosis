@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Phenotype : MonoBehaviour {
 	[HideInInspector]
-	public Cell rootCell {
+	public Cell originCell {
 		get {
 			return cellList[0];
 		}
@@ -129,7 +129,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	//SpawnPosition is the position where the center of the root cell will appear in word space
+	//SpawnPosition is the position where the center of the origin cell will appear in word space
 	private void Setup(Creature creature, Vector2 spawnPosition, float spawnHeading) {
 		timeOffset = Random.Range(0f, 7f); //TODO: Remove
 
@@ -144,7 +144,7 @@ public class Phenotype : MonoBehaviour {
 
 	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects) {
 		////Fail safe ... to be removed
-		Life.instance.UpdateSoulReferences();
+		//Life.instance.UpdateSoulReferences();
 
 		int growCellCount = 0;
 		Genotype genotype  = creature.genotype;
@@ -156,8 +156,8 @@ public class Phenotype : MonoBehaviour {
 			SpawnCell(creature, genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, spawnPosition, true, 30f);
 
 			//EvoFixedUpdate(creature, 0f); //Do we really need to do this here?
-			rootCell.heading = spawnHeading;
-			rootCell.triangleTransform.rotation = Quaternion.Euler(0f, 0f, rootCell.heading); // Just updating graphics
+			originCell.heading = spawnHeading;
+			originCell.triangleTransform.rotation = Quaternion.Euler(0f, 0f, originCell.heading); // Just updating graphics
 			growCellCount++;
 		}
 		genotype.geneCellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
@@ -169,7 +169,7 @@ public class Phenotype : MonoBehaviour {
 
 			if (!IsCellBuiltForGeneCell(geneCell)
 				&& IsCellBuiltAtNeighbourPosition(geneCell.mapPosition)
-				&& (allowOvergrowth || !(IsMotherPlacentaLocation(creature, geneCell.mapPosition) || IsChildRootLocation(creature, geneCell.mapPosition)))) {
+				&& (allowOvergrowth || !(IsMotherPlacentaLocation(creature, geneCell.mapPosition) || IsChildOriginLocation(creature, geneCell.mapPosition)))) {
 				Vector3 averagePosition = Vector3.zero;
 				int positionCount = 0;
 
@@ -236,10 +236,10 @@ public class Phenotype : MonoBehaviour {
 		return growCellCount;
 	}
 
-	private bool IsChildRootLocation(Creature creature, Vector2i mapPosition) {
-		//My(placenta) <====> Child(root)
+	private bool IsChildOriginLocation(Creature creature, Vector2i mapPosition) {
+		//My(placenta) <====> Child(origin)
 		foreach (Soul child in creature.childSouls) {
-			if (creature.soul.isConnectedWithChildSoul(child.id) && creature.soul.childSoulRootMapPosition(child.id) == mapPosition) {
+			if (creature.soul.isConnectedWithChildSoul(child.id) && creature.soul.childSoulOriginMapPosition(child.id) == mapPosition) {
 				return true;
 			}
 		}
@@ -247,7 +247,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	private bool IsMotherPlacentaLocation(Creature creature, Vector2i mapPosition) {
-		//My(root) <====> Mohther(placenta)
+		//My(origin) <====> Mohther(placenta)
 		if (creature.soul != null && creature.soul.motherSoulReference.id != string.Empty && creature.soul.isConnectedWithMotherSoul) {
 			Creature creatureMother = creature.mother;
 			foreach (Soul child in creatureMother.childSouls) {
@@ -258,10 +258,10 @@ public class Phenotype : MonoBehaviour {
 
 						for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 							Vector2i neighbourMapPosition = CellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
-							if (neighbourMapPosition == creature.motherSoul.childSoulRootMapPosition(child.id)) {
-								int childSoulRootCardinalBindIndex = creature.motherSoul.childSoulRootBindCardinalIndex(child.id);
-								// One of mothers cells found a neighbour, which is its childSoulRootMapPosition 
-								Vector2i placentaCellPositionInChildSpace = CellMap.GetGridNeighbourGridPosition(new Vector2i(0, 0), AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3 - childSoulRootCardinalBindIndex + 1));
+							if (neighbourMapPosition == creature.motherSoul.childSoulOriginMapPosition(child.id)) {
+								int childSoulOriginCardinalBindIndex = creature.motherSoul.childSoulOriginBindCardinalIndex(child.id);
+								// One of mothers cells found a neighbour, which is its childSoulOriginMapPosition 
+								Vector2i placentaCellPositionInChildSpace = CellMap.GetGridNeighbourGridPosition(new Vector2i(0, 0), AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3 - childSoulOriginCardinalBindIndex + 1));
 								if (placentaCellPositionInChildSpace == mapPosition) {
 									return true;
 								}
@@ -319,7 +319,7 @@ public class Phenotype : MonoBehaviour {
 		if (connectionsDiffersFromCells) {
 
 			////Fail safe ... to be removed
-			Life.instance.UpdateSoulReferences();
+			//Life.instance.UpdateSoulReferences();
 
 			UpdateNeighbourReferencesInterBody(creature);
 
@@ -358,7 +358,7 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 
-		//My(root) <====> Mohther(placenta)
+		//My(origin) <====> Mohther(placenta)
 		if (creature.hasMotherSoul && creature.soul.isConnectedWithMotherSoul) {
 			Creature creatureMother = creature.mother;
 			foreach (Soul child in creatureMother.childSouls) {
@@ -368,14 +368,14 @@ public class Phenotype : MonoBehaviour {
 						Cell placentaCell = creatureMother.phenotype.cellList[index];
 						for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 							Vector2i neighbourMapPosition = CellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
-							if (neighbourMapPosition == creature.motherSoul.childSoulRootMapPosition(child.id)) {
-								// My placenta to childs root
-								placentaCell.SetNeighbourCell(cardinalIndex, rootCell);
-								//Debug.Log("Me(root)" + creature.id + " <==neighbour== Mother(placenta)" + creatureMother.id);
+							if (neighbourMapPosition == creature.motherSoul.childSoulOriginMapPosition(child.id)) {
+								// My placenta to childs origin
+								placentaCell.SetNeighbourCell(cardinalIndex, originCell);
+								//Debug.Log("Me(origin)" + creature.id + " <==neighbour== Mother(placenta)" + creatureMother.id);
 
-								//childs root to my placenta
-								rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.creature.motherSoul.childSoulRootBindCardinalIndex(child.id) + 1 + 3), placentaCell);
-								//Debug.Log("Me(root)" + creature.id + " ==neighbour==> Mother(placenta)" + creatureMother.id);
+								//childs origin to my placenta
+								originCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.creature.motherSoul.childSoulOriginBindCardinalIndex(child.id) + 1 + 3), placentaCell);
+								//Debug.Log("Me(origin)" + creature.id + " ==neighbour==> Mother(placenta)" + creatureMother.id);
 							}
 						}
 					}
@@ -383,21 +383,21 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 
-		//My(placenta) <====> Child(root)
+		//My(placenta) <====> Child(origin)
 		foreach (Soul child in creature.childSouls) {
 			if (creature.soul.isConnectedWithChildSoul(child.id)) {
 				for (int index = 0; index < cellList.Count; index++) {
 					Cell placentaCell = cellList[index];
 					for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 						Vector2i neighbourMapPosition = CellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
-						if (neighbourMapPosition == creature.soul.childSoulRootMapPosition(child.id)) {
-							// My placenta to childs root
-							placentaCell.SetNeighbourCell(cardinalIndex, child.creature.phenotype.rootCell);
-							//Debug.Log("Me: " + creature.id + ", my Child :" + child.id + " Me(placenta) ==neighbour==> Child(root)");
+						if (neighbourMapPosition == creature.soul.childSoulOriginMapPosition(child.id)) {
+							// My placenta to childs origin
+							placentaCell.SetNeighbourCell(cardinalIndex, child.creature.phenotype.originCell);
+							//Debug.Log("Me: " + creature.id + ", my Child :" + child.id + " Me(placenta) ==neighbour==> Child(origin)");
 
-							//childs root to my placenta
-							child.creature.phenotype.rootCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - creature.soul.childSoulRootBindCardinalIndex(child.id) + 1 + 3), placentaCell);
-							//Debug.Log("Me: " + creature.id + ", my Child :" + child.id + " Me(placenta) <==neighbour== Child(root)");
+							//childs origin to my placenta
+							child.creature.phenotype.originCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - creature.soul.childSoulOriginBindCardinalIndex(child.id) + 1 + 3), placentaCell);
+							//Debug.Log("Me: " + creature.id + ", my Child :" + child.id + " Me(placenta) <==neighbour== Child(origin)");
 						}
 					}
 				}
@@ -441,7 +441,7 @@ public class Phenotype : MonoBehaviour {
 				CellPanel.instance.selectedCell = null;
 			}
 
-			DeleteCell(cellList[cellList.Count - 1], false, true);
+			KillCell(cellList[cellList.Count - 1], false, true);
 			shrinkCellCount++;
 		}
 		
@@ -453,10 +453,10 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public bool IsRootNeighbouringMothersPlacenta(Creature creature) {
+	public bool IsOriginNeighbouringMothersPlacenta(Creature creature) {
 		Debug.Assert(creature.hasMotherSoul);
 
-		List<Cell> neighbours = rootCell.GetNeighbourCells();
+		List<Cell> neighbours = originCell.GetNeighbourCells();
 		foreach(Cell motherMai in neighbours) {
 			//if (motherMai.creature == creature.motherSoul.creature) {
 			if (motherMai.creature.id == creature.soul.motherSoulReference.id) {
@@ -470,8 +470,8 @@ public class Phenotype : MonoBehaviour {
 		disturbedCell.RemoveNeighbourCell(deletedCell);
 
 		//Check if mothers placenta is gone
-		if (creature.hasMotherSoul && disturbedCell.isRoot && !deletedCell.IsSameCreature(disturbedCell)) {
-			if (!IsRootNeighbouringMothersPlacenta(creature)) {
+		if (creature.hasMotherSoul && disturbedCell.isOrigin && !deletedCell.IsSameCreature(disturbedCell)) {
+			if (!IsOriginNeighbouringMothersPlacenta(creature)) {
 				DetatchFromMother(creature, true);
 			}
 		}
@@ -479,17 +479,17 @@ public class Phenotype : MonoBehaviour {
 		connectionsDiffersFromCells = true;
 	}
 
-	//This will make root inaccessible
-	public void DeleteAllCells() {
+	//This will make origin inaccessible
+	public void KillAllCells() {
 		List<Cell> allCells = new List<Cell>(cellList);
 
 		for (int i = 0; i < allCells.Count; i++) {
-			DeleteCell(allCells[i], false, true);
+			KillCell(allCells[i], false, true);
 		}
 	}
 
 	//This is the one and only final place where cell is removed
-	public void DeleteCell(Cell deleteCell, bool deleteDebris, bool playEffects = false) {
+	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects) {
 		if (playEffects) {
 			Audio.instance.CellDeath();
 			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalSettings.instance.playVisualEffects) {
@@ -506,7 +506,7 @@ public class Phenotype : MonoBehaviour {
 			disturbedCell.creature.phenotype.OnNeighbourDeleted(disturbedCell.creature, deleteCell, disturbedCell);
 		}
 
-		if (!deleteCell.isRoot) {
+		if (!deleteCell.isOrigin) {
 			cellMap.RemoveCellAtGridPosition(deleteCell.mapPosition);
 			cellList.Remove(deleteCell);
 			Destroy(deleteCell.gameObject);
@@ -514,7 +514,7 @@ public class Phenotype : MonoBehaviour {
 				CellPanel.instance.selectedCell = null;
 			}
 		} else {
-			isAlive = false; //Hack
+			isAlive = false; //Hack, to avoid problems with origin missing everywhere
 		}
 
 		if (deleteDebris) {
@@ -528,7 +528,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	private void DeleteDebris() {
-		List<Vector2i> keepers = cellMap.IsConnectedTo(rootCell.mapPosition);
+		List<Vector2i> keepers = cellMap.IsConnectedTo(originCell.mapPosition);
 		List<Cell> debris = new List<Cell>();
 		foreach (Cell c in cellList) {
 			if (keepers.Find(p => p == c.mapPosition) == null) {
@@ -536,7 +536,7 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 		for (int i = 0; i < debris.Count; i++) {
-			DeleteCell(debris[i], false, true);
+			KillCell(debris[i], false, true);
 		}
 	}
 
@@ -590,11 +590,11 @@ public class Phenotype : MonoBehaviour {
 		if (creature.hasMotherSoul && creature.soul.isConnectedWithMotherSoul) {
 			if (playEffects && GlobalSettings.instance.playVisualEffects) {
 				Audio.instance.CreatureDetatch();
-				Cell rootCell = creature.phenotype.rootCell;
-				SpawnCellDetatchBloodEffect(rootCell);
+				Cell originCell = creature.phenotype.originCell;
+				SpawnCellDetatchBloodEffect(originCell);
 			}
 
-			//GeometryUtils.GetVector(rootCell.heading + 180f, rootCell.radius)
+			//GeometryUtils.GetVector(originCell.heading + 180f, originCell.radius)
 
 			//me
 			creature.soul.SetConnectedWithMotherSoul(false);
@@ -732,10 +732,10 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 	
-	public void MoveRootToOrigo() {
-		Vector3 rootCellPosition = rootCell.position;
+	public void MoveOriginToOrigo() {
+		Vector3 originCellPosition = originCell.position;
 		foreach (Cell cell in cellList) {
-			cell.transform.position -= rootCellPosition;
+			cell.transform.position -= originCellPosition;
 		}
 	}
 
@@ -752,7 +752,7 @@ public class Phenotype : MonoBehaviour {
 			cell.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 			//cell.GetComponent<Collider2D>().enabled = false;
 		}
-		MoveRootToOrigo();
+		MoveOriginToOrigo();
 	}
 
 	public void Release(Creature creature) {
@@ -777,8 +777,8 @@ public class Phenotype : MonoBehaviour {
 
 	public void MoveToGenotype(Creature creature) {
 		if (hasDirtyPosition) {
-			MoveTo(creature.genotype.rootCell.position);
-			TurnTo(creature.genotype.rootCell.heading);
+			MoveTo(creature.genotype.originCell.position);
+			TurnTo(creature.genotype.originCell.heading);
 			hasDirtyPosition = false;
 		}
 	}
@@ -790,18 +790,18 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public void MoveTo(Vector2 vector) {
-		Move(vector - rootCell.position);
+		Move(vector - originCell.position);
 	}
 
-	//Make root cell point in this direction while the rest of the cells tags along
-	//Angle = 0 ==> root cell pointing east
-	//Angle = 90 ==> root cell pointing north
+	//Make origin cell point in this direction while the rest of the cells tags along
+	//Angle = 0 ==> origin cell pointing east
+	//Angle = 90 ==> origin cell pointing north
 	private void TurnTo(float targetAngle) {
-		float deltaAngle = targetAngle - rootCell.heading;
+		float deltaAngle = targetAngle - originCell.heading;
 		foreach (Cell cell in cellList) {
-			Vector3 rootToCell = cell.transform.position - (Vector3)rootCell.position;
-			Vector3 turnedVector = Quaternion.Euler(0, 0, deltaAngle) * rootToCell;
-			cell.transform.position = (Vector2)rootCell.position + (Vector2)turnedVector;
+			Vector3 originToCell = cell.transform.position - (Vector3)originCell.position;
+			Vector3 turnedVector = Quaternion.Euler(0, 0, deltaAngle) * originToCell;
+			cell.transform.position = (Vector2)originCell.position + (Vector2)turnedVector;
 			float heading = AngleUtil.CardinalIndexToAngle(cell.bindCardinalIndex) + targetAngle - 90f;
 			cell.heading = heading;
 			cell.SetTringleHeadingAngle(heading);
@@ -890,12 +890,12 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public bool UpdateKillWeakCells() {
-		if (rootCell.energy <= 0f) {
+		if (originCell.energy <= 0f) {
 			return true;
 		}
 		for (int index = 1; index < cellList.Count; index++) {
 			if (cellList[index].energy <= 0f) {
-				DeleteCell(cellList[index], true, true);
+				KillCell(cellList[index], true, true);
 			}
 		}
 		return false;

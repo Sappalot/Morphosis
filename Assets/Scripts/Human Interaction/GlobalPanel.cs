@@ -6,9 +6,12 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	
 	public Text worldNameAndTimeText;
 	public Text fps;
-	public Text population;
-	public Text souls;
 
+	public Text CreatureCount;
+	public Text soulsDirtyCount;
+	public Text soulsCleanCount;
+	public Text soulsDeadButUsedCount;
+	public Text soulsLostCount;
 
 	private int frameCount;
 	private float timeCount;
@@ -46,8 +49,11 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			frameCount = 0;
 			timeCount = 0;
 
-			population.text = "Population: " + Life.instance.creatureCount;
-			souls.text = "Souls: updated: " + Life.instance.soulUpdatedCount + ", un-updated: " + Life.instance.soulUnupdatedCount;
+			CreatureCount.text =         "Creatures: "   + Life.instance.creatureCount;
+			soulsDirtyCount.text =       "Alive & dirty: " + Life.instance.soulUnupdatedCount;
+			soulsCleanCount.text =       "Alive & clean: " + (Life.instance.soulUpdatedCount - Life.instance.soulsDeadButUsedCount);
+			soulsDeadButUsedCount.text = "Dead & used: "   + Life.instance.soulsDeadButUsedCount;
+			soulsLostCount.text =        "Dead & lost: "   + Life.instance.soulsLostCount;
 		}
 	}
 

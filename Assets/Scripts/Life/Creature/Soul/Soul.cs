@@ -15,10 +15,33 @@ public class Soul {
 
 	public Creature creature {
 		get {
-			Debug.Assert(areAllReferencesUpdated, "Update references first!");
+			//Debug.Assert(areAllReferencesUpdated, "Update references first!");
 			return creatureReference.creature;
 		}
 	}
+
+	//Don't call this one unless all relative souls are dead (=carry no creatures)
+	public void OnKill() {
+		MakeMotherForgetAboutMe();
+		MakeChildrenForgetAboutMe();
+	}
+
+	//when killing, has no mother alive
+	private void MakeMotherForgetAboutMe() {
+		if (motherSoulReference.id != string.Empty && motherSoulReference.soul != null) {
+			motherSoulReference.soul.GetChildSoulReference(id).soul = null;
+		}
+	}
+
+	//when kiling, has no child alive
+	private void MakeChildrenForgetAboutMe() {
+		foreach (SoulReference c in childSoulReferences) {
+			if (c.soul != null && c.soul.motherSoulReference != null) {
+				c.soul.motherSoulReference.soul = null;
+			}
+		}
+	}
+
 
 	public bool hasCreature {
 		get {
@@ -33,7 +56,6 @@ public class Soul {
 	}
 
 	public void SetCreature(string id) {
-		Debug.Assert(motherSoulReference.id == string.Empty, "We shouldn't change the id of mother");
 		creatureReference.id = id;
 	}
 
@@ -87,17 +109,17 @@ public class Soul {
 
 	//We run into trouble if we add children here, while we still have this one in lifes list of souls with updated refrernces
 	//Call this function from AddChildSoulImmediateSafe in life only
-	public void AddChildSoulImmediate(Soul childSoul, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
-		SoulReference reference = AddChildSoul(childSoul.id, rootMapPosition, rootBindCardinalIndex, isConnected);
+	public void AddChildSoulImmediate(Soul childSoul, Vector2i originMapPosition, int originBindCardinalIndex, bool isConnected) {
+		SoulReference reference = AddChildSoul(childSoul.id, originMapPosition, originBindCardinalIndex, isConnected);
 		reference.soul = childSoul;
 	}
 
-	private SoulReference AddChildSoul(string id, Vector2i rootMapPosition, int rootBindCardinalIndex, bool isConnected) {
+	private SoulReference AddChildSoul(string id, Vector2i originMapPosition, int originBindCardinalIndex, bool isConnected) {
 		Debug.Assert(childSouls.Find(s => s.id == id) == null, "Creature has allready a child with that id");
 		// This soul will be created as the child is created, just fetch teh reference
 		SoulReference childSoulReference = new SoulReference(id);
-		childSoulReference.childRootMapPosition = rootMapPosition;
-		childSoulReference.childRootBindCardinalIndex = rootBindCardinalIndex;
+		childSoulReference.childOriginMapPosition = originMapPosition;
+		childSoulReference.childOriginBindCardinalIndex = originBindCardinalIndex;
 		childSoulReference.isChildConnected = isConnected;
 		childSoulReferences.Add(childSoulReference);
 
@@ -106,11 +128,13 @@ public class Soul {
 
 	public List<Creature> children {
 		get {
-			Debug.Assert(areChildReferencesUpdated, "Update references first!");
+			//Debug.Assert(areChildReferencesUpdated, "Update references first!");
 			List<Creature> children = new List<Creature>();
 			for (int i = 0; i < childSoulReferences.Count; i++) {
-				Debug.Assert(childSoulReferences[i].soul.areAllReferencesUpdated, "Update references first!");
-				children.Add(childSoulReferences[i].soul.creature);
+				//Debug.Assert(childSoulReferences[i].soul.areAllReferencesUpdated, "Update references first!");
+				if (childSoulReferences[i].soul != null && childSoulReferences[i].soul.creature != null) {
+					children.Add(childSoulReferences[i].soul.creature);
+				}
 			}
 			return children;
 		}
@@ -118,7 +142,7 @@ public class Soul {
 
 	public List<Soul> childSouls {
 		get {
-			Debug.Assert(areChildReferencesUpdated, "Update references first!");
+			//Debug.Assert(areChildReferencesUpdated, "Update references first!");
 			List<Soul> childSouls = new List<Soul>();
 			for (int i = 0; i < childSoulReferences.Count; i++) {
 				childSouls.Add(childSoulReferences[i].soul);
@@ -132,6 +156,10 @@ public class Soul {
 			Debug.Assert(areChildReferencesUpdated, "Update references first!");
 			return childSoulReferences.Count;
 		}
+	}
+
+	public SoulReference GetChildSoulReference(string id) {
+		return childSoulReferences.Find(c => c.id == id);
 	}
 
 	public Soul GetChildSoul(string id) {
@@ -192,14 +220,14 @@ public class Soul {
 		return childSoulReferences.Find(c => c.id == childSoulId).isChildConnected = connected;
 	}
 
-	public Vector2i childSoulRootMapPosition(string childSoulId) {
+	public Vector2i childSoulOriginMapPosition(string childSoulId) {
 		Debug.Assert(areAllReferencesUpdated, "Update references first!");
-		return childSoulReferences.Find(c => c.id == childSoulId).childRootMapPosition;
+		return childSoulReferences.Find(c => c.id == childSoulId).childOriginMapPosition;
 	}
 
-	public int childSoulRootBindCardinalIndex(string childSoulId) {
+	public int childSoulOriginBindCardinalIndex(string childSoulId) {
 		Debug.Assert(areAllReferencesUpdated, "Update references first!");
-		return childSoulReferences.Find(c => c.id == childSoulId).childRootBindCardinalIndex;
+		return childSoulReferences.Find(c => c.id == childSoulId).childOriginBindCardinalIndex;
 	}
 	// ^ Relatives ^
 

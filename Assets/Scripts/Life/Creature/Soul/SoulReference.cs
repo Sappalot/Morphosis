@@ -3,6 +3,7 @@
 public class SoulReference {
 	public string id = string.Empty;
 	public Soul soul;
+	private bool canNotFindSoul = false;
 
 	public SoulReference(string id) {
 		this.id = id;
@@ -14,7 +15,8 @@ public class SoulReference {
 				if (Life.instance.HasSoul(id)) {
 					soul = Life.instance.GetSoul(id);
 				} else {
-					Debug.LogError("Soul Reference: Can't find soul in Life");
+					//Debug.LogError("Soul Reference: Can't find soul in Life");
+					canNotFindSoul = true;
 				}
 			}
 		}
@@ -22,15 +24,15 @@ public class SoulReference {
 
 	public bool isReferenceUpdated {
 		get {
-			return id == string.Empty || soul != null;
+			return id == string.Empty || soul != null || canNotFindSoul; // Is it OK to call soulReference updated when we can not find it
 		}
 	}
 
 	//---------------- only used for children
 	// How mother sees a child:
 	public bool isChildConnected; // Should be connected
-	public Vector2i childRootMapPosition; //As seen from mothers frame of reference
-	public int childRootBindCardinalIndex; //As seen from mothers frame of reference
+	public Vector2i childOriginMapPosition; //As seen from mothers frame of reference
+	public int childOriginBindCardinalIndex; //As seen from mothers frame of reference
 
 	// Load Save
 	private SoulReferenceData soulReferenceData = new SoulReferenceData();
@@ -38,8 +40,8 @@ public class SoulReference {
 	public SoulReferenceData UpdateData() {
 		soulReferenceData.id = id;
 		soulReferenceData.isChildConnected = isChildConnected;
-		soulReferenceData.childRootMapPosition = childRootMapPosition;
-		soulReferenceData.childRootBindCardinalIndex = childRootBindCardinalIndex;
+		soulReferenceData.childOriginMapPosition = childOriginMapPosition;
+		soulReferenceData.childOriginBindCardinalIndex = childOriginBindCardinalIndex;
 
 		return soulReferenceData;
 	}
@@ -47,8 +49,8 @@ public class SoulReference {
 	public void ApplyData(SoulReferenceData soulReferenceData) {
 		id = soulReferenceData.id;
 		isChildConnected = soulReferenceData.isChildConnected;
-		childRootMapPosition = soulReferenceData.childRootMapPosition;
-		childRootBindCardinalIndex = soulReferenceData.childRootBindCardinalIndex;
+		childOriginMapPosition = soulReferenceData.childOriginMapPosition;
+		childOriginBindCardinalIndex = soulReferenceData.childOriginBindCardinalIndex;
 	}
 	// ^ Load Save ^
 }

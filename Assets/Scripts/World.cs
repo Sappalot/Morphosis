@@ -7,8 +7,8 @@ public class World : MonoSingleton<World> {
 	private string worldName = "Gaia";
 	private float fixedTime;
 
-	public void KillAllCreatures() {
-		Life.instance.DeleteAll();
+	public void KillAllCreaturesAndSouls() {
+		Life.instance.KillAllCreaturesAndSouls();
 		CreatureSelectionPanel.instance.ClearSelection();
 	}
 
@@ -44,7 +44,7 @@ public class World : MonoSingleton<World> {
 	//Save load
 	public void Restart() {
 		Time.timeScale = 0;
-		KillAllCreatures();
+		KillAllCreaturesAndSouls();
 		fixedTime = 0f;
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
 		for (int y = 1; y <= 1; y++) {
@@ -54,6 +54,7 @@ public class World : MonoSingleton<World> {
 		}
 		//Life.instance.SpawnCreatureEdgeFailure(new Vector3(100f, 200f, 0f)); //Fixed :)
 		//Life.instance.SpawnCreatureJellyfish(new Vector3(100f, 100f, 0f));
+		
 		CreatureEditModePanel.instance.Restart();
 		RMBToolModePanel.instance.Restart();
 

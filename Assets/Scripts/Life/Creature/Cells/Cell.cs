@@ -130,7 +130,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public bool isRoot {
+	public bool isOrigin {
 		get {
 			return mapPosition == new Vector2i(0, 0);
 		}
@@ -555,7 +555,7 @@ public abstract class Cell : MonoBehaviour {
 
 	//Phenotype
 	public void UpdateSpringConnectionsInter(Creature creature) {
-		// Here we connect root cell to placenta of mother only
+		// Here we connect origin cell to placenta of mother only
 		if (placentaSprings != null) {
 			for (int i = 0; i < placentaSprings.Length; i++) {
 				Destroy(placentaSprings[i]);
@@ -563,10 +563,10 @@ public abstract class Cell : MonoBehaviour {
 		}
 		placentaSprings = new SpringJoint2D[0];
 
-		if (this != creature.phenotype.rootCell || !creature.hasMotherSoul || !creature.soul.isConnectedWithMotherSoul) {
+		if (this != creature.phenotype.originCell || !creature.hasMotherSoul || !creature.soul.isConnectedWithMotherSoul) {
 			return;
 		}
-		//This is creatures root cell and creature has a connected mother
+		//This is creatures origin cell and creature has a connected mother
 
 		List<Cell> placentaCells = new List<Cell>();
 		for (int index = 0; index < 6; index++) {
@@ -596,8 +596,8 @@ public abstract class Cell : MonoBehaviour {
 			if (HasNeighbourCell(index)) {
 				Creature neighbourCreature = GetNeighbourCell(index).creature;
 
-				if (lastWasNeighbor && isRoot && ((neighbourCreature.id == motherId && lastHost == creature) || neighbourCreature == creature && lastHost.id == motherId)) {
-					// When the mother root is finding an adjacent child neighbour, she should just ignore it when it comes to groups
+				if (lastWasNeighbor && isOrigin && ((neighbourCreature.id == motherId && lastHost == creature) || neighbourCreature == creature && lastHost.id == motherId)) {
+					// When the mother origin is finding an adjacent child neighbour, she should just ignore it when it comes to groups
 					groups++;
 				}
 

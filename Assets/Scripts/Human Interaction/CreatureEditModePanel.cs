@@ -39,7 +39,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	}
 
 	public void UpdateAllAccordingToEditMode() {
-		CreatureSelectionPanel.instance.SetCellAndGeneSelectionToRoot();
+		CreatureSelectionPanel.instance.SetCellAndGeneSelectionToOrigin();
 		foreach (Creature c in Life.instance.creatures) {
 			c.BringCurrentGenoPhenoPositionAndRotationToOther();
 			c.MakeDirtyGraphics();

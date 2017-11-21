@@ -36,7 +36,7 @@ public class Vein : MonoBehaviour {
 		attachmentFront = new EdgeAttachment(parentCell, (directionChildToParentCell + 3) % 6);
 		attachmentBack = new EdgeAttachment(childCell, directionChildToParentCell);
 
-		if (parentCell.isRoot || childCell.isRoot) {
+		if (parentCell.isOrigin || childCell.isOrigin) {
 			effectType = EffectEnum.HighHigh;
 		} else if (!IsHighEfficiency(parentCell.GetCellType()) && !IsHighEfficiency(childCell.GetCellType())) {
 			effectType = EffectEnum.LowLow;
