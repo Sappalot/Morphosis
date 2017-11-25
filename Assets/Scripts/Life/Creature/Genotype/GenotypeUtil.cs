@@ -36,5 +36,4 @@ public static class GenotypeUtil {
 		}
 		return combination;
 	}
-
 }

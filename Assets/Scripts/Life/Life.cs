@@ -147,7 +147,7 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	// TODO MOve to creature ?
-	public void FertilizeCreature(Cell eggCell, bool playEffects = false) {
+	public void FertilizeCreature(Cell eggCell, bool playEffects, float? fixedTime) {
 		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
 
 		if (playEffects) {
@@ -160,7 +160,7 @@ public class Life : MonoSingleton<Life> {
 
 		// remove cell at childs origin location
 		float eggEnergy = eggCell.energy;
-		mother.KillCell(eggCell, false); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
+		mother.KillCell(eggCell, false, fixedTime); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
 
 		// Spawn child at egg cell location
 		Creature child = InstantiateCreature(); // Will create soul as well
@@ -168,7 +168,7 @@ public class Life : MonoSingleton<Life> {
 		// Let there be evolution, and ther ewas evolution
 		//child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
 		//.GetMutatedClone(0.2f)
-		child.GenerateEmbryo(mother.genotype.GetMutatedClone(0.2f), eggCell.position, eggCell.heading); //Mutation Hack
+		child.GenerateEmbryo(mother.genotype.GetMutatedClone(0.1f), eggCell.position, eggCell.heading); //Mutation Hack
 		child.phenotype.originCell.energy = eggEnergy;
 
 		Soul motherSoul = GetSoul(mother.id);
@@ -200,7 +200,7 @@ public class Life : MonoSingleton<Life> {
 		if (cell.isOrigin) {
 			KillCreatureSafe(cell.creature);
 		} else {
-			cell.creature.KillCell(cell, true);
+			cell.creature.KillCell(cell, true, null);
 		}
 	}
 
@@ -465,7 +465,7 @@ public class Life : MonoSingleton<Life> {
 		//kill of weak cells / creatures
 		killCreatureList.Clear();
 		for (int index = 0; index < creatureList.Count; index++) {
-			if (creatureList[index].UpdateKillWeakCells() || !creatureList[index].phenotype.isAlive) {
+			if (creatureList[index].UpdateKillWeakCells(fixedTime) || !creatureList[index].phenotype.isAlive) {
 				killCreatureList.Add(creatureList[index]);
 			}
 		}

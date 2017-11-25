@@ -40,7 +40,7 @@ public class Gene {
 		GlobalSettings gs = GlobalSettings.instance;
 		float mut = Random.Range(0, gs.cellTypeLeave + gs.cellTypeRandom * strength);
 		if (mut < gs.cellTypeRandom * strength) {
-			type = (CellTypeEnum)Random.Range(0, 5);
+			type = (CellTypeEnum)Random.Range(0, 8);
 		}
 		arrangements[0].Mutate(strength);
 		arrangements[1].Mutate(strength);
@@ -48,7 +48,7 @@ public class Gene {
 	}
 
 	public void Scramble() {
-		type = (CellTypeEnum)Random.Range(0, 5);
+		type = (CellTypeEnum)Random.Range(0, 8);
 		arrangements[0].Scramble();
 		arrangements[1].Scramble();
 		arrangements[2].Scramble();

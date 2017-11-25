@@ -3,9 +3,12 @@
 [Serializable]
 public enum CellTypeEnum {
 	Egg,
+	Fungal,
 	Jaw,
 	Leaf,
 	Muscle,
+	Root,
+	Shell,
 	Vein,
 }
 /*

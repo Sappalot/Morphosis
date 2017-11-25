@@ -54,12 +54,15 @@ public class Phenotype : MonoBehaviour {
 	public Transform cellsTransform;
 
 	public CellDeath cellDeathPrefab;
-	public CellDetatch cellDetatchPrefab; 
+	public CellDetatch cellDetatchPrefab;
 
 	public EggCell eggCellPrefab;
+	public FungalCell fungalCellPrefab;
 	public JawCell jawCellPrefab;
 	public LeafCell leafCellPrefab;
 	public MuscleCell muscleCellPrefab;
+	public RootCell rootCellPrefab;
+	public ShellCell shellCellPrefab;
 	public VeinCell veinCellPrefab;
 
 	public bool cellsDiffersFromGeneCells = true;
@@ -112,7 +115,7 @@ public class Phenotype : MonoBehaviour {
 
 	public void InitiateEmbryo(Creature creature, Vector2 position, float heading) {
 		Setup(creature, position, heading);
-		TryGrow(creature, true, 1, true, false);
+		TryGrow(creature, true, 1, true, false, null);
 		cellsDiffersFromGeneCells = false;
 	}
 
@@ -139,10 +142,10 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public int TryGrowFully(Creature creature, bool forceGrow) {
-		return TryGrow(creature, forceGrow, creature.genotype.geneCellCount, true, false);
+		return TryGrow(creature, forceGrow, creature.genotype.geneCellCount, true, false, null);
 	}
 
-	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects) {
+	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects, float? fixedTime) {
 		////Fail safe ... to be removed
 		//Life.instance.UpdateSoulReferences();
 
@@ -185,6 +188,15 @@ public class Phenotype : MonoBehaviour {
 						float distance = geneCell.radius + gridNeighbourBuilder.radius;
 						averagePosition += gridNeighbourBuilder.transform.position + new Vector3(distance * Mathf.Cos(meFromNeighbour * Mathf.Deg2Rad), distance * Mathf.Sin(meFromNeighbour * Mathf.Deg2Rad), 0f);
 						positionCount++;
+					}
+				}
+
+				// test if long enough time has passed since cell was killed
+				if (fixedTime != null && cellMap.HasKilledTimeStamp(geneCell.mapPosition)) {
+					if (fixedTime < cellMap.KilledTimeStamp(geneCell.mapPosition) + GlobalSettings.instance.cellRebuildCooldown) {
+						continue;
+					} else {
+						cellMap.RemoveTimeStamp(geneCell.mapPosition);
 					}
 				}
 
@@ -441,7 +453,7 @@ public class Phenotype : MonoBehaviour {
 				CellPanel.instance.selectedCell = null;
 			}
 
-			KillCell(cellList[cellList.Count - 1], false, true);
+			KillCell(cellList[cellList.Count - 1], false, true, null);
 			shrinkCellCount++;
 		}
 		
@@ -484,12 +496,12 @@ public class Phenotype : MonoBehaviour {
 		List<Cell> allCells = new List<Cell>(cellList);
 
 		for (int i = 0; i < allCells.Count; i++) {
-			KillCell(allCells[i], false, true);
+			KillCell(allCells[i], false, true, null);
 		}
 	}
 
 	//This is the one and only final place where cell is removed
-	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects) {
+	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects, float? fixedTime) {
 		if (playEffects) {
 			Audio.instance.CellDeath();
 			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalSettings.instance.playVisualEffects) {
@@ -521,6 +533,11 @@ public class Phenotype : MonoBehaviour {
 			DeleteDebris();
 		}
 
+		//Mark cell as destroyed so we don't try to build it back emediatly
+		if (fixedTime != null && !cellMap.HasKilledTimeStamp(deleteCell.mapPosition)) {
+			cellMap.AddKilledTimeStamp(deleteCell.mapPosition, fixedTime);
+		}
+
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		CreatureSelectionPanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
@@ -536,7 +553,7 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 		for (int i = 0; i < debris.Count; i++) {
-			KillCell(debris[i], false, true);
+			KillCell(debris[i], false, true, null);
 		}
 	}
 
@@ -655,12 +672,18 @@ public class Phenotype : MonoBehaviour {
 		Cell cell = null;
 		if (type == CellTypeEnum.Egg) {
 			cell = (Instantiate(eggCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
+		} else if (type == CellTypeEnum.Fungal) {
+			cell = (Instantiate(fungalCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
 		} else if (type == CellTypeEnum.Jaw) {
 			cell = (Instantiate(jawCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
 		} else if (type == CellTypeEnum.Leaf) {
 			cell = (Instantiate(leafCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
 		} else if (type == CellTypeEnum.Muscle) {
 			cell = (Instantiate(muscleCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
+		} else if (type == CellTypeEnum.Root) {
+			cell = (Instantiate(rootCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
+		} else if (type == CellTypeEnum.Shell) {
+			cell = (Instantiate(shellCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
 		} else if (type == CellTypeEnum.Vein) {
 			cell = (Instantiate(veinCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
 		}
@@ -889,13 +912,13 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public bool UpdateKillWeakCells() {
+	public bool UpdateKillWeakCells(float fixedTime) {
 		if (originCell.energy <= 0f) {
 			return true;
 		}
 		for (int index = 1; index < cellList.Count; index++) {
 			if (cellList[index].energy <= 0f) {
-				KillCell(cellList[index], true, true);
+				KillCell(cellList[index], true, true, fixedTime);
 			}
 		}
 		return false;

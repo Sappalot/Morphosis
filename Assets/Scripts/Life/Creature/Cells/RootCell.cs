@@ -1,35 +1,19 @@
-﻿public class JawCell : Cell {
+﻿public class RootCell : Cell {
 
-	public JawCellMouth mouth;
-
-	public JawCell() : base() {
+	public RootCell() : base() {
 		springFrequenzy = 5f;
 		springDamping = 11f;
 	}
 
 	public override void UpdateMetabolism(float deltaTime) {
-		effectConsumptionInternal = GlobalSettings.instance.jawCellEffectCost;
-
-		float weightedPrayCount = 0f;
-		foreach (Cell pray in mouth.prays) {
-			if (pray.GetCellType() == CellTypeEnum.Jaw) {
-				weightedPrayCount += GlobalSettings.instance.jawCellEatJawCellFactor;
-			} else if (pray.GetCellType() == CellTypeEnum.Shell) {
-				weightedPrayCount +=  GlobalSettings.instance.jawCellEatShellSellFactor;
-			} else {
-				weightedPrayCount += 1f;
-			}
-		}
-		effectProduction = weightedPrayCount * GlobalSettings.instance.jawCellEatEffect;
-
-		//Hack release pray
-		mouth.RemoveNullPrays();
+		effectConsumptionInternal = GlobalSettings.instance.rootCellEffectCost;
+		effectProduction = 0.5f; // GlobalSettings.instance.rootCellEarthMaxEffect;
 
 		base.UpdateMetabolism(deltaTime);
 	}
 
 	public override CellTypeEnum GetCellType() {
-		return CellTypeEnum.Jaw;
+		return CellTypeEnum.Root;
 	}
 
 	public override void UpdateSpringFrequenzy() {

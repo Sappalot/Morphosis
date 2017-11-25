@@ -22,7 +22,7 @@ public abstract class Cell : MonoBehaviour {
 	private List<JawCell> predators = new List<JawCell>(); //Who is eating on me
 
 	//How many cells are eating on me
-	private int predatorCount {
+	public int predatorCount {
 		get {
 			return predators.Count;
 		}
@@ -58,7 +58,7 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public float effectConsumptionInternal = 0;
 	[HideInInspector]
-	public float effectConsumptionExternal {
+	virtual public float effectConsumptionExternal {
 		get {
 			return predatorCount * GlobalSettings.instance.jawCellEatEffect;
 		}

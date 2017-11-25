@@ -60,12 +60,18 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		if (cellTypeDropdown.value == 0) {
 			selectedGene.type = CellTypeEnum.Egg;
 		} else if (cellTypeDropdown.value == 1) {
-			selectedGene.type = CellTypeEnum.Jaw;
+			selectedGene.type = CellTypeEnum.Fungal;
 		} else if (cellTypeDropdown.value == 2) {
-			selectedGene.type = CellTypeEnum.Leaf;
+			selectedGene.type = CellTypeEnum.Jaw;
 		} else if (cellTypeDropdown.value == 3) {
-			selectedGene.type = CellTypeEnum.Muscle;
+			selectedGene.type = CellTypeEnum.Leaf;
 		} else if (cellTypeDropdown.value == 4) {
+			selectedGene.type = CellTypeEnum.Muscle;
+		} else if (cellTypeDropdown.value == 5) {
+			selectedGene.type = CellTypeEnum.Root;
+		} else if (cellTypeDropdown.value == 6) {
+			selectedGene.type = CellTypeEnum.Shell;
+		} else if (cellTypeDropdown.value == 7) {
 			selectedGene.type = CellTypeEnum.Vein;
 		}
 
@@ -131,14 +137,20 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
 			if (selectedGene.type == CellTypeEnum.Egg) {
 				cellTypeDropdown.value = 0;
-			} else if (selectedGene.type == CellTypeEnum.Jaw) {
+			} else if (selectedGene.type == CellTypeEnum.Fungal) {
 				cellTypeDropdown.value = 1;
-			} else if (selectedGene.type == CellTypeEnum.Leaf) {
+			} else if (selectedGene.type == CellTypeEnum.Jaw) {
 				cellTypeDropdown.value = 2;
-			} else if (selectedGene.type == CellTypeEnum.Muscle) {
+			} else if (selectedGene.type == CellTypeEnum.Leaf) {
 				cellTypeDropdown.value = 3;
-			} else if (selectedGene.type == CellTypeEnum.Vein) {
+			} else if (selectedGene.type == CellTypeEnum.Muscle) {
 				cellTypeDropdown.value = 4;
+			} else if (selectedGene.type == CellTypeEnum.Root) {
+				cellTypeDropdown.value = 5;
+			} else if (selectedGene.type == CellTypeEnum.Shell) {
+				cellTypeDropdown.value = 6;
+			} else if (selectedGene.type == CellTypeEnum.Vein) {
+				cellTypeDropdown.value = 7;
 			}
 
 			isDirty = false;

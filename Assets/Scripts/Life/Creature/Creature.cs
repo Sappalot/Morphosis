@@ -273,7 +273,7 @@ public class Creature : MonoBehaviour {
 
 	// Apply on Phenotype
 	public void TryGrow(bool forceGrow, int cellCount, bool playEffects) {
-		phenotype.TryGrow(this, forceGrow, cellCount, true, playEffects);
+		phenotype.TryGrow(this, forceGrow, cellCount, true, playEffects, null);
 		isDirtyGraphics = true;
 	}
 
@@ -287,8 +287,8 @@ public class Creature : MonoBehaviour {
 		isDirtyGraphics = true;
 	}
 
-	public void KillCell(Cell cell, bool playEffects) {
-		phenotype.KillCell(cell, true, playEffects);
+	public void KillCell(Cell cell, bool playEffects, float? fixedTime) {
+		phenotype.KillCell(cell, true, playEffects, fixedTime);
 	}
 
 	public void KillAllCells() {
@@ -518,8 +518,8 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public bool UpdateKillWeakCells() {
-		return phenotype.UpdateKillWeakCells();
+	public bool UpdateKillWeakCells(float fixedTime) {
+		return phenotype.UpdateKillWeakCells(fixedTime);
 	}
 
 	float tickCoolDown = 0f;
@@ -546,7 +546,7 @@ public class Creature : MonoBehaviour {
 		}
 		phenotype.UpdatePhysics(this, fixedTime, deltaTickTime, isTick);
 		if (isTick) {
-			phenotype.TryGrow(this, false, 1, false, true);
+			phenotype.TryGrow(this, false, 1, false, true, fixedTime);
 
 			//Detatch ?
 			if (phenotype.originCell.energy > GlobalSettings.instance.eggCellOriginDetatchThresholdEnergy) {
@@ -566,7 +566,7 @@ public class Creature : MonoBehaviour {
 				}
 			}
 			if (fertilizeCell != null) {
-				Life.instance.FertilizeCreature(fertilizeCell, true);
+				Life.instance.FertilizeCreature(fertilizeCell, true, fixedTime);
 			}
 
 			PhenotypePanel.instance.MakeDirty();

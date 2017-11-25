@@ -5,9 +5,12 @@ public class Genotype : MonoBehaviour {
 	public Gene[] genome = new Gene[genomeLength]; //One gene can give rise to many geneCells
 
 	public EggCell eggCellPrefab;
+	public FungalCell fungalCellPrefab;
 	public JawCell jawCellPrefab;
 	public LeafCell leafCellPrefab;
 	public MuscleCell muscleCellPrefab;
+	public RootCell rootCellPrefab;
+	public ShellCell shellCellPrefab;
 	public VeinCell veinCellPrefab;
 	public Transform cellsTransform;
 
@@ -252,18 +255,23 @@ public class Genotype : MonoBehaviour {
 
 		if (gene.type == CellTypeEnum.Egg) {
 			cell = (Instantiate(eggCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
+		} else if (gene.type == CellTypeEnum.Fungal) {
+			cell = (Instantiate(fungalCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Jaw) {
 			cell = (Instantiate(jawCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Leaf) {
 			cell = (Instantiate(leafCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Muscle) {
 			cell = (Instantiate(muscleCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
+		} else if (gene.type == CellTypeEnum.Root) {
+			cell = (Instantiate(rootCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
+		} else if (gene.type == CellTypeEnum.Shell) {
+			cell = (Instantiate(shellCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Vein) {
 			cell = (Instantiate(veinCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		}
 
 		cell.RemovePhysicsComponents();
-
 
 		if (cell == null) {
 			throw new System.Exception("Could not create Cell out of type defined in gene");

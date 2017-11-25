@@ -7,6 +7,28 @@ using System.Collections.Generic;
 public class CellMap {
 	private Dictionary<GridPosition, Cell> grid = new Dictionary<GridPosition, Cell>();
 	private List<Vector2i> illegalPositions = new List<Vector2i>();
+
+	private Dictionary<Vector2i, float?> positionKilledTimeStamp = new Dictionary<Vector2i, float?>();
+
+	public bool HasKilledTimeStamp(Vector2i gridPosition) {
+		return positionKilledTimeStamp.ContainsKey(gridPosition);
+	}
+
+	public void AddKilledTimeStamp(Vector2i gridPosition, float? fixedTime) {
+		if (fixedTime != null) {
+			positionKilledTimeStamp.Add(gridPosition, fixedTime);
+		}
+	}
+
+	public float? KilledTimeStamp(Vector2i gridPosition) {
+		return positionKilledTimeStamp[gridPosition];
+	}
+
+	public void RemoveTimeStamp(Vector2i gridPosition) {
+		positionKilledTimeStamp.Remove(gridPosition);
+	}
+
+
 	public float cellRadius = 0.5f;
 
 	public int cellCount {
