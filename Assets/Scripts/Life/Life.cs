@@ -150,16 +150,16 @@ public class Life : MonoSingleton<Life> {
 	public void FertilizeCreature(Cell eggCell, bool playEffects, float? fixedTime) {
 		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
 
-		if (playEffects) {
-			Audio.instance.EggCellFertilize();
+		if (playEffects && HUD.instance.isPlaySoundFX && CameraUtils.IsObservedLazy(eggCell.position)) {
+			Audio.instance.EggCellFertilize(CameraUtils.GetEffectStrengthLazy());
 		}
 
 		Creature mother = eggCell.creature;
 
-		// Q: What happens when 2 children, attatched to same mother, grows into each other (prio??), A: Let them grow as long as ther is room for each new cell. Probe for room firstm, then build?
-
 		// remove cell at childs origin location
 		float eggEnergy = eggCell.energy;
+
+		//Do we want to have a cool down for egg or not?
 		mother.KillCell(eggCell, false, fixedTime); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
 
 		// Spawn child at egg cell location
@@ -168,8 +168,9 @@ public class Life : MonoSingleton<Life> {
 		// Let there be evolution, and ther ewas evolution
 		//child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
 		//.GetMutatedClone(0.2f)
-		child.GenerateEmbryo(mother.genotype.GetMutatedClone(0.1f), eggCell.position, eggCell.heading); //Mutation Hack
+		child.GenerateEmbryo(mother.genotype.GetMutatedClone(GlobalSettings.instance.mutation.masterMutationStrength), eggCell.position, eggCell.heading); //Mutation Hack
 		child.phenotype.originCell.energy = eggEnergy;
+		child.phenotype.originCell.originDetatchThreshold = eggCell.eggCellDetatchThreshold; // form mothers eggCell to childs origin
 
 		Soul motherSoul = GetSoul(mother.id);
 		Soul childSoul = GetSoul(child.id);
@@ -455,7 +456,6 @@ public class Life : MonoSingleton<Life> {
 		}
 		
 	}
-
 
 	// Phenotype only, updated from FixedUpdate
 	// Everything that needs to be updated as the biological clock is ticking, wings, cell tasks, energy

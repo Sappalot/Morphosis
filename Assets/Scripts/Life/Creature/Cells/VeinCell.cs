@@ -6,7 +6,7 @@
 	}
 
 	public override void UpdateMetabolism(float deltaTime) {
-		effectConsumptionInternal = GlobalSettings.instance.veinCellEffectCost;
+		effectConsumptionInternal = GlobalSettings.instance.phenotype.veinCellEffectCost;
 		effectProduction = 0f;
 
 		base.UpdateMetabolism(deltaTime);

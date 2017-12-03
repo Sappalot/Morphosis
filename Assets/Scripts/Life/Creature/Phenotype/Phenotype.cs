@@ -193,7 +193,7 @@ public class Phenotype : MonoBehaviour {
 
 				// test if long enough time has passed since cell was killed
 				if (fixedTime != null && cellMap.HasKilledTimeStamp(geneCell.mapPosition)) {
-					if (fixedTime < cellMap.KilledTimeStamp(geneCell.mapPosition) + GlobalSettings.instance.cellRebuildCooldown) {
+					if (fixedTime < cellMap.KilledTimeStamp(geneCell.mapPosition) + GlobalSettings.instance.phenotype.cellRebuildCooldown) {
 						continue;
 					} else {
 						cellMap.RemoveTimeStamp(geneCell.mapPosition);
@@ -502,9 +502,15 @@ public class Phenotype : MonoBehaviour {
 
 	//This is the one and only final place where cell is removed
 	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects, float? fixedTime) {
-		if (playEffects) {
-			Audio.instance.CellDeath();
-			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalSettings.instance.playVisualEffects) {
+		
+		if (playEffects && (HUD.instance.isPlaySoundFX || (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && HUD.instance.isShowVisualFX))) {
+			bool isObserved = CameraUtils.IsObservedLazy(deleteCell.position);
+
+			if (HUD.instance.isPlaySoundFX && isObserved) {
+				Audio.instance.CellDeath(CameraUtils.GetEffectStrengthLazy());
+			}
+		
+			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && HUD.instance.isShowVisualFX && isObserved) {
 				SpawnCellDeathEffect(deleteCell.position, Color.red);
 				SpawnCellDeleteBloodEffect(deleteCell);
 			}
@@ -605,10 +611,14 @@ public class Phenotype : MonoBehaviour {
 
 	public bool DetatchFromMother(Creature creature, bool playEffects = false) {
 		if (creature.hasMotherSoul && creature.soul.isConnectedWithMotherSoul) {
-			if (playEffects && GlobalSettings.instance.playVisualEffects) {
-				Audio.instance.CreatureDetatch();
-				Cell originCell = creature.phenotype.originCell;
-				SpawnCellDetatchBloodEffect(originCell);
+			if (playEffects && CameraUtils.IsObservedLazy(creature.phenotype.originCell.position)) {
+				if (HUD.instance.isPlaySoundFX) {
+					Audio.instance.CreatureDetatch(CameraUtils.GetEffectStrengthLazy());
+				}
+				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && HUD.instance.isShowVisualFX) {
+					Cell originCell = creature.phenotype.originCell;
+					SpawnCellDetatchBloodEffect(originCell);
+				}
 			}
 
 			//GeometryUtils.GetVector(originCell.heading + 180f, originCell.radius)
@@ -662,8 +672,12 @@ public class Phenotype : MonoBehaviour {
 		cell.flipSide = flipSide;
 		cell.timeOffset = timeOffset;
 		cell.creature = creature;
-
 		cell.energy = spawnEnergy;
+
+		// Gene settings
+		// Egg
+		cell.eggCellFertilizeThreshold = gene.eggCellFertilizeThreshold;
+		cell.eggCellDetatchThreshold = gene.eggCellDetatchThreshold; // form gene to eggCell
 
 		return cell;
 	}
@@ -924,7 +938,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	public void UpdatePhysics(Creature creature, float fixedTime, float deltaTickTime, bool isTick) {
+	public void UpdatePhysics(Creature creature, float fixedTime, float deltaTickTime, bool isTick, float deltaTickTimeVein, bool isTickVein) {
 		if (isGrabbed) {
 			return;
 		}
@@ -954,8 +968,8 @@ public class Phenotype : MonoBehaviour {
 			cellList[index].UpdatePhysics(fixedTime, deltaTickTime, isTick);
 		}
 
-		if (isTick) {
-			veins.UpdatePhysics(deltaTickTime);
+		if (isTickVein) {
+			veins.UpdatePhysics(deltaTickTimeVein);
 		}
 	}
 }

@@ -8,19 +8,19 @@
 	}
 
 	public override void UpdateMetabolism(float deltaTime) {
-		effectConsumptionInternal = GlobalSettings.instance.jawCellEffectCost;
+		effectConsumptionInternal = GlobalSettings.instance.phenotype.jawCellEffectCost;
 
 		float weightedPrayCount = 0f;
 		foreach (Cell pray in mouth.prays) {
 			if (pray.GetCellType() == CellTypeEnum.Jaw) {
-				weightedPrayCount += GlobalSettings.instance.jawCellEatJawCellFactor;
+				weightedPrayCount += GlobalSettings.instance.phenotype.jawCellEatJawCellFactor;
 			} else if (pray.GetCellType() == CellTypeEnum.Shell) {
-				weightedPrayCount +=  GlobalSettings.instance.jawCellEatShellSellFactor;
+				weightedPrayCount +=  GlobalSettings.instance.phenotype.jawCellEatShellSellFactor;
 			} else {
 				weightedPrayCount += 1f;
 			}
 		}
-		effectProduction = weightedPrayCount * GlobalSettings.instance.jawCellEatEffect;
+		effectProduction = weightedPrayCount * GlobalSettings.instance.phenotype.jawCellEatEffect;
 
 		//Hack release pray
 		mouth.RemoveNullPrays();

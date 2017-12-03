@@ -2,8 +2,10 @@
 using UnityEngine.UI;
 
 public class GenePanel : MonoSingleton<GenePanel> {
-
 	public GameObject circles;
+
+	// Gene panels
+	public EggGenePanel eggGenePanel;
 
 	public Image geneReferenceImage;
 	public Image flipBlackWhite;
@@ -25,7 +27,6 @@ public class GenePanel : MonoSingleton<GenePanel> {
 			isDirty = true;
 		}
 	}
-
 
 	public ReferenceGraphics[] referenceGraphics;
 	public ReferenceGraphics centerReferenceGraphics;
@@ -103,6 +104,9 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update GenePanel");
+
+			eggGenePanel.gameObject.SetActive(false);
+
 			//Nothing to represent
 			if (selectedGene == null) {
 				for (int index = 0; index < arrangementPanels.Length; index++) {
@@ -137,6 +141,9 @@ public class GenePanel : MonoSingleton<GenePanel> {
 
 			if (selectedGene.type == CellTypeEnum.Egg) {
 				cellTypeDropdown.value = 0;
+				eggGenePanel.gameObject.SetActive(true);
+				eggGenePanel.MakeDirty();
+				eggGenePanel.MakeSlidersDirty();
 			} else if (selectedGene.type == CellTypeEnum.Fungal) {
 				cellTypeDropdown.value = 1;
 			} else if (selectedGene.type == CellTypeEnum.Jaw) {

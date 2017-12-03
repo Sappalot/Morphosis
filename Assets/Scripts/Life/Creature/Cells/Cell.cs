@@ -21,7 +21,14 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	private List<JawCell> predators = new List<JawCell>(); //Who is eating on me
 
-	//How many cells are eating on me
+	//Egg only
+	public float eggCellFertilizeThreshold; // J 
+	public float eggCellDetatchThreshold; //J 
+
+	//Origin only
+	public float originDetatchThreshold; // J  If we have more energy than this in the origin cell and it is attached with mother, it will separate
+										  //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
+
 	public int predatorCount {
 		get {
 			return predators.Count;
@@ -60,7 +67,7 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	virtual public float effectConsumptionExternal {
 		get {
-			return predatorCount * GlobalSettings.instance.jawCellEatEffect;
+			return predatorCount * GlobalSettings.instance.phenotype.jawCellEatEffect;
 		}
 	}
 
@@ -657,10 +664,8 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	// Load / Save
-
+	// Save
 	private CellData cellData = new CellData();
-
 	public CellData UpdateData() {
 		cellData.position = transform.position;
 		cellData.heading = heading;
@@ -674,9 +679,18 @@ public abstract class Cell : MonoBehaviour {
 		cellData.radius = radius;
 		cellData.velocity = transform.GetComponent<Rigidbody2D>().velocity;
 		cellData.energy = energy;
+
+		//Egg
+		cellData.eggCellFertilizeThreshold = eggCellFertilizeThreshold;
+		cellData.eggCellDetatchThreshold = eggCellDetatchThreshold;
+
+		// Origin
+		cellData.originDetatchThreshold = originDetatchThreshold;
+
 		return cellData;
 	}
 
+	// Load
 	public void ApplyData(CellData cellData, Creature creature) {
 		transform.position = cellData.position;
 		heading = cellData.heading;
@@ -690,28 +704,34 @@ public abstract class Cell : MonoBehaviour {
 		radius = cellData.radius;
 		transform.GetComponent<Rigidbody2D>().velocity = cellData.velocity;
 		energy = cellData.energy;
+
+		// Egg
+		eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold;
+		eggCellDetatchThreshold = cellData.eggCellDetatchThreshold;
+
+		// Origin
+		originDetatchThreshold = cellData.originDetatchThreshold;
+
 		this.creature = creature;
 	}
-
-	// ^ Load Save ^
 
 	// Update
 
 	//TODO: update cell graphics from here
 	public void UpdateGraphics() {
-		if (HUD.instance.shouldRenderEnergy) {
-			float life = energy / 100f;
-			filledCircleSprite.color = new Color((1f - life) * 0.5f, life, 0f);
-
-			//float e = effectProduction;
-			//if (e >= -0.01 && e <= 0.01) {
-			//	filledCircleSprite.color = Color.yellow;
-			//} else if (e > 0.01) {
-			//	filledCircleSprite.color = Color.green;
-			//} else {
-			//	filledCircleSprite.color = Color.red;
-			//}
-
+		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+			if (HUD.instance.showCellInformation == HUD.ShowCellInformation.type) {
+				filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
+			} else if (HUD.instance.showCellInformation == HUD.ShowCellInformation.energy) {
+				float life = energy / 100f;
+				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(life);
+			} else if (HUD.instance.showCellInformation == HUD.ShowCellInformation.effect) {
+				float effectValue = 0.5f + effect * 0.5f;
+				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
+			} else if (HUD.instance.showCellInformation == HUD.ShowCellInformation.creatureEffect) {
+				float effectValue = 0.5f + (creature.phenotype.effect / creature.phenotype.cellCount) * 0.5f;
+				filledCircleSprite.color = ColorScheme.instance.cellGradientCreatureEffect.Evaluate(effectValue);
+			}
 		} else {
 			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
 		}

@@ -6,8 +6,8 @@
 	}
 
 	public override void UpdateMetabolism(float deltaTime) {
-		effectConsumptionInternal = GlobalSettings.instance.rootCellEffectCost;
-		effectProduction = 0.5f; // GlobalSettings.instance.rootCellEarthMaxEffect;
+		effectConsumptionInternal = 0f;
+		effectProduction = 0f;
 
 		base.UpdateMetabolism(deltaTime);
 	}

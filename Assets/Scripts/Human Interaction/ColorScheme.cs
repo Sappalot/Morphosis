@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 
 public class ColorScheme : MonoSingleton<ColorScheme> {
+	public Gradient cellGradientEnergy;
+	public Gradient cellGradientEffect;
+	public Gradient cellGradientCreatureEffect;
+
 	public Color selectedButton;
 	public Color notSelectedButton;
 	public Color mouseText;

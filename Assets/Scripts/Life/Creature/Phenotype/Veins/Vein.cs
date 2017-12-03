@@ -36,9 +36,7 @@ public class Vein : MonoBehaviour {
 		attachmentFront = new EdgeAttachment(parentCell, (directionChildToParentCell + 3) % 6);
 		attachmentBack = new EdgeAttachment(childCell, directionChildToParentCell);
 
-		if (parentCell.isOrigin || childCell.isOrigin) {
-			effectType = EffectEnum.HighHigh;
-		} else if (!IsHighEfficiency(parentCell.GetCellType()) && !IsHighEfficiency(childCell.GetCellType())) {
+		if (!IsHighEfficiency(parentCell.GetCellType()) && !IsHighEfficiency(childCell.GetCellType())) {
 			effectType = EffectEnum.LowLow;
 		} else if ((!IsHighEfficiency(parentCell.GetCellType()) && IsHighEfficiency(childCell.GetCellType())) || (IsHighEfficiency(parentCell.GetCellType()) && !IsHighEfficiency(childCell.GetCellType()))) {
 			effectType = EffectEnum.LowHigh;
@@ -55,7 +53,7 @@ public class Vein : MonoBehaviour {
 
 	public void UpdateGraphics(bool showVeins) {
 		//TODO: If draw wings && inside frustum
-		if (HUD.instance.shouldRenderEnergy && showVeins) {
+		if ((HUD.instance.showCellInformation == HUD.ShowCellInformation.energy || HUD.instance.showCellInformation == HUD.ShowCellInformation.effect) && showVeins) {
 			if (frontCell != null && backCell != null) {
 				mainArrow.SetActive(true);
 				//draw main
@@ -105,12 +103,12 @@ public class Vein : MonoBehaviour {
 	private float flowEffectFactor {
 		get {
 			if (effectType == EffectEnum.LowLow) {
-				return GlobalSettings.instance.weakVeinFluxEffect;
+				return GlobalSettings.instance.phenotype.veinFluxEffectWeak;
 			} else if (effectType == EffectEnum.LowHigh) {
-				return GlobalSettings.instance.mediumVeinFluxEffect;
+				return GlobalSettings.instance.phenotype.veinFluxEffectMedium;
 			} else {
 				// HighHigh
-				return GlobalSettings.instance.strongVeinFluxEffect;
+				return GlobalSettings.instance.phenotype.veinFluxEffectStrong;
 			}
 		}
 	}

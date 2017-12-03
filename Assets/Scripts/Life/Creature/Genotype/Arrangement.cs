@@ -71,20 +71,20 @@ public class Arrangement {
 		float rnd;
 
 		// isEnabled
-		rnd = Random.Range(0, gs.isEnabledToggle * strength + gs.isEnabledLeave);
-		if (rnd < gs.isEnabledToggle * strength) {
+		rnd = Random.Range(0, gs.mutation.isEnabledToggle * strength + gs.mutation.isEnabledLeave);
+		if (rnd < gs.mutation.isEnabledToggle * strength) {
 			isEnabled = !isEnabled;
 		}
 
 		// reference
-		rnd = Random.Range(0, gs.referenceRandom * strength + gs.referenceCountLeave);
-		if (rnd < gs.referenceRandom * strength) {
+		rnd = Random.Range(0, gs.mutation.referenceRandom * strength + gs.mutation.referenceCountLeave);
+		if (rnd < gs.mutation.referenceRandom * strength) {
 			referenceGeneIndex = Random.Range(1, Genotype.genomeLength);
 		}
 
 		// flipTypeSameOpposite
-		rnd = Random.Range(0, gs.flipTypeSameOppositeToggle * strength + gs.flipTypeSameOppositeLeave);
-		if (rnd < gs.flipTypeSameOppositeToggle * strength) {
+		rnd = Random.Range(0, gs.mutation.flipTypeSameOppositeToggle * strength + gs.mutation.flipTypeSameOppositeLeave);
+		if (rnd < gs.mutation.flipTypeSameOppositeToggle * strength) {
 			if (flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same) {
 				flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Opposite;
 			} else {
@@ -93,8 +93,8 @@ public class Arrangement {
 		}
 
 		// flipTypeBlackWhiteToArrow
-		rnd = Random.Range(0, gs.flipTypeBlackWhiteToArrowToggle * strength + gs.flipTypeBlackWhiteToArrowLeave);
-		if (rnd < gs.flipTypeBlackWhiteToArrowToggle * strength) {
+		rnd = Random.Range(0, gs.mutation.flipTypeBlackWhiteToArrowToggle * strength + gs.mutation.flipTypeBlackWhiteToArrowLeave);
+		if (rnd < gs.mutation.flipTypeBlackWhiteToArrowToggle * strength) {
 			if (flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow) {
 				flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
 			} else {
@@ -103,14 +103,14 @@ public class Arrangement {
 		}
 
 		// flipPairsEnabled
-		rnd = Random.Range(0, gs.isflipPairsEnabledToggle * strength + gs.isflipPairsEnabledLeave);
-		if (rnd < gs.isflipPairsEnabledToggle * strength) {
+		rnd = Random.Range(0, gs.mutation.isflipPairsEnabledToggle * strength + gs.mutation.isflipPairsEnabledLeave);
+		if (rnd < gs.mutation.isflipPairsEnabledToggle * strength) {
 			isFlipPairsEnabled = !isFlipPairsEnabled;
 		}
 
 		// type
-		rnd = Random.Range(0, gs.typeChange * strength + gs.typeLeave);
-		if (rnd < gs.typeChange * strength) {
+		rnd = Random.Range(0, gs.mutation.typeChange * strength + gs.mutation.typeLeave);
+		if (rnd < gs.mutation.typeChange * strength) {
 			int t = Random.Range(0, 2);
 			if (type == ArrangementTypeEnum.Side) {
 				if (t == 0) {
@@ -135,26 +135,26 @@ public class Arrangement {
 
 		// referenceCount
 		float referenceChange =
-			  gs.referenceCountDecrease1 * strength
-			+ gs.referenceCountDecrease2 * strength
-			+ gs.referenceCountDecrease3 * strength
-			+ gs.referenceCountIncrease1 * strength
-			+ gs.referenceCountIncrease2 * strength
-			+ gs.referenceCountIncrease3 * strength;
-		rnd = Random.Range(0, referenceChange * strength + gs.referenceCountLeave);
+			  gs.mutation.referenceCountDecrease1 * strength
+			+ gs.mutation.referenceCountDecrease2 * strength
+			+ gs.mutation.referenceCountDecrease3 * strength
+			+ gs.mutation.referenceCountIncrease1 * strength
+			+ gs.mutation.referenceCountIncrease2 * strength
+			+ gs.mutation.referenceCountIncrease3 * strength;
+		rnd = Random.Range(0, referenceChange * strength + gs.mutation.referenceCountLeave);
 
 		// -1
-		float ra =     gs.referenceCountDecrease1 * strength;
+		float ra =     gs.mutation.referenceCountDecrease1 * strength;
 		// -2
-		float rb = ra + gs.referenceCountDecrease2 * strength;
+		float rb = ra + gs.mutation.referenceCountDecrease2 * strength;
 		// -3
-		float rc = rb + gs.referenceCountDecrease3 * strength;
+		float rc = rb + gs.mutation.referenceCountDecrease3 * strength;
 		// +1
-		float rd = rc + gs.referenceCountIncrease1 * strength;
+		float rd = rc + gs.mutation.referenceCountIncrease1 * strength;
 		// +2
-		float re = rd + gs.referenceCountIncrease2 * strength;
+		float re = rd + gs.mutation.referenceCountIncrease2 * strength;
 		// +3
-		float rf = re + gs.referenceCountIncrease3 * strength;
+		float rf = re + gs.mutation.referenceCountIncrease3 * strength;
 
 		if (rnd < ra) {
 			referenceCount -= 1;
@@ -172,26 +172,26 @@ public class Arrangement {
 
 		// Arrow Index
 		float arrowIndexChange =
-			  gs.arrowIndexDecrease1 * strength
-			+ gs.arrowIndexDecrease2 * strength
-			+ gs.arrowIndexDecrease3 * strength
-			+ gs.arrowIndexIncrease1 * strength
-			+ gs.arrowIndexIncrease2 * strength
-			+ gs.arrowIndexIncrease3 * strength;
-		rnd = Random.Range(0, arrowIndexChange * strength + gs.arrowIndexLeave);
+			  gs.mutation.arrowIndexDecrease1 * strength
+			+ gs.mutation.arrowIndexDecrease2 * strength
+			+ gs.mutation.arrowIndexDecrease3 * strength
+			+ gs.mutation.arrowIndexIncrease1 * strength
+			+ gs.mutation.arrowIndexIncrease2 * strength
+			+ gs.mutation.arrowIndexIncrease3 * strength;
+		rnd = Random.Range(0, arrowIndexChange * strength + gs.mutation.arrowIndexLeave);
 
 		// -1
-		float aa = gs.arrowIndexDecrease1 * strength;
+		float aa = gs.mutation.arrowIndexDecrease1 * strength;
 		// -2
-		float ab = ra + gs.arrowIndexDecrease2 * strength;
+		float ab = ra + gs.mutation.arrowIndexDecrease2 * strength;
 		// -3
-		float ac = rb + gs.arrowIndexDecrease3 * strength;
+		float ac = rb + gs.mutation.arrowIndexDecrease3 * strength;
 		// +1
-		float ad = rc + gs.arrowIndexIncrease1 * strength;
+		float ad = rc + gs.mutation.arrowIndexIncrease1 * strength;
 		// +2
-		float ae = rd + gs.arrowIndexIncrease2 * strength;
+		float ae = rd + gs.mutation.arrowIndexIncrease2 * strength;
 		// +3
-		float af = re + gs.arrowIndexIncrease3 * strength;
+		float af = re + gs.mutation.arrowIndexIncrease3 * strength;
 
 		if (rnd < aa) {
 			arrowIndex -= 1;
@@ -210,26 +210,26 @@ public class Arrangement {
 
 		// gap
 		float gapChange =
-			  gs.gapDecrease1 * strength
-			+ gs.gapDecrease2 * strength
-			+ gs.gapDecrease3 * strength
-			+ gs.gapIncrease1 * strength
-			+ gs.gapIncrease2 * strength
-			+ gs.gapIncrease3 * strength;
-		rnd = Random.Range(0, gapChange * strength + gs.gapLeave);
+			  gs.mutation.gapDecrease1 * strength
+			+ gs.mutation.gapDecrease2 * strength
+			+ gs.mutation.gapDecrease3 * strength
+			+ gs.mutation.gapIncrease1 * strength
+			+ gs.mutation.gapIncrease2 * strength
+			+ gs.mutation.gapIncrease3 * strength;
+		rnd = Random.Range(0, gapChange * strength + gs.mutation.gapLeave);
 
 		// -1
-		float ga = gs.gapDecrease1 * strength;
+		float ga = gs.mutation.gapDecrease1 * strength;
 		// -2
-		float gb = ra + gs.gapDecrease2 * strength;
+		float gb = ra + gs.mutation.gapDecrease2 * strength;
 		// -3
-		float gc = rb + gs.gapDecrease3 * strength;
+		float gc = rb + gs.mutation.gapDecrease3 * strength;
 		// +1
-		float gd = rc + gs.gapIncrease1 * strength;
+		float gd = rc + gs.mutation.gapIncrease1 * strength;
 		// +2
-		float ge = rd + gs.gapIncrease2 * strength;
+		float ge = rd + gs.mutation.gapIncrease2 * strength;
 		// +3
-		float gf = re + gs.gapIncrease3 * strength;
+		float gf = re + gs.mutation.gapIncrease3 * strength;
 
 		if (rnd < ga) {
 			gap -= 1;
@@ -246,8 +246,8 @@ public class Arrangement {
 		}
 
 		// referenceSide
-		rnd = Random.Range(0, gs.referenceSideToggle * strength + gs.referenceSideLeave);
-		if (rnd < gs.referenceSideToggle * strength) {
+		rnd = Random.Range(0, gs.mutation.referenceSideToggle * strength + gs.mutation.referenceSideLeave);
+		if (rnd < gs.mutation.referenceSideToggle * strength) {
 			if (referenceSide == ArrangementReferenceSideEnum.Black) {
 				referenceSide = ArrangementReferenceSideEnum.White;
 			} else {

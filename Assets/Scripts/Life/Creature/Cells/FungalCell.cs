@@ -7,7 +7,7 @@
 
 	public override void UpdateMetabolism(float deltaTime) {
 		effectConsumptionInternal = 0f;
-		effectProduction = GlobalSettings.instance.fungalCellEffect;
+		effectProduction = 0f;
 
 		base.UpdateMetabolism(deltaTime);
 	}

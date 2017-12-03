@@ -16,5 +16,12 @@ public class CellData {
 	public float timeOffset; //To be removed
 	public float lastTime; //Last time muscle cell was updated
 
+	// Egg
+	public float eggCellFertilizeThreshold;
+	public float eggCellDetatchThreshold;
+
+	// Origin
+	public float originDetatchThreshold;
+
 	public float energy;
 }

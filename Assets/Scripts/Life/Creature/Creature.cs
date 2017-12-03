@@ -522,8 +522,13 @@ public class Creature : MonoBehaviour {
 		return phenotype.UpdateKillWeakCells(fixedTime);
 	}
 
+	//Change from time to every ie. 100th fixed frame
 	float tickCoolDown = 0f;
 	float lastTickTimeStamp = -1f;
+
+	float tickCoolDownVein = 0f;
+	float lastTickTimeStampVein = -1f;
+
 	public void UpdatePhysics(float fixedTime) {
 		if (!hasSoul) {
 			return;
@@ -544,13 +549,31 @@ public class Creature : MonoBehaviour {
 				lastTickTimeStamp = fixedTime;
 			}
 		}
-		phenotype.UpdatePhysics(this, fixedTime, deltaTickTime, isTick);
+
+		//vein
+		tickCoolDownVein -= Time.fixedDeltaTime;
+		float deltaTickTimeVein = 0f;
+		bool isTickVein = false;
+		if (tickCoolDownVein <= 0f) {
+			if (lastTickTimeStampVein < 0) {
+				//initialize
+				lastTickTimeStampVein = fixedTime;
+				tickCoolDownVein = Random.Range(0f, GlobalSettings.instance.metabolismPeriodVein);
+			} else {
+				isTickVein = true;
+				tickCoolDownVein = GlobalSettings.instance.metabolismPeriodVein;
+				deltaTickTimeVein = fixedTime - lastTickTimeStampVein;
+				lastTickTimeStampVein = fixedTime;
+			}
+		}
+
+		phenotype.UpdatePhysics(this, fixedTime, deltaTickTime, isTick, deltaTickTimeVein, isTickVein);
 		if (isTick) {
 			phenotype.TryGrow(this, false, 1, false, true, fixedTime);
 
 			//Detatch ?
-			if (phenotype.originCell.energy > GlobalSettings.instance.eggCellOriginDetatchThresholdEnergy) {
-				DetatchFromMother(true);
+			if (phenotype.originCell.energy > phenotype.originCell.originDetatchThreshold) {
+				DetatchFromMother();
 			}
 
 			//Fertilize ?

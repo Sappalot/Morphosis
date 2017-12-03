@@ -6,7 +6,7 @@
 	}
 
 	public override void UpdateMetabolism(float deltaTime) {
-		effectConsumptionInternal = GlobalSettings.instance.shellCellEffectCost;
+		effectConsumptionInternal = GlobalSettings.instance.phenotype.shellCellEffectCost;
 		effectProduction = 0f;
 
 		base.UpdateMetabolism(deltaTime);
@@ -14,7 +14,7 @@
 
 	public override float effectConsumptionExternal {
 		get {
-			return predatorCount * GlobalSettings.instance.jawCellEatEffect * GlobalSettings.instance.jawCellEatShellSellFactor;
+			return predatorCount * GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellEatShellSellFactor;
 		}
 	}
 

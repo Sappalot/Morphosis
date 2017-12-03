@@ -1,7 +1,15 @@
 ﻿using UnityEngine;
 
 public class Gene {
-	public CellTypeEnum m_type = CellTypeEnum.Leaf; // + this vein cell's settings 
+	// Egg cell
+	public float eggCellFertilizeThreshold = 40f; // J 
+	public float eggCellDetatchThreshold = 45; //J 
+
+	//Jaw Cell
+	//bool: eat mother, eat child, eat sibling 
+
+
+	public CellTypeEnum m_type = CellTypeEnum.Leaf;
 	public CellTypeEnum type {
 		get {
 			if (index == 0 && m_type == CellTypeEnum.Egg) {
@@ -15,7 +23,6 @@ public class Gene {
 			} else {
 				m_type = value;
 			}
-			
 		}
 	}
 	public int index;
@@ -38,10 +45,23 @@ public class Gene {
 
 	public void Mutate(float strength) {
 		GlobalSettings gs = GlobalSettings.instance;
-		float mut = Random.Range(0, gs.cellTypeLeave + gs.cellTypeRandom * strength);
-		if (mut < gs.cellTypeRandom * strength) {
+		float mut = Random.Range(0, gs.mutation.cellTypeLeave + gs.mutation.cellTypeRandom * strength);
+		if (mut < gs.mutation.cellTypeRandom * strength) {
 			type = (CellTypeEnum)Random.Range(0, 8);
 		}
+
+		//Egg
+		float spread = 6f;
+		mut = Random.Range(0, gs.mutation.eggCellFertilizeThresholdLeave + gs.mutation.eggCellFertilizeThresholdRandom * strength);
+		if (mut < gs.mutation.eggCellFertilizeThresholdRandom * strength) {
+			eggCellFertilizeThreshold = Mathf.Clamp(eggCellFertilizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), 0, 99f); // J 
+		}
+		mut = Random.Range(0, gs.mutation.eggCellDetatchThresholdLeave + gs.mutation.eggCellDetatchThresholdRandom * strength);
+		if (mut < gs.mutation.eggCellDetatchThresholdRandom * strength) {
+			eggCellDetatchThreshold = Mathf.Clamp(eggCellDetatchThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), 0f, 110); // J
+		}
+
+		//arrangements
 		arrangements[0].Mutate(strength);
 		arrangements[1].Mutate(strength);
 		arrangements[2].Mutate(strength);
@@ -82,10 +102,15 @@ public class Gene {
 		return clone;
 	}
 
+	// Save
 	private GeneData geneData = new GeneData();
 	public GeneData UpdateData() {
 		geneData.type = type;
 		geneData.index = index;
+
+		// Egg
+		geneData.eggCellFertilizeThreshold = eggCellFertilizeThreshold;
+		geneData.eggCellDetatchThreshold = eggCellDetatchThreshold;
 
 		geneData.arrangementData[0] = arrangements[0].UpdateData();
 		geneData.arrangementData[1] = arrangements[1].UpdateData();
@@ -94,9 +119,14 @@ public class Gene {
 		return geneData;
 	}
 
+	// Load
 	public void ApplyData(GeneData geneData) {
 		type = geneData.type;
 		index = geneData.index;
+
+		// Egg
+		eggCellFertilizeThreshold = geneData.eggCellFertilizeThreshold;
+		eggCellDetatchThreshold = geneData.eggCellDetatchThreshold;
 
 		arrangements[0].ApplyData(geneData.arrangementData[0]);
 		arrangements[1].ApplyData(geneData.arrangementData[1]);

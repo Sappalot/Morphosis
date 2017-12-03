@@ -38,7 +38,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 	public void OnClickedMutateAbsolute() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
-			creature.MutateAbsolute(GlobalSettings.instance.mutationStrength);
+			creature.MutateAbsolute(GlobalSettings.instance.mutation.masterMutationStrength * 10f);
 		}
 		GenePanel.instance.selectedGene = null;
 		GenePanel.instance.MakeDirty();
@@ -47,7 +47,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 	public void OnClickedMutateCummulative() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
-			creature.MutateCummulative(GlobalSettings.instance.mutationStrength);
+			creature.MutateCummulative(GlobalSettings.instance.mutation.masterMutationStrength * 10f);
 		}
 		GenePanel.instance.selectedGene = null;
 		GenePanel.instance.MakeDirty();

@@ -2,7 +2,7 @@
 
 public class LeafCell : Cell {
 	public LineRenderer[] testRays = new LineRenderer[6];
-	private const int recorMaxCapacity = 10;
+	private const int recorMaxCapacity = 5;
 	private float[] effectRecord = new float[recorMaxCapacity];
 	private int effectRecorCursor = 0;
 	private int effectRecordCount = 0;
@@ -13,7 +13,7 @@ public class LeafCell : Cell {
 	}
 
 	public override void UpdateMetabolism(float deltaTime) {
-		effectConsumptionInternal = GlobalSettings.instance.leafCellEffectCost;
+		effectConsumptionInternal = GlobalSettings.instance.phenotype.leafCellEffectCost;
 
 		float effectSum = 0;
 		for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
@@ -25,7 +25,7 @@ public class LeafCell : Cell {
 				Vector2 directionVector = GeometryUtils.GetVector(angle, 1f);
 				Vector2 origin = position + directionVector;
 
-				RaycastHit2D hit = Physics2D.Raycast(origin, directionVector, GlobalSettings.instance.leafCellSunMaxRange, 1);
+				RaycastHit2D hit = Physics2D.Raycast(origin, directionVector, GlobalSettings.instance.phenotype.leafCellSunMaxRange, 1);
 				Vector2 hipPosition = hit.point;
 				float range = hit.fraction;
 
@@ -43,7 +43,7 @@ public class LeafCell : Cell {
 				//testRays[cardinalIndex].enabled = false;
 			}
 		}
-		float effect = GlobalSettings.instance.leafCellSunMaxEffect * effectSum / 6f;
+		float effect = GlobalSettings.instance.phenotype.leafCellSunMaxEffect * effectSum / 6f;
 
 		
 		effectRecord[effectRecorCursor] = effect;

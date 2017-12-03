@@ -4,6 +4,7 @@ using SerializerFree.Serializers;
 using System.IO;
 
 public class World : MonoSingleton<World> {
+	public Camera worldCamera;
 	private string worldName = "Gaia";
 	private float fixedTime;
 
