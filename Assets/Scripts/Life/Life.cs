@@ -473,11 +473,9 @@ public class Life : MonoSingleton<Life> {
 			KillCreatureSafe(killCreatureList[index]);
 		}
 
-		//
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdatePhysics(fixedTime);
 		}
-		
 	}
 
 	// ^ Update ^

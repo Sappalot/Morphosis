@@ -938,7 +938,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	public void UpdatePhysics(Creature creature, float fixedTime, float deltaTickTime, bool isTick, float deltaTickTimeVein, bool isTickVein) {
+	public void UpdatePhysics(Creature creature, float fixedTime, float deltaTickTime, bool isTick) {
 		if (isGrabbed) {
 			return;
 		}
@@ -968,8 +968,8 @@ public class Phenotype : MonoBehaviour {
 			cellList[index].UpdatePhysics(fixedTime, deltaTickTime, isTick);
 		}
 
-		if (isTickVein) {
-			veins.UpdatePhysics(deltaTickTimeVein);
+		if (isTick) {
+			veins.UpdatePhysics(deltaTickTime);
 		}
 	}
 }

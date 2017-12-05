@@ -40,7 +40,7 @@ public class Creature : MonoBehaviour {
 	[Range(-1f, 1f)]
 	public float muscleContractRetract = -0.5f;
 
-	[Range(0f, 10f)]
+	[Range(0f, 20f)]
 	public float muscleSpeed = 1.55f;
 
 	public Genotype genotype;
@@ -526,8 +526,8 @@ public class Creature : MonoBehaviour {
 	float tickCoolDown = 0f;
 	float lastTickTimeStamp = -1f;
 
-	float tickCoolDownVein = 0f;
-	float lastTickTimeStampVein = -1f;
+	//float tickCoolDownVein = 0f;
+	//float lastTickTimeStampVein = -1f;
 
 	public void UpdatePhysics(float fixedTime) {
 		if (!hasSoul) {
@@ -548,26 +548,31 @@ public class Creature : MonoBehaviour {
 				deltaTickTime = fixedTime - lastTickTimeStamp;
 				lastTickTimeStamp = fixedTime;
 			}
-		}
 
-		//vein
-		tickCoolDownVein -= Time.fixedDeltaTime;
-		float deltaTickTimeVein = 0f;
-		bool isTickVein = false;
-		if (tickCoolDownVein <= 0f) {
-			if (lastTickTimeStampVein < 0) {
-				//initialize
-				lastTickTimeStampVein = fixedTime;
-				tickCoolDownVein = Random.Range(0f, GlobalSettings.instance.metabolismPeriodVein);
-			} else {
-				isTickVein = true;
-				tickCoolDownVein = GlobalSettings.instance.metabolismPeriodVein;
-				deltaTickTimeVein = fixedTime - lastTickTimeStampVein;
-				lastTickTimeStampVein = fixedTime;
-			}
+			//Debug.Log("Time unscaled: " + Time.fixedUnscaledTime + ", FixedTime: " + fixedTime + ", Physic Updates: " + updates + ", Tick Delta time: " + deltaTickTime);
+			updates = 0;
 		}
+		updates++;
 
-		phenotype.UpdatePhysics(this, fixedTime, deltaTickTime, isTick, deltaTickTimeVein, isTickVein);
+		////vein
+		//tickCoolDownVein -= Time.fixedDeltaTime;
+		//float deltaTickTimeVein = 0f;
+		//bool isTickVein = false;
+		//if (tickCoolDownVein <= 0f) {
+		//	if (lastTickTimeStampVein < 0) {
+		//		//initialize
+		//		lastTickTimeStampVein = fixedTime;
+		//		tickCoolDownVein = Random.Range(0f, GlobalSettings.instance.metabolismPeriodVein);
+		//	} else {
+		//		isTickVein = true;
+		//		tickCoolDownVein = GlobalSettings.instance.metabolismPeriodVein;
+		//		deltaTickTimeVein = fixedTime - lastTickTimeStampVein;
+		//		lastTickTimeStampVein = fixedTime;
+		//	}
+		//}
+
+		phenotype.UpdatePhysics(this, fixedTime, deltaTickTime, isTick);
+
 		if (isTick) {
 			phenotype.TryGrow(this, false, 1, false, true, fixedTime);
 
@@ -595,37 +600,8 @@ public class Creature : MonoBehaviour {
 			PhenotypePanel.instance.MakeDirty();
 			CellPanel.instance.MakeDirty();
 		}
-		//if (!updateMetabolism)
-		//	return false;
-
-		//// Life cycle hack HACK
-		//growthCooldown -= Time.deltaTime;
-		//if (GlobalPanel.instance.hackFps < 2) {
-		//	lowFPS = true;
-		//}
-		//if (true || !lowFPS) {
-		//	if (growthCooldown < 0f) {
-		//		growthCooldown = 0.5f;
-		//		int grown = phenotype.TryGrow(this, false, 1, true);
-		//		if (grown == 0) {
-		//			if (phenotype.DetatchFromMother(this, true)) {
-		//				return true;
-		//			}
-		//			foreach (Cell eggCell in phenotype.cellList) {
-		//				if (eggCell.GetCellType() == CellTypeEnum.Egg) {
-		//					if (Random.Range(0, 100) == 0) {
-		//						Life.instance.FertilizeCreature(eggCell, true);
-		//						return true;
-		//					}
-		//				}
-		//			}
-		//		} else {
-		//			return true;
-		//		}
-		//	}
-		//}
-		return;
 	}
 
-
+	private int updates;
+	private float lastUpdate = -1;
 }

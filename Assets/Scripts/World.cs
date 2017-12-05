@@ -33,13 +33,26 @@ public class World : MonoSingleton<World> {
 		Life.instance.UpdateGraphics();
 	}
 
+
+	private int updates;
+	private float lastUpdate = -1;
 	private void FixedUpdate() {
 		Life.instance.UpdateStructure();
 
-		fixedTime += Time.fixedDeltaTime * Time.timeScale;
+		fixedTime += Time.fixedDeltaTime; // * Time.timeScale;
 		Life.instance.UpdatePhysics(fixedTime);
 
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
+
+		if (lastUpdate < 0) {
+			lastUpdate = Time.fixedUnscaledTime;
+		}
+		if (Time.fixedUnscaledTime > lastUpdate + 1f) {
+			lastUpdate = Time.fixedUnscaledTime;
+			//Debug.Log("W: Time unscaled: " + Time.fixedUnscaledTime + ", FixedTime: " + fixedTime + ", Updates: " + updates + ", FixedDeltaTime: " + Time.fixedDeltaTime);
+			updates = 0;
+		}
+		updates++;
 	}
 
 	//Save load

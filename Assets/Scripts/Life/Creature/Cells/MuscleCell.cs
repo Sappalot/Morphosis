@@ -50,8 +50,8 @@ public class MuscleCell : Cell {
 		float expandContract = Mathf.Sign(curveOffset + Mathf.Cos(timeOffset + modularTime / (2f * Mathf.PI)));
 		float radiusGoal = 0.5f - 0.5f * radiusDiff + 0.5f * radiusDiff * expandContract;
 
-		float goingSmallSpeed = 0.5f; //units per second
-		float goingBigSpeed = 0.02f;
+		float goingSmallSpeed = 0.5f * 4f; //units per second
+		float goingBigSpeed = 0.02f * 4f;
 		//float goingSmallSpeed = 0.02f; //units per second
 		//float goingBigSpeed = 0.5f;
 
