@@ -25,7 +25,7 @@ public class RMBToolController : MouseDrag {
 					spring.GetComponent<LineRenderer>().enabled = true;
 				}
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.simple) {
-				if (HUD.instance.isPlaySoundFX) {
+				if (GlobalPanel.instance.effectsPlaySound.isOn) {
 					Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 				}
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
@@ -34,7 +34,7 @@ public class RMBToolController : MouseDrag {
 					Life.instance.SpawnCreatureSimple(downPositionMouse, 90f);
 				}				
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.freak) {
-				if (HUD.instance.isPlaySoundFX) {
+				if (GlobalPanel.instance.effectsPlaySound.isOn) {
 					Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 				}
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {

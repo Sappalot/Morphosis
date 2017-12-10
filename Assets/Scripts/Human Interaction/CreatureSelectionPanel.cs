@@ -393,7 +393,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void PlaceHoveringCreatures() {
-		if (HUD.instance.isPlaySoundFX) {
+		if (GlobalPanel.instance.effectsPlaySound.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
 		ReleaseMoveCreatures();
@@ -410,7 +410,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void PasteHoveringCreatures() {
-		if (HUD.instance.isPlaySoundFX) {
+		if (GlobalPanel.instance.effectsPlaySound.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
 		List<Creature> continueMoveCopy = new List<Creature>();
@@ -429,7 +429,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void PasteHoveringMergling() {
-		if (HUD.instance.isPlaySoundFX) {
+		if (GlobalPanel.instance.effectsPlaySound.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
 		ReleaseMoveCreatures();
@@ -444,7 +444,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	private void ReleaseMoveCreatures() {
-		if (HUD.instance.isPlaySoundFX) {
+		if (GlobalPanel.instance.effectsPlaySound.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {

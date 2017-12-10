@@ -34,7 +34,7 @@ public class Edges : MonoBehaviour {
 		}
 		for (int index = 0; index < edgeList.Count; index++) {
 			Edge edge = edgeList[index];
-			if (edge.IsWing) {
+			if (edge.IsWing && GlobalPanel.instance.physicsApplyWingForce.isOn) {
 				edge.ApplyForce();
 			}
 		}

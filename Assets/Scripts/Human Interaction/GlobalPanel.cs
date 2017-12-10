@@ -41,6 +41,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	//Physics
+	public Toggle effectsUpdateMetabolism;
+	public Toggle physicsApplyWingForce;
 	public Slider timeSpeedSilder;
 
 	//Graphics
@@ -59,6 +61,10 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			return (CellGraphicsEnum)graphicsCellDropdown.value;
 		}
 	}
+
+	// Effects
+	public Toggle effectsPlaySound;
+	public Toggle effectsShowParticles;
 
 	private void Update () {
 		frameCount++;

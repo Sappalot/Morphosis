@@ -573,7 +573,7 @@ public class Creature : MonoBehaviour {
 
 		phenotype.UpdatePhysics(this, fixedTime, deltaTickTime, isTick, deltaTickTimeVein, isTickVein);
 
-		if (isTick) {
+		if (isTick && GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
 			phenotype.TryGrow(this, false, 1, false, true, fixedTime);
 
 			//Detatch ?

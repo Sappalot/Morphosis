@@ -751,7 +751,7 @@ public abstract class Cell : MonoBehaviour {
 		UpdateRadius(fixedTime);
 		UpdateSpringLengths(); // It is costy to update spring length
 
-		if (isTick && HUD.instance.shouldUpdateMetabolism) {
+		if (isTick && GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
 			UpdateMetabolism(deltaTickTime);
 		}
 	}

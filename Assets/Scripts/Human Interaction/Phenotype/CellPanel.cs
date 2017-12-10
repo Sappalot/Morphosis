@@ -81,7 +81,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isOrigin ? " (O)" : "");
 			cellEnergy.text = string.Format("Energy: {0:F2}J", selectedCell.energy);
-			if (HUD.instance.shouldUpdateMetabolism) {
+			if (GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
 				cellEffect.text = string.Format("Effect: {0:F3} - {1:F3} = {2:F3}W", selectedCell.effectProduction, selectedCell.effectConsumption, selectedCell.effect);
 			} else {
 				cellEffect.text = "Effect: -";

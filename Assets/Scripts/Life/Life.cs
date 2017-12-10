@@ -150,7 +150,7 @@ public class Life : MonoSingleton<Life> {
 	public void FertilizeCreature(Cell eggCell, bool playEffects, float? fixedTime) {
 		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
 
-		if (playEffects && HUD.instance.isPlaySoundFX && CameraUtils.IsObservedLazy(eggCell.position)) {
+		if (playEffects && GlobalPanel.instance.effectsPlaySound.isOn && CameraUtils.IsObservedLazy(eggCell.position)) {
 			Audio.instance.EggCellFertilize(CameraUtils.GetEffectStrengthLazy());
 		}
 

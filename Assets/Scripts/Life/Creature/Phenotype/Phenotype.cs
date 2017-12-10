@@ -504,14 +504,14 @@ public class Phenotype : MonoBehaviour {
 	//This is the one and only final place where cell is removed
 	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects, float? fixedTime) {
 		
-		if (playEffects && (HUD.instance.isPlaySoundFX || (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && HUD.instance.isShowVisualFX))) {
+		if (playEffects && (GlobalPanel.instance.effectsPlaySound.isOn || (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalPanel.instance.effectsShowParticles.isOn))) {
 			bool isObserved = CameraUtils.IsObservedLazy(deleteCell.position);
 
-			if (HUD.instance.isPlaySoundFX && isObserved) {
+			if (GlobalPanel.instance.effectsPlaySound.isOn && isObserved) {
 				Audio.instance.CellDeath(CameraUtils.GetEffectStrengthLazy());
 			}
 		
-			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && HUD.instance.isShowVisualFX && isObserved) {
+			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalPanel.instance.effectsShowParticles.isOn && isObserved) {
 				SpawnCellDeathEffect(deleteCell.position, Color.red);
 				SpawnCellDeleteBloodEffect(deleteCell);
 			}
@@ -613,10 +613,10 @@ public class Phenotype : MonoBehaviour {
 	public bool DetatchFromMother(Creature creature, bool playEffects = false) {
 		if (creature.hasMotherSoul && creature.soul.isConnectedWithMotherSoul) {
 			if (playEffects && CameraUtils.IsObservedLazy(creature.phenotype.originCell.position)) {
-				if (HUD.instance.isPlaySoundFX) {
+				if (GlobalPanel.instance.effectsPlaySound.isOn) {
 					Audio.instance.CreatureDetatch(CameraUtils.GetEffectStrengthLazy());
 				}
-				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && HUD.instance.isShowVisualFX) {
+				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalPanel.instance.effectsShowParticles.isOn) {
 					Cell originCell = creature.phenotype.originCell;
 					SpawnCellDetatchBloodEffect(originCell);
 				}
@@ -992,11 +992,6 @@ public class Phenotype : MonoBehaviour {
 		}
 		velocity = (cellList.Count > 0f) ? velocity = averageVelocity / cellList.Count : new Vector3();
 
-		//// Cells, turn strings of cells straight
-		//for (int index = 0; index < cellList.Count; index++) {
-		//	cellList[index].TurnNeighboursInPlace();
-		//}
-
 		// Edges, let edge-wings apply proper forces to neighbouring cells
 		edges.UpdatePhysics(velocity, creature);
 
@@ -1004,8 +999,8 @@ public class Phenotype : MonoBehaviour {
 			cellList[index].UpdatePhysics(fixedTime, deltaTickTime, isTick);
 		}
 
-		if (isTickVein) {
-			veins.UpdatePhysics(deltaTickTimeVein);
+		if (isTickVein && GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
+			veins.UpdateMetabolism(deltaTickTimeVein);
 		}
 	}
 }

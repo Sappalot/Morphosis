@@ -30,7 +30,7 @@ public class Veins : MonoBehaviour {
 		}
 	}
 
-	public void UpdatePhysics(float deltaTickTime) {
+	public void UpdateMetabolism(float deltaTickTime) {
 		foreach (Vein vein in veinList) {
 			vein.UpdateEnergyFluxEffect();
 		}
