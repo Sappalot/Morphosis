@@ -526,8 +526,8 @@ public class Creature : MonoBehaviour {
 	float tickCoolDown = 0f;
 	float lastTickTimeStamp = -1f;
 
-	//float tickCoolDownVein = 0f;
-	//float lastTickTimeStampVein = -1f;
+	float tickCoolDownVein = 0f;
+	float lastTickTimeStampVein = -1f;
 
 	public void UpdatePhysics(float fixedTime) {
 		if (!hasSoul) {
@@ -554,31 +554,31 @@ public class Creature : MonoBehaviour {
 		}
 		updates++;
 
-		////vein
-		//tickCoolDownVein -= Time.fixedDeltaTime;
-		//float deltaTickTimeVein = 0f;
-		//bool isTickVein = false;
-		//if (tickCoolDownVein <= 0f) {
-		//	if (lastTickTimeStampVein < 0) {
-		//		//initialize
-		//		lastTickTimeStampVein = fixedTime;
-		//		tickCoolDownVein = Random.Range(0f, GlobalSettings.instance.metabolismPeriodVein);
-		//	} else {
-		//		isTickVein = true;
-		//		tickCoolDownVein = GlobalSettings.instance.metabolismPeriodVein;
-		//		deltaTickTimeVein = fixedTime - lastTickTimeStampVein;
-		//		lastTickTimeStampVein = fixedTime;
-		//	}
-		//}
+		//vein
+		tickCoolDownVein -= Time.fixedDeltaTime;
+		float deltaTickTimeVein = 0f;
+		bool isTickVein = false;
+		if (tickCoolDownVein <= 0f) {
+			if (lastTickTimeStampVein < 0) {
+				//initialize
+				lastTickTimeStampVein = fixedTime;
+				tickCoolDownVein = Random.Range(0f, GlobalSettings.instance.metabolismPeriodVein);
+			} else {
+				isTickVein = true;
+				tickCoolDownVein = GlobalSettings.instance.metabolismPeriodVein;
+				deltaTickTimeVein = fixedTime - lastTickTimeStampVein;
+				lastTickTimeStampVein = fixedTime;
+			}
+		}
 
-		phenotype.UpdatePhysics(this, fixedTime, deltaTickTime, isTick);
+		phenotype.UpdatePhysics(this, fixedTime, deltaTickTime, isTick, deltaTickTimeVein, isTickVein);
 
 		if (isTick) {
 			phenotype.TryGrow(this, false, 1, false, true, fixedTime);
 
 			//Detatch ?
 			if (phenotype.originCell.energy > phenotype.originCell.originDetatchThreshold) {
-				DetatchFromMother();
+				DetatchFromMother(true);
 			}
 
 			//Fertilize ?
@@ -594,7 +594,7 @@ public class Creature : MonoBehaviour {
 				}
 			}
 			if (fertilizeCell != null) {
-				Life.instance.FertilizeCreature(fertilizeCell, true, fixedTime);
+				Life.instance.FertilizeCreature(fertilizeCell, true, null);
 			}
 
 			PhenotypePanel.instance.MakeDirty();

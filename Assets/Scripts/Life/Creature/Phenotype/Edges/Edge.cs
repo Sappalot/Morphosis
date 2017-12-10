@@ -66,7 +66,7 @@ public class Edge : MonoBehaviour {
 
 	public void UpdateGraphics() {
 		//TODO: If draw wings && inside frustum
-		if (HUD.instance.shouldRenderEdges) {
+		if (GlobalPanel.instance.graphicsRenderWings.isOn) {
 			if (frontCell != null && backCell != null) {
 
 				mainArrow.SetActive(true);

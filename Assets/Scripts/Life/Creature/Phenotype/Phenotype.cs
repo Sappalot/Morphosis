@@ -67,6 +67,7 @@ public class Phenotype : MonoBehaviour {
 
 	public bool cellsDiffersFromGeneCells = true;
 	public bool connectionsDiffersFromCells = true;
+	public Dictionary<Cell, Vector2> detatchmentKick;
 
 	public float timeOffset;
 
@@ -621,7 +622,31 @@ public class Phenotype : MonoBehaviour {
 				}
 			}
 
-			//GeometryUtils.GetVector(originCell.heading + 180f, originCell.radius)
+			//Kick separation
+			Creature mother = creature.motherSoul.creature;
+			Cell childOrigin = creature.phenotype.originCell;
+			int placentaCount = 0;
+			for (int i = 0; i < 6; i++) {
+				if (childOrigin.HasNeighbourCell(i) && childOrigin.GetNeighbourCell(i).creature.id != creature.id) {
+					placentaCount++;
+				}
+			}
+			if (placentaCount > 0) {
+				mother.phenotype.detatchmentKick = new Dictionary<Cell, Vector2>();
+				detatchmentKick = new Dictionary<Cell, Vector2>();
+				Vector2 offspringForce = Vector2.zero;
+				float cellSum = cellCount + mother.phenotype.cellCount;
+				float kickFactor = GlobalSettings.instance.detatchmentKick * cellSum + GlobalSettings.instance.detatchmentKickSquare * cellSum * cellSum;
+
+				for (int i = 0; i < 6; i++) {
+					if (childOrigin.HasNeighbourCell(i) && childOrigin.GetNeighbourCell(i).creature.id != creature.id) {
+						Vector2 placentaForce = (childOrigin.GetNeighbourCell(i).position - childOrigin.position).normalized / placentaCount;
+						mother.phenotype.detatchmentKick.Add(childOrigin.GetNeighbourCell(i), placentaForce * kickFactor);
+						offspringForce -= placentaForce;
+					}
+				}
+				detatchmentKick.Add(childOrigin, offspringForce * kickFactor);
+			}
 
 			//me
 			creature.soul.SetConnectedWithMotherSoul(false);
@@ -634,6 +659,13 @@ public class Phenotype : MonoBehaviour {
 			return true;
 		}
 		return false;
+	}
+
+	private void ApplyDetatchKick() {
+		foreach (Cell cell in detatchmentKick.Keys) {
+			cell.GetComponent<Rigidbody2D>().AddForce(detatchmentKick[cell], ForceMode2D.Impulse);
+		}
+		detatchmentKick = null;
 	}
 
 	private bool IsCellBuiltForGeneCell(Cell geneCell) {
@@ -938,9 +970,13 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	public void UpdatePhysics(Creature creature, float fixedTime, float deltaTickTime, bool isTick) {
+	public void UpdatePhysics(Creature creature, float fixedTime, float deltaTickTime, bool isTick, float deltaTickTimeVein, bool isTickVein) {
 		if (isGrabbed) {
 			return;
+		}
+
+		if (!connectionsDiffersFromCells && detatchmentKick != null) {
+			ApplyDetatchKick();
 		}
 
 		//if (update % 50 == 0) {
@@ -968,8 +1004,8 @@ public class Phenotype : MonoBehaviour {
 			cellList[index].UpdatePhysics(fixedTime, deltaTickTime, isTick);
 		}
 
-		if (isTick) {
-			veins.UpdatePhysics(deltaTickTime);
+		if (isTickVein) {
+			veins.UpdatePhysics(deltaTickTimeVein);
 		}
 	}
 }

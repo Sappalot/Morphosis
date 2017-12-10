@@ -720,15 +720,15 @@ public abstract class Cell : MonoBehaviour {
 	//TODO: update cell graphics from here
 	public void UpdateGraphics() {
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-			if (HUD.instance.showCellInformation == HUD.ShowCellInformation.type) {
+			if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.type) {
 				filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
-			} else if (HUD.instance.showCellInformation == HUD.ShowCellInformation.energy) {
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.energy) {
 				float life = energy / 100f;
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(life);
-			} else if (HUD.instance.showCellInformation == HUD.ShowCellInformation.effect) {
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effect) {
 				float effectValue = 0.5f + effect * 0.5f;
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
-			} else if (HUD.instance.showCellInformation == HUD.ShowCellInformation.creatureEffect) {
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effectCreature) {
 				float effectValue = 0.5f + (creature.phenotype.effect / creature.phenotype.cellCount) * 0.5f;
 				filledCircleSprite.color = ColorScheme.instance.cellGradientCreatureEffect.Evaluate(effectValue);
 			}

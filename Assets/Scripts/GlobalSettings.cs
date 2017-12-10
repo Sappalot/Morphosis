@@ -122,10 +122,13 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	public Phenotype phenotype;
 
 	//Physics
-	public float metabolismPeriod = 5f;
-	public float metabolismPeriodVein = 2f;
+	public float metabolismPeriod = 1f;
+	public float metabolismPeriodVein = 1f;
 
-	//Effects
+	public float detatchmentKick = 0.05f; //N
+	public float detatchmentKickSquare = 0.05f; //N
+
+	//Visual
 	public float orthoMinStrongFX = 10f;
 	public float orthoMaxHorizonFx = 30f;
 

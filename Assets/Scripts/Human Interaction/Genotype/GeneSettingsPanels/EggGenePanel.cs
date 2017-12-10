@@ -10,6 +10,9 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 	public Slider detatchSlider;
 
 	private bool isDirty = false;
+
+	private bool ignoreSliderMoved = false; // Work around
+
 	public void MakeDirty() {
 		isDirty = true;
 	}
@@ -20,6 +23,10 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 	}
 
 	public void OnFertilizeSliderMoved() {
+		if (ignoreSliderMoved) {
+			return;
+		}
+
 		GenePanel.instance.selectedGene.eggCellFertilizeThreshold = fertilizeSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
@@ -28,6 +35,10 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 	}
 
 	public void OnDetatchSliderMoved() {
+		if (ignoreSliderMoved) {
+			return;
+		}
+
 		GenePanel.instance.selectedGene.eggCellDetatchThreshold = detatchSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
@@ -55,8 +66,10 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 			}
 
 			if (CellPanel.instance.selectedCell != null) {
+				ignoreSliderMoved = true;
 				fertilizeSlider.value = GenePanel.instance.selectedGene.eggCellFertilizeThreshold;
 				detatchSlider.value = GenePanel.instance.selectedGene.eggCellDetatchThreshold;
+				ignoreSliderMoved = false;
 			}
 
 			areSlidersDirty = false;

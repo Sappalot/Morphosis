@@ -53,7 +53,7 @@ public class Vein : MonoBehaviour {
 
 	public void UpdateGraphics(bool showVeins) {
 		//TODO: If draw wings && inside frustum
-		if ((HUD.instance.showCellInformation == HUD.ShowCellInformation.energy || HUD.instance.showCellInformation == HUD.ShowCellInformation.effect) && showVeins) {
+		if ((GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.energy || GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effect) && showVeins) {
 			if (frontCell != null && backCell != null) {
 				mainArrow.SetActive(true);
 				//draw main

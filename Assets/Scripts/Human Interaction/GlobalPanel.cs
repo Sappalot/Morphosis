@@ -3,7 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class GlobalPanel : MonoSingleton<GlobalPanel> {
-	
+
+	//Debug
 	public Text worldNameAndTimeText;
 	public Text fps;
 
@@ -20,6 +21,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	public float hackFps;
 
+	//World
 	public void UpdateWorldNameAndTime(string worldName, float fixedTime) {
 		TimeSpan t = TimeSpan.FromSeconds(fixedTime);
 		int d = t.Days;
@@ -35,6 +37,26 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			worldNameAndTimeText.text = string.Format("{0} {1:F0}m {2:F0}s", worldName, m, s);
 		} else {
 			worldNameAndTimeText.text = string.Format("{0} {1:F0}s", worldName, s);
+		}
+	}
+
+	//Physics
+	public Slider timeSpeedSilder;
+
+	//Graphics
+	public Toggle graphicsRenderWings;
+	public Dropdown graphicsCellDropdown;
+	public enum CellGraphicsEnum {
+		type,
+		energy,
+		effect,
+		effectCreature,
+		update,
+	}
+	[HideInInspector]
+	public CellGraphicsEnum graphicsCell {
+		get {
+			return (CellGraphicsEnum)graphicsCellDropdown.value;
 		}
 	}
 

@@ -22,14 +22,15 @@ public class World : MonoSingleton<World> {
 
 	private void Update() {
 		//Handle time from here to not get locked out
-		if (HUD.instance.timeControllValue == 0 || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-			Time.timeScale = 0;
+		if (GlobalPanel.instance.timeSpeedSilder.value == 0 || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+			Time.timeScale = 0f;
 			Life.instance.UpdateStructure();
-		} else if (HUD.instance.timeControllValue == 1) {
-			Time.timeScale = 1;
+		} else if (GlobalPanel.instance.timeSpeedSilder.value == 1) {
+			Time.timeScale = 1f;
 		} else {
-			Time.timeScale = 4;
-		}		
+			Time.timeScale = 4f;
+		}
+
 		Life.instance.UpdateGraphics();
 	}
 
@@ -57,7 +58,9 @@ public class World : MonoSingleton<World> {
 
 	//Save load
 	public void Restart() {
+		GlobalPanel.instance.timeSpeedSilder.value = 0;
 		Time.timeScale = 0;
+
 		KillAllCreaturesAndSouls();
 		fixedTime = 0f;
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
@@ -71,11 +74,12 @@ public class World : MonoSingleton<World> {
 		
 		CreatureEditModePanel.instance.Restart();
 		RMBToolModePanel.instance.Restart();
-
-		Time.timeScale = HUD.instance.timeControllValue;
 	}
 
 	public void Load() {
+		GlobalPanel.instance.timeSpeedSilder.value = 0;
+		Time.timeScale = 0;
+
 		Time.timeScale = 0;
 		// Open the file to read from.
 		string serializedString = File.ReadAllText(path + "save.txt");
@@ -86,12 +90,13 @@ public class World : MonoSingleton<World> {
 
 		CreatureSelectionPanel.instance.ClearSelection();
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
-		Time.timeScale = HUD.instance.timeControllValue;
 	}
 
 	private string path = "F:/Morfosis/";
 	public void Save() {
-		//Life.instance.GeneratePhenotypeCells(); // In case we are still in Genotype view, Phenotypes are not updated
+		GlobalPanel.instance.timeSpeedSilder.value = 0;
+		Time.timeScale = 0;
+
 		UpdateData();
 
 		string worldToSave = Serializer.Serialize(worldData, new UnityJsonSerializer());
