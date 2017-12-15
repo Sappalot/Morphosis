@@ -22,25 +22,31 @@ public class World : MonoSingleton<World> {
 
 	private void Update() {
 		//Handle time from here to not get locked out
-		if (GlobalPanel.instance.timeSpeedSilder.value == 0 || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+		if (GlobalPanel.instance.timeSpeedSilder.value < -10f || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			Time.timeScale = 0f;
 			Life.instance.UpdateStructure();
-		} else if (GlobalPanel.instance.timeSpeedSilder.value == 1) {
-			Time.timeScale = 1f;
+			GlobalPanel.instance.physicsTimeSpeedText.text = "II";
 		} else {
-			Time.timeScale = 4f;
+			if (GlobalPanel.instance.timeSpeedSilder.value >= -10f && GlobalPanel.instance.timeSpeedSilder.value <= 0f) {
+				Time.timeScale = 1f;
+				timeScaleAim = 1f;
+			} else if (GlobalPanel.instance.physicsUpdatesPerSecond == 0f) {
+				//kick start physics
+				Time.timeScale = timeScaleAim;
+			}
 		}
 
-		Life.instance.UpdateGraphics();
+		if (GlobalPanel.instance.graphicsCreatures.isOn) {
+			Life.instance.UpdateGraphics();
+		}
 	}
-
 
 	private int updates;
 	private float lastUpdate = -1;
 	private void FixedUpdate() {
 		Life.instance.UpdateStructure();
 
-		fixedTime += Time.fixedDeltaTime; // * Time.timeScale;
+		fixedTime += Time.fixedDeltaTime;
 		Life.instance.UpdatePhysics(fixedTime);
 
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
@@ -48,17 +54,24 @@ public class World : MonoSingleton<World> {
 		if (lastUpdate < 0) {
 			lastUpdate = Time.fixedUnscaledTime;
 		}
-		if (Time.fixedUnscaledTime > lastUpdate + 1f) {
-			lastUpdate = Time.fixedUnscaledTime;
-			//Debug.Log("W: Time unscaled: " + Time.fixedUnscaledTime + ", FixedTime: " + fixedTime + ", Updates: " + updates + ", FixedDeltaTime: " + Time.fixedDeltaTime);
-			updates = 0;
-		}
-		updates++;
+
+		//---
+		float isValue = GlobalPanel.instance.physicsUpdatesPerSecond * Time.fixedDeltaTime;
+		float sliderValue = GlobalPanel.instance.timeSpeedSilder.value / 5f;
+
+
+		timeScaleAim = isValue + Mathf.Clamp((sliderValue - isValue) * 0.5f, -0.5f, 0.5f);
+		timeScaleAim = Mathf.Clamp(timeScaleAim, 1f, Mathf.Max(0f, sliderValue));
+		GlobalPanel.instance.physicsTimeSpeedText.text = string.Format("{0:F1} ({1:F1})", Mathf.Max(1f, sliderValue), isValue);
+		//GlobalPanel.instance.physicsTimeSpeedText.text = string.Format("W: {0:F1}, A: {1:F1}, Is: {2:F2}", sliderValue, timeScaleAim, isValue);
+		Time.timeScale = timeScaleAim;
 	}
+
+	private float timeScaleAim;
 
 	//Save load
 	public void Restart() {
-		GlobalPanel.instance.timeSpeedSilder.value = 0;
+		GlobalPanel.instance.timeSpeedSilder.value = -20f;
 		Time.timeScale = 0;
 
 		KillAllCreaturesAndSouls();
@@ -77,7 +90,7 @@ public class World : MonoSingleton<World> {
 	}
 
 	public void Load() {
-		GlobalPanel.instance.timeSpeedSilder.value = 0;
+		GlobalPanel.instance.timeSpeedSilder.value = -20f; //pause
 		Time.timeScale = 0;
 
 		Time.timeScale = 0;
@@ -94,7 +107,7 @@ public class World : MonoSingleton<World> {
 
 	private string path = "F:/Morfosis/";
 	public void Save() {
-		GlobalPanel.instance.timeSpeedSilder.value = 0;
+		GlobalPanel.instance.timeSpeedSilder.value = -20f; //pause
 		Time.timeScale = 0;
 
 		UpdateData();

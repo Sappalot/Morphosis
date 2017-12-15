@@ -484,10 +484,10 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	private void EvoUpdateCells() {
-		//TODO: only if creature inside frustum && should be shown
-		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].UpdateGraphics();
-		}
-	}
+	//private void EvoUpdateCells() {
+	//	//TODO: only if creature inside frustum && should be shown
+	//	for (int index = 0; index < geneCellList.Count; index++) {
+	//		geneCellList[index].UpdateGraphics();
+	//	}
+	//}
 }

@@ -7,6 +7,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	//Debug
 	public Text worldNameAndTimeText;
 	public Text fps;
+	public Text pps;
 
 	public Text CreatureCount;
 	public Text soulsDirtyCount;
@@ -19,7 +20,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	private float updateTimeCount;
 	private float updatePeriod = 1f;
 
-	public float hackFps;
+	private int physicsUpdateCount;
 
 	//World
 	public void UpdateWorldNameAndTime(string worldName, float fixedTime) {
@@ -44,8 +45,13 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Toggle effectsUpdateMetabolism;
 	public Toggle physicsApplyWingForce;
 	public Slider timeSpeedSilder;
+	public Text physicsTimeSpeedText;
+	public float physicsUpdatesPerSecond;
+	public RectTransform physicsSliderFillBar;
+
 
 	//Graphics
+	public Toggle graphicsCreatures;
 	public Toggle graphicsRenderWings;
 	public Dropdown graphicsCellDropdown;
 	public enum CellGraphicsEnum {
@@ -68,21 +74,35 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	private void Update () {
 		frameCount++;
-		timeCount += Time.deltaTime;
+		timeCount += Time.unscaledDeltaTime;
 		updateTimeCount += Time.unscaledDeltaTime;
 		if (updateTimeCount > updatePeriod) {
 			updateTimeCount = 0;
-			fps.text = timeCount > 0 ? string.Format("FPS: {0:F1}", frameCount / timeCount) : "FPS: ---";
-			hackFps = frameCount / timeCount;
+
+			//fps
+			fps.text = timeCount > 0f ? string.Format("FPS: {0:F1}", frameCount / timeCount) : "FPS: ---";
 			frameCount = 0;
+
+			//pps
+			physicsUpdatesPerSecond = physicsUpdateCount / timeCount;
+			pps.text = CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && timeCount > 0f ? string.Format("PPS: {0:F1}", physicsUpdateCount / timeCount) : "PPS: ---";
+			physicsUpdateCount = 0;
+			float width = Mathf.Clamp(physicsUpdatesPerSecond * Time.fixedDeltaTime * 9f, 0f, 180f);
+			physicsSliderFillBar.sizeDelta = new Vector2(width, physicsSliderFillBar.sizeDelta.y);
+
 			timeCount = 0;
 
+			//creatures & souls
 			CreatureCount.text =         "Creatures: "   + Life.instance.creatureCount;
 			soulsDirtyCount.text =       "Alive & dirty: " + Life.instance.soulUnupdatedCount;
 			soulsCleanCount.text =       "Alive & clean: " + (Life.instance.soulUpdatedCount - Life.instance.soulsDeadButUsedCount);
 			soulsDeadButUsedCount.text = "Dead & used: "   + Life.instance.soulsDeadButUsedCount;
 			soulsLostCount.text =        "Dead & lost: "   + Life.instance.soulsLostCount;
 		}
+	}
+
+	private void FixedUpdate() {
+		physicsUpdateCount++;
 	}
 
 	public void OnRestartClicked() {

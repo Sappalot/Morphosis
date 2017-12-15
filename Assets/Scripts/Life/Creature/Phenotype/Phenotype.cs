@@ -239,6 +239,9 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 		if (growCellCount > 0) {
+			if (fixedTime != null && !IsSliding((float)fixedTime)) {
+				SetTrueCellDrag(); //make slow
+			}
 			//if (playEffects) {
 			//	Audio.instance.CellBirth();
 			//}
@@ -663,9 +666,36 @@ public class Phenotype : MonoBehaviour {
 
 	private void ApplyDetatchKick() {
 		foreach (Cell cell in detatchmentKick.Keys) {
-			cell.GetComponent<Rigidbody2D>().AddForce(detatchmentKick[cell], ForceMode2D.Impulse);
+			if (cell != null) {
+				cell.GetComponent<Rigidbody2D>().AddForce(detatchmentKick[cell], ForceMode2D.Impulse);
+			}
 		}
 		detatchmentKick = null;
+	}
+
+	private float kickTimeStamp = -1f;
+	private const float slideTime = 10f;
+	private void SetTrueCellDrag() {
+		foreach (Cell cell in cellList) {
+			if (cell.GetCellType() == CellTypeEnum.Leaf) {
+				cell.GetComponent<Rigidbody2D>().drag = 0.2f;
+			} else {
+				cell.GetComponent<Rigidbody2D>().drag = 0.2f;
+			}
+		}
+
+		Debug.Log("Update Cell Drag");
+	}
+
+	public bool IsSliding(float fixedTime) {
+		return kickTimeStamp > 0 && fixedTime < kickTimeStamp + slideTime;
+	}
+
+	private void SetSlideCellDrag() {
+		foreach (Cell cell in cellList) {
+			cell.GetComponent<Rigidbody2D>().drag = 0.2f;
+		}
+		Debug.Log("Slide Cell Drag");
 	}
 
 	private bool IsCellBuiltForGeneCell(Cell geneCell) {
@@ -975,8 +1005,19 @@ public class Phenotype : MonoBehaviour {
 			return;
 		}
 
-		if (!connectionsDiffersFromCells && detatchmentKick != null) {
+		
+
+		if (detatchmentKick != null) {
+			SetSlideCellDrag();
 			ApplyDetatchKick();
+			kickTimeStamp = fixedTime;
+
+			Debug.Log("Kick");
+		}
+
+		if (kickTimeStamp > 0 && fixedTime > kickTimeStamp + slideTime) {
+			SetTrueCellDrag(); //make slow
+			kickTimeStamp = -1;
 		}
 
 		//if (update % 50 == 0) {
