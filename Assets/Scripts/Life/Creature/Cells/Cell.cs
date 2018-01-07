@@ -178,7 +178,7 @@ public abstract class Cell : MonoBehaviour {
 
 	virtual public void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
 		energy = Mathf.Min(energy + effect * deltaTicks * Time.fixedDeltaTime, maxEnergy);
-		didUpdateThisFrame = 5;
+		didUpdateThisFrame = 5; // Just for update visuals
 	}
 
 	virtual public void UpdateRadius(ulong fixedTime) { }
@@ -589,6 +589,7 @@ public abstract class Cell : MonoBehaviour {
 		for (int i = 0; i < placentaCells.Count; i++) {
 			placentaSprings[i] = gameObject.AddComponent(typeof(SpringJoint2D)) as SpringJoint2D;
 			placentaSprings[i].connectedBody = placentaCells[i].gameObject.GetComponent<Rigidbody2D>();
+			placentaSprings[i].distance = 1f;
 		}
 	}
 

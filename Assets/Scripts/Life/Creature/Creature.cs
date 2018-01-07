@@ -438,6 +438,9 @@ public class Creature : MonoBehaviour {
 		creatureData.genotypeData = genotype.UpdateData();
 		creatureData.phenotypeData = phenotype.UpdateData();
 
+		creatureData.growTicks = growTicks;
+		creatureData.detatchTicks = detatchTicks;
+
 		return creatureData;
 	}
 
@@ -451,6 +454,9 @@ public class Creature : MonoBehaviour {
 		Vector2 position = creatureData.genotypeData.originPosition;
 		float heading = creatureData.genotypeData.originHeading;
 		genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
+
+		growTicks = creatureData.growTicks;
+		detatchTicks = creatureData.detatchTicks;
 
 		phenotype.ApplyData(creatureData.phenotypeData, this);
 	}
@@ -524,13 +530,8 @@ public class Creature : MonoBehaviour {
 
 	//time
 	private int growTicks;
-	private int growTickPeriod = 30;
-
-	private int fertilizeTicks;
-	private int fertilizeTickPeriod = 60;
-
 	private int detatchTicks;
-	private int detatchTickPeriod = 10;
+
 	//time ^
 
 	public void UpdatePhysics(ulong worldTicks) {
@@ -540,17 +541,17 @@ public class Creature : MonoBehaviour {
 
 		//time
 		growTicks++;
-		if (growTicks >= growTickPeriod) {
+		if (growTicks >= GlobalSettings.instance.quality.growTickPeriod) {
 			growTicks = 0;
 		}
 
-		fertilizeTicks++;
-		if (fertilizeTicks >= fertilizeTickPeriod) {
-			fertilizeTicks = 0;
-		}
+		//fertilizeTicks++;
+		//if (fertilizeTicks >= fertilizeTickPeriod) {
+		//	fertilizeTicks = 0;
+		//}
 
 		detatchTicks++;
-		if (detatchTicks >= detatchTickPeriod) {
+		if (detatchTicks >= GlobalSettings.instance.quality.detatchTickPeriod) {
 			detatchTicks = 0;
 		}
 		//time ^
@@ -596,6 +597,4 @@ public class Creature : MonoBehaviour {
 			//}
 		}
 	}
-
-	private float lastUpdate = -1;
 }

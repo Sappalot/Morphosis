@@ -24,13 +24,13 @@ public class Veins : MonoBehaviour {
 		}
 	}
 
-	public void UpdateMetabolism(float deltaTickTime) {
+	public void UpdateMetabolism(int deltaTicks) {
 		foreach (Vein vein in veinList) {
 			vein.UpdateEnergyFluxEffect();
 		}
 
 		foreach (Vein vein in veinList) {
-			vein.UpdateEnergy(deltaTickTime);
+			vein.UpdateEnergy(deltaTicks);
 		}
 	}
 

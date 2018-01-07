@@ -69,17 +69,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	}
 	public Mutation mutation;
 
+	//Metabolism
 	[Serializable]
 	public class Phenotype {
-
-		//Veins
-		public float veinFluxEffectWeak = 0.05f; //W
-		public float veinFluxEffectMedium = 0.25f; //W
-		public float veinFluxEffectStrong = 0.5f; //W
-
-		// Rebuild
-		public float cellRebuildCooldown = 30f; //s
-
 		//Egg Cell
 		public float eggCellEffectCost = 0.2f; //W
 											   //           eggCellEffect                        0.0 W
@@ -118,23 +110,47 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		//VeinCell
 		public float veinCellEffectCost = 0.1f; //W
 												//           veinCellEffect                       0.0 W
+
+		//Veins
+		public float veinFluxEffectWeak = 0.05f; //W
+		public float veinFluxEffectMedium = 0.25f; //W
+		public float veinFluxEffectStrong = 0.5f; //W
+
+		// Rebuild
+		public float cellRebuildCooldown = 30f; //s
+
+		//Physics
+		public float detatchmentKick = 0.05f; //N
+		public float detatchmentKickSquare = 0.05f; //N
+
+		public float detatchSlideDuration = 10; // s
 	}
 	public Phenotype phenotype;
 
-	//Physics
-	public float metabolismPeriod = 1f;
-	public float metabolismPeriodVein = 1f;
+	[Serializable]
+	public class Quality {
+		public int eggCellTickPeriod =     50;
+		public int fungalCellTickPeriod =  50;
+		public int jawCellTickPeriod =     50;
+		public int leafCellTickPeriod =    50;
+		public int muscleCellTickPeriod =   5;
+		public int rootCellTickPeriod =    50;
+		public int shellCellTickPeriod =   50;
+		public int veinCellTickPeriod =    50;
 
-	public float detatchmentKick = 0.05f; //N
-	public float detatchmentKickSquare = 0.05f; //N
+		public int veinTickPeriod = 5;
+		public int growTickPeriod = 30;
+		public int detatchTickPeriod = 10;
+	}
+	public Quality quality;
+
+
 
 	//Visual
 	public float orthoMinStrongFX = 10f;
 	public float orthoMaxHorizonFx = 30f;
+	public float orthoMaxHorizonDetailedCell = 50f;
 
 	// DEBUG
 	public bool printoutAtDirtyMarkedUpdate = true;
-
-	
-
 }

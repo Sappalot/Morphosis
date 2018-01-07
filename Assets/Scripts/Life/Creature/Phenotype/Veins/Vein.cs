@@ -98,7 +98,7 @@ public class Vein : MonoBehaviour {
 	private float flowEffectFrontToBack;
 	public void UpdateEnergyFluxEffect() {
 		float moreEnergyFront = frontCell.energy - backCell.energy;
-		flowEffectFrontToBack = moreEnergyFront * flowEffectFactor;
+		flowEffectFrontToBack = Mathf.Clamp(moreEnergyFront, -100f, 100f) * flowEffectFactor;
 	}
 	private float flowEffectFactor {
 		get {
@@ -113,8 +113,8 @@ public class Vein : MonoBehaviour {
 		}
 	}
 
-	public void UpdateEnergy(float deltaTickTime) {
-		float deltaEnergyBack = flowEffectFrontToBack * deltaTickTime;
+	public void UpdateEnergy(int deltaTicks) {
+		float deltaEnergyBack = flowEffectFrontToBack * deltaTicks * Time.fixedDeltaTime;
 		backCell.energy += deltaEnergyBack;
 		frontCell.energy -= deltaEnergyBack;
 	}

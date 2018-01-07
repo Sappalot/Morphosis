@@ -345,7 +345,7 @@ public class Phenotype : MonoBehaviour {
 			UpdateNeighbourReferencesInterBody(creature);
 
 			//Springs
-			UpdateSpringsInterBody(creature);
+			UpdateSpringsInterAndIntraBody(creature);
 
 			//Groups
 			UpdateGroupsInterBody(motherId);
@@ -433,7 +433,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	private void UpdateSpringsInterBody(Creature creature) {
+	private void UpdateSpringsInterAndIntraBody(Creature creature) {
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
 			cell.UpdateSpringConnectionsIntra();
@@ -513,7 +513,7 @@ public class Phenotype : MonoBehaviour {
 	// fixedTime = 0 ==> no mar will be set to when this cell can be regrown again
 	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects, ulong worldTicks) {
 		if (playEffects && (GlobalPanel.instance.effectsPlaySound.isOn || (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalPanel.instance.effectsShowParticles.isOn))) {
-			bool isObserved = CameraUtils.IsObservedLazy(deleteCell.position);
+			bool isObserved = CameraUtils.IsObservedLazy(deleteCell.position, GlobalSettings.instance.orthoMaxHorizonFx);
 
 			if (GlobalPanel.instance.effectsPlaySound.isOn && isObserved) {
 				Audio.instance.CellDeath(CameraUtils.GetEffectStrengthLazy());
@@ -620,7 +620,7 @@ public class Phenotype : MonoBehaviour {
 
 	public bool DetatchFromMother(Creature creature, bool playEffects = false) {
 		if (creature.hasMotherSoul && creature.soul.isConnectedWithMotherSoul) {
-			if (playEffects && CameraUtils.IsObservedLazy(creature.phenotype.originCell.position)) {
+			if (playEffects && CameraUtils.IsObservedLazy(creature.phenotype.originCell.position, GlobalSettings.instance.orthoMaxHorizonFx)) {
 				if (GlobalPanel.instance.effectsPlaySound.isOn) {
 					Audio.instance.CreatureDetatch(CameraUtils.GetEffectStrengthLazy());
 				}
@@ -644,7 +644,7 @@ public class Phenotype : MonoBehaviour {
 				detatchmentKick = new Dictionary<Cell, Vector2>();
 				Vector2 offspringForce = Vector2.zero;
 				float cellSum = cellCount + mother.phenotype.cellCount;
-				float kickFactor = GlobalSettings.instance.detatchmentKick * cellSum + GlobalSettings.instance.detatchmentKickSquare * cellSum * cellSum;
+				float kickFactor = GlobalSettings.instance.phenotype.detatchmentKick * cellSum + GlobalSettings.instance.phenotype.detatchmentKickSquare * cellSum * cellSum;
 
 				for (int i = 0; i < 6; i++) {
 					if (childOrigin.HasNeighbourCell(i) && childOrigin.GetNeighbourCell(i).creature.id != creature.id) {
@@ -679,7 +679,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	private ulong kickTickStamp = 0;
-	private const float slideForTicks = 100f;
+	
 	private void SetTrueCellDrag() {
 		foreach (Cell cell in cellList) {
 			if (cell.GetCellType() == CellTypeEnum.Leaf) {
@@ -693,7 +693,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public bool IsSliding(float worldTicks) {
-		return kickTickStamp > 0 && worldTicks < kickTickStamp + slideForTicks;
+		return kickTickStamp > 0 && worldTicks < kickTickStamp + (ulong)(GlobalSettings.instance.phenotype.detatchSlideDuration / Time.fixedDeltaTime);
 	}
 
 	private void SetSlideCellDrag() {
@@ -944,6 +944,7 @@ public class Phenotype : MonoBehaviour {
 
 	// Load / Save
 
+	// Save
 	private PhenotypeData phenotypeData = new PhenotypeData();
 	public PhenotypeData UpdateData() {
 		phenotypeData.timeOffset = timeOffset;
@@ -954,10 +955,20 @@ public class Phenotype : MonoBehaviour {
 		}
 		phenotypeData.differsFromGenotype = cellsDiffersFromGeneCells;
 
-		phenotypeData.veinTick = veinTick;
+		phenotypeData.eggCellTick =    eggCellTick;
+		phenotypeData.fungalCellTick = fungalCellTick;
+		phenotypeData.jawCellTick =    jawCellTick;
+		phenotypeData.leafCellTick =   leafCellTick;
+		phenotypeData.muscleCellTick = muscleCellTick;
+		phenotypeData.rootCellTick =   rootCellTick;
+		phenotypeData.shellCellTick =  shellCellTick;
+		phenotypeData.veinCellTick =   veinCellTick;
+
+		phenotypeData.veinTick =       veinTick;
 		return phenotypeData;
 	}
 
+	// Load
 	public void ApplyData(PhenotypeData phenotypeData, Creature creature) {
 		timeOffset = phenotypeData.timeOffset;
 
@@ -970,7 +981,16 @@ public class Phenotype : MonoBehaviour {
 		cellsDiffersFromGeneCells = false; //This work is done
 		connectionsDiffersFromCells = true; //We need to connect mothers with children
 
-		veinTick = phenotypeData.veinTick;
+		eggCellTick =    phenotypeData.eggCellTick;
+		fungalCellTick = phenotypeData.fungalCellTick;
+		jawCellTick =    phenotypeData.jawCellTick;
+		leafCellTick =   phenotypeData.leafCellTick;
+		muscleCellTick = phenotypeData.muscleCellTick;
+		rootCellTick =   phenotypeData.rootCellTick;
+		shellCellTick =  phenotypeData.shellCellTick;
+		veinCellTick =   phenotypeData.veinCellTick;
+
+		phenotypeData.veinTick = veinTick;
 	}
 
 	// ^ Load / Save ^
@@ -1010,32 +1030,17 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	//time
-	private int eggTick;
-	private int eggTickPeriod = 50;
-
-	private int fungalTick;
-	private int fungalTickPeriod = 50;
-
-	private int jawTick;
-	private int jawTickPeriod = 50;
-
-	private int leafTick;
-	private int leafTickPeriod = 50;
-
-	private int muscleTick;
-	private int muscleTickPeriod = 5;
-
-	private int rootTick;
-	private int rootTickPeriod = 50;
-
-	private int shellTick;
-	private int shellTickPeriod = 50;
+	private int eggCellTick;
+	private int fungalCellTick;
+	private int jawCellTick;
+	private int leafCellTick;
+	private int muscleCellTick;
+	private int rootCellTick;
+	private int shellCellTick;
+	private int veinCellTick;
 
 	private int veinTick;
-	private int veinTickPeriod = 50;
 
-	private int veinEdgeTick;
-	private int veinEdgeTickPeriod = 5;
 	//time ^
 
 	public void UpdatePhysics(Creature creature, ulong worldTick) {
@@ -1044,49 +1049,49 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		//time
-		eggTick++;
-		if (eggTick >= eggTickPeriod) {
-			eggTick = 0;
+		eggCellTick++;
+		if (eggCellTick >= GlobalSettings.instance.quality.eggCellTickPeriod) {
+			eggCellTick = 0;
 		}
 
-		fungalTick++;
-		if (fungalTick >= fungalTickPeriod) {
-			fungalTick = 0;
+		fungalCellTick++;
+		if (fungalCellTick >= GlobalSettings.instance.quality.fungalCellTickPeriod) {
+			fungalCellTick = 0;
 		}
 
-		jawTick++;
-		if (jawTick >= jawTickPeriod) {
-			jawTick = 0;
+		jawCellTick++;
+		if (jawCellTick >= GlobalSettings.instance.quality.jawCellTickPeriod) {
+			jawCellTick = 0;
 		}
 
-		leafTick++;
-		if (leafTick >= leafTickPeriod) {
-			leafTick = 0;
+		leafCellTick++;
+		if (leafCellTick >= GlobalSettings.instance.quality.leafCellTickPeriod) {
+			leafCellTick = 0;
 		}
 
-		muscleTick++;
-		if (muscleTick >= muscleTickPeriod) {
-			muscleTick = 0;
+		muscleCellTick++;
+		if (muscleCellTick >= GlobalSettings.instance.quality.muscleCellTickPeriod) {
+			muscleCellTick = 0;
 		}
 
-		rootTick++;
-		if (rootTick >= rootTickPeriod) {
-			rootTick = 0;
+		rootCellTick++;
+		if (rootCellTick >= GlobalSettings.instance.quality.rootCellTickPeriod) {
+			rootCellTick = 0;
 		}
 
-		shellTick++;
-		if (shellTick >= shellTickPeriod) {
-			shellTick = 0;
+		shellCellTick++;
+		if (shellCellTick >= GlobalSettings.instance.quality.shellCellTickPeriod) {
+			shellCellTick = 0;
+		}
+
+		veinCellTick++;
+		if (veinCellTick >= GlobalSettings.instance.quality.veinCellTickPeriod) {
+			veinCellTick = 0;
 		}
 
 		veinTick++;
-		if (veinTick >= veinTickPeriod) {
+		if (veinTick >= GlobalSettings.instance.quality.veinTickPeriod) {
 			veinTick = 0;
-		}
-
-		veinEdgeTick++;
-		if (veinEdgeTick >= veinEdgeTickPeriod) {
-			veinEdgeTick = 0;
 		}
 		//time ^
 
@@ -1095,10 +1100,8 @@ public class Phenotype : MonoBehaviour {
 			SetSlideCellDrag();
 			ApplyDetatchKick();
 			kickTickStamp = worldTick;
-
-			Debug.Log("Kick");
 		}
-		if (kickTickStamp > 0 && worldTick > kickTickStamp + slideForTicks) {
+		if (kickTickStamp > 0 && worldTick > kickTickStamp + (ulong)(GlobalSettings.instance.phenotype.detatchSlideDuration / Time.fixedDeltaTime)) {
 			SetTrueCellDrag(); //make slow
 			kickTickStamp = 0;
 		}
@@ -1124,27 +1127,27 @@ public class Phenotype : MonoBehaviour {
 		if (GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
 			for (int index = 0; index < cellList.Count; index++) {
 				Cell cell = cellList[index];
-				if (cell.GetCellType() == CellTypeEnum.Egg && eggTick == 0) {
-					cell.UpdateMetabolism(eggTickPeriod, worldTick);
-				} else if (cell.GetCellType() == CellTypeEnum.Fungal && fungalTick == 0) {
-					cell.UpdateMetabolism(fungalTickPeriod, worldTick);
-				} else if (cell.GetCellType() == CellTypeEnum.Jaw && jawTick == 0) {
-					cell.UpdateMetabolism(jawTickPeriod, worldTick);
-				} else if (cell.GetCellType() == CellTypeEnum.Leaf && leafTick == 0) {
-					cell.UpdateMetabolism(leafTickPeriod, worldTick);
-				} else if (cell.GetCellType() == CellTypeEnum.Muscle && muscleTick == 0) {
-					cell.UpdateMetabolism(muscleTickPeriod, worldTick);
-				} else if (cell.GetCellType() == CellTypeEnum.Root && rootTick == 0) {
-					cell.UpdateMetabolism(rootTickPeriod, worldTick);
-				} else if (cell.GetCellType() == CellTypeEnum.Shell && shellTick == 0) {
-					cell.UpdateMetabolism(shellTickPeriod, worldTick);
-				} else if (cell.GetCellType() == CellTypeEnum.Vein && veinTick == 0) {
-					cell.UpdateMetabolism(veinTickPeriod, worldTick);
+				if (eggCellTick == 0           && cell.GetCellType() == CellTypeEnum.Egg) {
+					cell.UpdateMetabolism(GlobalSettings.instance.quality.eggCellTickPeriod, worldTick);
+				} else if (fungalCellTick == 0 && cell.GetCellType() == CellTypeEnum.Fungal) {
+					cell.UpdateMetabolism(GlobalSettings.instance.quality.fungalCellTickPeriod, worldTick);
+				} else if (jawCellTick == 0    && cell.GetCellType() == CellTypeEnum.Jaw) {
+					cell.UpdateMetabolism(GlobalSettings.instance.quality.jawCellTickPeriod, worldTick);
+				} else if (leafCellTick == 0   && cell.GetCellType() == CellTypeEnum.Leaf) {
+					cell.UpdateMetabolism(GlobalSettings.instance.quality.leafCellTickPeriod, worldTick);
+				} else if (muscleCellTick == 0 && cell.GetCellType() == CellTypeEnum.Muscle) {
+					cell.UpdateMetabolism(GlobalSettings.instance.quality.muscleCellTickPeriod, worldTick);
+				} else if (rootCellTick == 0   && cell.GetCellType() == CellTypeEnum.Root) {
+					cell.UpdateMetabolism(GlobalSettings.instance.quality.rootCellTickPeriod, worldTick);
+				} else if (shellCellTick == 0  && cell.GetCellType() == CellTypeEnum.Shell) {
+					cell.UpdateMetabolism(GlobalSettings.instance.quality.shellCellTickPeriod, worldTick);
+				} else if (veinCellTick == 0   && cell.GetCellType() == CellTypeEnum.Vein) {
+					cell.UpdateMetabolism(GlobalSettings.instance.quality.veinCellTickPeriod, worldTick);
 				}
 			}
 
-			if (veinEdgeTick == 0) {
-				veins.UpdateMetabolism(veinEdgeTickPeriod * Time.fixedDeltaTime);
+			if (veinTick == 0) {
+				veins.UpdateMetabolism(GlobalSettings.instance.quality.veinTickPeriod);
 			}
 		}
 	}

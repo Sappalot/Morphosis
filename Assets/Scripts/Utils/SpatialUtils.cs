@@ -2,8 +2,8 @@
 
 static class CameraUtils {
 
-	public static bool IsObservedLazy(Vector3 position) {
-		return IsInsideFrustum(World.instance.worldCamera, position) && World.instance.worldCamera.orthographicSize < GlobalSettings.instance.orthoMaxHorizonFx;
+	public static bool IsObservedLazy(Vector3 position, float orthoMaxWidth) {
+		return IsInsideFrustum(World.instance.worldCamera, position) && World.instance.worldCamera.orthographicSize < orthoMaxWidth;
 	}
 
 	public static bool IsInsideFrustum(Camera camera, Vector3 position) {

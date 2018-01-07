@@ -73,8 +73,8 @@ public class MuscleCell : Cell {
 				radius = radiusGoal;
 		}
 
-		if (CameraUtils.IsObservedLazy(position)) {
-			transform.localScale = new Vector3(radius * 2f, radius * 2f, 1f); //costy, only if in frustum
+		if (CameraUtils.IsObservedLazy(position, GlobalSettings.instance.orthoMaxHorizonDetailedCell)) {
+			transform.localScale = new Vector3(radius * 2f, radius * 2f, 1f); //costy, only if in frustum and close
 			scaleIsDirty = true;
 		} else if (scaleIsDirty) {
 			transform.localScale = new Vector3(1f, 1f, 1f);

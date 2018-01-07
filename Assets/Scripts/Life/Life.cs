@@ -150,7 +150,7 @@ public class Life : MonoSingleton<Life> {
 	public void FertilizeCreature(Cell eggCell, bool playEffects, ulong worldTicks) {
 		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
 
-		if (playEffects && GlobalPanel.instance.effectsPlaySound.isOn && CameraUtils.IsObservedLazy(eggCell.position)) {
+		if (playEffects && GlobalPanel.instance.effectsPlaySound.isOn && CameraUtils.IsObservedLazy(eggCell.position, GlobalSettings.instance.orthoMaxHorizonFx)) {
 			Audio.instance.EggCellFertilize(CameraUtils.GetEffectStrengthLazy());
 		}
 
@@ -165,7 +165,7 @@ public class Life : MonoSingleton<Life> {
 		// Spawn child at egg cell location
 		Creature child = InstantiateCreature(); // Will create soul as well
 
-		// Let there be evolution, and ther ewas evolution
+		// Let there be evolution, and there was evolution
 		//child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
 		//.GetMutatedClone(0.2f)
 		child.GenerateEmbryo(mother.genotype.GetMutatedClone(GlobalSettings.instance.mutation.masterMutationStrength), eggCell.position, eggCell.heading); //Mutation Hack
@@ -180,6 +180,9 @@ public class Life : MonoSingleton<Life> {
 
 		PhenotypePanel.instance.MakeDirty();
 		CreatureSelectionPanel.instance.MakeDirty();
+
+		//Sometimes child origin is placed with spring too far from mother's placent this update might fix this problem
+		UpdateStructure();
 	}
 
 	public void KillAllCreaturesAndSouls() {
