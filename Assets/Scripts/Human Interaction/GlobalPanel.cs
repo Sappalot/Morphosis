@@ -23,22 +23,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	private int physicsUpdateCount;
 
 	//World
-	public void UpdateWorldNameAndTime(string worldName, float fixedTime) {
-		TimeSpan t = TimeSpan.FromSeconds(fixedTime);
-		int d = t.Days;
-		int h = t.Hours;
-		int m = t.Minutes;
-		int s = t.Seconds;
-
-		if (d > 0) {
-			worldNameAndTimeText.text = string.Format("{0} {1:F0}d {2:F0}h {3:F0}m {4:F0}s", worldName, d, h, m, s);
-		} else if (h > 0) {
-			worldNameAndTimeText.text = string.Format("{0} {1:F0}h {2:F0}m {3:F0}s", worldName, h, m, s);
-		} else if (m > 0) {
-			worldNameAndTimeText.text = string.Format("{0} {1:F0}m {2:F0}s", worldName, m, s);
-		} else {
-			worldNameAndTimeText.text = string.Format("{0} {1:F0}s", worldName, s);
-		}
+	public void UpdateWorldNameAndTime(string worldName, ulong worldTicks) {
+		worldNameAndTimeText.text = worldName + " " + TimeUtil.GetTimeString((ulong)(worldTicks * Time.fixedDeltaTime));
 	}
 
 	//Physics

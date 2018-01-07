@@ -6,7 +6,7 @@ using System.IO;
 public class World : MonoSingleton<World> {
 	public Camera worldCamera;
 	private string worldName = "Gaia";
-	private float fixedTime;
+	public ulong worldTicks = 0;
 
 	public void KillAllCreaturesAndSouls() {
 		Life.instance.KillAllCreaturesAndSouls();
@@ -42,23 +42,17 @@ public class World : MonoSingleton<World> {
 	}
 
 	private int updates;
-	private float lastUpdate = -1;
+
 	private void FixedUpdate() {
 		Life.instance.UpdateStructure();
 
-		fixedTime += Time.fixedDeltaTime;
-		Life.instance.UpdatePhysics(fixedTime);
+		worldTicks++; //The only place where time is increased
+		Life.instance.UpdatePhysics(worldTicks);
 
-		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
+		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 
-		if (lastUpdate < 0) {
-			lastUpdate = Time.fixedUnscaledTime;
-		}
-
-		//---
 		float isValue = GlobalPanel.instance.physicsUpdatesPerSecond * Time.fixedDeltaTime;
 		float sliderValue = GlobalPanel.instance.timeSpeedSilder.value / 5f;
-
 
 		timeScaleAim = isValue + Mathf.Clamp((sliderValue - isValue) * 0.5f, -0.5f, 0.5f);
 		timeScaleAim = Mathf.Clamp(timeScaleAim, 1f, Mathf.Max(0f, sliderValue));
@@ -75,8 +69,8 @@ public class World : MonoSingleton<World> {
 		Time.timeScale = 0;
 
 		KillAllCreaturesAndSouls();
-		fixedTime = 0f;
-		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
+		worldTicks = 0;
+		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 		for (int y = 1; y <= 1; y++) {
 			for (int x = 1; x <= 1; x++) {
 				Life.instance.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f));
@@ -102,7 +96,7 @@ public class World : MonoSingleton<World> {
 		CreatureEditModePanel.instance.UpdateAllAccordingToEditMode();
 
 		CreatureSelectionPanel.instance.ClearSelection();
-		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, fixedTime);
+		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 	}
 
 	private string path = "F:/Morfosis/";
@@ -125,16 +119,13 @@ public class World : MonoSingleton<World> {
 	//data
 	private void UpdateData() {
 		worldData.worldName = worldName;
-
 		worldData.lifeData = Life.instance.UpdateData();
-		worldData.fixedTime = fixedTime;
+		worldData.worldTicks = worldTicks;
 	}
 
 	private void ApplyData(WorldData worldData) {
 		worldName = worldData.worldName;
-
 		Life.instance.ApplyData(worldData.lifeData);
-
-		fixedTime = worldData.fixedTime;
+		worldTicks = worldData.worldTicks;
 	}
 }

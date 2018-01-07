@@ -14,10 +14,8 @@ public class CellMap {
 		return positionKilledTimeStamp.ContainsKey(gridPosition);
 	}
 
-	public void AddKilledTimeStamp(Vector2i gridPosition, float? fixedTime) {
-		if (fixedTime != null) {
-			positionKilledTimeStamp.Add(gridPosition, fixedTime);
-		}
+	public void AddKilledTimeStamp(Vector2i gridPosition, ulong worldTicks) {
+		positionKilledTimeStamp.Add(gridPosition, worldTicks);
 	}
 
 	public float? KilledTimeStamp(Vector2i gridPosition) {

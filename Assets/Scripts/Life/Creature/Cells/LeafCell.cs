@@ -12,7 +12,7 @@ public class LeafCell : Cell {
 		springDamping = 11f;
 	}
 
-	public override void UpdateMetabolism(float deltaTime) {
+	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.leafCellEffectCost;
 
 		float effectSum = 0;
@@ -60,7 +60,7 @@ public class LeafCell : Cell {
 		effectProduction = lowPass / effectRecordCount;
 
 
-		base.UpdateMetabolism(deltaTime);
+		base.UpdateMetabolism(deltaTicks, worldTicks);
 	}
 
 

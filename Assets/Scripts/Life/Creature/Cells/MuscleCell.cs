@@ -8,10 +8,14 @@ public class MuscleCell : Cell {
 		springDamping = 11f;
 	}
 
-	public override void UpdateMetabolism(float deltaTime) {
+	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.muscleCellEffectCost;
 		effectProduction = 0f;
-		base.UpdateMetabolism(deltaTime);
+
+		UpdateRadius(worldTicks);
+		UpdateSpringLengths();
+
+		base.UpdateMetabolism(deltaTicks, worldTicks);
 	}
 
 	public override CellTypeEnum GetCellType() {
@@ -20,8 +24,9 @@ public class MuscleCell : Cell {
 	}
 	private float modularTime = 0f;
 	private bool isContracting;
+	private bool scaleIsDirty = true;
 
-	public override void UpdateRadius(float fixedTime) {
+	public override void UpdateRadius(ulong worldTicks) {
 		float muscleSpeed = creature.muscleSpeed;
 		float radiusDiff = creature.muscleRadiusDiff;
 		float curveOffset = creature.muscleContractRetract;
@@ -42,10 +47,10 @@ public class MuscleCell : Cell {
 
 		//modularTime += Time.fixedDeltaTime * muscleSpeed;
 
-		modularTime = fixedTime * muscleSpeed;
+		modularTime = worldTicks * Time.fixedDeltaTime * muscleSpeed;
 
-		float deltaTime = fixedTime - lastTime;
-		lastTime = fixedTime;
+		float deltaTime = worldTicks * Time.fixedDeltaTime - lastTime;
+		lastTime = worldTicks * Time.fixedDeltaTime;
 
 		float expandContract = Mathf.Sign(curveOffset + Mathf.Cos(timeOffset + modularTime / (2f * Mathf.PI)));
 		float radiusGoal = 0.5f - 0.5f * radiusDiff + 0.5f * radiusDiff * expandContract;
@@ -68,7 +73,13 @@ public class MuscleCell : Cell {
 				radius = radiusGoal;
 		}
 
-		//transform.localScale = new Vector3(radius * 2, radius * 2, 1f); //costy, only if in frustum
+		if (CameraUtils.IsObservedLazy(position)) {
+			transform.localScale = new Vector3(radius * 2f, radius * 2f, 1f); //costy, only if in frustum
+			scaleIsDirty = true;
+		} else if (scaleIsDirty) {
+			transform.localScale = new Vector3(1f, 1f, 1f);
+			scaleIsDirty = false;
+		}
 
 		//--------------------------------------------------
 
@@ -122,9 +133,9 @@ public class MuscleCell : Cell {
 		return isContracting;
 	}
 
-	long seldom = 0;
+	//long seldom = 0;
 	public override void UpdateSpringLengths() {
-		if (seldom % 5 == 0) {
+		//if (seldom % 5 == 0) {
 			if (HasOwnNeighbourCell(CardinalEnum.northEast)) {
 				northEastNeighbour.cell.GetSpring(this).distance = this.radius + northEastNeighbour.cell.radius;
 			}
@@ -148,8 +159,8 @@ public class MuscleCell : Cell {
 			if (HasOwnNeighbourCell(CardinalEnum.southEast)) {
 				southEastSpring.distance = this.radius + southEastNeighbour.cell.radius;
 			}
-		}
-		seldom++;
+		//}
+		//seldom++;
 	}
 
 	public override void UpdateSpringFrequenzy() {

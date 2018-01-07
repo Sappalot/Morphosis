@@ -1,20 +1,32 @@
 ﻿
+using UnityEngine;
+
 public class EggCell : Cell {
 	public EggCell() : base() {
 		springFrequenzy = 5f;
 		springDamping = 11f;
+		m_shouldFertilize = -1;
 	}
 
-	public bool shouldFertilize = false;
+	[HideInInspector]
+	private int m_shouldFertilize;
+	public int shouldFertilize {
+		get {
+			return m_shouldFertilize;
+		}
+		set {
+			m_shouldFertilize = value;
+		}
+	}
 
-	public override void UpdateMetabolism(float deltaTime) {
+	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.eggCellEffectCost;
 		effectProduction = 0f;
 
-		base.UpdateMetabolism(deltaTime);
+		base.UpdateMetabolism(deltaTicks, worldTicks);
 
-		if (energy > eggCellFertilizeThreshold) {
-			shouldFertilize = true;
+		if (energy > eggCellFertilizeThreshold && shouldFertilize == -1) {
+			shouldFertilize = Random.Range(0, 60);
 		}
 	}
 

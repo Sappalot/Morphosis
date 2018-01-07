@@ -48,7 +48,7 @@ public class Vein : MonoBehaviour {
 
 
 	private bool IsHighEfficiency(CellTypeEnum cellType) {
-		return (cellType == CellTypeEnum.Egg || cellType == CellTypeEnum.Vein);
+		return cellType == CellTypeEnum.Vein;
 	}
 
 	public void UpdateGraphics(bool showVeins) {

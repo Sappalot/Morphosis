@@ -3,12 +3,6 @@ using UnityEngine;
 
 
 public class Veins : MonoBehaviour {
-
-
-	public void Awake() {
-
-	}
-
 	public Vein veinPrefab;
 
 	private List<Vein> veinList = new List<Vein>();

@@ -273,7 +273,7 @@ public class Creature : MonoBehaviour {
 
 	// Apply on Phenotype
 	public void TryGrow(bool forceGrow, int cellCount, bool playEffects) {
-		phenotype.TryGrow(this, forceGrow, cellCount, true, playEffects, null);
+		phenotype.TryGrow(this, forceGrow, cellCount, true, playEffects, 0, true);
 		isDirtyGraphics = true;
 	}
 
@@ -287,8 +287,8 @@ public class Creature : MonoBehaviour {
 		isDirtyGraphics = true;
 	}
 
-	public void KillCell(Cell cell, bool playEffects, float? fixedTime) {
-		phenotype.KillCell(cell, true, playEffects, fixedTime);
+	public void KillCell(Cell cell, bool playEffects, ulong worldTicks) {
+		phenotype.KillCell(cell, true, playEffects, worldTicks);
 	}
 
 	public void KillAllCells() {
@@ -518,90 +518,84 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public bool UpdateKillWeakCells(float fixedTime) {
-		return phenotype.UpdateKillWeakCells(fixedTime);
+	public bool UpdateKillWeakCells(ulong worldTicks) {
+		return phenotype.UpdateKillWeakCells(worldTicks);
 	}
 
-	//Change from time to every ie. 100th fixed frame
-	float tickCoolDown = 0f;
-	float lastTickTimeStamp = -1f;
+	//time
+	private int growTicks;
+	private int growTickPeriod = 30;
 
-	float tickCoolDownVein = 0f;
-	float lastTickTimeStampVein = -1f;
+	private int fertilizeTicks;
+	private int fertilizeTickPeriod = 60;
 
-	public void UpdatePhysics(float fixedTime) {
+	private int detatchTicks;
+	private int detatchTickPeriod = 10;
+	//time ^
+
+	public void UpdatePhysics(ulong worldTicks) {
 		if (!hasSoul) {
 			return;
 		}
 
-		tickCoolDown -= Time.fixedDeltaTime;
-		float deltaTickTime = 0f;
-		bool isTick = false;
-		if (tickCoolDown <= 0f) {
-			if (lastTickTimeStamp < 0) {
-				//initialize
-				lastTickTimeStamp = fixedTime;
-				tickCoolDown = Random.Range(0f, GlobalSettings.instance.metabolismPeriod);
-			} else {
-				isTick = true;
-				tickCoolDown = GlobalSettings.instance.metabolismPeriod;
-				deltaTickTime = fixedTime - lastTickTimeStamp;
-				lastTickTimeStamp = fixedTime;
-			}
-
-			//Debug.Log("Time unscaled: " + Time.fixedUnscaledTime + ", FixedTime: " + fixedTime + ", Physic Updates: " + updates + ", Tick Delta time: " + deltaTickTime);
-			updates = 0;
-		}
-		updates++;
-
-		//vein
-		tickCoolDownVein -= Time.fixedDeltaTime;
-		float deltaTickTimeVein = 0f;
-		bool isTickVein = false;
-		if (tickCoolDownVein <= 0f) {
-			if (lastTickTimeStampVein < 0) {
-				//initialize
-				lastTickTimeStampVein = fixedTime;
-				tickCoolDownVein = Random.Range(0f, GlobalSettings.instance.metabolismPeriodVein);
-			} else {
-				isTickVein = true;
-				tickCoolDownVein = GlobalSettings.instance.metabolismPeriodVein;
-				deltaTickTimeVein = fixedTime - lastTickTimeStampVein;
-				lastTickTimeStampVein = fixedTime;
-			}
+		//time
+		growTicks++;
+		if (growTicks >= growTickPeriod) {
+			growTicks = 0;
 		}
 
-		phenotype.UpdatePhysics(this, fixedTime, deltaTickTime, isTick, deltaTickTimeVein, isTickVein);
+		fertilizeTicks++;
+		if (fertilizeTicks >= fertilizeTickPeriod) {
+			fertilizeTicks = 0;
+		}
 
-		if (isTick && GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
-			//Detatch ?
-			if (phenotype.originCell.energy > phenotype.originCell.originDetatchThreshold) {
-				DetatchFromMother(true);
+		detatchTicks++;
+		if (detatchTicks >= detatchTickPeriod) {
+			detatchTicks = 0;
+		}
+		//time ^
+
+		phenotype.UpdatePhysics(this, worldTicks);
+
+		if (GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
+
+			if (detatchTicks == 0) {
+				if (phenotype.originCell.energy > phenotype.originCell.originDetatchThreshold) {
+					DetatchFromMother(true);
+					PhenotypePanel.instance.MakeDirty();
+					CellPanel.instance.MakeDirty();
+				}
 			}
 
-			phenotype.TryGrow(this, false, 1, false, true, fixedTime);
+			if (growTicks == 0) {
+				if (phenotype.TryGrow(this, false, 1, false, true, worldTicks, false) > 0) {
+					PhenotypePanel.instance.MakeDirty();
+					CellPanel.instance.MakeDirty();
+				}
+			}
 
-			//Fertilize ?
+			//if (fertilizeTicks == 0) {
 			Cell fertilizeCell = null;
 			foreach (Cell c in phenotype.cellList) {
 				if (c is EggCell) {
 					EggCell eggCell = c as EggCell;
-					if (eggCell.shouldFertilize) {
+					if (eggCell.shouldFertilize == 0) {
 						fertilizeCell = eggCell;
-						eggCell.shouldFertilize = false;
+						eggCell.shouldFertilize = -1;
 						break;
+					} else if (eggCell.shouldFertilize > 0) {
+						eggCell.shouldFertilize--;
 					}
 				}
 			}
 			if (fertilizeCell != null) {
-				Life.instance.FertilizeCreature(fertilizeCell, true, null);
+				Life.instance.FertilizeCreature(fertilizeCell, true, worldTicks);
+				PhenotypePanel.instance.MakeDirty();
+				CellPanel.instance.MakeDirty();
 			}
-
-			PhenotypePanel.instance.MakeDirty();
-			CellPanel.instance.MakeDirty();
+			//}
 		}
 	}
 
-	private int updates;
 	private float lastUpdate = -1;
 }

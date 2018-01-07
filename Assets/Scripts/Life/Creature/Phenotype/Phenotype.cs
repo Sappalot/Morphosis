@@ -47,7 +47,6 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-
 	[HideInInspector]
 	public bool isAlive = true; // Are we going to use this approach?
 
@@ -87,7 +86,13 @@ public class Phenotype : MonoBehaviour {
 
 	private bool isDirty = true;
 
-	public CircleCollider2D probe;
+	//time
+	private ulong bornTick;
+	private ulong deadTick;
+
+	public ulong GetAgeTicks(ulong worldTicks) {
+		return worldTicks - bornTick;
+	}
 
 	//Grown cells
 	public int cellCount {
@@ -116,7 +121,7 @@ public class Phenotype : MonoBehaviour {
 
 	public void InitiateEmbryo(Creature creature, Vector2 position, float heading) {
 		Setup(creature, position, heading);
-		TryGrow(creature, true, 1, true, false, null);
+		TryGrow(creature, true, 1, true, false, 0, true);
 		cellsDiffersFromGeneCells = false;
 	}
 
@@ -143,10 +148,10 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public int TryGrowFully(Creature creature, bool forceGrow) {
-		return TryGrow(creature, forceGrow, creature.genotype.geneCellCount, true, false, null);
+		return TryGrow(creature, forceGrow, creature.genotype.geneCellCount, true, false, 0, true);
 	}
 
-	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects, float? fixedTime) {
+	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects, ulong worldTicks, bool enableInstantRegrowth) {
 		////Fail safe ... to be removed
 		//Life.instance.UpdateSoulReferences();
 
@@ -193,8 +198,8 @@ public class Phenotype : MonoBehaviour {
 				}
 
 				// test if long enough time has passed since cell was killed
-				if (fixedTime != null && cellMap.HasKilledTimeStamp(geneCell.mapPosition)) {
-					if (fixedTime < cellMap.KilledTimeStamp(geneCell.mapPosition) + GlobalSettings.instance.phenotype.cellRebuildCooldown) {
+				if (!enableInstantRegrowth && cellMap.HasKilledTimeStamp(geneCell.mapPosition)) {
+					if (worldTicks < cellMap.KilledTimeStamp(geneCell.mapPosition) + GlobalSettings.instance.phenotype.cellRebuildCooldown / Time.fixedDeltaTime) {
 						continue;
 					} else {
 						cellMap.RemoveTimeStamp(geneCell.mapPosition);
@@ -239,7 +244,7 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 		if (growCellCount > 0) {
-			if (fixedTime != null && !IsSliding((float)fixedTime)) {
+			if (!IsSliding((float)worldTicks)) {
 				SetTrueCellDrag(); //make slow
 			}
 			//if (playEffects) {
@@ -457,7 +462,7 @@ public class Phenotype : MonoBehaviour {
 				CellPanel.instance.selectedCell = null;
 			}
 
-			KillCell(cellList[cellList.Count - 1], false, true, null);
+			KillCell(cellList[cellList.Count - 1], false, true, 0);
 			shrinkCellCount++;
 		}
 		
@@ -500,13 +505,13 @@ public class Phenotype : MonoBehaviour {
 		List<Cell> allCells = new List<Cell>(cellList);
 
 		for (int i = 0; i < allCells.Count; i++) {
-			KillCell(allCells[i], false, true, null);
+			KillCell(allCells[i], false, true, 0);
 		}
 	}
 
 	//This is the one and only final place where cell is removed
-	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects, float? fixedTime) {
-		
+	// fixedTime = 0 ==> no mar will be set to when this cell can be regrown again
+	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects, ulong worldTicks) {
 		if (playEffects && (GlobalPanel.instance.effectsPlaySound.isOn || (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalPanel.instance.effectsShowParticles.isOn))) {
 			bool isObserved = CameraUtils.IsObservedLazy(deleteCell.position);
 
@@ -544,8 +549,8 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		//Mark cell as destroyed so we don't try to build it back emediatly
-		if (fixedTime != null && !cellMap.HasKilledTimeStamp(deleteCell.mapPosition)) {
-			cellMap.AddKilledTimeStamp(deleteCell.mapPosition, fixedTime);
+		if (worldTicks != 0 && !cellMap.HasKilledTimeStamp(deleteCell.mapPosition)) {
+			cellMap.AddKilledTimeStamp(deleteCell.mapPosition, worldTicks);
 		}
 
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
@@ -563,7 +568,7 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 		for (int i = 0; i < debris.Count; i++) {
-			KillCell(debris[i], false, true, null);
+			KillCell(debris[i], false, true, 0);
 		}
 	}
 
@@ -673,8 +678,8 @@ public class Phenotype : MonoBehaviour {
 		detatchmentKick = null;
 	}
 
-	private float kickTimeStamp = -1f;
-	private const float slideTime = 10f;
+	private ulong kickTickStamp = 0;
+	private const float slideForTicks = 100f;
 	private void SetTrueCellDrag() {
 		foreach (Cell cell in cellList) {
 			if (cell.GetCellType() == CellTypeEnum.Leaf) {
@@ -687,8 +692,8 @@ public class Phenotype : MonoBehaviour {
 		Debug.Log("Update Cell Drag");
 	}
 
-	public bool IsSliding(float fixedTime) {
-		return kickTimeStamp > 0 && fixedTime < kickTimeStamp + slideTime;
+	public bool IsSliding(float worldTicks) {
+		return kickTickStamp > 0 && worldTicks < kickTickStamp + slideForTicks;
 	}
 
 	private void SetSlideCellDrag() {
@@ -948,6 +953,8 @@ public class Phenotype : MonoBehaviour {
 			phenotypeData.cellDataList.Add(cell.UpdateData());
 		}
 		phenotypeData.differsFromGenotype = cellsDiffersFromGeneCells;
+
+		phenotypeData.veinTick = veinTick;
 		return phenotypeData;
 	}
 
@@ -962,6 +969,8 @@ public class Phenotype : MonoBehaviour {
 		}
 		cellsDiffersFromGeneCells = false; //This work is done
 		connectionsDiffersFromCells = true; //We need to connect mothers with children
+
+		veinTick = phenotypeData.veinTick;
 	}
 
 	// ^ Load / Save ^
@@ -988,43 +997,111 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public bool UpdateKillWeakCells(float fixedTime) {
+	public bool UpdateKillWeakCells(ulong worldTicks) {
 		if (originCell.energy <= 0f) {
 			return true;
 		}
 		for (int index = 1; index < cellList.Count; index++) {
 			if (cellList[index].energy <= 0f) {
-				KillCell(cellList[index], true, true, fixedTime);
+				KillCell(cellList[index], true, true, worldTicks);
 			}
 		}
 		return false;
 	}
 
-	public void UpdatePhysics(Creature creature, float fixedTime, float deltaTickTime, bool isTick, float deltaTickTimeVein, bool isTickVein) {
+	//time
+	private int eggTick;
+	private int eggTickPeriod = 50;
+
+	private int fungalTick;
+	private int fungalTickPeriod = 50;
+
+	private int jawTick;
+	private int jawTickPeriod = 50;
+
+	private int leafTick;
+	private int leafTickPeriod = 50;
+
+	private int muscleTick;
+	private int muscleTickPeriod = 5;
+
+	private int rootTick;
+	private int rootTickPeriod = 50;
+
+	private int shellTick;
+	private int shellTickPeriod = 50;
+
+	private int veinTick;
+	private int veinTickPeriod = 50;
+
+	private int veinEdgeTick;
+	private int veinEdgeTickPeriod = 5;
+	//time ^
+
+	public void UpdatePhysics(Creature creature, ulong worldTick) {
 		if (isGrabbed) {
 			return;
 		}
 
-		
+		//time
+		eggTick++;
+		if (eggTick >= eggTickPeriod) {
+			eggTick = 0;
+		}
 
+		fungalTick++;
+		if (fungalTick >= fungalTickPeriod) {
+			fungalTick = 0;
+		}
+
+		jawTick++;
+		if (jawTick >= jawTickPeriod) {
+			jawTick = 0;
+		}
+
+		leafTick++;
+		if (leafTick >= leafTickPeriod) {
+			leafTick = 0;
+		}
+
+		muscleTick++;
+		if (muscleTick >= muscleTickPeriod) {
+			muscleTick = 0;
+		}
+
+		rootTick++;
+		if (rootTick >= rootTickPeriod) {
+			rootTick = 0;
+		}
+
+		shellTick++;
+		if (shellTick >= shellTickPeriod) {
+			shellTick = 0;
+		}
+
+		veinTick++;
+		if (veinTick >= veinTickPeriod) {
+			veinTick = 0;
+		}
+
+		veinEdgeTick++;
+		if (veinEdgeTick >= veinEdgeTickPeriod) {
+			veinEdgeTick = 0;
+		}
+		//time ^
+
+		// Detatchment Kick
 		if (detatchmentKick != null) {
 			SetSlideCellDrag();
 			ApplyDetatchKick();
-			kickTimeStamp = fixedTime;
+			kickTickStamp = worldTick;
 
 			Debug.Log("Kick");
 		}
-
-		if (kickTimeStamp > 0 && fixedTime > kickTimeStamp + slideTime) {
+		if (kickTickStamp > 0 && worldTick > kickTickStamp + slideForTicks) {
 			SetTrueCellDrag(); //make slow
-			kickTimeStamp = -1;
+			kickTickStamp = 0;
 		}
-
-		//if (update % 50 == 0) {
-		//    edges.ShuffleEdgeUpdateOrder();
-		//    ShuffleCellUpdateOrder();
-		//}
-		//update++;
 
 		// Creature
 		Vector3 averageVelocity = new Vector3();
@@ -1037,11 +1114,38 @@ public class Phenotype : MonoBehaviour {
 		edges.UpdatePhysics(velocity, creature);
 
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdatePhysics(fixedTime, deltaTickTime, isTick);
+			cellList[index].UpdatePhysics(worldTick);
+			//if (leafTick == 0 && GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
+			//	cellList[index].UpdateMetabolism(leafTickPeriod, worldTick);
+			//}
 		}
 
-		if (isTickVein && GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
-			veins.UpdateMetabolism(deltaTickTimeVein);
+		//Metabolism
+		if (GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
+			for (int index = 0; index < cellList.Count; index++) {
+				Cell cell = cellList[index];
+				if (cell.GetCellType() == CellTypeEnum.Egg && eggTick == 0) {
+					cell.UpdateMetabolism(eggTickPeriod, worldTick);
+				} else if (cell.GetCellType() == CellTypeEnum.Fungal && fungalTick == 0) {
+					cell.UpdateMetabolism(fungalTickPeriod, worldTick);
+				} else if (cell.GetCellType() == CellTypeEnum.Jaw && jawTick == 0) {
+					cell.UpdateMetabolism(jawTickPeriod, worldTick);
+				} else if (cell.GetCellType() == CellTypeEnum.Leaf && leafTick == 0) {
+					cell.UpdateMetabolism(leafTickPeriod, worldTick);
+				} else if (cell.GetCellType() == CellTypeEnum.Muscle && muscleTick == 0) {
+					cell.UpdateMetabolism(muscleTickPeriod, worldTick);
+				} else if (cell.GetCellType() == CellTypeEnum.Root && rootTick == 0) {
+					cell.UpdateMetabolism(rootTickPeriod, worldTick);
+				} else if (cell.GetCellType() == CellTypeEnum.Shell && shellTick == 0) {
+					cell.UpdateMetabolism(shellTickPeriod, worldTick);
+				} else if (cell.GetCellType() == CellTypeEnum.Vein && veinTick == 0) {
+					cell.UpdateMetabolism(veinTickPeriod, worldTick);
+				}
+			}
+
+			if (veinEdgeTick == 0) {
+				veins.UpdateMetabolism(veinEdgeTickPeriod * Time.fixedDeltaTime);
+			}
 		}
 	}
 }

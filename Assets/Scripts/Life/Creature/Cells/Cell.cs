@@ -21,6 +21,7 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	private List<JawCell> predators = new List<JawCell>(); //Who is eating on me
 
+	private int didUpdateThisFrame = 0;
 	//Egg only
 	public float eggCellFertilizeThreshold; // J 
 	public float eggCellDetatchThreshold; //J 
@@ -175,11 +176,12 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	virtual public void UpdateMetabolism(float deltaTime) {
-		energy = Mathf.Min(energy + effect * deltaTime, maxEnergy);
+	virtual public void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
+		energy = Mathf.Min(energy + effect * deltaTicks * Time.fixedDeltaTime, maxEnergy);
+		didUpdateThisFrame = 5;
 	}
 
-	virtual public void UpdateRadius(float fixedTime) { }
+	virtual public void UpdateRadius(ulong fixedTime) { }
 
 	virtual public void UpdateSpringLengths() { }
 
@@ -731,13 +733,16 @@ public abstract class Cell : MonoBehaviour {
 			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effectCreature) {
 				float effectValue = 0.5f + (creature.phenotype.effect / creature.phenotype.cellCount) * 0.5f;
 				filledCircleSprite.color = ColorScheme.instance.cellGradientCreatureEffect.Evaluate(effectValue);
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.update) {
+				filledCircleSprite.color = didUpdateThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.gray;
 			}
 		} else {
 			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
 		}
+		didUpdateThisFrame --;
 	}
 
-	public void UpdatePhysics(float fixedTime, float deltaTickTime, bool isTick) {
+	public void UpdatePhysics(ulong fixedTime) {
 		//Optimize further
 		transform.rotation = Quaternion.identity; //dont turn the cells
 
@@ -748,14 +753,14 @@ public abstract class Cell : MonoBehaviour {
 		UpdateRotation(); //costy, update only if cell has direction and is in frustum
 		UpdateFlipSide();
 
-		UpdateRadius(fixedTime);
-		UpdateSpringLengths(); // It is costy to update spring length
+		//Updated from muscle cells update instead
+		//UpdateRadius(fixedTime);
+		//UpdateSpringLengths(); // It is costy to update spring length
 
-		if (isTick && GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
-			UpdateMetabolism(deltaTickTime);
-		}
+		//if (isTick && GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
+		//	UpdateMetabolism(deltaTickTime);
+		//}
 	}
 
 	// ^ Update ^
-
 }

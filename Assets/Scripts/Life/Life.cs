@@ -147,7 +147,7 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	// TODO MOve to creature ?
-	public void FertilizeCreature(Cell eggCell, bool playEffects, float? fixedTime) {
+	public void FertilizeCreature(Cell eggCell, bool playEffects, ulong worldTicks) {
 		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
 
 		if (playEffects && GlobalPanel.instance.effectsPlaySound.isOn && CameraUtils.IsObservedLazy(eggCell.position)) {
@@ -160,7 +160,7 @@ public class Life : MonoSingleton<Life> {
 		float eggEnergy = eggCell.energy;
 
 		//Do we want to have a cool down for egg or not?
-		mother.KillCell(eggCell, false, fixedTime); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
+		mother.KillCell(eggCell, false, worldTicks); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
 
 		// Spawn child at egg cell location
 		Creature child = InstantiateCreature(); // Will create soul as well
@@ -197,11 +197,11 @@ public class Life : MonoSingleton<Life> {
 		soulsDeadButUsedCount = 0;
 	}
 
-	public void KillCellSafe(Cell cell) {
+	public void KillCellSafe(Cell cell, ulong worldTicks) {
 		if (cell.isOrigin) {
 			KillCreatureSafe(cell.creature);
 		} else {
-			cell.creature.KillCell(cell, true, null);
+			cell.creature.KillCell(cell, true, worldTicks);
 		}
 	}
 
@@ -220,24 +220,11 @@ public class Life : MonoSingleton<Life> {
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
 
-		////remove my soul, if unused
-		//KillSoulIfUnneeded(GetSoul(creature.soul.id));
-
-		////remove mother's soul, if unused
-		//if (creature.soul.motherSoulReference.id != string.Empty && HasSoul(creature.soul.motherSoulReference.id)) {
-		//	KillSoulIfUnneeded(GetSoul(creature.soul.motherSoulReference.id));
-		//}
-
-		//remove children's souls if unused
-
 		RemoveUnusedSouls();
 
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		CreatureSelectionPanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
-
-		// Note the soul will remain :)
-		// Q: will we keep souls forever? This will cause a really slow application over night
 	}
 
 	List<Soul> unusedSoulsToKill = new List<Soul>();
@@ -454,18 +441,20 @@ public class Life : MonoSingleton<Life> {
 			c.FetchSoul();
 			c.UpdateStructure();
 		}
-		
 	}
 
 	// Phenotype only, updated from FixedUpdate
 	// Everything that needs to be updated as the biological clock is ticking, wings, cell tasks, energy
 	private List<Creature> killCreatureList = new List<Creature>();
 
-	public void UpdatePhysics(float fixedTime) {
+	public void UpdatePhysics(ulong worldTicks) {
 		//kill of weak cells / creatures
+
 		killCreatureList.Clear();
+
+		//TODO: dont do it every tick
 		for (int index = 0; index < creatureList.Count; index++) {
-			if (creatureList[index].UpdateKillWeakCells(fixedTime) || !creatureList[index].phenotype.isAlive) {
+			if (creatureList[index].UpdateKillWeakCells(worldTicks) || !creatureList[index].phenotype.isAlive) {
 				killCreatureList.Add(creatureList[index]);
 			}
 		}
@@ -474,7 +463,7 @@ public class Life : MonoSingleton<Life> {
 		}
 
 		for (int index = 0; index < creatureList.Count; index++) {
-			creatureList[index].UpdatePhysics(fixedTime);
+			creatureList[index].UpdatePhysics(worldTicks);
 		}
 	}
 

@@ -32,7 +32,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public void OnClickDelete() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			Life.instance.KillCellSafe(selectedCell);
+			Life.instance.KillCellSafe(selectedCell, World.instance.worldTicks);
 
 			CreatureSelectionPanel.instance.MakeDirty();
 			PhenotypePanel.instance.MakeDirty();
@@ -82,7 +82,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isOrigin ? " (O)" : "");
 			cellEnergy.text = string.Format("Energy: {0:F2}J", selectedCell.energy);
 			if (GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
-				cellEffect.text = string.Format("Effect: {0:F3} - {1:F3} = {2:F3}W", selectedCell.effectProduction, selectedCell.effectConsumption, selectedCell.effect);
+				cellEffect.text = string.Format("Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.effectProduction, selectedCell.effectConsumption, selectedCell.effect);
 			} else {
 				cellEffect.text = "Effect: -";
 			}

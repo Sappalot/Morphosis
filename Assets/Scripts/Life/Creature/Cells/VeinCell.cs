@@ -5,11 +5,11 @@
 		springDamping = 11f;
 	}
 
-	public override void UpdateMetabolism(float deltaTime) {
+	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.veinCellEffectCost;
 		effectProduction = 0f;
 
-		base.UpdateMetabolism(deltaTime);
+		base.UpdateMetabolism(deltaTicks, worldTicks);
 	}
 
 	public override CellTypeEnum GetCellType() {
