@@ -96,7 +96,7 @@ public abstract class Cell : MonoBehaviour {
 	public SpringJoint2D southEastSpring;
 	public SpringJoint2D southWestSpring;
 
-	private SpringJoint2D[] placentaSprings;
+	protected SpringJoint2D[] placentaSprings;
 
 	public float springFrequenzy = 5f;
 	public float springDamping = 11f;
@@ -142,6 +142,16 @@ public abstract class Cell : MonoBehaviour {
 		get {
 			return mapPosition == new Vector2i(0, 0);
 		}
+	}
+
+	[HideInInspector]
+	public bool isPlacenta; // Note: a cell can be placenta of more than 1 child origins
+
+	public void UpdatePlacentaSpringLengths() {
+		foreach (SpringJoint2D placentaSpring in placentaSprings) {
+			Cell motherPlacenta = placentaSpring.connectedBody.gameObject.GetComponent<Cell>();
+			placentaSpring.distance = radius + motherPlacenta.radius;
+		}		
 	}
 
 	// Total
@@ -582,6 +592,7 @@ public abstract class Cell : MonoBehaviour {
 			Cell neighbour = GetNeighbourCell(index);
 			if (neighbour != null && neighbour.creature == creature.motherSoul.creature) {
 				placentaCells.Add(neighbour);
+				neighbour.isPlacenta = true;
 			}
 		}
 
@@ -590,6 +601,7 @@ public abstract class Cell : MonoBehaviour {
 			placentaSprings[i] = gameObject.AddComponent(typeof(SpringJoint2D)) as SpringJoint2D;
 			placentaSprings[i].connectedBody = placentaCells[i].gameObject.GetComponent<Rigidbody2D>();
 			placentaSprings[i].distance = 1f;
+			placentaSprings[i].autoConfigureDistance = false; // Found ya! :)
 		}
 	}
 

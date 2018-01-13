@@ -345,7 +345,7 @@ public class Phenotype : MonoBehaviour {
 			UpdateNeighbourReferencesInterBody(creature);
 
 			//Springs
-			UpdateSpringsInterAndIntraBody(creature);
+			UpdateSpringsInterBody(creature);
 
 			//Groups
 			UpdateGroupsInterBody(motherId);
@@ -433,7 +433,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	private void UpdateSpringsInterAndIntraBody(Creature creature) {
+	private void UpdateSpringsInterBody(Creature creature) {
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
 			cell.UpdateSpringConnectionsIntra();
@@ -636,6 +636,7 @@ public class Phenotype : MonoBehaviour {
 			int placentaCount = 0;
 			for (int i = 0; i < 6; i++) {
 				if (childOrigin.HasNeighbourCell(i) && childOrigin.GetNeighbourCell(i).creature.id != creature.id) {
+					childOrigin.GetNeighbourCell(i).isPlacenta = false;
 					placentaCount++;
 				}
 			}
@@ -688,8 +689,6 @@ public class Phenotype : MonoBehaviour {
 				cell.GetComponent<Rigidbody2D>().drag = 0.2f;
 			}
 		}
-
-		Debug.Log("Update Cell Drag");
 	}
 
 	public bool IsSliding(float worldTicks) {
@@ -700,7 +699,6 @@ public class Phenotype : MonoBehaviour {
 		foreach (Cell cell in cellList) {
 			cell.GetComponent<Rigidbody2D>().drag = 0.2f;
 		}
-		Debug.Log("Slide Cell Drag");
 	}
 
 	private bool IsCellBuiltForGeneCell(Cell geneCell) {

@@ -135,32 +135,49 @@ public class MuscleCell : Cell {
 
 	//long seldom = 0;
 	public override void UpdateSpringLengths() {
-		//if (seldom % 5 == 0) {
-			if (HasOwnNeighbourCell(CardinalEnum.northEast)) {
-				northEastNeighbour.cell.GetSpring(this).distance = this.radius + northEastNeighbour.cell.radius;
-			}
 
-			if (HasOwnNeighbourCell(CardinalEnum.north)) {
-				northSpring.distance = this.radius + northNeighbour.cell.radius;
-			}
+		//Intra creature
+		if (HasOwnNeighbourCell(CardinalEnum.northEast)) {
+			northEastNeighbour.cell.GetSpring(this).distance = this.radius + northEastNeighbour.cell.radius;
+		}
 
-			if (HasOwnNeighbourCell(CardinalEnum.northWest)) {
-				northWestNeighbour.cell.GetSpring(this).distance = this.radius + northWestNeighbour.cell.radius;
-			}
+		if (HasOwnNeighbourCell(CardinalEnum.north)) {
+			northSpring.distance = this.radius + northNeighbour.cell.radius;
+		}
 
-			if (HasOwnNeighbourCell(CardinalEnum.southWest)) {
-				southWestSpring.distance = this.radius + southWestNeighbour.cell.radius;
-			}
+		if (HasOwnNeighbourCell(CardinalEnum.northWest)) {
+			northWestNeighbour.cell.GetSpring(this).distance = this.radius + northWestNeighbour.cell.radius;
+		}
 
-			if (HasOwnNeighbourCell(CardinalEnum.south)) {
-				southNeighbour.cell.GetSpring(this).distance = this.radius + southNeighbour.cell.radius;
-			}
+		if (HasOwnNeighbourCell(CardinalEnum.southWest)) {
+			southWestSpring.distance = this.radius + southWestNeighbour.cell.radius;
+		}
 
-			if (HasOwnNeighbourCell(CardinalEnum.southEast)) {
-				southEastSpring.distance = this.radius + southEastNeighbour.cell.radius;
+		if (HasOwnNeighbourCell(CardinalEnum.south)) {
+			southNeighbour.cell.GetSpring(this).distance = this.radius + southNeighbour.cell.radius;
+		}
+
+		if (HasOwnNeighbourCell(CardinalEnum.southEast)) {
+			southEastSpring.distance = this.radius + southEastNeighbour.cell.radius;
+		}
+
+		// Update placenta spring lengths from me to mother placenta, if i happen to be origin
+		if (placentaSprings.Length > 0) {
+			//i am origin and is connected to mother via placenta
+			UpdatePlacentaSpringLengths();
+		}
+
+		// If i have a neighbouring cell which does not belong to my body and is origin: ask this cell to update its spring lengths (to placenta)
+		if (isPlacenta) {
+			for (int index = 0; index < 6; index++) {
+				Cell neighbour = GetNeighbourCell(index);
+				if (neighbour != null && neighbour.creature != creature && neighbour.isOrigin) {
+					// i am a placenta cell
+					neighbour.UpdatePlacentaSpringLengths();
+					break;
+				}
 			}
-		//}
-		//seldom++;
+		}
 	}
 
 	public override void UpdateSpringFrequenzy() {
