@@ -273,7 +273,8 @@ public class Creature : MonoBehaviour {
 
 	// Apply on Phenotype
 	public void TryGrow(bool forceGrow, int cellCount, bool playEffects) {
-		phenotype.TryGrow(this, forceGrow, cellCount, true, playEffects, 0, true);
+		NoGrowthReason reason;
+		phenotype.TryGrow(this, forceGrow, cellCount, true, playEffects, 0, true, out reason);
 		isDirtyGraphics = true;
 	}
 
@@ -534,6 +535,8 @@ public class Creature : MonoBehaviour {
 
 	//time ^
 
+	private int cantGrowMore = 0;
+
 	public void UpdatePhysics(ulong worldTicks) {
 		if (!hasSoul) {
 			return;
@@ -560,18 +563,33 @@ public class Creature : MonoBehaviour {
 
 		if (GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
 
+			
+			if (growTicks == 0) {
+				NoGrowthReason reason;
+				int growCount = phenotype.TryGrow(this, false, 1, false, true, worldTicks, false, out reason);
+				if (growCount > 0) {
+					PhenotypePanel.instance.MakeDirty();
+					CellPanel.instance.MakeDirty();
+					cantGrowMore = 0;
+				} else if (reason.fullyGrown) {
+					cantGrowMore = int.MaxValue;
+				} else if ((reason.roomBound && !reason.energyBound && !reason.respawnTimeBound)  ) {
+					cantGrowMore++; // wait a while before giving up on finding a spot to grow another cell
+				}
+
+				// ☠ ꕕ Haha, make use of these
+				Debug.Log(" Id: " + id + ", roomBound: " + reason.roomBound + "CGM: " + cantGrowMore + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
+			}
+
 			if (detatchTicks == 0) {
-				if (phenotype.originCell.energy > phenotype.originCell.originDetatchThreshold) {
+				if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size   && phenotype.cellCount         >= phenotype.originCell.originDetatchSizeThreshold) ||
+					(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.DetatchCompletionPersistance)) {
+
 					DetatchFromMother(true);
 					PhenotypePanel.instance.MakeDirty();
 					CellPanel.instance.MakeDirty();
-				}
-			}
 
-			if (growTicks == 0) {
-				if (phenotype.TryGrow(this, false, 1, false, true, worldTicks, false) > 0) {
-					PhenotypePanel.instance.MakeDirty();
-					CellPanel.instance.MakeDirty();
+					cantGrowMore = 0;
 				}
 			}
 

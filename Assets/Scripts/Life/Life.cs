@@ -170,7 +170,9 @@ public class Life : MonoSingleton<Life> {
 		//.GetMutatedClone(0.2f)
 		child.GenerateEmbryo(mother.genotype.GetMutatedClone(GlobalSettings.instance.mutation.masterMutationStrength), eggCell.position, eggCell.heading); //Mutation Hack
 		child.phenotype.originCell.energy = eggEnergy;
-		child.phenotype.originCell.originDetatchThreshold = eggCell.eggCellDetatchThreshold; // form mothers eggCell to childs origin
+		child.phenotype.originCell.originDetatchMode = eggCell.eggCellDetatchMode;
+		child.phenotype.originCell.originDetatchSizeThreshold = eggCell.eggCellDetatchSizeThreshold;
+		child.phenotype.originCell.originDetatchEnergyThreshold = eggCell.eggCellDetatchEnergyThreshold; // form mothers eggCell to childs origin
 
 		Soul motherSoul = GetSoul(mother.id);
 		Soul childSoul = GetSoul(child.id);

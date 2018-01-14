@@ -19,8 +19,17 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float eggCellFertilizeThresholdLeave = 100f;
 		public float eggCellFertilizeThresholdRandom = 10f;
 
-		public float eggCellDetatchThresholdLeave = 100f;
-		public float eggCellDetatchThresholdRandom = 10f;
+		public float eggCellCanFertilizeWhenAttachedLeave = 1000f;
+		public float eggCellCanFertilizeWhenAttachedChange = 10f;
+
+		public float eggCellDetatchModeLeave = 1000f;
+		public float eggCellDetatchModeChange = 5f;
+
+		public float eggCellDetatchSizeThresholdLeave = 1000f;
+		public float eggCellDetatchSizeThresholdRandom = 10f;
+
+		public float eggCellDetatchEnergyThresholdLeave = 1000f;
+		public float eggCellDetatchEnergyThresholdRandom = 10f;
 
 		public float isEnabledLeave = 100f;
 		public float isEnabledToggle = 1f;
@@ -119,11 +128,12 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		// Rebuild
 		public float cellRebuildCooldown = 30f; //s
 
-		//Physics
+		//Detatch
 		public float detatchmentKick = 0.05f; //N
 		public float detatchmentKickSquare = 0.05f; //N
-
 		public float detatchSlideDuration = 10; // s
+		public int DetatchCompletionPersistance = 5; // How many times will we retry to find a spot to grow next cell in before we give up and realize that it is time to detatch (1 ==> give up (and detatch) after failing one time)
+
 	}
 	public Phenotype phenotype;
 

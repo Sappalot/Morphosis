@@ -18,10 +18,14 @@ public class CellData {
 
 	// Egg
 	public float eggCellFertilizeThreshold;
-	public float eggCellDetatchThreshold;
+	public ChildDetatchModeEnum eggCellDetatchMode;
+	public float eggCellDetatchSizeThreshold;
+	public float eggCellDetatchEnergyThreshold;
 
 	// Origin
-	public float originDetatchThreshold;
+	public ChildDetatchModeEnum originDetatchMode;
+	public float originDetatchSizeThreshold;
+	public float originDetatchEnergyThreshold;
 
 	public float energy;
 }

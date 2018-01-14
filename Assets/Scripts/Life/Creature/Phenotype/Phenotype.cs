@@ -47,6 +47,12 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public bool isAttachedToMother {
+		get {
+			return originCell.isAttachedToMother;
+		}
+	}
+
 	[HideInInspector]
 	public bool isAlive = true; // Are we going to use this approach?
 
@@ -121,7 +127,8 @@ public class Phenotype : MonoBehaviour {
 
 	public void InitiateEmbryo(Creature creature, Vector2 position, float heading) {
 		Setup(creature, position, heading);
-		TryGrow(creature, true, 1, true, false, 0, true);
+		NoGrowthReason reason;
+		TryGrow(creature, true, 1, true, false, 0, true, out reason);
 		cellsDiffersFromGeneCells = false;
 	}
 
@@ -148,16 +155,21 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public int TryGrowFully(Creature creature, bool forceGrow) {
-		return TryGrow(creature, forceGrow, creature.genotype.geneCellCount, true, false, 0, true);
+		NoGrowthReason reason;
+		return TryGrow(creature, forceGrow, creature.genotype.geneCellCount, true, false, 0, true, out reason);
 	}
 
-	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects, ulong worldTicks, bool enableInstantRegrowth) {
+	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects, ulong worldTicks, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
+		noGrowthReason = new NoGrowthReason();
+		
+		
 		////Fail safe ... to be removed
 		//Life.instance.UpdateSoulReferences();
 
 		int growCellCount = 0;
 		Genotype genotype  = creature.genotype;
 		if (cellCount < 1 || this.cellCount >= genotype.geneCellCount) {
+			noGrowthReason.fullyGrown = true;
 			return 0;
 		}
 
@@ -200,6 +212,7 @@ public class Phenotype : MonoBehaviour {
 				// test if long enough time has passed since cell was killed
 				if (!enableInstantRegrowth && cellMap.HasKilledTimeStamp(geneCell.mapPosition)) {
 					if (worldTicks < cellMap.KilledTimeStamp(geneCell.mapPosition) + GlobalSettings.instance.phenotype.cellRebuildCooldown / Time.fixedDeltaTime) {
+						noGrowthReason.respawnTimeBound = true;
 						continue;
 					} else {
 						cellMap.RemoveTimeStamp(geneCell.mapPosition);
@@ -209,6 +222,7 @@ public class Phenotype : MonoBehaviour {
 				// test if the position is free to grow on
 				Vector2 spawnPosition = averagePosition / positionCount;
 				if (!allowOvergrowth && !CanGrowAtPosition(spawnPosition, 0.33f)) {
+					noGrowthReason.roomBound = true;
 					continue;
 				}
 
@@ -231,6 +245,7 @@ public class Phenotype : MonoBehaviour {
 						}
 						newCellEnergy = buildBaseEnergy;
 					} else {
+						noGrowthReason.energyBound = true;
 						continue;
 					}
 				}
@@ -741,8 +756,12 @@ public class Phenotype : MonoBehaviour {
 
 		// Gene settings
 		// Egg
-		cell.eggCellFertilizeThreshold = gene.eggCellFertilizeThreshold;
-		cell.eggCellDetatchThreshold = gene.eggCellDetatchThreshold; // form gene to eggCell
+		// form gene to eggCell
+		cell.eggCellFertilizeThreshold =       gene.eggCellFertilizeThreshold;
+		cell.eggCellCanFertilizeWhenAttached = gene.eggCellCanFertilizeWhenAttached;
+		cell.eggCellDetatchMode =              gene.eggCellDetatchMode;
+		cell.eggCellDetatchSizeThreshold =     gene.eggCellDetatchSizeThreshold; 
+		cell.eggCellDetatchEnergyThreshold =   gene.eggCellDetatchEnergyThreshold;
 
 		return cell;
 	}

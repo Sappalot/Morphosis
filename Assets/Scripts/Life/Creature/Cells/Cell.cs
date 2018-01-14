@@ -22,14 +22,21 @@ public abstract class Cell : MonoBehaviour {
 	private List<JawCell> predators = new List<JawCell>(); //Who is eating on me
 
 	private int didUpdateThisFrame = 0;
-	//Egg only
-	public float eggCellFertilizeThreshold; // J 
-	public float eggCellDetatchThreshold; //J 
+	// Egg only
+	public float eggCellFertilizeThreshold; // J
+	public bool eggCellCanFertilizeWhenAttached;
+	public ChildDetatchModeEnum eggCellDetatchMode;
+	public float eggCellDetatchSizeThreshold; //J 
+	public float eggCellDetatchEnergyThreshold; //J 
+	// Egg only ^
+	
+	// Origin only
+	public ChildDetatchModeEnum originDetatchMode;
+	public float originDetatchSizeThreshold;
+	public float originDetatchEnergyThreshold; // J  If we have more energy than this in the origin cell and it is attached with mother, it will separate
+											   //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
 
-	//Origin only
-	public float originDetatchThreshold; // J  If we have more energy than this in the origin cell and it is attached with mother, it will separate
-										  //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
-
+	// Origin only ^
 	public int predatorCount {
 		get {
 			return predators.Count;
@@ -97,6 +104,12 @@ public abstract class Cell : MonoBehaviour {
 	public SpringJoint2D southWestSpring;
 
 	protected SpringJoint2D[] placentaSprings;
+
+	public bool isAttachedToMother {
+		get {
+			return placentaSprings != null && placentaSprings.Length > 0;
+		}
+	}
 
 	public float springFrequenzy = 5f;
 	public float springDamping = 11f;
@@ -696,11 +709,15 @@ public abstract class Cell : MonoBehaviour {
 		cellData.energy = energy;
 
 		//Egg
-		cellData.eggCellFertilizeThreshold = eggCellFertilizeThreshold;
-		cellData.eggCellDetatchThreshold = eggCellDetatchThreshold;
+		cellData.eggCellFertilizeThreshold =     eggCellFertilizeThreshold;
+		cellData.eggCellDetatchMode =            eggCellDetatchMode;
+		cellData.eggCellDetatchSizeThreshold =   eggCellDetatchSizeThreshold;
+		cellData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
 
 		// Origin
-		cellData.originDetatchThreshold = originDetatchThreshold;
+		cellData.originDetatchMode =            originDetatchMode;
+		cellData.originDetatchSizeThreshold =   originDetatchSizeThreshold;
+		cellData.originDetatchEnergyThreshold = originDetatchEnergyThreshold;
 
 		return cellData;
 	}
@@ -721,11 +738,15 @@ public abstract class Cell : MonoBehaviour {
 		energy = cellData.energy;
 
 		// Egg
-		eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold;
-		eggCellDetatchThreshold = cellData.eggCellDetatchThreshold;
+		eggCellFertilizeThreshold =     cellData.eggCellFertilizeThreshold;
+		eggCellDetatchMode =            cellData.eggCellDetatchMode;
+		eggCellDetatchSizeThreshold =   cellData.eggCellDetatchSizeThreshold;
+		eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold;
 
 		// Origin
-		originDetatchThreshold = cellData.originDetatchThreshold;
+		originDetatchMode = cellData.originDetatchMode;
+		originDetatchSizeThreshold = cellData.originDetatchSizeThreshold;
+		originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold;
 
 		this.creature = creature;
 	}

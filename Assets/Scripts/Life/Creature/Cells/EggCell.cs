@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EggCell : Cell {
 	public EggCell() : base() {
@@ -25,7 +24,7 @@ public class EggCell : Cell {
 
 		base.UpdateMetabolism(deltaTicks, worldTicks);
 
-		if (energy > eggCellFertilizeThreshold && shouldFertilize == -1) {
+		if (energy > eggCellFertilizeThreshold && (eggCellCanFertilizeWhenAttached || !creature.phenotype.isAttachedToMother) && shouldFertilize == -1) {
 			shouldFertilize = Random.Range(0, 60);
 		}
 	}
