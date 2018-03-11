@@ -13,6 +13,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public Text childrenText;
 
 	public List<Creature> selection { get; private set; }
+	public List<Creature> selectionCluster { get; private set; }
 
 	private bool isDirty = true;
 
@@ -68,9 +69,14 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		return selection.Contains(creature);
 	}
 
+	public bool IsSelectedCluster(Creature creature) {
+		return selectionCluster.Contains(creature);
+	}
+
 	public override void Init() {
 		base.Init();
 		selection = new List<Creature>();
+		selectionCluster = new List<Creature>();
 		ClearSelection();
 
 		lineRenderer.enabled = false;
@@ -78,7 +84,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	//UI done
 	public void ClearSelection() {
-		DirtyMarkSelected();
+		DirtyMarkSelection();
 		selection.Clear();
 
 		isDirty = true;
@@ -88,6 +94,13 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		LockedUnlockedPanel.instance.MakeDirty();
 
 		SetCellAndGeneSelectionToOrigin();
+
+		ClearSelectionCluster();
+	}
+
+	public void ClearSelectionCluster() {
+		DirtyMarkSelectionCluster();
+		selectionCluster.Clear();
 	}
 
 	public void SetCellAndGeneSelectionToOrigin() {
@@ -97,7 +110,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void Select(Creature creature, Cell cell = null) {
-		DirtyMarkSelected();
+		DirtyMarkSelection();
 		selection.Clear();
 		selection.Add(creature);
 
@@ -110,6 +123,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
+
+		UpdateSelectionCluster();
 	}
 
 	public void Select(List<Creature> creatures) {
@@ -126,12 +141,16 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		LockedUnlockedPanel.instance.MakeDirty();
 
 		StoreAllSelectedsState();
+
+		UpdateSelectionCluster();
 	}
 
 	public void AddToSelection(List<Creature> creatures) {
 		for (int index = 0; index < creatures.Count; index++) {
 			AddToSelection(creatures[index]);
 		}
+
+		UpdateSelectionCluster();
 	}
 
 	public void AddToSelection(Creature creature) {
@@ -142,25 +161,29 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		selectedCell = null;
 		selection.Add(creature);
 
-		DirtyMarkSelected();
+		DirtyMarkSelection();
 		isDirty = true;
 		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
 		LockedUnlockedPanel.instance.MakeDirty();
+
+		UpdateSelectionCluster();
 	}
 
 	public void RemoveFromSelection(List<Creature> creatures) {
 		for (int index = 0; index < creatures.Count; index++) {
 			RemoveFromSelection(creatures[index]);
 		}
+
+		UpdateSelectionCluster();
 	}
 
 	public void RemoveFromSelection(Creature creature) {
 		if (!selection.Contains(creature)) {
 			return;
 		}
-		DirtyMarkSelected();
+		DirtyMarkSelection();
 
 		selectedCell = null;
 		selection.Remove(creature);
@@ -172,11 +195,34 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
 		LockedUnlockedPanel.instance.MakeDirty();
+
+		UpdateSelectionCluster();
 	}
 
-	private void DirtyMarkSelected() {
+	public void UpdateSelectionCluster() {
+		ClearSelectionCluster();
+		for (int indexSelected = 0; indexSelected < selection.Count; indexSelected++) {
+			Creature selectedCreature = selection[indexSelected];
+			List<Creature> creaturesInCluster = selectedCreature.creaturesInCluster;
+			for (int indexCluster = 0; indexCluster < creaturesInCluster.Count; indexCluster++) {
+				Creature clusterCreature = creaturesInCluster[indexCluster];
+				if (!selectionCluster.Contains(clusterCreature)) {
+					selectionCluster.Add(clusterCreature);
+				}
+			}
+		}
+		DirtyMarkSelectionCluster();
+	}
+
+	private void DirtyMarkSelection() {
 		for (int index = 0; index < selection.Count; index++) {
 			selection[index].MakeDirtyGraphics();
+		}
+	}
+
+	private void DirtyMarkSelectionCluster() {
+		for (int index = 0; index < selectionCluster.Count; index++) {
+			selectionCluster[index].MakeDirtyGraphics();
 		}
 	}
 

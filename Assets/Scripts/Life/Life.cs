@@ -147,7 +147,7 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	// TODO MOve to creature ?
-	public void FertilizeCreature(Cell eggCell, bool playEffects, ulong worldTicks) {
+	public void FertilizeCreature(Cell eggCell, bool playEffects, ulong worldTicks, bool wasForced) {
 		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
 
 		if (playEffects && GlobalPanel.instance.effectsPlaySound.isOn && CameraUtils.IsObservedLazy(eggCell.position, GlobalSettings.instance.orthoMaxHorizonFx)) {
@@ -185,6 +185,11 @@ public class Life : MonoSingleton<Life> {
 
 		//Sometimes child origin is placed with spring too far from mother's placent this update might fix this problem
 		UpdateStructure();
+
+		if (wasForced) {
+			CreatureSelectionPanel.instance.Select(mother, mother.phenotype.originCell);
+		}
+		CreatureSelectionPanel.instance.UpdateSelectionCluster();
 	}
 
 	public void KillAllCreaturesAndSouls() {

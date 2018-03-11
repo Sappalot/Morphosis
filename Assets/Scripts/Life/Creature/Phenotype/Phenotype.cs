@@ -572,6 +572,8 @@ public class Phenotype : MonoBehaviour {
 		CreatureSelectionPanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
 		connectionsDiffersFromCells = true;
+
+		CreatureSelectionPanel.instance.UpdateSelectionCluster();
 	}
 
 	private void DeleteDebris() {
@@ -819,16 +821,39 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public void ShowCreatureSelected(bool isSelected) {
-		bool close = CameraUtils.IsCloseEnoughLazy(30f);
-
+	public void UpdateOutline(Creature creature, bool isSelected, bool isClusterSelected) {
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdateOutline(isSelected);
-			cellList[index].ShowOutline(isSelected || close);
+			if (isSelected) {
+				cellList[index].ShowOutline(true);
+				cellList[index].SetOutlineColor(ColorScheme.instance.outlineSelected);
+			} else if (isClusterSelected) {
+				cellList[index].ShowOutline(true);
+				cellList[index].SetOutlineColor(ColorScheme.instance.outlineCluster);
+			} else {
+				cellList[index].ShowOutline(false);
+			}
+
+			//fix properly
+			cellList[index].ShowShadow(false);
 		}
 
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].ShowTriangle(false); // Debug
+			if (cellList[index].isOrigin) {
+				cellList[index].ShowTriangle(true); // Debug
+				if (!creature.hasMotherSoul) {
+					if (!creature.hasChildSoul) {
+						cellList[index].SetTriangleColor(ColorScheme.instance.noRelativesArrow);
+					} else {
+						cellList[index].SetTriangleColor(ColorScheme.instance.noMotherArrow);
+					}
+				} else if (creature.soul.isConnectedWithMotherSoul) {
+					cellList[index].SetTriangleColor(ColorScheme.instance.motherAttachedArrow);
+				} else {
+					cellList[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
+				}
+			} else {
+				cellList[index].ShowTriangle(false);
+			}
 		}
 	}
 
@@ -853,11 +878,11 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	//Allways false for phenotype
-	public void ShowShadow(bool on) {
-		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].ShowShadow(on);
-		}
-	}
+	//public void ShowShadow(bool on) {
+	//	for (int index = 0; index < cellList.Count; index++) {
+	//		cellList[index].ShowShadow(on);
+	//	}
+	//}
 
 	public void Show(bool on) {
 		for (int index = 0; index < cellList.Count; index++) {
@@ -1020,6 +1045,9 @@ public class Phenotype : MonoBehaviour {
 		veinCellTick =   phenotypeData.veinCellTick;
 
 		phenotypeData.veinTick = veinTick;
+
+		//Turn arrrows right
+		UpdateRotation();
 	}
 
 	// ^ Load / Save ^
@@ -1146,7 +1174,7 @@ public class Phenotype : MonoBehaviour {
 		edges.UpdatePhysics(velocity, creature);
 
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdatePhysics(worldTick);
+			cellList[index].UpdatePhysics();
 			//if (leafTick == 0 && GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
 			//	cellList[index].UpdateMetabolism(leafTickPeriod, worldTick);
 			//}
@@ -1178,6 +1206,12 @@ public class Phenotype : MonoBehaviour {
 			if (veinTick == 0) {
 				veins.UpdateMetabolism(GlobalSettings.instance.quality.veinTickPeriod);
 			}
+		}
+	}
+
+	public void UpdateRotation() {
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].UpdatePhysics();
 		}
 	}
 }

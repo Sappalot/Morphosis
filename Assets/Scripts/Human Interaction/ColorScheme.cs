@@ -18,8 +18,13 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color shell;
 	public Color vein;
 
-	public Color outlineNormal;
-	public Color outlineHighlited;
+	public Color outlineCluster;
+	public Color outlineSelected;
+
+	public Color noRelativesArrow;
+	public Color noMotherArrow;
+	public Color noMotherAttachedArrow;
+	public Color motherAttachedArrow;
 
 	public Color ToColor(CellTypeEnum cellType) {
 		if (cellType == CellTypeEnum.Egg) {

@@ -239,6 +239,10 @@ public abstract class Cell : MonoBehaviour {
 		triangleSprite.enabled = show;
 	}
 
+	public void SetTriangleColor(Color color) {
+		triangleSprite.color = color;
+	}
+
 	public void ShowOpenCircle(bool show) {
 		openCircleSprite.enabled = show;
 	}
@@ -253,10 +257,14 @@ public abstract class Cell : MonoBehaviour {
 
 	public void UpdateOutline(bool isHighlited) {
 		if (isHighlited) {
-			creatureSelectedSprite.color = ColorScheme.instance.outlineHighlited;
+			creatureSelectedSprite.color = ColorScheme.instance.outlineSelected;
 		} else {
-			creatureSelectedSprite.color = ColorScheme.instance.outlineNormal;
+			creatureSelectedSprite.color = ColorScheme.instance.outlineCluster;
 		}
+	}
+
+	public void SetOutlineColor(Color color) {
+		creatureSelectedSprite.color = color;
 	}
 
 	public void ShowCellSelected(bool on) {
@@ -532,6 +540,7 @@ public abstract class Cell : MonoBehaviour {
 			heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex) + angleDiffFromBindpose;
 		}
 
+		//Debug.Log("Update arrow");
 		triangleTransform.localRotation = Quaternion.Euler(0f, 0f, heading);
 	}
 
@@ -784,7 +793,7 @@ public abstract class Cell : MonoBehaviour {
 		didUpdateThisFrame --;
 	}
 
-	public void UpdatePhysics(ulong fixedTime) {
+	public void UpdatePhysics() {
 		//Optimize further
 		transform.rotation = Quaternion.identity; //dont turn the cells
 

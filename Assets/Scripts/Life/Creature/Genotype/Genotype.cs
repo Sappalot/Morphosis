@@ -341,15 +341,34 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	public void UpdateOutline(bool isHighlited) {
-		bool close = CameraUtils.IsCloseEnoughLazy(30f);
+	public void UpdateOutline(Creature creature, bool isSelected) {
 		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].UpdateOutline(isHighlited);
-			geneCellList[index].ShowOutline(isHighlited || close);
+			if (isSelected) {
+				geneCellList[index].ShowOutline(true);
+				geneCellList[index].SetOutlineColor(ColorScheme.instance.outlineSelected);
+			} else {
+				geneCellList[index].ShowOutline(false);
+			}
 		}
 
 		for (int index = 0; index < geneCellList.Count; index++) {
 			geneCellList[index].ShowTriangle(true); // Debug
+			if (geneCellList[index].isOrigin) {
+				geneCellList[index].ShowTriangle(true); // Debug
+				if (!creature.hasMotherSoul) {
+					if (!creature.hasChildSoul) {
+						geneCellList[index].SetTriangleColor(ColorScheme.instance.noRelativesArrow);
+					} else {
+						geneCellList[index].SetTriangleColor(ColorScheme.instance.noMotherArrow);
+					}
+				} else if (creature.soul.isConnectedWithMotherSoul) {
+					geneCellList[index].SetTriangleColor(ColorScheme.instance.motherAttachedArrow);
+				} else {
+					geneCellList[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
+				}
+			} else {
+				geneCellList[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
+			}
 		}
 	}
 
