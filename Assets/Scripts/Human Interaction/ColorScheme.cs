@@ -18,6 +18,9 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color shell;
 	public Color vein;
 
+	public Color outlineNormal;
+	public Color outlineHighlited;
+
 	public Color ToColor(CellTypeEnum cellType) {
 		if (cellType == CellTypeEnum.Egg) {
 			return egg;

@@ -36,8 +36,8 @@ public class MuscleCell : Cell {
 		float deltaTime = worldTicks * Time.fixedDeltaTime - lastTime;
 		lastTime = worldTicks * Time.fixedDeltaTime;
 
-		Debug.Log("offset" + timeOffset);
-		float expandContract = Mathf.Sign(curveOffset + Mathf.Cos(/*timeOffset + */ modularTime / (2f * Mathf.PI)));
+		//Debug.Log("offset" + timeOffset);
+		float expandContract = Mathf.Sign(curveOffset + Mathf.Cos(timeOffset + modularTime / (2f * Mathf.PI)));
 		float radiusGoal = 0.5f - 0.5f * radiusDiff + 0.5f * radiusDiff * expandContract;
 
 		float goingSmallSpeed = 0.5f * 4f; //units per second

@@ -247,8 +247,12 @@ public abstract class Cell : MonoBehaviour {
 		filledCircleSprite.enabled = show;
 	}
 
-	public void ShowCreatureSelected(bool on) {
-		creatureSelectedSprite.enabled = on;
+	public void ShowOutlineHighlited(bool on) {
+		if (on) {
+			creatureSelectedSprite.color = ColorScheme.instance.outlineHighlited;
+		} else {
+			creatureSelectedSprite.color = ColorScheme.instance.outlineNormal;
+		}
 	}
 
 	public void ShowCellSelected(bool on) {
@@ -310,7 +314,7 @@ public abstract class Cell : MonoBehaviour {
 		springList.Add(southEastSpring);
 		springList.Add(southWestSpring);
 
-		ShowCreatureSelected(false);
+		ShowOutlineHighlited(false);
 	}
 
 	public void OnDelete() {
@@ -502,12 +506,12 @@ public abstract class Cell : MonoBehaviour {
 		return neighbourCell != null && neighbourCell.IsSameCreature(this);
 	}
 
-	public void SetOrderInLayer(int order) {
-		SpriteRenderer[] renderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
-		foreach (SpriteRenderer renderer in renderers) {
-			renderer.sortingOrder = order;
-		}
-	}
+	//public void SetOrderInLayer(int order) {
+	//	SpriteRenderer[] renderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
+	//	foreach (SpriteRenderer renderer in renderers) {
+	//		renderer.sortingOrder = order;
+	//	}
+	//}
 
 	////  Updates world space rotation (heading) derived from neighbour position relative to this
 	public void UpdateRotation() {

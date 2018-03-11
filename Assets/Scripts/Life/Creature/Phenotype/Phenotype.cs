@@ -815,7 +815,7 @@ public class Phenotype : MonoBehaviour {
 
 	public void ShowSelectedCreature(bool on) {
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].ShowCreatureSelected(on);
+			cellList[index].ShowOutlineHighlited(on);
 			cellList[index].ShowTriangle(false); // Debug
 		}
 	}
