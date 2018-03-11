@@ -11,6 +11,10 @@ static class CameraUtils {
 		return viewportPosition.x > 0f && viewportPosition.x < 1f && viewportPosition.y > 0f && viewportPosition.y < 1f;
 	}
 
+	public static bool IsCloseEnoughLazy(float orthoMaxWidth) {
+		return World.instance.worldCamera.orthographicSize < orthoMaxWidth;
+	}
+
 	public static float GetEffectStrengthLazy() {
 		return GetEffectStrength(World.instance.worldCamera, GlobalSettings.instance.orthoMinStrongFX, GlobalSettings.instance.orthoMaxHorizonFx);
 	}

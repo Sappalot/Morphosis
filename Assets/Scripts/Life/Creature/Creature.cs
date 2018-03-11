@@ -473,6 +473,13 @@ public class Creature : MonoBehaviour {
 		genotype.UpdateGraphics();
 		phenotype.UpdateGraphics(this);
 
+		// Update selection
+		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+			phenotype.ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(this));
+		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+			genotype.UpdateOutline(CreatureSelectionPanel.instance.IsSelected(this));
+		}
+
 		if (isDirtyGraphics) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature (due to user input)");
@@ -481,10 +488,6 @@ public class Creature : MonoBehaviour {
 			EnableCurrentGenoPhenoColliderAndDisableOther();
 
 			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-
-				// Update selection
-				phenotype.ShowSelectedCreature(CreatureSelectionPanel.instance.IsSelected(this));
-
 				phenotype.ShowShadow(false);
 
 				//Show selected or not
@@ -492,12 +495,9 @@ public class Creature : MonoBehaviour {
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
 					phenotype.ShowCellSelected(CellPanel.instance.selectedCell, true);
 				}
-
 			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-				// Update selection
-				genotype.ShowCreatureSelected(CreatureSelectionPanel.instance.IsSelected(this));
-
 				//Show selected or not
+				phenotype.ShowOutline(false);
 				genotype.ShowGeneCellsSelected(false);
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
 					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);

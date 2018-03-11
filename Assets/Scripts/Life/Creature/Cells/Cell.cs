@@ -247,8 +247,12 @@ public abstract class Cell : MonoBehaviour {
 		filledCircleSprite.enabled = show;
 	}
 
-	public void ShowOutlineHighlited(bool on) {
-		if (on) {
+	public void ShowOutline(bool show) {
+		creatureSelectedSprite.gameObject.SetActive(show);
+	}
+
+	public void UpdateOutline(bool isHighlited) {
+		if (isHighlited) {
 			creatureSelectedSprite.color = ColorScheme.instance.outlineHighlited;
 		} else {
 			creatureSelectedSprite.color = ColorScheme.instance.outlineNormal;
@@ -314,7 +318,7 @@ public abstract class Cell : MonoBehaviour {
 		springList.Add(southEastSpring);
 		springList.Add(southWestSpring);
 
-		ShowOutlineHighlited(false);
+		UpdateOutline(false);
 	}
 
 	public void OnDelete() {

@@ -813,9 +813,21 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public void ShowSelectedCreature(bool on) {
+	public void ShowOutline(bool show) {
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].ShowOutlineHighlited(on);
+			cellList[index].ShowOutline(show);
+		}
+	}
+
+	public void ShowCreatureSelected(bool isSelected) {
+		bool close = CameraUtils.IsCloseEnoughLazy(30f);
+
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].UpdateOutline(isSelected);
+			cellList[index].ShowOutline(isSelected || close);
+		}
+
+		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].ShowTriangle(false); // Debug
 		}
 	}

@@ -341,15 +341,16 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	public void ShowCreatureSelected(bool on) {
+	public void UpdateOutline(bool isHighlited) {
+		bool close = CameraUtils.IsCloseEnoughLazy(30f);
 		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].ShowOutlineHighlited(on);
-			geneCellList[index].ShowTriangle(true);
-			geneCellList[index].ShowShadow(on);
-
-			//geneCellList[index].SetOrderInLayer(on ? 1 : 0);
+			geneCellList[index].UpdateOutline(isHighlited);
+			geneCellList[index].ShowOutline(isHighlited || close);
 		}
-		//isElevated = on;
+
+		for (int index = 0; index < geneCellList.Count; index++) {
+			geneCellList[index].ShowTriangle(true); // Debug
+		}
 	}
 
 	public void ShowGeneCellsSelected(bool on) {
