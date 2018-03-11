@@ -2,6 +2,8 @@
 using UnityEngine.UI;
 
 public class GenotypePanel : MonoSingleton<GenotypePanel> {
+	public LockedUnlockedPanel lockedUnlockedPanel;
+
 	public Image blackWhiteImage;
 	public Image whiteBlackImage;
 
@@ -91,6 +93,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update GenotypePanel");
 			}
+
 			blackWhiteImage.color = (viewedFlipSide == FlipSideEnum.BlackWhite) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 			whiteBlackImage.color = (viewedFlipSide == FlipSideEnum.WhiteBlack) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 			isDirty = false;

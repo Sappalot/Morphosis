@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
@@ -86,6 +85,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.selectedGene = null;
+		LockedUnlockedPanel.instance.MakeDirty();
 
 		SetCellAndGeneSelectionToOrigin();
 	}
@@ -103,6 +103,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		selectedCell = cell;
 		GenePanel.instance.selectedGene = cell.gene;
+		LockedUnlockedPanel.instance.MakeDirty();
 
 		creature.MakeDirtyGraphics();
 		isDirty = true;
@@ -122,6 +123,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
+		LockedUnlockedPanel.instance.MakeDirty();
 
 		StoreAllSelectedsState();
 	}
@@ -145,6 +147,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
+		LockedUnlockedPanel.instance.MakeDirty();
 	}
 
 	public void RemoveFromSelection(List<Creature> creatures) {
@@ -168,6 +171,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
+		LockedUnlockedPanel.instance.MakeDirty();
 	}
 
 	private void DirtyMarkSelected() {

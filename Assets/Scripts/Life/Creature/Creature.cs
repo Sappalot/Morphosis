@@ -578,7 +578,7 @@ public class Creature : MonoBehaviour {
 				}
 
 				// ☠ ꕕ Haha, make use of these
-				Debug.Log(" Id: " + id + ", roomBound: " + reason.roomBound + "CGM: " + cantGrowMore + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
+				//Debug.Log(" Id: " + id + ", roomBound: " + reason.roomBound + "CGM: " + cantGrowMore + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
 			}
 
 			if (detatchTicks == 0) {

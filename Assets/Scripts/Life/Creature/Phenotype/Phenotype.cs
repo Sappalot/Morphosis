@@ -147,7 +147,7 @@ public class Phenotype : MonoBehaviour {
 
 	//SpawnPosition is the position where the center of the origin cell will appear in word space
 	private void Setup(Creature creature, Vector2 spawnPosition, float spawnHeading) {
-		timeOffset = Random.Range(0f, 7f); //TODO: Remove
+		timeOffset = 0f; // Random.Range(0f, 7f); //TODO: Remove
 
 		Clear();
 		this.spawnPosition = spawnPosition;
