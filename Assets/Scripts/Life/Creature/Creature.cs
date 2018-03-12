@@ -145,7 +145,7 @@ public class Creature : MonoBehaviour {
 			return false;
 		}
 
-		if (from.hasMother && from.mother == to && from.soul.isConnectedWithMotherSoul) {
+		if (from.hasMotherSoul && from == to && from.soul.isConnectedWithMotherSoul) {
 			return true;
 		}
 
