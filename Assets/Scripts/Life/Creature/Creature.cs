@@ -123,7 +123,7 @@ public class Creature : MonoBehaviour {
 		}
 
 		// mother
-		if (creature.hasMother && !allreadyInList.Contains(creature.mother)) {
+		if (creature.soul.motherSoulReference.isReferenceUpdated && creature.hasMother && !allreadyInList.Contains(creature.mother)) {
 			AddConnectedCreatures(creature.mother, creature, allreadyInList);
 		}
 
@@ -171,6 +171,13 @@ public class Creature : MonoBehaviour {
 
 	public void DetatchFromMother(bool playEffects = false) {
 		phenotype.DetatchFromMother(this, playEffects);
+	}
+
+	public bool isAttachedToMother {
+		get {
+			Debug.Assert(soul != null, "isAttachedToMother? on soulless creature");
+			return soul.isConnectedWithMotherSoul;
+		}
 	}
 
 	// ^ Relatives ^
@@ -548,17 +555,17 @@ public class Creature : MonoBehaviour {
 		//	fertilizeTicks = 0;
 		//}
 
-		detatchTicks++;
-		if (detatchTicks >= GlobalSettings.instance.quality.detatchTickPeriod) {
-			detatchTicks = 0;
-		}
+		//if (isAttachedToMother) {
+		//	detatchTicks++;
+		//	if (detatchTicks >= GlobalSettings.instance.quality.detatchTickPeriod) {
+		//		detatchTicks = 0;
+		//	}
+		//}
 		//time ^
 
 		phenotype.UpdatePhysics(this, worldTicks);
 
 		if (GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
-
-			
 			if (growTicks == 0) {
 				NoGrowthReason reason;
 				int growCount = phenotype.TryGrow(this, false, 1, false, true, worldTicks, false, out reason);
@@ -573,18 +580,19 @@ public class Creature : MonoBehaviour {
 				}
 
 				// ☠ ꕕ Haha, make use of these
-				//Debug.Log(" Id: " + id + ", roomBound: " + reason.roomBound + "CGM: " + cantGrowMore + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
-			}
+				//Debug.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
 
-			if (detatchTicks == 0) {
-				if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size   && phenotype.cellCount         >= phenotype.originCell.originDetatchSizeThreshold) ||
-					(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.DetatchCompletionPersistance)) {
+				if (isAttachedToMother) {
+					if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.cellCount >= phenotype.originCell.originDetatchSizeThreshold) ||
+						(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.DetatchCompletionPersistance)) {
 
-					DetatchFromMother(true);
-					PhenotypePanel.instance.MakeDirty();
-					CellPanel.instance.MakeDirty();
+						Debug.Log(" Id: " + id + " Should detatch now");
+						DetatchFromMother(true);
+						PhenotypePanel.instance.MakeDirty();
+						CellPanel.instance.MakeDirty();
 
-					cantGrowMore = 0;
+						cantGrowMore = 0;
+					}
 				}
 			}
 

@@ -162,7 +162,6 @@ public class Phenotype : MonoBehaviour {
 	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects, ulong worldTicks, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
 		noGrowthReason = new NoGrowthReason();
 		
-		
 		////Fail safe ... to be removed
 		//Life.instance.UpdateSoulReferences();
 
@@ -188,9 +187,13 @@ public class Phenotype : MonoBehaviour {
 				break;
 			}
 
-			if (!IsCellBuiltForGeneCell(geneCell)
-				&& IsCellBuiltAtNeighbourPosition(geneCell.mapPosition)
-				&& (allowOvergrowth || !(IsMotherPlacentaLocation(creature, geneCell.mapPosition) || IsChildOriginLocation(creature, geneCell.mapPosition)))) {
+			if (!IsCellBuiltForGeneCell(geneCell) && IsCellBuiltAtNeighbourPosition(geneCell.mapPosition)) {
+				// test if the cell map position is free to grow on
+				if (!allowOvergrowth && (IsMotherPlacentaLocation(creature, geneCell.mapPosition) || IsChildOriginLocation(creature, geneCell.mapPosition))) {
+					noGrowthReason.roomBound = true;
+					continue;
+				}
+
 				Vector3 averagePosition = Vector3.zero;
 				int positionCount = 0;
 

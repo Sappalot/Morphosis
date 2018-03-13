@@ -196,6 +196,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		GenePanel.instance.MakeDirty();
 		LockedUnlockedPanel.instance.MakeDirty();
 
+		Life.instance.UpdateStructure();
 		UpdateSelectionCluster();
 	}
 
@@ -238,6 +239,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	// Delete
 	public void OnDeleteClicked() {
 		for (int index = 0; index < selection.Count; index++) {
+			Debug.Log("try Kill Creature: " + index);
 			life.KillCreatureSafe(selection[index]);
 		}
 		ClearSelection();

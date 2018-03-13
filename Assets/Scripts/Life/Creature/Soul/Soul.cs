@@ -91,7 +91,7 @@ public class Soul {
 				return null;
 			}
 			Debug.Assert(motherSoulReference.isReferenceUpdated, "Update mother reference first!");
-			Debug.Assert(motherSoul.areAllReferencesUpdated, "Update mother's references first!");
+			//Debug.Assert(motherSoul.areAllReferencesUpdated, "Update mother's references first!");
 			return motherSoul.creature;
 		}
 	}
@@ -102,7 +102,7 @@ public class Soul {
 				return false;
 			}
 			Debug.Assert(motherSoulReference.isReferenceUpdated, "Update references first!");
-			Debug.Assert(motherSoul != null && motherSoul.areAllReferencesUpdated, "Update references first!");
+			//Debug.Assert(motherSoul != null && motherSoul.areAllReferencesUpdated, "Update references first!"); // We will know we have the right mother even if her references are not updated, right?
 			return mother != null;
 		}
 	}
@@ -192,14 +192,17 @@ public class Soul {
 		get {
 			Debug.Assert(motherSoulReference.isReferenceUpdated, "Update references first!");
 			//Debug.Assert(motherSoul.areAllReferencesUpdated, "Update mother's references first!");
-			return (motherSoulReference.soul == null && motherSoulReference.isReferenceUpdated) || motherSoul.childSoulReferences.Find(c => c.id == id).isChildConnected;
+			if (motherSoulReference.soul == null && motherSoulReference.isReferenceUpdated) {
+				return false; //I have no mother, so how can i be connected to her?
+			}
+			return /*(motherSoulReference.soul == null && motherSoulReference.isReferenceUpdated) ||*/ motherSoul.childSoulReferences.Find(c => c.id == id).isChildConnected;
 		}
 	}
 
-	public bool SetConnectedWithMotherSoul(bool connected) {
+	public void SetConnectedWithMotherSoul(bool connected) {
 		Debug.Assert(areAllReferencesUpdated, "Update references first!");
 		Debug.Assert(motherSoul.areAllReferencesUpdated, "Update mother's references first!");
-		return motherSoul.childSoulReferences.Find(c => c.id == id).isChildConnected = connected;
+		motherSoul.childSoulReferences.Find(c => c.id == id).isChildConnected = connected;
 	}
 
 	public bool isConnectedWithChildSoul(string childSoulId) {
