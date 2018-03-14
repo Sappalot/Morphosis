@@ -49,6 +49,7 @@ public class World : MonoSingleton<World> {
 		worldTicks++; //The only place where time is increased
 		Life.instance.UpdatePhysics(worldTicks);
 		Portals.instance.UpdatePhysics(Life.instance.creatures, worldTicks);
+		PrisonWall.instance.UpdatePhysics(Life.instance.creatures, worldTicks);
 
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 
@@ -74,7 +75,7 @@ public class World : MonoSingleton<World> {
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 		for (int y = 1; y <= 1; y++) {
 			for (int x = 1; x <= 1; x++) {
-				Life.instance.SpawnCreatureJellyfish(new Vector3(x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f));
+				Life.instance.SpawnCreatureJellyfish(new Vector3(100f + x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f));
 			}
 		}
 		//Life.instance.SpawnCreatureEdgeFailure(new Vector3(100f, 200f, 0f)); //Fixed :)
@@ -82,6 +83,7 @@ public class World : MonoSingleton<World> {
 		
 		CreatureEditModePanel.instance.Restart();
 		RMBToolModePanel.instance.Restart();
+		PrisonWall.instance.Restart();
 	}
 
 	public void Load() {
@@ -122,11 +124,15 @@ public class World : MonoSingleton<World> {
 		worldData.worldName = worldName;
 		worldData.lifeData = Life.instance.UpdateData();
 		worldData.worldTicks = worldTicks;
+
+		worldData.runnersKilledCount = PrisonWall.instance.runnersKilledCount;
 	}
 
 	private void ApplyData(WorldData worldData) {
 		worldName = worldData.worldName;
 		Life.instance.ApplyData(worldData.lifeData);
 		worldTicks = worldData.worldTicks;
+
+		PrisonWall.instance.runnersKilledCount = worldData.runnersKilledCount;
 	}
 }

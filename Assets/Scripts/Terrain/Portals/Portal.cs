@@ -17,7 +17,6 @@ public class Portal : MonoBehaviour {
 	}
 
 	public void UpdatePhysics(List<Creature> creatures, ulong worldTicks) {
-
 		List<Creature> canTeleport = new List<Creature>();
 		List<Creature> canNotTeleport = new List<Creature>();
 		bool clusterCouldTravel;

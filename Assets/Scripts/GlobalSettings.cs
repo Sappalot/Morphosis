@@ -154,6 +154,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		// Terrain
 		public int portalTeleportPeriod = 10;
+		public int escapistCleanupPeriod = 10;
 
 		//Panels
 		public int phenotypePanelTickPeriod = 10;
