@@ -451,7 +451,6 @@ public class Creature : MonoBehaviour {
 		creatureData.phenotypeData = phenotype.UpdateData();
 
 		creatureData.growTicks = growTicks;
-		creatureData.detatchTicks = detatchTicks;
 
 		return creatureData;
 	}
@@ -468,7 +467,6 @@ public class Creature : MonoBehaviour {
 		genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
 
 		growTicks = creatureData.growTicks;
-		detatchTicks = creatureData.detatchTicks;
 
 		phenotype.ApplyData(creatureData.phenotypeData, this);
 	}
@@ -537,10 +535,9 @@ public class Creature : MonoBehaviour {
 
 	//time
 	private int growTicks;
-	private int detatchTicks;
-
 	//time ^
 
+	private bool detatch = false;
 	private int cantGrowMore = 0;
 
 	public void UpdatePhysics(ulong worldTicks) {
@@ -570,10 +567,20 @@ public class Creature : MonoBehaviour {
 		phenotype.UpdatePhysics(this, worldTicks);
 
 		if (GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
+
+			if (detatch) { // At this point we are sure that our origin cell had time to get to know its neighbours (including mother placenta)
+				DetatchFromMother(true);
+				PhenotypePanel.instance.MakeDirty();
+				CellPanel.instance.MakeDirty();
+				cantGrowMore = 0;
+
+				detatch = false;
+			}
+
 			if (growTicks == 0) {
 				NoGrowthReason reason;
-				int growCount = phenotype.TryGrow(this, false, 1, false, true, worldTicks, false, out reason);
-				if (growCount > 0) {
+				int didGrowCount = phenotype.TryGrow(this, false, 1, false, true, worldTicks, false, out reason);
+				if (didGrowCount > 0) {
 					PhenotypePanel.instance.MakeDirty();
 					CellPanel.instance.MakeDirty();
 					cantGrowMore = 0;
@@ -589,11 +596,7 @@ public class Creature : MonoBehaviour {
 				if (isAttachedToMother) {
 					if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.cellCount >= phenotype.originCell.originDetatchSizeThreshold) ||
 						(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.DetatchCompletionPersistance)) {
-
-						DetatchFromMother(true);
-						PhenotypePanel.instance.MakeDirty();
-						CellPanel.instance.MakeDirty();
-						cantGrowMore = 0;
+						detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
 					}
 				}
 			}

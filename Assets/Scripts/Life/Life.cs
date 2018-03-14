@@ -436,6 +436,8 @@ public class Life : MonoSingleton<Life> {
 	// Allways, updated from Update
 	// Keeping graphics up to date, creature selection, cell selection, flipArrows, edges
 	public void UpdateGraphics() {
+
+
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdateGraphics();
 		}
@@ -452,6 +454,8 @@ public class Life : MonoSingleton<Life> {
 			c.UpdateStructure();
 		}
 	}
+
+	private int phenotypePanelTicks;
 
 	// Phenotype only, updated from FixedUpdate
 	// Everything that needs to be updated as the biological clock is ticking, wings, cell tasks, energy
@@ -475,6 +479,18 @@ public class Life : MonoSingleton<Life> {
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdatePhysics(worldTicks);
 		}
+
+		phenotypePanelTicks++;
+		if (phenotypePanelTicks >= GlobalSettings.instance.quality.phenotypePanelTickPeriod) {
+			if (CreatureSelectionPanel.instance.hasSoloSelected) {
+				PhenotypePanel.instance.MakeDirty();
+				CellPanel.instance.MakeDirty();
+				//Debug.Log("Updating panels");
+			}
+
+			phenotypePanelTicks = 0;
+		}
+
 	}
 
 	// ^ Update ^

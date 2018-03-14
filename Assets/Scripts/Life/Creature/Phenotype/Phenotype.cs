@@ -671,7 +671,8 @@ public class Phenotype : MonoBehaviour {
 			Cell childOrigin = creature.phenotype.originCell;
 			int placentaCount = 0;
 			for (int i = 0; i < 6; i++) {
-				if (childOrigin.HasNeighbourCell(i) && childOrigin.GetNeighbourCell(i).creature.id != creature.id) {
+				if (childOrigin.HasNeighbourCell(i)
+					&& childOrigin.GetNeighbourCell(i).creature.id != creature.id) {
 					childOrigin.GetNeighbourCell(i).isPlacenta = false;
 					placentaCount++;
 				}
@@ -681,7 +682,7 @@ public class Phenotype : MonoBehaviour {
 				detatchmentKick = new Dictionary<Cell, Vector2>();
 				Vector2 offspringForce = Vector2.zero;
 				float cellSum = cellCount + mother.phenotype.cellCount;
-				float kickFactor = GlobalSettings.instance.phenotype.detatchmentKick * cellSum + GlobalSettings.instance.phenotype.detatchmentKickSquare * cellSum * cellSum;
+				float kickFactor = 1f; //GlobalSettings.instance.phenotype.detatchmentKick * cellSum + GlobalSettings.instance.phenotype.detatchmentKickSquare * cellSum * cellSum;
 
 				for (int i = 0; i < 6; i++) {
 					if (childOrigin.HasNeighbourCell(i) && childOrigin.GetNeighbourCell(i).creature.id != creature.id) {
@@ -706,6 +707,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
+	// Detatchment kick is applied to child (origin cell) as well as this phenotypes placenta cells
 	private void ApplyDetatchKick() {
 		foreach (Cell cell in detatchmentKick.Keys) {
 			if (cell != null) {
