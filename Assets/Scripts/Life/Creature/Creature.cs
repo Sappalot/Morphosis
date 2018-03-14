@@ -215,12 +215,16 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public bool IsPhenotypeInside(Rect area) {
-		return phenotype.IsInside(area);
+	public bool IsPhenotypePartlyInside(Rect area) {
+		return phenotype.IsPartlyInside(area);
 	}
 
-	public bool IsGenotypeInside(Rect area) {
-		return genotype.IsInside(area);
+	public bool IsPhenotypeCompletelyInside(Rect area) {
+		return phenotype.IsCompletelyInside(area);
+	}
+
+	public bool IsGenotypePartlyInside(Rect area) {
+		return genotype.IsPartlyInside(area);
 	}
 
 	public void GenerateEmbryo(Gene[] motherGenome, Vector3 position, float heading) {
@@ -586,11 +590,9 @@ public class Creature : MonoBehaviour {
 					if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.cellCount >= phenotype.originCell.originDetatchSizeThreshold) ||
 						(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.DetatchCompletionPersistance)) {
 
-						Debug.Log(" Id: " + id + " Should detatch now");
 						DetatchFromMother(true);
 						PhenotypePanel.instance.MakeDirty();
 						CellPanel.instance.MakeDirty();
-
 						cantGrowMore = 0;
 					}
 				}

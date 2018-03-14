@@ -107,18 +107,32 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public bool IsInside(Rect area) {
+	public bool IsPartlyInside(Rect area) {
 		float cellRadius = 0.5f;
-		float top = area.y + cellRadius + area.height / 2f;
-		float bottom = area.y - cellRadius - area.height / 2f;
-		float left = area.x - cellRadius - area.width / 2f;
-		float right = area.x + cellRadius + area.width / 2f;
+		float top = area.y + area.height / 2f + cellRadius;
+		float bottom = area.y - area.height / 2f - cellRadius;
+		float left = area.x - area.width / 2f - cellRadius;
+		float right = area.x + area.width / 2f + cellRadius;
 		foreach (Cell cell in cellList) {
-			if (cell.position.x < right + cell.radius && cell.position.x > left - cell.radius && cell.position.y < top + cell.radius && cell.position.y > bottom - cell.radius) {
+			if (cell.position.x < right && cell.position.x > left && cell.position.y < top && cell.position.y > bottom) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public bool IsCompletelyInside(Rect area) {
+		float cellRadius = 0.5f;
+		float top = area.y + area.height / 2f - cellRadius;
+		float bottom = area.y - area.height / 2f + cellRadius;
+		float left = area.x - area.width / 2f + cellRadius;
+		float right = area.x + area.width / 2f - cellRadius;
+		foreach (Cell cell in cellList) {
+			if (cell.position.x > right || cell.position.x < left || cell.position.y > top || cell.position.y < bottom) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void ShuffleCellUpdateOrder() {
@@ -952,8 +966,8 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public void MoveTo(Vector2 vector) {
-		Move(vector - originCell.position);
+	public void MoveTo(Vector2 position) {
+		Move(position - originCell.position);
 	}
 
 	//Make origin cell point in this direction while the rest of the cells tags along

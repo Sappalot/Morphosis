@@ -93,14 +93,14 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	public bool IsInside(Rect area) {
+	public bool IsPartlyInside(Rect area) {
 		float cellRadius = 0.5f;
 		float top = area.y + cellRadius + area.height / 2f;
 		float bottom = area.y - cellRadius - area.height / 2f;
 		float left = area.x - cellRadius - area.width / 2f;
 		float right = area.x + cellRadius + area.width / 2f;
 		foreach (Cell cell in geneCellList) {
-			if (cell.position.x < right + cell.radius && cell.position.x > left - cell.radius && cell.position.y < top + cell.radius && cell.position.y > bottom - cell.radius) {
+			if (cell.position.x < right && cell.position.x > left && cell.position.y < top && cell.position.y > bottom) {
 				return true;
 			}
 		}

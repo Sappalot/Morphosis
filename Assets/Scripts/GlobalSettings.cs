@@ -139,6 +139,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 	[Serializable]
 	public class Quality {
+		// Life
 		public int eggCellTickPeriod =     50;
 		public int fungalCellTickPeriod =  50;
 		public int jawCellTickPeriod =     50;
@@ -149,8 +150,10 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public int veinCellTickPeriod =    50;
 
 		public int veinTickPeriod = 5;
-		public int growTickPeriod = 30;
-		public int detatchTickPeriod = 10;
+		public int growTickPeriod = 30; // Detatch attempt has same period as grow
+
+		// Terrain
+		public int portalTeleportPeriod = 10;
 	}
 	public Quality quality;
 

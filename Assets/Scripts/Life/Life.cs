@@ -260,7 +260,7 @@ public class Life : MonoSingleton<Life> {
 	public List<Creature> GetPhenotypesInside(Rect area) {
 		List<Creature> insideList = new List<Creature>();
 		foreach (Creature c in creatureList) {
-			if (c.IsPhenotypeInside(area)) {
+			if (c.IsPhenotypePartlyInside(area)) {
 				insideList.Add(c);
 			}
 		}
@@ -270,7 +270,7 @@ public class Life : MonoSingleton<Life> {
 	public List<Creature> GetGenotypesInside(Rect area) {
 		List<Creature> insideList = new List<Creature>();
 		foreach (Creature c in creatureList) {
-			if (c.IsGenotypeInside(area)) {
+			if (c.IsGenotypePartlyInside(area)) {
 				insideList.Add(c);
 			}
 		}
