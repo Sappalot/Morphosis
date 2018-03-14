@@ -61,7 +61,7 @@ public class Soul {
 
 	public Soul motherSoul {
 		get {
-			Debug.Assert(motherSoulReference.isReferenceUpdated, "Update references first!");
+			//Debug.Assert(motherSoulReference.isReferenceUpdated, "Update references first!");
 			return motherSoulReference.soul;
 		}
 	}
@@ -80,7 +80,7 @@ public class Soul {
 
 	public bool hasMotherSoul {
 		get {
-			Debug.Assert(motherSoulReference.isReferenceUpdated, "Update references first!");
+			//Debug.Assert(motherSoulReference.isReferenceUpdated, "Update references first!");
 			return motherSoul != null;
 		}
 	}

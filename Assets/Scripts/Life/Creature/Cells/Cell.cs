@@ -180,7 +180,6 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-
 	public int neighbourCountOwn {
 		get {
 			int count = 0;
@@ -193,7 +192,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public int neighbourCountConnected {
+	public int neighbourCountConnectedRelatives {
 		get {
 			return neighbourCountAll - neighbourCountOwn;
 		}

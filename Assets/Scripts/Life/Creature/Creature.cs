@@ -169,8 +169,8 @@ public class Creature : MonoBehaviour {
 		return soul.HasChild(id);
 	}
 
-	public void DetatchFromMother(bool playEffects = false) {
-		phenotype.DetatchFromMother(this, playEffects);
+	public void DetatchFromMother(bool applyKick, bool playEffects) {
+		phenotype.DetatchFromMother(this, applyKick, playEffects);
 	}
 
 	public bool isAttachedToMother {
@@ -569,7 +569,7 @@ public class Creature : MonoBehaviour {
 		if (GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
 
 			if (detatch) { // At this point we are sure that our origin cell had time to get to know its neighbours (including mother placenta)
-				DetatchFromMother(true);
+				DetatchFromMother(true, true);
 				PhenotypePanel.instance.MakeDirty();
 				CellPanel.instance.MakeDirty();
 				cantGrowMore = 0;

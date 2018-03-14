@@ -239,7 +239,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	// Delete
 	public void OnDeleteClicked() {
 		for (int index = 0; index < selection.Count; index++) {
-			Debug.Log("try Kill Creature: " + index);
 			life.KillCreatureSafe(selection[index]);
 		}
 		ClearSelection();
@@ -271,13 +270,13 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		foreach (Creature creature in selection) {
 			//mother
 			if (creature.soul.motherSoulReference.id != string.Empty && !selection.Contains(creature.mother)) {
-				creature.DetatchFromMother(true);
+				creature.DetatchFromMother(false, true);
 			}
 
 			//children
 			foreach (Creature child in creature.children) {
 				if (!selection.Contains(child) && child != null) {
-					child.DetatchFromMother(true);
+					child.DetatchFromMother(false, true);
 				}
 			}
 		}

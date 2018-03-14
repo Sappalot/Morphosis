@@ -87,7 +87,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				cellEffect.text = "Effect: -";
 			}
 			
-			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnected) + " + ("  + selectedCell.neighbourCountConnected + ")";
+			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnectedRelatives) + " + ("  + selectedCell.neighbourCountConnectedRelatives + ")";
 			connectionGroupCount.text = "Con. Groups: " + selectedCell.groups;
 			if (selectedCell is EggCell) {
 				eggCellPanel.gameObject.SetActive(true);

@@ -527,7 +527,7 @@ public class Phenotype : MonoBehaviour {
 		//Check if mothers placenta is gone
 		if (creature.hasMotherSoul && disturbedCell.isOrigin && !deletedCell.IsSameCreature(disturbedCell)) {
 			if (!IsOriginNeighbouringMothersPlacenta(creature)) {
-				DetatchFromMother(creature, true);
+				DetatchFromMother(creature, false, true);
 			}
 		}
 
@@ -654,7 +654,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public bool DetatchFromMother(Creature creature, bool playEffects = false) {
+	public bool DetatchFromMother(Creature creature, bool applyKick, bool playEffects) {
 		if (creature.hasMotherSoul && creature.soul.isConnectedWithMotherSoul) {
 			if (playEffects && CameraUtils.IsObservedLazy(creature.phenotype.originCell.position, GlobalSettings.instance.orthoMaxHorizonFx)) {
 				if (GlobalPanel.instance.effectsPlaySound.isOn) {
@@ -667,31 +667,35 @@ public class Phenotype : MonoBehaviour {
 			}
 
 			//Kick separation
-			Creature mother = creature.motherSoul.creature;
-			Cell childOrigin = creature.phenotype.originCell;
-			int placentaCount = 0;
-			for (int i = 0; i < 6; i++) {
-				if (childOrigin.HasNeighbourCell(i)
-					&& childOrigin.GetNeighbourCell(i).creature.id != creature.id) {
-					childOrigin.GetNeighbourCell(i).isPlacenta = false;
-					placentaCount++;
-				}
-			}
-			if (placentaCount > 0) {
-				mother.phenotype.detatchmentKick = new Dictionary<Cell, Vector2>();
-				detatchmentKick = new Dictionary<Cell, Vector2>();
-				Vector2 offspringForce = Vector2.zero;
-				float cellSum = cellCount + mother.phenotype.cellCount;
-				float kickFactor = 1f; //GlobalSettings.instance.phenotype.detatchmentKick * cellSum + GlobalSettings.instance.phenotype.detatchmentKickSquare * cellSum * cellSum;
-
+			if (applyKick) {
+				Creature mother = creature.motherSoul.creature;
+				Cell childOrigin = creature.phenotype.originCell;
+				int placentaCount = 0;
 				for (int i = 0; i < 6; i++) {
-					if (childOrigin.HasNeighbourCell(i) && childOrigin.GetNeighbourCell(i).creature.id != creature.id) {
-						Vector2 placentaForce = (childOrigin.GetNeighbourCell(i).position - childOrigin.position).normalized / placentaCount;
-						mother.phenotype.detatchmentKick.Add(childOrigin.GetNeighbourCell(i), placentaForce * kickFactor);
-						offspringForce -= placentaForce;
+					if (childOrigin.HasNeighbourCell(i)
+						&& childOrigin.GetNeighbourCell(i).creature.id != creature.id) {
+						childOrigin.GetNeighbourCell(i).isPlacenta = false;
+						placentaCount++;
 					}
 				}
-				detatchmentKick.Add(childOrigin, offspringForce * kickFactor);
+				if (placentaCount > 0) {
+					mother.phenotype.detatchmentKick = new Dictionary<Cell, Vector2>();
+					detatchmentKick = new Dictionary<Cell, Vector2>();
+					Vector2 offspringForce = Vector2.zero;
+					float kickFactorMother = GlobalSettings.instance.phenotype.detatchmentKick * mother.phenotype.cellCount + GlobalSettings.instance.phenotype.detatchmentKickSquare * mother.phenotype.cellCount * mother.phenotype.cellCount;
+					float kickFactorChild = GlobalSettings.instance.phenotype.detatchmentKick * cellCount + GlobalSettings.instance.phenotype.detatchmentKickSquare * cellCount * cellCount;
+
+					//impulses are negated, but may be of different magnitude, poor Newton!
+					//That way big creatures slides roughly the length of small ones
+					for (int i = 0; i < 6; i++) {
+						if (childOrigin.HasNeighbourCell(i) && childOrigin.GetNeighbourCell(i).creature.id != creature.id) {
+							Vector2 placentaForce = (childOrigin.GetNeighbourCell(i).position - childOrigin.position).normalized / placentaCount;
+							mother.phenotype.detatchmentKick.Add(childOrigin.GetNeighbourCell(i), placentaForce * kickFactorMother);
+							offspringForce -= placentaForce; //same magnitude but negated
+						}
+					}
+					detatchmentKick.Add(childOrigin, offspringForce * kickFactorChild);
+				}
 			}
 
 			//me

@@ -25,7 +25,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 	public void OnClickDetatchFromMother() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
-			creature.DetatchFromMother(true);
+			creature.DetatchFromMother(true, true);
 		}
 	}
 

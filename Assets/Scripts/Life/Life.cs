@@ -217,10 +217,10 @@ public class Life : MonoSingleton<Life> {
 
 	//This is the only way, where the creature GO is deleted
 	public void KillCreatureSafe(Creature creature) {
-		creature.DetatchFromMother(true);
+		creature.DetatchFromMother(false, true);
 		foreach(Soul childSoul in creature.childSouls) {
 			if (childSoul.creatureReference.creature != null) {
-				childSoul.creatureReference.creature.DetatchFromMother(true);
+				childSoul.creatureReference.creature.DetatchFromMother(false, true);
 			}
 		}
 
