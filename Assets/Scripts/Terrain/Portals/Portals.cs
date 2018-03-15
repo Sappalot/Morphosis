@@ -9,7 +9,7 @@ public class Portals : MonoSingleton<Portals> {
 		teleportTicks++;
 		if (teleportTicks >= GlobalSettings.instance.quality.portalTeleportPeriod) {
 			for(int portalIndex = 0; portalIndex < portals.Length; portalIndex++) {
-				portals[portalIndex].UpdatePhysics(creatures, worldTicks);
+				portals[portalIndex].TryTeleportCreature(creatures, worldTicks);
 			}
 			teleportTicks = 0;
 		}

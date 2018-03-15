@@ -132,8 +132,10 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float detatchmentKick = 0.05f; //N
 		public float detatchmentKickSquare = 0.05f; //N
 		public float detatchSlideDuration = 10; // s
-		public int DetatchCompletionPersistance = 5; // How many times will we retry to find a spot to grow next cell in before we give up and realize that it is time to detatch (1 ==> give up (and detatch) after failing one time)
+		public int detatchCompletionPersistance = 5; // How many times will we retry to find a spot to grow next cell in before we give up and realize that it is time to detatch (1 ==> give up (and detatch) after failing one time)
 
+		//Teleport
+		public float telefragDamage = 4f; //damage on obstracting creature in J/s
 	}
 	public Phenotype phenotype;
 

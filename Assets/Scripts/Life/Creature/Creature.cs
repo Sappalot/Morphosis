@@ -540,6 +540,7 @@ public class Creature : MonoBehaviour {
 	private bool detatch = false;
 	private int cantGrowMore = 0;
 
+	//Returns true if creature grew
 	public void UpdatePhysics(ulong worldTicks) {
 		if (!hasSoul) {
 			return;
@@ -566,7 +567,8 @@ public class Creature : MonoBehaviour {
 
 		phenotype.UpdatePhysics(this, worldTicks);
 
-		if (GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
+		int didGrowCount = 0;
+		if (GlobalPanel.instance.physicsUpdateMetabolism.isOn) {
 
 			if (detatch) { // At this point we are sure that our origin cell had time to get to know its neighbours (including mother placenta)
 				DetatchFromMother(true, true);
@@ -579,7 +581,7 @@ public class Creature : MonoBehaviour {
 
 			if (growTicks == 0) {
 				NoGrowthReason reason;
-				int didGrowCount = phenotype.TryGrow(this, false, 1, false, true, worldTicks, false, out reason);
+				didGrowCount = phenotype.TryGrow(this, false, 1, false, true, worldTicks, false, out reason);
 				if (didGrowCount > 0) {
 					PhenotypePanel.instance.MakeDirty();
 					CellPanel.instance.MakeDirty();
@@ -595,7 +597,7 @@ public class Creature : MonoBehaviour {
 
 				if (isAttachedToMother) {
 					if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.cellCount >= phenotype.originCell.originDetatchSizeThreshold) ||
-						(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.DetatchCompletionPersistance)) {
+						(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchCompletionPersistance)) {
 						detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
 					}
 				}
@@ -620,7 +622,6 @@ public class Creature : MonoBehaviour {
 				PhenotypePanel.instance.MakeDirty();
 				CellPanel.instance.MakeDirty();
 			}
-			//}
 		}
 	}
 }

@@ -238,7 +238,7 @@ public class Phenotype : MonoBehaviour {
 
 				// test if the position is free to grow on
 				Vector2 spawnPosition = averagePosition / positionCount;
-				if (!allowOvergrowth && !CanGrowAtPosition(spawnPosition, 0.33f)) {
+				if (!allowOvergrowth && !CanGrowAtPosition(spawnPosition, 0.4f)) { // was 0.33
 					noGrowthReason.roomBound = true;
 					continue;
 				}
@@ -267,6 +267,9 @@ public class Phenotype : MonoBehaviour {
 					}
 				}
 
+				if (Vector2.Distance(spawnPosition, originCell.position) > 8f) {
+					Debug.Log("Building too far far away!!!!");
+				}
 				Cell newCell = SpawnCell(creature, geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, spawnPosition, false, newCellEnergy);
 				UpdateNeighbourReferencesIntraBody(); //We need to know our neighbours in order to update vectors correctly 
 				newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
@@ -337,9 +340,8 @@ public class Phenotype : MonoBehaviour {
 		//return c == null || !(c is CircleCollider2D); //the isCircleCollider2D test is there to avoid count collision with the big world touch square collider
 
 		List<Cell> cells = new List<Cell>();
-		//All creatures in cluster
-		foreach (Creature clusterPart in Life.instance.creatures) { // creature.creaturesInCluster
-			cells.AddRange(clusterPart.phenotype.cellList);
+		foreach (Creature creature in Life.instance.creatures) { // creature.creaturesInCluster
+			cells.AddRange(creature.phenotype.cellList);
 		}
 
 		foreach (Cell cell in cells) {
@@ -928,6 +930,18 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public void SetKinematic(bool kinematic) {
+		foreach (Cell cell in cellList) {
+			cell.GetComponent<Rigidbody2D>().isKinematic = kinematic;
+		}
+	}
+
+	public void EnableCollider(bool collider) {
+		foreach (Cell cell in cellList) {
+			cell.GetComponent<Collider2D>().enabled = collider;
+		}
+	}
+
 	public void Grab() {
 		isGrabbed = true;
 		foreach (Cell cell in cellList) {
@@ -1206,7 +1220,7 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		//Metabolism
-		if (GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
+		if (GlobalPanel.instance.physicsUpdateMetabolism.isOn) {
 			for (int index = 0; index < cellList.Count; index++) {
 				Cell cell = cellList[index];
 				if (eggCellTick == 0           && cell.GetCellType() == CellTypeEnum.Egg) {

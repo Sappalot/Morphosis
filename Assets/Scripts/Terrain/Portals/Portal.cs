@@ -16,22 +16,33 @@ public class Portal : MonoBehaviour {
 		departureToArrival = arrivalArea.transform.position - departureArea.transform.position;
 	}
 
-	public void UpdatePhysics(List<Creature> creatures, ulong worldTicks) {
+	public void TryTeleportCreature(List<Creature> creatures, ulong worldTicks) {
 		List<Creature> canTeleport = new List<Creature>();
 		List<Creature> canNotTeleport = new List<Creature>();
+
+		List<Creature> shouldBeTelefragged = new List<Creature>();
+
 		bool clusterCouldTravel;
+		List<Creature> travelerCluster = new List<Creature>();
 		foreach (Creature travelLeader in creatures) {
 			if (canTeleport.Contains(travelLeader) || canNotTeleport.Contains(travelLeader)) {
 				continue;
 			}
 
 			if (travelLeader.IsPhenotypeCompletelyInside(departureRect)) {
-				List<Creature> travelerCluster = travelLeader.creaturesInCluster;
+				travelerCluster = travelLeader.creaturesInCluster;
 				clusterCouldTravel = true; //hopefully...
+
 				foreach (Creature companion in travelerCluster) {
+					Cell blockingCell = GetAnyBlockingCell(creatures, travelLeader, departureToArrival);
 					if ((companion != travelLeader && !companion.IsPhenotypeCompletelyInside(departureRect)) ||
-						!CanTeleportTo(creatures, travelLeader, departureToArrival) ||
-						travelLeader.phenotype.isGrabbed) {
+						blockingCell != null ||
+						companion.phenotype.isGrabbed ||
+						companion.phenotype.connectionsDiffersFromCells) { // FOUND IT :D We need to be sure that everything is connected otherwise we might teleport away from our attached child (???)
+
+						if (blockingCell != null) {
+							shouldBeTelefragged.Add(blockingCell.creature);
+						}
 
 						clusterCouldTravel = false;
 						break;
@@ -44,6 +55,7 @@ public class Portal : MonoBehaviour {
 							canTeleport.Add(sucessful);
 						}
 					}
+					//break; //One cluser is enough to teleport at a time
 				} else {
 					foreach (Creature failure in travelerCluster) {
 						if (!canNotTeleport.Contains(failure)) {
@@ -51,21 +63,33 @@ public class Portal : MonoBehaviour {
 						}
 					}
 				}
-				//CanTeleportTo(creatures, traveler, departureToArrival) &&
-				//!traveler.phenotype.isGrabbed) {
-
-				//traveler.phenotype.Move(departureToArrival);
-				//Debug.Log("Creature: " + traveler.id + " teleported");
 			}
 		}
 
-		//Move creatures
-		foreach (Creature traveler in canTeleport) {
-			traveler.phenotype.Move(departureToArrival);
+		//// Telefrag obstructing creatures
+		foreach (Creature fragMe in shouldBeTelefragged) {
+			fragMe.ChangeEnergy(-GlobalSettings.instance.quality.portalTeleportPeriod * GlobalSettings.instance.phenotype.telefragDamage);
+		}
+
+		if (canTeleport.Count > 0) {
+			//Move (teleport) creatures
+			//foreach (Creature traveler in canTeleport) {
+			//	traveler.phenotype.EnableCollider(false);
+			//	traveler.phenotype.SetKinematic(true);
+			//}
+
+			foreach (Creature traveler in canTeleport) {
+				traveler.phenotype.Move(departureToArrival);
+			}
+
+			//foreach (Creature traveler in canTeleport) {
+			//	traveler.phenotype.EnableCollider(true);
+			//	traveler.phenotype.SetKinematic(false);
+			//}
 		}
 	}
 
-	private bool CanTeleportTo(List<Creature> creatures, Creature traveler, Vector2 departureToArrival) {
+	private Cell GetAnyBlockingCell(List<Creature> creatures, Creature traveler, Vector2 departureToArrival) {
 		foreach (Creature blocker in creatures) {
 			if (blocker == traveler) {
 				continue;
@@ -76,13 +100,13 @@ public class Portal : MonoBehaviour {
 				foreach (Cell travelerCell in traveler.phenotype.cellList) {
 					Vector2 travelerCellArrivalPosition = travelerCell.position + departureToArrival;
 					foreach (Cell blockerCell in blocker.phenotype.cellList) {
-						if (Vector2.SqrMagnitude(blockerCell.position - travelerCellArrivalPosition) < 1f) {
-							return false;
+						if (Vector2.Distance(blockerCell.position, travelerCellArrivalPosition) < 1f) {
+							return blockerCell;
 						}
 					}
 				}
 			}
 		}
-		return true;
+		return null;
 	}
 }

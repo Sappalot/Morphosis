@@ -48,7 +48,9 @@ public class World : MonoSingleton<World> {
 
 		worldTicks++; //The only place where time is increased
 		Life.instance.UpdatePhysics(worldTicks);
-		Portals.instance.UpdatePhysics(Life.instance.creatures, worldTicks);
+		if (GlobalPanel.instance.physicsTeleport.isOn) {
+			Portals.instance.UpdatePhysics(Life.instance.creatures, worldTicks);
+		}
 		PrisonWall.instance.UpdatePhysics(Life.instance.creatures, worldTicks);
 
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);

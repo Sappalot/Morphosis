@@ -29,8 +29,9 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	//Physics
-	public Toggle effectsUpdateMetabolism;
+	public Toggle physicsUpdateMetabolism;
 	public Toggle physicsApplyWingForce;
+	public Toggle physicsTeleport;
 	public Slider timeSpeedSilder;
 	public Text physicsTimeSpeedText;
 	public float physicsUpdatesPerSecond;
@@ -40,6 +41,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	//Graphics
 	public Toggle graphicsCreatures;
 	public Toggle graphicsRenderWings;
+	public Toggle graphicsLeafRays;
 	public Dropdown graphicsCellDropdown;
 	public enum CellGraphicsEnum {
 		type,

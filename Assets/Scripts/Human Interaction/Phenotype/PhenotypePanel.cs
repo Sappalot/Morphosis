@@ -68,7 +68,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			creatureAge.text = "Age: " + TimeUtil.GetTimeString((ulong)(solo.phenotype.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime));
 			creatureCellCount.text = "Cells: " + solo.cellsCount + " (" + solo.cellsCountFullyGrown + ")";
 			creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energy / solo.phenotype.cellCount);
-			if (GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
+			if (GlobalPanel.instance.physicsUpdateMetabolism.isOn) {
 				creatureEffect.text = string.Format("<Effect>: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.effectProduction / solo.phenotype.cellCount, solo.phenotype.effectConsumption / solo.phenotype.cellCount, solo.phenotype.effect / solo.phenotype.cellCount);
 			} else {
 				creatureEffect.text = "<Effect>: -";
