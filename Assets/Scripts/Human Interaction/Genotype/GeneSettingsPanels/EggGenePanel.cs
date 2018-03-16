@@ -46,7 +46,7 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 			return;
 		}
 
-		GenePanel.instance.selectedGene.eggCellCanFertilizeWhenAttached = detatchSizeToggle.isOn;
+		GenePanel.instance.selectedGene.eggCellCanFertilizeWhenAttached = canFertilizeWhenAttachedToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
 		}
