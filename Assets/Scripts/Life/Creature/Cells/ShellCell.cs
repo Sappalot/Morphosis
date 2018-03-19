@@ -7,16 +7,16 @@
 
 	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.shellCellEffectCost;
-		effectProduction = 0f;
+		effectProductionInternal = 0f;
 
 		base.UpdateMetabolism(deltaTicks, worldTicks);
 	}
 
-	public override float effectConsumptionExternal {
-		get {
-			return predatorCount * GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellEatShellSellFactor;
-		}
-	}
+	//public override float effectConsumptionExternal {
+	//	get {
+	//		return predatorCount * GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellEatShellSellFactor;
+	//	}
+	//}
 
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Shell;

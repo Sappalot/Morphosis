@@ -88,8 +88,8 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 											   //public float eggCellOriginDetatchThresholdEnergy = 45.0f; //J
 
 		//Fungal Cell
-		//           fungalCellEffectCost =               0.0 W
-		public float fungalCellEffect = 0.1f;
+		public float fungalCellEffectCost = 0f; // W
+		public float fungalCellEffect = 0.1f; // W
 
 		//Jaw Cell
 		public float jawCellEffectCost = 0.2f; //W
@@ -125,6 +125,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float veinFluxEffectMedium = 0.25f; //W
 		public float veinFluxEffectStrong = 0.5f; //W
 
+		//General
+		public float cellBuildCost = 10f; //Energy Cost to build cell, J (Newly built cell will have this energy at start of its life)
+
 		// Rebuild
 		public float cellRebuildCooldown = 30f; //s
 
@@ -135,7 +138,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public int detatchCompletionPersistance = 5; // How many times will we retry to find a spot to grow next cell in before we give up and realize that it is time to detatch (1 ==> give up (and detatch) after failing one time)
 
 		//Teleport
-		public float telefragDamage = 4f; //damage on obstracting creature in J/s
+		public float telefragDamage = 1f; //damage on obstracting creature in J/s
 	}
 	public Phenotype phenotype;
 

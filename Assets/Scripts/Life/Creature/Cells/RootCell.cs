@@ -6,8 +6,8 @@
 	}
 
 	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
-		effectConsumptionInternal = 0f;
-		effectProduction = 0f;
+		effectConsumptionInternal = GlobalSettings.instance.phenotype.rootCellEffectCost;
+		effectProductionInternal = 0f;
 
 		base.UpdateMetabolism(deltaTicks, worldTicks);
 	}

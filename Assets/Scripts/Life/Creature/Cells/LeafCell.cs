@@ -98,7 +98,7 @@ public class LeafCell : Cell {
 		for (int i = 0; i < effectRecordCount; i++) {
 			lowPass += effectRecord[i];
 		}
-		effectProduction = lowPass / effectRecordCount;
+		effectProductionInternal = lowPass / effectRecordCount;
 
 
 		base.UpdateMetabolism(deltaTicks, worldTicks);

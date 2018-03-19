@@ -48,6 +48,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		energy,
 		effect,
 		effectCreature,
+		predatorPray,
 		update,
 	}
 	[HideInInspector]

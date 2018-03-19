@@ -85,6 +85,7 @@ public class Phenotype : MonoBehaviour {
 	public bool hasDirtyPosition = false;
 
 	private Vector3 velocity = new Vector3();
+	public float speed;
 	public List<Cell> cellList = new List<Cell>();
 	private Vector2 spawnPosition;
 	private float spawnHeading;
@@ -238,14 +239,14 @@ public class Phenotype : MonoBehaviour {
 
 				// test if the position is free to grow on
 				Vector2 spawnPosition = averagePosition / positionCount;
-				if (!allowOvergrowth && !CanGrowAtPosition(spawnPosition, 0.4f)) { // was 0.33
+				if (!allowOvergrowth && !CanGrowAtPosition(spawnPosition, 0.3f)) { // was 0.33
 					noGrowthReason.roomBound = true;
 					continue;
 				}
 
-				// test if neighbours can afford to build cell
+				// test if neighbours can afford to build cell, when pitching in all together
 				float newCellEnergy = 30f;
-				const float buildBaseEnergy = 10f;
+				float buildBaseEnergy = GlobalSettings.instance.phenotype.cellBuildCost;
 				if (!free) {
 					float sumExtraEnergy = 0f;
 					foreach (Cell builder in builderCells) {
@@ -708,6 +709,8 @@ public class Phenotype : MonoBehaviour {
 			creature.motherSoul.creature.phenotype.connectionsDiffersFromCells = true;
 
 			CreatureSelectionPanel.instance.MakeDirty();
+
+			CreatureSelectionPanel.instance.UpdateSelectionCluster();
 			return true;
 		}
 		return false;
@@ -1203,11 +1206,12 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		// Creature
-		Vector3 averageVelocity = new Vector3();
+		Vector3 velocitySum = new Vector3();
 		for (int index = 0; index < cellList.Count; index++) {
-			averageVelocity += cellList[index].velocity;
+			velocitySum += cellList[index].velocity;
 		}
-		velocity = (cellList.Count > 0f) ? velocity = averageVelocity / cellList.Count : new Vector3();
+		velocity = (cellList.Count > 0f) ? velocity = velocitySum / cellList.Count : new Vector3();
+		speed = velocity.magnitude;
 
 		// Edges, let edge-wings apply proper forces to neighbouring cells
 		edges.UpdatePhysics(velocity, creature);

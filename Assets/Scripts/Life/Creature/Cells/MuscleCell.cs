@@ -10,7 +10,7 @@ public class MuscleCell : Cell {
 
 	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.muscleCellEffectCost;
-		effectProduction = 0f;
+		effectProductionInternal = 0f;
 
 		UpdateRadius(worldTicks);
 		UpdateSpringLengths();

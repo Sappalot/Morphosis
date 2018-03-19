@@ -17,7 +17,7 @@ public class JawCellPanel : MonoSingleton<JawCellPanel> {
 			}
 
 			if (CellPanel.instance.selectedCell != null) {
-				prayCellCount.text = "Pray count: " + (CellPanel.instance.selectedCell as JawCell).mouth.prayCount;
+				prayCellCount.text = "Pray count: " + (CellPanel.instance.selectedCell as JawCell).prayCount;
 			}
 
 			isDirty = false;

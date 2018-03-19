@@ -18,7 +18,7 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public float timeOffset;
 
-	[HideInInspector]
+	//[HideInInspector]
 	private List<JawCell> predators = new List<JawCell>(); //Who is eating on me
 
 	private int didUpdateThisFrame = 0;
@@ -35,23 +35,27 @@ public abstract class Cell : MonoBehaviour {
 	public float originDetatchSizeThreshold;
 	public float originDetatchEnergyThreshold; // J  If we have more energy than this in the origin cell and it is attached with mother, it will separate
 											   //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
-
-	// Origin only ^
-	public int predatorCount {
-		get {
-			return predators.Count;
-		}
-	}
-
+											   // Origin only ^
+	
+	// Controlled by cell mouth of other creature
 	public void AddPredator(JawCell predator) {
 		if (!predators.Contains(predator)) {
 			predators.Add(predator);
 		}
 	}
 
+	// Controlled by cell mouth of other creature
 	public void RemovePredator(JawCell predator) {
 		if (predators.Contains(predator)) {
 			predators.Remove(predator);
+		}
+	}
+
+	public void OnDelete() {
+		foreach (JawCell predator in predators) {
+			//Debug.Log("Removeing pray: " + this.creature.id + ", Cell: " + GetCellType() + " from " + predator);
+			predator.RemovePray(this); // make predator forget about me as a pray of his
+			//predators.Remove(predator);
 		}
 	}
 
@@ -68,20 +72,45 @@ public abstract class Cell : MonoBehaviour {
 			m_energy = value;
 		}
 	}
+
+
 	[HideInInspector]
-	public float effectProduction = 0f;
+	public float effectProductionInternal = 0f;
+
 	[HideInInspector]
 	public float effectConsumptionInternal = 0;
-	[HideInInspector]
-	virtual public float effectConsumptionExternal {
+
+	//How much am i stealing from other creatures
+	public float effectProductionExternal;
+
+	//How much damage are all predators inflicting on me?
+	//Check with all Jaw cells eating on me they know and keep up to date
+	public float effectConsumptionExternal {
 		get {
-			return predatorCount * GlobalSettings.instance.phenotype.jawCellEatEffect;
+			float loss = 0f;
+			foreach (JawCell predator in predators) {
+				loss += predator.GetPrayEatenEffect(this);
+			}
+			return loss;
 		}
 	}
 
 	public float effectConsumption {
 		get {
 			return effectConsumptionInternal + effectConsumptionExternal;
+		}
+	}
+
+	public float effectProduction {
+		get {
+			return effectProductionInternal + effectProductionExternal;
+		}
+	}
+
+	//predatore vs pray
+	public float effectExternal {
+		get {
+			return effectProductionExternal - effectConsumptionExternal;
 		}
 	}
 
@@ -198,6 +227,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
+	//Note: effecteConsumption external changes over time in the same manner for all cells but is integrated with different periods depending on cell
 	virtual public void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
 		energy = Mathf.Min(energy + effect * deltaTicks * Time.fixedDeltaTime, maxEnergy);
 		didUpdateThisFrame = 5; // Just for update visuals
@@ -326,14 +356,6 @@ public abstract class Cell : MonoBehaviour {
 		springList.Add(southWestSpring);
 
 		UpdateOutline(false);
-	}
-
-	public void OnDelete() {
-		foreach(JawCell predator in predators) {
-			//Debug.Log("Removeing pray: " + this.creature.id + ", Cell: " + GetCellType() + " from " + predator);
-			predator.mouth.RemovePray(this);
-			//predators.Remove(predator);
-		}
 	}
 
 	public void RemovePhysicsComponents() {
@@ -783,8 +805,11 @@ public abstract class Cell : MonoBehaviour {
 			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effectCreature) {
 				float effectValue = 0.5f + (creature.phenotype.effect / creature.phenotype.cellCount) * 0.5f;
 				filledCircleSprite.color = ColorScheme.instance.cellGradientCreatureEffect.Evaluate(effectValue);
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.predatorPray) {
+				float effectValue = 0.5f + effectExternal * 0.5f;
+				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.update) {
-				filledCircleSprite.color = didUpdateThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.gray;
+				filledCircleSprite.color = didUpdateThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
 			}
 		} else {
 			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());

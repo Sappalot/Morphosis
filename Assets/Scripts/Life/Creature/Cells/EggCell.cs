@@ -20,7 +20,7 @@ public class EggCell : Cell {
 
 	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.eggCellEffectCost;
-		effectProduction = 0f;
+		effectProductionInternal = 0f;
 
 		base.UpdateMetabolism(deltaTicks, worldTicks);
 
