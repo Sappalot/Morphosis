@@ -32,6 +32,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Toggle physicsUpdateMetabolism;
 	public Toggle physicsApplyWingForce;
 	public Toggle physicsTeleport;
+	public Toggle physicsJawRam;
+
 	public Slider timeSpeedSilder;
 	public Text physicsTimeSpeedText;
 	public float physicsUpdatesPerSecond;
@@ -49,6 +51,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		effect,
 		effectCreature,
 		predatorPray,
+		ramSpeed,
 		update,
 	}
 	[HideInInspector]

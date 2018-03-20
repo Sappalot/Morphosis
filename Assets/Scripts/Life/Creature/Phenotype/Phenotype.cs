@@ -53,6 +53,13 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	//debug
+	public void SetRamSpeedZero() {
+		foreach (Cell cell in cellList) {
+			cell.ramSpeed = 0f;
+		}
+	}
+
 	[HideInInspector]
 	public bool isAlive = true; // Are we going to use this approach?
 
@@ -84,7 +91,7 @@ public class Phenotype : MonoBehaviour {
 	[HideInInspector]
 	public bool hasDirtyPosition = false;
 
-	private Vector3 velocity = new Vector3();
+	private Vector2 velocity = new Vector2();
 	public float speed;
 	public List<Cell> cellList = new List<Cell>();
 	private Vector2 spawnPosition;
@@ -1206,11 +1213,11 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		// Creature
-		Vector3 velocitySum = new Vector3();
+		Vector2 velocitySum = new Vector3();
 		for (int index = 0; index < cellList.Count; index++) {
 			velocitySum += cellList[index].velocity;
 		}
-		velocity = (cellList.Count > 0f) ? velocity = velocitySum / cellList.Count : new Vector3();
+		velocity = (cellList.Count > 0f) ? velocity = velocitySum / cellList.Count : new Vector2();
 		speed = velocity.magnitude;
 
 		// Edges, let edge-wings apply proper forces to neighbouring cells

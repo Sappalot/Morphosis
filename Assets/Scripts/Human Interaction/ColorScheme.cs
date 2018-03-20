@@ -4,6 +4,7 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Gradient cellGradientEnergy;
 	public Gradient cellGradientEffect;
 	public Gradient cellGradientCreatureEffect;
+	public Gradient cellGradientRamSpeed;
 
 	public Color selectedButton;
 	public Color notSelectedButton;

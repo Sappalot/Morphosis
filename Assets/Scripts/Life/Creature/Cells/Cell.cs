@@ -107,6 +107,8 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
+	public float ramSpeed = 0f; // for debug rendering only
+
 	//predatore vs pray
 	public float effectExternal {
 		get {
@@ -312,9 +314,10 @@ public abstract class Cell : MonoBehaviour {
 		triangleSprite.flipX = (flip == FlipSideEnum.WhiteBlack);
 	}
 
-	public Vector3 velocity {
-		get { return this.GetComponent<Rigidbody2D>().velocity; }
-		private set { }
+	public Vector2 velocity {
+		get {
+			return GetComponent<Rigidbody2D>().velocity;
+		}
 	}
 
 	[HideInInspector]
@@ -807,7 +810,16 @@ public abstract class Cell : MonoBehaviour {
 				filledCircleSprite.color = ColorScheme.instance.cellGradientCreatureEffect.Evaluate(effectValue);
 			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.predatorPray) {
 				float effectValue = 0.5f + effectExternal * 0.5f;
-				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
+				if (effectExternal == 0f) {
+					filledCircleSprite.color = Color.blue;
+				} else if (GetCellType() == CellTypeEnum.Jaw && effectValue < 0f) {
+					filledCircleSprite.color = Color.white;
+				} else {
+					filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
+				}
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.ramSpeed) {
+				float ramSpeedValue = 0.5f + ramSpeed * 0.5f;
+				filledCircleSprite.color = ColorScheme.instance.cellGradientRamSpeed.Evaluate(ramSpeedValue);
 			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.update) {
 				filledCircleSprite.color = didUpdateThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
 			}

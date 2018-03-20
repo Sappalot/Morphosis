@@ -13,7 +13,7 @@ public class JawCell : Cell {
 
 	private void UpdatePrayMetabolism() {
 		foreach (Pray pray in prays.Values) {
-			pray.UpdateMetabolism();
+			pray.UpdateMetabolism(this);
 		}
 	}
 
@@ -39,10 +39,12 @@ public class JawCell : Cell {
 
 	//Todo: Take ram speed into account
 	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
-		UpdateEffect();
+		
 
 		//Hack release pray
-		//RemoveNullPrays();
+		RemoveNullPrays(); //We seem to be doing fine without this one, or do we?...
+
+		UpdateEffect();
 
 		base.UpdateMetabolism(deltaTicks, worldTicks);
 	}
@@ -82,7 +84,7 @@ public class JawCell : Cell {
 			PairPredatorPray(this, prayCell);
 		}
 
-		UpdateEffect();
+		//UpdateEffect();
 
 		PhenotypePanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
@@ -105,7 +107,7 @@ public class JawCell : Cell {
 			RemoveNullPrays();
 		}
 
-		UpdateEffect();
+		//UpdateEffect();
 
 		PhenotypePanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
@@ -120,6 +122,7 @@ public class JawCell : Cell {
 			}
 		}
 		foreach (Pray pray in remove) {
+			pray.cell.ramSpeed = 0f;
 			prays.Remove(pray.cell);
 		}
 	}
@@ -136,17 +139,21 @@ public class JawCell : Cell {
 	}
 
 	private void UnpairPredatorPray(JawCell predatorCell, Cell prayCell) {
+		prayCell.ramSpeed = 0f;
+		predatorCell.ramSpeed = 0f;
 		RemovePray(prayCell);
 		prayCell.RemovePredator(predatorCell);
 	}
 
 	public void RemovePray(Pray pray) {
 		if (prays.ContainsKey(pray.cell)) {
+			pray.cell.ramSpeed = 0f;
 			prays.Remove(pray.cell);
 		}
 	}
 
 	public void RemovePray(Cell prayCell) {
+		prayCell.ramSpeed = 0f;
 		if (prays.ContainsKey(prayCell)) {
 			prays.Remove(prayCell);
 		}

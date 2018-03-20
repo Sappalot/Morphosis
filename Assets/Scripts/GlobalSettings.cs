@@ -94,7 +94,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		//Jaw Cell
 		public float jawCellEffectCost = 0.2f; //W
 		public float jawCellEatEffect = 10.0f; //W
-		public float jawCellEatJawCellFactor = 0.2f; // How much we gain from eating others creature jaw (compared to normal cells, which are 1)
+		public float jawCellMutualEatKindness = 0.2f; // How much we gain from eating others creature jaw (compared to normal cells, which are 1)
 													 // The other creature are loosing more than i gain, and vice versa ==> Both are losing, energy is being lost (when fighting) 
 													 // A factor of 1 means 2 jaw cells are not affecting each other, zero sum
 
