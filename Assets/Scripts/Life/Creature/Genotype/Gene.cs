@@ -58,7 +58,7 @@ public class Gene {
 		float spread = 6f;
 		mut = Random.Range(0, gs.mutation.eggCellFertilizeThresholdLeave + gs.mutation.eggCellFertilizeThresholdRandom * strength);
 		if (mut < gs.mutation.eggCellFertilizeThresholdRandom * strength) {
-			eggCellFertilizeThreshold = Mathf.Clamp(eggCellFertilizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), 0, 99f); // J 
+			eggCellFertilizeThreshold = Mathf.Clamp(eggCellFertilizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellFertilizeThresholdMin, 99f); // J 
 		}
 	
 		mut = Random.Range(0, gs.mutation.eggCellCanFertilizeWhenAttachedLeave + gs.mutation.eggCellCanFertilizeWhenAttachedChange * strength);
