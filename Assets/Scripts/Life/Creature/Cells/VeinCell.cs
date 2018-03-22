@@ -5,18 +5,18 @@
 		springDamping = 11f;
 	}
 
-	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
+	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.veinCellEffectCost;
 		effectProductionInternal = 0f;
 
-		base.UpdateMetabolism(deltaTicks, worldTicks);
+		base.UpdateCellFunction(deltaTicks, worldTicks);
 	}
 
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Vein;
 	}
 
-	public override void UpdateSpringFrequenzy() {
+	public override void UpdateSpringFrequenzy() { 
 		base.UpdateSpringFrequenzy();
 
 		if (HasOwnNeighbourCell(CardinalEnum.north)) {

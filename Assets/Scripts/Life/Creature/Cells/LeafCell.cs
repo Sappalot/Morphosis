@@ -14,7 +14,7 @@ public class LeafCell : Cell {
 		springDamping = 11f;
 	}
 
-	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
+	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.leafCellEffectCost;
 
 		//random angles
@@ -101,7 +101,7 @@ public class LeafCell : Cell {
 		effectProductionInternal = lowPass / effectRecordCount;
 
 
-		base.UpdateMetabolism(deltaTicks, worldTicks);
+		base.UpdateCellFunction(deltaTicks, worldTicks);
 	}
 
 

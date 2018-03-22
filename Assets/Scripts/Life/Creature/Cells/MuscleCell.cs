@@ -8,14 +8,14 @@ public class MuscleCell : Cell {
 		springDamping = 11f;
 	}
 
-	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
+	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.muscleCellEffectCost;
 		effectProductionInternal = 0f;
 
 		UpdateRadius(worldTicks);
 		UpdateSpringLengths();
 
-		base.UpdateMetabolism(deltaTicks, worldTicks);
+		base.UpdateCellFunction(deltaTicks, worldTicks);
 	}
 
 	public override CellTypeEnum GetCellType() {

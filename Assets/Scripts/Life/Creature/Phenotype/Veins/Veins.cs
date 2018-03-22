@@ -24,7 +24,7 @@ public class Veins : MonoBehaviour {
 		}
 	}
 
-	public void UpdateMetabolism(int deltaTicks) {
+	public void UpdateEffectAndEnergy(int deltaTicks) {
 		foreach (Vein vein in veinList) {
 			vein.UpdateEnergyFluxEffect();
 		}

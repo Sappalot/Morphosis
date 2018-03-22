@@ -24,7 +24,7 @@ public class Pray {
 			prayEatenEffect = ramSpeedFactor * GlobalSettings.instance.phenotype.jawCellEatEffect;
 			predatorEatEffect = ramSpeedFactor * GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellMutualEatKindness;
 		} else if (cell.GetCellType() == CellTypeEnum.Shell) {
-			prayEatenEffect = predatorEatEffect = ramSpeedFactor * GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellEatShellSellFactor;
+			prayEatenEffect = predatorEatEffect = ramSpeedFactor * GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.shellCellWeaknessFactor;
 		} else {
 			prayEatenEffect = predatorEatEffect = ramSpeedFactor * GlobalSettings.instance.phenotype.jawCellEatEffect;
 		}

@@ -1145,6 +1145,8 @@ public class Phenotype : MonoBehaviour {
 	private int shellCellTick;
 	private int veinCellTick;
 
+	private int cellEnergyTick;
+
 	private int veinTick;
 
 	//time ^
@@ -1195,6 +1197,11 @@ public class Phenotype : MonoBehaviour {
 			veinCellTick = 0;
 		}
 
+		cellEnergyTick++;
+		if (cellEnergyTick >= GlobalSettings.instance.quality.cellEnergyTickPeriod) {
+			cellEnergyTick = 0;
+		}
+
 		veinTick++;
 		if (veinTick >= GlobalSettings.instance.quality.veinTickPeriod) {
 			veinTick = 0;
@@ -1212,7 +1219,7 @@ public class Phenotype : MonoBehaviour {
 			kickTickStamp = 0;
 		}
 
-		// Creature
+		// Whole bodey
 		Vector2 velocitySum = new Vector3();
 		for (int index = 0; index < cellList.Count; index++) {
 			velocitySum += cellList[index].velocity;
@@ -1224,10 +1231,7 @@ public class Phenotype : MonoBehaviour {
 		edges.UpdatePhysics(velocity, creature);
 
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdatePhysics();
-			//if (leafTick == 0 && GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
-			//	cellList[index].UpdateMetabolism(leafTickPeriod, worldTick);
-			//}
+			cellList[index].UpdatePhysics(); //rotation
 		}
 
 		//Metabolism
@@ -1235,26 +1239,37 @@ public class Phenotype : MonoBehaviour {
 			for (int index = 0; index < cellList.Count; index++) {
 				Cell cell = cellList[index];
 				if (eggCellTick == 0           && cell.GetCellType() == CellTypeEnum.Egg) {
-					cell.UpdateMetabolism(GlobalSettings.instance.quality.eggCellTickPeriod, worldTick);
-				} else if (fungalCellTick == 0 && cell.GetCellType() == CellTypeEnum.Fungal) {
-					cell.UpdateMetabolism(GlobalSettings.instance.quality.fungalCellTickPeriod, worldTick);
-				} else if (jawCellTick == 0    && cell.GetCellType() == CellTypeEnum.Jaw) {
-					cell.UpdateMetabolism(GlobalSettings.instance.quality.jawCellTickPeriod, worldTick);
-				} else if (leafCellTick == 0   && cell.GetCellType() == CellTypeEnum.Leaf) {
-					cell.UpdateMetabolism(GlobalSettings.instance.quality.leafCellTickPeriod, worldTick);
-				} else if (muscleCellTick == 0 && cell.GetCellType() == CellTypeEnum.Muscle) {
-					cell.UpdateMetabolism(GlobalSettings.instance.quality.muscleCellTickPeriod, worldTick);
-				} else if (rootCellTick == 0   && cell.GetCellType() == CellTypeEnum.Root) {
-					cell.UpdateMetabolism(GlobalSettings.instance.quality.rootCellTickPeriod, worldTick);
-				} else if (shellCellTick == 0  && cell.GetCellType() == CellTypeEnum.Shell) {
-					cell.UpdateMetabolism(GlobalSettings.instance.quality.shellCellTickPeriod, worldTick);
-				} else if (veinCellTick == 0   && cell.GetCellType() == CellTypeEnum.Vein) {
-					cell.UpdateMetabolism(GlobalSettings.instance.quality.veinCellTickPeriod, worldTick);
+					cell.UpdateCellFunction(GlobalSettings.instance.quality.eggCellTickPeriod, worldTick);
+				}
+				else if (fungalCellTick == 0 && cell.GetCellType() == CellTypeEnum.Fungal) {
+					cell.UpdateCellFunction(GlobalSettings.instance.quality.fungalCellTickPeriod, worldTick);
+				}
+				else if (jawCellTick == 0    && cell.GetCellType() == CellTypeEnum.Jaw) {
+					cell.UpdateCellFunction(GlobalSettings.instance.quality.jawCellTickPeriod, worldTick);
+				}
+				else if (leafCellTick == 0   && cell.GetCellType() == CellTypeEnum.Leaf) {
+					cell.UpdateCellFunction(GlobalSettings.instance.quality.leafCellTickPeriod, worldTick);
+				}
+				else if (muscleCellTick == 0 && cell.GetCellType() == CellTypeEnum.Muscle) {
+					cell.UpdateCellFunction(GlobalSettings.instance.quality.muscleCellTickPeriod, worldTick);
+				}
+				else if (rootCellTick == 0   && cell.GetCellType() == CellTypeEnum.Root) {
+					cell.UpdateCellFunction(GlobalSettings.instance.quality.rootCellTickPeriod, worldTick);
+				}
+				else if (shellCellTick == 0 && cell.GetCellType() == CellTypeEnum.Shell) {
+					cell.UpdateCellFunction(GlobalSettings.instance.quality.shellCellTickPeriod, worldTick);
+				}
+				else if (veinCellTick == 0 && cell.GetCellType() == CellTypeEnum.Vein) {
+					cell.UpdateCellFunction(GlobalSettings.instance.quality.veinCellTickPeriod, worldTick);
+				}
+
+				if (cellEnergyTick == 0) {
+					cell.UpdateEnergy(GlobalSettings.instance.quality.cellEnergyTickPeriod, worldTick);
 				}
 			}
 
 			if (veinTick == 0) {
-				veins.UpdateMetabolism(GlobalSettings.instance.quality.veinTickPeriod);
+				veins.UpdateEffectAndEnergy(GlobalSettings.instance.quality.veinTickPeriod);
 			}
 		}
 	}

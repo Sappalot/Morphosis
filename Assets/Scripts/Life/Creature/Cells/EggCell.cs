@@ -7,6 +7,17 @@ public class EggCell : Cell {
 		m_shouldFertilize = -1;
 	}
 
+	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
+		effectProductionInternal = 0f;
+		effectConsumptionInternal = GlobalSettings.instance.phenotype.eggCellEffectCost;
+
+		if (energy > eggCellFertilizeThreshold && (eggCellCanFertilizeWhenAttached || !creature.phenotype.isAttachedToMother) && shouldFertilize == -1) {
+			shouldFertilize = Random.Range(0, 60);
+		}
+
+		base.UpdateCellFunction(deltaTicks, worldTicks);
+	}
+
 	[HideInInspector]
 	private int m_shouldFertilize;
 	public int shouldFertilize {
@@ -15,17 +26,6 @@ public class EggCell : Cell {
 		}
 		set {
 			m_shouldFertilize = value;
-		}
-	}
-
-	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
-		effectConsumptionInternal = GlobalSettings.instance.phenotype.eggCellEffectCost;
-		effectProductionInternal = 0f;
-
-		base.UpdateMetabolism(deltaTicks, worldTicks);
-
-		if (energy > eggCellFertilizeThreshold && (eggCellCanFertilizeWhenAttached || !creature.phenotype.isAttachedToMother) && shouldFertilize == -1) {
-			shouldFertilize = Random.Range(0, 60);
 		}
 	}
 

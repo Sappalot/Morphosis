@@ -21,7 +21,9 @@ public abstract class Cell : MonoBehaviour {
 	//[HideInInspector]
 	private List<JawCell> predators = new List<JawCell>(); //Who is eating on me
 
-	private int didUpdateThisFrame = 0;
+	private int didUpdateFunctionThisFrame = 0;
+	private int didUpdateEnergyThisFrame = 0;
+
 	// Egg only
 	public float eggCellFertilizeThreshold; // J
 	public bool eggCellCanFertilizeWhenAttached;
@@ -157,7 +159,6 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-
 	public SpriteRenderer cellSelectedSprite; //transparent
 	public SpriteRenderer triangleSprite;
 	public SpriteRenderer openCircleSprite; //cell type colour
@@ -230,9 +231,13 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	//Note: effecteConsumption external changes over time in the same manner for all cells but is integrated with different periods depending on cell
-	virtual public void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
+	public void UpdateEnergy(int deltaTicks, ulong worldTicks) {
 		energy = Mathf.Min(energy + effect * deltaTicks * Time.fixedDeltaTime, maxEnergy);
-		didUpdateThisFrame = 5; // Just for update visuals
+		didUpdateEnergyThisFrame = 1;
+	}
+
+	virtual public void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
+		didUpdateFunctionThisFrame = 1; // Just for update visuals
 	}
 
 	virtual public void UpdateRadius(ulong fixedTime) { }
@@ -821,12 +826,13 @@ public abstract class Cell : MonoBehaviour {
 				float ramSpeedValue = 0.5f + ramSpeed * 0.5f;
 				filledCircleSprite.color = ColorScheme.instance.cellGradientRamSpeed.Evaluate(ramSpeedValue);
 			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.update) {
-				filledCircleSprite.color = didUpdateThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
+				filledCircleSprite.color = didUpdateFunctionThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
+				//filledCircleSprite.color = didUpdateEnergyThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
 			}
 		} else {
 			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
 		}
-		didUpdateThisFrame --;
+		
 	}
 
 	public void UpdatePhysics() {
@@ -847,6 +853,9 @@ public abstract class Cell : MonoBehaviour {
 		//if (isTick && GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
 		//	UpdateMetabolism(deltaTickTime);
 		//}
+
+		didUpdateFunctionThisFrame--; //  Just for visuals
+		didUpdateEnergyThisFrame--; //  Just for visuals
 	}
 
 	// ^ Update ^

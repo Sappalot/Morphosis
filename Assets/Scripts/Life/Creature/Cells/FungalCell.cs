@@ -5,10 +5,10 @@
 		springDamping = 11f;
 	}
 
-	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
+	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.fungalCellEffectCost;
 		effectProductionInternal = 0f;
-		base.UpdateMetabolism(deltaTicks, worldTicks);
+		base.UpdateCellFunction(deltaTicks, worldTicks);
 	}
 
 	public override CellTypeEnum GetCellType() {

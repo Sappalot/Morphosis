@@ -11,10 +11,18 @@ public class JawCell : Cell {
 		springDamping = 11f;
 	}
 
-	private void UpdatePrayMetabolism() {
+	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
+		effectConsumptionInternal = GlobalSettings.instance.phenotype.jawCellEffectCost;
+
+		//Hack release pray
+		RemoveNullPrays(); //We need this one not to run into null refs once in a blue moon
+		
 		foreach (Pray pray in prays.Values) {
 			pray.UpdateMetabolism(this);
 		}
+		effectProductionExternal = eatEffect;
+
+		base.UpdateCellFunction(deltaTicks, worldTicks);
 	}
 
 	private float eatEffect {
@@ -29,24 +37,6 @@ public class JawCell : Cell {
 
 	public float GetPrayEatenEffect(Cell prayCell) {
 		return prays[prayCell].prayEatenEffect;
-	}
-
-	private void UpdateEffect() {
-		effectConsumptionInternal = GlobalSettings.instance.phenotype.jawCellEffectCost;
-		UpdatePrayMetabolism();
-		effectProductionExternal = eatEffect;
-	}
-
-	//Todo: Take ram speed into account
-	public override void UpdateMetabolism(int deltaTicks, ulong worldTicks) {
-		
-
-		//Hack release pray
-		RemoveNullPrays(); //We seem to be doing fine without this one, or do we?...
-
-		UpdateEffect();
-
-		base.UpdateMetabolism(deltaTicks, worldTicks);
 	}
 
 	public int prayCount {

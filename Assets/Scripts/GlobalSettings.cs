@@ -113,7 +113,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		//Shell Cell
 		public float shellCellEffectCost = 0.1f; //W
 												 //           shellCellEffect =                    0.0 W
-		public float jawCellEatShellSellFactor = 0.02f; // 1=> as easy as other cells, 0 => inpossible to eat
+		public float shellCellWeaknessFactor = 0.02f; // 1=> as easy as other cells, 0 => inpossible to eat
 
 		//VeinCell
 		public float veinCellEffectCost = 0.1f; //W
@@ -153,6 +153,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public int shellCellTickPeriod =   50;
 		public int veinCellTickPeriod =    50;
 
+		public int cellEnergyTickPeriod = 5;
 		public int veinTickPeriod = 5;
 		public int growTickPeriod = 30; // Detatch attempt has same period as grow
 
