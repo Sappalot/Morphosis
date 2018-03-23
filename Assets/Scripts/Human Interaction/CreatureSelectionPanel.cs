@@ -309,10 +309,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-			Creature mergeling = Life.instance.SpawnCreatureMergling(genomes, Vector2.zero, 90f);
+			Creature mergeling = Life.instance.SpawnCreatureMergling(genomes, Vector2.zero, 90f, World.instance.worldTicks);
 			moveCreatures.Add(mergeling);
 		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-			Creature mergeling = Life.instance.SpawnCreatureMergling(genomes, Vector2.zero, 90f);
+			Creature mergeling = Life.instance.SpawnCreatureMergling(genomes, Vector2.zero, 90f, World.instance.worldTicks);
 			moveCreatures.Add(mergeling);
 		}
 
@@ -335,7 +335,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		Dictionary<string, string> originalToCopy = new Dictionary<string, string>();
 		Dictionary<string, string> copyToOriginal = new Dictionary<string, string>();
 		foreach (Creature originalCreature in originalCreatures) {
-			Creature copy = Life.instance.SpawnCreatureCopy(originalCreature); // will instantiate souls as well
+			Creature copy = Life.instance.SpawnCreatureCopy(originalCreature, World.instance.worldTicks); // will instantiate souls as well
 			moveCreatures.Add(copy);
 			copies.Add(copy);
 			originalToCopy.Add(originalCreature.id, copy.id);

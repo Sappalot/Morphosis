@@ -93,6 +93,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		//Jaw Cell
 		public float jawCellEffectCost = 0.2f; //W
 		public float jawCellEatEffect = 10.0f; //W
+		public int jawCellEatLinger = 5; // jawCellEatLinger * jawCellTickPeriod is the time after jaw cell has left pray, that it will still chew on it
 		public float jawCellMutualEatKindness = 0.2f; // How much we gain from eating others creature jaw (compared to normal cells, which are 1)
 													 // The other creature are loosing more than i gain, and vice versa ==> Both are losing, energy is being lost (when fighting) 
 													 // A factor of 1 means 2 jaw cells are not affecting each other, zero sum
@@ -128,7 +129,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float cellBuildCost = 10f; //Energy Cost to build cell, J (Newly built cell will have this energy at start of its life)
 
 		// Rebuild
-		public float cellRebuildCooldown = 30f; //s
+		public float cellRebuildCooldown = 40f; //s
 
 		//Detatch
 		public float detatchmentKick = 0.05f; //N

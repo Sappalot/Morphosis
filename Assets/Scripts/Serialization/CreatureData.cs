@@ -6,6 +6,9 @@ public class CreatureData {
 	public string id = "no id";
 	public string nickname = "no name";
 
+	public ulong bornTick;
+	public ulong deadTick;
+
 	public GenotypeData genotypeData = new GenotypeData();
 	public PhenotypeData phenotypeData = new PhenotypeData();
 

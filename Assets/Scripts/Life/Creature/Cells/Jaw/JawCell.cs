@@ -6,20 +6,56 @@ public class JawCell : Cell {
 	[HideInInspector]
 	public Dictionary<Cell, Pray> prays = new Dictionary<Cell, Pray>(); //Who am i eating on? Me gain? other lose?
 
+	private List<Cell> praysToAdd = new List<Cell>();
+	private Dictionary<Cell, PredatorPrayPair> praysToRemove = new Dictionary<Cell, PredatorPrayPair>();
+
+	private bool deleteFlagged;
+
 	public JawCell() : base() {
 		springFrequenzy = 5f;
 		springDamping = 11f;
 	}
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
+		if (deleteFlagged) {
+			return;
+		}
+
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.jawCellEffectCost;
 
 		//Hack release pray
 		RemoveNullPrays(); //We need this one not to run into null refs once in a blue moon
-		
-		foreach (Pray pray in prays.Values) {
-			pray.UpdateMetabolism(this);
+
+		//Add prays
+		foreach (Cell addMe in praysToAdd) {
+			if (addMe != null) {
+				PairPredatorPray(this, addMe);
+			}
 		}
+		praysToAdd.Clear();
+
+		//Remove prays (or at leas make them closer to being removed)
+		List<Cell> toRemoveFromRemoveList = new List<Cell>();
+		foreach (KeyValuePair<Cell, PredatorPrayPair> removeMe in praysToRemove) {
+			if (removeMe.Key != null) {
+				if (removeMe.Value.linger == 0) {
+					UnpairPredatorPray(this, removeMe.Key);
+					toRemoveFromRemoveList.Add(removeMe.Key);
+				} else {
+					removeMe.Value.linger--;
+				}
+			}
+		}
+		foreach (Cell  remove in toRemoveFromRemoveList) {
+			praysToRemove.Remove(remove);
+		}
+		//praysToRemove.Clear();
+
+		JawCellPanel.instance.MakeDirty();
+
+		//foreach (Pray pray in prays.Values) {
+		//	pray.UpdateMetabolism(this);
+		//}
 		effectProductionExternal = eatEffect;
 
 		base.UpdateCellFunction(deltaTicks, worldTicks);
@@ -70,15 +106,19 @@ public class JawCell : Cell {
 					return;
 				}
 			}
-
-			PairPredatorPray(this, prayCell);
+			
+			//Add this one to list of prays to ad at update
+			if (!praysToAdd.Contains(prayCell)) {
+				if (praysToRemove.ContainsKey(prayCell)) {
+					praysToRemove.Remove(prayCell);
+				}
+				praysToAdd.Add(prayCell);
+			}
 		}
 
-		//UpdateEffect();
-
-		PhenotypePanel.instance.MakeDirty();
-		CellPanel.instance.MakeDirty();
-		JawCellPanel.instance.MakeDirty();
+		//PhenotypePanel.instance.MakeDirty();
+		//CellPanel.instance.MakeDirty();
+		//JawCellPanel.instance.MakeDirty();
 	}
 
 	//Called from cell mouth
@@ -86,22 +126,24 @@ public class JawCell : Cell {
 		if (other.gameObject.layer == 2) { //dont trigger other's mouth colliders, only on cells
 			return;
 		}
-		//Life.instance.UpdateSoulReferences();
 
 		Cell prayCell = other.GetComponent<Cell>();
 
 		if (prayCell != null) {
-			UnpairPredatorPray(this, prayCell);
+			if (!praysToRemove.ContainsKey(prayCell)) {
+				PredatorPrayPair pair = new PredatorPrayPair(prayCell);
+				pair.linger = GlobalSettings.instance.phenotype.jawCellEatLinger;
+				praysToRemove.Add(prayCell, pair);
+			}			
+			//UnpairPredatorPray(this, prayCell);
 		} else {
 			//Debug.Log("Ooops!");
 			RemoveNullPrays();
 		}
 
-		//UpdateEffect();
-
-		PhenotypePanel.instance.MakeDirty();
-		CellPanel.instance.MakeDirty();
-		JawCellPanel.instance.MakeDirty();
+		//PhenotypePanel.instance.MakeDirty();
+		//CellPanel.instance.MakeDirty();
+		//JawCellPanel.instance.MakeDirty();
 	}
 
 	public void RemoveNullPrays() {
@@ -124,8 +166,10 @@ public class JawCell : Cell {
 	}
 
 	private void PairPredatorPray(JawCell predatorCell, Cell prayCell) {
-		AddPray(new Pray(prayCell)); //TODO update effect
+		Pray p = new Pray(prayCell);
+		AddPray(p); //TODO update effect
 		prayCell.AddPredator(predatorCell);
+		p.UpdateMetabolism(this);
 	}
 
 	private void UnpairPredatorPray(JawCell predatorCell, Cell prayCell) {
@@ -135,18 +179,21 @@ public class JawCell : Cell {
 		prayCell.RemovePredator(predatorCell);
 	}
 
-	public void RemovePray(Pray pray) {
-		if (prays.ContainsKey(pray.cell)) {
-			pray.cell.ramSpeed = 0f;
-			prays.Remove(pray.cell);
-		}
-	}
-
 	public void RemovePray(Cell prayCell) {
 		prayCell.ramSpeed = 0f;
 		if (prays.ContainsKey(prayCell)) {
 			prays.Remove(prayCell);
 		}
+	}
+
+	public override void OnDelete() {
+		deleteFlagged = true;
+
+		//Free all prays from me since i excint no more
+		foreach (Cell prayCell in prays.Keys) {
+			prayCell.RemovePredator(this);
+		}
+		base.OnDelete();
 	}
 
 	//--------

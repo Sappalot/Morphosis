@@ -13,9 +13,9 @@ public class Pray {
 
 		float ramSpeedFactor = 1f;
 
-		if (GlobalPanel.instance.physicsTeleport.isOn) {
+		if (GlobalPanel.instance.physicsJawRam.isOn) {
 			float ramSpeed = GetRamFactor(predatorCell, cell);
-			cell.ramSpeed = 0f;
+			//cell.ramSpeed = 0f;
 			predatorCell.ramSpeed = ramSpeed;
 			ramSpeedFactor = 0.2f + Mathf.Max(0, ramSpeed * 1.5f);
 		}

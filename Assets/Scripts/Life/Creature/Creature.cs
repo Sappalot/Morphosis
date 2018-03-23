@@ -10,6 +10,14 @@ public class Creature : MonoBehaviour {
 	public string id;
 	public string nickname;
 
+	//time
+	public ulong bornTick;
+	public ulong deadTick;
+
+	public ulong GetAgeTicks(ulong worldTicks) {
+		return worldTicks - bornTick;
+	}
+
 	//debug
 	public SpriteRenderer creturePosition;
 	public SpriteRenderer phenotypePosition;
@@ -227,8 +235,8 @@ public class Creature : MonoBehaviour {
 		return genotype.IsPartlyInside(area);
 	}
 
-	public void GenerateEmbryo(Gene[] motherGenome, Vector3 position, float heading) {
-		genotype.GenomeSet(motherGenome);
+	public void GenerateEmbryo(Gene[] genome, Vector3 position, float heading) {
+		genotype.GenomeSet(genome);
 		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading);
 		phenotype.InitiateEmbryo(this, position, heading);
 		isDirtyGraphics = true;
@@ -445,6 +453,9 @@ public class Creature : MonoBehaviour {
 		//me
 		creatureData.id = id;
 		creatureData.nickname = nickname;
+
+		creatureData.bornTick = bornTick;
+		creatureData.deadTick = deadTick;
 		//todo: spieces
 
 		creatureData.genotypeData = genotype.UpdateData();
@@ -460,6 +471,9 @@ public class Creature : MonoBehaviour {
 		//me
 		nickname = creatureData.nickname;
 		id = creatureData.id;
+
+		bornTick = creatureData.bornTick;
+		deadTick = creatureData.deadTick;
 
 		genotype.ApplyData(creatureData.genotypeData);
 		Vector2 position = creatureData.genotypeData.originPosition;

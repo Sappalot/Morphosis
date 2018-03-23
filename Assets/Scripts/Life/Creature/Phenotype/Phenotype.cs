@@ -100,14 +100,6 @@ public class Phenotype : MonoBehaviour {
 
 	private bool isDirty = true;
 
-	//time
-	private ulong bornTick;
-	private ulong deadTick;
-
-	public ulong GetAgeTicks(ulong worldTicks) {
-		return worldTicks - bornTick;
-	}
-
 	//Grown cells
 	public int cellCount {
 		get {
@@ -148,7 +140,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public void InitiateEmbryo(Creature creature, Vector2 position, float heading) {
-		Setup(creature, position, heading);
+		Setup(position, heading);
 		NoGrowthReason reason;
 		TryGrow(creature, true, 1, true, false, 0, true, out reason);
 		cellsDiffersFromGeneCells = false;
@@ -159,7 +151,7 @@ public class Phenotype : MonoBehaviour {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Creature UpdateCellsFromGeneCells");
 			}
-			Setup(creature, position, heading);
+			Setup(position, heading);
 			TryGrowFully(creature, true);
 			cellsDiffersFromGeneCells = false;
 			return true;
@@ -168,7 +160,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	//SpawnPosition is the position where the center of the origin cell will appear in word space
-	private void Setup(Creature creature, Vector2 spawnPosition, float spawnHeading) {
+	private void Setup(Vector2 spawnPosition, float spawnHeading) {
 		timeOffset = 0f; // Random.Range(0f, 7f); //TODO: Remove
 
 		Clear();
@@ -1075,7 +1067,7 @@ public class Phenotype : MonoBehaviour {
 	public void ApplyData(PhenotypeData phenotypeData, Creature creature) {
 		timeOffset = phenotypeData.timeOffset;
 
-		Setup(creature, phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
+		Setup(phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
 		for (int index = 0; index < phenotypeData.cellDataList.Count; index++) {
 			CellData cellData = phenotypeData.cellDataList[index];
 			Cell cell = InstantiateCell(creature.genotype.genome[cellData.geneIndex].type, cellData.mapPosition);

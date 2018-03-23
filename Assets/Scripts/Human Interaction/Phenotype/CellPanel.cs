@@ -7,6 +7,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public Text cellEffect;
 	public Text cellNeighbours;
 	public Text connectionGroupCount;
+	public Text predators; //number of Jaw cells eating on me
 
 	public EggCellPanel eggCellPanel;
 	public JawCellPanel jawCellPanel;
@@ -74,6 +75,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				cellEffect.text = "Effect:";
 				cellNeighbours.text = "Neighbours:";
 				connectionGroupCount.text = "Con. Groups: ";
+				predators.text = "Eating on me:";
 
 				isDirty = false;
 				return;
@@ -89,6 +91,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			
 			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnectedRelatives) + " + ("  + selectedCell.neighbourCountConnectedRelatives + ")";
 			connectionGroupCount.text = "Con. Groups: " + selectedCell.groups;
+			predators.text = "Eating on me: " + selectedCell.predatorCount;
 			if (selectedCell is EggCell) {
 				eggCellPanel.gameObject.SetActive(true);
 			} else if (selectedCell is JawCell) {

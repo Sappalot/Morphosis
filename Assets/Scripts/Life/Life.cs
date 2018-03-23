@@ -164,6 +164,7 @@ public class Life : MonoSingleton<Life> {
 
 		// Spawn child at egg cell location
 		Creature child = InstantiateCreature(); // Will create soul as well
+		child.bornTick = worldTicks; //The time of birth is the time when the egg is fertilized
 
 		// Let there be evolution, and there was evolution
 		//child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
@@ -277,28 +278,32 @@ public class Life : MonoSingleton<Life> {
 		return insideList;
 	}
 
-	public Creature SpawnCreatureJellyfish(Vector2 position, float heading) {
+	public Creature SpawnCreatureJellyfish(Vector2 position, float heading, ulong bornTick) {
 		Creature creature = InstantiateCreature();
+		creature.bornTick = bornTick;
 		creature.GenerateJellyfish(position, heading);
 		return creature;
 	}
 
-	public Creature SpawnCreatureSimple(Vector3 position, float heading) {
+	public Creature SpawnCreatureSimple(Vector3 position, float heading, ulong bornTick) {
 		Creature creature = InstantiateCreature();
+		creature.bornTick = bornTick;
 		creature.GenerateSimple(position, heading);
 
 		return creature;
 	}
 
-	public Creature SpawnCreatureFreak(Vector3 position, float heading) {
+	public Creature SpawnCreatureFreak(Vector3 position, float heading, ulong bornTick) {
 		Creature creature = InstantiateCreature();
+		creature.bornTick = bornTick;
 		creature.GenerateFreak(position, heading);
 
 		return creature;
 	}
 
-	public Creature SpawnCreatureMergling(List<Gene[]> genomes, Vector3 position, float heading) {
+	public Creature SpawnCreatureMergling(List<Gene[]> genomes, Vector3 position, float heading, ulong bornTick) {
 		Creature creature = InstantiateCreature();
+		creature.bornTick = bornTick;
 		creature.GenerateMergling(genomes, position, heading);
 
 		creature.hasPhenotypeCollider = false;
@@ -306,7 +311,7 @@ public class Life : MonoSingleton<Life> {
 		return creature;
 	}
 
-	public Creature SpawnCreatureCopy(Creature original) {
+	public Creature SpawnCreatureCopy(Creature original, ulong bornTick) {
 		Creature clone = InstantiateCreature();
 		string id = clone.id;
 		clone.Clone(original);
@@ -315,6 +320,8 @@ public class Life : MonoSingleton<Life> {
 		clone.hasPhenotypeCollider = false;
 		clone.hasGenotypeCollider = false;
 		clone.soul = null;
+
+		clone.bornTick = bornTick;
 
 		return clone;
 	}
@@ -464,6 +471,10 @@ public class Life : MonoSingleton<Life> {
 	public void UpdatePhysics(ulong worldTicks) {
 		//kill of weak cells / creatures
 
+		for (int index = 0; index < creatureList.Count; index++) {
+			creatureList[index].UpdatePhysics(worldTicks);
+		}
+
 		killCreatureList.Clear();
 
 		//TODO: dont do it every tick
@@ -481,9 +492,7 @@ public class Life : MonoSingleton<Life> {
 		//	creatureList[index].phenotype.SetRamSpeedZero();
 		//}
 
-		for (int index = 0; index < creatureList.Count; index++) {
-			creatureList[index].UpdatePhysics(worldTicks);
-		}
+
 
 		phenotypePanelTicks++;
 		if (phenotypePanelTicks >= GlobalSettings.instance.quality.phenotypePanelTickPeriod) {

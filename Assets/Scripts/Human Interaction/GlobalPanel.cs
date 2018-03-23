@@ -51,6 +51,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		effect,
 		effectCreature,
 		predatorPray,
+		typeAndPredatorPray,
 		ramSpeed,
 		update,
 	}
