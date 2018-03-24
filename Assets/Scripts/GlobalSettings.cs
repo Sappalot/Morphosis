@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
@@ -101,7 +102,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		//Leaf Cell
 		public float leafCellEffectCost = 1.0f; //W
 		public float leafCellSunMaxEffect = 4.0f; //W
-		public float leafCellSunMaxRange = 50.0f; //m
+		public float leafCellSunMaxRange = 25.0f; //m
+		public AnimationCurve leafCellSunLossFactorOwnCell;// Joules lost / m own body penetrated : at phenotype size
+		public AnimationCurve leafCellSunLossFactorOtherCell; // Joules lost / m others body penetrated : at phenotype size
 
 		//Muscle Cell
 		public float muscleCellEffectCost = 0.4f; //W

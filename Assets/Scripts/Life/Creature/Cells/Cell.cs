@@ -823,10 +823,19 @@ public abstract class Cell : MonoBehaviour {
 				float effectValue = 0.5f + (creature.phenotype.effect / creature.phenotype.cellCount) * 0.5f;
 				filledCircleSprite.color = ColorScheme.instance.cellGradientCreatureEffect.Evaluate(effectValue);
 			}
+			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.leafExposure) {
+				if (GetCellType() == CellTypeEnum.Leaf) {
+					float effectValue = effectProductionInternal / GlobalSettings.instance.phenotype.leafCellSunMaxEffect;
+					filledCircleSprite.color = ColorScheme.instance.cellGradientLeafExposure.Evaluate(effectValue);
+				} else {
+					filledCircleSprite.color = Color.blue;
+				}
+			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.childCountCreature) {
 				float value = 0.05f + creature.childSoulCount * 0.1f;
 				filledCircleSprite.color = ColorScheme.instance.cellCreatureChildCount.Evaluate(value);
-			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.predatorPray) {
+			}
+			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.predatorPray) {
 				float effectValue = 0.5f + effectExternal * 0.02f;
 				if (effectExternal == 0f) {
 					filledCircleSprite.color = Color.blue;
