@@ -139,6 +139,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		//Teleport
 		public float telefragDamage = 1f; //damage on obstracting creature in J/s
+
+		//Sterile
+		public float maxAgeAsChildless = 3600; //s
 	}
 	public Phenotype phenotype;
 
@@ -157,6 +160,8 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public int cellEnergyTickPeriod = 5;
 		public int veinTickPeriod = 5;
 		public int growTickPeriod = 30; // Detatch attempt has same period as grow
+
+		public int killSterileCreaturesTickPeriod = 300;
 
 		// Terrain
 		public int portalTeleportPeriod = 10;

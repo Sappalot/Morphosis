@@ -14,6 +14,8 @@ public class Life : MonoSingleton<Life> {
 	private List<Soul> soulListUpdated = new List<Soul>();
 	public int soulsLostCount { get; private set; }
 	public int soulsDeadButUsedCount { get; private set; }
+	[HideInInspector]
+	public int sterileKilledCount;
 
 	public int soulUpdatedCount {
 		get {
@@ -382,6 +384,7 @@ public class Life : MonoSingleton<Life> {
 		//Creatures
 		lifeData.creatureList.Clear();
 		lifeData.creatureDictionary.Clear();
+		lifeData.sterileKilledCount = sterileKilledCount;
 
 		for (int index = 0; index < creatureList.Count; index++) {
 			Creature creature = creatureList[index];
@@ -417,6 +420,7 @@ public class Life : MonoSingleton<Life> {
 			Creature creature = InstantiateCreature(creatureData.id); // Creatres soul as
 			creature.ApplyData(creatureData);
 		}
+		sterileKilledCount = lifeData.sterileKilledCount;
 
 		// Create all Souls
 		soulDictionary.Clear();
@@ -463,6 +467,7 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	private int phenotypePanelTicks;
+	private int killSterileCreaturesTicks;
 
 	// Phenotype only, updated from FixedUpdate
 	// Everything that needs to be updated as the biological clock is ticking, wings, cell tasks, energy
@@ -470,6 +475,19 @@ public class Life : MonoSingleton<Life> {
 
 	public void UpdatePhysics(ulong worldTicks) {
 		//kill of weak cells / creatures
+
+		//Ticks 
+		phenotypePanelTicks++;
+		if (phenotypePanelTicks >= GlobalSettings.instance.quality.phenotypePanelTickPeriod) {
+			phenotypePanelTicks = 0;
+		}
+
+		killSterileCreaturesTicks++;
+		if (killSterileCreaturesTicks >= GlobalSettings.instance.quality.killSterileCreaturesTickPeriod) {
+			killSterileCreaturesTicks = 0;
+		}
+
+		// ^ Ticks ^
 
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdatePhysics(worldTicks);
@@ -483,28 +501,26 @@ public class Life : MonoSingleton<Life> {
 				killCreatureList.Add(creatureList[index]);
 			}
 		}
+		
+		if (killSterileCreaturesTicks == 0) {
+			for (int index = 0; index < creatureList.Count; index++) {
+				if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAgeAsChildless && creatureList[index].childSoulCount == 0) {
+					killCreatureList.Add(creatureList[index]);
+					sterileKilledCount++;
+				}
+			}
+		}
+
 		for (int index = 0; index < killCreatureList.Count; index++) {
 			KillCreatureSafe(killCreatureList[index]);
 		}
-
-		//debug
-		//for (int index = 0; index < creatureList.Count; index++) {
-		//	creatureList[index].phenotype.SetRamSpeedZero();
-		//}
-
-
-
-		phenotypePanelTicks++;
-		if (phenotypePanelTicks >= GlobalSettings.instance.quality.phenotypePanelTickPeriod) {
+		
+		if (phenotypePanelTicks == 0) {
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
 				PhenotypePanel.instance.MakeDirty();
 				CellPanel.instance.MakeDirty();
-				//Debug.Log("Updating panels");
 			}
-
-			phenotypePanelTicks = 0;
 		}
-
 	}
 
 	// ^ Update ^

@@ -15,6 +15,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Text soulsDeadButUsedCount;
 	public Text soulsLostCount;
 	public Text runnersKilledCount;
+	public Text sterileKilledCount;
 
 	private int frameCount;
 	private float timeCount;
@@ -93,7 +94,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			soulsDeadButUsedCount.text = "Dead & used: "   + Life.instance.soulsDeadButUsedCount;
 			soulsLostCount.text =        "Dead & lost: "   + Life.instance.soulsLostCount;
 			runnersKilledCount.text =    "Runners Killed: " + PrisonWall.instance.runnersKilledCount;
-
+			sterileKilledCount.text =    "Sterile Killed: " + Life.instance.sterileKilledCount;
 		}
 	}
 

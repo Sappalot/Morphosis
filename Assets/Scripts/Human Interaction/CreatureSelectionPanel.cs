@@ -535,7 +535,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			} else if (selection.Count == 1) {
 				selectedCreatureText.text = soloSelected.id; // soloSelected.nickname;
 				motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
-				string childrenString = "";
+				string childrenString = "" + soloSelected.childSouls.Count + " ";
 
 				for (int i = 0; i < soloSelected.childSouls.Count; i++) {
 					childrenString += (soloSelected.soul.isConnectedWithChildSoul(soloSelected.childSouls[i].id) ? "[" : "") + soloSelected.childSouls[i].id + (soloSelected.soul.isConnectedWithChildSoul(soloSelected.childSouls[i].id) ? "]" : "");

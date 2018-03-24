@@ -18,6 +18,10 @@ public class Creature : MonoBehaviour {
 		return worldTicks - bornTick;
 	}
 
+	public float GetAge(ulong worldTicks) {
+		return (worldTicks - bornTick) * Time.fixedDeltaTime;
+	}
+
 	//debug
 	public SpriteRenderer creturePosition;
 	public SpriteRenderer phenotypePosition;
