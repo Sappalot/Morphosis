@@ -821,7 +821,7 @@ public abstract class Cell : MonoBehaviour {
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effectCreature) {
 				float effectValue = 0.5f + (creature.phenotype.effect / creature.phenotype.cellCount) * 0.5f;
-				filledCircleSprite.color = ColorScheme.instance.cellGradientCreatureEffect.Evaluate(effectValue);
+				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.leafExposure) {
 				if (GetCellType() == CellTypeEnum.Leaf) {
@@ -837,6 +837,7 @@ public abstract class Cell : MonoBehaviour {
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.predatorPray) {
 				float effectValue = 0.5f + effectExternal * 0.02f;
+				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 				if (effectExternal == 0f) {
 					filledCircleSprite.color = Color.blue;
 				} else if (GetCellType() == CellTypeEnum.Jaw && effectExternal < 0f) {
