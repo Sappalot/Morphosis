@@ -5,19 +5,12 @@ public class Pray {
 	public float prayEatenEffect;
 	public float predatorEatEffect;
 
-	static float ramSpeedRecord = 0f;
-
 	public Pray(Cell cell) {
 		this.cell = cell;
 	}
 
 	public void UpdateMetabolism(Cell predatorCell) {
-
-		float ramSpeedFactor = 1f;
-
-
 		float ramSpeed = GetRamSpeed(predatorCell, cell);
-		predatorCell.ramSpeed = ramSpeed;
 		float jawEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(Mathf.Max(0f, ramSpeed));
 
 		if (cell.GetCellType() == CellTypeEnum.Jaw) {

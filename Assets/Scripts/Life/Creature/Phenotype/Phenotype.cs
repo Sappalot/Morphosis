@@ -69,13 +69,6 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	//debug
-	public void SetRamSpeedZero() {
-		foreach (Cell cell in cellList) {
-			cell.ramSpeed = 0f;
-		}
-	}
-
 	public float speed { get; private set; }
 
 	[HideInInspector]

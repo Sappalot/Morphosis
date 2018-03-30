@@ -169,9 +169,6 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	[HideInInspector]
-	public float ramSpeed = 0f; // for debug rendering only
-
 	//predatore vs pray
 	public float effectExternal {
 		get {
@@ -877,10 +874,6 @@ public abstract class Cell : MonoBehaviour {
 				} else {
 					filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 				}
-			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.ramSpeed) {
-				float ramSpeedValue = 0.5f + ramSpeed * 0.5f;
-				filledCircleSprite.color = ColorScheme.instance.cellGradientRamSpeed.Evaluate(ramSpeedValue);
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.update) {
 				filledCircleSprite.color = didUpdateFunctionThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;

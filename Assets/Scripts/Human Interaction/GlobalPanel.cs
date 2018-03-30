@@ -54,7 +54,6 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		childCountCreature,
 		predatorPray,
 		typeAndPredatorPray,
-		ramSpeed,
 		update,
 	}
 	[HideInInspector]

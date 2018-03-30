@@ -154,7 +154,6 @@ public class JawCell : Cell {
 			}
 		}
 		foreach (Pray pray in remove) {
-			pray.cell.ramSpeed = 0f;
 			prays.Remove(pray.cell);
 		}
 	}
@@ -173,14 +172,11 @@ public class JawCell : Cell {
 	}
 
 	private void UnpairPredatorPray(JawCell predatorCell, Cell prayCell) {
-		prayCell.ramSpeed = 0f;
-		predatorCell.ramSpeed = 0f;
 		RemovePray(prayCell);
 		prayCell.RemovePredator(predatorCell);
 	}
 
 	public void RemovePray(Cell prayCell) {
-		prayCell.ramSpeed = 0f;
 		if (prays.ContainsKey(prayCell)) {
 			prays.Remove(prayCell);
 		}
