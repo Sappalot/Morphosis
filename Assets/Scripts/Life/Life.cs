@@ -197,7 +197,7 @@ public class Life : MonoSingleton<Life> {
 
 	public void KillAllCreaturesAndSouls() {
 		foreach (Creature creature in creatureList) {
-			Destroy(creature.gameObject);
+			Destroy(creature.gameObject); //TODO: return it to pool instead
 		}
 		creatureDictionary.Clear();
 		creatureList.Clear();
@@ -229,7 +229,7 @@ public class Life : MonoSingleton<Life> {
 
 		creature.KillAllCells(); // for the fx :)
 
-		Destroy(creature.gameObject);
+		Destroy(creature.gameObject); //TODO: return it to pool instead
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
 
@@ -338,7 +338,8 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	private Creature InstantiateCreature(String id) {
-		Creature creature = (GameObject.Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity) as Creature);
+		Creature creature = (Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity) as Creature); //TODO: borrow from pool instead
+		creature.name = "Creature " + id;
 		creature.transform.parent = this.transform;
 		creatureDictionary.Add(id, creature);
 		creatureList.Add(creature);

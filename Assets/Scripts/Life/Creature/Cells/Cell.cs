@@ -3,41 +3,93 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 public abstract class Cell : MonoBehaviour {
+	//------- Inspector
+
+	public SpriteRenderer cellSelectedSprite; //transparent
+	public SpriteRenderer triangleSprite;
+	public SpriteRenderer openCircleSprite; //cell type colour
+	public SpriteRenderer filledCircleSprite; //cell type colour
+	public SpriteRenderer creatureSelectedSprite;
+	public SpriteRenderer shadowSprite;
+
+	public Transform triangleTransform;
+
+	public SpringJoint2D northSpring;
+	public SpringJoint2D southEastSpring;
+	public SpringJoint2D southWestSpring;
+
+	//----- ^ Inspector ^
+
 	[HideInInspector]
 	public Gene gene;
+
 	[HideInInspector]
 	public FlipSideEnum flipSide;
+
 	[HideInInspector]
 	public Vector2i mapPosition = new Vector2i();
+
 	[HideInInspector]
 	public int buildOrderIndex = 0;
+
 	[HideInInspector]
 	public float lastTime = 0; //Last time muscle cell was updated
+
 	[HideInInspector]
 	public float radius = 0.5f;
+
 	[HideInInspector]
 	public float timeOffset;
 
-	//[HideInInspector]
+	//  The direction the cell is facing in creature space
+	[HideInInspector]
+	public int bindCardinalIndex; // where cells flip triangle is pointing in gene mode (0 is 30 degrees, N is 30 + N * 60 drgrees)
+
+	[HideInInspector]
+	public float heading; // where the cells flip triangle is pointing at the moment (0 is east, 90 is north ...)
+						  //public float angleDiffFromBindpose;
+
+	[HideInInspector]
+	public string id;
+
+	[HideInInspector]
+	public int groups = 0;
+
+	protected SpringJoint2D[] placentaSprings;
+
 	private List<JawCell> predators = new List<JawCell>(); //Who is eating on me
 
 	private int didUpdateFunctionThisFrame = 0;
 	private int didUpdateEnergyThisFrame = 0;
 
-	// Egg only
+	//---- Egg only
+	[HideInInspector]
 	public float eggCellFertilizeThreshold; // J
+
+	[HideInInspector]
 	public bool eggCellCanFertilizeWhenAttached;
+
+	[HideInInspector]
 	public ChildDetatchModeEnum eggCellDetatchMode;
+
+	[HideInInspector]
 	public float eggCellDetatchSizeThreshold; //J 
+
+	[HideInInspector]
 	public float eggCellDetatchEnergyThreshold; //J 
-	// Egg only ^
-	
-	// Origin only
+												//---- Egg only ^
+
+	//---- Origin only
+	[HideInInspector]
 	public ChildDetatchModeEnum originDetatchMode;
+
+	[HideInInspector]
 	public float originDetatchSizeThreshold;
+
+	[HideInInspector]
 	public float originDetatchEnergyThreshold; // J  If we have more energy than this in the origin cell and it is attached with mother, it will separate
 											   //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
-											   // Origin only ^
+	//--- Origin only ^
 	
 	// Controlled by cell mouth of other creature
 	public void AddPredator(JawCell predator) {
@@ -70,6 +122,7 @@ public abstract class Cell : MonoBehaviour {
 	// metabolism
 	[HideInInspector]
 	public static float maxEnergy = 100f;
+
 	[HideInInspector]
 	private float m_energy;
 	public float energy {
@@ -89,6 +142,7 @@ public abstract class Cell : MonoBehaviour {
 	public float effectConsumptionInternal = 0;
 
 	//How much am i stealing from other creatures
+	[HideInInspector]
 	public float effectProductionExternal;
 
 	//How much damage are all predators inflicting on me?
@@ -115,6 +169,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
+	[HideInInspector]
 	public float ramSpeed = 0f; // for debug rendering only
 
 	//predatore vs pray
@@ -130,27 +185,16 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	//  The direction the cell is facing in creature space
-	public int bindCardinalIndex; // where cells flip triangle is pointing in gene mode (0 is 30 degrees, N is 30 + N * 60 drgrees)
-	public float heading; // where the cells flip triangle is pointing at the moment (0 is east, 90 is north ...)
-	//public float angleDiffFromBindpose;
-
-	public string id;
-	public int groups = 0;
-   
-	public SpringJoint2D northSpring;
-	public SpringJoint2D southEastSpring;
-	public SpringJoint2D southWestSpring;
-
-	protected SpringJoint2D[] placentaSprings;
-
 	public bool isAttachedToMother {
 		get {
 			return placentaSprings != null && placentaSprings.Length > 0;
 		}
 	}
 
+	[HideInInspector]
 	public float springFrequenzy = 5f;
+
+	[HideInInspector]
 	public float springDamping = 11f;
 
 	[HideInInspector]
@@ -164,15 +208,6 @@ public abstract class Cell : MonoBehaviour {
 			m_creature = value;
 		}
 	}
-
-	public SpriteRenderer cellSelectedSprite; //transparent
-	public SpriteRenderer triangleSprite;
-	public SpriteRenderer openCircleSprite; //cell type colour
-	public SpriteRenderer filledCircleSprite; //cell type colour
-	public SpriteRenderer creatureSelectedSprite;
-	public SpriteRenderer shadowSprite;
-
-	public Transform triangleTransform;
 
 	abstract public CellTypeEnum GetCellType();
 
@@ -269,6 +304,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	//Set only once, when adding cell to CellMap
+	[HideInInspector]
 	public Vector2 modelSpacePosition;
 
 	public void Show(bool show) {
@@ -397,10 +433,6 @@ public abstract class Cell : MonoBehaviour {
 	public void TurnHingeNeighboursInPlace() {
 		//TODO Update turn springs only when nessesary 
 
-
-		//return;
-
-
 		//CellNeighbour firstNeighbour = null;
 		int springs = 0;
 		Vector3 responceForce = new Vector3();
@@ -469,7 +501,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	//Applies forces to neighbour and returns reaction force to this
-	Vector3 ApplyTorqueToPair(int alphaIndex, int betaIndex) {
+	private Vector3 ApplyTorqueToPair(int alphaIndex, int betaIndex) {
 		CellNeighbour alphaNeighbour = GetNeighbour(alphaIndex);
 		CellNeighbour betaNeighbour = GetNeighbour(betaIndex);
 
@@ -553,13 +585,6 @@ public abstract class Cell : MonoBehaviour {
 		return neighbourCell != null && neighbourCell.IsSameCreature(this);
 	}
 
-	//public void SetOrderInLayer(int order) {
-	//	SpriteRenderer[] renderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
-	//	foreach (SpriteRenderer renderer in renderers) {
-	//		renderer.sortingOrder = order;
-	//	}
-	//}
-
 	////  Updates world space rotation (heading) derived from neighbour position relative to this
 	public void UpdateRotation() {
 		if (hasNeighbour) { // !(mapPosition == new Vector2i() && neighbourCount == 0)
@@ -604,8 +629,6 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 	}
-
-	//Phenotype
 
 	public void UpdateSpringConnectionsIntra() {
 		// Intra creatures
@@ -670,7 +693,6 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	//Phenotype
 	public void UpdateGroups(string motherId) {
 		//TODO check if this cell is a hinge
 		int groups = 0;

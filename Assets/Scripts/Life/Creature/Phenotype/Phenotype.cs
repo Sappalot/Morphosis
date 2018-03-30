@@ -4,6 +4,22 @@ using System.Collections.Generic;
 // The physical creature defined by all its cells
 
 public class Phenotype : MonoBehaviour {
+	public EggCell eggCellPrefab;
+	public FungalCell fungalCellPrefab;
+	public JawCell jawCellPrefab;
+	public LeafCell leafCellPrefab;
+	public MuscleCell muscleCellPrefab;
+	public RootCell rootCellPrefab;
+	public ShellCell shellCellPrefab;
+	public VeinCell veinCellPrefab;
+
+	public CellDeath cellDeathPrefab;
+	public CellDetatch cellDetatchPrefab;
+
+	public Transform cellsTransform; 
+	public Edges edges; //AKA Wings
+	public Veins veins;
+
 	[HideInInspector]
 	public Cell originCell {
 		get {
@@ -60,44 +76,31 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public float speed { get; private set; }
+
 	[HideInInspector]
 	public bool isAlive = true; // Are we going to use this approach?
-
-	public Transform cellsTransform;
-
-	public CellDeath cellDeathPrefab;
-	public CellDetatch cellDetatchPrefab;
-
-	public EggCell eggCellPrefab;
-	public FungalCell fungalCellPrefab;
-	public JawCell jawCellPrefab;
-	public LeafCell leafCellPrefab;
-	public MuscleCell muscleCellPrefab;
-	public RootCell rootCellPrefab;
-	public ShellCell shellCellPrefab;
-	public VeinCell veinCellPrefab;
-
+	[HideInInspector]
 	public bool cellsDiffersFromGeneCells = true;
+	[HideInInspector]
 	public bool connectionsDiffersFromCells = true;
+	[HideInInspector]
 	public Dictionary<Cell, Vector2> detatchmentKick;
-
+	[HideInInspector]
 	public float timeOffset;
 
-	public GameObject cells;
-	public Edges edges; //Wings
-	public Veins veins;
 
+	[HideInInspector]
 	public bool isGrabbed { get; private set; }
 	[HideInInspector]
 	public bool hasDirtyPosition = false;
+	[HideInInspector]
+	public List<Cell> cellList = new List<Cell>();
 
 	private Vector2 velocity = new Vector2();
-	public float speed;
-	public List<Cell> cellList = new List<Cell>();
 	private Vector2 spawnPosition;
 	private float spawnHeading;
 	private CellMap cellMap = new CellMap();
-
 	private bool isDirty = true;
 
 	//Grown cells
@@ -572,7 +575,7 @@ public class Phenotype : MonoBehaviour {
 		if (!deleteCell.isOrigin) {
 			cellMap.RemoveCellAtGridPosition(deleteCell.mapPosition);
 			cellList.Remove(deleteCell);
-			Destroy(deleteCell.gameObject);
+			Destroy(deleteCell.gameObject); //TODO: return to pool instead
 			if (CellPanel.instance.selectedCell == deleteCell) {
 				CellPanel.instance.selectedCell = null;
 			}
@@ -799,8 +802,9 @@ public class Phenotype : MonoBehaviour {
 
 	private Cell InstantiateCell(CellTypeEnum type, Vector2i mapPosition) {
 		Cell cell = null;
+		//TODO: borrow from pool instead
 		if (type == CellTypeEnum.Egg) {
-			cell = (Instantiate(eggCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
+			cell = (Instantiate(eggCellPrefab, Vector3.zero, Quaternion.identity) as Cell); 
 		} else if (type == CellTypeEnum.Fungal) {
 			cell = (Instantiate(fungalCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
 		} else if (type == CellTypeEnum.Jaw) {
@@ -819,16 +823,17 @@ public class Phenotype : MonoBehaviour {
 		if (cell == null) {
 			throw new System.Exception("Could not create Cell out of type defined in gene");
 		}
+		cell.name = type.ToString();
 		cellMap.SetCell(mapPosition, cell);
 		cellList.Add(cell);
-		cell.transform.parent = cells.transform;
+		cell.transform.parent = cellsTransform.transform;
 
 		return cell;
 	}
 
 	private void Clear() {
 		for (int index = 0; index < cellList.Count; index++) {
-			Destroy(cellList[index].gameObject);
+			Destroy(cellList[index].gameObject); //return to pool instead
 		}
 		cellList.Clear();
 		cellMap.Clear();
@@ -970,7 +975,7 @@ public class Phenotype : MonoBehaviour {
 
 		Halt();
 		foreach (Cell cell in cellList) {
-			cell.transform.parent = cells.transform;
+			cell.transform.parent = cellsTransform.transform;
 		}
 	}
 
@@ -1270,5 +1275,10 @@ public class Phenotype : MonoBehaviour {
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].UpdatePhysics();
 		}
+	}
+
+	public void OnReturnToPool() {
+		//for all cells
+			//return it to pool
 	}
 }

@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 public class MuscleCell : Cell {
 
+	private float modularTime = 0f;
+	private bool isContracting;
+	private bool scaleIsDirty = true;
+
 	public MuscleCell() : base() {
 		springFrequenzy = 20f;
 		springDamping = 11f;
@@ -22,9 +26,6 @@ public class MuscleCell : Cell {
 		return CellTypeEnum.Muscle;
 
 	}
-	private float modularTime = 0f;
-	private bool isContracting;
-	private bool scaleIsDirty = true;
 
 	public override void UpdateRadius(ulong worldTicks) {
 		float muscleSpeed = creature.muscleSpeed;
@@ -134,6 +135,5 @@ public class MuscleCell : Cell {
 			southEastSpring.dampingRatio = (this.springDamping + southEastNeighbour.cell.springDamping) / 2f;
 		}
 	}
-
 }
 

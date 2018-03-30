@@ -7,11 +7,15 @@ public class Creature : MonoBehaviour {
 	[HideInInspector]
 	public Soul soul; //Born soul-less the soul will find the creature 
 
+	[HideInInspector]
 	public string id;
+	[HideInInspector]
 	public string nickname;
 
 	//time
+	[HideInInspector]
 	public ulong bornTick;
+	[HideInInspector]
 	public ulong deadTick;
 
 	public ulong GetAgeTicks(ulong worldTicks) {
@@ -31,29 +35,29 @@ public class Creature : MonoBehaviour {
 
 	//wing force
 	[Range(0f, 1f)]
-	public float wingDrag = 1f;
+	public float wingDrag = 0.1f;
 
 	[Range(0f, 1f)]
-	public float f1 = 0.03f;
+	public float f1 = 0.1f;
 
 	[Range(0f, 5f)]
-	public float wingF2 = 1f;
+	public float wingF2 = 0.15f;
 
 	[Range(0f, 40f)]
-	public float wingPow = 10f;
+	public float wingPow = 2f;
 
 	[Range(0f, 100f)]
-	public float wingMax = 0.1f;
+	public float wingMax = 5f;
 
 	//muscle
 	[Range(0f, 0.5f)]
-	public float muscleRadiusDiff = 0.2f;
+	public float muscleRadiusDiff = 0.1f;
 
 	[Range(-1f, 1f)]
-	public float muscleContractRetract = -0.5f;
+	public float muscleContractRetract = -0.14f;
 
 	[Range(0f, 20f)]
-	public float muscleSpeed = 1.55f;
+	public float muscleSpeed = 6.55f;
 
 	public Genotype genotype;
 	public Phenotype phenotype;
@@ -641,5 +645,12 @@ public class Creature : MonoBehaviour {
 				CellPanel.instance.MakeDirty();
 			}
 		}
+	}
+
+	public void OnReturnToPool() {
+		//genotype.OnReturnToPool
+		//phenotype.OnReturn to pool
+
+		//clear all information
 	}
 }

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 
 public class Genotype : MonoBehaviour {
-	public Gene[] genome = new Gene[genomeLength]; //One gene can give rise to many geneCells
-
 	public EggCell eggCellPrefab;
 	public FungalCell fungalCellPrefab;
 	public JawCell jawCellPrefab;
@@ -12,17 +10,18 @@ public class Genotype : MonoBehaviour {
 	public RootCell rootCellPrefab;
 	public ShellCell shellCellPrefab;
 	public VeinCell veinCellPrefab;
-	public Transform cellsTransform;
+	public Transform geneCellsTransform;
 
-	public static int origin = 0;
 	public static int genomeLength = 21;
-	private CellMap geneCellMap = new CellMap();
+	[HideInInspector]
+	public Gene[] genome = new Gene[genomeLength]; //One gene can give rise to many geneCells
+	[HideInInspector]
 	public List<Cell> geneCellList = new List<Cell>();
-
+	[HideInInspector]
 	public bool geneCellsDiffersFromGenome = true; // Cell List and Cell Map needs to be updates
-
 	public bool isGrabbed { get; private set; }
 
+	private CellMap geneCellMap = new CellMap();
 	private bool isDirty = true;
 
 	public int geneCellCount {
@@ -31,7 +30,6 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	[HideInInspector]
 	public Cell originCell {
 		get {
 			return geneCellList[0];
@@ -210,8 +208,8 @@ public class Genotype : MonoBehaviour {
 								} else {
 									Debug.Assert(residentCell.buildOrderIndex <= buildOrderIndex, "Trying to spawn a cell at a location where a cell of higher build order are allready present.");
 									if (residentCell.buildOrderIndex == buildOrderIndex) {
-										//trying to spawn a cell where ther is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
-										GameObject.Destroy(residentCell.gameObject);
+										//trying to spawn a cell where there is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
+										Destroy(residentCell.gameObject); // TODO: return to pool instead
 										geneCellList.Remove(residentCell);
 										geneCellMap.RemoveCellAtGridPosition(residentCell.mapPosition);
 										nextSpawningFromCells.Remove(residentCell);
@@ -252,7 +250,7 @@ public class Genotype : MonoBehaviour {
 	// 3 Add cell to list and CellMap
 	private Cell SpawnGeneCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide) {
 		Cell cell = null;
-
+		//TODO: borrow from pool instead
 		if (gene.type == CellTypeEnum.Egg) {
 			cell = (Instantiate(eggCellPrefab, CellMap.ToModelSpacePosition(mapPosition), Quaternion.identity) as Cell);
 		} else if (gene.type == CellTypeEnum.Fungal) {
@@ -272,11 +270,11 @@ public class Genotype : MonoBehaviour {
 		}
 
 		cell.RemovePhysicsComponents();
-
+		cell.name = gene.type.ToString();
 		if (cell == null) {
 			throw new System.Exception("Could not create Cell out of type defined in gene");
 		}
-		cell.transform.parent = cellsTransform;
+		cell.transform.parent = geneCellsTransform;
 		cell.mapPosition = mapPosition;
 		cell.buildOrderIndex = buildOrderIndex;
 		cell.gene = gene;
@@ -386,13 +384,13 @@ public class Genotype : MonoBehaviour {
 
 	private void Clear() {
 		for (int index = 0; index < geneCellList.Count; index++) {
-			Destroy(geneCellList[index].gameObject);
+			Destroy(geneCellList[index].gameObject); // TODO: return to pool instead
 		}
 		geneCellList.Clear();
 		geneCellMap.Clear();
 
-		cellsTransform.localPosition = Vector3.zero;
-		cellsTransform.localRotation = Quaternion.identity;
+		geneCellsTransform.localPosition = Vector3.zero;
+		geneCellsTransform.localRotation = Quaternion.identity;
 
 		transform.localPosition = Vector3.zero;
 		transform.localRotation = Quaternion.identity;
@@ -428,7 +426,7 @@ public class Genotype : MonoBehaviour {
 		transform.rotation = Quaternion.identity;
 
 		foreach (Cell cell in geneCellList) {
-			cell.transform.parent = cellsTransform.transform;
+			cell.transform.parent = geneCellsTransform.transform;
 		}
 
 		creature.phenotype.MoveToGenotype(creature);
@@ -510,4 +508,9 @@ public class Genotype : MonoBehaviour {
 	//		geneCellList[index].UpdateGraphics();
 	//	}
 	//}
+
+	public void OnReturnToPool() {
+		//for all gene cells
+			//return it to pool
+	}
 }
