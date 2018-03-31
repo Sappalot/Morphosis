@@ -315,12 +315,13 @@ public class Creature : MonoBehaviour {
 		isDirtyGraphics = true;
 	}
 
+	//OK
 	public void KillCell(Cell cell, bool playEffects, ulong worldTicks) {
 		phenotype.KillCell(cell, true, playEffects, worldTicks);
 	}
 
-	public void KillAllCells() {
-		phenotype.KillAllCells();
+	public void KillAllCells(bool effects) {
+		phenotype.KillAllCells(effects);
 	}
 
 	public void ShowCellSelected(Cell cell, bool on) {
@@ -649,7 +650,7 @@ public class Creature : MonoBehaviour {
 
 	public void OnReturnToPool() {
 		//genotype.OnReturnToPool
-		//phenotype.OnReturn to pool
+		//phenotype.OnReturnToPool();
 
 		//clear all information
 	}

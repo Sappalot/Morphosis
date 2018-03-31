@@ -234,7 +234,7 @@ public class Phenotype : MonoBehaviour {
 
 				// test if the position is free to grow on
 				Vector2 spawnPosition = averagePosition / positionCount;
-				if (!allowOvergrowth && !CanGrowAtPosition(spawnPosition, 0.3f)) { // was 0.33
+				if (!allowOvergrowth && !CanGrowAtPosition(spawnPosition, GlobalSettings.instance.phenotype.cellBuildNeededRadius)) {
 					noGrowthReason.roomBound = true;
 					continue;
 				}
@@ -519,7 +519,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	public void OnNeighbourDeleted(Creature creature, Cell deletedCell, Cell disturbedCell) {
+	public void OnNeighbourCellRecycled(Creature creature, Cell deletedCell, Cell disturbedCell) {
 		disturbedCell.RemoveNeighbourCell(deletedCell);
 
 		//Check if mothers placenta is gone
@@ -533,11 +533,12 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	//This will make origin inaccessible
-	public void KillAllCells() {
+	
+	public void KillAllCells(bool effects) {
 		List<Cell> allCells = new List<Cell>(cellList);
 
 		for (int i = 0; i < allCells.Count; i++) {
-			KillCell(allCells[i], false, true, 0);
+			KillCell(allCells[i], false, effects, 0);
 		}
 	}
 
@@ -557,27 +558,29 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 
-		// Clean up
-		deleteCell.OnDelete();
-		List<Cell> disturbedCells = deleteCell.GetNeighbourCells();
-		foreach (Cell disturbedCell in disturbedCells) {
-			deleteCell.RemoveNeighbourCell(disturbedCell);
-			disturbedCell.creature.phenotype.OnNeighbourDeleted(disturbedCell.creature, deleteCell, disturbedCell);
+		//Clean up neighbours
+		List<Cell> neightbourCells = deleteCell.GetNeighbourCells();
+		foreach (Cell neighbourCell in neightbourCells) {
+			deleteCell.RemoveNeighbourCell(neighbourCell);
+			neighbourCell.creature.phenotype.OnNeighbourCellRecycled(neighbourCell.creature, deleteCell, neighbourCell);
 		}
 
-		if (!deleteCell.isOrigin) {
-			cellMap.RemoveCellAtGridPosition(deleteCell.mapPosition);
-			cellList.Remove(deleteCell);
-			Destroy(deleteCell.gameObject); //TODO: return to pool instead
-			if (CellPanel.instance.selectedCell == deleteCell) {
-				CellPanel.instance.selectedCell = null;
-			}
-		} else {
-			isAlive = false; //Hack, to avoid problems with origin missing everywhere
+		if (deleteCell.isOrigin) {
+			isAlive = false; //Hack, to avoid problems with origin missing everywhere, this creature will be safely recycled soon, by Life.UpdatePhysics() 
 		}
+
+		cellMap.RemoveCellAtGridPosition(deleteCell.mapPosition);
+		cellList.Remove(deleteCell);
+		if (CellPanel.instance.selectedCell == deleteCell) {
+			CellPanel.instance.selectedCell = null;
+		}
+
+		// Clean up cell: Has vereybodey forgotten about me?
+		deleteCell.OnReturnToPool();
+		CellPool.instance.Return(deleteCell);
 
 		if (deleteDebris) {
-			DeleteDebris();
+			DeleteDebris(); 
 		}
 
 		//Mark cell as destroyed so we don't try to build it back emediatly
@@ -586,9 +589,11 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
-		CreatureSelectionPanel.instance.MakeDirty();
+
 		CellPanel.instance.MakeDirty();
 		connectionsDiffersFromCells = true;
+
+		CreatureSelectionPanel.instance.MakeDirty();
 
 		CreatureSelectionPanel.instance.UpdateSelectionCluster();
 	}
@@ -795,39 +800,22 @@ public class Phenotype : MonoBehaviour {
 
 	private Cell InstantiateCell(CellTypeEnum type, Vector2i mapPosition) {
 		Cell cell = null;
-		//TODO: borrow from pool instead
-		if (type == CellTypeEnum.Egg) {
-			cell = (Instantiate(eggCellPrefab, Vector3.zero, Quaternion.identity) as Cell); 
-		} else if (type == CellTypeEnum.Fungal) {
-			cell = (Instantiate(fungalCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		} else if (type == CellTypeEnum.Jaw) {
-			cell = (Instantiate(jawCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		} else if (type == CellTypeEnum.Leaf) {
-			cell = (Instantiate(leafCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		} else if (type == CellTypeEnum.Muscle) {
-			cell = (Instantiate(muscleCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		} else if (type == CellTypeEnum.Root) {
-			cell = (Instantiate(rootCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		} else if (type == CellTypeEnum.Shell) {
-			cell = (Instantiate(shellCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		} else if (type == CellTypeEnum.Vein) {
-			cell = (Instantiate(veinCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		}
-		if (cell == null) {
-			throw new System.Exception("Could not create Cell out of type defined in gene");
-		}
+
+		cell = CellPool.instance.Borrow(type);
+		
+
 		cell.name = type.ToString();
 		cellMap.SetCell(mapPosition, cell);
 		cellList.Add(cell);
 		cell.transform.parent = cellsTransform.transform;
+		
 
 		return cell;
 	}
 
 	private void Clear() {
-		for (int index = 0; index < cellList.Count; index++) {
-			Destroy(cellList[index].gameObject); //return to pool instead
-		}
+		KillAllCells(false); //Kill Cell (when origin) will set isAlive = false;
+		isAlive = true; //Just clearing not killing, Fix this!!
 		cellList.Clear();
 		cellMap.Clear();
 	}
@@ -1268,10 +1256,5 @@ public class Phenotype : MonoBehaviour {
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].UpdatePhysics();
 		}
-	}
-
-	public void OnReturnToPool() {
-		//for all cells
-			//return it to pool
 	}
 }

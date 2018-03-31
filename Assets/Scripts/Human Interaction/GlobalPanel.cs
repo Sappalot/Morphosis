@@ -24,6 +24,16 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	private int physicsUpdateCount;
 
+	//Debug -> Cell Pool Count
+	public Text cellPoolEggCount;
+	public Text cellPoolFungalCount;
+	public Text cellPoolJawCount;
+	public Text cellPoolLeafCount;
+	public Text cellPoolMuscleCount;
+	public Text cellPoolRootCount;
+	public Text cellPoolShellCount;
+	public Text cellPoolVeinCount;
+
 	//World
 	public void UpdateWorldNameAndTime(string worldName, ulong worldTicks) {
 		worldNameAndTimeText.text = worldName + " " + TimeUtil.GetTimeString((ulong)(worldTicks * Time.fixedDeltaTime));
@@ -95,6 +105,16 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			soulsLostCount.text =        "Dead & lost: "   + Life.instance.soulsLostCount;
 			runnersKilledCount.text =    "Runners Killed: " + PrisonWall.instance.runnersKilledCount;
 			sterileKilledCount.text =    "Sterile Killed: " + Life.instance.sterileKilledCount;
+
+			//Cell Pool
+			cellPoolEggCount.text =    "E: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Egg) +    " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Egg) +    " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Egg)    + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Egg));
+			cellPoolFungalCount.text = "F: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Fungal) + " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Fungal) + " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Fungal) + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Fungal));
+			cellPoolJawCount.text =    "J: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Jaw) +    " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Jaw) +    " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Jaw)    + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Jaw));
+			cellPoolLeafCount.text =   "L: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Leaf) +   " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Leaf) +   " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Leaf)   + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Leaf));
+			cellPoolMuscleCount.text = "M: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Muscle) + " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Muscle) + " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Muscle) + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Muscle));
+			cellPoolRootCount.text =   "R: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Root) +   " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Root) +   " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Root)   + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Root));
+			cellPoolShellCount.text =  "S: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) +  " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell) +  " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Shell)  + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell));
+			cellPoolVeinCount.text =   "V: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) +   " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein) +   " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Vein)   + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein));
 		}
 	}
 

@@ -119,7 +119,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 												 //           shellCellEffect =                    0.0 W
 		public float shellCellWeaknessFactor = 0.02f; // 1=> as easy as other cells, 0 => inpossible to eat
 
-		//VeinCell
+		//Vein Cell
 		public float veinCellEffectCost = 0.1f; //W
 												//           veinCellEffect                       0.0 W
 
@@ -130,9 +130,10 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		//General
 		public float cellBuildCost = 10f; //Energy Cost to build cell, J (Newly built cell will have this energy at start of its life)
+		public float cellBuildNeededRadius = 0.35f; //m
 
 		// Rebuild
-		public float cellRebuildCooldown = 40f; //s
+		public float cellRebuildCooldown = 40f; //s, before a cell which was killed/deleted can be rebuilt
 
 		//Detatch
 		public float detatchmentKick = 0.05f; //N

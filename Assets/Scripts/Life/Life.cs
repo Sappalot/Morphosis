@@ -197,6 +197,7 @@ public class Life : MonoSingleton<Life> {
 
 	public void KillAllCreaturesAndSouls() {
 		foreach (Creature creature in creatureList) {
+			creature.OnReturnToPool();
 			Destroy(creature.gameObject); //TODO: return it to pool instead
 		}
 		creatureDictionary.Clear();
@@ -227,8 +228,9 @@ public class Life : MonoSingleton<Life> {
 			}
 		}
 
-		creature.KillAllCells(); // for the fx :)
+		creature.KillAllCells(true); // for the fx :)
 
+		//TODO: Return root cell to pool
 		Destroy(creature.gameObject); //TODO: return it to pool instead
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
@@ -498,7 +500,11 @@ public class Life : MonoSingleton<Life> {
 
 		//TODO: dont do it every tick
 		for (int index = 0; index < creatureList.Count; index++) {
-			if (creatureList[index].UpdateKillWeakCells(worldTicks) || !creatureList[index].phenotype.isAlive) {
+			if (creatureList[index].phenotype.isAlive) {
+				if (creatureList[index].UpdateKillWeakCells(worldTicks)) {
+					killCreatureList.Add(creatureList[index]);
+				}
+			} else {
 				killCreatureList.Add(creatureList[index]);
 			}
 		}

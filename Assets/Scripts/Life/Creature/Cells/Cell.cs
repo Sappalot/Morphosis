@@ -111,12 +111,43 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	virtual public void OnDelete() {
+	virtual public void OnReturnToPool() {
+		//Predators, remembering me as pray
 		foreach (JawCell predator in predators) {
 			//Debug.Log("Removeing pray: " + this.creature.id + ", Cell: " + GetCellType() + " from " + predator);
 			predator.RemovePray(this); // make jaw forget about me as a pray of his
 									   //predators.Remove(predator);
 		}
+
+		//My own 3 springs to others
+		if (northSpring != null) {
+			northSpring.connectedBody = null;
+			northSpring.enabled = false;
+		}
+		if (southEastSpring != null) {
+			southEastSpring.connectedBody = null;
+			southEastSpring.enabled = false;
+		}
+		if (southWestSpring != null) {
+			southWestSpring.connectedBody = null;
+			southWestSpring.enabled = false;
+		}
+
+		//My placenta springs
+		if (placentaSprings != null) {
+			foreach (SpringJoint2D placentaSpring in placentaSprings) {
+				Destroy(placentaSpring);
+			}
+		}
+
+
+		gene = null;
+		id = "trash";
+		predators.Clear();
+	}
+
+	virtual public void OnBorrowToWorld() {
+
 	}
 
 	// metabolism
@@ -378,7 +409,7 @@ public abstract class Cell : MonoBehaviour {
 	public CellNeighbour southEastNeighbour =   new CellNeighbour(5);
    
 	private Dictionary<int, CellNeighbour> cellNeighbourDictionary = new Dictionary<int, CellNeighbour>();
-	private List<SpringJoint2D> springList = new List<SpringJoint2D>();
+
 
 	public List<Cell> GetNeighbourCells() {
 		List<Cell> cells = new List<Cell>();
@@ -397,10 +428,6 @@ public abstract class Cell : MonoBehaviour {
 		cellNeighbourDictionary.Add(3, southWestNeighbour);
 		cellNeighbourDictionary.Add(4, southNeighbour);
 		cellNeighbourDictionary.Add(5, southEastNeighbour);
-
-		springList.Add(northSpring);
-		springList.Add(southEastSpring);
-		springList.Add(southWestSpring);
 
 		UpdateOutline(false);
 	}
@@ -555,6 +582,25 @@ public abstract class Cell : MonoBehaviour {
 	public void RemoveNeighbourCell(Cell cell) {
 		for (int i = 0; i < 6; i++) {
 			if (cellNeighbourDictionary[i].cell == cell) {
+				if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalEnum.north) {
+					if (northSpring != null) {
+						northSpring.connectedBody = null;
+						northSpring.enabled = false;
+					}
+				}
+				else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalEnum.southWest) {
+					if (southWestSpring != null) {
+						southWestSpring.connectedBody = null;
+						southWestSpring.enabled = false;
+					}
+				}
+				else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalEnum.southEast) {
+					if (southEastSpring != null) {
+						southEastSpring.connectedBody = null;
+						southEastSpring.enabled = false;
+					}
+				}
+
 				cellNeighbourDictionary[i].cell = null;
 			}
 		}

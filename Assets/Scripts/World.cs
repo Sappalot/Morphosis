@@ -6,6 +6,7 @@ using System.IO;
 public class World : MonoSingleton<World> {
 	public Camera worldCamera;
 	private string worldName = "Gaia";
+	[HideInInspector]
 	public ulong worldTicks = 0;
 
 	public void KillAllCreaturesAndSouls() {
