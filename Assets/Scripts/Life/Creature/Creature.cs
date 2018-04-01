@@ -122,6 +122,22 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
+	public int cellCount {
+		get {
+			return phenotype.cellCount;
+		}
+	}
+
+	public int clusterCellCount {
+		get {
+			int cellCount = 0;
+			foreach (Creature c in creaturesInCluster) {
+				cellCount += c.cellCount;
+			}
+			return cellCount;
+		}
+	}
+
 	public List<Creature> creaturesInCluster {
 		get {
 			List<Creature> allreadyInList = new List<Creature>();

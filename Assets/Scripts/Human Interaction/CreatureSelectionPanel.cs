@@ -9,8 +9,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public LineRenderer lineRenderer;
 
 	public Text selectedCreatureText;
-	public Text motherText;
-	public Text childrenText;
+	//public Text motherText;
+	//public Text childrenText;
 
 	public List<Creature> selection { get; private set; }
 	public List<Creature> selectionCluster { get; private set; }
@@ -530,11 +530,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 			if (selection.Count == 0) {
 				selectedCreatureText.text = "";
-				motherText.text = "Mother:";
-				childrenText.text = "Offspring:";
+				//motherText.text = "Mother:";
+				//childrenText.text = "Offspring:";
 			} else if (selection.Count == 1) {
 				selectedCreatureText.text = soloSelected.id; // soloSelected.nickname;
-				motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
+				//motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
 				string childrenString = "" + soloSelected.childSouls.Count + " ";
 
 				for (int i = 0; i < soloSelected.childSouls.Count; i++) {
@@ -544,11 +544,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 					}
 				}
 
-				childrenText.text = "Offspring: " + (soloSelected.hasChildSoul ?  childrenString : "<none>");
+				//childrenText.text = "Offspring: " + (soloSelected.hasChildSoul ?  childrenString : "<none>");
 			} else {
 				selectedCreatureText.text = selection.Count + " Creatures";
-				motherText.text = "Mother: -"; //TODO : if all have the same mother - write it
-				childrenText.text = "Offspring: -"; //TODO: if all have the same chilren - write it
+				//motherText.text = "Mother: -"; //TODO : if all have the same mother - write it
+				//childrenText.text = "Offspring: -"; //TODO: if all have the same chilren - write it
 			}
 
 			isDirty = false;

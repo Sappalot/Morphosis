@@ -31,22 +31,37 @@ public class Portal : MonoBehaviour {
 
 			if (travelLeader.IsPhenotypeCompletelyInside(departureRect)) {
 				travelerCluster = travelLeader.creaturesInCluster;
-				clusterCouldTravel = true; //hopefully...
 
+				clusterCouldTravel = true; //assume we can travel
+
+				//Check if whole cluser is inside & we are not grabbed & we have all connections in order
 				foreach (Creature companion in travelerCluster) {
-					Cell blockingCell = GetAnyBlockingCell(creatures, travelLeader, departureToArrival);
+
 					if ((companion != travelLeader && !companion.IsPhenotypeCompletelyInside(departureRect)) ||
-						blockingCell != null ||
 						companion.phenotype.isGrabbed ||
 						companion.phenotype.connectionsDiffersFromCells) { // FOUND IT :D We need to be sure that everything is connected otherwise we might teleport away from our attached child (???)
 
-						if (blockingCell != null) {
-							shouldBeTelefragged.Add(blockingCell.creature);
-						}
-
 						clusterCouldTravel = false;
 						break;
-					} 
+					}
+				}
+
+				//We dont check for blockers if we were screwed in the previous test, since we can not go anyway
+				//If we are ready to go with the whole cluser we will check for blockers on the other side
+				//It is inportant not to punish someone on the other side only if that creature is the reason i can not go
+				if (clusterCouldTravel) {
+					foreach (Creature companion in travelerCluster) {
+						Cell blockingCell = GetAnyBlockingCell(creatures, travelLeader, departureToArrival);
+						if (blockingCell != null) { // FOUND IT :D We need to be sure that everything is connected otherwise we might teleport away from our attached child (???)
+
+							if (blockingCell != null) {
+								shouldBeTelefragged.Add(blockingCell.creature);
+							}
+
+							clusterCouldTravel = false;
+							break;
+						}
+					}
 				}
 
 				if (clusterCouldTravel) {
@@ -68,7 +83,7 @@ public class Portal : MonoBehaviour {
 
 		//// Telefrag obstructing creatures
 		foreach (Creature fragMe in shouldBeTelefragged) {
-			fragMe.ChangeEnergy(-GlobalSettings.instance.quality.portalTeleportPeriod * GlobalSettings.instance.phenotype.telefragDamage);
+			fragMe.phenotype.Telefrag();
 		}
 
 		if (canTeleport.Count > 0) {
