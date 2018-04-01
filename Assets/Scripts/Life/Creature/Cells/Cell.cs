@@ -111,45 +111,6 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	virtual public void OnReturnToPool() {
-		//Predators, remembering me as pray
-		foreach (JawCell predator in predators) {
-			//Debug.Log("Removeing pray: " + this.creature.id + ", Cell: " + GetCellType() + " from " + predator);
-			predator.RemovePray(this); // make jaw forget about me as a pray of his
-									   //predators.Remove(predator);
-		}
-
-		//My own 3 springs to others
-		if (northSpring != null) {
-			northSpring.connectedBody = null;
-			northSpring.enabled = false;
-		}
-		if (southEastSpring != null) {
-			southEastSpring.connectedBody = null;
-			southEastSpring.enabled = false;
-		}
-		if (southWestSpring != null) {
-			southWestSpring.connectedBody = null;
-			southWestSpring.enabled = false;
-		}
-
-		//My placenta springs
-		if (placentaSprings != null) {
-			foreach (SpringJoint2D placentaSpring in placentaSprings) {
-				Destroy(placentaSpring);
-			}
-		}
-
-
-		gene = null;
-		id = "trash";
-		predators.Clear();
-	}
-
-	virtual public void OnBorrowToWorld() {
-
-	}
-
 	// metabolism
 	[HideInInspector]
 	public static float maxEnergy = 100f;
@@ -874,7 +835,11 @@ public abstract class Cell : MonoBehaviour {
 	public void UpdateGraphics() {
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 			if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.type) {
-				filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
+				if (creature.phenotype.visualTelefrag > 0) {
+					filledCircleSprite.color = Color.white;
+				} else {
+					filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
+				}
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.energy) {
 				float life = energy / 100f;
@@ -890,7 +855,7 @@ public abstract class Cell : MonoBehaviour {
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.leafExposure) {
 				if (GetCellType() == CellTypeEnum.Leaf) {
-					float effectValue = effectProductionInternal / GlobalSettings.instance.phenotype.leafCellSunMaxEffect;
+					float effectValue = (this as LeafCell).lowPassExposure;
 					filledCircleSprite.color = ColorScheme.instance.cellGradientLeafExposure.Evaluate(effectValue);
 				} else {
 					filledCircleSprite.color = Color.blue;
@@ -955,4 +920,46 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// ^ Update ^
+
+	// Pooling
+	virtual public void OnReturnToPool() {
+		//Predators, remembering me as pray
+		foreach (JawCell predator in predators) {
+			//Debug.Log("Removeing pray: " + this.creature.id + ", Cell: " + GetCellType() + " from " + predator);
+			predator.RemovePray(this); // make jaw forget about me as a pray of his
+									   //predators.Remove(predator);
+		}
+
+		//My own 3 springs to others
+		if (northSpring != null) {
+			northSpring.connectedBody = null;
+			northSpring.enabled = false;
+		}
+		if (southEastSpring != null) {
+			southEastSpring.connectedBody = null;
+			southEastSpring.enabled = false;
+		}
+		if (southWestSpring != null) {
+			southWestSpring.connectedBody = null;
+			southWestSpring.enabled = false;
+		}
+
+		//My placenta springs
+		if (placentaSprings != null) {
+			foreach (SpringJoint2D placentaSpring in placentaSprings) {
+				Destroy(placentaSpring);
+			}
+		}
+
+
+		gene = null;
+		id = "trash";
+		predators.Clear();
+		isPlacenta = false;
+		groups = 0;
+	}
+
+	virtual public void OnBorrowToWorld() { }
+
+	// ^ Pooling ^ 
 }

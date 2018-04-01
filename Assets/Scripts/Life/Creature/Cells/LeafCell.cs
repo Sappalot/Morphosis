@@ -4,14 +4,27 @@ using UnityEngine;
 public class LeafCell : Cell {
 	//public LineRenderer[] testRays = new LineRenderer[6];
 
-	private const int recorMaxCapacity = 20;
-	private float[] effectRecord = new float[recorMaxCapacity];
-	private int effectRecorCursor = 0;
-	private int effectRecordCount = 0;
+	private const int exposureRecordMaxCapacity = 10;
+	private float[] exposureRecord = new float[exposureRecordMaxCapacity];
+	private int exposureRecorCursor = 0;
+	private int exposureRecordCount = 0;
 
 	public LeafCell() : base() {
 		springFrequenzy = 5f;
 		springDamping = 11f;
+	}
+
+	private float m_lowPassExposure = 0.33f;
+	public float lowPassExposure {
+		get {
+			return m_lowPassExposure;
+		}
+	}
+
+	public override void OnBorrowToWorld() {
+		for (int i = 0; i < exposureRecord.Length; i++) {
+			exposureRecord[i] = 0.33f;
+		}
 	}
 
 	//private enum HitType {
@@ -33,11 +46,10 @@ public class LeafCell : Cell {
 	private float GetEnergyLoss(RaycastHit2D hit, float energyLossAir) {
 		CollisionType type = GetCollisionType(hit);
 
-		int creatureSize = creature.phenotype.cellCount;
 		if (type == CollisionType.ownCell) {
-			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creatureSize); //J / m;
+			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.clusterCellCount); //J / m;
 		} else if (type == CollisionType.othersCell) {
-			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creatureSize); //J / m;
+			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.clusterCellCount); //J / m;
 		} else {
 			//Wall
 			return energyLossAir * 1000f; //J / m; 
@@ -45,7 +57,7 @@ public class LeafCell : Cell {
 	}
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		effectConsumptionInternal = GlobalSettings.instance.phenotype.leafCellEffectCost;
+		effectConsumptionInternal = GlobalSettings.instance.phenotype.leafCellEffectCost * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount);
 
 		bool debugRender = GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.leafExposure && CreatureSelectionPanel.instance.selectedCell == this;
 
@@ -155,8 +167,9 @@ public class LeafCell : Cell {
 		}
 
 		if (debugRender) {
-			Debug.DrawLine(start, start + direction * maxRange, Color.black, 1f);
-			Debug.DrawLine(start, start + direction * rayRange, Color.white, 1f);
+			float stayTime = GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(creature.phenotype.speed) * 0.1f * 20f;
+			Debug.DrawLine(start, start + direction * maxRange, Color.black, stayTime);
+			Debug.DrawLine(start, start + direction * rayRange, Color.white, stayTime);
 		}
 
 		//if (debugRender) {
@@ -184,18 +197,23 @@ public class LeafCell : Cell {
 
 		float effect = (rayRange / maxRange);
 
-		effectRecord[effectRecorCursor] = effect;
-		effectRecorCursor++;
-		if (effectRecorCursor >= recorMaxCapacity) {
-			effectRecorCursor = 0;
+		exposureRecord[exposureRecorCursor] = effect;
+		exposureRecorCursor++;
+		if (exposureRecorCursor >= exposureRecordMaxCapacity) {
+			exposureRecorCursor = 0;
 		}
-		effectRecordCount = (int)Mathf.Min(recorMaxCapacity, effectRecordCount + 1);
+		exposureRecordCount = (int)Mathf.Min(exposureRecordMaxCapacity, exposureRecordCount + 1);
 
-		float lowPass = 0f;
-		for (int i = 0; i < effectRecordCount; i++) {
-			lowPass += effectRecord[i];
+		m_lowPassExposure = 0f;
+		for (int i = 0; i < exposureRecordCount; i++) {
+			m_lowPassExposure += exposureRecord[i];
 		}
-		effectProductionInternal = (lowPass / effectRecordCount) * GlobalSettings.instance.phenotype.leafCellSunMaxEffect;
+		m_lowPassExposure /= exposureRecordCount;
+		effectProductionInternal = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount);
+
+		if (CellPanel.instance.selectedCell == this) {
+			LeafCellPanel.instance.MakeDirty();
+		}
 		base.UpdateCellFunction(deltaTicks, worldTicks) ;
 	}
 
@@ -204,6 +222,7 @@ public class LeafCell : Cell {
 		return distanceClose + ((distanceFar - distanceClose) * energyClose) / (energyClose - energyFar);
 	}
 	private void DrawEnergyLine(Color color, Vector2 lightStart, Vector2 lightDirection, float distanceClose, float distanceFar, float energyClose, float energyFar) {
+		return;
 		Vector2 perpendicular = new Vector2(-lightDirection.y, lightDirection.x);
 		Vector2 closeOnRay = lightStart + lightDirection * distanceClose;
 		Vector2 farOnRay = lightStart + lightDirection * distanceFar;

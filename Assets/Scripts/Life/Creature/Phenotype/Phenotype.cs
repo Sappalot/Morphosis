@@ -20,6 +20,14 @@ public class Phenotype : MonoBehaviour {
 	public Edges edges; //AKA Wings
 	public Veins veins;
 
+	//Telefrag
+	public int visualTelefrag { get; private set; }
+	public void Telefrag() {
+		ChangeEnergy(-GlobalSettings.instance.quality.portalTeleportPeriod * GlobalSettings.instance.phenotype.telefragDamage);
+		visualTelefrag = 10;
+	}
+	//^ Telefrag ^
+
 	[HideInInspector]
 	public Cell originCell {
 		get {
@@ -1151,7 +1159,7 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		leafCellTick++;
-		if (leafCellTick >= GlobalSettings.instance.quality.leafCellTickPeriod) {
+		if (leafCellTick >= (int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed)) {
 			leafCellTick = 0;
 		}
 
@@ -1226,7 +1234,7 @@ public class Phenotype : MonoBehaviour {
 					cell.UpdateCellFunction(GlobalSettings.instance.quality.jawCellTickPeriod, worldTick);
 				}
 				else if (leafCellTick == 0   && cell.GetCellType() == CellTypeEnum.Leaf) {
-					cell.UpdateCellFunction(GlobalSettings.instance.quality.leafCellTickPeriod, worldTick);
+					cell.UpdateCellFunction((int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed), worldTick);
 				}
 				else if (muscleCellTick == 0 && cell.GetCellType() == CellTypeEnum.Muscle) {
 					cell.UpdateCellFunction(GlobalSettings.instance.quality.muscleCellTickPeriod, worldTick);
@@ -1248,6 +1256,11 @@ public class Phenotype : MonoBehaviour {
 
 			if (veinTick == 0) {
 				veins.UpdateEffectAndEnergy(GlobalSettings.instance.quality.veinTickPeriod);
+			}
+
+			//Viual
+			if (visualTelefrag > 0) {
+				visualTelefrag--;
 			}
 		}
 	}

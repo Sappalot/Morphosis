@@ -11,6 +11,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public EggCellPanel eggCellPanel;
 	public JawCellPanel jawCellPanel;
+	public LeafCellPanel leafCellPanel;
 
 	private bool isDirty = true;
 	private Cell m_selectedCell;
@@ -18,7 +19,9 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public void MakeDirty() {
 		isDirty = true;
 
+		EggCellPanel.instance.MakeDirty();
 		JawCellPanel.instance.MakeDirty();
+		LeafCellPanel.instance.MakeDirty();
 	}
 
 	public Cell selectedCell {
@@ -67,6 +70,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 			eggCellPanel.gameObject.SetActive(false);
 			jawCellPanel.gameObject.SetActive(false);
+			leafCellPanel.gameObject.SetActive(false);
 
 			//Nothing to represent
 			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
@@ -96,6 +100,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				eggCellPanel.gameObject.SetActive(true);
 			} else if (selectedCell is JawCell) {
 				jawCellPanel.gameObject.SetActive(true);
+			} else if (selectedCell is LeafCell) {
+				leafCellPanel.gameObject.SetActive(true);
 			}
 
 			isDirty = false;
