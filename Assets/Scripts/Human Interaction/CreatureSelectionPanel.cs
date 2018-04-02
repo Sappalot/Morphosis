@@ -131,11 +131,15 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void Select(Creature creature, Cell cell = null) {
+		if (cell == null) {
+			cell = creature.phenotype.originCell;
+		}
 		DirtyMarkSelection();
 		selection.Clear();
 		selection.Add(creature);
 
 		selectedCell = cell;
+
 		GenePanel.instance.selectedGene = cell.gene;
 		LockedUnlockedPanel.instance.MakeDirty();
 
@@ -256,6 +260,24 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	//Actions ------------------------------------------------------------------------
 	//Separat class?
+
+	// Select
+	public void OnSelectMotherClicked() {
+		if (hasSoloSelected && soloSelected.hasMother && soloSelected.mother != null) {
+			Select(soloSelected.mother);
+		}
+	}
+
+	public void OnSelectChildrenClicked() {
+		if (hasSoloSelected && soloSelected.hasChildSoul) {
+			List<Creature> select = new List<Creature>();
+			foreach(Creature child in soloSelected.children) {
+				select.Add(child);
+			}
+			Select(select);
+		}
+	}
+	// ^ Select ^
 
 	// Delete
 	public void OnDeleteClicked() {
