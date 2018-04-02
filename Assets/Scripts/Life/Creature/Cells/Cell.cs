@@ -888,7 +888,18 @@ public abstract class Cell : MonoBehaviour {
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.update) {
 				filledCircleSprite.color = didUpdateFunctionThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
-				//filledCircleSprite.color = didUpdateEnergyThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
+			}
+			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.creation) {
+				if (creature.creation == CreatureCreationEnum.Born) {
+					filledCircleSprite.color = Color.magenta;
+				} else if (creature.creation == CreatureCreationEnum.Cloned) {
+					filledCircleSprite.color = Color.yellow;
+				} else {
+					//forged
+					filledCircleSprite.color = Color.cyan;
+				}
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.individual) {
+				filledCircleSprite.color = creature.phenotype.color;
 			}
 		} else {
 			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());

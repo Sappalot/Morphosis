@@ -343,7 +343,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	// Combine
 	public void OnCombineClicked() {
-		if (!hasSelection) {
+		if (!hasSelection || selectionCount == 1) {
 			return;
 		}
 		List<Gene[]> genomes = new List<Gene[]>();
@@ -607,7 +607,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				rotateButtonText.color = Color.black;
 				deleteButtonText.color = Color.black;
 				cloneButtonText.color = Color.black;
-				combineButtonText.color = Color.black;
+				combineButtonText.color = Color.grey;
 				// ^ right side ^
 				// left side
 				spiecesButtonText.color = Color.black;

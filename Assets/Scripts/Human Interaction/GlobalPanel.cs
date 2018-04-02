@@ -65,6 +65,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		predatorPray,
 		typeAndPredatorPray,
 		update,
+		creation,
+		individual,
 	}
 	[HideInInspector]
 	public CellGraphicsEnum graphicsCell {

@@ -29,6 +29,9 @@ public class Phenotype : MonoBehaviour {
 	//^ Telefrag ^
 
 	[HideInInspector]
+	public Color color = Color.black;
+
+	[HideInInspector]
 	public Cell originCell {
 		get {
 			return cellList[0];
@@ -170,6 +173,8 @@ public class Phenotype : MonoBehaviour {
 		Clear();
 		this.spawnPosition = spawnPosition;
 		this.spawnHeading = spawnHeading;
+
+		color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
 	}
 
 	public int TryGrowFully(Creature creature, bool forceGrow) {
