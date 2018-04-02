@@ -14,12 +14,13 @@ public class LockedUnlockedPanel : MonoSingleton<LockedUnlockedPanel> {
 	private void Update() {
 		if (isDirty) {
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
-				if (CreatureSelectionPanel.instance.soloSelected.hasMotherSoul || CreatureSelectionPanel.instance.soloSelected.hasChildSoul) {
-					locked.enabled = true;
-					unLocked.enabled = false;
-				} else {
+				if (CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome) {
 					locked.enabled = false;
 					unLocked.enabled = true;
+				} else {
+					locked.enabled = true;
+					unLocked.enabled = false;
+
 				}
 			} else {
 				locked.enabled = false;

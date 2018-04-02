@@ -20,6 +20,15 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 
 	private bool ignoreSliderMoved = false; // Work around
 
+	public void SetInteractable(bool interactable) {
+		fertilizeSlider.interactable = interactable;
+		canFertilizeWhenAttachedToggle.interactable = interactable;
+		detatchSizeToggle.interactable = interactable;
+		detatchEnergyToggle.interactable = interactable;
+		detatchSizeSlider.interactable = interactable;
+		detatchEnergySlider.interactable = interactable;
+	}
+
 	public void MakeDirty() {
 		isDirty = true;
 	}
@@ -36,7 +45,7 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 
 		GenePanel.instance.selectedGene.eggCellFertilizeThreshold = fertilizeSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
+			OnEggChanged();
 		}
 		MakeDirty();
 	}
@@ -48,7 +57,7 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 
 		GenePanel.instance.selectedGene.eggCellCanFertilizeWhenAttached = canFertilizeWhenAttachedToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
+			OnEggChanged();
 		}
 		MakeDirty();
 	}
@@ -60,7 +69,7 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 
 		GenePanel.instance.selectedGene.eggCellDetatchMode = detatchSizeToggle.isOn ? ChildDetatchModeEnum.Size : ChildDetatchModeEnum.Energy;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
+			OnEggChanged();
 		}
 		MakeDirty();
 	}
@@ -72,7 +81,7 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 
 		GenePanel.instance.selectedGene.eggCellDetatchSizeThreshold = detatchSizeSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
+			OnEggChanged();
 		}
 		MakeDirty();
 	}
@@ -84,9 +93,15 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 
 		GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold = detatchEnergySlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
+			OnEggChanged();
 		}
 		MakeDirty();
+	}
+
+	private void OnEggChanged() {
+		CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
+		CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+		CreatureSelectionPanel.instance.soloSelected.generation = 1;
 	}
 
 	private void Update() {

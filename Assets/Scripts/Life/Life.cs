@@ -167,6 +167,8 @@ public class Life : MonoSingleton<Life> {
 		// Spawn child at egg cell location
 		Creature child = InstantiateCreature(); // Will create soul as well
 		child.bornTick = worldTicks; //The time of birth is the time when the egg is fertilized
+		child.creation = CreatureCreationEnum.Born;
+		child.generation = mother.generation + 1;
 
 		// Let there be evolution, and there was evolution
 		//child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
@@ -286,6 +288,9 @@ public class Life : MonoSingleton<Life> {
 		Creature creature = InstantiateCreature();
 		creature.bornTick = bornTick;
 		creature.GenerateJellyfish(position, heading);
+		creature.creation = CreatureCreationEnum.Forged;
+		creature.generation = 1;
+
 		return creature;
 	}
 
@@ -293,6 +298,8 @@ public class Life : MonoSingleton<Life> {
 		Creature creature = InstantiateCreature();
 		creature.bornTick = bornTick;
 		creature.GenerateSimple(position, heading);
+		creature.creation = CreatureCreationEnum.Forged;
+		creature.generation = 1;
 
 		return creature;
 	}
@@ -301,6 +308,8 @@ public class Life : MonoSingleton<Life> {
 		Creature creature = InstantiateCreature();
 		creature.bornTick = bornTick;
 		creature.GenerateFreak(position, heading);
+		creature.creation = CreatureCreationEnum.Forged;
+		creature.generation = 1;
 
 		return creature;
 	}
@@ -309,6 +318,8 @@ public class Life : MonoSingleton<Life> {
 		Creature creature = InstantiateCreature();
 		creature.bornTick = bornTick;
 		creature.GenerateMergling(genomes, position, heading);
+		creature.creation = CreatureCreationEnum.Forged;
+		creature.generation = 1;
 
 		creature.hasPhenotypeCollider = false;
 		creature.hasGenotypeCollider = false;
@@ -324,6 +335,8 @@ public class Life : MonoSingleton<Life> {
 		clone.hasPhenotypeCollider = false;
 		clone.hasGenotypeCollider = false;
 		clone.soul = null;
+		clone.creation = CreatureCreationEnum.Cloned;
+		//Let generation be same as mothers
 
 		clone.bornTick = bornTick;
 

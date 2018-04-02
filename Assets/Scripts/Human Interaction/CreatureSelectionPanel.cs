@@ -9,8 +9,29 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public LineRenderer lineRenderer;
 
 	public Text selectedCreatureText;
-	//public Text motherText;
-	//public Text childrenText;
+	public Text creatureCreatedText;
+
+	//right side
+	public Text moveButtonText;
+	public Text rotateButtonText;
+	public Text deleteButtonText;
+	public Text cloneButtonText;
+	public Text combineButtonText;
+
+	// ^ right side ^
+
+	// left side
+	public Text spiecesButtonText;
+
+	public Button motherButton;
+	public Text motherButtonText;
+
+	public Button fatherButton;
+	public Text fatherButtonText;
+
+	public Button childrenButton;
+	public Text childrenButtonText;
+	// ^ left side ^
 
 	public List<Creature> selection { get; private set; }
 	public List<Creature> selectionCluster { get; private set; }
@@ -530,25 +551,87 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 			if (selection.Count == 0) {
 				selectedCreatureText.text = "";
-				//motherText.text = "Mother:";
-				//childrenText.text = "Offspring:";
+				creatureCreatedText.text = "";
+
+				//right side
+				moveButtonText.color =     Color.gray;
+				rotateButtonText.color =   Color.gray;
+				deleteButtonText.color =   Color.gray;
+				cloneButtonText.color =    Color.gray;
+				combineButtonText.color =  Color.gray;
+				// ^ right side ^
+				// left side
+				spiecesButtonText.color =  Color.gray;
+
+				motherButtonText.color =   Color.gray;
+				motherButton.gameObject.SetActive(true);
+
+				fatherButtonText.color =   Color.gray;
+				fatherButton.gameObject.SetActive(true);
+
+				childrenButtonText.color = Color.gray;
+				childrenButton.gameObject.SetActive(true);
+				// ^ left side ^
+
+
 			} else if (selection.Count == 1) {
 				selectedCreatureText.text = soloSelected.id; // soloSelected.nickname;
 				//motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
 				string childrenString = "" + soloSelected.childSouls.Count + " ";
 
-				for (int i = 0; i < soloSelected.childSouls.Count; i++) {
-					childrenString += (soloSelected.soul.isConnectedWithChildSoul(soloSelected.childSouls[i].id) ? "[" : "") + soloSelected.childSouls[i].id + (soloSelected.soul.isConnectedWithChildSoul(soloSelected.childSouls[i].id) ? "]" : "");
-					if (i < soloSelected.childSouls.Count - 1) {
-						childrenString += ", ";
-					}
-				}
+				creatureCreatedText.text = soloSelected.creation.ToString() + (soloSelected.creation != CreatureCreationEnum.Forged ? ", Generation: " + soloSelected.generation : "");
+				//right side
+				moveButtonText.color = Color.black;
+				rotateButtonText.color = Color.black;
+				deleteButtonText.color = Color.black;
+				cloneButtonText.color = Color.black;
+				combineButtonText.color = Color.black;
+				// ^ right side ^
+				// left side
+				spiecesButtonText.color = Color.black;
 
-				//childrenText.text = "Offspring: " + (soloSelected.hasChildSoul ?  childrenString : "<none>");
+				motherButtonText.color = Color.red;
+				motherButton.gameObject.SetActive(soloSelected.hasMotherSoul); //show even if mother is dead
+
+				fatherButtonText.color = Color.red;
+				fatherButton.gameObject.SetActive(false);
+
+				childrenButtonText.color = Color.red;
+				if (soloSelected.hasChildSoul) {
+					childrenButton.gameObject.SetActive(true); //show even if mother is dead
+					if (soloSelected.childSoulCount == 1) {
+						childrenButtonText.text = "1 Child";
+					} else {
+						childrenButtonText.text = soloSelected.childSoulCount + " Children";
+					}
+				} else {
+					childrenButton.gameObject.SetActive(false);
+				}
+				// ^ left side ^
+
 			} else {
 				selectedCreatureText.text = selection.Count + " Creatures";
-				//motherText.text = "Mother: -"; //TODO : if all have the same mother - write it
-				//childrenText.text = "Offspring: -"; //TODO: if all have the same chilren - write it
+				creatureCreatedText.text = "-";
+
+				//right side
+				moveButtonText.color = Color.black;
+				rotateButtonText.color = Color.black;
+				deleteButtonText.color = Color.black;
+				cloneButtonText.color = Color.black;
+				combineButtonText.color = Color.black;
+				// ^ right side ^
+				// left side
+				spiecesButtonText.color = Color.gray;
+
+				motherButtonText.color = Color.gray;
+				motherButton.gameObject.SetActive(true);
+
+				fatherButtonText.color = Color.gray;
+				fatherButton.gameObject.SetActive(true);
+
+				childrenButtonText.color = Color.gray;
+				childrenButton.gameObject.SetActive(true);
+				// ^ left side ^
 			}
 
 			isDirty = false;

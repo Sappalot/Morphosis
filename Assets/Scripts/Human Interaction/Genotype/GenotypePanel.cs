@@ -2,8 +2,6 @@
 using UnityEngine.UI;
 
 public class GenotypePanel : MonoSingleton<GenotypePanel> {
-	public LockedUnlockedPanel lockedUnlockedPanel;
-
 	public Image blackWhiteImage;
 	public Image whiteBlackImage;
 
@@ -31,8 +29,12 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 	public void OnClickedClear() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
-			creature.Clear();
+			if (creature.allowedToChangeGenome) {
+				creature.Clear();
+				creature.creation = CreatureCreationEnum.Forged;
+			}
 		}
+		CreatureSelectionPanel.instance.MakeDirty();
 		GenePanel.instance.selectedGene = null;
 		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -40,8 +42,12 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 	public void OnClickedMutateAbsolute() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
-			creature.MutateAbsolute(GlobalSettings.instance.mutation.masterMutationStrength * 10f);
+			if (creature.allowedToChangeGenome) {
+				creature.MutateAbsolute(GlobalSettings.instance.mutation.masterMutationStrength * 10f);
+				creature.creation = CreatureCreationEnum.Forged;
+			}
 		}
+		CreatureSelectionPanel.instance.MakeDirty();
 		GenePanel.instance.selectedGene = null;
 		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -49,8 +55,12 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 	public void OnClickedMutateCummulative() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
-			creature.MutateCummulative(GlobalSettings.instance.mutation.masterMutationStrength * 10f);
+			if (creature.allowedToChangeGenome) {
+				creature.MutateCummulative(GlobalSettings.instance.mutation.masterMutationStrength * 10f);
+				creature.creation = CreatureCreationEnum.Forged;
+			}
 		}
+		CreatureSelectionPanel.instance.MakeDirty();
 		GenePanel.instance.selectedGene = null;
 		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -58,17 +68,26 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 	public void OnClickedScramble() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
-			creature.Scramble();
+			if (creature.allowedToChangeGenome) {
+				creature.Scramble();
+				creature.creation = CreatureCreationEnum.Forged;
+			}
 		}
+		CreatureSelectionPanel.instance.MakeDirty();
 		GenePanel.instance.selectedGene = null;
 		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
+	//To be removed
 	public void OnClickedRevert() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
-			creature.RestoreState();
+			if (creature.allowedToChangeGenome) { //sould not really be needed... but anyway to make sure
+				creature.RestoreState();
+				creature.creation = CreatureCreationEnum.Forged; //we have been tinkering with it allready
+			}
 		}
+		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.selectedGene = null;
 		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();

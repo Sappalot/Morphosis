@@ -28,6 +28,10 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color noMotherAttachedArrow;
 	public Color motherAttachedArrow;
 
+	public Color creatureLockedColor;
+	public Color creatureUnlockedColor;
+
+
 	public Color ToColor(CellTypeEnum cellType) {
 		if (cellType == CellTypeEnum.Egg) {
 			return egg;

@@ -81,6 +81,8 @@ public class GenePanel : MonoSingleton<GenePanel> {
 			GenomePanel.instance.MakeDirty();
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
 				CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
+				CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+				CreatureSelectionPanel.instance.soloSelected.generation = 1;
 			}
 			isDirty = true;
 		}
@@ -121,6 +123,13 @@ public class GenePanel : MonoSingleton<GenePanel> {
 				isDirty = false;
 				return;
 			}
+
+			//allow interactionclo
+			if (CreatureSelectionPanel.instance.hasSoloSelected) {
+				cellTypeDropdown.interactable = CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
+				eggGenePanel.SetInteractable(CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome);
+			}
+
 
 			circles.SetActive(true);
 

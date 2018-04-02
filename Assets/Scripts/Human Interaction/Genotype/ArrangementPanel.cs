@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 
 public class ArrangementPanel : MonoBehaviour {
-	public GameObject enableToggle;
+	public Toggle enableToggle;
 	public GameObject circles;
 	[HideInInspector]
 	public GenePanel genePanel;
@@ -72,10 +72,12 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	public void OnClickEnabledToggle(bool value) {
-		bool wasChanged = arrangement.isEnabled != value; //To prevent dirtymarking when just setting startup value
-		arrangement.isEnabled = value;
-		if (wasChanged) {
-			MakeAllGenomeStuffDirty();
+		if (CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome) {
+			bool wasChanged = arrangement.isEnabled != value; //To prevent dirtymarking when just setting startup value
+			arrangement.isEnabled = value;
+			if (wasChanged) {
+				MakeAllGenomeStuffDirty();
+			}
 		}
 	}
 
@@ -185,6 +187,8 @@ public class ArrangementPanel : MonoBehaviour {
 		GenomePanel.instance.MakeDirty();
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
+			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}
 		MakeDirty();
 	}
@@ -228,7 +232,7 @@ public class ArrangementPanel : MonoBehaviour {
 				grayOut.gameObject.SetActive(false);
 				circles.SetActive(false);
 				arrowTransform.gameObject.SetActive(false);
-				enableToggle.SetActive(false);
+				enableToggle.gameObject.SetActive(false);
 
 				isDirty = false;
 				return;
@@ -236,9 +240,14 @@ public class ArrangementPanel : MonoBehaviour {
 			grayOut.gameObject.SetActive(true);
 			circles.SetActive(true);
 			arrowTransform.gameObject.SetActive(true);
-			enableToggle.SetActive(true);
+			enableToggle.gameObject.SetActive(true);
+			if (CreatureSelectionPanel.instance.hasSoloSelected) {
+				enableToggle.interactable = CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
+			} else {
+				enableToggle.interactable = false;
+			}
 
-			arrangementButtons.SetActive(isEnabled && isMouseHoverng);
+			arrangementButtons.SetActive(isEnabled && isMouseHoverng && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome);
 
 			//grey out
 			UpdateIsUsed();

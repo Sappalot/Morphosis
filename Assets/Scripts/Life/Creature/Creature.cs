@@ -11,6 +11,10 @@ public class Creature : MonoBehaviour {
 	public string id;
 	[HideInInspector]
 	public string nickname;
+	[HideInInspector]
+	public CreatureCreationEnum creation = CreatureCreationEnum.Forged;
+	[HideInInspector]
+	public int generation = 1;
 
 	//time
 	[HideInInspector]
@@ -119,6 +123,13 @@ public class Creature : MonoBehaviour {
 	public bool hasChildSoul {
 		get {
 			return soul.hasChildSoul;
+		}
+	}
+
+	//Dead or alive counts
+	public bool allowedToChangeGenome {
+		get {
+			return !(hasChildSoul || hasMotherSoul);
 		}
 	}
 
@@ -478,6 +489,8 @@ public class Creature : MonoBehaviour {
 		//me
 		creatureData.id = id;
 		creatureData.nickname = nickname;
+		creatureData.creation = creation;
+		creatureData.generation = generation;
 
 		creatureData.bornTick = bornTick;
 		creatureData.deadTick = deadTick;
@@ -496,6 +509,8 @@ public class Creature : MonoBehaviour {
 		//me
 		nickname = creatureData.nickname;
 		id = creatureData.id;
+		creation = creatureData.creation;
+		generation = creatureData.generation;
 
 		bornTick = creatureData.bornTick;
 		deadTick = creatureData.deadTick;

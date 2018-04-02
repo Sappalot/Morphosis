@@ -179,6 +179,7 @@ public class Genotype : MonoBehaviour {
 		if (geneCellsDiffersFromGenome) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature UpdateGeneCellsFromGenome");
+
 			const int maxSize = 6;
 			Clear();
 
