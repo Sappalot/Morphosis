@@ -819,16 +819,17 @@ public class Phenotype : MonoBehaviour {
 		return cell;
 	}
 
+	private List<Cell> cellsToReActivate = new List<Cell>();
 	private Cell InstantiateCell(CellTypeEnum type, Vector2i mapPosition, Creature creature) {
 		Cell cell = null;
 
 		cell = CellPool.instance.Borrow(type);
 
-		//haxzor
-
-		//creature.gameObject.GetComponent<SortingGroup>().enabled = false;
-		
-
+		//haxzor workaround
+		//Cell is activated in Update instead of here
+		//Updating it here will cause: Assertion failed: Invalid SortingGroup index set in Renderer
+		isDirty = true;
+		cellsToReActivate.Add(cell);
 
 		cell.name = type.ToString();
 		cellMap.SetCell(mapPosition, cell);
@@ -1112,7 +1113,16 @@ public class Phenotype : MonoBehaviour {
 		veins.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(creature));
 
 		if (isDirty) {
-			creature.gameObject.GetComponent<SortingGroup>().enabled = true;
+			//if (toSetActiveCell != null) {
+			//	toSetActiveCell.gameObject.SetActive(true);
+			//	toSetActiveCell = null;
+			//}
+			if (cellsToReActivate.Count > 0) {
+				foreach (Cell c in cellsToReActivate) {
+					c.gameObject.SetActive(true);
+				}
+				cellsToReActivate.Clear();
+			}
 
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature Phenotype");
