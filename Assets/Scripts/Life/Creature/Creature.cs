@@ -678,11 +678,4 @@ public class Creature : MonoBehaviour {
 			}
 		}
 	}
-
-	public void OnReturnToPool() {
-		//genotype.OnReturnToPool
-		//phenotype.OnReturnToPool();
-
-		//clear all information
-	}
 }

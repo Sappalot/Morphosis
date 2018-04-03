@@ -29,7 +29,9 @@ public class Phenotype : MonoBehaviour {
 	//^ Telefrag ^
 
 	[HideInInspector]
-	public Color color = Color.black;
+	public Color individualColor = Color.black;
+	[HideInInspector]
+	public Color outlineClusterColor = Color.black;
 
 	[HideInInspector]
 	public Cell originCell {
@@ -174,7 +176,12 @@ public class Phenotype : MonoBehaviour {
 		this.spawnPosition = spawnPosition;
 		this.spawnHeading = spawnHeading;
 
-		color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+		individualColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+
+		Color outline = ColorScheme.instance.outlineCluster;
+		float brightnessDiff = 0f;
+		float redGreenDiff = 0f;
+		outlineClusterColor = new Color(outline.r + brightnessDiff + redGreenDiff, outline.g + brightnessDiff - redGreenDiff, outline.b + brightnessDiff);
 	}
 
 	public int TryGrowFully(Creature creature, bool forceGrow) {
@@ -856,7 +863,7 @@ public class Phenotype : MonoBehaviour {
 				cellList[index].SetOutlineColor(ColorScheme.instance.outlineSelected);
 			} else if (isClusterSelected) {
 				cellList[index].ShowOutline(true);
-				cellList[index].SetOutlineColor(ColorScheme.instance.outlineCluster);
+				cellList[index].SetOutlineColor(creature.phenotype.outlineClusterColor);
 			} else {
 				cellList[index].ShowOutline(false);
 			}

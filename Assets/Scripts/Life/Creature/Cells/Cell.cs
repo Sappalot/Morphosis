@@ -326,7 +326,11 @@ public abstract class Cell : MonoBehaviour {
 		if (isHighlited) {
 			creatureSelectedSprite.color = ColorScheme.instance.outlineSelected;
 		} else {
-			creatureSelectedSprite.color = ColorScheme.instance.outlineCluster;
+			if (creature != null) {
+				creatureSelectedSprite.color = creature.phenotype.outlineClusterColor;
+			} else {
+				creatureSelectedSprite.color = ColorScheme.instance.outlineCluster;
+			}
 		}
 	}
 
@@ -899,7 +903,7 @@ public abstract class Cell : MonoBehaviour {
 					filledCircleSprite.color = Color.cyan;
 				}
 			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.individual) {
-				filledCircleSprite.color = creature.phenotype.color;
+				filledCircleSprite.color = creature.phenotype.individualColor;
 			}
 		} else {
 			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());

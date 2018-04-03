@@ -34,6 +34,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Text cellPoolShellCount;
 	public Text cellPoolVeinCount;
 
+	public Text persistantCellCount;
+
 	//World
 	public void UpdateWorldNameAndTime(string worldName, ulong worldTicks) {
 		worldNameAndTimeText.text = worldName + " " + TimeUtil.GetTimeString((ulong)(worldTicks * Time.fixedDeltaTime));
@@ -117,6 +119,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			cellPoolRootCount.text =   "R: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Root) +   " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Root) +   " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Root)   + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Root));
 			cellPoolShellCount.text =  "S: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) +  " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell) +  " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Shell)  + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell));
 			cellPoolVeinCount.text =   "V: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) +   " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein) +   " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Vein)   + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein));
+
+			persistantCellCount.text = "Lost: " + Life.instance.persistantCellCount; 
 		}
 	}
 

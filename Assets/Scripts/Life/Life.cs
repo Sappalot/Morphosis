@@ -17,6 +17,9 @@ public class Life : MonoSingleton<Life> {
 	[HideInInspector]
 	public int sterileKilledCount;
 
+	//debug
+	public int persistantCellCount = 0;
+
 	public int soulUpdatedCount {
 		get {
 			return soulListUpdated.Count;
@@ -198,9 +201,10 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	public void KillAllCreaturesAndSouls() {
-		foreach (Creature creature in creatureList) {
-			creature.OnReturnToPool();
-			Destroy(creature.gameObject); //TODO: return it to pool instead
+		List<Creature> toKill = new List<Creature>(creatureList);
+		foreach (Creature creature in toKill) {
+			KillCreatureSafe(creature);
+			//Destroy(creature.gameObject); //TODO: return it to pool instead
 		}
 		creatureDictionary.Clear();
 		creatureList.Clear();
@@ -233,6 +237,11 @@ public class Life : MonoSingleton<Life> {
 		creature.KillAllCells(true); // for the fx :)
 
 		//TODO: Return root cell to pool
+		//This is the only place where ta creature is ultimatly destroyed
+		//Are there cells still left on creature?
+		Cell[] oopsCells = creature.phenotype.cellsTransform.GetComponents<Cell>();
+		persistantCellCount += oopsCells.Length;
+
 		Destroy(creature.gameObject); //TODO: return it to pool instead
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
