@@ -79,7 +79,7 @@ public class CellPool : MonoSingleton<CellPool> {
 	private Cell PopCell(Queue<Cell> queue) {
 		if (queue.Count > 0) {
 			Cell cell = queue.Dequeue();
-			cell.gameObject.SetActive(true);
+			cell.gameObject.SetActive(true); // Causes: Assertion failed: Invalid SortingGroup index set in Renderer
 			return cell;
 		}
 		return null;
@@ -107,7 +107,6 @@ public class CellPool : MonoSingleton<CellPool> {
 
 		cell.name = type.ToString();
 		cell.transform.parent = transform;
-		cell.gameObject.SetActive(true);
 
 		return cell;
 	}

@@ -204,7 +204,6 @@ public class Life : MonoSingleton<Life> {
 		List<Creature> toKill = new List<Creature>(creatureList);
 		foreach (Creature creature in toKill) {
 			KillCreatureSafe(creature);
-			//Destroy(creature.gameObject); //TODO: return it to pool instead
 		}
 		creatureDictionary.Clear();
 		creatureList.Clear();

@@ -25,6 +25,7 @@ public class LeafCell : Cell {
 		for (int i = 0; i < exposureRecord.Length; i++) {
 			exposureRecord[i] = 0.33f;
 		}
+		base.OnBorrowToWorld();
 	}
 
 	//private enum HitType {

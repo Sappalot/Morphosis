@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Rendering;
 
 // The physical creature defined by all its cells
 
@@ -793,7 +794,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	private Cell SpawnCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindCardinalIndex, FlipSideEnum flipSide, Vector2 position, bool modelSpace, float spawnEnergy) {
-		Cell cell = InstantiateCell(gene.type, mapPosition);
+		Cell cell = InstantiateCell(gene.type, mapPosition, creature);
 		Vector2 spawnPosition = (modelSpace ? CellMap.ToModelSpacePosition(mapPosition) : Vector2.zero) + position;
 		cell.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, 0f);
 
@@ -818,17 +819,21 @@ public class Phenotype : MonoBehaviour {
 		return cell;
 	}
 
-	private Cell InstantiateCell(CellTypeEnum type, Vector2i mapPosition) {
+	private Cell InstantiateCell(CellTypeEnum type, Vector2i mapPosition, Creature creature) {
 		Cell cell = null;
 
 		cell = CellPool.instance.Borrow(type);
+
+		//haxzor
+
+		//creature.gameObject.GetComponent<SortingGroup>().enabled = false;
 		
+
 
 		cell.name = type.ToString();
 		cellMap.SetCell(mapPosition, cell);
 		cellList.Add(cell);
 		cell.transform.parent = cellsTransform.transform;
-		
 
 		return cell;
 	}
@@ -1076,7 +1081,7 @@ public class Phenotype : MonoBehaviour {
 		Setup(phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
 		for (int index = 0; index < phenotypeData.cellDataList.Count; index++) {
 			CellData cellData = phenotypeData.cellDataList[index];
-			Cell cell = InstantiateCell(creature.genotype.genome[cellData.geneIndex].type, cellData.mapPosition);
+			Cell cell = InstantiateCell(creature.genotype.genome[cellData.geneIndex].type, cellData.mapPosition, creature);
 			cell.ApplyData(cellData, creature);
 		}
 		cellsDiffersFromGeneCells = false; //This work is done
@@ -1107,6 +1112,8 @@ public class Phenotype : MonoBehaviour {
 		veins.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(creature));
 
 		if (isDirty) {
+			creature.gameObject.GetComponent<SortingGroup>().enabled = true;
+
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature Phenotype");
 

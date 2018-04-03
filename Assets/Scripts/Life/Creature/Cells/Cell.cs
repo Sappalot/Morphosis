@@ -974,7 +974,9 @@ public abstract class Cell : MonoBehaviour {
 		groups = 0;
 	}
 
-	virtual public void OnBorrowToWorld() { }
+	virtual public void OnBorrowToWorld() {
+		//gameObject.SetActive(true);
+	}
 
 	// ^ Pooling ^ 
 }
