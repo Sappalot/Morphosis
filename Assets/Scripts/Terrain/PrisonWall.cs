@@ -26,7 +26,7 @@ public class PrisonWall : MonoSingleton<PrisonWall> {
 				}
 			}
 			foreach (Creature kill in killList) {
-				Life.instance.KillCreatureSafe(kill);
+				Life.instance.KillCreatureSafe(kill, true);
 				runnersKilledCount++;
 			}
 			escapistCleanupTicks = 0;

@@ -14,6 +14,9 @@ public class Phenotype : MonoBehaviour {
 	public ShellCell shellCellPrefab;
 	public VeinCell veinCellPrefab;
 
+	public Animator creatureDetatchEffectPrefab;
+
+	// Effects
 	public CellDeath cellDeathPrefab;
 	public CellDetatch cellDetatchPrefab;
 
@@ -153,6 +156,9 @@ public class Phenotype : MonoBehaviour {
 		Setup(position, heading);
 		NoGrowthReason reason;
 		TryGrow(creature, true, 1, true, false, 0, true, out reason);
+
+		
+
 		cellsDiffersFromGeneCells = false;
 	}
 
@@ -690,6 +696,11 @@ public class Phenotype : MonoBehaviour {
 				}
 			}
 
+			if (playEffects) {
+				float angle = originCell.heading - 90f;
+				Animator detatch = Instantiate(creatureDetatchEffectPrefab, originCell.position, Quaternion.Euler(0f, 0f, angle));
+			}
+
 			//Kick separation
 			if (applyKick) {
 				Creature mother = creature.motherSoul.creature;
@@ -825,11 +836,11 @@ public class Phenotype : MonoBehaviour {
 
 		cell = CellPool.instance.Borrow(type);
 
-		//haxzor workaround
+		//haxzor workaround, may caus phisics to explode
 		//Cell is activated in Update instead of here
 		//Updating it here will cause: Assertion failed: Invalid SortingGroup index set in Renderer
-		isDirty = true;
-		cellsToReActivate.Add(cell);
+		//isDirty = true;
+		//cellsToReActivate.Add(cell);
 
 		cell.name = type.ToString();
 		cellMap.SetCell(mapPosition, cell);
@@ -1113,10 +1124,6 @@ public class Phenotype : MonoBehaviour {
 		veins.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(creature));
 
 		if (isDirty) {
-			//if (toSetActiveCell != null) {
-			//	toSetActiveCell.gameObject.SetActive(true);
-			//	toSetActiveCell = null;
-			//}
 			if (cellsToReActivate.Count > 0) {
 				foreach (Cell c in cellsToReActivate) {
 					c.gameObject.SetActive(true);

@@ -4,6 +4,9 @@ using System;
 
 public class Life : MonoSingleton<Life> {
 	public Creature creaturePrefab;
+	public Animator creatureDeathEffectPrefab;
+	public Animator creatureBirthEffectPrefab;
+	public Animator creatureAddEffectPrefab;
 
 	private IdGenerator idGenerator = new IdGenerator();
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
@@ -159,6 +162,10 @@ public class Life : MonoSingleton<Life> {
 			Audio.instance.EggCellFertilize(CameraUtils.GetEffectStrengthLazy());
 		}
 
+		if (playEffects) {
+			Animator birth = Instantiate(creatureBirthEffectPrefab, eggCell.position, Quaternion.Euler(0f, 0f, 0f));
+		}
+
 		Creature mother = eggCell.creature;
 
 		// remove cell at childs origin location
@@ -203,7 +210,7 @@ public class Life : MonoSingleton<Life> {
 	public void KillAllCreaturesAndSouls() {
 		List<Creature> toKill = new List<Creature>(creatureList);
 		foreach (Creature creature in toKill) {
-			KillCreatureSafe(creature);
+			KillCreatureSafe(creature, false);
 		}
 		creatureDictionary.Clear();
 		creatureList.Clear();
@@ -216,21 +223,26 @@ public class Life : MonoSingleton<Life> {
 		soulsDeadButUsedCount = 0;
 	}
 
+	//When pressing delete, use effects
 	public void KillCellSafe(Cell cell, ulong worldTicks) {
 		if (cell.isOrigin) {
-			KillCreatureSafe(cell.creature);
+			KillCreatureSafe(cell.creature, true);
 		} else {
 			cell.creature.KillCell(cell, true, worldTicks);
 		}
 	}
 
 	//This is the only way, where the creature GO is deleted
-	public void KillCreatureSafe(Creature creature) {
+	public void KillCreatureSafe(Creature creature, bool playEffects) {
 		creature.DetatchFromMother(false, true);
 		foreach(Soul childSoul in creature.childSouls) {
 			if (childSoul.creatureReference.creature != null) {
 				childSoul.creatureReference.creature.DetatchFromMother(false, true);
 			}
+		}
+
+		if (playEffects) {
+			Animator birth = Instantiate(creatureDeathEffectPrefab, creature.phenotype.originCell.position, Quaternion.Euler(0f, 0f, 0f));
 		}
 
 		creature.KillAllCells(true); // for the fx :)
@@ -246,6 +258,7 @@ public class Life : MonoSingleton<Life> {
 		creatureList.Remove(creature);
 
 		RemoveUnusedSouls();
+
 
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		CreatureSelectionPanel.instance.MakeDirty();
@@ -299,6 +312,8 @@ public class Life : MonoSingleton<Life> {
 		creature.creation = CreatureCreationEnum.Forged;
 		creature.generation = 1;
 
+		SpawnAddEffect(position);
+
 		return creature;
 	}
 
@@ -309,6 +324,8 @@ public class Life : MonoSingleton<Life> {
 		creature.creation = CreatureCreationEnum.Forged;
 		creature.generation = 1;
 
+		SpawnAddEffect(position);
+
 		return creature;
 	}
 
@@ -318,6 +335,8 @@ public class Life : MonoSingleton<Life> {
 		creature.GenerateFreak(position, heading);
 		creature.creation = CreatureCreationEnum.Forged;
 		creature.generation = 1;
+
+		SpawnAddEffect(position);
 
 		return creature;
 	}
@@ -331,6 +350,7 @@ public class Life : MonoSingleton<Life> {
 
 		creature.hasPhenotypeCollider = false;
 		creature.hasGenotypeCollider = false;
+
 		return creature;
 	}
 
@@ -349,6 +369,14 @@ public class Life : MonoSingleton<Life> {
 		clone.bornTick = bornTick;
 
 		return clone;
+	}
+
+	private void SpawnAddEffect(Vector2 position) {
+		Animator birth = Instantiate(creatureAddEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
+	}
+
+	private void SpawnBirthEffect(Vector2 position) {
+		Animator birth = Instantiate(creatureBirthEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
 	}
 
 	private Creature InstantiateCreature() {
@@ -540,7 +568,7 @@ public class Life : MonoSingleton<Life> {
 		}
 
 		for (int index = 0; index < killCreatureList.Count; index++) {
-			KillCreatureSafe(killCreatureList[index]);
+			KillCreatureSafe(killCreatureList[index], true);
 		}
 		
 		if (phenotypePanelTicks == 0) {

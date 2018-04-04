@@ -4,6 +4,12 @@ using UnityEngine;
 // The container of genotype(genes) and phenotype(body)
 // Holds information that does not fit into genes or body 
 public class Creature : MonoBehaviour {
+	public SpriteRenderer creturePosition;
+	public SpriteRenderer phenotypePosition;
+	public SpriteRenderer phenotypeCellsPosition;
+	public SpriteRenderer genotypePosition;
+	public SpriteRenderer genotypeCellsPosition;
+
 	[HideInInspector]
 	public Soul soul; //Born soul-less the soul will find the creature 
 
@@ -29,13 +35,6 @@ public class Creature : MonoBehaviour {
 	public float GetAge(ulong worldTicks) {
 		return (worldTicks - bornTick) * Time.fixedDeltaTime;
 	}
-
-	//debug
-	public SpriteRenderer creturePosition;
-	public SpriteRenderer phenotypePosition;
-	public SpriteRenderer phenotypeCellsPosition;
-	public SpriteRenderer genotypePosition;
-	public SpriteRenderer genotypeCellsPosition;
 
 	//wing force
 	[Range(0f, 1f)]
@@ -391,6 +390,7 @@ public class Creature : MonoBehaviour {
 			phenotype.Release(this);
 			genotype.MoveToPhenotype(this);
 			hasPhenotypeCollider = true;
+			phenotype.UpdateRotation();
 		} else if (type == PhenoGenoEnum.Genotype) {
 			genotype.Release(this);
 			hasGenotypeCollider = true;

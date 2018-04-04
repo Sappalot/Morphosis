@@ -70,7 +70,6 @@ public class CellPool : MonoSingleton<CellPool> {
 	//Note: make sure there are no object out there with references to this returned cell
 	public void Return(Cell cell) {
 		cell.transform.parent = transform;
-		//cell.transform.position = new Vector3(-10f, -10f, 0f);
 		cell.gameObject.SetActive(false);
 		storedQueues[cell.GetCellType()].Enqueue(cell);
 		loanedCount[cell.GetCellType()]--;
@@ -79,7 +78,7 @@ public class CellPool : MonoSingleton<CellPool> {
 	private Cell PopCell(Queue<Cell> queue) {
 		if (queue.Count > 0) {
 			Cell cell = queue.Dequeue();
-			//cell.gameObject.SetActive(true); // Causes: Assertion failed: Invalid SortingGroup index set in Renderer
+			cell.gameObject.SetActive(true); // Causes: Assertion failed: Invalid SortingGroup index set in Renderer
 			return cell;
 		}
 		return null;

@@ -7,6 +7,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public PhenotypePanel phenotypePanel;
 	public new Camera camera;
 	public LineRenderer lineRenderer;
+	public Animator creatureAddEffectPrefab;
 
 	public Text selectedCreatureText;
 	public Text creatureCreatedText;
@@ -282,7 +283,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	// Delete
 	public void OnDeleteClicked() {
 		for (int index = 0; index < selection.Count; index++) {
-			life.KillCreatureSafe(selection[index]);
+			life.KillCreatureSafe(selection[index], true);
 		}
 		ClearSelection();
 	}
@@ -544,11 +545,19 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 			foreach (Creature c in moveCreatures) {
 				c.Release(PhenoGenoEnum.Phenotype);
+				SpawnAddEffect(c.phenotype.originCell.position);
 			}
 		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			foreach (Creature c in moveCreatures) {
 				c.Release(PhenoGenoEnum.Genotype);
+				SpawnAddEffect(c.genotype.originCell.position);
 			}
+		}
+	}
+
+	private void SpawnAddEffect(Vector2 position) {
+		if (MouseAction.instance.actionState == MouseActionStateEnum.combineMoveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures) {
+			Animator birth = Instantiate(creatureAddEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
 		}
 	}
 
