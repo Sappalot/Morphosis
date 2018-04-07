@@ -210,7 +210,7 @@ public class Genotype : MonoBehaviour {
 									Debug.Assert(residentCell.buildOrderIndex <= buildOrderIndex, "Trying to spawn a cell at a location where a cell of higher build order are allready present.");
 									if (residentCell.buildOrderIndex == buildOrderIndex) {
 										//trying to spawn a cell where there is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
-										GeneCellPool.instance.Return(residentCell);
+										GeneCellPool.instance.Recycle(residentCell);
 										geneCellList.Remove(residentCell);
 										geneCellMap.RemoveCellAtGridPosition(residentCell.mapPosition);
 										nextSpawningFromCells.Remove(residentCell);
@@ -253,7 +253,6 @@ public class Genotype : MonoBehaviour {
 		cell.transform.parent = geneCellsTransform;
 		cell.transform.position = CellMap.ToModelSpacePosition(mapPosition);
 		cell.RemovePhysicsComponents();
-		cell.name = gene.type.ToString();
 		if (cell == null) {
 			throw new System.Exception("Could not create Cell out of type defined in gene");
 		}
@@ -367,7 +366,7 @@ public class Genotype : MonoBehaviour {
 
 	private void Clear() {
 		for (int index = 0; index < geneCellList.Count; index++) {
-			GeneCellPool.instance.Return(geneCellList[index]);
+			GeneCellPool.instance.Recycle(geneCellList[index]);
 		}
 		geneCellList.Clear();
 		geneCellMap.Clear();

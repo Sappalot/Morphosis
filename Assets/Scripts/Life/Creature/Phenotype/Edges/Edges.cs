@@ -17,7 +17,7 @@ public class Edges : MonoBehaviour {
 	private void Clear() {
 		for (int index = 0; index < edgeList.Count; index++) {
 			//Destroy(edgeList[index].gameObject);
-			EdgePool.instance.Return(edgeList[index]);
+			EdgePool.instance.Recycle(edgeList[index]);
 		}
 		edgeList.Clear();
 	}

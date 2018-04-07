@@ -118,4 +118,8 @@ public class Vein : MonoBehaviour {
 		backCell.energy += deltaEnergyBack;
 		frontCell.energy -= deltaEnergyBack;
 	}
+
+	public void OnRecycle() {
+
+	}
 }

@@ -602,7 +602,7 @@ public class Phenotype : MonoBehaviour {
 
 		// Clean up cell: Has vereybodey forgotten about me?
 		
-		CellPool.instance.Return(deleteCell);
+		CellPool.instance.Recycle(deleteCell);
 
 		if (deleteDebris) {
 			DeleteDebris(); 
@@ -840,7 +840,6 @@ public class Phenotype : MonoBehaviour {
 		//isDirty = true;
 		//cellsToReActivate.Add(cell);
 
-		cell.name = type.ToString();
 		cellMap.SetCell(mapPosition, cell);
 		cellList.Add(cell);
 		cell.transform.parent = cellsTransform.transform;

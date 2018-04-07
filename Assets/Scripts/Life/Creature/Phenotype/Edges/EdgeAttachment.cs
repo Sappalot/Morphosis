@@ -1,7 +1,7 @@
 ﻿public class EdgeAttachment { 
 	public EdgeAttachment(Cell cell, int direction) {
-		this.mCell = cell;
-		this.mDirection = direction;
+		mCell = cell;
+		mDirection = direction;
 	}
 
 	private Cell mCell;
