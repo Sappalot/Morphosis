@@ -82,8 +82,10 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	public void OnClickedCenterCircle() {
-		arrangement.CycleArrangementType();
-		MakeAllGenomeStuffDirty();
+		if (CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome) {
+			arrangement.CycleArrangementType();
+			MakeAllGenomeStuffDirty();
+		}
 	}
 
 	public void OnClickIncreaseGap() {
