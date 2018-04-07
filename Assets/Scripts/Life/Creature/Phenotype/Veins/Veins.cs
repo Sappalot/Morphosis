@@ -13,7 +13,8 @@ public class Veins : MonoBehaviour {
 
 	private void Clear() {
 		for (int index = 0; index < veinList.Count; index++) {
-			Destroy(veinList[index].gameObject);
+			//Destroy(veinList[index].gameObject);
+			VeinPool.instance.Recycle(veinList[index]);
 		}
 		veinList.Clear();
 	}
@@ -46,13 +47,20 @@ public class Veins : MonoBehaviour {
 						continue;
 					}
 					if (!HasVein(cell, neighbour)) {
-						Vein vein = (Instantiate(veinPrefab, transform.position, Quaternion.identity) as Vein);
+						//Vein vein = (Instantiate(veinPrefab, transform.position, Quaternion.identity) as Vein);
+						Vein vein = VeinPool.instance.Borrow();
+
 						vein.transform.parent = transform;
+						vein.transform.position = transform.position;
 						vein.Setup(cell, neighbour, AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3));
 						veinList.Add(vein);
 					}
 				}
 			}
 		}
+	}
+
+	public void OnRecycle() {
+		Clear();
 	}
 }

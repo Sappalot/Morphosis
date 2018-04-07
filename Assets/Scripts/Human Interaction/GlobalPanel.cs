@@ -49,6 +49,9 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	//Debug -> Edge Pool Count
 	public Text edgePoolCount;
 
+	//Debug -> Edge Pool Count
+	public Text veinPoolCount;
+
 	//World
 	public void UpdateWorldNameAndTime(string worldName, ulong worldTicks) {
 		worldNameAndTimeText.text = worldName + " " + TimeUtil.GetTimeString((ulong)(worldTicks * Time.fixedDeltaTime));
@@ -156,6 +159,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			}
 
 			edgePoolCount.text = "Edge: " + EdgePool.instance.storedCount + " + " + EdgePool.instance.loanedCount + " = " + (EdgePool.instance.storedCount + EdgePool.instance.loanedCount);
+
+			veinPoolCount.text = "Vein: " + VeinPool.instance.storedCount + " + " + VeinPool.instance.loanedCount + " = " + (VeinPool.instance.storedCount + VeinPool.instance.loanedCount);
 		}
 	}
 

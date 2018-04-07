@@ -120,6 +120,7 @@ public class Vein : MonoBehaviour {
 	}
 
 	public void OnRecycle() {
-
+		attachmentFront = null;
+		attachmentBack = null;
 	}
 }

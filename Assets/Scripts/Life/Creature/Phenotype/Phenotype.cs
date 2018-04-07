@@ -155,8 +155,6 @@ public class Phenotype : MonoBehaviour {
 		NoGrowthReason reason;
 		TryGrow(creature, true, 1, true, false, 0, true, out reason);
 
-		
-
 		cellsDiffersFromGeneCells = false;
 	}
 
@@ -855,6 +853,8 @@ public class Phenotype : MonoBehaviour {
 
 		//Perifery edges
 		edges.OnRecycle();
+
+		veins.OnRecycle();
 
 		isAlive = true; //Just clearing not killing, Fix this!!
 	}
