@@ -210,8 +210,6 @@ public class Genotype : MonoBehaviour {
 									Debug.Assert(residentCell.buildOrderIndex <= buildOrderIndex, "Trying to spawn a cell at a location where a cell of higher build order are allready present.");
 									if (residentCell.buildOrderIndex == buildOrderIndex) {
 										//trying to spawn a cell where there is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
-										//Destroy(residentCell.gameObject); // TODO: return to pool instead
-										geneCellList[index].OnRecycleGeneCell();
 										GeneCellPool.instance.Return(residentCell);
 										geneCellList.Remove(residentCell);
 										geneCellMap.RemoveCellAtGridPosition(residentCell.mapPosition);
@@ -249,30 +247,8 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	// 1 Spawn cell from prefab
-	// 2 Setup its properties according to parameters
-	// 3 Add cell to list and CellMap
 	private Cell SpawnGeneCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide) {
-		//Cell cell = null;
-		//TODO: borrow from pool instead
 		Cell cell = GeneCellPool.instance.Borrow(gene.type);
-		//if (gene.type == CellTypeEnum.Egg) {
-		//	cell = (Instantiate(eggCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		//} else if (gene.type == CellTypeEnum.Fungal) {
-		//	cell = (Instantiate(fungalCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		//} else if (gene.type == CellTypeEnum.Jaw) {
-		//	cell = (Instantiate(jawCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		//} else if (gene.type == CellTypeEnum.Leaf) {
-		//	cell = (Instantiate(leafCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		//} else if (gene.type == CellTypeEnum.Muscle) {
-		//	cell = (Instantiate(muscleCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		//} else if (gene.type == CellTypeEnum.Root) {
-		//	cell = (Instantiate(rootCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		//} else if (gene.type == CellTypeEnum.Shell) {
-		//	cell = (Instantiate(shellCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		//} else if (gene.type == CellTypeEnum.Vein) {
-		//	cell = (Instantiate(veinCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
-		//}
 
 		cell.transform.parent = geneCellsTransform;
 		cell.transform.position = CellMap.ToModelSpacePosition(mapPosition);
@@ -391,9 +367,7 @@ public class Genotype : MonoBehaviour {
 
 	private void Clear() {
 		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].OnRecycleGeneCell();
 			GeneCellPool.instance.Return(geneCellList[index]);
-			//Destroy(geneCellList[index].gameObject); // TODO: return to pool instead
 		}
 		geneCellList.Clear();
 		geneCellMap.Clear();

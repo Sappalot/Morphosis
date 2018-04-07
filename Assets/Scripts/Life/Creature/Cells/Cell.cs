@@ -945,8 +945,6 @@ public abstract class Cell : MonoBehaviour {
 	// Pooling
 	//Phenotype only
 	virtual public void OnRecycleCell() {
-		RemoveCellNeighbours();
-		
 		//Predators, remembering me as pray
 		foreach (JawCell predator in predators) {
 			//Debug.Log("Removeing pray: " + this.creature.id + ", Cell: " + GetCellType() + " from " + predator);
@@ -975,6 +973,7 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 
+		
 		gene = null;
 		id = "trash";
 		predators.Clear();
@@ -982,19 +981,9 @@ public abstract class Cell : MonoBehaviour {
 		groups = 0;
 	}
 
-	virtual public void OnRecycleGeneCell() {
-		//RemoveCellNeighbours();
+	// Pooling
 
-		//gene = null;
-		//id = "trash";
-		//predators.Clear();
-		//isPlacenta = false;
-		//groups = 0;
-	}
-
-	virtual public void OnBorrowToWorld() {
-		//gameObject.SetActive(true);
-	}
+	virtual public void OnBorrowToWorld() {}
 
 	// ^ Pooling ^ 
 }

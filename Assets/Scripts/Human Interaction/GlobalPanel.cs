@@ -46,6 +46,9 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Text geneCellPoolShellCount;
 	public Text geneCellPoolVeinCount;
 
+	//Debug -> Edge Pool Count
+	public Text edgePoolCount;
+
 	//World
 	public void UpdateWorldNameAndTime(string worldName, ulong worldTicks) {
 		worldNameAndTimeText.text = worldName + " " + TimeUtil.GetTimeString((ulong)(worldTicks * Time.fixedDeltaTime));
@@ -114,6 +117,11 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			//creatures & souls
 			creatureCount.text =         "Creatures: "   + Life.instance.creatureCount;
 			soulsDirtyCount.text =       "Alive & dirty: " + Life.instance.soulUnupdatedCount;
+			if (Life.instance.soulUnupdatedCount == 0) {
+				deletedCellCount.color = Color.gray;
+			} else {
+				deletedCellCount.color = Color.red;
+			}
 			soulsCleanCount.text =       "Alive & clean: " + (Life.instance.soulUpdatedCount - Life.instance.soulsDeadButUsedCount);
 			soulsDeadButUsedCount.text = "Dead & used: "   + Life.instance.soulsDeadButUsedCount;
 			soulsLostCount.text =        "Dead & lost: "   + Life.instance.soulsLostCount;
@@ -130,8 +138,6 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			cellPoolShellCount.text =  "S: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) +  " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell) +  " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Shell)  + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell));
 			cellPoolVeinCount.text =   "V: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) +   " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein) +   " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Vein)   + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein));
 
-			deletedCellCount.text = "Deleted: " + Life.instance.deletedCellCount + " (should be 0)";
-
 			//Cell Pool
 			geneCellPoolEggCount.text =    "E: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Egg) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Egg) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Egg) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Egg));
 			geneCellPoolFungalCount.text = "F: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Fungal) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Fungal) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Fungal) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Fungal));
@@ -141,6 +147,15 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			geneCellPoolRootCount.text =   "R: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Root) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Root) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Root) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Root));
 			geneCellPoolShellCount.text =  "S: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell));
 			geneCellPoolVeinCount.text =   "V: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein));
+
+			deletedCellCount.text = "Deleted Cell Count: " + Life.instance.deletedCellCount;
+			if (Life.instance.deletedCellCount == 0) {
+				deletedCellCount.color = Color.gray;
+			} else {
+				deletedCellCount.color = Color.red;
+			}
+
+			edgePoolCount.text = "Edge: " + EdgePool.instance.storedCount + " + " + EdgePool.instance.loanedCount + " = " + (EdgePool.instance.storedCount + EdgePool.instance.loanedCount);
 		}
 	}
 

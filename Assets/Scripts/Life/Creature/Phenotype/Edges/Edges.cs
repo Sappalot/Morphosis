@@ -16,7 +16,8 @@ public class Edges : MonoBehaviour {
 
 	private void Clear() {
 		for (int index = 0; index < edgeList.Count; index++) {
-			Destroy(edgeList[index].gameObject);
+			//Destroy(edgeList[index].gameObject);
+			EdgePool.instance.Return(edgeList[index]);
 		}
 		edgeList.Clear();
 	}
@@ -43,7 +44,7 @@ public class Edges : MonoBehaviour {
 	public void UpdateGraphics() {
 		for (int index = 0; index < edgeList.Count; index++) {
 			Edge edge = edgeList[index];
-			if (edge.IsWing) {
+			if (true || edge.IsWing) {
 				edge.UpdateGraphics();
 			}
 		}
@@ -68,8 +69,10 @@ public class Edges : MonoBehaviour {
 			if (nextCell == null) {
 				Debug.Log("We don't have a next periphery cell");
 			}
-			Edge edge = (GameObject.Instantiate(edgePrefab, transform.position, Quaternion.identity) as Edge);
+			//Edge edge = (GameObject.Instantiate(edgePrefab, transform.position, Quaternion.identity) as Edge);
+			Edge edge = EdgePool.instance.Borrow();
 			edge.transform.parent = transform;
+			edge.transform.position = transform.position;
 			edgeList.Add(edge);
 			edge.Setup(currentCell, nextCell, currentCell.GetDirectionOfOwnNeighbourCell(creature, nextCell));
 			edge.MakeWing(nextCell);
@@ -113,5 +116,9 @@ public class Edges : MonoBehaviour {
 			}
 		}
 		return leftCellRecord;
+	}
+
+	public void OnRecycle() {
+		Clear();
 	}
 }

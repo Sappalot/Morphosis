@@ -26,7 +26,16 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public Cell selectedCell {
 		get {
-			return m_selectedCell != null ? m_selectedCell : (CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive ? CreatureSelectionPanel.instance.soloSelected.phenotype.originCell : null);
+			if (m_selectedCell != null) {
+				return m_selectedCell;
+			}
+			if (CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive) {
+				if (CreatureSelectionPanel.instance.soloSelected.phenotype.originCell != null) {
+					return CreatureSelectionPanel.instance.soloSelected.phenotype.originCell;
+				}
+				return null;
+			}
+			return null;
 		}
 		set {
 			m_selectedCell = value;

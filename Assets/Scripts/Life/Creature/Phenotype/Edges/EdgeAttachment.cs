@@ -1,6 +1,4 @@
 ﻿public class EdgeAttachment { 
-	public EdgeAttachmentType type = EdgeAttachmentType.unassigned;
-
 	public EdgeAttachment(Cell cell, int direction) {
 		this.mCell = cell;
 		this.mDirection = direction;

@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Rendering;
 
 // The physical creature defined by all its cells
-
 public class Phenotype : MonoBehaviour {
 	public EggCell eggCellPrefab;
 	public FungalCell fungalCellPrefab;
@@ -603,7 +601,7 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		// Clean up cell: Has vereybodey forgotten about me?
-		deleteCell.OnRecycleCell();
+		
 		CellPool.instance.Return(deleteCell);
 
 		if (deleteDebris) {
@@ -851,10 +849,15 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	private void Clear() {
+		//Cells
 		KillAllCells(false); //Kill Cell (when origin) will set isAlive = false;
-		isAlive = true; //Just clearing not killing, Fix this!!
 		cellList.Clear();
 		cellMap.Clear();
+
+		//Perifery edges
+		edges.OnRecycle();
+
+		isAlive = true; //Just clearing not killing, Fix this!!
 	}
 
 	public int GetCellCount() {

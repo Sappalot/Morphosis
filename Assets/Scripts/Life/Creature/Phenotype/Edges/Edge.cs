@@ -132,4 +132,15 @@ public class Edge : MonoBehaviour {
 		frontCell.GetComponent<Rigidbody2D>().AddForce(force * 0.5f, ForceMode2D.Impulse);
 		backCell.GetComponent<Rigidbody2D>().AddForce(force * 0.5f, ForceMode2D.Impulse);
 	}
+
+	public void OnRecycle() {
+		frontCell = null;
+		backCell = null;
+
+		attachmentChild = null;
+		attachmentParent = null;
+
+		force = Vector3.zero;
+		velocity = Vector3.zero;
+	}
 }
