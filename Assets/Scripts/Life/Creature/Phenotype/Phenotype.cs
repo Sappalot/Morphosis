@@ -603,7 +603,7 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		// Clean up cell: Has vereybodey forgotten about me?
-		deleteCell.OnReturnToPool();
+		deleteCell.OnRecycleCell();
 		CellPool.instance.Return(deleteCell);
 
 		if (deleteDebris) {
@@ -1306,4 +1306,10 @@ public class Phenotype : MonoBehaviour {
 			cellList[index].UpdatePhysics();
 		}
 	}
+
+	// Pooling
+	public void OnRecycle() {
+		Clear();
+	}
+	// ^ pooling ^ 
 }

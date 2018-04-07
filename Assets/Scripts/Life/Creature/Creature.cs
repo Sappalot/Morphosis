@@ -678,4 +678,9 @@ public class Creature : MonoBehaviour {
 			}
 		}
 	}
+
+	public void OnRecycle() {
+		genotype.OnRecycle();
+		phenotype.OnRecycle();
+	}
 }

@@ -24,6 +24,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	private int physicsUpdateCount;
 
+	public Text deletedCellCount;
+
 	//Debug -> Cell Pool Count
 	public Text cellPoolEggCount;
 	public Text cellPoolFungalCount;
@@ -34,7 +36,15 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Text cellPoolShellCount;
 	public Text cellPoolVeinCount;
 
-	public Text persistantCellCount;
+	//Debug -> Gene Cell Pool Count
+	public Text geneCellPoolEggCount;
+	public Text geneCellPoolFungalCount;
+	public Text geneCellPoolJawCount;
+	public Text geneCellPoolLeafCount;
+	public Text geneCellPoolMuscleCount;
+	public Text geneCellPoolRootCount;
+	public Text geneCellPoolShellCount;
+	public Text geneCellPoolVeinCount;
 
 	//World
 	public void UpdateWorldNameAndTime(string worldName, ulong worldTicks) {
@@ -120,7 +130,17 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			cellPoolShellCount.text =  "S: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) +  " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell) +  " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Shell)  + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell));
 			cellPoolVeinCount.text =   "V: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) +   " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein) +   " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Vein)   + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein));
 
-			persistantCellCount.text = "Lost: " + Life.instance.persistantCellCount; 
+			deletedCellCount.text = "Deleted: " + Life.instance.deletedCellCount + " (should be 0)";
+
+			//Cell Pool
+			geneCellPoolEggCount.text =    "E: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Egg) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Egg) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Egg) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Egg));
+			geneCellPoolFungalCount.text = "F: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Fungal) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Fungal) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Fungal) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Fungal));
+			geneCellPoolJawCount.text =    "J: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Jaw) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Jaw) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Jaw) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Jaw));
+			geneCellPoolLeafCount.text =   "L: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Leaf) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Leaf) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Leaf) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Leaf));
+			geneCellPoolMuscleCount.text = "M: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Muscle) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Muscle) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Muscle) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Muscle));
+			geneCellPoolRootCount.text =   "R: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Root) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Root) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Root) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Root));
+			geneCellPoolShellCount.text =  "S: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell));
+			geneCellPoolVeinCount.text =   "V: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein));
 		}
 	}
 

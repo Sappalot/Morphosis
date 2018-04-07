@@ -397,6 +397,12 @@ public abstract class Cell : MonoBehaviour {
 		UpdateOutline(false);
 	}
 
+	public void RemoveCellNeighbours() {
+		foreach (CellNeighbour neighbour in cellNeighbourDictionary.Values) {
+			neighbour.cell = null;
+		}
+	}
+
 	public void RemovePhysicsComponents() {
 
 		SpringJoint2D[] springJoints = gameObject.GetComponents<SpringJoint2D>();
@@ -937,7 +943,10 @@ public abstract class Cell : MonoBehaviour {
 	// ^ Update ^
 
 	// Pooling
-	virtual public void OnReturnToPool() {
+	//Phenotype only
+	virtual public void OnRecycleCell() {
+		RemoveCellNeighbours();
+		
 		//Predators, remembering me as pray
 		foreach (JawCell predator in predators) {
 			//Debug.Log("Removeing pray: " + this.creature.id + ", Cell: " + GetCellType() + " from " + predator);
@@ -966,12 +975,21 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 
-
 		gene = null;
 		id = "trash";
 		predators.Clear();
 		isPlacenta = false;
 		groups = 0;
+	}
+
+	virtual public void OnRecycleGeneCell() {
+		//RemoveCellNeighbours();
+
+		//gene = null;
+		//id = "trash";
+		//predators.Clear();
+		//isPlacenta = false;
+		//groups = 0;
 	}
 
 	virtual public void OnBorrowToWorld() {

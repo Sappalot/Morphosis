@@ -21,7 +21,7 @@ public class Life : MonoSingleton<Life> {
 	public int sterileKilledCount;
 
 	//debug
-	public int persistantCellCount = 0;
+	public int deletedCellCount = 0;
 
 	public int soulUpdatedCount {
 		get {
@@ -247,11 +247,14 @@ public class Life : MonoSingleton<Life> {
 
 		creature.KillAllCells(true); // for the fx :)
 
+		creature.OnRecycle();
 		//TODO: Return root cell to pool
 		//This is the only place where ta creature is ultimatly destroyed
 		//Are there cells still left on creature?
-		Cell[] oopsCells = creature.phenotype.cellsTransform.GetComponents<Cell>();
-		persistantCellCount += oopsCells.Length;
+		Cell[] forgottenCells = creature.phenotype.cellsTransform.GetComponents<Cell>();
+		deletedCellCount += forgottenCells.Length;
+		Cell[] forgottenGeneCells = creature.genotype.geneCellsTransform.GetComponents<Cell>();
+		deletedCellCount += forgottenGeneCells.Length;
 
 		Destroy(creature.gameObject); //TODO: return it to pool instead
 		creatureDictionary.Remove(creature.id);

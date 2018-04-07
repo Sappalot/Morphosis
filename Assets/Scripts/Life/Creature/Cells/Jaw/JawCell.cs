@@ -182,19 +182,19 @@ public class JawCell : Cell {
 		}
 	}
 
-	public override void OnReturnToPool() {
+	public override void OnRecycleCell() {
 		deleteFlagged = true;
 
 		//Free all prays from me since i excint no more
 		foreach (Cell prayCell in prays.Keys) {
 			prayCell.RemovePredator(this);
 		}
-		base.OnReturnToPool();
+		base.OnRecycleCell();
 	}
 
 	public override void OnBorrowToWorld() {
 		deleteFlagged = false;
-		base.OnReturnToPool();
+		base.OnRecycleCell();
 	}
 	//--------
 
