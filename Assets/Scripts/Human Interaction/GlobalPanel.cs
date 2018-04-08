@@ -26,6 +26,9 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	public Text deletedCellCount;
 
+	//Debug -> Creature Pool Count
+	public Text creaturePoolCount;
+
 	//Debug -> Cell Pool Count
 	public Text cellPoolEggCount;
 	public Text cellPoolFungalCount;
@@ -131,6 +134,9 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			runnersKilledCount.text =    "Runners Killed: " + PrisonWall.instance.runnersKilledCount;
 			sterileKilledCount.text =    "Sterile Killed: " + Life.instance.sterileKilledCount;
 
+			//Creature Pool
+			creaturePoolCount.text = "Creatures: " + CreaturePool.instance.storedCount + " + " + CreaturePool.instance.loanedCount + " = " + (CreaturePool.instance.storedCount + CreaturePool.instance.loanedCount);
+
 			//Cell Pool
 			cellPoolEggCount.text =    "E: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Egg) +    " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Egg) +    " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Egg)    + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Egg));
 			cellPoolFungalCount.text = "F: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Fungal) + " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Fungal) + " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Fungal) + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Fungal));
@@ -151,16 +157,16 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			geneCellPoolShellCount.text =  "S: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell));
 			geneCellPoolVeinCount.text =   "V: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein));
 
-			deletedCellCount.text = "Deleted Cell Count: " + Life.instance.deletedCellCount;
+			deletedCellCount.text = "Deleted Cells: " + Life.instance.deletedCellCount;
 			if (Life.instance.deletedCellCount == 0) {
 				deletedCellCount.color = Color.gray;
 			} else {
 				deletedCellCount.color = Color.red;
 			}
 
-			edgePoolCount.text = "Edge: " + EdgePool.instance.storedCount + " + " + EdgePool.instance.loanedCount + " = " + (EdgePool.instance.storedCount + EdgePool.instance.loanedCount);
+			edgePoolCount.text = "Edges: " + EdgePool.instance.storedCount + " + " + EdgePool.instance.loanedCount + " = " + (EdgePool.instance.storedCount + EdgePool.instance.loanedCount);
 
-			veinPoolCount.text = "Vein: " + VeinPool.instance.storedCount + " + " + VeinPool.instance.loanedCount + " = " + (VeinPool.instance.storedCount + VeinPool.instance.loanedCount);
+			veinPoolCount.text = "Veins: " + VeinPool.instance.storedCount + " + " + VeinPool.instance.loanedCount + " = " + (VeinPool.instance.storedCount + VeinPool.instance.loanedCount);
 		}
 	}
 

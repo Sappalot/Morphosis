@@ -234,6 +234,7 @@ public class Life : MonoSingleton<Life> {
 
 	//This is the only way, where the creature GO is deleted
 	public void KillCreatureSafe(Creature creature, bool playEffects) {
+		
 		creature.DetatchFromMother(false, true);
 		foreach(Soul childSoul in creature.childSouls) {
 			if (childSoul.creatureReference.creature != null) {
@@ -256,7 +257,8 @@ public class Life : MonoSingleton<Life> {
 		Cell[] forgottenGeneCells = creature.genotype.geneCellsTransform.GetComponents<Cell>();
 		deletedCellCount += forgottenGeneCells.Length;
 
-		Destroy(creature.gameObject); //TODO: return it to pool instead
+		//Destroy(creature.gameObject); //TODO: return it to pool instead
+		CreaturePool.instance.Recycle(creature);
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
 
@@ -392,8 +394,9 @@ public class Life : MonoSingleton<Life> {
 	}
 
 	private Creature InstantiateCreature(String id) {
-		Creature creature = (Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity) as Creature); //TODO: borrow from pool instead
-		creature.name = "Creature " + id;
+		//Creature creature = (Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity) as Creature); //TODO: borrow from pool instead
+		//creature.name = "Creature " + id;
+		Creature creature = CreaturePool.instance.Borrow();
 		creature.transform.parent = this.transform;
 		creatureDictionary.Add(id, creature);
 		creatureList.Add(creature);

@@ -86,7 +86,6 @@ public class Phenotype : MonoBehaviour {
 
 	public float speed { get; private set; }
 
-	[HideInInspector]
 	public bool isAlive = true; // Are we going to use this approach?
 	[HideInInspector]
 	public bool cellsDiffersFromGeneCells = true;
@@ -174,8 +173,9 @@ public class Phenotype : MonoBehaviour {
 	//SpawnPosition is the position where the center of the origin cell will appear in word space
 	private void Setup(Vector2 spawnPosition, float spawnHeading) {
 		timeOffset = 0f; // Random.Range(0f, 7f); //TODO: Remove
-
+		
 		Clear();
+		isAlive = true;
 		this.spawnPosition = spawnPosition;
 		this.spawnHeading = spawnHeading;
 
@@ -855,8 +855,6 @@ public class Phenotype : MonoBehaviour {
 		edges.OnRecycle();
 
 		veins.OnRecycle();
-
-		isAlive = true; //Just clearing not killing, Fix this!!
 	}
 
 	public int GetCellCount() {
@@ -1312,6 +1310,7 @@ public class Phenotype : MonoBehaviour {
 	// Pooling
 	public void OnRecycle() {
 		Clear();
+		isAlive = false;
 	}
 	// ^ pooling ^ 
 }
