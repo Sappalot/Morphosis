@@ -517,7 +517,7 @@ public class Phenotype : MonoBehaviour {
 				CellPanel.instance.selectedCell = null;
 			}
 
-			KillCell(cellList[cellList.Count - 1], false, true, 0);
+			KillCell(cellList[cellList.Count - 1], true, true, 0);
 			shrinkCellCount++;
 		}
 		

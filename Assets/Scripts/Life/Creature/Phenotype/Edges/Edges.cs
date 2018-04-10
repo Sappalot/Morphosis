@@ -6,6 +6,8 @@ public class Edges : MonoBehaviour {
 
 	public float timeOffset;
 
+	public LineRenderer peripheryLoop;
+
 	public void Awake() {
 		timeOffset = UnityEngine.Random.Range(0f, 7f);
 	}
@@ -20,6 +22,7 @@ public class Edges : MonoBehaviour {
 			EdgePool.instance.Recycle(edgeList[index]);
 		}
 		edgeList.Clear();
+		peripheryLoop.positionCount = 0;
 	}
 
 	//All wings will apply forces to their cells 
@@ -42,12 +45,26 @@ public class Edges : MonoBehaviour {
 	}
 
 	public void UpdateGraphics() {
+
 		for (int index = 0; index < edgeList.Count; index++) {
+			//edges
 			Edge edge = edgeList[index];
-			if (true || edge.IsWing) {
-				edge.UpdateGraphics();
+			if (edge.IsWing) {
+				edge.UpdateGraphics(); // force arrow only
+			}
+
+			//Periphery
+			if (GlobalPanel.instance.graphicsPeriphery.isOn && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+				peripheryLoop.enabled = true;
+				if (index < peripheryLoop.positionCount) {
+					peripheryLoop.SetPosition(index, edgeList[index].parentCell.position);
+				}
+			} else {
+				peripheryLoop.enabled = false;
 			}
 		}
+
+
 	} 
 
 	public void ShuffleEdgeUpdateOrder() {
@@ -69,6 +86,13 @@ public class Edges : MonoBehaviour {
 			if (nextCell == null) {
 				Debug.Log("We don't have a next periphery cell");
 			}
+
+
+			//We are around, since we are trying to create an edge which would be the same as the first one
+			if (edgeList.Exists(e => e.parentCell == currentCell && e.childCell == nextCell)) {
+				break;
+			}
+
 			//Edge edge = (GameObject.Instantiate(edgePrefab, transform.position, Quaternion.identity) as Edge);
 			Edge edge = EdgePool.instance.Borrow();
 			edge.transform.parent = transform;
@@ -76,12 +100,13 @@ public class Edges : MonoBehaviour {
 			edgeList.Add(edge);
 			edge.Setup(currentCell, nextCell, currentCell.GetDirectionOfOwnNeighbourCell(creature, nextCell));
 			edge.MakeWing(nextCell);
-			if (nextCell == firstCell) {
-				break;
-			}
+
 			previousCell = currentCell;
 			currentCell = nextCell;
 		}
+
+		//periphery
+		peripheryLoop.positionCount = edgeList.Count;
 	}
 
 	private Cell GetNextOwnPeripheryCell(Creature creature, Cell currentCell, Cell previousCell) {

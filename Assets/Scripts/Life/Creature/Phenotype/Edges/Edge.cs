@@ -22,6 +22,18 @@ public class Edge : MonoBehaviour {
 
 	private float strength;
 
+	public Cell parentCell {
+		get {
+			return attachmentParent.cell;
+		}
+	}
+
+	public Cell childCell {
+		get {
+			return attachmentChild.cell;
+		}
+
+	}
 	private void Start() {
 		mainArrow.SetActive(false);
 		normalArrow.SetActive(false);
@@ -66,37 +78,37 @@ public class Edge : MonoBehaviour {
 
 	public void UpdateGraphics() {
 		//TODO: If draw wings && inside frustum
-		if (GlobalPanel.instance.graphicsRenderWings.isOn && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+		if (GlobalPanel.instance.graphicsWingsForces.isOn && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 			if (frontCell != null && backCell != null) {
 
-				mainArrow.SetActive(true);
-				normalArrow.SetActive(true);
-				velocityArrow.SetActive(true);
+				//mainArrow.SetActive(true);
+				//normalArrow.SetActive(true);
+				//velocityArrow.SetActive(true);
 				forceArrow.SetActive(true);
 
-				//draw main
-				mainArrow.GetComponent<LineRenderer>().SetPosition(1, frontCell.transform.position);
-				mainArrow.GetComponent<LineRenderer>().SetPosition(0, backCell.transform.position);
+				////draw main
+				//mainArrow.GetComponent<LineRenderer>().SetPosition(1, frontCell.transform.position);
+				//mainArrow.GetComponent<LineRenderer>().SetPosition(0, backCell.transform.position);
 
-				//draw normal
+				////draw normal
 				Vector3 wingSegmentHalf = (frontCell.transform.position - backCell.transform.position) * 0.5f;
 				Vector3 midSegment = backCell.transform.position + wingSegmentHalf;
-				Vector3 normalPoint = midSegment + normal;
-				normalArrow.GetComponent<LineRenderer>().SetPosition(1, normalPoint);
-				normalArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
+				//Vector3 normalPoint = midSegment + normal;
+				//normalArrow.GetComponent<LineRenderer>().SetPosition(1, normalPoint);
+				//normalArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
 
-				//draw velocity
-				velocityArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + velocity);
-				velocityArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
+				////draw velocity
+				//velocityArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + velocity);
+				//velocityArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
 
 				//draw force
 				forceArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + force * 10f);
 				forceArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
 			}
 		} else {
-			mainArrow.SetActive(false);
-			normalArrow.SetActive(false);
-			velocityArrow.SetActive(false);
+			//mainArrow.SetActive(false);
+			//normalArrow.SetActive(false);
+			//velocityArrow.SetActive(false);
 			forceArrow.SetActive(false);
 		}
 	}
@@ -142,5 +154,7 @@ public class Edge : MonoBehaviour {
 
 		force = Vector3.zero;
 		velocity = Vector3.zero;
+
+		forceArrow.SetActive(false);
 	}
 }

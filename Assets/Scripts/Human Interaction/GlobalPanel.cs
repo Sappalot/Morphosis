@@ -74,7 +74,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	//Graphics
 	public Toggle graphicsCreatures;
-	public Toggle graphicsRenderWings;
+	public Toggle graphicsWingsForces;
+	public Toggle graphicsPeriphery;
 	public Dropdown graphicsCellDropdown;
 	public enum CellGraphicsEnum {
 		type,

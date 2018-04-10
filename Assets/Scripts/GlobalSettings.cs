@@ -177,7 +177,15 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	}
 	public Quality quality;
 
+	[Serializable]
+	public class Pooling {
+		public bool cell =     true;
+		public bool geneCell = true;
+		public bool vein =     true;
+		public bool edge =     true;
+	}
 
+	public Pooling pooling;
 
 	//Visual
 	public float orthoMinStrongFX = 10f;

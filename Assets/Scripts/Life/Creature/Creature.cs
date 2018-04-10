@@ -18,9 +18,133 @@ public class Creature : MonoBehaviour {
 	[HideInInspector]
 	public string nickname;
 	[HideInInspector]
-	public CreatureCreationEnum creation = CreatureCreationEnum.Forged;
+	public CreatureCreationEnum creation = CreatureCreationEnum.Unset;
 	[HideInInspector]
 	public int generation = 1;
+
+	////-------- Project: Move soul into creature
+
+	public FamilyMemberState GetRelationToMother() {
+		Debug.Assert(creation != CreatureCreationEnum.Unset, "We cant get our relation to mother unless we know hoe we were made!"); // we dont know how i was made yet
+
+		if (creation == CreatureCreationEnum.Forged) {
+			return FamilyMemberState.Unexisting;
+		} else if (creation == CreatureCreationEnum.Cloned) {
+			if (mother_ == null ) {
+				return FamilyMemberState.LostWhenCloning;
+			} else {
+				if (Life.instance.HasCreature(id)) {
+					if (phenotype.isAttachedToMother) {
+						return FamilyMemberState.AliveAndAttached;
+					} else {
+						return FamilyMemberState.AliveAndDetatched;
+					}
+				} else {
+					return FamilyMemberState.Dead;
+				}
+			}
+		} else { //born
+			if (mother_ == null) {
+				return FamilyMemberState.Error; //	born without mother
+			} else {
+				if (Life.instance.HasCreature(id)) {
+					if (phenotype.isAttachedToMother) {
+						return FamilyMemberState.AliveAndAttached;
+					} else {
+						return FamilyMemberState.AliveAndDetatched;
+					}
+				} else {
+					return FamilyMemberState.Dead;
+				}
+			}
+		}
+	}
+
+	public FamilyMemberState GetRelationToChild(string id) {
+		Debug.Assert(creation != CreatureCreationEnum.Unset, "We can't get our relation to a child, unless we know how we were made!"); // we dont know how i was made yet
+
+		if (creation == CreatureCreationEnum.Forged) {
+			return FamilyMemberState.Unexisting;
+		} else if (creation == CreatureCreationEnum.Cloned) {
+			if (children_.ContainsKey(id)) {
+				if (children_[id] == null) {
+					return FamilyMemberState.LostWhenCloning;
+				} else {
+					if (Life.instance.HasCreature(id)) {
+						Creature child = Life.instance.GetCreature(id);
+						if (child.phenotype.isAttachedToMother) {
+							return FamilyMemberState.AliveAndAttached;
+						} else {
+							return FamilyMemberState.AliveAndDetatched;
+						}
+					} else {
+						return FamilyMemberState.Dead;
+					}
+				}
+			} else {
+				return FamilyMemberState.Unexisting;
+			}
+		} else { //born
+			if (children_.ContainsKey(id)) {
+				if (children_[id] == null) {
+					return FamilyMemberState.Error;
+				} else {
+					if (Life.instance.HasCreature(id)) {
+						Creature child = Life.instance.GetCreature(id);
+						if (child.phenotype.isAttachedToMother) {
+							return FamilyMemberState.AliveAndAttached;
+						} else {
+							return FamilyMemberState.AliveAndDetatched;
+						}
+					} else {
+						return FamilyMemberState.Dead;
+					}
+				}
+			} else {
+				return FamilyMemberState.Unexisting;
+			}
+		}
+	}
+
+	//do this when this when creature is reecycled
+	public void ClearFamilyRelations() {
+
+	}
+
+	//do this when creature is born, copied or loaded
+	public void SetFamilyRelations(Mother mother, List<Child> children) {
+
+	}
+
+	public void AddChild(Child child) {
+
+	}
+
+	public bool hasMother_() {
+		return GetRelationToMother() == FamilyMemberState.AliveAndAttached ||
+			GetRelationToMother() == FamilyMemberState.AliveAndAttached ||
+			GetRelationToMother() == FamilyMemberState.Dead;
+	}
+
+	public bool hasMotherAlive_() {
+		return GetRelationToMother() == FamilyMemberState.AliveAndAttached ||
+			GetRelationToMother() == FamilyMemberState.AliveAndAttached;
+	}
+
+	public bool hasChild_() {
+		return children_.Count > 0;
+	}
+
+	//public Creature GetMother() {
+
+	//}
+
+
+	private Mother mother_;
+	private Dictionary<string, Child> children_ = new Dictionary<string, Child>();
+
+
+	////------ ^ Project: Move soul into creature ^
 
 	//time
 	[HideInInspector]
