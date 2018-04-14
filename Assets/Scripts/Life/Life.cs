@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System;
 
 public class Life : MonoSingleton<Life> {
+	public CellPool cellPool;
+	public GeneCellPool geneCellPool;
+	public VeinPool veinPool;
+	public EdgePool edgePool;
+
 	public Creature creaturePrefab;
 	public Animator creatureDeathEffectPrefab;
 	public Animator creatureBirthEffectPrefab;
@@ -248,7 +253,8 @@ public class Life : MonoSingleton<Life> {
 
 		creature.KillAllCells(true); // for the fx :)
 
-		creature.OnRecycle();
+		creature.OnRecycle(); //Not only when using creature pool
+
 		//TODO: Return root cell to pool
 		//This is the only place where ta creature is ultimatly destroyed
 		//Are there cells still left on creature?
@@ -582,6 +588,13 @@ public class Life : MonoSingleton<Life> {
 				CellPanel.instance.MakeDirty();
 			}
 		}
+	}
+
+	public void OnDestroy() {
+		//Destroy(cellPool.gameObject);
+		//Destroy(geneCellPool.gameObject);
+		//Destroy(veinPool.gameObject);
+		//Destroy(edgePool.gameObject);
 	}
 
 	// ^ Update ^

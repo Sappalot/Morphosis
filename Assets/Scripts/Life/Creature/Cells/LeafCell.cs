@@ -22,27 +22,14 @@ public class LeafCell : Cell {
 	}
 
 	public override void OnBorrowToWorld() {
+		if (raycastHitArray == null) {
+			raycastHitArray = new RaycastHit2D[(int)GlobalSettings.instance.phenotype.leafCellSunMaxRange];
+		}
 		for (int i = 0; i < exposureRecord.Length; i++) {
 			exposureRecord[i] = 0.33f;
 		}
 		base.OnBorrowToWorld();
 	}
-
-	//private enum HitType {
-	//	beginAir,
-	//	beginBody,
-	//	insideBody,
-	//}
-
-	//private struct HitPoint {
-	//	public HitType hitType;
-	//	public float distance;
-
-	//	public HitPoint(HitType hitType, float distance) {
-	//		this.hitType = hitType;
-	//		this.distance = distance;
-	//	}
-	//}
 
 	private float GetEnergyLoss(RaycastHit2D hit, float energyLossAir) {
 		CollisionType type = GetCollisionType(hit);
@@ -59,29 +46,33 @@ public class LeafCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.leafCellEffectCost * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount);
-
+		////-- test
+		//effectProductionInternal = 0.5f * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount);
+		//base.UpdateCellFunction(deltaTicks, worldTicks);
+		//return;
+		////--
 		bool debugRender = GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.leafExposure && CreatureSelectionPanel.instance.selectedCell == this;
 
-		//--
 		float startEnergy = 2f; //matters only graphically during debug
 		float maxRange = GlobalSettings.instance.phenotype.leafCellSunMaxRange; // how many meters an unblocked light beam will travel
 		float energyLossAir = startEnergy / maxRange; //J / m (allways reaches max range if nothing blocks it)
-		//--
+
 		Vector2 direction = GeometryUtils.GetVector(Random.Range(0f, 360f), 1f);
 
 		Vector2 start = position + direction * (radius + 0.1f);
-		Vector2 perpendicular = new Vector2(-direction.y, direction.x); //debug shit
+		//Vector2 perpendicular = new Vector2(-direction.y, direction.x); //debug shit
 
 		float rayEnergy = startEnergy; //100% when leaving
 		float rayRange = maxRange;
 
-		RaycastHit2D[] hits = Physics2D.RaycastAll(start, direction, maxRange, 1);
+		//RaycastHit2D[] hits = Physics2D.RaycastAll(start, direction, maxRange, 1);
+		int raycastHitCount = Physics2D.RaycastNonAlloc(start, direction, raycastHitArray, maxRange, 1);
 		//Store all entries --> exits
 		//List<HitPoint> enterExit = new List<HitPoint>();
 
-		for (int index = 0; index < hits.Length; index++) {
-			RaycastHit2D hit = hits[index];
-			RaycastHit2D previousHit = hits[Mathf.Max(index - 1, 0)];
+		for (int index = 0; index < raycastHitCount; index++) {
+			RaycastHit2D hit = raycastHitArray[index];
+			RaycastHit2D previousHit = raycastHitArray[Mathf.Max(index - 1, 0)];
 
 			if (index == 0) {
 				//first hitpoint
@@ -142,9 +133,9 @@ public class LeafCell : Cell {
 			}
 		}
 
-		if (hits.Length > 0 && rayEnergy >= 0f) {
+		if (raycastHitCount > 0 && rayEnergy >= 0f) {
 			//Last hit: cell, then air after it
-			RaycastHit2D hit = hits[hits.Length - 1];
+			RaycastHit2D hit = raycastHitArray[raycastHitCount - 1];
 
 			//enterExit.Add(new HitPoint(HitType.beginAir, enterExit[enterExit.Count - 1].distance + 1f));
 
@@ -217,6 +208,9 @@ public class LeafCell : Cell {
 		}
 		base.UpdateCellFunction(deltaTicks, worldTicks) ;
 	}
+	//Opt. this array should contain enoug fields to store all hits
+	private RaycastHit2D[] raycastHitArray;
+
 
 	//energy far is allways negative
 	private float GetDistanceAtZeroEnergy(float energyClose, float energyFar, float distanceClose, float distanceFar) {
