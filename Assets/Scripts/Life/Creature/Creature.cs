@@ -33,7 +33,7 @@ public class Creature : MonoBehaviour {
 			if (mother_ == null ) {
 				return FamilyMemberState.LostWhenCloning;
 			} else {
-				if (Life.instance.HasCreature(id)) {
+				if (World.instance.life.HasCreature(id)) {
 					if (phenotype.isAttachedToMother) {
 						return FamilyMemberState.AliveAndAttached;
 					} else {
@@ -47,7 +47,7 @@ public class Creature : MonoBehaviour {
 			if (mother_ == null) {
 				return FamilyMemberState.Error; //	born without mother
 			} else {
-				if (Life.instance.HasCreature(id)) {
+				if (World.instance.life.HasCreature(id)) {
 					if (phenotype.isAttachedToMother) {
 						return FamilyMemberState.AliveAndAttached;
 					} else {
@@ -70,8 +70,8 @@ public class Creature : MonoBehaviour {
 				if (children_[id] == null) {
 					return FamilyMemberState.LostWhenCloning;
 				} else {
-					if (Life.instance.HasCreature(id)) {
-						Creature child = Life.instance.GetCreature(id);
+					if (World.instance.life.HasCreature(id)) {
+						Creature child = World.instance.life.GetCreature(id);
 						if (child.phenotype.isAttachedToMother) {
 							return FamilyMemberState.AliveAndAttached;
 						} else {
@@ -89,8 +89,8 @@ public class Creature : MonoBehaviour {
 				if (children_[id] == null) {
 					return FamilyMemberState.Error;
 				} else {
-					if (Life.instance.HasCreature(id)) {
-						Creature child = Life.instance.GetCreature(id);
+					if (World.instance.life.HasCreature(id)) {
+						Creature child = World.instance.life.GetCreature(id);
 						if (child.phenotype.isAttachedToMother) {
 							return FamilyMemberState.AliveAndAttached;
 						} else {
@@ -491,7 +491,7 @@ public class Creature : MonoBehaviour {
 
 			transform.parent = null;
 			transform.position = originCellPosition;
-			transform.parent = Life.instance.transform;
+			transform.parent = World.instance.life.transform;
 		} else if (type == PhenoGenoEnum.Genotype) {
 			phenotype.hasDirtyPosition = true;
 
@@ -504,7 +504,7 @@ public class Creature : MonoBehaviour {
 
 			transform.parent = null;
 			transform.position = originCellPosition;
-			transform.parent = Life.instance.transform;
+			transform.parent = World.instance.life.transform;
 		}
 		isDirtyGraphics = true;
 	}
@@ -578,8 +578,8 @@ public class Creature : MonoBehaviour {
 
 	public void FetchSoul() {
 		if (!hasSoul) {
-			if (Life.instance.HasSoul(id)) {
-				soul = Life.instance.GetSoul(id);
+			if (World.instance.life.HasSoul(id)) {
+				soul = World.instance.life.GetSoul(id);
 			} else {
 				Debug.LogError("Creature could not find is soul!!");
 				return;
@@ -796,7 +796,7 @@ public class Creature : MonoBehaviour {
 				}
 			}
 			if (fertilizeCell != null) {
-				Life.instance.FertilizeCreature(fertilizeCell, true, worldTicks, false);
+				World.instance.life.FertilizeCreature(fertilizeCell, true, worldTicks, false);
 				PhenotypePanel.instance.MakeDirty();
 				CellPanel.instance.MakeDirty();
 			}

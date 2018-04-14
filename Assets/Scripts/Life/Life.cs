@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 
-public class Life : MonoSingleton<Life> {
+public class Life : MonoBehaviour {
 	public CellPool cellPool;
 	public GeneCellPool geneCellPool;
 	public VeinPool veinPool;

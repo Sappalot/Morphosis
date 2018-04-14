@@ -122,52 +122,52 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			timeCount = 0;
 
 			//creatures & souls
-			creatureCount.text =         "Creatures: "   + Life.instance.creatureCount;
-			soulsDirtyCount.text =       "Alive & dirty: " + Life.instance.soulUnupdatedCount;
-			if (Life.instance.soulUnupdatedCount == 0) {
+			creatureCount.text =         "Creatures: "   + World.instance.life.creatureCount;
+			soulsDirtyCount.text =       "Alive & dirty: " + World.instance.life.soulUnupdatedCount;
+			if (World.instance.life.soulUnupdatedCount == 0) {
 				deletedCellCount.color = Color.gray;
 			} else {
 				deletedCellCount.color = Color.red;
 			}
-			soulsCleanCount.text =       "Alive & clean: " + (Life.instance.soulUpdatedCount - Life.instance.soulsDeadButUsedCount);
-			soulsDeadButUsedCount.text = "Dead & used: "   + Life.instance.soulsDeadButUsedCount;
-			soulsLostCount.text =        "Dead & lost: "   + Life.instance.soulsLostCount;
+			soulsCleanCount.text =       "Alive & clean: " + (World.instance.life.soulUpdatedCount - World.instance.life.soulsDeadButUsedCount);
+			soulsDeadButUsedCount.text = "Dead & used: "   + World.instance.life.soulsDeadButUsedCount;
+			soulsLostCount.text =        "Dead & lost: "   + World.instance.life.soulsLostCount;
 			runnersKilledCount.text =    "Runners Killed: " + PrisonWall.instance.runnersKilledCount;
-			sterileKilledCount.text =    "Sterile Killed: " + Life.instance.sterileKilledCount;
+			sterileKilledCount.text =    "Sterile Killed: " + World.instance.life.sterileKilledCount;
 
 			//Creature Pool
 			//creaturePoolCount.text = "Creatures: " + CreaturePool.instance.storedCount + " + " + CreaturePool.instance.loanedCount + " = " + (CreaturePool.instance.storedCount + CreaturePool.instance.loanedCount);
 
 			//Cell Pool
-			cellPoolEggCount.text =    "E: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Egg) +    " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Egg) +    " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Egg)    + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Egg));
-			cellPoolFungalCount.text = "F: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Fungal) + " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Fungal) + " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Fungal) + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Fungal));
-			cellPoolJawCount.text =    "J: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Jaw) +    " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Jaw) +    " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Jaw)    + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Jaw));
-			cellPoolLeafCount.text =   "L: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Leaf) +   " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Leaf) +   " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Leaf)   + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Leaf));
-			cellPoolMuscleCount.text = "M: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Muscle) + " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Muscle) + " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Muscle) + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Muscle));
-			cellPoolRootCount.text =   "R: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Root) +   " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Root) +   " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Root)   + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Root));
-			cellPoolShellCount.text =  "S: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) +  " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell) +  " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Shell)  + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell));
-			cellPoolVeinCount.text =   "V: " + CellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) +   " + " + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein) +   " = " + (CellPool.instance.GetStoredCellCount(CellTypeEnum.Vein)   + CellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein));
+			cellPoolEggCount.text =    "E: " + World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Egg) +    " + " + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Egg) +    " = " + (World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Egg)    + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Egg));
+			cellPoolFungalCount.text = "F: " + World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Fungal) + " + " + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Fungal) + " = " + (World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Fungal) + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Fungal));
+			cellPoolJawCount.text =    "J: " + World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Jaw) +    " + " + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Jaw) +    " = " + (World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Jaw)    + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Jaw));
+			cellPoolLeafCount.text =   "L: " + World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Leaf) +   " + " + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Leaf) +   " = " + (World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Leaf)   + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Leaf));
+			cellPoolMuscleCount.text = "M: " + World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Muscle) + " + " + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Muscle) + " = " + (World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Muscle) + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Muscle));
+			cellPoolRootCount.text =   "R: " + World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Root) +   " + " + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Root) +   " = " + (World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Root)   + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Root));
+			cellPoolShellCount.text =  "S: " + World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Shell) +  " + " + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Shell) +  " = " + (World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Shell)  + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Shell));
+			cellPoolVeinCount.text =   "V: " + World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Vein) +   " + " + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Vein) +   " = " + (World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Vein)   + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Vein));
 
 			//Cell Pool
-			geneCellPoolEggCount.text =    "E: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Egg) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Egg) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Egg) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Egg));
-			geneCellPoolFungalCount.text = "F: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Fungal) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Fungal) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Fungal) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Fungal));
-			geneCellPoolJawCount.text =    "J: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Jaw) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Jaw) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Jaw) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Jaw));
-			geneCellPoolLeafCount.text =   "L: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Leaf) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Leaf) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Leaf) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Leaf));
-			geneCellPoolMuscleCount.text = "M: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Muscle) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Muscle) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Muscle) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Muscle));
-			geneCellPoolRootCount.text =   "R: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Root) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Root) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Root) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Root));
-			geneCellPoolShellCount.text =  "S: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Shell) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Shell));
-			geneCellPoolVeinCount.text =   "V: " + GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) + " + " + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein) + " = " + (GeneCellPool.instance.GetStoredCellCount(CellTypeEnum.Vein) + GeneCellPool.instance.GetLoanedCellCount(CellTypeEnum.Vein));
+			geneCellPoolEggCount.text =    "E: " + World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Egg) + " + " + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Egg) + " = " + (World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Egg) + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Egg));
+			geneCellPoolFungalCount.text = "F: " + World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Fungal) + " + " + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Fungal) + " = " + (World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Fungal) + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Fungal));
+			geneCellPoolJawCount.text =    "J: " + World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Jaw) + " + " + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Jaw) + " = " + (World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Jaw) + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Jaw));
+			geneCellPoolLeafCount.text =   "L: " + World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Leaf) + " + " + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Leaf) + " = " + (World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Leaf) + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Leaf));
+			geneCellPoolMuscleCount.text = "M: " + World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Muscle) + " + " + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Muscle) + " = " + (World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Muscle) + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Muscle));
+			geneCellPoolRootCount.text =   "R: " + World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Root) + " + " + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Root) + " = " + (World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Root) + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Root));
+			geneCellPoolShellCount.text =  "S: " + World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Shell) + " + " + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Shell) + " = " + (World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Shell) + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Shell));
+			geneCellPoolVeinCount.text =   "V: " + World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Vein) + " + " + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Vein) + " = " + (World.instance.life.geneCellPool.GetStoredCellCount(CellTypeEnum.Vein) + World.instance.life.geneCellPool.GetLoanedCellCount(CellTypeEnum.Vein));
 
-			deletedCellCount.text = "Deleted Cells: " + Life.instance.deletedCellCount;
-			if (Life.instance.deletedCellCount == 0) {
+			deletedCellCount.text = "Deleted Cells: " + World.instance.life.deletedCellCount;
+			if (World.instance.life.deletedCellCount == 0) {
 				deletedCellCount.color = Color.gray;
 			} else {
 				deletedCellCount.color = Color.red;
 			}
 
-			edgePoolCount.text = "Edges: " + EdgePool.instance.storedCount + " + " + EdgePool.instance.loanedCount + " = " + (EdgePool.instance.storedCount + EdgePool.instance.loanedCount);
+			edgePoolCount.text = "Edges: " + World.instance.life.edgePool.storedCount + " + " + World.instance.life.edgePool.loanedCount + " = " + (World.instance.life.edgePool.storedCount + World.instance.life.edgePool.loanedCount);
 
-			veinPoolCount.text = "Veins: " + VeinPool.instance.storedCount + " + " + VeinPool.instance.loanedCount + " = " + (VeinPool.instance.storedCount + VeinPool.instance.loanedCount);
+			veinPoolCount.text = "Veins: " + World.instance.life.veinPool.storedCount + " + " + World.instance.life.veinPool.loanedCount + " = " + (World.instance.life.veinPool.storedCount + World.instance.life.veinPool.loanedCount);
 		}
 	}
 

@@ -19,7 +19,7 @@ public class Edges : MonoBehaviour {
 	private void Clear() {
 		for (int index = 0; index < edgeList.Count; index++) {
 			//Destroy(edgeList[index].gameObject);
-			EdgePool.instance.Recycle(edgeList[index]);
+			World.instance.life.edgePool.Recycle(edgeList[index]);
 		}
 		edgeList.Clear();
 		peripheryLoop.positionCount = 0;
@@ -94,7 +94,7 @@ public class Edges : MonoBehaviour {
 			}
 
 			//Edge edge = (GameObject.Instantiate(edgePrefab, transform.position, Quaternion.identity) as Edge);
-			Edge edge = EdgePool.instance.Borrow();
+			Edge edge = World.instance.life.edgePool.Borrow();
 			edge.transform.parent = transform;
 			edge.transform.position = transform.position;
 			edgeList.Add(edge);

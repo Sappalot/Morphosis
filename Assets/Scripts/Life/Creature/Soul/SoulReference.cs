@@ -12,8 +12,8 @@ public class SoulReference {
 	public void TryGetReference() {
 		if(!isReferenceUpdated) {
 			if (id != string.Empty) {
-				if (Life.instance.HasSoul(id)) {
-					soul = Life.instance.GetSoul(id);
+				if (World.instance.life.HasSoul(id)) {
+					soul = World.instance.life.GetSoul(id);
 				} else {
 					//Debug.LogError("Soul Reference: Can't find soul in Life");
 					canNotFindSoul = true;

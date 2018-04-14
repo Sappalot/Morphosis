@@ -15,7 +15,7 @@ public class RMBToolController : MouseDrag {
 			downPositionMouse = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 			if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spring && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 				
-				Cell cell = Life.instance.GetCellAt(downPositionMouse);
+				Cell cell = World.instance.life.GetCellAt(downPositionMouse);
 				if (cell != null) {
 					spring.connectedBody = cell.GetComponent<Rigidbody2D>();
 					spring.anchor = downPositionMouse;
@@ -29,18 +29,18 @@ public class RMBToolController : MouseDrag {
 					Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 				}
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-					Life.instance.SpawnCreatureSimple(downPositionMouse, 90f, World.instance.worldTicks);
+					World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f, World.instance.worldTicks);
 				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-					Life.instance.SpawnCreatureSimple(downPositionMouse, 90f, World.instance.worldTicks);
+					World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f, World.instance.worldTicks);
 				}				
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.freak) {
 				if (GlobalPanel.instance.effectsPlaySound.isOn) {
 					Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 				}
 				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-					Life.instance.SpawnCreatureFreak(downPositionMouse, 90f, World.instance.worldTicks);
+					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, World.instance.worldTicks);
 				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-					Life.instance.SpawnCreatureFreak(downPositionMouse, 90f, World.instance.worldTicks);
+					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, World.instance.worldTicks);
 				}
 			}
 

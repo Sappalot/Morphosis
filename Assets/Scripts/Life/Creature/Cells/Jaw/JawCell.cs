@@ -87,7 +87,7 @@ public class JawCell : Cell {
 			return;
 		}
 
-		Life.instance.UpdateSoulReferences();
+		World.instance.life.UpdateSoulReferences();
 
 		Cell prayCell = other.GetComponent<Cell>();
 
@@ -270,7 +270,7 @@ public class JawCell : Cell {
 //			return;
 //		}
 
-//		Life.instance.UpdateSoulReferences();
+//		World.instance.life.UpdateSoulReferences();
 
 //		Cell prayCell = other.GetComponent<Cell>();
 
@@ -302,7 +302,7 @@ public class JawCell : Cell {
 //		if (other.gameObject.layer == 2) { //dont trigger other's mouth colliders, only on cells
 //			return;
 //		}
-//		//Life.instance.UpdateSoulReferences();
+//		//World.instance.life.UpdateSoulReferences();
 
 //		Cell prayCell = other.GetComponent<Cell>();
 

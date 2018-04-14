@@ -4,13 +4,15 @@ using SerializerFree.Serializers;
 using System.IO;
 
 public class World : MonoSingleton<World> {
+	public Life life;
+
 	public Camera worldCamera;
 	private string worldName = "Gaia";
 	[HideInInspector]
 	public ulong worldTicks = 0;
 
 	public void KillAllCreaturesAndSouls() {
-		Life.instance.KillAllCreaturesAndSouls();
+		World.instance.life.KillAllCreaturesAndSouls();
 		CreatureSelectionPanel.instance.ClearSelection();
 	}
 
@@ -18,14 +20,14 @@ public class World : MonoSingleton<World> {
 		//test, OK with 24 * 24 (18 cells per creature) ~ 27 FPS :)
 		//including: turn hinged neighbours to correct angle, just one test string creature
 		//excluding: turn cell graphics to correct angle, scale mussle cells
-		//Life.instance.EvoFixedUpdate(fixedTime);
+		//World.instance.life.EvoFixedUpdate(fixedTime);
 	}
 
 	private void Update() {
 		//Handle time from here to not get locked out
 		if (GlobalPanel.instance.timeSpeedSilder.value < -10f || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			Time.timeScale = 0f;
-			Life.instance.UpdateStructure();
+			World.instance.life.UpdateStructure();
 			GlobalPanel.instance.physicsTimeSpeedText.text = "II";
 		} else {
 			if (GlobalPanel.instance.timeSpeedSilder.value >= -10f && GlobalPanel.instance.timeSpeedSilder.value <= 0f) {
@@ -38,21 +40,21 @@ public class World : MonoSingleton<World> {
 		}
 
 		if (GlobalPanel.instance.graphicsCreatures.isOn) {
-			Life.instance.UpdateGraphics();
+			World.instance.life.UpdateGraphics();
 		}
 	}
 
 	private int updates;
 
 	private void FixedUpdate() {
-		Life.instance.UpdateStructure();
+		World.instance.life.UpdateStructure();
 
 		worldTicks++; //The only place where time is increased
-		Life.instance.UpdatePhysics(worldTicks);
+		World.instance.life.UpdatePhysics(worldTicks);
 		if (GlobalPanel.instance.physicsTeleport.isOn) {
-			Portals.instance.UpdatePhysics(Life.instance.creatures, worldTicks);
+			Portals.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
 		}
-		PrisonWall.instance.UpdatePhysics(Life.instance.creatures, worldTicks);
+		PrisonWall.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
 
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 
@@ -78,11 +80,11 @@ public class World : MonoSingleton<World> {
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 		for (int y = 1; y <= 1; y++) {
 			for (int x = 1; x <= 1; x++) {
-				Life.instance.SpawnCreatureJellyfish(new Vector3(100f + x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f), worldTicks);
+				World.instance.life.SpawnCreatureJellyfish(new Vector3(100f + x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f), worldTicks);
 			}
 		}
-		//Life.instance.SpawnCreatureEdgeFailure(new Vector3(100f, 200f, 0f)); //Fixed :)
-		//Life.instance.SpawnCreatureJellyfish(new Vector3(100f, 100f, 0f));
+		//World.instance.life.SpawnCreatureEdgeFailure(new Vector3(100f, 200f, 0f)); //Fixed :)
+		//World.instance.life.SpawnCreatureJellyfish(new Vector3(100f, 100f, 0f));
 		
 		CreatureEditModePanel.instance.Restart();
 		RMBToolModePanel.instance.Restart();
@@ -125,7 +127,7 @@ public class World : MonoSingleton<World> {
 	//data
 	private void UpdateData() {
 		worldData.worldName = worldName;
-		worldData.lifeData = Life.instance.UpdateData();
+		worldData.lifeData = World.instance.life.UpdateData();
 		worldData.worldTicks = worldTicks;
 
 		worldData.runnersKilledCount = PrisonWall.instance.runnersKilledCount;
@@ -133,7 +135,7 @@ public class World : MonoSingleton<World> {
 
 	private void ApplyData(WorldData worldData) {
 		worldName = worldData.worldName;
-		Life.instance.ApplyData(worldData.lifeData);
+		World.instance.life.ApplyData(worldData.lifeData);
 		worldTicks = worldData.worldTicks;
 
 		PrisonWall.instance.runnersKilledCount = worldData.runnersKilledCount;

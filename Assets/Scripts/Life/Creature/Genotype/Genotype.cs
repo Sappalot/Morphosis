@@ -210,7 +210,7 @@ public class Genotype : MonoBehaviour {
 									Debug.Assert(residentCell.buildOrderIndex <= buildOrderIndex, "Trying to spawn a cell at a location where a cell of higher build order are allready present.");
 									if (residentCell.buildOrderIndex == buildOrderIndex) {
 										//trying to spawn a cell where there is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
-										GeneCellPool.instance.Recycle(residentCell);
+										World.instance.life.geneCellPool.Recycle(residentCell);
 										geneCellList.Remove(residentCell);
 										geneCellMap.RemoveCellAtGridPosition(residentCell.mapPosition);
 										nextSpawningFromCells.Remove(residentCell);
@@ -248,7 +248,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	private Cell SpawnGeneCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide) {
-		Cell cell = GeneCellPool.instance.Borrow(gene.type);
+		Cell cell = World.instance.life.geneCellPool.Borrow(gene.type);
 
 		cell.transform.parent = geneCellsTransform;
 		cell.transform.position = CellMap.ToModelSpacePosition(mapPosition);
@@ -366,7 +366,7 @@ public class Genotype : MonoBehaviour {
 
 	private void Clear() {
 		for (int index = 0; index < geneCellList.Count; index++) {
-			GeneCellPool.instance.Recycle(geneCellList[index]);
+			World.instance.life.geneCellPool.Recycle(geneCellList[index]);
 		}
 		geneCellList.Clear();
 		geneCellMap.Clear();

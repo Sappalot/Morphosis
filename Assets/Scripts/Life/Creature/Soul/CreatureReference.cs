@@ -13,8 +13,8 @@ public class CreatureReference {
 
 	public void TryGetReference() {
 		if (!isCreatureReferenceUpdated) {
-			if (Life.instance.HasCreature(id)) {
-				creature = Life.instance.GetCreature(id);
+			if (World.instance.life.HasCreature(id)) {
+				creature = World.instance.life.GetCreature(id);
 				hadReference = true;
 			} else {
 				//Debug.Log("Can't find creature");

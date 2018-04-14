@@ -7,7 +7,7 @@
 
 	public void OnClickFertilize() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			Life.instance.FertilizeCreature(CellPanel.instance.selectedCell, true, World.instance.worldTicks, true);
+			World.instance.life.FertilizeCreature(CellPanel.instance.selectedCell, true, World.instance.worldTicks, true);
 		}
 	}
 }

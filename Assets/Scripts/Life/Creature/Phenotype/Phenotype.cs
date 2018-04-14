@@ -196,7 +196,7 @@ public class Phenotype : MonoBehaviour {
 		noGrowthReason = new NoGrowthReason();
 		
 		////Fail safe ... to be removed
-		//Life.instance.UpdateSoulReferences();
+		//World.instance.life.UpdateSoulReferences();
 
 		int growCellCount = 0;
 		Genotype genotype  = creature.genotype;
@@ -359,7 +359,7 @@ public class Phenotype : MonoBehaviour {
 		//return c == null || !(c is CircleCollider2D); //the isCircleCollider2D test is there to avoid count collision with the big world touch square collider
 
 		List<Cell> cells = new List<Cell>();
-		foreach (Creature creature in Life.instance.creatures) { // creature.creaturesInCluster
+		foreach (Creature creature in World.instance.life.creatures) { // creature.creaturesInCluster
 			cells.AddRange(creature.phenotype.cellList);
 		}
 
@@ -393,7 +393,7 @@ public class Phenotype : MonoBehaviour {
 		if (connectionsDiffersFromCells) {
 
 			////Fail safe ... to be removed .... or is it ... really?
-			Life.instance.UpdateSoulReferences();
+			World.instance.life.UpdateSoulReferences();
 
 			UpdateNeighbourReferencesInterBody(creature);
 
@@ -599,8 +599,8 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		// Clean up cell: Has vereybodey forgotten about me?
-		
-		CellPool.instance.Recycle(deleteCell);
+
+		World.instance.life.cellPool.Recycle(deleteCell);
 
 		if (deleteDebris) {
 			DeleteDebris(); 
@@ -830,7 +830,7 @@ public class Phenotype : MonoBehaviour {
 	private Cell InstantiateCell(CellTypeEnum type, Vector2i mapPosition, Creature creature) {
 		Cell cell = null;
 
-		cell = CellPool.instance.Borrow(type);
+		cell = World.instance.life.cellPool.Borrow(type);
 
 		//haxzor workaround, may caus phisics to explode
 		//Cell is activated in Update instead of here

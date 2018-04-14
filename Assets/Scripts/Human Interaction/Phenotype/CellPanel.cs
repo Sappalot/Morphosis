@@ -45,7 +45,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public void OnClickDelete() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			Life.instance.KillCellSafe(selectedCell, World.instance.worldTicks);
+			World.instance.life.KillCellSafe(selectedCell, World.instance.worldTicks);
 
 			CreatureSelectionPanel.instance.MakeDirty();
 			PhenotypePanel.instance.MakeDirty();

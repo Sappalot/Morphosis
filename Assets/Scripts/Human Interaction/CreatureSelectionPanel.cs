@@ -222,7 +222,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		GenePanel.instance.MakeDirty();
 		LockedUnlockedPanel.instance.MakeDirty();
 
-		Life.instance.UpdateStructure();
+		World.instance.life.UpdateStructure();
 		UpdateSelectionCluster();
 	}
 
@@ -353,10 +353,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
-			Creature mergeling = Life.instance.SpawnCreatureMergling(genomes, Vector2.zero, 90f, World.instance.worldTicks);
+			Creature mergeling = World.instance.life.SpawnCreatureMergling(genomes, Vector2.zero, 90f, World.instance.worldTicks);
 			moveCreatures.Add(mergeling);
 		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
-			Creature mergeling = Life.instance.SpawnCreatureMergling(genomes, Vector2.zero, 90f, World.instance.worldTicks);
+			Creature mergeling = World.instance.life.SpawnCreatureMergling(genomes, Vector2.zero, 90f, World.instance.worldTicks);
 			moveCreatures.Add(mergeling);
 		}
 
@@ -379,7 +379,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		Dictionary<string, string> originalToCopy = new Dictionary<string, string>();
 		Dictionary<string, string> copyToOriginal = new Dictionary<string, string>();
 		foreach (Creature originalCreature in originalCreatures) {
-			Creature copy = Life.instance.SpawnCreatureCopy(originalCreature, World.instance.worldTicks); // will instantiate souls as well
+			Creature copy = World.instance.life.SpawnCreatureCopy(originalCreature, World.instance.worldTicks); // will instantiate souls as well
 			moveCreatures.Add(copy);
 			copies.Add(copy);
 			originalToCopy.Add(originalCreature.id, copy.id);
@@ -387,8 +387,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 
 		foreach (Creature copy in copies) {
-			Soul soulCopy = Life.instance.GetSoul(copy.id);
-			Soul soulOriginal = Life.instance.GetSoul(copyToOriginal[copy.id]);
+			Soul soulCopy = World.instance.life.GetSoul(copy.id);
+			Soul soulOriginal = World.instance.life.GetSoul(copyToOriginal[copy.id]);
 
 			// me
 			//soulCopy.id = copy.id; //not really needed
@@ -401,8 +401,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				string copyId = originalToCopy[soulOriginal.motherSoulReference.id];
 
 				//soulCopy.SetMotherSoul(copyId);
-				Life.instance.SetMotherSoulImmediateSafe(soulCopy, Life.instance.GetSoul(copyId));
-				//soulCopy.SetMotherSoulImmediate(Life.instance.GetSoul(copyId));
+				World.instance.life.SetMotherSoulImmediateSafe(soulCopy, World.instance.life.GetSoul(copyId));
+				//soulCopy.SetMotherSoulImmediate(World.instance.life.GetSoul(copyId));
 			}
 
 			//children
@@ -410,7 +410,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				SoulReference childReference = soulOriginal.childSoulReferences[i];
 				if (originalCreatures.Find(c => c.id == childReference.id)) {
 					string copyId = originalToCopy[childReference.id];
-					Life.instance.AddChildSoulImmediateSafe(soulCopy, Life.instance.GetSoul(copyId), childReference.childOriginMapPosition, childReference.childOriginBindCardinalIndex, childReference.isChildConnected);
+					World.instance.life.AddChildSoulImmediateSafe(soulCopy, World.instance.life.GetSoul(copyId), childReference.childOriginMapPosition, childReference.childOriginBindCardinalIndex, childReference.isChildConnected);
 				}
 			}
 		}
@@ -721,7 +721,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 
 		//debug markers
-		foreach (Creature c in Life.instance.creatures) {
+		foreach (Creature c in World.instance.life.creatures) {
 			//c.ShowMarkers(IsSelected(c));
 			c.ShowMarkers(false);
 		}
