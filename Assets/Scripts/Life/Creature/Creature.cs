@@ -23,178 +23,129 @@ public class Creature : MonoBehaviour {
 	public int generation = 1;
 
 	////-------- Project: Move soul into creature
+	private Mother mother_;
+	private Dictionary<string, Child> children_ = new Dictionary<string, Child>(); // each entry contains both string and child (child is never null)
 
-	public FamilyMemberState GetRelationToMother() {
-		Debug.Assert(creation != CreatureCreationEnum.Unset, "We cant get our relation to mother unless we know hoe we were made!"); // we dont know how i was made yet
-
-		if (creation == CreatureCreationEnum.Forged) {
-			return FamilyMemberState.Unexisting;
-		} else if (creation == CreatureCreationEnum.Cloned) {
-			if (mother_ == null ) {
-				return FamilyMemberState.LostWhenCloning;
-			} else {
-				if (World.instance.life.HasCreature(id)) {
-					if (phenotype.isAttachedToMother) {
-						return FamilyMemberState.AliveAndAttached;
-					} else {
-						return FamilyMemberState.AliveAndDetatched;
-					}
-				} else {
-					return FamilyMemberState.Dead;
-				}
-			}
-		} else { //born
-			if (mother_ == null) {
-				return FamilyMemberState.Error; //	born without mother
-			} else {
-				if (World.instance.life.HasCreature(id)) {
-					if (phenotype.isAttachedToMother) {
-						return FamilyMemberState.AliveAndAttached;
-					} else {
-						return FamilyMemberState.AliveAndDetatched;
-					}
-				} else {
-					return FamilyMemberState.Dead;
-				}
-			}
-		}
+	//do this when this when creature is reecycled, only
+	public void RemoveAllFamilyRelations() {
+		mother_ = null;
+		children_.Clear();
 	}
 
-	public FamilyMemberState GetRelationToChild(string id) {
-		Debug.Assert(creation != CreatureCreationEnum.Unset, "We can't get our relation to a child, unless we know how we were made!"); // we dont know how i was made yet
-
-		if (creation == CreatureCreationEnum.Forged) {
+	//  Move soul into creature -> Mother
+	public FamilyMemberState GetRelationToMother_() {
+		if (mother_ == null) {
 			return FamilyMemberState.Unexisting;
-		} else if (creation == CreatureCreationEnum.Cloned) {
-			if (children_.ContainsKey(id)) {
-				if (children_[id] == null) {
-					return FamilyMemberState.LostWhenCloning;
+		} else {
+			if (World.instance.life.HasCreature(id)) {
+				if (phenotype.isAttachedToMother) {
+					return FamilyMemberState.AliveAndAttached;
 				} else {
-					if (World.instance.life.HasCreature(id)) {
-						Creature child = World.instance.life.GetCreature(id);
-						if (child.phenotype.isAttachedToMother) {
-							return FamilyMemberState.AliveAndAttached;
-						} else {
-							return FamilyMemberState.AliveAndDetatched;
-						}
-					} else {
-						return FamilyMemberState.Dead;
-					}
+					return FamilyMemberState.AliveAndDetatched;
 				}
 			} else {
-				return FamilyMemberState.Unexisting;
-			}
-		} else { //born
-			if (children_.ContainsKey(id)) {
-				if (children_[id] == null) {
-					return FamilyMemberState.Error;
-				} else {
-					if (World.instance.life.HasCreature(id)) {
-						Creature child = World.instance.life.GetCreature(id);
-						if (child.phenotype.isAttachedToMother) {
-							return FamilyMemberState.AliveAndAttached;
-						} else {
-							return FamilyMemberState.AliveAndDetatched;
-						}
-					} else {
-						return FamilyMemberState.Dead;
-					}
-				}
-			} else {
-				return FamilyMemberState.Unexisting;
+				return FamilyMemberState.Dead;
 			}
 		}
-	}
-
-	//do this when this when creature is reecycled
-	public void ClearFamilyRelations() {
-
 	}
 
 	//do this when creature is born, copied or loaded
-	public void SetFamilyRelations(Mother mother, List<Child> children) {
-
+	public void SetMother_(string motherId) {
+		mother_ = new Mother(motherId);
 	}
 
-	public void AddChild(Child child) {
-
+	public bool HasMotherAlive_() {
+		return GetRelationToMother_() == FamilyMemberState.AliveAndAttached ||
+			GetRelationToMother_() == FamilyMemberState.AliveAndAttached;
 	}
 
-	public bool hasMother_() {
-		return GetRelationToMother() == FamilyMemberState.AliveAndAttached ||
-			GetRelationToMother() == FamilyMemberState.AliveAndAttached ||
-			GetRelationToMother() == FamilyMemberState.Dead;
+	public bool HasMotherDeadOrAlive_() {
+		return GetRelationToMother_() == FamilyMemberState.AliveAndAttached ||
+			GetRelationToMother_() == FamilyMemberState.AliveAndDetatched ||
+			GetRelationToMother_() == FamilyMemberState.Dead;
 	}
 
-	public bool hasMotherAlive_() {
-		return GetRelationToMother() == FamilyMemberState.AliveAndAttached ||
-			GetRelationToMother() == FamilyMemberState.AliveAndAttached;
+	public Creature GetMotherAlive_() {
+		if (!HasMotherAlive_()) {
+			return null;
+		}
+		if (World.instance.life.HasCreature(mother_.id)) {
+			return World.instance.life.GetCreature(mother_.id);
+		}
+		return null;
 	}
 
-	public bool hasChild_() {
-		return children_.Count > 0;
-	}
+	//  ^ soul into creature -> Mother ^
 
-	//public Creature GetMother() {
+	//  soul into creature -> Children
 
-	//}
-
-
-	private Mother mother_;
-	private Dictionary<string, Child> children_ = new Dictionary<string, Child>();
-
-
-	////------ ^ Project: Move soul into creature ^
-
-	//time
-	[HideInInspector]
-	public ulong bornTick;
-	[HideInInspector]
-	public ulong deadTick;
-
-	public ulong GetAgeTicks(ulong worldTicks) {
-		return worldTicks - bornTick;
-	}
-
-	public float GetAge(ulong worldTicks) {
-		return (worldTicks - bornTick) * Time.fixedDeltaTime;
-	}
-
-	//wing force
-	[Range(0f, 1f)]
-	public float wingDrag = 0.1f;
-
-	[Range(0f, 1f)]
-	public float f1 = 0.1f;
-
-	[Range(0f, 5f)]
-	public float wingF2 = 0.15f;
-
-	[Range(0f, 40f)]
-	public float wingPow = 2f;
-
-	[Range(0f, 100f)]
-	public float wingMax = 5f;
-
-	//muscle
-	[Range(0f, 0.5f)]
-	public float muscleRadiusDiff = 0.1f;
-
-	[Range(-1f, 1f)]
-	public float muscleContractRetract = -0.14f;
-
-	[Range(0f, 20f)]
-	public float muscleSpeed = 6.55f;
-
-	public Genotype genotype;
-	public Phenotype phenotype;
-
-	public float energy {
-		get {
-			return phenotype.energy;
+	public FamilyMemberState GetRelationToChild_(string id) {
+		if (children_.ContainsKey(id)) {
+			if (World.instance.life.HasCreature(id)) {
+				Creature child = World.instance.life.GetCreature(id);
+				if (child.phenotype.isAttachedToMother) {
+					return FamilyMemberState.AliveAndAttached;
+				} else {
+					return FamilyMemberState.AliveAndDetatched;
+				}
+			} else {
+				return FamilyMemberState.Dead;
+			}
+		} else {
+			return FamilyMemberState.Unexisting;
 		}
 	}
 
+	public void SetChildren_(List<ChildData> childrenData) {
+		children_.Clear();
+		foreach (ChildData c in childrenData) {
+			children_.Add(c.id, new Child(c.id, c.isConnected, c.originMapPosition, c.originBindCardinalIndex));
+		}
+	}
+
+	public void AddChild_(ChildData childData) {
+		children_.Add(childData.id, new Child(childData.id, childData.isConnected, childData.originMapPosition, childData.originBindCardinalIndex));
+	}
+
+	public bool HasChildrenDeadOrAlive_() {
+		return children_.Count > 0;
+	}
+
+	public bool HasChildrenAlive_() {
+		foreach (Child c in children_.Values) {
+			if (GetRelationToChild_(c.id) == FamilyMemberState.AliveAndAttached || GetRelationToChild_(c.id) == FamilyMemberState.AliveAndDetatched) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private Creature GetChildAlive_(string id) {
+		if (!children_.ContainsKey(id)) {
+			return null;
+		}
+		if (World.instance.life.HasCreature(id)) {
+			return World.instance.life.GetCreature(mother_.id);
+		}
+		return null;
+	}
+
+	private List<Creature> GetChildrenAlive_() {
+		if (!HasChildrenAlive_()) {
+			return null;
+		}
+		List<Creature> childrenAlive = new List<Creature>();
+		foreach (string id in children_.Keys) {
+			Creature found = World.instance.life.GetCreature(id);
+			if (found != null) {
+				childrenAlive.Add(found);
+			}
+		}
+		return childrenAlive;
+	}
+	//  ^ soul into creature -> Children  ^
+
+	////------ ^ Project: Move soul into creature ^
 	public bool hasSoul {
 		get {
 			return soul != null;
@@ -248,6 +199,60 @@ public class Creature : MonoBehaviour {
 			return soul.hasChildSoul;
 		}
 	}
+
+	//--- ^ Relations ^
+	
+		
+	//time
+	[HideInInspector]
+	public ulong bornTick;
+	[HideInInspector]
+	public ulong deadTick;
+
+	public ulong GetAgeTicks(ulong worldTicks) {
+		return worldTicks - bornTick;
+	}
+
+	public float GetAge(ulong worldTicks) {
+		return (worldTicks - bornTick) * Time.fixedDeltaTime;
+	}
+
+	//wing force
+	[Range(0f, 1f)]
+	public float wingDrag = 0.1f;
+
+	[Range(0f, 1f)]
+	public float f1 = 0.1f;
+
+	[Range(0f, 5f)]
+	public float wingF2 = 0.15f;
+
+	[Range(0f, 40f)]
+	public float wingPow = 2f;
+
+	[Range(0f, 100f)]
+	public float wingMax = 5f;
+
+	//muscle
+	[Range(0f, 0.5f)]
+	public float muscleRadiusDiff = 0.1f;
+
+	[Range(-1f, 1f)]
+	public float muscleContractRetract = -0.14f;
+
+	[Range(0f, 20f)]
+	public float muscleSpeed = 6.55f;
+
+	public Genotype genotype;
+	public Phenotype phenotype;
+
+	public float energy {
+		get {
+			return phenotype.energy;
+		}
+	}
+
+
 
 	//Dead or alive counts
 	public bool allowedToChangeGenome {
