@@ -546,7 +546,6 @@ public class Life : MonoSingleton<Life> {
 		}
 
 		// ^ Ticks ^
-
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdatePhysics(worldTicks);
 		}
