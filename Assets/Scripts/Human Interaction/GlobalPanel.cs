@@ -121,6 +121,10 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 			timeCount = 0;
 
+			if (World.instance.life == null) {
+				return;
+			}
+
 			//creatures & souls
 			creatureCount.text =         "Creatures: "   + World.instance.life.creatureCount;
 			soulsDirtyCount.text =       "Alive & dirty: " + World.instance.life.soulUnupdatedCount;
@@ -185,5 +189,13 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	public void OnSaveClicked() {
 		World.instance.Save();
+	}
+
+	public void OnClickedDestroy() {
+		World.instance.DestroyLife();
+	}
+
+	public void OnClickedCreate() {
+		World.instance.CreateLife();
 	}
 }

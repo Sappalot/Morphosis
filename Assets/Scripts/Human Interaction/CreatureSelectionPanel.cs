@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
-	public Life life;
 	public PhenotypePanel phenotypePanel;
 	public new Camera camera;
 	public LineRenderer lineRenderer;
@@ -154,12 +153,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void Select(List<Creature> creatures) {
-		List<Creature> allCreatures = life.creatures;
+		List<Creature> allCreatures = World.instance.life.creatures;
 
 		ClearSelection();
 		selection.AddRange(creatures);
 
-		life.MakeAllCreaturesDirty();
+		World.instance.life.MakeAllCreaturesDirty();
 		isDirty = true;
 		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -283,7 +282,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	// Delete
 	public void OnDeleteClicked() {
 		for (int index = 0; index < selection.Count; index++) {
-			life.KillCreatureSafe(selection[index], true);
+			World.instance.life.KillCreatureSafe(selection[index], true);
 		}
 		ClearSelection();
 	}
@@ -574,6 +573,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	//--------------------------------
 	private void Update() {
+		if (World.instance.life == null) {
+			return;
+		}
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update CreatureSelectionPanel");

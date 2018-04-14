@@ -5,6 +5,7 @@ using System.IO;
 
 public class World : MonoSingleton<World> {
 	public Life life;
+	public Life lifePrefab;
 
 	public Camera worldCamera;
 	private string worldName = "Gaia";
@@ -24,6 +25,9 @@ public class World : MonoSingleton<World> {
 	}
 
 	private void Update() {
+		if (life == null) {
+			return;
+		}
 		//Handle time from here to not get locked out
 		if (GlobalPanel.instance.timeSpeedSilder.value < -10f || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			Time.timeScale = 0f;
@@ -47,6 +51,10 @@ public class World : MonoSingleton<World> {
 	private int updates;
 
 	private void FixedUpdate() {
+		if(life == null) {
+			return;
+		}
+
 		World.instance.life.UpdateStructure();
 
 		worldTicks++; //The only place where time is increased
@@ -139,5 +147,14 @@ public class World : MonoSingleton<World> {
 		worldTicks = worldData.worldTicks;
 
 		PrisonWall.instance.runnersKilledCount = worldData.runnersKilledCount;
+	}
+
+	public void DestroyLife() {
+		Destroy(life.gameObject);
+	}
+
+	public void CreateLife() {
+		life = Instantiate(lifePrefab, transform);
+		life.name = "Life";
 	}
 }
