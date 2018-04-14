@@ -191,11 +191,11 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		World.instance.Save();
 	}
 
-	public void OnClickedDestroy() {
-		World.instance.DestroyLife();
+	public void OnClickedStoreLife() {
+		World.instance.StoreLife();
 	}
 
-	public void OnClickedCreate() {
-		World.instance.CreateLife();
+	public void OnClickedRestoreLife() {
+		World.instance.RestoreLife();
 	}
 }

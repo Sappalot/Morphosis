@@ -22,6 +22,8 @@ public class World : MonoSingleton<World> {
 		//including: turn hinged neighbours to correct angle, just one test string creature
 		//excluding: turn cell graphics to correct angle, scale mussle cells
 		//World.instance.life.EvoFixedUpdate(fixedTime);
+
+		CreateLife();
 	}
 
 	private void Update() {
@@ -149,8 +151,23 @@ public class World : MonoSingleton<World> {
 		PrisonWall.instance.runnersKilledCount = worldData.runnersKilledCount;
 	}
 
-	public void DestroyLife() {
+
+	private string allThereIs;
+	public void StoreLife() {
+		UpdateData();
+		allThereIs = Serializer.Serialize(worldData, new UnityJsonSerializer());
+
 		Destroy(life.gameObject);
+	}
+
+	public void RestoreLife() {
+		CreateLife();
+
+		WorldData loadedWorld = Serializer.Deserialize<WorldData>(allThereIs, new UnityJsonSerializer());
+		ApplyData(loadedWorld);
+		CreatureEditModePanel.instance.UpdateAllAccordingToEditMode();
+		CreatureSelectionPanel.instance.ClearSelection();
+		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 	}
 
 	public void CreateLife() {
