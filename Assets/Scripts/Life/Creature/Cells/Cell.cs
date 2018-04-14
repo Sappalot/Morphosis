@@ -979,6 +979,11 @@ public abstract class Cell : MonoBehaviour {
 		predators.Clear();
 		isPlacenta = false;
 		groups = 0;
+
+		lastTime = 0;
+		timeOffset = 0;
+		buildOrderIndex = 0;
+			
 	}
 
 	// Pooling

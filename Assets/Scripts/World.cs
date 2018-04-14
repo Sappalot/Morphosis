@@ -158,6 +158,7 @@ public class World : MonoSingleton<World> {
 		allThereIs = Serializer.Serialize(worldData, new UnityJsonSerializer());
 
 		Destroy(life.gameObject);
+		System.GC.Collect();
 	}
 
 	public void RestoreLife() {
