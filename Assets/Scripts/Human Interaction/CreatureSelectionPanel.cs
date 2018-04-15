@@ -263,15 +263,15 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	// Select
 	public void OnSelectMotherClicked() {
-		if (hasSoloSelected && soloSelected.HasMotherAlive_() && soloSelected.GetMotherAlive_() != null) {
-			Select(soloSelected.GetMotherAlive_());
+		if (hasSoloSelected && soloSelected.HasMother() && soloSelected.GetMother() != null) {
+			Select(soloSelected.GetMother());
 		}
 	}
 
 	public void OnSelectChildrenClicked() {
-		if (hasSoloSelected && soloSelected.HasChildrenAlive_()) {
+		if (hasSoloSelected && soloSelected.HasChildren()) {
 			List<Creature> select = new List<Creature>();
-			foreach(Creature child in soloSelected.GetChildrenAlive_()) {
+			foreach(Creature child in soloSelected.GetChildren()) {
 				select.Add(child);
 			}
 			Select(select);
@@ -312,12 +312,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		List<Creature> attachedUnselectedChildren = new List<Creature>();
 		foreach (Creature creature in selection) {
 			//mother
-			if (creature.HasMotherAlive_() && !selection.Contains(creature.GetMotherAlive_())) {
+			if (creature.HasMother() && !selection.Contains(creature.GetMother())) {
 				creature.DetatchFromMother(false, true);
 			}
 
 			//children
-			foreach (Creature child in creature.GetChildrenAlive_()) {
+			foreach (Creature child in creature.GetChildren()) {
 				if (!selection.Contains(child) && child != null) {
 					child.DetatchFromMother(false, true);
 				}
@@ -390,20 +390,20 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			Creature creatureCopy = World.instance.life.GetCreature(copy.id);
 			Creature creatureOriginal = World.instance.life.GetCreature(copyToOriginal[copy.id]);
 
-			creatureCopy.RemoveAllFamilyRelations();
+			creatureCopy.ClearMotherAndChildren();
 
 			// mother
-			if (originalCreatureList.Find(c => c.id == creatureOriginal.GetMotherIdDeadOrAlive_())) {
+			if (originalCreatureList.Find(c => c.id == creatureOriginal.GetMotherIdIncDead())) {
 				//my mother is among the creatures which was coppied
-				string copyId = originalToCopy[creatureOriginal.GetMotherIdDeadOrAlive_()];
-				creatureCopy.SetMother_(copyId);
+				string copyId = originalToCopy[creatureOriginal.GetMotherIdIncDead()];
+				creatureCopy.SetMother(copyId);
 			}
 
 			//children
-			List<string> creatureOriginalChildIdList = creatureOriginal.GetChildrenIdDeadOrAlive_();
+			List<string> creatureOriginalChildIdList = creatureOriginal.GetChildrenIdIncDead();
 
 			// Narly code below !!
-			for (int i = 0; i < creatureOriginal.ChildrenDeadOrAliveCount_(); i++) {
+			for (int i = 0; i < creatureOriginal.ChildrenCountIncDead(); i++) {
 				//For each child of the current original
 
 				//SoulReference childReference = soulOriginal.childSoulReferences[i];
@@ -416,10 +416,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 					// Our copy child reference is the same as the original, but poits at another creature child
 					childData.id =                      originalToCopy[creatureOriginalsChildId];
-					childData.isConnectedToMother =     creatureOriginal.IsConnectedToChild_(creatureOriginalsChildId);
-					childData.originMapPosition =       creatureOriginal.ChildOriginMapPosition_(creatureOriginalsChildId); //As seen from mothers frame of reference
-					childData.originBindCardinalIndex = creatureOriginal.ChildOriginBindCardinalIndex_(creatureOriginalsChildId);
-					creatureCopy.AddChild_(childData);
+					childData.isConnectedToMother =     creatureOriginal.IsAttachedToChild(creatureOriginalsChildId);
+					childData.originMapPosition =       creatureOriginal.ChildOriginMapPosition(creatureOriginalsChildId); //As seen from mothers frame of reference
+					childData.originBindCardinalIndex = creatureOriginal.ChildOriginBindCardinalIndex(creatureOriginalsChildId);
+					creatureCopy.AddChild(childData);
 
 
 				}
@@ -637,18 +637,18 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				spiecesButtonText.color = Color.black;
 
 				motherButtonText.color = Color.red;
-				motherButton.gameObject.SetActive(soloSelected.HasMotherDeadOrAlive_()); //show even if mother is dead
+				motherButton.gameObject.SetActive(soloSelected.HasMotherIncDead()); //show even if mother is dead
 
 				fatherButtonText.color = Color.red;
 				fatherButton.gameObject.SetActive(false);
 
 				childrenButtonText.color = Color.red;
-				if (soloSelected.HasChildrenDeadOrAlive_()) {
+				if (soloSelected.HasChildrenIncDead()) {
 					childrenButton.gameObject.SetActive(true); //show even if mother is dead
-					if (soloSelected.ChildrenDeadOrAliveCount_() == 1) {
+					if (soloSelected.ChildrenCountIncDead() == 1) {
 						childrenButtonText.text = "1 Child";
 					} else {
-						childrenButtonText.text = soloSelected.ChildrenDeadOrAliveCount_() + " Children";
+						childrenButtonText.text = soloSelected.ChildrenCountIncDead() + " Children";
 					}
 				} else {
 					childrenButton.gameObject.SetActive(false);

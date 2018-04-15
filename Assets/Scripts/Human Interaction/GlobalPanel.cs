@@ -10,10 +10,6 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Text pps;
 
 	public Text creatureCount;
-	//public Text soulsDirtyCount;
-	//public Text soulsCleanCount;
-	//public Text soulsDeadButUsedCount;
-	//public Text soulsLostCount;
 	public Text runnersKilledCount;
 	public Text sterileKilledCount;
 
@@ -131,7 +127,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			sterileKilledCount.text =    "Sterile Killed: " + World.instance.life.sterileKilledCount;
 
 			//Creature Pool
-			//creaturePoolCount.text = "Creatures: " + CreaturePool.instance.storedCount + " + " + CreaturePool.instance.loanedCount + " = " + (CreaturePool.instance.storedCount + CreaturePool.instance.loanedCount);
+			creaturePoolCount.text = "Creatures: " + CreaturePool.instance.storedCount + " + " + CreaturePool.instance.loanedCount + " = " + (CreaturePool.instance.storedCount + CreaturePool.instance.loanedCount);
 
 			//Cell Pool
 			cellPoolEggCount.text =    "E: " + World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Egg) +    " + " + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Egg) +    " = " + (World.instance.life.cellPool.GetStoredCellCount(CellTypeEnum.Egg)    + World.instance.life.cellPool.GetLoanedCellCount(CellTypeEnum.Egg));

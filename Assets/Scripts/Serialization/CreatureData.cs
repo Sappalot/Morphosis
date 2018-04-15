@@ -1,5 +1,5 @@
 ﻿using System;
-using UnityEngine;
+using System.Collections.Generic;
 
 [Serializable]
 public class CreatureData {
@@ -13,6 +13,9 @@ public class CreatureData {
 
 	public GenotypeData genotypeData = new GenotypeData();
 	public PhenotypeData phenotypeData = new PhenotypeData();
+
+	public MotherData motherData = null;
+	public List<ChildData> childDataList = new List<ChildData>();
 
 	public int growTicks;
 	public int detatchTicks;

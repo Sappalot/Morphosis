@@ -20,24 +20,74 @@ public class Creature : MonoBehaviour {
 	[HideInInspector]
 	public int generation = 1;
 
-	////-------- Project: Move soul into creature
+	// Relations
+	//Dont keep any direct reference to avoid keeping references to killed relatives (which are then recycled)
 	private Mother mother_;
 	private Dictionary<string, Child> children_ = new Dictionary<string, Child>(); // each entry contains both string and child (child is allways a reference ID, which may or may not be found in life)
 
-	//do this when this when creature is reecycled, only
-	public void RemoveAllFamilyRelations() {
+	public void ClearMotherAndChildren() {
+		ClearMother();
+		ClearChildren();
+	}
+
+	public void ClearMother() {
 		mother_ = null;
+	}
+
+	public void ClearChildren() {
 		children_.Clear();
 	}
 
-	//  Move soul into creature -> Mother
-	public FamilyMemberState GetRelationToMother_() {
+	// Relations -> mother	
+
+	//do this when creature is born, copied or loaded
+	public void SetMother(string motherId) {
+		mother_ = new Mother(motherId);
+	}
+
+	public bool HasMother() {
+		return GetRelationToMother() == FamilyMemberState.AliveAndAttached || GetRelationToMother() == FamilyMemberState.AliveAndDetatched;
+	}
+
+	public Creature GetMother() {
+		if (!HasMother()) {
+			return null;
+		}
+		if (World.instance.life.HasCreature(mother_.id)) {
+			return World.instance.life.GetCreature(mother_.id);
+		}
+		return null;
+	}
+
+	public bool IsAttachedToMother() {
+		return GetRelationToMother() == FamilyMemberState.AliveAndAttached;
+	}
+
+	public void SetAttachedToChild(string childId, bool attached) {
+		if (!children_.ContainsKey(childId)) {
+			return;
+		}
+		children_[childId].isConnectedToMother = attached;
+	}
+
+	public bool HasMotherIncDead() {
+		return GetRelationToMother() == FamilyMemberState.AliveAndAttached || GetRelationToMother() == FamilyMemberState.AliveAndDetatched || GetRelationToMother() == FamilyMemberState.Dead;
+	}
+
+	public string GetMotherIdIncDead() {
+		if (mother_ != null) {
+			return mother_.id;
+		}
+		return null;
+	}
+
+	private FamilyMemberState GetRelationToMother() {
 		if (mother_ == null) {
 			return FamilyMemberState.Unexisting;
 		} else {
 			Creature myMother = World.instance.life.GetCreature(mother_.id);
 			if (myMother != null) {
-				if (myMother.IsConnectedToChild_(id)) {
+				if (myMother.IsAttachedToChild(id)) {
 					return FamilyMemberState.AliveAndAttached;
 				} else {
 					return FamilyMemberState.AliveAndDetatched;
@@ -47,60 +97,88 @@ public class Creature : MonoBehaviour {
 			}
 		}
 	}
-
-	//do this when creature is born, copied or loaded
-	public void SetMother_(string motherId) {
-		mother_ = new Mother(motherId);
+	// ^ Relations -> mother ^
+	// Relations -> children
+	public void AddChild(ChildData childData) {
+		children_.Add(childData.id, new Child(childData.id, childData.isConnectedToMother, childData.originMapPosition, childData.originBindCardinalIndex));
 	}
 
-	public bool HasMotherAlive_() {
-		return GetRelationToMother_() == FamilyMemberState.AliveAndAttached || GetRelationToMother_() == FamilyMemberState.AliveAndDetatched;
+	public bool HasChildren() {
+		return ChildrenCount() > 0;
 	}
 
-	public bool HasMotherDeadOrAlive_() {
-		return GetRelationToMother_() == FamilyMemberState.AliveAndAttached || GetRelationToMother_() == FamilyMemberState.AliveAndDetatched || GetRelationToMother_() == FamilyMemberState.Dead;
-	}
-
-	public Creature GetMotherAlive_() {
-		if (!HasMotherAlive_()) {
+	public Creature GetChild(string id) {
+		if (!children_.ContainsKey(id)) {
 			return null;
 		}
-		if (World.instance.life.HasCreature(mother_.id)) {
+		if (World.instance.life.HasCreature(id)) {
 			return World.instance.life.GetCreature(mother_.id);
 		}
 		return null;
 	}
 
-	public Creature GetMotherDeadOrAlive_() {
-		if (World.instance.life.HasCreature(mother_.id)) {
-			return World.instance.life.GetCreature(mother_.id);
+	public bool IsAttachedToChild(string id) {
+		if (!children_.ContainsKey(id)) {
+			return false;
 		}
-		return null;
+		return children_[id].isConnectedToMother;
 	}
 
-	public string GetMotherIdDeadOrAlive_() {
-		if (mother_ != null) {
-			return mother_.id;
+	// Thll mother to see me as connected
+	public void SetAttachedToMother(bool attached) {
+		Creature mother = GetMother();
+		if (mother != null) {
+			mother.SetAttachedToChild(id, attached);
 		}
-		return null;
 	}
 
-	public bool IsConnectedToMother_() {
-		return GetRelationToMother_() == FamilyMemberState.AliveAndAttached;
+	public Vector2i ChildOriginMapPosition(string id) {
+		return children_[id].originMapPosition;
 	}
 
-	public void SetConnectedToChild_(string childId, bool connected) {
-		if (!children_.ContainsKey(childId)) {
-			return;
+	public int ChildOriginBindCardinalIndex(string id) {
+		return children_[id].originBindCardinalIndex;
+	}
+
+	//if we have no children we leave a list full of null
+	public List<Creature> GetChildren() {
+		List<Creature> childrenAlive = new List<Creature>();
+		foreach (string id in children_.Keys) {
+			Creature found = World.instance.life.GetCreature(id);
+			if (found != null) {
+				childrenAlive.Add(found);
+			}
 		}
-		children_[childId].isConnectedToMother = connected;
+		return childrenAlive;
 	}
 
-	//  ^ soul into creature -> Mother ^
+	public List<string> GetChildrenIdIncDead() {
+		List<string> ids = new List<string>();
+		foreach (string id in children_.Keys) {
+			ids.Add(id);
+		}
+		return ids;
+	}
 
-	//  soul into creature -> Children
+	private int ChildrenCount() {
+		int count = 0;
+		foreach (Child c in children_.Values) {
+			if (GetRelationToChild(c.id) == FamilyMemberState.AliveAndAttached || GetRelationToChild(c.id) == FamilyMemberState.AliveAndDetatched) {
+				count++;
+			}
+		}
+		return count;
+	}
 
-	public FamilyMemberState GetRelationToChild_(string id) {
+	public bool HasChildrenIncDead() {
+		return children_.Count > 0;
+	}
+
+	public int ChildrenCountIncDead() {
+		return children_.Count;
+	}
+
+	private FamilyMemberState GetRelationToChild(string id) {
 		if (children_.ContainsKey(id)) {
 			if (World.instance.life.HasCreature(id)) {
 				if (children_[id].isConnectedToMother) {
@@ -116,99 +194,12 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public void SetChildren_(List<ChildData> childrenData) {
-		children_.Clear();
-		foreach (ChildData c in childrenData) {
-			children_.Add(c.id, new Child(c.id, c.isConnectedToMother, c.originMapPosition, c.originBindCardinalIndex));
-		}
-	}
-
-	public void AddChild_(ChildData childData) {
-		children_.Add(childData.id, new Child(childData.id, childData.isConnectedToMother, childData.originMapPosition, childData.originBindCardinalIndex));
-	}
-
-	private void AddChild_(Child child) {
+	private void AddChild(Child child) {
 		children_.Add(child.id, child);
 	}
 
-	public bool HasChildrenDeadOrAlive_() {
-		return children_.Count > 0;
-	}
-
-	public int ChildrenDeadOrAliveCount_() {
-		return children_.Count;
-	}
-
-	public bool HasChildrenAlive_() {
-		return ChildrenAliveCount_() > 0;
-	}
-
-	public int ChildrenAliveCount_() {
-		int count = 0;
-		foreach (Child c in children_.Values) {
-			if (GetRelationToChild_(c.id) == FamilyMemberState.AliveAndAttached || GetRelationToChild_(c.id) == FamilyMemberState.AliveAndDetatched) {
-				count++;
-			}
-		}
-		return count;
-	}
-
-	public Creature GetChildAlive_(string id) {
-		if (!children_.ContainsKey(id)) {
-			return null;
-		}
-		if (World.instance.life.HasCreature(id)) {
-			return World.instance.life.GetCreature(mother_.id);
-		}
-		return null;
-	}
-
-	public bool IsConnectedToChild_(string id) {
-		if (!children_.ContainsKey(id)) {
-			return false;
-		}
-		return children_[id].isConnectedToMother;
-	}
-
-	// Thll mother to see me as connected
-	public void SetConnectedWithMother_(bool connected) {
-		Creature mother = GetMotherAlive_();
-		if (mother != null) {
-			mother.SetConnectedToChild_(id, connected);
-		}
-	}
-
-	public Vector2i ChildOriginMapPosition_(string id) {
-		return children_[id].originMapPosition;
-	}
-
-	public int ChildOriginBindCardinalIndex_(string id) {
-		return children_[id].originBindCardinalIndex;
-	}
-
-	//if we have no children we leave a list full of null
-	public List<Creature> GetChildrenAlive_() {
-		List<Creature> childrenAlive = new List<Creature>();
-		foreach (string id in children_.Keys) {
-			Creature found = World.instance.life.GetCreature(id);
-			if (found != null) {
-				childrenAlive.Add(found);
-			}
-		}
-		return childrenAlive;
-	}
-
-	public List<string> GetChildrenIdDeadOrAlive_() {
-		List<string> ids = new List<string>();
-		foreach (string id in children_.Keys) {
-			ids.Add(id);
-		}
-		return ids;
-	}
-
-	//  ^ soul into creature -> Children  ^
-
-	////------ ^ Project: Move soul into creature ^
+	//  ^ Relations - children ^
+	//  ^ Relations ^
 
 
 	//time
@@ -265,7 +256,7 @@ public class Creature : MonoBehaviour {
 	//Dead or alive counts
 	public bool allowedToChangeGenome {
 		get {
-			return !(HasMotherDeadOrAlive_() || HasChildrenDeadOrAlive_());
+			return !(HasMotherIncDead() || HasChildrenIncDead());
 		}
 	}
 
@@ -302,12 +293,12 @@ public class Creature : MonoBehaviour {
 		}
 
 		// mother
-		if (creature.HasMotherAlive_() && !allreadyInList.Contains(creature.GetMotherAlive_())) {
-			AddConnectedCreatures(creature.GetMotherAlive_(), creature, allreadyInList);
+		if (creature.HasMother() && !allreadyInList.Contains(creature.GetMother())) {
+			AddConnectedCreatures(creature.GetMother(), creature, allreadyInList);
 		}
 
 		//children
-		foreach (Creature child in creature.GetChildrenAlive_()) {
+		foreach (Creature child in creature.GetChildren()) {
 			AddConnectedCreatures(child, creature, allreadyInList);
 		}
 
@@ -324,12 +315,12 @@ public class Creature : MonoBehaviour {
 			return false;
 		}
 
-		if (from.HasMotherAlive_() && from == to && from.IsConnectedToMother_()) {
+		if (from.HasMother() && from == to && from.IsAttachedToMother()) {
 			return true;
 		}
 
-		foreach (Creature child in from.GetChildrenAlive_()) {
-			if (child != null && from != null && to != null && from.IsConnectedToChild_(to.id)) {
+		foreach (Creature child in from.GetChildren()) {
+			if (child != null && from != null && to != null && from.IsAttachedToChild(to.id)) {
 				return true;
 			}
 		}
@@ -427,6 +418,9 @@ public class Creature : MonoBehaviour {
 
 	// Apply on genotype ==> Phenotype
 	public void Clear() {
+		id = "";
+		nickname = "";
+		ClearMotherAndChildren();
 		genotype.GenomeEmpty();
 	}
 
@@ -646,11 +640,11 @@ public class Creature : MonoBehaviour {
 		phenotype.ApplyData(creatureData.phenotypeData, this);
 
 		//Relatives
-		RemoveAllFamilyRelations();
+		ClearMotherAndChildren();
 		for (int index = 0; index < creatureData.childDataList.Count; index++) {
 			Child child = new Child();
 			child.ApplyData(creatureData.childDataList[index]);
-			AddChild_(child);
+			AddChild(child);
 		}
 		if (creatureData.motherData != null && creatureData.motherData.id != "") {
 			mother_ = new Mother();
@@ -708,7 +702,7 @@ public class Creature : MonoBehaviour {
 			isDirtyGraphics = true;
 		}
 
-		if (phenotype.UpdateConnectionsFromCellsBody(this, HasMotherAlive_() ? GetMotherAlive_().id : "no mother")) {
+		if (phenotype.UpdateConnectionsFromCellsBody(this, HasMother() ? GetMother().id : "no mother")) {
 			isDirtyGraphics = true;
 		}
 	}
@@ -775,7 +769,7 @@ public class Creature : MonoBehaviour {
 				// ☠ ꕕ Haha, make use of these
 				//Debug.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
 
-				if (IsConnectedToMother_()) {
+				if (IsAttachedToMother()) {
 					if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.cellCount >= phenotype.originCell.originDetatchSizeThreshold) ||
 						(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchCompletionPersistance)) {
 						detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
@@ -806,7 +800,12 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void OnRecycle() {
+		Clear();
 		genotype.OnRecycle();
 		phenotype.OnRecycle();
+	}
+
+	public void OnBorrowToWorld() {
+		Clear();
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 
 public class Life : MonoBehaviour {
+	public CreaturePool creaturePool;
 	public CellPool cellPool;
 	public GeneCellPool geneCellPool;
 	public VeinPool veinPool;
@@ -93,9 +94,9 @@ public class Life : MonoBehaviour {
 		childData.isConnectedToMother = true; // Connected from the start
 		childData.originMapPosition = eggCell.mapPosition; //As seen from mothers frame of reference
 		childData.originBindCardinalIndex = eggCell.bindCardinalIndex; //As seen from mothers frame of reference
-		mother.AddChild_(childData);
+		mother.AddChild(childData);
 
-		child.SetMother_(mother.id);
+		child.SetMother(mother.id);
 
 		PhenotypePanel.instance.MakeDirty();
 		CreatureSelectionPanel.instance.MakeDirty();
@@ -131,7 +132,7 @@ public class Life : MonoBehaviour {
 	public void KillCreatureSafe(Creature creature, bool playEffects) {
 		
 		creature.DetatchFromMother(false, true);
-		foreach(Creature childSoul in creature.GetChildrenAlive_()) {
+		foreach(Creature childSoul in creature.GetChildren()) {
 			childSoul.DetatchFromMother(false, true);
 		}
 
@@ -151,8 +152,8 @@ public class Life : MonoBehaviour {
 		Cell[] forgottenGeneCells = creature.genotype.geneCellsTransform.GetComponents<Cell>();
 		deletedCellCount += forgottenGeneCells.Length;
 
-		Destroy(creature.gameObject); //TODO: return it to pool instead
-		//CreaturePool.instance.Recycle(creature);
+		//Destroy(creature.gameObject); //TODO: return it to pool instead
+		CreaturePool.instance.Recycle(creature);
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
 
@@ -264,9 +265,11 @@ public class Life : MonoBehaviour {
 	}
 
 	private Creature InstantiateCreature(String id) {
-		Creature creature = (Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity) as Creature); //TODO: borrow from pool instead
+		//Creature creature = (Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity) as Creature); //TODO: borrow from pool instead
+		Creature creature = creaturePool.Borrow();
+		creature.gameObject.SetActive(true);
 		creature.name = "Creature " + id;
-		//Creature creature = CreaturePool.instance.Borrow();
+		
 		creature.transform.parent = this.transform;
 		creatureDictionary.Add(id, creature);
 		creatureList.Add(creature);
@@ -397,7 +400,7 @@ public class Life : MonoBehaviour {
 		
 		if (killSterileCreaturesTicks == 0) {
 			for (int index = 0; index < creatureList.Count; index++) {
-				if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAgeAsChildless && !creatureList[index].HasChildrenDeadOrAlive_()) {
+				if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAgeAsChildless && !creatureList[index].HasChildrenIncDead()) {
 					killCreatureList.Add(creatureList[index]);
 					sterileKilledCount++;
 				}

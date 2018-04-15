@@ -313,8 +313,8 @@ public class Phenotype : MonoBehaviour {
 
 	private bool IsChildOriginLocation(Creature creature, Vector2i mapPosition) {
 		//My(placenta) <====> Child(origin)
-		foreach (Creature child in creature.GetChildrenAlive_()) {
-			if (creature.IsConnectedToChild_(child.id) && creature.ChildOriginMapPosition_(child.id) == mapPosition) {
+		foreach (Creature child in creature.GetChildren()) {
+			if (creature.IsAttachedToChild(child.id) && creature.ChildOriginMapPosition(child.id) == mapPosition) {
 				return true;
 			}
 		}
@@ -323,18 +323,18 @@ public class Phenotype : MonoBehaviour {
 
 	private bool IsMotherPlacentaLocation(Creature creature, Vector2i mapPosition) {
 		//My(origin) <====> Mohther(placenta)
-		if (creature.GetRelationToMother_() == FamilyMemberState.AliveAndAttached) {
-			Creature creatureMother = creature.GetMotherAlive_();
-			foreach (Creature child in creatureMother.GetChildrenAlive_()) {
-				if (child.IsConnectedToMother_() && child.id == creature.id) {
+		if (creature.IsAttachedToMother()) {
+			Creature creatureMother = creature.GetMother();
+			foreach (Creature child in creatureMother.GetChildren()) {
+				if (child.IsAttachedToMother() && child.id == creature.id) {
 					//We are talking about mothers view of me
 					for (int index = 0; index < creatureMother.genotype.geneCellList.Count; index++) {
 						Cell placentaCell = creatureMother.genotype.geneCellList[index];
 
 						for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 							Vector2i neighbourMapPosition = CellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
-							if (neighbourMapPosition == creature.GetMotherAlive_().ChildOriginMapPosition_(child.id)) {
-								int childSoulOriginCardinalBindIndex = creature.GetMotherAlive_().ChildOriginBindCardinalIndex_(child.id);
+							if (neighbourMapPosition == creature.GetMother().ChildOriginMapPosition(child.id)) {
+								int childSoulOriginCardinalBindIndex = creature.GetMother().ChildOriginBindCardinalIndex(child.id);
 								// One of mothers cells found a neighbour, which is its childSoulOriginMapPosition 
 								Vector2i placentaCellPositionInChildSpace = CellMap.GetGridNeighbourGridPosition(new Vector2i(0, 0), AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3 - childSoulOriginCardinalBindIndex + 1));
 								if (placentaCellPositionInChildSpace == mapPosition) {
@@ -433,22 +433,22 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		//My(origin) <====> Mohther(placenta)
-		if (creature.GetRelationToMother_() == FamilyMemberState.AliveAndAttached) {
-			Creature creatureMother = creature.GetMotherAlive_();
-			foreach (Creature child in creatureMother.GetChildrenAlive_()) {
-				if (child.IsConnectedToMother_() && child.id == creature.id) {
+		if (creature.IsAttachedToMother()) {
+			Creature creatureMother = creature.GetMother();
+			foreach (Creature child in creatureMother.GetChildren()) {
+				if (child.IsAttachedToMother() && child.id == creature.id) {
 					//We are talking about mothers view of me
 					for (int index = 0; index < creatureMother.phenotype.cellList.Count; index++) {
 						Cell placentaCell = creatureMother.phenotype.cellList[index];
 						for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 							Vector2i neighbourMapPosition = CellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
-							if (neighbourMapPosition == creature.GetMotherAlive_().ChildOriginMapPosition_(child.id)) {
+							if (neighbourMapPosition == creature.GetMother().ChildOriginMapPosition(child.id)) {
 								// My placenta to childs origin
 								placentaCell.SetNeighbourCell(cardinalIndex, originCell);
 								//Debug.Log("Me(origin)" + creature.id + " <==neighbour== Mother(placenta)" + creatureMother.id);
 
 								//childs origin to my placenta
-								originCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.GetMotherAlive_().ChildOriginBindCardinalIndex_(child.id) + 1 + 3), placentaCell);
+								originCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.GetMother().ChildOriginBindCardinalIndex(child.id) + 1 + 3), placentaCell);
 								//Debug.Log("Me(origin)" + creature.id + " ==neighbour==> Mother(placenta)" + creatureMother.id);
 							}
 						}
@@ -459,19 +459,19 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		//My(placenta) <====> Child(origin)
-		foreach (Creature child in creature.GetChildrenAlive_()) {
-			if (creature.IsConnectedToChild_(child.id)) {
+		foreach (Creature child in creature.GetChildren()) {
+			if (creature.IsAttachedToChild(child.id)) {
 				for (int index = 0; index < cellList.Count; index++) {
 					Cell placentaCell = cellList[index];
 					for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 						Vector2i neighbourMapPosition = CellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
-						if (neighbourMapPosition == creature.ChildOriginMapPosition_(child.id)) {
+						if (neighbourMapPosition == creature.ChildOriginMapPosition(child.id)) {
 							// My placenta to childs origin
 							placentaCell.SetNeighbourCell(cardinalIndex, child.phenotype.originCell);
 							//Debug.Log("Me: " + creature.id + ", my Child :" + child.id + " Me(placenta) ==neighbour==> Child(origin)");
 
 							//childs origin to my placenta
-							child.phenotype.originCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - creature.ChildOriginBindCardinalIndex_(child.id) + 1 + 3), placentaCell);
+							child.phenotype.originCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - creature.ChildOriginBindCardinalIndex(child.id) + 1 + 3), placentaCell);
 							//Debug.Log("Me: " + creature.id + ", my Child :" + child.id + " Me(placenta) <==neighbour== Child(origin)");
 						}
 					}
@@ -529,12 +529,12 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public bool IsOriginNeighbouringMothersPlacenta(Creature creature) {
-		Debug.Assert(creature.HasMotherAlive_());
+		Debug.Assert(creature.HasMother());
 
 		List<Cell> neighbours = originCell.GetNeighbourCells();
 		foreach(Cell motherMai in neighbours) {
 			//if (motherMai.creature == creature.motherSoul.creature) {
-			if (motherMai.creature.id == creature.GetMotherAlive_().id) {
+			if (motherMai.creature.id == creature.GetMother().id) {
 				return true;
 			}
 		}
@@ -545,7 +545,7 @@ public class Phenotype : MonoBehaviour {
 		disturbedCell.RemoveNeighbourCell(deletedCell);
 
 		//Check if mothers placenta is gone
-		if (creature.HasMotherAlive_() && disturbedCell.isOrigin && !deletedCell.IsSameCreature(disturbedCell)) {
+		if (creature.HasMother() && disturbedCell.isOrigin && !deletedCell.IsSameCreature(disturbedCell)) {
 			if (!IsOriginNeighbouringMothersPlacenta(creature)) {
 				DetatchFromMother(creature, false, true);
 			}
@@ -662,7 +662,7 @@ public class Phenotype : MonoBehaviour {
 	public void SpawnCellDetatchBloodEffect(Cell detatchCell) {
 		for (int i = 0; i < 6; i++) {
 			Cell neighbourCell = detatchCell.GetNeighbourCell(i);
-			if (neighbourCell != null && neighbourCell.creature.id == detatchCell.creature.GetMotherAlive_().id) {
+			if (neighbourCell != null && neighbourCell.creature.id == detatchCell.creature.GetMother().id) {
 				// mother neighbour looks back...
 				for (int neighbourCardinalIndex = 0; neighbourCardinalIndex < 6; neighbourCardinalIndex++) {
 					if (neighbourCell.GetNeighbourCell(neighbourCardinalIndex) == detatchCell) {
@@ -680,7 +680,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public bool DetatchFromMother(Creature creature, bool applyKick, bool playEffects) {
-		if (creature.GetRelationToMother_() == FamilyMemberState.AliveAndAttached) {
+		if (creature.IsAttachedToMother()) {
 			if (playEffects && CameraUtils.IsObservedLazy(creature.phenotype.originCell.position, GlobalSettings.instance.orthoMaxHorizonFx)) {
 				if (GlobalPanel.instance.effectsPlaySound.isOn) {
 					Audio.instance.CreatureDetatch(CameraUtils.GetEffectStrengthLazy());
@@ -698,7 +698,7 @@ public class Phenotype : MonoBehaviour {
 
 			//Kick separation
 			if (applyKick) {
-				Creature mother = creature.GetMotherAlive_();
+				Creature mother = creature.GetMother();
 				Cell childOrigin = creature.phenotype.originCell;
 				int placentaCount = 0;
 				for (int i = 0; i < 6; i++) {
@@ -729,11 +729,11 @@ public class Phenotype : MonoBehaviour {
 			}
 
 			//me
-			creature.SetConnectedWithMother_(false);
+			creature.SetAttachedToMother(false);
 			connectionsDiffersFromCells = true;
 
 			//mother
-			creature.GetMotherAlive_().phenotype.connectionsDiffersFromCells = true;
+			creature.GetMother().phenotype.connectionsDiffersFromCells = true;
 
 			CreatureSelectionPanel.instance.MakeDirty();
 
@@ -891,13 +891,13 @@ public class Phenotype : MonoBehaviour {
 		for (int index = 0; index < cellList.Count; index++) {
 			if (cellList[index].isOrigin) {
 				cellList[index].ShowTriangle(true); // Debug
-				if (!creature.HasMotherAlive_()) {
-					if (!creature.HasChildrenAlive_()) {
+				if (!creature.HasMother()) {
+					if (!creature.HasChildren()) {
 						cellList[index].SetTriangleColor(ColorScheme.instance.noRelativesArrow);
 					} else {
 						cellList[index].SetTriangleColor(ColorScheme.instance.noMotherArrow);
 					}
-				} else if (creature.IsConnectedToMother_()) {
+				} else if (creature.IsAttachedToMother()) {
 					cellList[index].SetTriangleColor(ColorScheme.instance.motherAttachedArrow);
 				} else {
 					cellList[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
