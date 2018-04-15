@@ -342,8 +342,20 @@ public abstract class Cell : MonoBehaviour {
 		cellSelectedSprite.enabled = on;
 	}
 
-	public void ShowShadow(bool on) {
-		shadowSprite.enabled = on;
+	private bool isOnTop = false;
+	public void ShowOnTop(bool onTop) {
+		shadowSprite.enabled = onTop;
+		SpriteRenderer[] allRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+		foreach (SpriteRenderer s in allRenderers) {
+			if (isOnTop && !onTop) {
+				s.sortingOrder = s.sortingOrder - 10;
+				transform.position = new Vector3(transform.position.x, transform.position.y, 0f); 
+			} else if (!isOnTop && onTop) {
+				s.sortingOrder = s.sortingOrder + 10;
+				transform.position = new Vector3(transform.position.x, transform.position.y, -1f);
+			}
+		}
+		isOnTop = onTop;
 	}
 
 	public void SetTringleHeadingAngle(float angle) {

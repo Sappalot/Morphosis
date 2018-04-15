@@ -885,7 +885,7 @@ public class Phenotype : MonoBehaviour {
 			}
 
 			//fix properly
-			cellList[index].ShowShadow(false);
+			cellList[index].ShowOnTop(false);
 		}
 
 		for (int index = 0; index < cellList.Count; index++) {

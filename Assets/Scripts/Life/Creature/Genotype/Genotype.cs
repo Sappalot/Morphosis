@@ -326,8 +326,10 @@ public class Genotype : MonoBehaviour {
 			if (isSelected) {
 				geneCellList[index].ShowOutline(true);
 				geneCellList[index].SetOutlineColor(ColorScheme.instance.outlineSelected);
+				geneCellList[index].ShowOnTop(true);
 			} else {
 				geneCellList[index].ShowOutline(false);
+				geneCellList[index].ShowOnTop(false);
 			}
 		}
 
