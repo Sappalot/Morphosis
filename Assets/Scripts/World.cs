@@ -50,8 +50,6 @@ public class World : MonoSingleton<World> {
 		}
 	}
 
-	private int updates;
-
 	private void FixedUpdate() {
 		if(life == null) {
 			return;

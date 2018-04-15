@@ -11,7 +11,7 @@ public class EggCell : Cell {
 		effectProductionInternal = 0f;
 		effectConsumptionInternal = GlobalSettings.instance.phenotype.eggCellEffectCost;
 
-		if (energy > eggCellFertilizeThreshold && (eggCellCanFertilizeWhenAttached || !creature.phenotype.isAttachedToMother) && shouldFertilize == -1) {
+		if (energy > eggCellFertilizeThreshold && (eggCellCanFertilizeWhenAttached || !creature.phenotype.hasPlacentaSpringsToMother) && shouldFertilize == -1) {
 			shouldFertilize = Random.Range(0, 60);
 		}
 

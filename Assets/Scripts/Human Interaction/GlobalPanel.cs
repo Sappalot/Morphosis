@@ -10,10 +10,10 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Text pps;
 
 	public Text creatureCount;
-	public Text soulsDirtyCount;
-	public Text soulsCleanCount;
-	public Text soulsDeadButUsedCount;
-	public Text soulsLostCount;
+	//public Text soulsDirtyCount;
+	//public Text soulsCleanCount;
+	//public Text soulsDeadButUsedCount;
+	//public Text soulsLostCount;
 	public Text runnersKilledCount;
 	public Text sterileKilledCount;
 
@@ -125,17 +125,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 				return;
 			}
 
-			//creatures & souls
+			//creatures
 			creatureCount.text =         "Creatures: "   + World.instance.life.creatureCount;
-			soulsDirtyCount.text =       "Alive & dirty: " + World.instance.life.soulUnupdatedCount;
-			if (World.instance.life.soulUnupdatedCount == 0) {
-				deletedCellCount.color = Color.gray;
-			} else {
-				deletedCellCount.color = Color.red;
-			}
-			soulsCleanCount.text =       "Alive & clean: " + (World.instance.life.soulUpdatedCount - World.instance.life.soulsDeadButUsedCount);
-			soulsDeadButUsedCount.text = "Dead & used: "   + World.instance.life.soulsDeadButUsedCount;
-			soulsLostCount.text =        "Dead & lost: "   + World.instance.life.soulsLostCount;
 			runnersKilledCount.text =    "Runners Killed: " + PrisonWall.instance.runnersKilledCount;
 			sterileKilledCount.text =    "Sterile Killed: " + World.instance.life.sterileKilledCount;
 

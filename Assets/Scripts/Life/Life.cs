@@ -17,129 +17,17 @@ public class Life : MonoBehaviour {
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
 	private List<Creature> creatureList = new List<Creature>(); // All enbodied creatures (the once that we can see and play with)
 
-	private Dictionary<string, Soul> soulDictionary = new Dictionary<string, Soul>();
-	private List<Soul> soulListUnupdated = new List<Soul>(); //All creature containers, count allways >= number of creatures, since each creature has a container
-	private List<Soul> soulListUpdated = new List<Soul>();
-	public int soulsLostCount { get; private set; }
-	public int soulsDeadButUsedCount { get; private set; }
 	[HideInInspector]
 	public int sterileKilledCount;
 
 	//debug
 	public int deletedCellCount = 0;
 
-	public int soulUpdatedCount {
-		get {
-			return soulListUpdated.Count;
-		}
-	}
-
-	public int soulUnupdatedCount {
-		get {
-			return soulListUnupdated.Count;
-		}
-	}
-
 	public int creatureCount {
 		get {
 			return creatureList.Count;
 		}
 	}
-
-	public void KillSoulIfUnneeded(Soul soul) {
-		if (!IsAnyOfMyCloseRelativesAlive(soul)) {
-			KillSoul(soul);
-			soulsLostCount++;
-		}
-	}
-
-	private bool IsAnyOfMyCloseRelativesAlive(Soul soul) {
-		//is living mother refering to me
-		if (HasCreature(soul.motherSoulReference.id)) {
-			return true;
-		}
-
-		//child living child refering to me
-		foreach (SoulReference child in soul.childSoulReferences) {
-			if (HasCreature(child.id)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private void KillSoul(Soul soul) {
-		//remove all references to me
-		soul.OnKill();
-
-		if (soulDictionary.ContainsValue(soul)) {
-			soulDictionary.Remove(soul.id);
-		}
-		if (soulListUnupdated.Contains(soul)) {
-			soulListUnupdated.Remove(soul);
-		}
-		if (soulListUpdated.Contains(soul)) {
-			soulListUpdated.Remove(soul);
-		}
-
-		//Note soul sill remains in other souls refering to it
-	}
-
-	public void UpdateSoulReferences() {
-		List<Soul> moveSouls = new List<Soul>();
-		moveSouls.Clear();
-		for (int index = 0; index < soulListUnupdated.Count; index++) {
-			if (soulListUnupdated[index].UpdateReferences()) {
-				moveSouls.Add(soulListUnupdated[index]);
-			}
-		}
-		foreach (Soul s in moveSouls) {
-			MoveToUpdated(s);
-		}
-	}
-
-	private void MoveToUpdated(Soul soul) {
-		
-		if (soulListUpdated.Contains(soul)) {
-			//Debug.Log("Ooops! Trying to move soul: " + soul.id + " to soulListUpdated when it's allready there!");
-		} else {
-			soulListUnupdated.Remove(soul);
-			soulListUpdated.Add(soul);
-		}
-	}
-
-	private void MoveToUnupdated(Soul soul) {
-		
-		if (soulListUnupdated.Contains(soul)) {
-			//Debug.Log("Ooops! Trying to move soul: " + soul.id + " to soulListUnupdated when it's allready there!");
-		} else {
-			soulListUpdated.Remove(soul);
-			soulListUnupdated.Add(soul);
-		}
-	}
-
-	public void SetMotherSoulImmediateSafe(Soul childSoul, Soul motherSoul) {
-		childSoul.SetMotherSoulImmediate(motherSoul);
-		MoveToUnupdated(motherSoul);
-		MoveToUnupdated(childSoul);
-	}
-
-	public void AddChildSoulImmediateSafe(Soul motherSoul, Soul childSoul, Vector2i originMapPosition, int originBindCardinalIndex, bool isConnected) {
-		motherSoul.AddChildSoulImmediate(childSoul, originMapPosition, originBindCardinalIndex, isConnected);
-		MoveToUnupdated(motherSoul);
-		MoveToUnupdated(childSoul);
-	}
-
-	public Soul GetSoul(string id) {
-		return soulDictionary[id];
-	}
-
-	public bool HasSoul(string id) {
-		return soulDictionary.ContainsKey(id);
-	}
-
-	//--
 
 	public string GetUniqueIdStamp() {
 		return idGenerator.GetUniqueId();
@@ -152,11 +40,17 @@ public class Life : MonoBehaviour {
 	}
 
 	public bool HasCreature(string id) {
+		if (id == null) { // MAkes it possible to load files from the soul era
+			return false;
+		}
 		return creatureDictionary.ContainsKey(id);
 	}
 
 	public Creature GetCreature(string id) {
-		return creatureDictionary[id];
+		if (HasCreature(id)) {
+			return creatureDictionary[id];
+		}
+		return null;
 	}
 
 	// TODO MOve to creature ?
@@ -194,11 +88,14 @@ public class Life : MonoBehaviour {
 		child.phenotype.originCell.originDetatchSizeThreshold = eggCell.eggCellDetatchSizeThreshold;
 		child.phenotype.originCell.originDetatchEnergyThreshold = eggCell.eggCellDetatchEnergyThreshold; // form mothers eggCell to childs origin
 
-		Soul motherSoul = GetSoul(mother.id);
-		Soul childSoul = GetSoul(child.id);
+		ChildData childData = new ChildData();
+		childData.id = child.id; // a creature carying a child with an id that can not be found in life ==> child concidered dead to mother
+		childData.isConnectedToMother = true; // Connected from the start
+		childData.originMapPosition = eggCell.mapPosition; //As seen from mothers frame of reference
+		childData.originBindCardinalIndex = eggCell.bindCardinalIndex; //As seen from mothers frame of reference
+		mother.AddChild_(childData);
 
-		AddChildSoulImmediateSafe(motherSoul, childSoul, eggCell.mapPosition, eggCell.bindCardinalIndex, true);
-		SetMotherSoulImmediateSafe(childSoul, motherSoul);
+		child.SetMother_(mother.id);
 
 		PhenotypePanel.instance.MakeDirty();
 		CreatureSelectionPanel.instance.MakeDirty();
@@ -219,13 +116,6 @@ public class Life : MonoBehaviour {
 		}
 		creatureDictionary.Clear();
 		creatureList.Clear();
-
-		soulDictionary.Clear();
-		soulListUnupdated.Clear();
-		soulListUpdated.Clear();
-
-		soulsLostCount = 0;
-		soulsDeadButUsedCount = 0;
 	}
 
 	//When pressing delete, use effects
@@ -241,10 +131,8 @@ public class Life : MonoBehaviour {
 	public void KillCreatureSafe(Creature creature, bool playEffects) {
 		
 		creature.DetatchFromMother(false, true);
-		foreach(Soul childSoul in creature.childSouls) {
-			if (childSoul.creatureReference.creature != null) {
-				childSoul.creatureReference.creature.DetatchFromMother(false, true);
-			}
+		foreach(Creature childSoul in creature.GetChildrenAlive_()) {
+			childSoul.DetatchFromMother(false, true);
 		}
 
 		if (playEffects) {
@@ -268,32 +156,9 @@ public class Life : MonoBehaviour {
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
 
-		RemoveUnusedSouls();
-
-
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		CreatureSelectionPanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
-	}
-
-	List<Soul> unusedSoulsToKill = new List<Soul>();
-	private void RemoveUnusedSouls() {
-		UpdateSoulReferences();
-
-		unusedSoulsToKill.Clear();
-		soulsDeadButUsedCount = 0;
-		foreach (Soul soul in soulListUpdated) {
-			if (!HasCreature(soul.id)) {
-				if (!IsAnyOfMyCloseRelativesAlive(soul)) {
-					unusedSoulsToKill.Add(soul);
-				} else {
-					soulsDeadButUsedCount++;
-				}
-			} 
-		}
-		foreach (Soul soul in unusedSoulsToKill) {
-			KillSoulIfUnneeded(soul);
-		}		
 	}
 
 	public List<Creature> GetPhenotypesInside(Rect area) {
@@ -373,7 +238,6 @@ public class Life : MonoBehaviour {
 		clone.nickname += " (Copy)";
 		clone.hasPhenotypeCollider = false;
 		clone.hasGenotypeCollider = false;
-		clone.soul = null;
 		clone.creation = CreatureCreationEnum.Cloned;
 		//Let generation be same as mothers
 
@@ -409,12 +273,6 @@ public class Life : MonoBehaviour {
 		creature.id = id;
 		creature.nickname = "Nick " + id; //dafault
 
-		Soul soul = new Soul(id);
-		
-		soulDictionary.Add(id, soul);
-		soulListUnupdated.Add(soul);
-
-		//creature.soul = soul; //The right Soul will find its way to the creature during update otherwise, Setting it here will cause troubble!
 		return creature;
 	}
 
@@ -441,7 +299,7 @@ public class Life : MonoBehaviour {
 
 	// Save
 	public LifeData UpdateData() {
-		UpdateSoulReferences();
+		//UpdateSoulReferences();
 
 		lifeData.lastId = idGenerator.number;
 
@@ -455,19 +313,6 @@ public class Life : MonoBehaviour {
 			CreatureData data = creature.UpdateData();
 			lifeData.creatureList.Add(data);
 			lifeData.creatureDictionary.Add(data.id, data);
-		}
-
-		//Souls
-		lifeData.soulList.Clear();
-		lifeData.soulDictionary.Clear();
-		lifeData.soulsLostCount = soulsLostCount;
-
-
-		for (int index = 0; index < soulListUpdated.Count; index++) {
-			Soul soul = soulListUpdated[index];
-			SoulData data = soul.UpdateData();
-			lifeData.soulList.Add(data);
-			lifeData.soulDictionary.Add(data.id, data);
 		}
 
 		return lifeData;
@@ -486,22 +331,6 @@ public class Life : MonoBehaviour {
 		}
 		sterileKilledCount = lifeData.sterileKilledCount;
 
-		// Create all Souls
-		soulDictionary.Clear();
-		soulListUnupdated.Clear();
-		soulListUpdated.Clear();
-
-		for (int index = 0; index < lifeData.soulList.Count; index++) {
-			SoulData solulData = lifeData.soulList[index];
-			Soul newSoul = new Soul(solulData.id);
-			newSoul.ApplyData(solulData);
-			soulDictionary.Add(newSoul.id, newSoul);
-			soulListUnupdated.Add(newSoul);
-		}
-		soulsLostCount = lifeData.soulsLostCount;
-
-		RemoveUnusedSouls();
-		UpdateSoulReferences();
 	}
 
 	// ^ Load Save ^
@@ -511,8 +340,6 @@ public class Life : MonoBehaviour {
 	// Allways, updated from Update
 	// Keeping graphics up to date, creature selection, cell selection, flipArrows, edges
 	public void UpdateGraphics() {
-
-
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdateGraphics();
 		}
@@ -522,10 +349,9 @@ public class Life : MonoBehaviour {
 	// If (editGenotype) updated from FixedUpdate
 	// Everything that needs to be updated when genome is changed, cells are removed, cells are added, creatures are spawned, creatures die
 	public void UpdateStructure() {
-		UpdateSoulReferences();
+		//UpdateSoulReferences();
 
 		foreach (Creature c in creatureList) {
-			c.FetchSoul();
 			c.UpdateStructure();
 		}
 	}
@@ -571,7 +397,7 @@ public class Life : MonoBehaviour {
 		
 		if (killSterileCreaturesTicks == 0) {
 			for (int index = 0; index < creatureList.Count; index++) {
-				if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAgeAsChildless && creatureList[index].childSoulCount == 0) {
+				if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAgeAsChildless && !creatureList[index].HasChildrenDeadOrAlive_()) {
 					killCreatureList.Add(creatureList[index]);
 					sterileKilledCount++;
 				}
@@ -588,13 +414,6 @@ public class Life : MonoBehaviour {
 				CellPanel.instance.MakeDirty();
 			}
 		}
-	}
-
-	public void OnDestroy() {
-		//Destroy(cellPool.gameObject);
-		//Destroy(geneCellPool.gameObject);
-		//Destroy(veinPool.gameObject);
-		//Destroy(edgePool.gameObject);
 	}
 
 	// ^ Update ^

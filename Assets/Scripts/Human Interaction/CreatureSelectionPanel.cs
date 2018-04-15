@@ -165,7 +165,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		GenePanel.instance.MakeDirty();
 		LockedUnlockedPanel.instance.MakeDirty();
 
-		StoreAllSelectedsState();
+		//StoreAllSelectedsState(); // needed for revert
 
 		UpdateSelectionCluster();
 	}
@@ -263,15 +263,15 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	// Select
 	public void OnSelectMotherClicked() {
-		if (hasSoloSelected && soloSelected.hasMother && soloSelected.mother != null) {
-			Select(soloSelected.mother);
+		if (hasSoloSelected && soloSelected.HasMotherAlive_() && soloSelected.GetMotherAlive_() != null) {
+			Select(soloSelected.GetMotherAlive_());
 		}
 	}
 
 	public void OnSelectChildrenClicked() {
-		if (hasSoloSelected && soloSelected.hasChildSoul) {
+		if (hasSoloSelected && soloSelected.HasChildrenAlive_()) {
 			List<Creature> select = new List<Creature>();
-			foreach(Creature child in soloSelected.children) {
+			foreach(Creature child in soloSelected.GetChildrenAlive_()) {
 				select.Add(child);
 			}
 			Select(select);
@@ -312,12 +312,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		List<Creature> attachedUnselectedChildren = new List<Creature>();
 		foreach (Creature creature in selection) {
 			//mother
-			if (creature.soul.motherSoulReference.id != string.Empty && !selection.Contains(creature.mother)) {
+			if (creature.HasMotherAlive_() && !selection.Contains(creature.GetMotherAlive_())) {
 				creature.DetatchFromMother(false, true);
 			}
 
 			//children
-			foreach (Creature child in creature.children) {
+			foreach (Creature child in creature.GetChildrenAlive_()) {
 				if (!selection.Contains(child) && child != null) {
 					child.DetatchFromMother(false, true);
 				}
@@ -373,11 +373,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
 	}
 
-	private void AddCoppiesToMoveCreature(List<Creature> originalCreatures) {
+	//TODO soul ==> creature
+	private void AddCoppiesToMoveCreature(List<Creature> originalCreatureList) {
 		List<Creature> copies = new List<Creature>();
 		Dictionary<string, string> originalToCopy = new Dictionary<string, string>();
 		Dictionary<string, string> copyToOriginal = new Dictionary<string, string>();
-		foreach (Creature originalCreature in originalCreatures) {
+		foreach (Creature originalCreature in originalCreatureList) {
 			Creature copy = World.instance.life.SpawnCreatureCopy(originalCreature, World.instance.worldTicks); // will instantiate souls as well
 			moveCreatures.Add(copy);
 			copies.Add(copy);
@@ -386,32 +387,45 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 
 		foreach (Creature copy in copies) {
-			Soul soulCopy = World.instance.life.GetSoul(copy.id);
-			Soul soulOriginal = World.instance.life.GetSoul(copyToOriginal[copy.id]);
+			Creature creatureCopy = World.instance.life.GetCreature(copy.id);
+			Creature creatureOriginal = World.instance.life.GetCreature(copyToOriginal[copy.id]);
 
-			// me
-			//soulCopy.id = copy.id; //not really needed
-			//soulCopy.creatureReference.id = copy.id;
-			soulCopy.SetCreatureImmediate(copy);
+			creatureCopy.RemoveAllFamilyRelations();
 
 			// mother
-			if (originalCreatures.Find(c => c.id == soulOriginal.motherSoulReference.id)) {
+			if (originalCreatureList.Find(c => c.id == creatureOriginal.GetMotherIdDeadOrAlive_())) {
 				//my mother is among the creatures which was coppied
-				string copyId = originalToCopy[soulOriginal.motherSoulReference.id];
-
-				//soulCopy.SetMotherSoul(copyId);
-				World.instance.life.SetMotherSoulImmediateSafe(soulCopy, World.instance.life.GetSoul(copyId));
-				//soulCopy.SetMotherSoulImmediate(World.instance.life.GetSoul(copyId));
+				string copyId = originalToCopy[creatureOriginal.GetMotherIdDeadOrAlive_()];
+				creatureCopy.SetMother_(copyId);
 			}
 
 			//children
-			for (int i = 0; i < soulOriginal.childSoulsCount; i++) {
-				SoulReference childReference = soulOriginal.childSoulReferences[i];
-				if (originalCreatures.Find(c => c.id == childReference.id)) {
-					string copyId = originalToCopy[childReference.id];
-					World.instance.life.AddChildSoulImmediateSafe(soulCopy, World.instance.life.GetSoul(copyId), childReference.childOriginMapPosition, childReference.childOriginBindCardinalIndex, childReference.isChildConnected);
+			List<string> creatureOriginalChildIdList = creatureOriginal.GetChildrenIdDeadOrAlive_();
+
+			// Narly code below !!
+			for (int i = 0; i < creatureOriginal.ChildrenDeadOrAliveCount_(); i++) {
+				//For each child of the current original
+
+				//SoulReference childReference = soulOriginal.childSoulReferences[i];
+				string creatureOriginalsChildId = creatureOriginalChildIdList[i];
+
+				if (originalCreatureList.Find(c => c.id == creatureOriginalsChildId)) { //childReference.id
+					//Child was one of the copied creatures, so we need to make a child reference for the copy as well
+
+					ChildData childData = new ChildData();
+
+					// Our copy child reference is the same as the original, but poits at another creature child
+					childData.id =                      originalToCopy[creatureOriginalsChildId];
+					childData.isConnectedToMother =     creatureOriginal.IsConnectedToChild_(creatureOriginalsChildId);
+					childData.originMapPosition =       creatureOriginal.ChildOriginMapPosition_(creatureOriginalsChildId); //As seen from mothers frame of reference
+					childData.originBindCardinalIndex = creatureOriginal.ChildOriginBindCardinalIndex_(creatureOriginalsChildId);
+					creatureCopy.AddChild_(childData);
+
+
 				}
 			}
+
+			creatureCopy.phenotype.connectionsDiffersFromCells = true;
 		}
 	}
 
@@ -610,7 +624,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			} else if (selection.Count == 1) {
 				selectedCreatureText.text = soloSelected.id; // soloSelected.nickname;
 				//motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
-				string childrenString = "" + soloSelected.childSouls.Count + " ";
 
 				creatureCreatedText.text = soloSelected.creation.ToString() + (soloSelected.creation != CreatureCreationEnum.Forged ? ", Generation: " + soloSelected.generation : "");
 				//right side
@@ -624,18 +637,18 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				spiecesButtonText.color = Color.black;
 
 				motherButtonText.color = Color.red;
-				motherButton.gameObject.SetActive(soloSelected.hasMotherSoul); //show even if mother is dead
+				motherButton.gameObject.SetActive(soloSelected.HasMotherDeadOrAlive_()); //show even if mother is dead
 
 				fatherButtonText.color = Color.red;
 				fatherButton.gameObject.SetActive(false);
 
 				childrenButtonText.color = Color.red;
-				if (soloSelected.hasChildSoul) {
+				if (soloSelected.HasChildrenDeadOrAlive_()) {
 					childrenButton.gameObject.SetActive(true); //show even if mother is dead
-					if (soloSelected.childSoulCount == 1) {
+					if (soloSelected.ChildrenDeadOrAliveCount_() == 1) {
 						childrenButtonText.text = "1 Child";
 					} else {
-						childrenButtonText.text = soloSelected.childSoulCount + " Children";
+						childrenButtonText.text = soloSelected.ChildrenDeadOrAliveCount_() + " Children";
 					}
 				} else {
 					childrenButton.gameObject.SetActive(false);

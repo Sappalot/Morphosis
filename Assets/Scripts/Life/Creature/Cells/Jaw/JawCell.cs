@@ -87,21 +87,17 @@ public class JawCell : Cell {
 			return;
 		}
 
-		World.instance.life.UpdateSoulReferences();
+		//World.instance.life.UpdateSoulReferences();
 
 		Cell prayCell = other.GetComponent<Cell>();
 
-		if (!creature.hasSoul) {
-			return;
-		}
-
 		if (prayCell != null && prayCell.creature != creature) {
 			// dont eat mother, grandma is OK (what about other siblings and cousins in the same cluster?)
-			if (creature.soul.motherSoulReference.id == prayCell.creature.id) {
+			if (creature.HasMotherAlive_() && creature.GetMotherAlive_().id == prayCell.creature.id) {
 				return;
 			}
 			// don't eat children, grandchildren is OK (what about other siblings and cousins in the same cluster?)
-			foreach (Creature child in creature.children) { //Note: all references in children are not updated at this point
+			foreach (Creature child in creature.GetChildrenAlive_()) { //Note: all references in children are not updated at this point
 				if (prayCell.creature == child) {
 					return;
 				}

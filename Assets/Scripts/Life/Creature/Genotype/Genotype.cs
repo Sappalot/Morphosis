@@ -335,13 +335,13 @@ public class Genotype : MonoBehaviour {
 			geneCellList[index].ShowTriangle(true); // Debug
 			if (geneCellList[index].isOrigin) {
 				geneCellList[index].ShowTriangle(true); // Debug
-				if (!creature.hasMotherSoul) {
-					if (!creature.hasChildSoul) {
+				if (!creature.HasMotherAlive_()) {
+					if (!creature.HasChildrenAlive_()) {
 						geneCellList[index].SetTriangleColor(ColorScheme.instance.noRelativesArrow);
 					} else {
 						geneCellList[index].SetTriangleColor(ColorScheme.instance.noMotherArrow);
 					}
-				} else if (creature.soul.isConnectedWithMotherSoul) {
+				} else if (creature.IsConnectedToMother_()) {
 					geneCellList[index].SetTriangleColor(ColorScheme.instance.motherAttachedArrow);
 				} else {
 					geneCellList[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
