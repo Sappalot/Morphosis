@@ -38,7 +38,7 @@ public class Edges : MonoBehaviour {
 		}
 		for (int index = 0; index < edgeList.Count; index++) {
 			Edge edge = edgeList[index];
-			if (edge.IsWing && GlobalPanel.instance.physicsApplyWingForce.isOn) {
+			if (edge.IsWing) { // So, we can see forces even if they are not applied
 				edge.ApplyForce();
 			}
 		}

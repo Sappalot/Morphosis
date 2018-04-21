@@ -13,13 +13,18 @@ public class MuscleCell : Cell {
 	}
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		effectConsumptionInternal = GlobalSettings.instance.phenotype.muscleCellEffectCost;
+		if (GlobalPanel.instance.physicsMuscleEffect.isOn && GlobalPanel.instance.physicsMuscle.isOn) {
+			effectConsumptionInternal = GlobalSettings.instance.phenotype.muscleCellEffectCost;
+		} else {
+			effectConsumptionInternal = 0f;
+		}
 		effectProductionInternal = 0f;
+		if (GlobalPanel.instance.physicsMuscle.isOn) {
+			UpdateRadius(worldTicks);
+			UpdateSpringLengths();
 
-		UpdateRadius(worldTicks);
-		UpdateSpringLengths();
-
-		base.UpdateCellFunction(deltaTicks, worldTicks);
+			base.UpdateCellFunction(deltaTicks, worldTicks);
+		}
 	}
 
 	public override CellTypeEnum GetCellType() {
@@ -104,6 +109,7 @@ public class MuscleCell : Cell {
 			UpdatePlacentaSpringLengths();
 		}
 
+		// Update placenta spring lengths from me to child root, if i happen to be placenta
 		// If i have a neighbouring cell which does not belong to my body and is origin: ask this cell to update its spring lengths (to placenta)
 		if (isPlacenta) {
 			for (int index = 0; index < 6; index++) {

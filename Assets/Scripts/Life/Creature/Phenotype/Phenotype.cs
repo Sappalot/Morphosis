@@ -524,7 +524,13 @@ public class Phenotype : MonoBehaviour {
 
 	public void ChangeEnergy(float amount) {
 		for (int count = 0; count < cellCount; count++) {
-			cellList[count].energy = Mathf.Min(cellList[count].energy + amount, Cell.maxEnergy);
+			cellList[count].energy = Mathf.Clamp(cellList[count].energy + amount, 0f, Cell.maxEnergy);
+		}
+	}
+
+	public void SetZeroIfNegative(float amount) {
+		for (int index = 0; index < cellCount; index++) {
+			cellList[index].energy = Mathf.Max(cellList[index].energy, Cell.maxEnergy);
 		}
 	}
 
@@ -567,14 +573,14 @@ public class Phenotype : MonoBehaviour {
 	//This is the one and only final place where cell is removed
 	// fixedTime = 0 ==> no mar will be set to when this cell can be regrown again
 	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects, ulong worldTicks) {
-		if (playEffects && (GlobalPanel.instance.effectsPlaySound.isOn || (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalPanel.instance.effectsShowParticles.isOn))) {
+		if (playEffects && (GlobalPanel.instance.soundCreatures.isOn || (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalPanel.instance.graphicsEffects.isOn))) {
 			bool isObserved = CameraUtils.IsObservedLazy(deleteCell.position, GlobalSettings.instance.orthoMaxHorizonFx);
 
-			if (GlobalPanel.instance.effectsPlaySound.isOn && isObserved) {
+			if (GlobalPanel.instance.soundCreatures.isOn && isObserved) {
 				Audio.instance.CellDeath(CameraUtils.GetEffectStrengthLazy());
 			}
 		
-			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalPanel.instance.effectsShowParticles.isOn && isObserved) {
+			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalPanel.instance.graphicsEffects.isOn && isObserved) {
 				SpawnCellDeathEffect(deleteCell.position, Color.red);
 				SpawnCellDeleteBloodEffect(deleteCell);
 			}
@@ -682,10 +688,10 @@ public class Phenotype : MonoBehaviour {
 	public bool DetatchFromMother(Creature creature, bool applyKick, bool playEffects) {
 		if (creature.IsAttachedToMother()) {
 			if (playEffects && CameraUtils.IsObservedLazy(creature.phenotype.originCell.position, GlobalSettings.instance.orthoMaxHorizonFx)) {
-				if (GlobalPanel.instance.effectsPlaySound.isOn) {
+				if (GlobalPanel.instance.soundCreatures.isOn) {
 					Audio.instance.CreatureDetatch(CameraUtils.GetEffectStrengthLazy());
 				}
-				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalPanel.instance.effectsShowParticles.isOn) {
+				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && GlobalPanel.instance.graphicsEffects.isOn) {
 					Cell originCell = creature.phenotype.originCell;
 					SpawnCellDetatchBloodEffect(originCell);
 				}
@@ -693,7 +699,7 @@ public class Phenotype : MonoBehaviour {
 
 			if (playEffects) {
 				float angle = originCell.heading - 90f;
-				Animator detatch = Instantiate(creatureDetatchEffectPrefab, originCell.position, Quaternion.Euler(0f, 0f, angle));
+				//Animator detatch = Instantiate(creatureDetatchEffectPrefab, originCell.position, Quaternion.Euler(0f, 0f, angle));
 			}
 
 			//Kick separation
@@ -1171,7 +1177,6 @@ public class Phenotype : MonoBehaviour {
 	private int veinTick;
 
 	//time ^
-
 	public void UpdatePhysics(Creature creature, ulong worldTick) {
 		if (isGrabbed) {
 			return;
@@ -1240,7 +1245,7 @@ public class Phenotype : MonoBehaviour {
 			kickTickStamp = 0;
 		}
 
-		// Whole bodey
+		// Whole body
 		Vector2 velocitySum = new Vector3();
 		for (int index = 0; index < cellList.Count; index++) {
 			velocitySum += cellList[index].velocity;
@@ -1248,55 +1253,54 @@ public class Phenotype : MonoBehaviour {
 		velocity = (cellList.Count > 0f) ? velocity = velocitySum / cellList.Count : new Vector2();
 		speed = velocity.magnitude;
 
-		// Edges, let edge-wings apply proper forces to neighbouring cells
-		edges.UpdatePhysics(velocity, creature);
+		// We are applying force only if mussceles are set to contract
+		// Edges, let edge-wings apply proper forces to neighbouring cells, caused by muscle edges swiming through ether
+		//if (GlobalPanel.instance.physicsMuscle.isOn) {
+		//	edges.UpdatePhysics(velocity, creature);
+		//}
 
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].UpdatePhysics(); //rotation
 		}
 
 		//Metabolism
-		if (GlobalPanel.instance.physicsUpdateMetabolism.isOn) {
-			for (int index = 0; index < cellList.Count; index++) {
-				Cell cell = cellList[index];
-				if (eggCellTick == 0           && cell.GetCellType() == CellTypeEnum.Egg) {
-					cell.UpdateCellFunction(GlobalSettings.instance.quality.eggCellTickPeriod, worldTick);
-				}
-				else if (fungalCellTick == 0 && cell.GetCellType() == CellTypeEnum.Fungal) {
-					cell.UpdateCellFunction(GlobalSettings.instance.quality.fungalCellTickPeriod, worldTick);
-				}
-				else if (jawCellTick == 0    && cell.GetCellType() == CellTypeEnum.Jaw) {
-					cell.UpdateCellFunction(GlobalSettings.instance.quality.jawCellTickPeriod, worldTick);
-				}
-				else if (leafCellTick == 0   && cell.GetCellType() == CellTypeEnum.Leaf) {
-					cell.UpdateCellFunction((int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed), worldTick);
-				}
-				else if (muscleCellTick == 0 && cell.GetCellType() == CellTypeEnum.Muscle) {
-					cell.UpdateCellFunction(GlobalSettings.instance.quality.muscleCellTickPeriod, worldTick);
-				}
-				else if (rootCellTick == 0   && cell.GetCellType() == CellTypeEnum.Root) {
-					cell.UpdateCellFunction(GlobalSettings.instance.quality.rootCellTickPeriod, worldTick);
-				}
-				else if (shellCellTick == 0 && cell.GetCellType() == CellTypeEnum.Shell) {
-					cell.UpdateCellFunction(GlobalSettings.instance.quality.shellCellTickPeriod, worldTick);
-				}
-				else if (veinCellTick == 0 && cell.GetCellType() == CellTypeEnum.Vein) {
-					cell.UpdateCellFunction(GlobalSettings.instance.quality.veinCellTickPeriod, worldTick);
-				}
 
-				if (cellEnergyTick == 0) {
-					cell.UpdateEnergy(GlobalSettings.instance.quality.cellEnergyTickPeriod, worldTick);
-				}
+		for (int index = 0; index < cellList.Count; index++) {
+			Cell cell = cellList[index];
+			if (eggCellTick == 0 && cell.GetCellType() == CellTypeEnum.Egg) {
+				cell.UpdateCellFunction(GlobalSettings.instance.quality.eggCellTickPeriod, worldTick);
+			} else if (fungalCellTick == 0 && cell.GetCellType() == CellTypeEnum.Fungal) {
+				cell.UpdateCellFunction(GlobalSettings.instance.quality.fungalCellTickPeriod, worldTick);
+			} else if (jawCellTick == 0 && cell.GetCellType() == CellTypeEnum.Jaw) {
+				cell.UpdateCellFunction(GlobalSettings.instance.quality.jawCellTickPeriod, worldTick);
+			} else if (leafCellTick == 0 && cell.GetCellType() == CellTypeEnum.Leaf) {
+				cell.UpdateCellFunction((int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed), worldTick);
+			} else if (muscleCellTick == 0 && cell.GetCellType() == CellTypeEnum.Muscle) {
+				cell.UpdateCellFunction(GlobalSettings.instance.quality.muscleCellTickPeriod, worldTick);
+			} else if (rootCellTick == 0 && cell.GetCellType() == CellTypeEnum.Root) {
+				cell.UpdateCellFunction(GlobalSettings.instance.quality.rootCellTickPeriod, worldTick);
+			} else if (shellCellTick == 0 && cell.GetCellType() == CellTypeEnum.Shell) {
+				cell.UpdateCellFunction(GlobalSettings.instance.quality.shellCellTickPeriod, worldTick);
+			} else if (veinCellTick == 0 && cell.GetCellType() == CellTypeEnum.Vein) {
+				cell.UpdateCellFunction(GlobalSettings.instance.quality.veinCellTickPeriod, worldTick);
 			}
 
-			if (veinTick == 0) {
+			if (cellEnergyTick == 0) {
+				cell.UpdateEnergy(GlobalSettings.instance.quality.cellEnergyTickPeriod, worldTick);
+			}
+		}
+
+		
+		if (veinTick == 0) {
+			if (GlobalPanel.instance.physicsOsmosis.isOn) {
 				veins.UpdateEffectAndEnergy(GlobalSettings.instance.quality.veinTickPeriod);
 			}
+		}
+		
 
-			//Viual
-			if (visualTelefrag > 0) {
-				visualTelefrag--;
-			}
+		//Viual
+		if (visualTelefrag > 0) {
+			visualTelefrag--;
 		}
 	}
 

@@ -15,16 +15,11 @@ public class RMBToolModePanel : MonoSingleton<RMBToolModePanel> {
 		freak,
 	}
 
-	private RMBToolMode m_toolMode;
+	private RMBToolMode m_toolMode = RMBToolMode.simple;
 	public RMBToolMode toolMode	{
 		get {
 			return m_toolMode;
 		}
-	}
-
-	public override void Init() {
-		m_toolMode = RMBToolMode.simple;
-		UpdateHUD();
 	}
 
 	public void Restart() {

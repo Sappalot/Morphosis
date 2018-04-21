@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public abstract class Cell : MonoBehaviour {
 	//------- Inspector
@@ -224,8 +225,7 @@ public abstract class Cell : MonoBehaviour {
 
 	public void UpdatePlacentaSpringLengths() {
 		foreach (SpringJoint2D placentaSpring in placentaSprings) {
-			Cell motherPlacenta = placentaSpring.connectedBody.gameObject.GetComponent<Cell>();
-			placentaSpring.distance = radius + motherPlacenta.radius;
+			placentaSpring.distance = radius + placentaSpring.connectedBody.gameObject.GetComponent<Cell>().radius;
 		}		
 	}
 
@@ -262,7 +262,7 @@ public abstract class Cell : MonoBehaviour {
 
 	//Note: effecteConsumption external changes over time in the same manner for all cells but is integrated with different periods depending on cell
 	public void UpdateEnergy(int deltaTicks, ulong worldTicks) {
-		energy = Mathf.Min(energy + effect * deltaTicks * Time.fixedDeltaTime, maxEnergy);
+		energy = Mathf.Clamp(energy + effect * deltaTicks * Time.fixedDeltaTime, 0f, maxEnergy);
 		didUpdateEnergyThisFrame = 1;
 	}
 
@@ -349,11 +349,14 @@ public abstract class Cell : MonoBehaviour {
 		foreach (SpriteRenderer s in allRenderers) {
 			if (isOnTop && !onTop) {
 				s.sortingOrder = s.sortingOrder - 10;
-				transform.position = new Vector3(transform.position.x, transform.position.y, 0f); 
 			} else if (!isOnTop && onTop) {
 				s.sortingOrder = s.sortingOrder + 10;
-				transform.position = new Vector3(transform.position.x, transform.position.y, -1f);
 			}
+		}
+		if (!onTop) {
+			transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
+		} else {
+			transform.position = new Vector3(transform.position.x, transform.position.y, -1f);
 		}
 		isOnTop = onTop;
 	}
@@ -985,7 +988,8 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 
-		
+		ShowOnTop(false);
+
 		gene = null;
 		id = "trash";
 		predators.Clear();

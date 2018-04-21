@@ -726,34 +726,21 @@ public class Creature : MonoBehaviour {
 			growTicks = 0;
 		}
 
-		//fertilizeTicks++;
-		//if (fertilizeTicks >= fertilizeTickPeriod) {
-		//	fertilizeTicks = 0;
-		//}
-
-		//if (isAttachedToMother) {
-		//	detatchTicks++;
-		//	if (detatchTicks >= GlobalSettings.instance.quality.detatchTickPeriod) {
-		//		detatchTicks = 0;
-		//	}
-		//}
-		//time ^
-
 		phenotype.UpdatePhysics(this, worldTicks);
 
 		int didGrowCount = 0;
-		if (GlobalPanel.instance.physicsUpdateMetabolism.isOn) {
 
-			if (detatch) { // At this point we are sure that our origin cell had time to get to know its neighbours (including mother placenta)
-				DetatchFromMother(true, true);
-				PhenotypePanel.instance.MakeDirty();
-				CellPanel.instance.MakeDirty();
-				cantGrowMore = 0;
+		// Execute detatch
+		if (GlobalPanel.instance.physicsDetatch.isOn && detatch) { // At this point we are sure that our origin cell had time to get to know its neighbours (including mother placenta)
+			DetatchFromMother(true, true);
+			PhenotypePanel.instance.MakeDirty();
+			CellPanel.instance.MakeDirty();
+			cantGrowMore = 0;
+			detatch = false;
+		}
 
-				detatch = false;
-			}
-
-			if (growTicks == 0) {
+		if (growTicks == 0) {
+			if (GlobalPanel.instance.physicsGrow.isOn) {
 				NoGrowthReason reason;
 				didGrowCount = phenotype.TryGrow(this, false, 1, false, true, worldTicks, false, out reason);
 				if (didGrowCount > 0) {
@@ -762,22 +749,25 @@ public class Creature : MonoBehaviour {
 					cantGrowMore = 0;
 				} else if (reason.fullyGrown) {
 					cantGrowMore = int.MaxValue;
-				} else if ((reason.roomBound && !reason.energyBound && !reason.respawnTimeBound)  ) {
+				} else if ((reason.roomBound && !reason.energyBound && !reason.respawnTimeBound)) {
 					cantGrowMore++; // wait a while before giving up on finding a spot to grow another cell
 				}
+			}
+			// ☠ ꕕ Haha, make use of these
+			//Debug.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
 
-				// ☠ ꕕ Haha, make use of these
-				//Debug.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
-
-				if (IsAttachedToMother()) {
-					if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.cellCount >= phenotype.originCell.originDetatchSizeThreshold) ||
-						(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchCompletionPersistance)) {
-						detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
-					}
+			// Detatch child from mother
+			if (GlobalPanel.instance.physicsDetatch.isOn && IsAttachedToMother()) {
+				if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.cellCount >= phenotype.originCell.originDetatchSizeThreshold) ||
+					(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchCompletionPersistance)) {
+					detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
 				}
 			}
+		}
 
-			//if (fertilizeTicks == 0) {
+		// Execute pending Egg Fertilize
+		// If Egg was disabled there is no point checking here either
+		if (GlobalPanel.instance.physicsEgg.isOn) {
 			Cell fertilizeCell = null;
 			foreach (Cell c in phenotype.cellList) {
 				if (c is EggCell) {

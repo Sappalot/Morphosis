@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
+
+	//--
 	public PhenotypePanel phenotypePanel;
 	public new Camera camera;
 	public LineRenderer lineRenderer;
@@ -33,8 +35,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public Text childrenButtonText;
 	// ^ left side ^
 
-	public List<Creature> selection { get; private set; }
-	public List<Creature> selectionCluster { get; private set; }
+	[HideInInspector]
+	public List<Creature> selection = new List<Creature>();
+	[HideInInspector]
+	public List<Creature> selectionCluster = new List<Creature>();
 
 	private bool isDirty = true;
 
@@ -96,11 +100,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	public override void Init() {
 		base.Init();
-		selection = new List<Creature>();
-		selectionCluster = new List<Creature>();
-		ClearSelection();
-
-		lineRenderer.enabled = false;
 	}
 
 	//UI done
@@ -501,7 +500,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void PlaceHoveringCreatures() {
-		if (GlobalPanel.instance.effectsPlaySound.isOn) {
+		if (GlobalPanel.instance.soundCreatures.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
 		ReleaseMoveCreatures();
@@ -518,7 +517,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void PasteHoveringCreatures() {
-		if (GlobalPanel.instance.effectsPlaySound.isOn) {
+		if (GlobalPanel.instance.soundCreatures.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
 		List<Creature> continueMoveCopy = new List<Creature>();
@@ -537,7 +536,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void PasteHoveringMergling() {
-		if (GlobalPanel.instance.effectsPlaySound.isOn) {
+		if (GlobalPanel.instance.soundCreatures.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
 		ReleaseMoveCreatures();
@@ -552,7 +551,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	private void ReleaseMoveCreatures() {
-		if (GlobalPanel.instance.effectsPlaySound.isOn) {
+		if (GlobalPanel.instance.soundCreatures.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
@@ -570,7 +569,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	private void SpawnAddEffect(Vector2 position) {
 		if (MouseAction.instance.actionState == MouseActionStateEnum.combineMoveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures) {
-			Animator birth = Instantiate(creatureAddEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
+			//Animator birth = Instantiate(creatureAddEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
 		}
 	}
 

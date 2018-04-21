@@ -20,45 +20,51 @@ public class JawCell : Cell {
 		if (deleteFlagged) {
 			return;
 		}
+		if (GlobalPanel.instance.physicsJaw.isOn) {
+			mouth.gameObject.SetActive(true);
+			effectConsumptionInternal = GlobalSettings.instance.phenotype.jawCellEffectCost;
 
-		effectConsumptionInternal = GlobalSettings.instance.phenotype.jawCellEffectCost;
+			//Hack release pray
+			RemoveNullPrays(); //We need this one not to run into null refs once in a blue moon
 
-		//Hack release pray
-		RemoveNullPrays(); //We need this one not to run into null refs once in a blue moon
-
-		//Add prays
-		foreach (Cell addMe in praysToAdd) {
-			if (addMe != null) {
-				PairPredatorPray(this, addMe);
-			}
-		}
-		praysToAdd.Clear();
-
-		//Remove prays (or at leas make them closer to being removed)
-		List<Cell> toRemoveFromRemoveList = new List<Cell>();
-		foreach (KeyValuePair<Cell, PredatorPrayPair> removeMe in praysToRemove) {
-			if (removeMe.Key != null) {
-				if (removeMe.Value.linger == 0) {
-					UnpairPredatorPray(this, removeMe.Key);
-					toRemoveFromRemoveList.Add(removeMe.Key);
-				} else {
-					removeMe.Value.linger--;
+			//Add prays
+			foreach (Cell addMe in praysToAdd) {
+				if (addMe != null) {
+					PairPredatorPray(this, addMe);
 				}
 			}
+			praysToAdd.Clear();
+
+			//Remove prays (or at leas make them closer to being removed)
+			List<Cell> toRemoveFromRemoveList = new List<Cell>();
+			foreach (KeyValuePair<Cell, PredatorPrayPair> removeMe in praysToRemove) {
+				if (removeMe.Key != null) {
+					if (removeMe.Value.linger == 0) {
+						UnpairPredatorPray(this, removeMe.Key);
+						toRemoveFromRemoveList.Add(removeMe.Key);
+					} else {
+						removeMe.Value.linger--;
+					}
+				}
+			}
+			foreach (Cell remove in toRemoveFromRemoveList) {
+				praysToRemove.Remove(remove);
+			}
+			//praysToRemove.Clear();
+
+			JawCellPanel.instance.MakeDirty();
+
+			//foreach (Pray pray in prays.Values) {
+			//	pray.UpdateMetabolism(this);
+			//}
+			effectProductionExternal = eatEffect;
+
+			base.UpdateCellFunction(deltaTicks, worldTicks);
+		} else {
+			mouth.gameObject.SetActive(false);
+			effectConsumptionInternal = 0f;
+			effectProductionExternal = 0f;
 		}
-		foreach (Cell  remove in toRemoveFromRemoveList) {
-			praysToRemove.Remove(remove);
-		}
-		//praysToRemove.Clear();
-
-		JawCellPanel.instance.MakeDirty();
-
-		//foreach (Pray pray in prays.Values) {
-		//	pray.UpdateMetabolism(this);
-		//}
-		effectProductionExternal = eatEffect;
-
-		base.UpdateCellFunction(deltaTicks, worldTicks);
 	}
 
 	private float eatEffect {

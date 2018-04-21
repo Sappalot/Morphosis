@@ -12,8 +12,8 @@ public class World : MonoSingleton<World> {
 	[HideInInspector]
 	public ulong worldTicks = 0;
 
-	public void KillAllCreaturesAndSouls() {
-		World.instance.life.KillAllCreaturesAndSouls();
+	public void KillAllCreatures() {
+		World.instance.life.KillAllCreatures();
 		CreatureSelectionPanel.instance.ClearSelection();
 	}
 
@@ -38,10 +38,10 @@ public class World : MonoSingleton<World> {
 		} else {
 			if (GlobalPanel.instance.timeSpeedSilder.value >= -10f && GlobalPanel.instance.timeSpeedSilder.value <= 0f) {
 				Time.timeScale = 1f;
-				timeScaleAim = 1f;
+				//timeScaleAim = 1f;
 			} else if (GlobalPanel.instance.physicsUpdatesPerSecond == 0f) {
 				//kick start physics
-				Time.timeScale = timeScaleAim;
+				Time.timeScale = 1f; // timeScaleAim;
 			}
 		}
 
@@ -55,35 +55,36 @@ public class World : MonoSingleton<World> {
 			return;
 		}
 
-		World.instance.life.UpdateStructure();
+		life.UpdateStructure();
 
 		worldTicks++; //The only place where time is increased
-		World.instance.life.UpdatePhysics(worldTicks);
+		life.UpdatePhysics(worldTicks);
 		if (GlobalPanel.instance.physicsTeleport.isOn) {
 			Portals.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
 		}
-		PrisonWall.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
-
+		if (GlobalPanel.instance.physicsKillFugitive.isOn) {
+			PrisonWall.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
+		}
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 
 		float isValue = GlobalPanel.instance.physicsUpdatesPerSecond * Time.fixedDeltaTime;
 		float sliderValue = GlobalPanel.instance.timeSpeedSilder.value / 5f;
 
-		timeScaleAim = isValue + Mathf.Clamp((sliderValue - isValue) * 0.5f, -0.5f, 0.5f);
-		timeScaleAim = Mathf.Clamp(timeScaleAim, 1f, Mathf.Max(0f, sliderValue));
+		//timeScaleAim = isValue + Mathf.Clamp((sliderValue - isValue) * 0.5f, -0.5f, 0.5f);
+		//timeScaleAim = Mathf.Clamp(timeScaleAim, 1f, Mathf.Max(0f, sliderValue));
 		GlobalPanel.instance.physicsTimeSpeedText.text = string.Format("{0:F1} ({1:F1})", Mathf.Max(1f, sliderValue), isValue);
 		//GlobalPanel.instance.physicsTimeSpeedText.text = string.Format("W: {0:F1}, A: {1:F1}, Is: {2:F2}", sliderValue, timeScaleAim, isValue);
-		Time.timeScale = timeScaleAim;
+		Time.timeScale = Mathf.Max(0f, sliderValue);
 	}
 
-	private float timeScaleAim;
+	//private float timeScaleAim;
 
 	//Save load
 	public void Restart() {
 		GlobalPanel.instance.timeSpeedSilder.value = -20f;
 		Time.timeScale = 0;
 
-		KillAllCreaturesAndSouls();
+		KillAllCreatures();
 		worldTicks = 0;
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 		for (int y = 1; y <= 1; y++) {
@@ -91,21 +92,22 @@ public class World : MonoSingleton<World> {
 				World.instance.life.SpawnCreatureJellyfish(new Vector3(100f + x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f), worldTicks);
 			}
 		}
-		//World.instance.life.SpawnCreatureEdgeFailure(new Vector3(100f, 200f, 0f)); //Fixed :)
-		//World.instance.life.SpawnCreatureJellyfish(new Vector3(100f, 100f, 0f));
 		
 		CreatureEditModePanel.instance.Restart();
 		RMBToolModePanel.instance.Restart();
 		PrisonWall.instance.Restart();
 	}
 
-	public void Load() {
+	public void Load(string filename) {
 		GlobalPanel.instance.timeSpeedSilder.value = -20f; //pause
 		Time.timeScale = 0;
 
 		Time.timeScale = 0;
 		// Open the file to read from.
-		string serializedString = File.ReadAllText(path + "save.txt");
+		if (filename == "") {
+			filename = "save.txt";
+		}
+		string serializedString = File.ReadAllText(path + filename);
 
 		WorldData loadedWorld = Serializer.Deserialize<WorldData>(serializedString, new UnityJsonSerializer());
 		ApplyData(loadedWorld);
@@ -116,7 +118,7 @@ public class World : MonoSingleton<World> {
 	}
 
 	private string path = "F:/Morfosis/";
-	public void Save() {
+	public void Save(string filename) {
 		GlobalPanel.instance.timeSpeedSilder.value = -20f; //pause
 		Time.timeScale = 0;
 
@@ -127,7 +129,10 @@ public class World : MonoSingleton<World> {
 		if (!Directory.Exists(path)) {
 			Directory.CreateDirectory(path);
 		}
-		File.WriteAllText(path + "save.txt", worldToSave);
+		if (filename == "") {
+			filename = "save.txt";
+		}
+		File.WriteAllText(path + filename, worldToSave);
 	}
 
 	private WorldData worldData = new WorldData();
@@ -150,19 +155,19 @@ public class World : MonoSingleton<World> {
 	}
 
 
-	private string allThereIs;
-	public void StoreLife() {
+//	private string allThereIs;
+	public string GetWorldData() {
 		UpdateData();
-		allThereIs = Serializer.Serialize(worldData, new UnityJsonSerializer());
+		return Serializer.Serialize(worldData, new UnityJsonSerializer());
 
-		Destroy(life.gameObject);
-		System.GC.Collect();
+		//Destroy(life.gameObject);
+		//System.GC.Collect();
 	}
 
-	public void RestoreLife() {
-		CreateLife();
+	public void CreateWorldFromData(string data) {
+		//CreateLife();
 
-		WorldData loadedWorld = Serializer.Deserialize<WorldData>(allThereIs, new UnityJsonSerializer());
+		WorldData loadedWorld = Serializer.Deserialize<WorldData>(data, new UnityJsonSerializer());
 		ApplyData(loadedWorld);
 		CreatureEditModePanel.instance.UpdateAllAccordingToEditMode();
 		CreatureSelectionPanel.instance.ClearSelection();

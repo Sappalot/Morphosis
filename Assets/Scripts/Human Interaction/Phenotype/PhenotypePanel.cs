@@ -70,11 +70,9 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			creatureCellCount.text = "Cells: " + solo.cellsCount + " (" + solo.cellsCountFullyGrown + ")";
 			creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energy / solo.phenotype.cellCount);
 			creatureSpeed.text = string.Format("Speed: {0:F2} m/s", solo.phenotype.speed);
-			if (GlobalPanel.instance.physicsUpdateMetabolism.isOn) {
-				creatureEffect.text = string.Format("Effect: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.effectProduction, solo.phenotype.effectConsumption, solo.phenotype.effect);
-			} else {
-				creatureEffect.text = "Effect: -";
-			}
+
+			creatureEffect.text = string.Format("Effect: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.effectProduction, solo.phenotype.effectConsumption, solo.phenotype.effect);
+
 
 			isDirty = false;
 		}

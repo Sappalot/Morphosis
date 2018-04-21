@@ -82,9 +82,12 @@ public class Portal : MonoBehaviour {
 		}
 
 		//// Telefrag obstructing creatures
-		foreach (Creature fragMe in shouldBeTelefragged) {
-			fragMe.phenotype.Telefrag();
+		if (GlobalPanel.instance.physicsTelefrag.isOn) {
+			foreach (Creature fragMe in shouldBeTelefragged) {
+				fragMe.phenotype.Telefrag();
+			}
 		}
+
 
 		if (canTeleport.Count > 0) {
 			//Move (teleport) creatures

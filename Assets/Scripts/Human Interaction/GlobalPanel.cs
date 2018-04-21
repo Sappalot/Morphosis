@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GlobalPanel : MonoSingleton<GlobalPanel> {
@@ -9,7 +11,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Text fps;
 	public Text pps;
 
-	public Text creatureCount;
+	public Text creatureAliveCount;
+	public Text creatureDeadCount;
 	public Text runnersKilledCount;
 	public Text sterileKilledCount;
 
@@ -57,10 +60,24 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	//Physics
-	public Toggle physicsUpdateMetabolism;
-	public Toggle physicsApplyWingForce;
+	
 	public Toggle physicsTeleport;
-	public Toggle physicsJawRam;
+	public Toggle physicsTelefrag;
+	public Toggle physicsKillFugitive;
+	public Toggle physicsKillSterile;
+	public Toggle physicsGrow;
+	public Toggle physicsDetatch;
+	public Toggle physicsOsmosis;
+
+	public Toggle physicsEgg;
+	public Toggle physicsFungal;
+	public Toggle physicsJaw;
+	public Toggle physicsLeaf;
+	public Toggle physicsMuscle; public Toggle physicsMuscleEffect;
+	public Toggle physicsRoot;
+	public Toggle physicsShell;
+	public Toggle physicsVein;
+
 
 	public Slider timeSpeedSilder;
 	public Text physicsTimeSpeedText;
@@ -70,8 +87,9 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	//Graphics
 	public Toggle graphicsCreatures;
-	public Toggle graphicsWingsForces;
 	public Toggle graphicsPeriphery;
+	public Toggle graphicsEffects;
+	public Toggle graphicsMuscleForces;
 	public Dropdown graphicsCellDropdown;
 	public enum CellGraphicsEnum {
 		type,
@@ -94,8 +112,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	// Effects
-	public Toggle effectsPlaySound;
-	public Toggle effectsShowParticles;
+	public Toggle soundCreatures;
 
 	private void Update () {
 		frameCount++;
@@ -122,7 +139,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			}
 
 			//creatures
-			creatureCount.text =         "Creatures: "   + World.instance.life.creatureCount;
+			creatureAliveCount.text =    "Alive: "   + World.instance.life.creatureAliveCount;
+			creatureDeadCount.text =     "Dead: " + World.instance.life.creatureDeadCount;
 			runnersKilledCount.text =    "Runners Killed: " + PrisonWall.instance.runnersKilledCount;
 			sterileKilledCount.text =    "Sterile Killed: " + World.instance.life.sterileKilledCount;
 
@@ -160,6 +178,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 			veinPoolCount.text = "Veins: " + World.instance.life.veinPool.storedCount + " + " + World.instance.life.veinPool.loanedCount + " = " + (World.instance.life.veinPool.storedCount + World.instance.life.veinPool.loanedCount);
 		}
+
+		TryRecreateWorld();
 	}
 
 	private void FixedUpdate() {
@@ -171,18 +191,48 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	public void OnLoadClicked() {
-		World.instance.Load();
+		World.instance.Load("save.txt");
 	}
 
 	public void OnSaveClicked() {
-		World.instance.Save();
+		World.instance.Save("save.txt");
 	}
 
-	public void OnClickedStoreLife() {
-		World.instance.StoreLife();
+
+	public void OnClickRecreateScene() {
+		World.instance.Save("temp.txt");
+		StartCoroutine("load");
+		ActivateScene();
+		System.GC.Collect();
 	}
 
-	public void OnClickedRestoreLife() {
-		World.instance.RestoreLife();
+	private bool shouldRecreate = true;
+	private void TryRecreateWorld() {
+		if (shouldRecreate) {
+			World.instance.Load("temp.txt");
+			shouldRecreate = false;
+		}
+	}
+
+	public void OnClickLoadBack() {
+		World.instance.Load("temp.txt");
+	}
+
+
+
+	private AsyncOperation async;
+
+	private IEnumerator load() {
+		async = SceneManager.LoadSceneAsync("MainScene");
+		async.allowSceneActivation = false;
+		while (!async.isDone) {
+			yield return null;
+		}
+		Debug.Log("Done loading scene");
+		
+	}
+
+	private void ActivateScene() {
+		async.allowSceneActivation = true;
 	}
 }

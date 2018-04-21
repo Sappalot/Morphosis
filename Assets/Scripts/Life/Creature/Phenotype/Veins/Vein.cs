@@ -36,6 +36,11 @@ public class Vein : MonoBehaviour {
 		attachmentFront = new EdgeAttachment(parentCell, (directionChildToParentCell + 3) % 6);
 		attachmentBack = new EdgeAttachment(childCell, directionChildToParentCell);
 
+		if (!GlobalPanel.instance.physicsVein.isOn) {
+			effectType = EffectEnum.LowLow;
+			return;
+		}
+
 		if (!IsHighEfficiency(parentCell.GetCellType()) && !IsHighEfficiency(childCell.GetCellType())) {
 			effectType = EffectEnum.LowLow;
 		} else if ((!IsHighEfficiency(parentCell.GetCellType()) && IsHighEfficiency(childCell.GetCellType())) || (IsHighEfficiency(parentCell.GetCellType()) && !IsHighEfficiency(childCell.GetCellType()))) {

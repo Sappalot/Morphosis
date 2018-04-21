@@ -6,10 +6,15 @@
 	}
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		effectConsumptionInternal = GlobalSettings.instance.phenotype.shellCellEffectCost;
-		effectProductionInternal = 0f;
+		if (GlobalPanel.instance.physicsShell.isOn) {
+			effectConsumptionInternal = GlobalSettings.instance.phenotype.shellCellEffectCost;
+			effectProductionInternal = 0f;
 
-		base.UpdateCellFunction(deltaTicks, worldTicks);
+			base.UpdateCellFunction(deltaTicks, worldTicks);
+		} else {
+			effectConsumptionInternal = 0f;
+			effectProductionInternal = 0f;
+		}
 	}
 
 	public override CellTypeEnum GetCellType() {

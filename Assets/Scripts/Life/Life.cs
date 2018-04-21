@@ -21,10 +21,13 @@ public class Life : MonoBehaviour {
 	[HideInInspector]
 	public int sterileKilledCount;
 
+	public int creatureDeadCount { get; private set; }
+
 	//debug
+	[HideInInspector]
 	public int deletedCellCount = 0;
 
-	public int creatureCount {
+	public int creatureAliveCount {
 		get {
 			return creatureList.Count;
 		}
@@ -58,12 +61,12 @@ public class Life : MonoBehaviour {
 	public void FertilizeCreature(Cell eggCell, bool playEffects, ulong worldTicks, bool wasForced) {
 		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
 
-		if (playEffects && GlobalPanel.instance.effectsPlaySound.isOn && CameraUtils.IsObservedLazy(eggCell.position, GlobalSettings.instance.orthoMaxHorizonFx)) {
+		if (playEffects && GlobalPanel.instance.soundCreatures.isOn && CameraUtils.IsObservedLazy(eggCell.position, GlobalSettings.instance.orthoMaxHorizonFx)) {
 			Audio.instance.EggCellFertilize(CameraUtils.GetEffectStrengthLazy());
 		}
 
 		if (playEffects) {
-			Animator birth = Instantiate(creatureBirthEffectPrefab, eggCell.position, Quaternion.Euler(0f, 0f, 0f));
+			//Animator birth = Instantiate(creatureBirthEffectPrefab, eggCell.position, Quaternion.Euler(0f, 0f, 0f));
 		}
 
 		Creature mother = eggCell.creature;
@@ -110,7 +113,7 @@ public class Life : MonoBehaviour {
 		CreatureSelectionPanel.instance.UpdateSelectionCluster();
 	}
 
-	public void KillAllCreaturesAndSouls() {
+	public void KillAllCreatures() {
 		List<Creature> toKill = new List<Creature>(creatureList);
 		foreach (Creature creature in toKill) {
 			KillCreatureSafe(creature, false);
@@ -137,12 +140,13 @@ public class Life : MonoBehaviour {
 		}
 
 		if (playEffects) {
-			Animator birth = Instantiate(creatureDeathEffectPrefab, creature.phenotype.originCell.position, Quaternion.Euler(0f, 0f, 0f));
+			//Animator birth = Instantiate(creatureDeathEffectPrefab, creature.phenotype.originCell.position, Quaternion.Euler(0f, 0f, 0f));
 		}
 
 		creature.KillAllCells(true); // for the fx :)
 
 		creature.OnRecycle(); //Not only when using creature pool
+		creatureDeadCount++;
 
 		//TODO: Return root cell to pool
 		//This is the only place where ta creature is ultimatly destroyed
@@ -248,11 +252,11 @@ public class Life : MonoBehaviour {
 	}
 
 	private void SpawnAddEffect(Vector2 position) {
-		Animator birth = Instantiate(creatureAddEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
+		//Animator birth = Instantiate(creatureAddEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
 	}
 
 	private void SpawnBirthEffect(Vector2 position) {
-		Animator birth = Instantiate(creatureBirthEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
+		//Animator birth = Instantiate(creatureBirthEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
 	}
 
 	private Creature InstantiateCreature() {
@@ -309,6 +313,7 @@ public class Life : MonoBehaviour {
 		//Creatures
 		lifeData.creatureList.Clear();
 		lifeData.creatureDictionary.Clear();
+		lifeData.creatureDeadCount = creatureDeadCount;
 		lifeData.sterileKilledCount = sterileKilledCount;
 
 		for (int index = 0; index < creatureList.Count; index++) {
@@ -326,12 +331,13 @@ public class Life : MonoBehaviour {
 		idGenerator.number = lifeData.lastId;
 
 		// Create all creatures
-		KillAllCreaturesAndSouls();
+		KillAllCreatures();
 		for (int index = 0; index < lifeData.creatureList.Count; index++) {
 			CreatureData creatureData = lifeData.creatureList[index];
 			Creature creature = InstantiateCreature(creatureData.id); // Creatres soul as
 			creature.ApplyData(creatureData);
 		}
+		creatureDeadCount = lifeData.creatureDeadCount;
 		sterileKilledCount = lifeData.sterileKilledCount;
 
 	}
@@ -367,7 +373,6 @@ public class Life : MonoBehaviour {
 	private List<Creature> killCreatureList = new List<Creature>();
 
 	public void UpdatePhysics(ulong worldTicks) {
-		//kill of weak cells / creatures
 
 		//Ticks 
 		phenotypePanelTicks++;
@@ -384,7 +389,7 @@ public class Life : MonoBehaviour {
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdatePhysics(worldTicks);
 		}
-
+		
 		killCreatureList.Clear();
 
 		//TODO: dont do it every tick
@@ -397,12 +402,14 @@ public class Life : MonoBehaviour {
 				killCreatureList.Add(creatureList[index]);
 			}
 		}
-		
-		if (killSterileCreaturesTicks == 0) {
-			for (int index = 0; index < creatureList.Count; index++) {
-				if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAgeAsChildless && !creatureList[index].HasChildrenIncDead()) {
-					killCreatureList.Add(creatureList[index]);
-					sterileKilledCount++;
+
+		if (GlobalPanel.instance.physicsKillSterile.isOn) {
+			if (killSterileCreaturesTicks == 0) {
+				for (int index = 0; index < creatureList.Count; index++) {
+					if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAgeAsChildless && !creatureList[index].HasChildrenIncDead()) {
+						killCreatureList.Add(creatureList[index]);
+						sterileKilledCount++;
+					}
 				}
 			}
 		}
@@ -410,7 +417,7 @@ public class Life : MonoBehaviour {
 		for (int index = 0; index < killCreatureList.Count; index++) {
 			KillCreatureSafe(killCreatureList[index], true);
 		}
-		
+
 		if (phenotypePanelTicks == 0) {
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
 				PhenotypePanel.instance.MakeDirty();

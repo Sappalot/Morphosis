@@ -16,7 +16,7 @@ public class Pray {
 		if (cell.GetCellType() == CellTypeEnum.Jaw) {
 			prayEatenEffect =   jawEatEffect;
 			predatorEatEffect = jawEatEffect * GlobalSettings.instance.phenotype.jawCellMutualEatKindness;
-		} else if (cell.GetCellType() == CellTypeEnum.Shell) {
+		} else if (cell.GetCellType() == CellTypeEnum.Shell && GlobalPanel.instance.physicsShell) {
 			prayEatenEffect = predatorEatEffect = jawEatEffect * GlobalSettings.instance.phenotype.shellCellWeaknessFactor;
 		} else {
 			prayEatenEffect = predatorEatEffect = jawEatEffect;
