@@ -15,6 +15,8 @@ public class Edge : MonoBehaviour {
 
 	private Cell frontCell; //used with wings
 	private Cell backCell; //used with wings
+	private Rigidbody2D frontCellRB; //used with wings
+	private Rigidbody2D backCellRB; //used with wings
 
 	private Vector3 normal; //used with wings
 	private Vector3 velocity; //used with wings
@@ -74,6 +76,9 @@ public class Edge : MonoBehaviour {
 			throw new Exception("Trying to make a wing, with frontCell wich is not present in edge");
 		}
 		mIsWing = (frontCell.GetCellType() == CellTypeEnum.Muscle || backCell.GetCellType() == CellTypeEnum.Muscle);
+
+		frontCellRB = this.frontCell.GetComponent<Rigidbody2D>();
+		backCellRB =  this.backCell.GetComponent<Rigidbody2D>();
 	}
 
 	public void UpdateGraphics() {
@@ -125,7 +130,7 @@ public class Edge : MonoBehaviour {
 	//use 2 cells to find center velocity
 	public void UpdateVelocity() {
 		//TODO Get references once
-		velocity = (frontCell.GetComponent<Rigidbody2D>().velocity + backCell.GetComponent<Rigidbody2D>().velocity) / 2f;
+		velocity = (frontCellRB.velocity + backCellRB.velocity) * 0.5f;
 	}
 
 	// use normal and velocity to calculate force
@@ -141,18 +146,21 @@ public class Edge : MonoBehaviour {
 	//Apply current force as an impulse on cells
 	public void ApplyForce() {
 		// There is still a possibility ForceMode2D.Force will work better
-		frontCell.GetComponent<Rigidbody2D>().AddForce(force * 0.5f, ForceMode2D.Impulse);
-		backCell.GetComponent<Rigidbody2D>().AddForce(force * 0.5f, ForceMode2D.Impulse);
+		frontCellRB.AddForce(force * 0.5f, ForceMode2D.Impulse);
+		backCellRB.AddForce(force * 0.5f, ForceMode2D.Impulse);
 	}
 
 	public void OnRecycle() {
 		frontCell = null;
-		backCell = null;
+		backCell =  null;
 
-		attachmentChild = null;
+		frontCellRB = null;
+		backCellRB = null;
+
+		attachmentChild =  null;
 		attachmentParent = null;
 
-		force = Vector3.zero;
+		force =    Vector3.zero;
 		velocity = Vector3.zero;
 
 		forceArrow.SetActive(false);

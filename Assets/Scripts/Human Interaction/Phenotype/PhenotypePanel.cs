@@ -67,7 +67,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			}
 
 			creatureAge.text = "Age: " + TimeUtil.GetTimeString((ulong)(solo.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime));
-			creatureCellCount.text = "Cells: " + solo.cellsCount + " (" + solo.cellsCountFullyGrown + ")";
+			creatureCellCount.text = "Cells: " + solo.cellCount + " (" + solo.cellsCountFullyGrown + ")";
 			creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energy / solo.phenotype.cellCount);
 			creatureSpeed.text = string.Format("Speed: {0:F2} m/s", solo.phenotype.speed);
 

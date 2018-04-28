@@ -179,6 +179,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 	[Serializable]
 	public class Pooling {
+		public bool creature = true;
 		public bool cell =     true;
 		public bool geneCell = true;
 		public bool vein =     true;

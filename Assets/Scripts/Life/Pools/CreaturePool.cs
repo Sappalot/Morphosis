@@ -23,6 +23,10 @@ public class CreaturePool : MonoSingleton<CreaturePool> {
 	private Queue<Creature> storedQueue = new Queue<Creature>();
 
 	public Creature Borrow() {
+		if (!GlobalSettings.instance.pooling.creature) {
+			return Instantiate();
+		}
+
 		Creature borrowCreature = null;
 		if (storedQueue.Count > 0) {
 			borrowCreature = PopCreature();
@@ -35,6 +39,11 @@ public class CreaturePool : MonoSingleton<CreaturePool> {
 
 	//Note: make sure there are no object out there with references to this returned cell
 	public void Recycle(Creature creature) {
+		if (!GlobalSettings.instance.pooling.creature) {
+			Destroy(creature.gameObject);
+			return;
+		}
+
 		creature.OnRecycle();
 		creature.transform.parent = transform;
 		creature.gameObject.SetActive(false);

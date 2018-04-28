@@ -262,7 +262,7 @@ public abstract class Cell : MonoBehaviour {
 
 	//Note: effecteConsumption external changes over time in the same manner for all cells but is integrated with different periods depending on cell
 	public void UpdateEnergy(int deltaTicks, ulong worldTicks) {
-		energy = Mathf.Clamp(energy + effect * deltaTicks * Time.fixedDeltaTime, 0f, maxEnergy);
+		energy = Mathf.Clamp(energy + effect * deltaTicks * Time.fixedDeltaTime, -13f, maxEnergy);
 		didUpdateEnergyThisFrame = 1;
 	}
 
@@ -929,7 +929,6 @@ public abstract class Cell : MonoBehaviour {
 		} else {
 			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
 		}
-		
 	}
 
 	public void UpdatePhysics() {

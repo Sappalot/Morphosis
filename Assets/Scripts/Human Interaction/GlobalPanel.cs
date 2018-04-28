@@ -6,10 +6,13 @@ using UnityEngine.UI;
 
 public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
+	public float frameRate { get; private set; }
+
 	//Debug
 	public Text worldNameAndTimeText;
 	public Text fps;
 	public Text pps;
+	public Text memoryUsage;
 
 	public Text creatureAliveCount;
 	public Text creatureDeadCount;
@@ -60,7 +63,15 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	//Physics
-	
+
+	// Operation
+	public Toggle fpsGuardToggle;
+	public Slider fpsGuardSlider;
+	public Text fpsGuardText;
+	public void OnFpsGuardSliderMoved() {
+		fpsGuardText.text = "FPS Guard: " + fpsGuardSlider.value;
+	}
+
 	public Toggle physicsTeleport;
 	public Toggle physicsTelefrag;
 	public Toggle physicsKillFugitive;
@@ -79,11 +90,13 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Toggle physicsVein;
 
 
-	public Slider timeSpeedSilder;
-	public Text physicsTimeSpeedText;
-	public float physicsUpdatesPerSecond;
+	public Slider physicsTimeScaleSilder;
+	public Text physicsTimeScaleIsText;
+	public Text physicsTimeScaleWantText;
 	public RectTransform physicsSliderFillBar;
+	public float physicsUpdatesPerSecond;
 
+	public RectTransform physicsAimFillBar;
 
 	//Graphics
 	public Toggle graphicsCreatures;
@@ -111,8 +124,17 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		}
 	}
 
-	// Effects
+	// Sound
 	public Toggle soundCreatures;
+
+	// Operation
+	public Slider garbageCollectPeriodSlider; // time in seconds
+	public Text garbageCollectText;
+	public Text garbageCollectPeriodText;
+	public void OnGarbageColectPeriodSliderMoved() {
+		garbageCollectPeriodText.text = garbageCollectPeriodSlider.value == 0 ? "Period: --" : ("Period: " + garbageCollectPeriodSlider.value + " s");
+	}
+
 
 	private void Update () {
 		frameCount++;
@@ -122,7 +144,10 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			updateTimeCount = 0;
 
 			//fps
-			fps.text = timeCount > 0f ? string.Format("FPS: {0:F1}", frameCount / timeCount) : "FPS: ---";
+			if (timeCount > 0f) {
+				frameRate = frameCount / timeCount;
+			}
+			fps.text = timeCount > 0f ? string.Format("FPS: {0:F1}", frameRate) : "FPS: ---";
 			frameCount = 0;
 
 			//pps
@@ -134,12 +159,18 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 			timeCount = 0;
 
+			width = Mathf.Lerp(0f, 180f, Mathf.InverseLerp(0f, 20, World.instance.aimSpeedLowPass));
+			physicsAimFillBar.sizeDelta = new Vector2(width, physicsAimFillBar.sizeDelta.y);
+
+			// memoryUsage
+			memoryUsage.text = "Heap size: " + (GC.GetTotalMemory(true) / 1000) + " K";
+
 			if (World.instance.life == null) {
 				return;
 			}
 
 			//creatures
-			creatureAliveCount.text =    "Alive: "   + World.instance.life.creatureAliveCount;
+			creatureAliveCount.text =    "Alive: "   + World.instance.life.creatureAliveCount + ", Cells: " + World.instance.life.cellAliveCount;
 			creatureDeadCount.text =     "Dead: " + World.instance.life.creatureDeadCount;
 			runnersKilledCount.text =    "Runners Killed: " + PrisonWall.instance.runnersKilledCount;
 			sterileKilledCount.text =    "Sterile Killed: " + World.instance.life.sterileKilledCount;
@@ -179,7 +210,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			veinPoolCount.text = "Veins: " + World.instance.life.veinPool.storedCount + " + " + World.instance.life.veinPool.loanedCount + " = " + (World.instance.life.veinPool.storedCount + World.instance.life.veinPool.loanedCount);
 		}
 
-		TryRecreateWorld();
+		//TryRecreateWorld();
 	}
 
 	private void FixedUpdate() {

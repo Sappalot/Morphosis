@@ -33,6 +33,16 @@ public class Life : MonoBehaviour {
 		}
 	}
 
+	public int cellAliveCount {
+		get {
+			int count = 0;
+			foreach (Creature c in creatures) {
+				count += c.cellCount;
+			}
+			return count;
+		}
+	}
+
 	public string GetUniqueIdStamp() {
 		return idGenerator.GetUniqueId();
 	}
@@ -65,8 +75,8 @@ public class Life : MonoBehaviour {
 			Audio.instance.EggCellFertilize(CameraUtils.GetEffectStrengthLazy());
 		}
 
-		if (playEffects) {
-			//Animator birth = Instantiate(creatureBirthEffectPrefab, eggCell.position, Quaternion.Euler(0f, 0f, 0f));
+		if (playEffects && GlobalPanel.instance.graphicsEffects.isOn) {
+			Animator birth = Instantiate(creatureBirthEffectPrefab, eggCell.position, Quaternion.Euler(0f, 0f, 0f));
 		}
 
 		Creature mother = eggCell.creature;
@@ -139,8 +149,8 @@ public class Life : MonoBehaviour {
 			childSoul.DetatchFromMother(false, true);
 		}
 
-		if (playEffects) {
-			//Animator birth = Instantiate(creatureDeathEffectPrefab, creature.phenotype.originCell.position, Quaternion.Euler(0f, 0f, 0f));
+		if (playEffects && GlobalPanel.instance.graphicsEffects.isOn) {
+			Animator birth = Instantiate(creatureDeathEffectPrefab, creature.phenotype.originCell.position, Quaternion.Euler(0f, 0f, 0f));
 		}
 
 		creature.KillAllCells(true); // for the fx :)
@@ -252,11 +262,15 @@ public class Life : MonoBehaviour {
 	}
 
 	private void SpawnAddEffect(Vector2 position) {
-		//Animator birth = Instantiate(creatureAddEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
+		if (GlobalPanel.instance.graphicsEffects.isOn) {
+			Animator birth = Instantiate(creatureAddEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
+		}
 	}
 
 	private void SpawnBirthEffect(Vector2 position) {
-		//Animator birth = Instantiate(creatureBirthEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
+		if (GlobalPanel.instance.graphicsEffects.isOn) {
+			Animator birth = Instantiate(creatureBirthEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
+		}
 	}
 
 	private Creature InstantiateCreature() {
@@ -389,7 +403,7 @@ public class Life : MonoBehaviour {
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdatePhysics(worldTicks);
 		}
-		
+
 		killCreatureList.Clear();
 
 		//TODO: dont do it every tick

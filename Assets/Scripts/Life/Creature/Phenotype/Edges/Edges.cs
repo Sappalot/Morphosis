@@ -26,23 +26,25 @@ public class Edges : MonoBehaviour {
 	}
 
 	//All wings will apply forces to their cells 
+	
 	public void UpdatePhysics(Vector3 creatureVelocity, Creature creature) {
 		//Todo do this more seldom
 		for (int index = 0; index < edgeList.Count; index++) {
-			Edge edge = edgeList[index];
-			if (edge.IsWing) {
-				edge.UpdateNormal();
-				edge.UpdateVelocity();
-				edge.UpdateForce(creatureVelocity, creature);
+			tempEdge = edgeList[index];
+			if (tempEdge.IsWing) {
+				tempEdge.UpdateNormal();
+				tempEdge.UpdateVelocity();
+				tempEdge.UpdateForce(creatureVelocity, creature);
 			}
 		}
 		for (int index = 0; index < edgeList.Count; index++) {
-			Edge edge = edgeList[index];
-			if (edge.IsWing) { // So, we can see forces even if they are not applied
-				edge.ApplyForce();
+			tempEdge = edgeList[index];
+			if (tempEdge.IsWing) { // So, we can see forces even if they are not applied
+				tempEdge.ApplyForce();
 			}
 		}
 	}
+	private Edge tempEdge;
 
 	public void UpdateGraphics() {
 

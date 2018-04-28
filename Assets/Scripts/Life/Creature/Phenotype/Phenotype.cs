@@ -18,7 +18,7 @@ public class Phenotype : MonoBehaviour {
 	public CellDeath cellDeathPrefab;
 	public CellDetatch cellDetatchPrefab;
 
-	public Transform cellsTransform; 
+	public Transform cellsTransform;
 	public Edges edges; //AKA Wings
 	public Veins veins;
 
@@ -195,9 +195,6 @@ public class Phenotype : MonoBehaviour {
 	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects, ulong worldTicks, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
 		noGrowthReason = new NoGrowthReason();
 		
-		////Fail safe ... to be removed
-		//World.instance.life.UpdateSoulReferences();
-
 		int growCellCount = 0;
 		Genotype genotype  = creature.genotype;
 		if (cellCount < 1 || this.cellCount >= genotype.geneCellCount) {
@@ -392,9 +389,6 @@ public class Phenotype : MonoBehaviour {
 	public bool UpdateConnectionsFromCellsBody(Creature creature, string motherId) {
 		if (connectionsDiffersFromCells) {
 
-			////Fail safe ... to be removed .... or is it ... really?
-			//World.instance.life.UpdateSoulReferences();
-
 			UpdateNeighbourReferencesInterBody(creature);
 
 			//Springs
@@ -411,6 +405,9 @@ public class Phenotype : MonoBehaviour {
 
 			//Debug
 			UpdateSpringsFrequenze(); //testing only
+
+			//test with no muscel collider
+			EnableCollider(true);
 
 			//Clean
 			connectionsDiffersFromCells = false;
@@ -697,9 +694,9 @@ public class Phenotype : MonoBehaviour {
 				}
 			}
 
-			if (playEffects) {
+			if (playEffects && GlobalPanel.instance.graphicsEffects.isOn) {
 				float angle = originCell.heading - 90f;
-				//Animator detatch = Instantiate(creatureDetatchEffectPrefab, originCell.position, Quaternion.Euler(0f, 0f, angle));
+				Animator detatch = Instantiate(creatureDetatchEffectPrefab, originCell.position, Quaternion.Euler(0f, 0f, angle));
 			}
 
 			//Kick separation
@@ -933,13 +930,6 @@ public class Phenotype : MonoBehaviour {
 			cellList[index].ShowTriangle(on);
 		}
 	}
-
-	//Allways false for phenotype
-	//public void ShowShadow(bool on) {
-	//	for (int index = 0; index < cellList.Count; index++) {
-	//		cellList[index].ShowShadow(on);
-	//	}
-	//}
 
 	public void Show(bool on) {
 		for (int index = 0; index < cellList.Count; index++) {
@@ -1255,9 +1245,9 @@ public class Phenotype : MonoBehaviour {
 
 		// We are applying force only if mussceles are set to contract
 		// Edges, let edge-wings apply proper forces to neighbouring cells, caused by muscle edges swiming through ether
-		//if (GlobalPanel.instance.physicsMuscle.isOn) {
-		//	edges.UpdatePhysics(velocity, creature);
-		//}
+		if (GlobalPanel.instance.physicsMuscle.isOn) {
+			edges.UpdatePhysics(velocity, creature); 
+		}
 
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].UpdatePhysics(); //rotation
