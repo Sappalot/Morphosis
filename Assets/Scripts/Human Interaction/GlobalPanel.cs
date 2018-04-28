@@ -61,6 +61,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public void UpdateWorldNameAndTime(string worldName, ulong worldTicks) {
 		worldNameAndTimeText.text = worldName + " " + TimeUtil.GetTimeString((ulong)(worldTicks * Time.fixedDeltaTime));
 	}
+	public Text worldSaveDirerectory;
 
 	//Physics
 
@@ -248,8 +249,6 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public void OnClickLoadBack() {
 		World.instance.Load("temp.txt");
 	}
-
-
 
 	private AsyncOperation async;
 

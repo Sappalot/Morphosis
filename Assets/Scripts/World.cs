@@ -146,6 +146,10 @@ public class World : MonoSingleton<World> {
 		if (filename == "") {
 			filename = "save.txt";
 		}
+		string path = GlobalPanel.instance.worldSaveDirerectory.text;
+		if (path == "") {
+			path = "F:/Morfosis/";
+		}
 		string serializedString = File.ReadAllText(path + filename);
 
 		WorldData loadedWorld = Serializer.Deserialize<WorldData>(serializedString, new UnityJsonSerializer());
@@ -156,13 +160,17 @@ public class World : MonoSingleton<World> {
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 	}
 
-	private string path = "F:/Morfosis/";
+	//private string path = "F:/Morfosis/";
 	public void Save(string filename) {
 		GlobalPanel.instance.physicsTimeScaleSilder.value = -20f; //pause
 		Time.timeScale = 0;
 
 		UpdateData();
 
+		string path = GlobalPanel.instance.worldSaveDirerectory.text;
+		if (path == "") {
+			path = "F:/Morfosis/";
+		}
 		string worldToSave = Serializer.Serialize(worldData, new UnityJsonSerializer());
 
 		if (!Directory.Exists(path)) {

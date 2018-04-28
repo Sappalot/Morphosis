@@ -521,7 +521,7 @@ public class Phenotype : MonoBehaviour {
 
 	public void ChangeEnergy(float amount) {
 		for (int count = 0; count < cellCount; count++) {
-			cellList[count].energy = Mathf.Clamp(cellList[count].energy + amount, 0f, Cell.maxEnergy);
+			cellList[count].energy = Mathf.Clamp(cellList[count].energy + amount, -25f, Cell.maxEnergy);
 		}
 	}
 
