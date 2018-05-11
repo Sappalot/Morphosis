@@ -7,6 +7,8 @@ public class World : MonoSingleton<World> {
 	public Life life;
 	public Life lifePrefab;
 
+	public GameObject cellPrefab;
+
 	public Camera worldCamera;
 	private string worldName = "Gaia";
 	[HideInInspector]
@@ -18,6 +20,12 @@ public class World : MonoSingleton<World> {
 	}
 
 	private void Start () {
+		//for (int y = 0; y < 32; y++) {
+		//	for (int x = 0; x < 32; x++) {
+		//		GameObject.Instantiate(cellPrefab, new Vector3(10f + x * 2f, 10f + y * 2f, 0f), Quaternion.identity, this.transform);
+		//	}
+		//}
+
 		//test, OK with 24 * 24 (18 cells per creature) ~ 27 FPS :)
 		//including: turn hinged neighbours to correct angle, just one test string creature
 		//excluding: turn cell graphics to correct angle, scale mussle cells
@@ -56,7 +64,7 @@ public class World : MonoSingleton<World> {
 	private int redGCText = 0;
 	private int garbageFixed = 0;
 	private void FixedUpdate() {
-		if(life == null) {
+		if (life == null) {
 			return;
 		}
 		if (GlobalPanel.instance.garbageCollectPeriodSlider.value != 0) {
@@ -102,17 +110,16 @@ public class World : MonoSingleton<World> {
 		} else {
 			aimSpeedLowPass = Mathf.Max(0f, desiredSpeed);
 		}
-		Time.timeScale = Mathf.Max(0f, aimSpeedLowPass);
+		//Time.timeScale = Mathf.Max(0f, aimSpeedLowPass);
 		GlobalPanel.instance.physicsTimeScaleIsText.text = string.Format("{0:F1}", isSpeed);
 		GlobalPanel.instance.physicsTimeScaleWantText.text = string.Format("{0:F1}", Mathf.Max(1f, desiredSpeed));
 
-		////Gravity
-		//gravityAngle += Time.fixedDeltaTime * 0.1f;
+		//gravityAngle += Time.fixedDeltaTime * 5f;
 		//if (gravityAngle > 360f) {
-		//	gravityAngle = 0f;
+		//	gravityAngle -= 360f;
 		//}
-
-		//Physics2D.gravity = new Vector2(Mathf.Cos(gravityAngle * Mathf.Deg2Rad) * 9.81f, Mathf.Sin(gravityAngle * Mathf.Deg2Rad) * 9.81f);
+		//float gravityFactor = 200f;
+		//Physics2D.gravity = new Vector2(Mathf.Cos(gravityAngle * Mathf.Deg2Rad) * gravityFactor, Mathf.Sin(gravityAngle * Mathf.Deg2Rad) * gravityFactor);
 	}
 	public float aimSpeedLowPass;
 

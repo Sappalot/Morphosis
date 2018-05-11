@@ -182,10 +182,10 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	[HideInInspector]
-	public float springFrequenzy = 5f;
+	public float springFrequenzy = 20f; //5
 
 	[HideInInspector]
-	public float springDamping = 11f;
+	public float springDamping = 30f; // 11
 
 	[HideInInspector]
 	public Creature m_creature;

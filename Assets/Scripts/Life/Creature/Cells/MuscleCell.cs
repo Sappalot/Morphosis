@@ -8,8 +8,8 @@ public class MuscleCell : Cell {
 	private bool scaleIsDirty = true;
 
 	public MuscleCell() : base() {
-		springFrequenzy = 20f;
-		springDamping = 11f;
+		springFrequenzy = 20f; //20
+		springDamping = 30f; // 11
 	}
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
@@ -43,24 +43,21 @@ public class MuscleCell : Cell {
 		lastTime = worldTicks * Time.fixedDeltaTime;
 
 		//Debug.Log("offset" + timeOffset);
-		float expandContract = Mathf.Sign(curveOffset + Mathf.Cos(timeOffset + modularTime / (2f * Mathf.PI)));
+		float expandContract = Mathf.Sign(curveOffset + Mathf.Cos(modularTime / (2f * Mathf.PI)));
 		float radiusGoal = 0.5f - 0.5f * radiusDiff + 0.5f * radiusDiff * expandContract;
 
-		float goingSmallSpeed = 0.5f * 4f; //units per second
-		float goingBigSpeed = 0.02f * 4f;
+		//float goingSmallSpeed = 0.5f * 4f * 0f; //units per second
+		//float goingBigSpeed = 0.02f * 4f * 0f;
 
-		if (radiusGoal > radius) {
-			isContracting = false;
-			radius = radius + goingBigSpeed * deltaTime;
-			if (radius > radiusGoal)
-				radius = radiusGoal;
-		}
-		else {
+		if (expandContract < 0f) {
 			isContracting = true;
-			radius = radius - goingSmallSpeed * deltaTime;
-			if (radius < radiusGoal)
-				radius = radiusGoal;
+			radius -= Time.fixedDeltaTime * 2f;
+		} else {
+			isContracting = false;
+			radius += Time.fixedDeltaTime * 2f;
 		}
+		radius = Mathf.Clamp(radius, 0.3f, 0.5f);
+		//radius = radiusGoal;
 
 		if (CameraUtils.IsObservedLazy(position, GlobalSettings.instance.orthoMaxHorizonDetailedCell)) {
 			transform.localScale = new Vector3(radius * 2f, radius * 2f, 1f); //costy, only if in frustum and close

@@ -761,9 +761,9 @@ public class Phenotype : MonoBehaviour {
 	private void SetTrueCellDrag() {
 		foreach (Cell cell in cellList) {
 			if (cell.GetCellType() == CellTypeEnum.Leaf) {
-				cell.GetComponent<Rigidbody2D>().drag = 0.2f;
+				cell.GetComponent<Rigidbody2D>().drag = 0.15f;
 			} else {
-				cell.GetComponent<Rigidbody2D>().drag = 0.2f;
+				cell.GetComponent<Rigidbody2D>().drag = 0.15f;
 			}
 		}
 	}
@@ -1246,7 +1246,7 @@ public class Phenotype : MonoBehaviour {
 		// We are applying force only if mussceles are set to contract
 		// Edges, let edge-wings apply proper forces to neighbouring cells, caused by muscle edges swiming through ether
 		if (GlobalPanel.instance.physicsMuscle.isOn) {
-			edges.UpdatePhysics(velocity, creature); 
+			edges.UpdatePhysics(velocity, creature);
 		}
 
 		for (int index = 0; index < cellList.Count; index++) {
@@ -1254,7 +1254,6 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		//Metabolism
-
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
 			if (eggCellTick == 0 && cell.GetCellType() == CellTypeEnum.Egg) {

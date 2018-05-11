@@ -600,19 +600,19 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				creatureCreatedText.text = "";
 
 				//right side
-				moveButtonText.color =     Color.gray;
-				rotateButtonText.color =   Color.gray;
-				deleteButtonText.color =   Color.gray;
-				cloneButtonText.color =    Color.gray;
-				combineButtonText.color =  Color.gray;
+				moveButtonText.color = Color.gray;
+				rotateButtonText.color = Color.gray;
+				deleteButtonText.color = Color.gray;
+				cloneButtonText.color = Color.gray;
+				combineButtonText.color = Color.gray;
 				// ^ right side ^
 				// left side
-				spiecesButtonText.color =  Color.gray;
+				spiecesButtonText.color = Color.gray;
 
-				motherButtonText.color =   Color.gray;
+				motherButtonText.color = Color.gray;
 				motherButton.gameObject.SetActive(true);
 
-				fatherButtonText.color =   Color.gray;
+				fatherButtonText.color = Color.gray;
 				fatherButton.gameObject.SetActive(true);
 
 				childrenButtonText.color = Color.gray;
@@ -622,7 +622,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 			} else if (selection.Count == 1) {
 				selectedCreatureText.text = soloSelected.id; // soloSelected.nickname;
-				//motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
+															 //motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
 
 				creatureCreatedText.text = soloSelected.creation.ToString() + (soloSelected.creation != CreatureCreationEnum.Forged ? ", Generation: " + soloSelected.generation : "");
 				//right side
