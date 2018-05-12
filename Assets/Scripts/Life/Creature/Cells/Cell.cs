@@ -182,10 +182,10 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	[HideInInspector]
-	public float springFrequenzy = 20f; //5
+	public float springFrequenzy = 5f; //5
 
 	[HideInInspector]
-	public float springDamping = 30f; // 11
+	public float springDamping = 11f; // 11
 
 	[HideInInspector]
 	public Creature m_creature;
@@ -871,11 +871,11 @@ public abstract class Cell : MonoBehaviour {
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(life);
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effect) {
-				float effectValue = 0.5f + effect * 0.5f;
+				float effectValue = 0.5f + effect * 0.1f;
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effectCreature) {
-				float effectValue = 0.5f + (creature.phenotype.effect / creature.phenotype.cellCount) * 0.5f;
+				float effectValue = 0.5f + (creature.phenotype.effect / creature.phenotype.cellCount) * 0.1f;
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.leafExposure) {
@@ -998,7 +998,9 @@ public abstract class Cell : MonoBehaviour {
 		lastTime = 0;
 		timeOffset = 0;
 		buildOrderIndex = 0;
-			
+
+		radius = 0.5f;
+		transform.localScale = new Vector3(1f, 1f, 1f);
 	}
 
 	// Pooling

@@ -9,7 +9,7 @@ public class MuscleCell : Cell {
 
 	public MuscleCell() : base() {
 		springFrequenzy = 20f; //20
-		springDamping = 30f; // 11
+		springDamping = 11f; // 11
 	}
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
@@ -137,6 +137,11 @@ public class MuscleCell : Cell {
 			southEastSpring.frequency = (this.springFrequenzy + southEastNeighbour.cell.springFrequenzy) / 2f;
 			southEastSpring.dampingRatio = (this.springDamping + southEastNeighbour.cell.springDamping) / 2f;
 		}
+	}
+
+	public override void OnRecycleCell() {
+		base.OnRecycleCell();
+		isContracting = false;
 	}
 }
 
