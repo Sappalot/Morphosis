@@ -696,7 +696,7 @@ public class Phenotype : MonoBehaviour {
 
 			if (playEffects && GlobalPanel.instance.graphicsEffects.isOn) {
 				float angle = originCell.heading - 90f;
-				Animator detatch = Instantiate(creatureDetatchEffectPrefab, originCell.position, Quaternion.Euler(0f, 0f, angle));
+				EffectPlayer.instance.Play(EffectEnum.CreatureDetatch, originCell.position);
 			}
 
 			//Kick separation

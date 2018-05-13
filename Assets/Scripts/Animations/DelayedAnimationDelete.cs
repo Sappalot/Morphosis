@@ -4,12 +4,12 @@ using UnityEngine;
 public class DelayedAnimationDelete : MonoBehaviour {
 	public float linger = 0f;
 
-	void Start() {
-		StartCoroutine(Die());
+	public void StopWhenDone() {
+		StartCoroutine(Stop());
 	}
 
-	private IEnumerator Die() {
+	private IEnumerator Stop() {
 		yield return new WaitForSecondsRealtime(this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length + linger);
-		Destroy(gameObject);
+		EffectPlayer.instance.Stop(GetComponent<Animator>());
 	}
 }

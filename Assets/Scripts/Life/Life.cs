@@ -10,9 +10,6 @@ public class Life : MonoBehaviour {
 	public EdgePool edgePool;
 
 	public Creature creaturePrefab;
-	public Animator creatureDeathEffectPrefab;
-	public Animator creatureBirthEffectPrefab;
-	public Animator creatureAddEffectPrefab;
 
 	private IdGenerator idGenerator = new IdGenerator();
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
@@ -76,7 +73,7 @@ public class Life : MonoBehaviour {
 		}
 
 		if (playEffects && GlobalPanel.instance.graphicsEffects.isOn) {
-			Animator birth = Instantiate(creatureBirthEffectPrefab, eggCell.position, Quaternion.Euler(0f, 0f, 0f));
+			EffectPlayer.instance.Play(EffectEnum.CreatureBorn, eggCell.position);
 		}
 
 		Creature mother = eggCell.creature;
@@ -150,7 +147,8 @@ public class Life : MonoBehaviour {
 		}
 
 		if (playEffects && GlobalPanel.instance.graphicsEffects.isOn) {
-			Animator birth = Instantiate(creatureDeathEffectPrefab, creature.phenotype.originCell.position, Quaternion.Euler(0f, 0f, 0f));
+			//Animator birth = Instantiate(creatureDeathEffectPrefab, creature.phenotype.originCell.position, Quaternion.Euler(0f, 0f, 0f));
+			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, creature.phenotype.originCell.position);
 		}
 
 		creature.KillAllCells(true); // for the fx :)
@@ -263,13 +261,13 @@ public class Life : MonoBehaviour {
 
 	private void SpawnAddEffect(Vector2 position) {
 		if (GlobalPanel.instance.graphicsEffects.isOn) {
-			Animator birth = Instantiate(creatureAddEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
+			EffectPlayer.instance.Play(EffectEnum.CreatureAdd, position);
 		}
 	}
 
 	private void SpawnBirthEffect(Vector2 position) {
 		if (GlobalPanel.instance.graphicsEffects.isOn) {
-			Animator birth = Instantiate(creatureBirthEffectPrefab, position, Quaternion.Euler(0f, 0f, 0f));
+			EffectPlayer.instance.Play(EffectEnum.CreatureBorn, position);
 		}
 	}
 

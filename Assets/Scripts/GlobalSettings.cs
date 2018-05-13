@@ -184,6 +184,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public bool geneCell = true;
 		public bool vein =     true;
 		public bool edge =     true;
+		public bool effects =  true;
 	}
 
 	public Pooling pooling;

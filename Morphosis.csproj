@@ -290,6 +290,8 @@
     <Compile Include="Assets\Scripts\Animations\DelayedAnimationDelete.cs" />
     <Compile Include="Assets\Scripts\Audio.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
+    <Compile Include="Assets\Scripts\Effects\EffectEnum.cs" />
+    <Compile Include="Assets\Scripts\Effects\EffectPlayer.cs" />
     <Compile Include="Assets\Scripts\GlobalSettings.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\ColorScheme.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\CreatureEditModePanel.cs" />
@@ -351,6 +353,7 @@
     <Compile Include="Assets\Scripts\Life\Creature\Phenotype\Phenotype.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Phenotype\Veins\Vein.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Phenotype\Veins\Veins.cs" />
+    <Compile Include="Assets\Scripts\Effects\EffectPool.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Pools\CellPool.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Pools\EdgePool.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\Pools\GeneCellPool.cs" />
