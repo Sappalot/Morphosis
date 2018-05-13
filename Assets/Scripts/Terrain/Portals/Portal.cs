@@ -5,6 +5,8 @@ public class Portal : MonoBehaviour {
 	public GameObject departureArea;
 	public GameObject arrivalArea;
 
+	public Vector2 telepokeDirection;
+
 	private Rect departureRect;
 	private Rect arrivalRect;
 	private Vector2 departureToArrival;
@@ -85,6 +87,7 @@ public class Portal : MonoBehaviour {
 		if (GlobalPanel.instance.physicsTelefrag.isOn) {
 			foreach (Creature fragMe in shouldBeTelefragged) {
 				fragMe.phenotype.Telefrag();
+				fragMe.phenotype.Telepoke(telepokeDirection * GlobalSettings.instance.phenotype.telepokeImpulseStrength);
 			}
 		}
 

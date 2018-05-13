@@ -26,9 +26,19 @@ public class Phenotype : MonoBehaviour {
 	public int visualTelefrag { get; private set; }
 	public void Telefrag() {
 		ChangeEnergy(-GlobalSettings.instance.quality.portalTeleportPeriod * GlobalSettings.instance.phenotype.telefragDamage);
-		visualTelefrag = 10;
+		visualTelefrag = GlobalSettings.instance.quality.portalTeleportPeriod;
 	}
 	//^ Telefrag ^
+
+	public void Telepoke(Vector2 impulse) {
+		AddImpulse(impulse);
+	}
+
+	private void AddImpulse(Vector2 impulse) {
+		foreach (Cell c in cellList) {
+			c.theRigidBody.AddForce(impulse, ForceMode2D.Impulse);
+		}
+	}	
 
 	[HideInInspector]
 	public Color individualColor = Color.black;
@@ -750,7 +760,7 @@ public class Phenotype : MonoBehaviour {
 	private void ApplyDetatchKick() {
 		foreach (Cell cell in detatchmentKick.Keys) {
 			if (cell != null) {
-				cell.GetComponent<Rigidbody2D>().AddForce(detatchmentKick[cell], ForceMode2D.Impulse);
+				cell.theRigidBody.AddForce(detatchmentKick[cell], ForceMode2D.Impulse);
 			}
 		}
 		detatchmentKick = null;
@@ -761,9 +771,9 @@ public class Phenotype : MonoBehaviour {
 	private void SetTrueCellDrag() {
 		foreach (Cell cell in cellList) {
 			if (cell.GetCellType() == CellTypeEnum.Leaf) {
-				cell.GetComponent<Rigidbody2D>().drag = 0.15f;
+				cell.theRigidBody.drag = 0.15f;
 			} else {
-				cell.GetComponent<Rigidbody2D>().drag = 0.15f;
+				cell.theRigidBody.drag = 0.15f;
 			}
 		}
 	}
@@ -774,7 +784,7 @@ public class Phenotype : MonoBehaviour {
 
 	private void SetSlideCellDrag() {
 		foreach (Cell cell in cellList) {
-			cell.GetComponent<Rigidbody2D>().drag = 0.2f;
+			cell.theRigidBody.drag = 0.2f;
 		}
 	}
 
@@ -946,13 +956,13 @@ public class Phenotype : MonoBehaviour {
 
 	public void Halt() {
 		foreach (Cell cell in cellList) {
-			cell.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+			cell.theRigidBody.velocity = Vector2.zero;
 		}
 	}
 
 	public void SetKinematic(bool kinematic) {
 		foreach (Cell cell in cellList) {
-			cell.GetComponent<Rigidbody2D>().isKinematic = kinematic;
+			cell.theRigidBody.isKinematic = kinematic;
 		}
 	}
 
@@ -965,8 +975,8 @@ public class Phenotype : MonoBehaviour {
 	public void Grab() {
 		isGrabbed = true;
 		foreach (Cell cell in cellList) {
-			cell.GetComponent<Rigidbody2D>().isKinematic = true;
-			cell.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+			cell.theRigidBody.isKinematic = true;
+			cell.theRigidBody.velocity = Vector2.zero;
 			//cell.GetComponent<Collider2D>().enabled = false;
 		}
 		MoveOriginToOrigo();
@@ -975,7 +985,7 @@ public class Phenotype : MonoBehaviour {
 	public void Release(Creature creature) {
 		isGrabbed = false;
 		foreach (Cell cell in cellList) {
-			cell.GetComponent<Rigidbody2D>().isKinematic = false;
+			cell.theRigidBody.isKinematic = false;
 			//cell.GetComponent<Collider2D>().enabled = true;
 		}
 		foreach (Cell cell in cellList) {

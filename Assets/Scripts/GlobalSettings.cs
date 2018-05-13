@@ -144,6 +144,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		//Teleport
 		public float telefragDamage = 1f; //damage on obstracting creature in J/s
+		public float telepokeImpulseStrength = 1f;
 
 		//Sterile
 		public float maxAgeAsChildless = 3600; //s

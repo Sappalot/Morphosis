@@ -17,7 +17,7 @@ public class RMBToolController : MouseDrag {
 				
 				Cell cell = World.instance.life.GetCellAt(downPositionMouse);
 				if (cell != null) {
-					spring.connectedBody = cell.GetComponent<Rigidbody2D>();
+					spring.connectedBody = cell.theRigidBody;
 					spring.anchor = downPositionMouse;
 					spring.distance = 0f;
 					spring.GetComponent<LineRenderer>().SetPosition(1, downPositionMouse);

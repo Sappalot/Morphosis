@@ -77,8 +77,8 @@ public class Edge : MonoBehaviour {
 		}
 		mIsWing = (frontCell.GetCellType() == CellTypeEnum.Muscle || backCell.GetCellType() == CellTypeEnum.Muscle);
 
-		frontCellRB = this.frontCell.GetComponent<Rigidbody2D>();
-		backCellRB =  this.backCell.GetComponent<Rigidbody2D>();
+		frontCellRB = this.frontCell.theRigidBody;
+		backCellRB =  this.backCell.theRigidBody;
 	}
 
 	public void UpdateGraphics() {

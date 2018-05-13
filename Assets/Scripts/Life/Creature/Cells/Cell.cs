@@ -19,6 +19,8 @@ public abstract class Cell : MonoBehaviour {
 	public SpringJoint2D southEastSpring;
 	public SpringJoint2D southWestSpring;
 
+	public Rigidbody2D theRigidBody;
+
 	//----- ^ Inspector ^
 
 	[HideInInspector]
@@ -92,6 +94,8 @@ public abstract class Cell : MonoBehaviour {
 											   //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
 	//--- Origin only ^
 	
+
+
 	// Controlled by cell mouth of other creature
 	public void AddPredator(JawCell predator) {
 		if (!predators.Contains(predator)) {
@@ -181,11 +185,17 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	[HideInInspector]
-	public float springFrequenzy = 5f; //5
+	virtual public float springFrequenzy {
+		get {
+			return 5f;
+		}
+	}
 
-	[HideInInspector]
-	public float springDamping = 11f; // 11
+	virtual public float springDamping {
+		get {
+			return 11f;
+		}
+	}
 
 	[HideInInspector]
 	public Creature m_creature;
@@ -274,15 +284,24 @@ public abstract class Cell : MonoBehaviour {
 
 	virtual public void UpdateSpringLengths() { }
 
-	virtual public void UpdateSpringFrequenzy() {
-		if (placentaSprings != null) {
-			for (int i = 0; i < placentaSprings.Length; i++) {
-				SpringJoint2D spring = placentaSprings[i];
-				spring.frequency = springFrequenzy;
-				spring.dampingRatio = springDamping;
-			}
+
+	public void UpdateSpringFrequenzy() {
+		if (HasOwnNeighbourCell(CardinalEnum.north)) {
+			northSpring.frequency = (this.springFrequenzy + northNeighbour.cell.springFrequenzy) / 2f;
+			northSpring.dampingRatio = (this.springDamping + northNeighbour.cell.springDamping) / 2f;
+		}
+
+		if (HasOwnNeighbourCell(CardinalEnum.southWest)) {
+			southWestSpring.frequency = (this.springFrequenzy + southWestNeighbour.cell.springFrequenzy) / 2f;
+			southWestSpring.dampingRatio = (this.springDamping + southWestNeighbour.cell.springDamping) / 2f;
+		}
+
+		if (HasOwnNeighbourCell(CardinalEnum.southEast)) {
+			southEastSpring.frequency = (this.springFrequenzy + southEastNeighbour.cell.springFrequenzy) / 2f;
+			southEastSpring.dampingRatio = (this.springDamping + southEastNeighbour.cell.springDamping) / 2f;
 		}
 	}
+
 
 	virtual public bool IsContracting() {
 		return false;
@@ -371,7 +390,7 @@ public abstract class Cell : MonoBehaviour {
 
 	public Vector2 velocity {
 		get {
-			return GetComponent<Rigidbody2D>().velocity;
+			return theRigidBody.velocity;
 		}
 	}
 
@@ -402,6 +421,8 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	private void Awake() {
+		theRigidBody = GetComponent<Rigidbody2D>();
+
 		cellNeighbourDictionary.Add(0, northEastNeighbour);
 		cellNeighbourDictionary.Add(1, northNeighbour);
 		cellNeighbourDictionary.Add(2, northWestNeighbour);
@@ -424,7 +445,7 @@ public abstract class Cell : MonoBehaviour {
 		foreach (SpringJoint2D springJoint in springJoints) {
 			Destroy(springJoint);
 		}
-		Destroy(GetComponent<Rigidbody2D>());
+		Destroy(theRigidBody);
 	}
 
 	public int GetDirectionOfOwnNeighbourCell(Creature me, Cell cell) {
@@ -507,7 +528,7 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 
-		GetComponent<Rigidbody2D>().AddForce(responceForce, ForceMode2D.Impulse);
+		theRigidBody.AddForce(responceForce, ForceMode2D.Impulse);
 	}
 
 	//Applies forces to neighbour and returns reaction force to this
@@ -533,8 +554,8 @@ public abstract class Cell : MonoBehaviour {
 		Vector3 alphaForce = Vector3.Cross(alphaVector, new Vector3(0f, 0f, 1f)) * magnitude;
 		Vector3 betaForce =  Vector3.Cross(betaVector, new Vector3(0f, 0f, -1f)) * magnitude;
 
-		alphaNeighbour.cell.GetComponent<Rigidbody2D>().AddForce(alphaForce, ForceMode2D.Impulse);
-		betaNeighbour.cell.GetComponent<Rigidbody2D>().AddForce(betaForce, ForceMode2D.Impulse);
+		alphaNeighbour.cell.theRigidBody.AddForce(alphaForce, ForceMode2D.Impulse);
+		betaNeighbour.cell.theRigidBody.AddForce(betaForce, ForceMode2D.Impulse);
 
 		return -(alphaForce + betaForce);
 
@@ -662,7 +683,7 @@ public abstract class Cell : MonoBehaviour {
 	public void UpdateSpringConnectionsIntra() {
 		// Intra creatures
 		if (HasOwnNeighbourCell(CardinalEnum.north)) {
-			northSpring.connectedBody = northNeighbour.cell.gameObject.GetComponent<Rigidbody2D>();
+			northSpring.connectedBody = northNeighbour.cell.theRigidBody;
 			northSpring.enabled = true;
 		}
 		else {
@@ -671,7 +692,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 
 		if (HasOwnNeighbourCell(CardinalEnum.southWest)) {
-			southWestSpring.connectedBody = southWestNeighbour.cell.gameObject.GetComponent<Rigidbody2D>();
+			southWestSpring.connectedBody = southWestNeighbour.cell.theRigidBody;
 			southWestSpring.enabled = true;
 		}
 		else {
@@ -680,7 +701,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 
 		if (HasOwnNeighbourCell(CardinalEnum.southEast)) {
-			southEastSpring.connectedBody = southEastNeighbour.cell.gameObject.GetComponent<Rigidbody2D>();
+			southEastSpring.connectedBody = southEastNeighbour.cell.theRigidBody;
 			southEastSpring.enabled = true;
 		}
 		else {
@@ -716,9 +737,12 @@ public abstract class Cell : MonoBehaviour {
 		placentaSprings = new SpringJoint2D[placentaCells.Count];
 		for (int i = 0; i < placentaCells.Count; i++) {
 			placentaSprings[i] = gameObject.AddComponent(typeof(SpringJoint2D)) as SpringJoint2D;
-			placentaSprings[i].connectedBody = placentaCells[i].gameObject.GetComponent<Rigidbody2D>();
+			placentaSprings[i].connectedBody = placentaCells[i].theRigidBody;
 			placentaSprings[i].distance = 1f;
 			placentaSprings[i].autoConfigureDistance = false; // Found ya! :)
+
+			placentaSprings[i].frequency = (springFrequenzy + placentaCells[i].springFrequenzy) / 2f;
+			placentaSprings[i].dampingRatio = (springDamping + placentaCells[i].springDamping) / 2f;
 		}
 	}
 
@@ -808,7 +832,7 @@ public abstract class Cell : MonoBehaviour {
 		cellData.timeOffset = timeOffset;
 		cellData.lastTime = lastTime;
 		cellData.radius = radius;
-		cellData.velocity = transform.GetComponent<Rigidbody2D>().velocity;
+		cellData.velocity = theRigidBody.velocity;
 		cellData.energy = energy;
 
 		//Egg
@@ -837,7 +861,7 @@ public abstract class Cell : MonoBehaviour {
 		timeOffset = cellData.timeOffset;
 		lastTime = cellData.lastTime;
 		radius = cellData.radius;
-		transform.GetComponent<Rigidbody2D>().velocity = cellData.velocity;
+		theRigidBody.velocity = cellData.velocity;
 		energy = cellData.energy;
 
 		// Egg
@@ -1001,6 +1025,16 @@ public abstract class Cell : MonoBehaviour {
 
 		radius = 0.5f;
 		transform.localScale = new Vector3(1f, 1f, 1f);
+
+		if (northSpring != null) {
+			northSpring.distance = 1f;
+		}
+		if (southWestSpring != null) {
+			southWestSpring.distance = 1f;
+		}
+		if (southEastSpring != null) {
+			southEastSpring.distance = 1f;
+		}
 	}
 
 	// Pooling
