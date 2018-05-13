@@ -8,9 +8,10 @@ public class EffectPlayer : MonoSingleton<EffectPlayer> {
 	public Sprite death;
 	public Sprite detatch;
 
-	public void Play(EffectEnum type, Vector2 position) {
+	public void Play(EffectEnum type, Vector2 position, float angle = 0f) {
 		Animator animator = EffectPool.instance.Borrow();
 		animator.transform.position = position;
+		animator.transform.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
 		animator.SetTrigger("expand");
 		animator.GetComponent<SpriteRenderer>().enabled = true;
 
