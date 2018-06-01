@@ -36,6 +36,12 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
+	public bool hasOriginCell {
+		get {
+			return geneCellList.Count > 0;
+		}
+	}
+
 	//Hack
 	public Gene[] GetMutatedClone(float strength) {
 		Gene[] temporary = new Gene[genomeLength];

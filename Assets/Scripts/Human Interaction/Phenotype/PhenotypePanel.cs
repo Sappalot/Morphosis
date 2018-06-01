@@ -7,6 +7,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public Text creatureEnergy;
 	public Text creatureSpeed;
 	public Text creatureEffect;
+	public Text creatureEffectAverage;
 	public CellPanel cellPanel;
 
 	private bool isDirty = true;
@@ -61,6 +62,8 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 				creatureCellCount.text = "Cells: ";
 				creatureEnergy.text = "Energy:";
 				creatureEffect.text = "Effect:";
+				creatureEffectAverage.text = "<Effect>:";
+				creatureSpeed.text = "Speed:";
 
 				isDirty = false;
 				return;
@@ -69,10 +72,11 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			creatureAge.text = "Age: " + TimeUtil.GetTimeString((ulong)(solo.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime));
 			creatureCellCount.text = "Cells: " + solo.cellCount + " (" + solo.cellsCountFullyGrown + ")";
 			creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energy / solo.phenotype.cellCount);
+
+			creatureEffect.text =        string.Format("Effect: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.effectProduction, solo.phenotype.effectConsumption, solo.phenotype.effect);
+			creatureEffectAverage.text = string.Format("<Effect>: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.effectProduction / solo.phenotype.cellCount, solo.phenotype.effectConsumption / solo.phenotype.cellCount, solo.phenotype.effect / solo.phenotype.cellCount);
+
 			creatureSpeed.text = string.Format("Speed: {0:F2} m/s", solo.phenotype.speed);
-
-			creatureEffect.text = string.Format("Effect: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.effectProduction, solo.phenotype.effectConsumption, solo.phenotype.effect);
-
 
 			isDirty = false;
 		}

@@ -140,10 +140,9 @@ public class Life : MonoBehaviour {
 
 	//This is the only way, where the creature GO is deleted
 	public void KillCreatureSafe(Creature creature, bool playEffects) {
-		
 		creature.DetatchFromMother(false, true);
-		foreach(Creature childSoul in creature.GetChildren()) {
-			childSoul.DetatchFromMother(false, true);
+		foreach (Creature child in creature.GetChildren()) {
+			child.DetatchFromMother(false, true);
 		}
 
 		if (playEffects && GlobalPanel.instance.graphicsEffects.isOn) {
@@ -164,7 +163,9 @@ public class Life : MonoBehaviour {
 		Cell[] forgottenGeneCells = creature.genotype.geneCellsTransform.GetComponents<Cell>();
 		deletedCellCount += forgottenGeneCells.Length;
 
-		//Destroy(creature.gameObject); //TODO: return it to pool instead
+		
+
+		//This is the only place where creature is recycled / destroyed
 		CreaturePool.instance.Recycle(creature);
 		creatureDictionary.Remove(creature.id);
 		creatureList.Remove(creature);
@@ -370,8 +371,6 @@ public class Life : MonoBehaviour {
 	// If (editGenotype) updated from FixedUpdate
 	// Everything that needs to be updated when genome is changed, cells are removed, cells are added, creatures are spawned, creatures die
 	public void UpdateStructure() {
-		//UpdateSoulReferences();
-
 		foreach (Creature c in creatureList) {
 			c.UpdateStructure();
 		}

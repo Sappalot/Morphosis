@@ -572,10 +572,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 	}
 
-	public void RemoveNullCreaturesFromSelection() {
+	public void RemoveDeletedAndRecycledFromSelection() {
 		List<Creature> keepers = new List<Creature>();
 		foreach (Creature enbodied in selection) {
-			if (enbodied != null) {
+			if (enbodied != null && enbodied.phenotype.isAlive) {
 				keepers.Add(enbodied);
 			}
 		}
@@ -592,7 +592,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update CreatureSelectionPanel");
 
-			RemoveNullCreaturesFromSelection();
+			RemoveDeletedAndRecycledFromSelection();
 
 			if (selection.Count == 0) {
 				selectedCreatureText.text = "";

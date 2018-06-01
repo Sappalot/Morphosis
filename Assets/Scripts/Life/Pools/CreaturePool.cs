@@ -37,7 +37,6 @@ public class CreaturePool : MonoSingleton<CreaturePool> {
 		return borrowCreature;
 	}
 
-	//Note: make sure there are no object out there with references to this returned cell
 	public void Recycle(Creature creature) {
 		if (!GlobalSettings.instance.pooling.creature) {
 			Destroy(creature.gameObject);
