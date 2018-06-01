@@ -86,12 +86,14 @@ public class CellPool : MonoBehaviour {
 
 	//Note: make sure there are no object out there with references to this returned cell
 	public void Recycle(Cell cell) {
+		cell.OnRecycleCell(); //should be done even if we are going to delete cell (because jaws need to free their prays)
+
 		if (!GlobalSettings.instance.pooling.cell) {
 			Destroy(cell.gameObject);
 			return;
 		}
 
-		cell.OnRecycleCell();
+
 		cell.transform.parent = transform;
 		cell.gameObject.SetActive(false);
 		storedQueues[cell.GetCellType()].Enqueue(cell);

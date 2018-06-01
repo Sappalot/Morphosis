@@ -4,6 +4,7 @@ using SerializerFree.Serializers;
 using System.IO;
 
 public class World : MonoSingleton<World> {
+	[HideInInspector]
 	public Life life;
 	public Life lifePrefab;
 

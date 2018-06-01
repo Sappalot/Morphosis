@@ -976,18 +976,12 @@ public abstract class Cell : MonoBehaviour {
 
 	// ^ Update ^
 
-	virtual public void BeforeKill() {
+	//Phenotype only
+	virtual public void OnRecycleCell() {
 		foreach (JawCell predator in predators) {
 			predator.RemovePray(this); // make jaw forget about me as a pray of his
 		}
 		predators.Clear();
-
-	}
-
-	// Pooling
-	//Phenotype only
-	virtual public void OnRecycleCell() {
-		BeforeKill();
 
 		//My own 3 springs to others
 		if (northSpring != null) {
@@ -1036,11 +1030,6 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	// Pooling
+	virtual public void OnBorrowToWorld() {}
 
-	virtual public void OnBorrowToWorld() {
-		BeforeKill();
-	}
-
-	// ^ Pooling ^ 
 }

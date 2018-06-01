@@ -610,8 +610,7 @@ public class Phenotype : MonoBehaviour {
 			CellPanel.instance.selectedCell = null;
 		}
 
-		// Clean up cell: Has vereybodey forgotten about me?
-		deleteCell.BeforeKill();
+		// Clean up cell: Has vereybodey forgotten about me? Should be right, mate!
 		World.instance.life.cellPool.Recycle(deleteCell);
 
 		if (deleteDebris) {
