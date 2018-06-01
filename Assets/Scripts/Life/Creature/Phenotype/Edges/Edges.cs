@@ -59,7 +59,9 @@ public class Edges : MonoBehaviour {
 			if (GlobalPanel.instance.graphicsPeriphery.isOn && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 				peripheryLoop.enabled = true;
 				if (index < peripheryLoop.positionCount) {
-					peripheryLoop.SetPosition(index, edgeList[index].parentCell.position);
+					if (edgeList[index].parentCell != null) {
+						peripheryLoop.SetPosition(index, edgeList[index].parentCell.position);
+					}
 				}
 			} else {
 				peripheryLoop.enabled = false;

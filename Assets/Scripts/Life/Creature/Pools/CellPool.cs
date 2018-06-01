@@ -12,6 +12,8 @@ public class CellPool : MonoBehaviour {
 	public ShellCell shellCellPrefab;
 	public VeinCell veinCellPrefab;
 
+	private List<bool> vacantPositions = new List<bool>();
+
 	public int GetStoredCellCount(CellTypeEnum type) {
 		return storedQueues[type].Count;
 	}
@@ -94,11 +96,20 @@ public class CellPool : MonoBehaviour {
 		cell.gameObject.SetActive(false);
 		storedQueues[cell.GetCellType()].Enqueue(cell);
 		loanedCount[cell.GetCellType()]--;
+
+		//int pos = FirstVacantPosition();
+		//int y = pos / 100;
+		//int x = pos % 100;
+		//cell.transform.position = new Vector2(10f + 2f * x, 50f - y * 2f);
+		//OccupyPosition(pos);
+		//cell.poolPosition = pos;
+		//cell.theRigidBody.velocity = Vector2.zero;
 	}
 
 	private Cell PopCell(Queue<Cell> queue) {
 		if (queue.Count > 0) {
 			Cell cell = queue.Dequeue();
+			//FreePosition(cell.poolPosition);
 			cell.gameObject.SetActive(true); // Causes: Assertion failed: Invalid SortingGroup index set in Renderer
 			return cell;
 		}
@@ -131,4 +142,22 @@ public class CellPool : MonoBehaviour {
 		return cell;
 	}
 
+	private int FirstVacantPosition() {
+		for (int pos = 0; pos < vacantPositions.Count; pos++) {
+			if (vacantPositions[pos]) {
+				return pos;
+			}
+		}
+		vacantPositions.Add(true);
+
+		return vacantPositions.Count - 1;
+	}
+
+	private void OccupyPosition(int pos) {
+		vacantPositions[pos] = false;
+	}
+
+	private void FreePosition(int pos) {
+		vacantPositions[pos] = true;
+	}
 }

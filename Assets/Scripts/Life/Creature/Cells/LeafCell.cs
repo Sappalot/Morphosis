@@ -16,6 +16,11 @@ public class LeafCell : Cell {
 		}
 	}
 
+	public void Awake() {
+		OnBorrowToWorld();
+		base.Init();
+	}
+
 	public override void OnBorrowToWorld() {
 		if (raycastHitArray == null) {
 			raycastHitArray = new RaycastHit2D[(int)GlobalSettings.instance.phenotype.leafCellSunMaxRange];

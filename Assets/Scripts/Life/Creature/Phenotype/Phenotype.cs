@@ -611,7 +611,7 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		// Clean up cell: Has vereybodey forgotten about me?
-
+		deleteCell.BeforeKill();
 		World.instance.life.cellPool.Recycle(deleteCell);
 
 		if (deleteDebris) {

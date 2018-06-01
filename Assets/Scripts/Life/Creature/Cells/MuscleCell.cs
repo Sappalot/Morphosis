@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 public class MuscleCell : Cell {
+	public Transform scale;
 
 	private float modularTime = 0f;
 	private bool isContracting;
@@ -61,10 +62,10 @@ public class MuscleCell : Cell {
 		//radius = radiusGoal;
 
 		if (CameraUtils.IsObservedLazy(position, GlobalSettings.instance.orthoMaxHorizonDetailedCell)) {
-			transform.localScale = new Vector3(radius * 2f, radius * 2f, 1f); //costy, only if in frustum and close
+			scale.localScale = new Vector3(radius * 2f, radius * 2f, 1f); //costy, only if in frustum and close
 			scaleIsDirty = true;
 		} else if (scaleIsDirty) {
-			transform.localScale = new Vector3(1f, 1f, 1f);
+			scale.localScale = new Vector3(1f, 1f, 1f);
 			scaleIsDirty = false;
 		}
 	}

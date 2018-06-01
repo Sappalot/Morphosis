@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using System.Linq;
 
 public abstract class Cell : MonoBehaviour {
+	
 	//------- Inspector
 
 	public SpriteRenderer cellSelectedSprite; //transparent
@@ -19,9 +20,12 @@ public abstract class Cell : MonoBehaviour {
 	public SpringJoint2D southEastSpring;
 	public SpringJoint2D southWestSpring;
 
-	public Rigidbody2D theRigidBody;
-
 	//----- ^ Inspector ^
+	[HideInInspector]
+	public int poolPosition;
+
+	[HideInInspector]
+	public Rigidbody2D theRigidBody;
 
 	[HideInInspector]
 	public Gene gene;
@@ -92,8 +96,8 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public float originDetatchEnergyThreshold; // J  If we have more energy than this in the origin cell and it is attached with mother, it will separate
 											   //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
-	//--- Origin only ^
-	
+											   //--- Origin only ^
+
 
 
 	// Controlled by cell mouth of other creature
@@ -236,7 +240,7 @@ public abstract class Cell : MonoBehaviour {
 	public void UpdatePlacentaSpringLengths() {
 		foreach (SpringJoint2D placentaSpring in placentaSprings) {
 			placentaSpring.distance = radius + placentaSpring.connectedBody.gameObject.GetComponent<Cell>().radius;
-		}		
+		}
 	}
 
 	// Total
@@ -395,18 +399,18 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	[HideInInspector]
-	public CellNeighbour northEastNeighbour =   new CellNeighbour(0);
+	public CellNeighbour northEastNeighbour = new CellNeighbour(0);
 	[HideInInspector]
-	public CellNeighbour northNeighbour     =   new CellNeighbour(1);
+	public CellNeighbour northNeighbour = new CellNeighbour(1);
 	[HideInInspector]
-	public CellNeighbour northWestNeighbour =   new CellNeighbour(2);
+	public CellNeighbour northWestNeighbour = new CellNeighbour(2);
 	[HideInInspector]
-	public CellNeighbour southWestNeighbour =   new CellNeighbour(3); 
+	public CellNeighbour southWestNeighbour = new CellNeighbour(3);
 	[HideInInspector]
-	public CellNeighbour southNeighbour     =   new CellNeighbour(4);
+	public CellNeighbour southNeighbour = new CellNeighbour(4);
 	[HideInInspector]
-	public CellNeighbour southEastNeighbour =   new CellNeighbour(5);
-   
+	public CellNeighbour southEastNeighbour = new CellNeighbour(5);
+
 	private Dictionary<int, CellNeighbour> cellNeighbourDictionary = new Dictionary<int, CellNeighbour>();
 
 
@@ -421,6 +425,10 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	private void Awake() {
+		Init();
+	}
+
+	public void Init() {
 		theRigidBody = GetComponent<Rigidbody2D>();
 
 		cellNeighbourDictionary.Add(0, northEastNeighbour);
@@ -468,14 +476,14 @@ public abstract class Cell : MonoBehaviour {
 		int springs = 0;
 		Vector3 responceForce = new Vector3();
 		for (int cardinalIndex = 0; cardinalIndex < 12; cardinalIndex++) {
-			if(!HasNeighbourCell(cardinalIndex)) {
+			if (!HasNeighbourCell(cardinalIndex)) {
 				continue;
 			}
 			if (!HasNeighbourCell(cardinalIndex + 1)) {
 				//this(0)...empty(1)
 				if (HasNeighbourCell(cardinalIndex + 2)) {
 					//this(0)...empty(1)...full(2)
-					responceForce += ApplyTorqueToPair(cardinalIndex, cardinalIndex+2);
+					responceForce += ApplyTorqueToPair(cardinalIndex, cardinalIndex + 2);
 					springs++;
 					//if (springs >= groups - 1) {
 					if (springs >= groups) {
@@ -484,47 +492,40 @@ public abstract class Cell : MonoBehaviour {
 					//jump to where spring was attached
 					cardinalIndex++; //+1
 					continue;
-				}
-				else {
+				} else {
 					//this(0)...empty(1)...empty(2)
 					if (HasNeighbourCell(cardinalIndex + 3)) {
 						//this(0)...empty(1)...empty(2)...full(3)
 						responceForce += ApplyTorqueToPair(cardinalIndex, cardinalIndex + 3);
 						springs++;
 						//if (springs >= groups - 1) {
-						if (springs >= groups)
-						{
+						if (springs >= groups) {
 							break;
 						}
 
 						//jump to where spring was attached
 						cardinalIndex += 2; //+1
 						continue;
-					}
-					else {
+					} else {
 						//this(0)...empty(1)...empty(2)...empty(3)
-						if (HasNeighbourCell(cardinalIndex + 4))
-						{
+						if (HasNeighbourCell(cardinalIndex + 4)) {
 							//this(0)...empty(1)...empty(2)...empty(3)...full(4)
 							responceForce += ApplyTorqueToPair(cardinalIndex, cardinalIndex + 4);
 							springs++;
 							//if (springs >= groups - 1) {
-							if (springs >= groups)
-							{
+							if (springs >= groups) {
 								break;
 							}
 
 							//jump to where spring was attached
 							cardinalIndex += 3; //+1
 							continue;
-						}
-						else
-						{
+						} else {
 							//this(0)...empty(1)...empty(2)...empty(3)...empty(4)
 							break; //if there is a "this + 4" aka "this-1" it must be connected to "this". if not then "this" is the only neibour and we would not be here in the first place
 						}
 					}
-				} 
+				}
 			}
 		}
 
@@ -538,7 +539,7 @@ public abstract class Cell : MonoBehaviour {
 
 		Vector3 alphaVector = alphaNeighbour.coreToThis; //Allways after = lower angle
 		Vector3 betaVector = betaNeighbour.coreToThis; //Allways ahead = lower angle
-		//float angle = Vector3.Angle(alphaVector, betaVector);
+													   //float angle = Vector3.Angle(alphaVector, betaVector);
 		float angle = LongAngle(alphaVector, betaVector);
 
 		float goalAngle = AngleUtil.GetAngleDifference(alphaIndex, betaIndex);
@@ -552,7 +553,7 @@ public abstract class Cell : MonoBehaviour {
 		//float k2 = 0.0003f;
 		float magnitude = k1 * diff + Mathf.Sign(diff) * k2 * diff * diff;
 		Vector3 alphaForce = Vector3.Cross(alphaVector, new Vector3(0f, 0f, 1f)) * magnitude;
-		Vector3 betaForce =  Vector3.Cross(betaVector, new Vector3(0f, 0f, -1f)) * magnitude;
+		Vector3 betaForce = Vector3.Cross(betaVector, new Vector3(0f, 0f, -1f)) * magnitude;
 
 		alphaNeighbour.cell.theRigidBody.AddForce(alphaForce, ForceMode2D.Impulse);
 		betaNeighbour.cell.theRigidBody.AddForce(betaForce, ForceMode2D.Impulse);
@@ -572,11 +573,9 @@ public abstract class Cell : MonoBehaviour {
 	public SpringJoint2D GetSpring(Cell askingCell) {
 		if (HasOwnNeighbourCell(CardinalEnum.north) && askingCell == northNeighbour.cell) {
 			return northSpring;
-		}
-		else if (HasOwnNeighbourCell(CardinalEnum.southEast) && askingCell == southEastNeighbour.cell) {
+		} else if (HasOwnNeighbourCell(CardinalEnum.southEast) && askingCell == southEastNeighbour.cell) {
 			return southEastSpring;
-		}
-		else if (HasOwnNeighbourCell(CardinalEnum.southWest) && askingCell == southWestNeighbour.cell) {
+		} else if (HasOwnNeighbourCell(CardinalEnum.southWest) && askingCell == southWestNeighbour.cell) {
 			return southWestSpring;
 		}
 		return null;
@@ -594,14 +593,12 @@ public abstract class Cell : MonoBehaviour {
 						northSpring.connectedBody = null;
 						northSpring.enabled = false;
 					}
-				}
-				else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalEnum.southWest) {
+				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalEnum.southWest) {
 					if (southWestSpring != null) {
 						southWestSpring.connectedBody = null;
 						southWestSpring.enabled = false;
 					}
-				}
-				else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalEnum.southEast) {
+				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalEnum.southEast) {
 					if (southEastSpring != null) {
 						southEastSpring.connectedBody = null;
 						southEastSpring.enabled = false;
@@ -640,7 +637,7 @@ public abstract class Cell : MonoBehaviour {
 		if (hasNeighbour) { // !(mapPosition == new Vector2i() && neighbourCount == 0)
 			UpdateNeighbourAngles();
 
-			float angleDiffFromBindpose = 0f; 
+			float angleDiffFromBindpose = 0f;
 			for (int index = 0; index < 6; index++) {
 				if (HasNeighbourCell(index)) {
 					angleDiffFromBindpose = AngleUtil.GetAngleDifference(cellNeighbourDictionary[index].bindAngle, cellNeighbourDictionary[index].angle);
@@ -685,8 +682,7 @@ public abstract class Cell : MonoBehaviour {
 		if (HasOwnNeighbourCell(CardinalEnum.north)) {
 			northSpring.connectedBody = northNeighbour.cell.theRigidBody;
 			northSpring.enabled = true;
-		}
-		else {
+		} else {
 			northSpring.connectedBody = null;
 			northSpring.enabled = false;
 		}
@@ -694,8 +690,7 @@ public abstract class Cell : MonoBehaviour {
 		if (HasOwnNeighbourCell(CardinalEnum.southWest)) {
 			southWestSpring.connectedBody = southWestNeighbour.cell.theRigidBody;
 			southWestSpring.enabled = true;
-		}
-		else {
+		} else {
 			southWestSpring.connectedBody = null;
 			southWestSpring.enabled = false;
 		}
@@ -703,8 +698,7 @@ public abstract class Cell : MonoBehaviour {
 		if (HasOwnNeighbourCell(CardinalEnum.southEast)) {
 			southEastSpring.connectedBody = southEastNeighbour.cell.theRigidBody;
 			southEastSpring.enabled = true;
-		}
-		else {
+		} else {
 			southEastSpring.connectedBody = null;
 			southEastSpring.enabled = false;
 		}
@@ -836,14 +830,14 @@ public abstract class Cell : MonoBehaviour {
 		cellData.energy = energy;
 
 		//Egg
-		cellData.eggCellFertilizeThreshold =     eggCellFertilizeThreshold;
-		cellData.eggCellDetatchMode =            eggCellDetatchMode;
-		cellData.eggCellDetatchSizeThreshold =   eggCellDetatchSizeThreshold;
+		cellData.eggCellFertilizeThreshold = eggCellFertilizeThreshold;
+		cellData.eggCellDetatchMode = eggCellDetatchMode;
+		cellData.eggCellDetatchSizeThreshold = eggCellDetatchSizeThreshold;
 		cellData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
 
 		// Origin
-		cellData.originDetatchMode =            originDetatchMode;
-		cellData.originDetatchSizeThreshold =   originDetatchSizeThreshold;
+		cellData.originDetatchMode = originDetatchMode;
+		cellData.originDetatchSizeThreshold = originDetatchSizeThreshold;
 		cellData.originDetatchEnergyThreshold = originDetatchEnergyThreshold;
 
 		return cellData;
@@ -865,9 +859,9 @@ public abstract class Cell : MonoBehaviour {
 		energy = cellData.energy;
 
 		// Egg
-		eggCellFertilizeThreshold =     cellData.eggCellFertilizeThreshold;
-		eggCellDetatchMode =            cellData.eggCellDetatchMode;
-		eggCellDetatchSizeThreshold =   cellData.eggCellDetatchSizeThreshold;
+		eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold;
+		eggCellDetatchMode = cellData.eggCellDetatchMode;
+		eggCellDetatchSizeThreshold = cellData.eggCellDetatchSizeThreshold;
 		eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold;
 
 		// Origin
@@ -889,43 +883,47 @@ public abstract class Cell : MonoBehaviour {
 				} else {
 					filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
 				}
-			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.energy) {
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.energy) {
 				float life = energy / 100f;
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(life);
-			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effect) {
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effect) {
 				float effectValue = 0.5f + effect * 0.1f;
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
-			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effectCreature) {
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effectCreature) {
 				float effectValue = 0.5f + (creature.phenotype.effect / creature.phenotype.cellCount) * 0.1f;
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
-			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.leafExposure) {
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.leafExposure) {
 				if (GetCellType() == CellTypeEnum.Leaf) {
 					float effectValue = (this as LeafCell).lowPassExposure;
 					filledCircleSprite.color = ColorScheme.instance.cellGradientLeafExposure.Evaluate(effectValue);
 				} else {
 					filledCircleSprite.color = Color.blue;
 				}
-			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.childCountCreature) {
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.childCountCreature) {
 				float value = 0.05f + creature.ChildrenCountIncDead() * 0.1f;
 				filledCircleSprite.color = ColorScheme.instance.cellCreatureChildCount.Evaluate(value);
-			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.predatorPray) {
-				float effectValue = 0.5f + effectExternal * 0.02f;
-				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
-				if (effectExternal == 0f) {
-					filledCircleSprite.color = Color.blue;
-				} else if (GetCellType() == CellTypeEnum.Jaw && effectExternal < 0f) {
-					filledCircleSprite.color = Color.white;
-				} else {
-					filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.predatorPray) {
+				//float effectValue = 0.5f + effectExternal * 0.02f;
+				//filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
+				//if (effectExternal == 0f) {
+				//	filledCircleSprite.color = Color.blue;
+				//} else if (GetCellType() == CellTypeEnum.Jaw && effectExternal < 0f) {
+				//	filledCircleSprite.color = Color.white;
+				//} else {
+				//	filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
+				//}
+				//--
+				filledCircleSprite.color = Color.blue;
+				if (GetCellType() == CellTypeEnum.Jaw) {
+					if ((this as JawCell).prayCount > 0) {
+						filledCircleSprite.color = Color.green;
+					}
 				}
-			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.typeAndPredatorPray) {
+				if (predatorCount > 0) {
+					filledCircleSprite.color = Color.red;
+				}
+
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.typeAndPredatorPray) {
 				float effectValue = 0.5f + effectExternal * 0.02f;
 				if (effectExternal == 0f) {
 					filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
@@ -934,11 +932,9 @@ public abstract class Cell : MonoBehaviour {
 				} else {
 					filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 				}
-			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.update) {
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.update) {
 				filledCircleSprite.color = didUpdateFunctionThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
-			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.creation) {
+			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.creation) {
 				if (creature.creation == CreatureCreationEnum.Born) {
 					filledCircleSprite.color = Color.magenta;
 				} else if (creature.creation == CreatureCreationEnum.Cloned) {
@@ -980,15 +976,18 @@ public abstract class Cell : MonoBehaviour {
 
 	// ^ Update ^
 
+	virtual public void BeforeKill() {
+		foreach (JawCell predator in predators) {
+			predator.RemovePray(this); // make jaw forget about me as a pray of his
+		}
+		predators.Clear();
+
+	}
+
 	// Pooling
 	//Phenotype only
 	virtual public void OnRecycleCell() {
-		//Predators, remembering me as pray
-		foreach (JawCell predator in predators) {
-			//Debug.Log("Removeing pray: " + this.creature.id + ", Cell: " + GetCellType() + " from " + predator);
-			predator.RemovePray(this); // make jaw forget about me as a pray of his
-									   //predators.Remove(predator);
-		}
+		BeforeKill();
 
 		//My own 3 springs to others
 		if (northSpring != null) {
@@ -1039,7 +1038,9 @@ public abstract class Cell : MonoBehaviour {
 
 	// Pooling
 
-	virtual public void OnBorrowToWorld() {}
+	virtual public void OnBorrowToWorld() {
+		BeforeKill();
+	}
 
 	// ^ Pooling ^ 
 }
