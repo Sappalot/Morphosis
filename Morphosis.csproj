@@ -305,6 +305,7 @@
     <Compile Include="Assets\Scripts\Human Interaction\Genotype\LockedUnlockedPanel.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\Genotype\ReferenceGraphics.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\GlobalPanel.cs" />
+    <Compile Include="Assets\Scripts\Human Interaction\Graphs\ResizeViewport.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\Interaction.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\MenuPopup.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\MouseAction\MouseAction.cs" />
@@ -314,8 +315,8 @@
     <Compile Include="Assets\Scripts\Human Interaction\Phenotype\CellPanels\JawCellPanel.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\Phenotype\CellPanels\LeafCellPanel.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\Phenotype\PhenotypePanel.cs" />
-    <Compile Include="Assets\Scripts\Human Interaction\RMBToolController.cs" />
-    <Compile Include="Assets\Scripts\Human Interaction\RMBToolModePanel.cs" />
+    <Compile Include="Assets\Scripts\Human Interaction\RMBTool\RMBToolController.cs" />
+    <Compile Include="Assets\Scripts\Human Interaction\RMBTool\RMBToolModePanel.cs" />
     <Compile Include="Assets\Scripts\Human Interaction\Selection\CreatureSelectionController.cs" />
     <Compile Include="Assets\Scripts\Inanimate\Terrain.cs" />
     <Compile Include="Assets\Scripts\Life\Creature\AngleUtil.cs" />
@@ -413,6 +414,7 @@
     <None Include="Assets\SerializerFree\Documentation\Getting Started.txt" />
     <None Include="Assets\SerializerFree\Documentation\Readme.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>
