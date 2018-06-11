@@ -1,24 +1,39 @@
 ﻿using UnityEngine;
 
-public class GraphPlotter : MonoBehaviour {
+public class GraphPlotter : MonoSingleton<GraphPlotter> {
 
 	public ResizeViewport viewport;
 	public Graph fpsGraph;
-	private Vector2i res;
+	public Graph cellCountGraph;
 
-	// Use this for initialization
+	[HideInInspector]
+	public History history;
+
+	private Vector2i res;
+	
+
 	void Start() {
+		
 		res = new Vector2i();
 	}
 
-	// Update is called once per frame
-	void Update() {
+	private bool isDirty;
 
+	public void MakeDirty() {  
+		isDirty = true; 
+	}
+
+	private void Update() {
 		if (res.x != viewport.width || res.y != viewport.height) {
 			fpsGraph.UpdateResolution(viewport);
-			//Debug.Log("w: " + viewport.width + ", h: " + viewport.height);
+			cellCountGraph.UpdateResolution(viewport);
+			res = new Vector2i(viewport.width, viewport.height); 
+		}
 
-			res = new Vector2i(viewport.width, viewport.height);
+		if (isDirty && history != null) {
+			fpsGraph.UpdateDataFPS(viewport, history);
+			cellCountGraph.UpdateDataCellCount(viewport, history);
+			isDirty = false;
 		}
 	}
 }

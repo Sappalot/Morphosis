@@ -33,6 +33,9 @@ public class World : MonoSingleton<World> {
 		//World.instance.life.EvoFixedUpdate(fixedTime);
 
 		CreateLife();
+
+		history.Init();
+		GraphPlotter.instance.history = history;
 	}
 
 	private void Update() {
@@ -55,31 +58,49 @@ public class World : MonoSingleton<World> {
 			World.instance.life.UpdateGraphics();
 		}
 
-		if (redGCText > 0) {
-			GlobalPanel.instance.garbageCollectText.color = Color.red;
-		} else {
-			GlobalPanel.instance.garbageCollectText.color = Color.black;
-		}
+		//if (redGCText > 0) {
+		//	GlobalPanel.instance.garbageCollectText.color = Color.red;
+		//} else {
+		//	GlobalPanel.instance.garbageCollectText.color = Color.black;
+		//}
 	}
 
-	private int redGCText = 0;
-	private int garbageFixed = 0;
+	private int updateTimeCount;
+	private History history = new History();
+
+	//private int redGCText = 0;
+	//private int garbageFixed = 0;
 	private void FixedUpdate() {
 		if (life == null) {
 			return;
 		}
-		if (GlobalPanel.instance.garbageCollectPeriodSlider.value != 0) {
-			garbageFixed++;
-			if (garbageFixed >= GlobalPanel.instance.garbageCollectPeriodSlider.value * 10) {
-				garbageFixed = 0;
-			}
-			if (garbageFixed == 0) {
-				System.GC.Collect();
-				redGCText = 2;
-			} else {
-				redGCText--;
-			}
+		
+		if (updateTimeCount >= 20f) {
+			updateTimeCount = 0;
+			Record record = new Record();
+			record.fps = GlobalPanel.instance.frameRate;
+			record.cellCount = life.cellAliveCount;
+			history.AddRecord(record);
+			GraphPlotter.instance.MakeDirty();
+		} else {
+			updateTimeCount++;
+			//GraphPlotter.instance.Tick();
+			//GraphPlotter.instance.MakeDirty();
 		}
+
+
+		//if (GlobalPanel.instance.garbageCollectPeriodSlider.value != 0) {
+		//	garbageFixed++;
+		//	if (garbageFixed >= GlobalPanel.instance.garbageCollectPeriodSlider.value * 10) {
+		//		garbageFixed = 0;
+		//	}
+		//	if (garbageFixed == 0) {
+		//		System.GC.Collect();
+		//		redGCText = 2;
+		//	} else {
+		//		redGCText--;
+		//	}
+		//}
 
 		life.UpdateStructure();
 

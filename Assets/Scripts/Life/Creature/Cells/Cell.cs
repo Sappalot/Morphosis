@@ -394,7 +394,13 @@ public abstract class Cell : MonoBehaviour {
 
 	public Vector2 velocity {
 		get {
-			return theRigidBody.velocity;
+			Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
+			if (rb != null) {
+				return gameObject.GetComponent<Rigidbody2D>().velocity;
+			} else {
+				return Vector2.zero;
+			}
+			
 		}
 	}
 

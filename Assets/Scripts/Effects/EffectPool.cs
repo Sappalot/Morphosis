@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EffectPool : MonoSingleton<EffectPool> {
 	public Animator creatureDeathEffectPrefab;
-
+	private int serialNumber = 0;
 	private Queue<Animator> storedQueues = new Queue<Animator>();
 
 	public override void Init() {
@@ -52,6 +52,7 @@ public class EffectPool : MonoSingleton<EffectPool> {
 	private Animator Instantiate() {
 		Animator animator = Instantiate(creatureDeathEffectPrefab, Vector3.zero, Quaternion.Euler(0f, 0f, 0f));
 		animator.transform.parent = transform;
+		animator.name = "Sprite Expand " + serialNumber++;
 		return animator;
 	}
 }
