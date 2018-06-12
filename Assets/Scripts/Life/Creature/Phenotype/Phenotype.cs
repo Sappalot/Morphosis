@@ -22,15 +22,9 @@ public class Phenotype : MonoBehaviour {
 	public Edges edges; //AKA Wings
 	public Veins veins;
 
-	//Telefrag
-	public int visualTelefrag { get; private set; }
-	public void Telefrag() {
-		ChangeEnergy(-GlobalSettings.instance.quality.portalTeleportPeriod * GlobalSettings.instance.phenotype.telefragDamage);
-		visualTelefrag = GlobalSettings.instance.quality.portalTeleportPeriod;
-	}
-	//^ Telefrag ^
-
+	public int visualTelepoke { get; private set; }
 	public void Telepoke(Vector2 impulse) {
+		visualTelepoke = GlobalSettings.instance.quality.portalTeleportPeriod;
 		AddImpulse(impulse);
 	}
 
@@ -125,6 +119,16 @@ public class Phenotype : MonoBehaviour {
 		get {
 			return cellMap.cellCount;
 		}
+	}
+
+	public int GetCellCount(CellTypeEnum type) {
+		int count = 0;
+		foreach (Cell c in cellList) {
+			if (c.GetCellType() == type) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public bool IsPartlyInside(Rect area) {
@@ -1297,8 +1301,8 @@ public class Phenotype : MonoBehaviour {
 		
 
 		//Viual
-		if (visualTelefrag > 0) {
-			visualTelefrag--;
+		if (visualTelepoke > 0) {
+			visualTelepoke--;
 		}
 	}
 

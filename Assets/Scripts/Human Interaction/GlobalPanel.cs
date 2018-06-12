@@ -74,7 +74,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	public Toggle physicsTeleport;
-	public Toggle physicsTelefrag;
+	public Toggle physicsTelepoke;
 	public Toggle physicsKillFugitive;
 	public Toggle physicsKillSterile;
 	public Toggle physicsGrow;

@@ -884,7 +884,7 @@ public abstract class Cell : MonoBehaviour {
 	public void UpdateGraphics() {
 		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
 			if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.type) {
-				if (creature.phenotype.visualTelefrag > 0) {
+				if (creature.phenotype.visualTelepoke > 0) {
 					filledCircleSprite.color = Color.white;
 				} else {
 					filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());

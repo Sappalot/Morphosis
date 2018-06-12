@@ -65,7 +65,7 @@ public class World : MonoSingleton<World> {
 		//}
 	}
 
-	private int updateTimeCount;
+
 	private History history = new History();
 
 	//private int redGCText = 0;
@@ -73,19 +73,6 @@ public class World : MonoSingleton<World> {
 	private void FixedUpdate() {
 		if (life == null) {
 			return;
-		}
-		
-		if (updateTimeCount >= 20f) {
-			updateTimeCount = 0;
-			Record record = new Record();
-			record.fps = GlobalPanel.instance.frameRate;
-			record.cellCount = life.cellAliveCount;
-			history.AddRecord(record);
-			GraphPlotter.instance.MakeDirty();
-		} else {
-			updateTimeCount++;
-			//GraphPlotter.instance.Tick();
-			//GraphPlotter.instance.MakeDirty();
 		}
 
 
@@ -113,6 +100,16 @@ public class World : MonoSingleton<World> {
 			PrisonWall.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
 		}
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
+		if (worldTicks % 20 == 0) {
+			Record record = new Record(); //Only place where records are created
+			record.Add(RecordEnum.fps, GlobalPanel.instance.frameRate);
+			record.Add(RecordEnum.cellCountTotal, life.cellAliveCount);
+			record.Add(RecordEnum.cellCountJaw, life.GetCellAliveCount(CellTypeEnum.Jaw));
+			record.Add(RecordEnum.cellCountLeaf, life.GetCellAliveCount(CellTypeEnum.Leaf));
+			history.AddRecord(record);
+			GraphPlotter.instance.MakeDirty();
+		}
+
 
 		float isSpeed = GlobalPanel.instance.physicsUpdatesPerSecond * Time.fixedDeltaTime;
 		float desiredSpeed = GlobalPanel.instance.physicsTimeScaleSilder.value / 5f;
@@ -164,6 +161,8 @@ public class World : MonoSingleton<World> {
 		CreatureEditModePanel.instance.Restart();
 		RMBToolModePanel.instance.Restart();
 		PrisonWall.instance.Restart();
+
+		history.Clear();
 	}
 
 	public void Load(string filename) {

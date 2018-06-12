@@ -6,39 +6,9 @@ public class ResizeViewport : MonoBehaviour {
 
 	public int rightMargin;
 	public int topMargin;
-	public int height; // height of the viewport and the camera 
+	public int height; // height of the viewport set by user (camera is allways sime height as viewport)
 
-	public int width { // width of the viewport and the camera 
-		get {
-			return viewportToResize.pixelWidth;
-		}
-	}
-
-	public float left {
-		get {
-			return gameObject.transform.position.x - width / 2f;
-		}
-	}
-
-	public float right {
-		get {
-			return gameObject.transform.position.x + width / 2f;
-		}
-	}
-
-	public float bottom {
-		get {
-			return gameObject.transform.position.y - height / 2f;
-		}
-	}
-
-	public float top {
-		get {
-			return gameObject.transform.position.y + height / 2f;
-		}
-	}
-
-
+	public Rect graphPlotterArea = new Rect();
 
 	private Vector2i windowResolution;
 
@@ -49,7 +19,6 @@ public class ResizeViewport : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-
 		if (windowResolution.x != (int)windowSize.rect.width || windowResolution.y != (int)windowSize.rect.height) {
 
 			float viewportHeight = height / windowSize.rect.height;
@@ -60,7 +29,12 @@ public class ResizeViewport : MonoBehaviour {
 			//Debug.Log("w: " + viewportWidth + ", h: " + viewportHeight + ", y: " + viewportY);
 
 			windowResolution = new Vector2i((int)windowSize.rect.width, (int)windowSize.rect.height);
-		}
 
+			graphPlotterArea.width = viewportToResize.pixelWidth;
+			graphPlotterArea.height = height;
+			graphPlotterArea.center = gameObject.transform.position;
+
+
+		}
 	}
 }

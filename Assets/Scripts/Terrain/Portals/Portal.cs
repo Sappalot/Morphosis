@@ -22,7 +22,7 @@ public class Portal : MonoBehaviour {
 		List<Creature> canTeleport = new List<Creature>();
 		List<Creature> canNotTeleport = new List<Creature>();
 
-		List<Creature> shouldBeTelefragged = new List<Creature>();
+		List<Creature> shouldBeTelepoked = new List<Creature>();
 
 		bool clusterCouldTravel;
 		List<Creature> travelerCluster = new List<Creature>();
@@ -57,7 +57,7 @@ public class Portal : MonoBehaviour {
 						if (blockingCell != null) { // FOUND IT :D We need to be sure that everything is connected otherwise we might teleport away from our attached child (???)
 
 							if (blockingCell != null) {
-								shouldBeTelefragged.Add(blockingCell.creature);
+								shouldBeTelepoked.Add(blockingCell.creature);
 							}
 
 							clusterCouldTravel = false;
@@ -83,30 +83,18 @@ public class Portal : MonoBehaviour {
 			}
 		}
 
-		//// Telefrag obstructing creatures
-		if (GlobalPanel.instance.physicsTelefrag.isOn) {
-			foreach (Creature fragMe in shouldBeTelefragged) {
-				fragMe.phenotype.Telefrag();
-				fragMe.phenotype.Telepoke(telepokeDirection * GlobalSettings.instance.phenotype.telepokeImpulseStrength);
+		//// Move obstructing creatures
+		if (GlobalPanel.instance.physicsTelepoke.isOn) {
+			foreach (Creature pokeMe in shouldBeTelepoked) {
+				pokeMe.phenotype.Telepoke(telepokeDirection * GlobalSettings.instance.phenotype.telepokeImpulseStrength);
 			}
 		}
 
 
 		if (canTeleport.Count > 0) {
-			//Move (teleport) creatures
-			//foreach (Creature traveler in canTeleport) {
-			//	traveler.phenotype.EnableCollider(false);
-			//	traveler.phenotype.SetKinematic(true);
-			//}
-
 			foreach (Creature traveler in canTeleport) {
 				traveler.phenotype.Move(departureToArrival);
 			}
-
-			//foreach (Creature traveler in canTeleport) {
-			//	traveler.phenotype.EnableCollider(true);
-			//	traveler.phenotype.SetKinematic(false);
-			//}
 		}
 	}
 

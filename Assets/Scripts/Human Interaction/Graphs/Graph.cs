@@ -1,57 +1,49 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class Graph : MonoBehaviour {
 
-	private float spacing = 10f; // pixels between each point, each point is 1 second
-
+	//private float spacing = 50f; // pixels between each point, each point is 1 second
 	public LineRenderer line;
+	public Canvas textCanvas;
+	public Text text;
 
+	public RecordEnum type;
+	//public short level;
+	public string textPrefix;
+	public string textPostfix;
+	public float maxValue = 200;
+	public short decimals;
 
-
-	public void UpdateResolution(ResizeViewport viewport) {
-		int positionCount = Mathf.CeilToInt(viewport.width / spacing) + 1;
-		line.positionCount = positionCount;
-
-		float strideX = viewport.width / (float)(positionCount - 1);
-		float strideY = viewport.height / (float)(positionCount - 1);
-		for (int i = 0; i < positionCount; i++) {
-			float offset = i % 2 == 0 ? 20f : -20f;
-			line.SetPosition(i, new Vector3(viewport.left + strideX * i, viewport.bottom + strideY * i + offset, -1f));
-		}
+	public void UpdateCanvas(Rect graphArea) {
+		textCanvas.GetComponent<RectTransform>().sizeDelta = new Vector2(graphArea.width, graphArea.height);
+		textCanvas.GetComponent<RectTransform>().position = new Vector2(graphArea.center.x, graphArea.center.y);
 	}
 
-	public void UpdateDataFPS(ResizeViewport viewport, History history) {
-		int positionCount = Mathf.CeilToInt(viewport.width / spacing) + 1;
-		float strideX = viewport.width / (float)(positionCount - 1);
+
+
+	private int oldPositionCount = 0;
+	public void DrawGraph(Rect graphArea, float scale, short level, History history) {
+		float levelScale = scale * Mathf.Pow(2f, level);
+
+		int positionCount = Mathf.CeilToInt(graphArea.width / levelScale) + 1;
+		if (positionCount != oldPositionCount) {
+			line.positionCount = positionCount;
+			oldPositionCount = positionCount;
+		}
 
 		for (int i = 0; i < positionCount; i++) {
-			int secondsAgo = (positionCount - 1) - i;
-
-			line.SetPosition(i, new Vector3(viewport.right - strideX * (secondsAgo + ((float)tick / 20f)), viewport.bottom + viewport.height * (history.GetRecord(secondsAgo).fps / 200f), -1f));
+			int stepsAgo = (positionCount - 1) - i;
+			line.SetPosition(i, new Vector3(graphArea.xMax - levelScale * stepsAgo , graphArea.yMin + graphArea.height * (history.GetRecord(level, stepsAgo).Get(type) / maxValue), -1f));
 		}
-	}
 
-	public void UpdateDataCellCount(ResizeViewport viewport, History history) {
-		int positionCount = Mathf.CeilToInt(viewport.width / spacing) + 1;
-		float strideX = viewport.width / (float)(positionCount - 1);
-
-		for (int i = 0; i < positionCount; i++) {
-			int secondsAgo = (positionCount - 1) - i;
-
-			line.SetPosition(i, new Vector3(viewport.right - strideX * secondsAgo, viewport.bottom + viewport.height * (history.GetRecord(secondsAgo).cellCount / 2500f), -1f));
-		}
-	}
-
-	private int tick = 0;
-
-	public void UpdateTick(ResizeViewport viewport) {
-		int positionCount = Mathf.CeilToInt(viewport.width / spacing) + 1;
-		float strideX = viewport.width / (float)(positionCount - 1);
-
-		if (tick >= 20) {
-			tick = 0;
+		text.GetComponent<RectTransform>().anchoredPosition = new Vector2(5, Mathf.Clamp(graphArea.height * (history.GetRecord(0, 0).Get(type) / maxValue), - 5f, graphArea.height + 5f));
+		if (decimals == 1) {
+			text.text = string.Format("{0} {1:F1} {2}", textPrefix, history.GetRecord(0, 0).Get(type), textPostfix);
 		} else {
-			tick++;
+			text.text = string.Format("{0} {1:F0} {2}", textPrefix, history.GetRecord(0, 0).Get(type), textPostfix);
 		}
+		
 	}
+
 }
