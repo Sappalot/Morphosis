@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public class RecordStrip {
-	const int size = 400; // long enough to show one strip in graph plotter area, ~300 should be enough, so we are having a bit of a margin 
+	public static int size = 400; // long enough to show one strip in graph plotter area, ~300 should be enough, so we are having a bit of a margin 
 
 	private Record[] records = new Record[size];
 	private int cursor = 0; // cursor is standing on last written record
@@ -43,11 +43,9 @@ public class RecordStrip {
 			cursor = 0;
 		}
 		records[cursor].Clear(); // clear oldes record to use it again
-		
+
 		foreach (RecordEnum t in types) {
-			if (other.Contains(t)) {
-				records[cursor].Add(t, other.Get(t));
-			}
+			records[cursor].Add(t, other.Get(t));
 		}
 
 		lowpassCounter++;
@@ -56,12 +54,10 @@ public class RecordStrip {
 			Record lowpassRecord = new Record();
 
 			foreach (RecordEnum t in types) {
-				Record todayRecord =     records[cursor];
+				Record todayRecord = records[cursor];
 				Record yesterdayRecord = records[GetWrappedCursor(cursor - 1)];
 
-				if (todayRecord.Contains(t) && yesterdayRecord.Contains(t)) {
-					lowpassRecord.Add(t, (todayRecord.Get(t) + yesterdayRecord.Get(t)) / 2f);
-				}
+				lowpassRecord.Add(t, (todayRecord.Get(t) + yesterdayRecord.Get(t)) / 2f);
 			}
 			lowpassCounter = 0;
 			return lowpassRecord;
@@ -81,5 +77,34 @@ public class RecordStrip {
 				return records[(cursor + 1) % size];
 			}
 		}
+	}
+
+	// Load / Save
+
+	private RecordStripData recordStripData = new RecordStripData();
+
+	// Save
+	public RecordStripData UpdateData() {
+		recordStripData.records = new RecordData[size];
+		for (int i = 0; i < size; i++) {
+			recordStripData.records[i] = records[i].UpdateData();
+		}
+
+		recordStripData.cursor = cursor;
+		recordStripData.lowpassCounter = lowpassCounter;
+
+		return recordStripData;
+	}
+
+	// Load
+	public void ApplyData(RecordStripData recordStripData) {
+		if (recordStripData == null) { // to be able to load files without history data
+			return;
+		}
+		for (int i = 0; i < size; i++) {
+			records[i].ApplyData(recordStripData.records[i]);
+		}
+		cursor = recordStripData.cursor;
+		lowpassCounter = recordStripData.lowpassCounter;
 	}
 }

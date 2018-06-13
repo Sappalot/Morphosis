@@ -213,19 +213,27 @@ public class World : MonoSingleton<World> {
 	private WorldData worldData = new WorldData();
 
 	//data
+	// Save
 	private void UpdateData() {
 		worldData.worldName = worldName;
-		worldData.lifeData = World.instance.life.UpdateData();
+		worldData.lifeData = life.UpdateData();
 		worldData.worldTicks = worldTicks;
+		worldData.historyData = history.UpdateData();
 
 		worldData.runnersKilledCount = PrisonWall.instance.runnersKilledCount;
 	}
 
+	// Load
 	private void ApplyData(WorldData worldData) {
 		worldName = worldData.worldName;
-		World.instance.life.ApplyData(worldData.lifeData);
+		life.ApplyData(worldData.lifeData);
 		worldTicks = worldData.worldTicks;
-
+		if (worldData.historyData != null) {
+			history.ApplyData(worldData.historyData);
+		} else {
+			history.Clear();
+		}
+		
 		PrisonWall.instance.runnersKilledCount = worldData.runnersKilledCount;
 	}
 

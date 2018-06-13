@@ -104,4 +104,52 @@ public class History {
 	public int GetLowpassCounter(int level) {
 		return strips[level].lowpassCounter;
 	}
+
+	// Load Save
+
+	private HistoryData historyData = new HistoryData();
+
+	// Save
+	public HistoryData UpdateData() {
+		historyData.level0 =  level0.UpdateData();
+		historyData.level1 =  level1.UpdateData();
+		historyData.level2 =  level2.UpdateData();
+		historyData.level3 =  level3.UpdateData();
+		historyData.level4 =  level4.UpdateData();
+		historyData.level5 =  level5.UpdateData();
+		historyData.level6 =  level6.UpdateData();
+		historyData.level7 =  level7.UpdateData();
+		historyData.level8 =  level8.UpdateData();
+		historyData.level9 =  level9.UpdateData();
+		historyData.level10 = level10.UpdateData();
+		historyData.level11 = level11.UpdateData();
+		historyData.level12 = level12.UpdateData();
+		historyData.level13 = level13.UpdateData();
+		historyData.level14 = level14.UpdateData();
+
+		return historyData;
+	}
+
+	// Load
+	public void ApplyData(HistoryData historyData) {
+		Clear();
+
+		level0.ApplyData(historyData.level0);
+		level1.ApplyData(historyData.level1);
+		level2.ApplyData(historyData.level2);
+		level3.ApplyData(historyData.level3);
+		level4.ApplyData(historyData.level4);
+		level5.ApplyData(historyData.level5);
+		level6.ApplyData(historyData.level6);
+		level7.ApplyData(historyData.level7);
+		level8.ApplyData(historyData.level8);
+		level9.ApplyData(historyData.level9);
+		level10.ApplyData(historyData.level10);
+		level11.ApplyData(historyData.level11);
+		level12.ApplyData(historyData.level12);
+		level13.ApplyData(historyData.level13);
+		level14.ApplyData(historyData.level14);
+	}
+
+	// ^ Load Save ^
 }

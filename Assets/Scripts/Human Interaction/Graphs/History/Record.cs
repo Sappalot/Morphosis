@@ -1,21 +1,84 @@
 ﻿using System.Collections.Generic;
 
 public class Record {
-	private Dictionary<RecordEnum, float> values = new Dictionary<RecordEnum, float>();
+	float fps;
+	float cellCountTotal;
+	float cellCountJaw;
+	float cellCountLeaf;
 
-	public bool Contains(RecordEnum type) {
-		return values.ContainsKey(type);
-	}
+	string tag;
+
+	//private Dictionary<RecordEnum, float> entries = new Dictionary<RecordEnum, float>();
+
+	//public bool Contains(RecordEnum type) {
+	//	return entries.ContainsKey(type);
+	//}
 
 	public void Clear() {
-		values.Clear();
+		fps =            0f;
+		cellCountTotal = 0f;
+		cellCountJaw =   0f;
+		cellCountLeaf =  0f;
 	}
 
 	public float Get(RecordEnum type) {
-		return values[type];
+		if (type == RecordEnum.fps) {
+			return fps;
+		}
+		if (type == RecordEnum.cellCountTotal) {
+			return cellCountTotal;
+		}
+		if (type == RecordEnum.cellCountJaw) {
+			return cellCountJaw;
+		}
+		if (type == RecordEnum.cellCountLeaf) {
+			return cellCountLeaf;
+		}
+		return 0f;
 	}
 
 	public void Add(RecordEnum type, float value) {
-		values[type] =  value;
+		if (type == RecordEnum.fps) {
+			fps = value;
+		}
+		if (type == RecordEnum.cellCountTotal) {
+			cellCountTotal = value;
+		}
+		if (type == RecordEnum.cellCountJaw) {
+			cellCountJaw = value;
+		}
+		if (type == RecordEnum.cellCountLeaf) {
+			cellCountLeaf = value;
+		}
+	}
+
+	//public string testString;
+
+	private RecordData recordData = new RecordData();
+
+	// Save
+	public RecordData UpdateData() {
+		recordData.fps = fps;
+		recordData.cellCountTotal = cellCountTotal;
+		recordData.cellCountJaw = cellCountJaw;
+		recordData.cellCountLeaf = cellCountLeaf;
+		//recordData.entries = new Dictionary<RecordEnum, float>();
+		//foreach (KeyValuePair<RecordEnum, float> entry in entries) {
+		//	recordData.entries.Add(entry.Key, entry.Value);
+		//}
+		//recordData.testString = "yo!";
+		return recordData;
+	}
+
+	// Load
+	public void ApplyData(RecordData recordData) {
+		fps =            recordData.fps;
+		cellCountTotal = recordData.cellCountTotal;
+		cellCountJaw =   recordData.cellCountJaw;
+		cellCountLeaf =  recordData.cellCountLeaf;
+		//foreach (KeyValuePair<RecordEnum, float> entry in recordData.entries) {
+		//	entries.Add(entry.Key, entry.Value);
+		//}
+		//testString = recordData.testString;
 	}
 }
