@@ -105,12 +105,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Toggle physicsShell;
 	public Toggle physicsVein;
 
-
-	public Slider physicsTimeScaleSilder;
-	public Text physicsTimeScaleIsText;
-	public Text physicsTimeScaleWantText;
-	public RectTransform physicsSliderFillBar;
-	public float physicsUpdatesPerSecond;
+	public float physicsUpdatesPerSecond { get; private set; }
 
 	public RectTransform physicsAimFillBar;
 
@@ -174,13 +169,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			physicsUpdatesPerSecond = physicsUpdateCount / timeCount;
 			pps.text = CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && timeCount > 0f ? string.Format("PPS: {0:F1}", physicsUpdateCount / timeCount) : "PPS: ---";
 			physicsUpdateCount = 0;
-			//float width = Mathf.Clamp(physicsUpdatesPerSecond * Time.fixedDeltaTime * 9f, 0f, 180f);
-			//physicsSliderFillBar.sizeDelta = new Vector2(width, physicsSliderFillBar.sizeDelta.y);
-
 			timeCount = 0;
-
-			//width = Mathf.Lerp(0f, 180f, Mathf.InverseLerp(0f, 20, World.instance.aimSpeedLowPass));
-			//physicsAimFillBar.sizeDelta = new Vector2(width, physicsAimFillBar.sizeDelta.y);
 
 			// memoryUsage
 			memoryUsage.text = "Heap size: " + (GC.GetTotalMemory(true) / 1000) + " K";
@@ -246,11 +235,14 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	public void OnSaveClicked() {
-		//World.instance.Save("save.txt");
 		World.instance.Save();
 	}
 
 	public void OnPausePhysicsClicked() {
+		SelectPausePhysics();
+	}
+
+	public void SelectPausePhysics() {
 		if (!isRunPhysicsGrayOut) {
 			pausePhysicsImage.color = ColorScheme.instance.selectedButton;
 			runPhysicsImage.color = ColorScheme.instance.notSelectedButton;
@@ -259,6 +251,10 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	public void OnRunPhysicsClicked() {
+		SelectRunPhysics();
+	}
+
+	public void SelectRunPhysics() {
 		if (!isRunPhysicsGrayOut) {
 			pausePhysicsImage.color = ColorScheme.instance.notSelectedButton;
 			runPhysicsImage.color = ColorScheme.instance.selectedButton;

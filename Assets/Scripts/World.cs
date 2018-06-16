@@ -46,24 +46,15 @@ public class World : MonoSingleton<World> {
 		//Handle time from here to not get locked out
 		if ((!GlobalPanel.instance.isRunPhysics || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) && !doSave) {
 			Time.timeScale = 0f;
-			//aimSpeedLowPass = 0f;
-			World.instance.life.UpdateStructure();
-			GlobalPanel.instance.physicsTimeScaleWantText.text = "II";
+			life.UpdateStructure();
 		} else if (GlobalPanel.instance.physicsUpdatesPerSecond == 0f) {
 			//kick start physics
 			Time.timeScale = 1f;
-			//aimSpeedLowPass = 1f;
 		}
 
 		if (GlobalPanel.instance.graphicsCreatures.isOn) {
-			World.instance.life.UpdateGraphics();
+			life.UpdateGraphics();
 		}
-
-		//if (redGCText > 0) {
-		//	GlobalPanel.instance.garbageCollectText.color = Color.red;
-		//} else {
-		//	GlobalPanel.instance.garbageCollectText.color = Color.black;
-		//}
 	}
 
 	public History history = new History();
@@ -74,32 +65,18 @@ public class World : MonoSingleton<World> {
 	}
 
 	private bool doSave = false;
+	private bool doPostLoad = false;
+
 	public void Save() {
 		doSave = true;
 		Time.timeScale = 1f; // if paused we need to tick one more tick
-		GlobalPanel.instance.OnPausePhysicsClicked();
+		GlobalPanel.instance.SelectPausePhysics();
 	}
 
-	//private int redGCText = 0;
-	//private int garbageFixed = 0;
 	private void FixedUpdate() {
 		if (life == null) {
 			return;
 		}
-
-
-		//if (GlobalPanel.instance.garbageCollectPeriodSlider.value != 0) {
-		//	garbageFixed++;
-		//	if (garbageFixed >= GlobalPanel.instance.garbageCollectPeriodSlider.value * 10) {
-		//		garbageFixed = 0;
-		//	}
-		//	if (garbageFixed == 0) {
-		//		System.GC.Collect();
-		//		redGCText = 2;
-		//	} else {
-		//		redGCText--;
-		//	}
-		//}
 
 		life.UpdateStructure();
 		
@@ -117,6 +94,7 @@ public class World : MonoSingleton<World> {
 				Record record = new Record();
 				record.SetTagText("Big Bang", true);
 				record.Add(RecordEnum.fps,            0);
+				record.Add(RecordEnum.pps,            0);
 				record.Add(RecordEnum.cellCountTotal, 0);
 				record.Add(RecordEnum.cellCountJaw,   0);
 				record.Add(RecordEnum.cellCountLeaf,  0);
@@ -133,30 +111,14 @@ public class World : MonoSingleton<World> {
 				}
 			}
 
+			if (doPostLoad) {
+				GlobalPanel.instance.SelectPausePhysics();
+				doPostLoad = false;
+			}
 		}
 		worldTicks++; //The only place where time is increased
 
-		//float isSpeed = GlobalPanel.instance.physicsUpdatesPerSecond * Time.fixedDeltaTime;
-		//float desiredSpeed = GlobalPanel.instance.physicsTimeScaleSilder.value / 5f;
 
-		//if (GlobalPanel.instance.fpsGuardToggle.isOn) {
-		//	float quickness = 0.2f;
-		//	float newAimSpeed = 0f;
-		//	if (GlobalPanel.instance.frameRate > GlobalPanel.instance.fpsGuardSlider.value) {
-		//		newAimSpeed = aimSpeedLowPass + Mathf.Sign(desiredSpeed - aimSpeedLowPass) * Time.fixedUnscaledDeltaTime * 0.6f;
-		//	} else {
-		//		newAimSpeed = aimSpeedLowPass - Time.fixedUnscaledDeltaTime * 0.6f;
-		//	}
-		//	aimSpeedLowPass = aimSpeedLowPass * (1f - quickness) + newAimSpeed * quickness;
-		//	if (desiredSpeed < aimSpeedLowPass) {
-		//		aimSpeedLowPass = Mathf.Max(0f, desiredSpeed);
-		//	}
-		//} else {
-		//	aimSpeedLowPass = Mathf.Max(0f, desiredSpeed);
-		//}
-		//Time.timeScale = Mathf.Max(0f, aimSpeedLowPass);
-		//GlobalPanel.instance.physicsTimeScaleIsText.text = string.Format("{0:F1}", isSpeed);
-		//GlobalPanel.instance.physicsTimeScaleWantText.text = string.Format("{0:F1}", Mathf.Max(1f, desiredSpeed));
 
 		//gravityAngle += Time.fixedDeltaTime * 5f;
 		//if (gravityAngle > 360f) {
@@ -165,7 +127,6 @@ public class World : MonoSingleton<World> {
 		//float gravityFactor = 200f;
 		//Physics2D.gravity = new Vector2(Mathf.Cos(gravityAngle * Mathf.Deg2Rad) * gravityFactor, Mathf.Sin(gravityAngle * Mathf.Deg2Rad) * gravityFactor);
 	}
-	//public float aimSpeedLowPass;
 
 	private float gravityAngle;
 
@@ -183,6 +144,7 @@ public class World : MonoSingleton<World> {
 		}
 
 		record.Add(RecordEnum.fps, GlobalPanel.instance.frameRate);
+		record.Add(RecordEnum.pps, GlobalPanel.instance.physicsUpdatesPerSecond);
 		record.Add(RecordEnum.cellCountTotal, life.cellAliveCount);
 		record.Add(RecordEnum.cellCountJaw, life.GetCellAliveCount(CellTypeEnum.Jaw));
 		record.Add(RecordEnum.cellCountLeaf, life.GetCellAliveCount(CellTypeEnum.Leaf));
@@ -193,7 +155,6 @@ public class World : MonoSingleton<World> {
 
 	//Save load
 	public void Restart() {
-		GlobalPanel.instance.physicsTimeScaleSilder.value = -20f;
 		Time.timeScale = 0;
 
 		KillAllCreatures();
@@ -213,10 +174,6 @@ public class World : MonoSingleton<World> {
 	}
 
 	public void Load(string filename) {
-		GlobalPanel.instance.physicsTimeScaleSilder.value = -20f; //pause
-		Time.timeScale = 0;
-
-		Time.timeScale = 0;
 		// Open the file to read from.
 		if (filename == "") {
 			filename = "save.txt";
@@ -233,16 +190,13 @@ public class World : MonoSingleton<World> {
 
 		CreatureSelectionPanel.instance.ClearSelection();
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
+
+		GlobalPanel.instance.SelectRunPhysics();
+		doPostLoad = true;
 	}
 
-	//private string path = "F:/Morfosis/";
 	private void DoSave(string filename) {
-		//AddHistoryEvent(new HistoryEvent("Saved", true));
-		//CreateRecord();
-		//--
-
-		GlobalPanel.instance.physicsTimeScaleSilder.value = -20f; //pause
-		Time.timeScale = 0;
+		GlobalPanel.instance.SelectPausePhysics();
 
 		UpdateData();
 
@@ -259,13 +213,10 @@ public class World : MonoSingleton<World> {
 			filename = "save.txt";
 		}
 		File.WriteAllText(path + filename, worldToSave);
-
-
 	}
 
 	private WorldData worldData = new WorldData();
 
-	//data
 	// Save
 	private void UpdateData() {
 		worldData.worldName = worldName;
@@ -290,14 +241,9 @@ public class World : MonoSingleton<World> {
 		PrisonWall.instance.runnersKilledCount = worldData.runnersKilledCount;
 	}
 
-
-//	private string allThereIs;
 	public string GetWorldData() {
 		UpdateData();
 		return Serializer.Serialize(worldData, new UnityJsonSerializer());
-
-		//Destroy(life.gameObject);
-		//System.GC.Collect();
 	}
 
 	public void CreateWorldFromData(string data) {

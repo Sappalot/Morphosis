@@ -10,6 +10,7 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 	public LineRenderer frameLine;
 
 	public Graph fpsGraph;
+	public Graph ppsGraph;
 
 	public Graph cellCountTotalGraph;
 	public Graph cellCountJawGraph;
@@ -29,12 +30,14 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 
 	public void ZoomStepIn() {
 		scale *= 1 + zoomStepSpeed;
-		//Debug.Log(scale);
+		isDirty = true;
+		Update();
 	}
 
 	public void ZoomStepOut() {
 		scale *= 1 / (1 + zoomStepSpeed);
-		//Debug.Log(scale);
+		isDirty = true;
+		Update();
 	}
 
 	public override void Init() {
@@ -66,6 +69,7 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 
 			// graphs
 			fpsGraph.UpdateCanvas(           graphArea);
+			ppsGraph.UpdateCanvas(graphArea);
 			cellCountTotalGraph.UpdateCanvas(graphArea);
 			cellCountJawGraph.UpdateCanvas(  graphArea);
 			cellCountLeafGraph.UpdateCanvas( graphArea);
@@ -79,17 +83,18 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 			res = new Vector2i((int)viewport.graphPlotterArea.width, (int)viewport.graphPlotterArea.height);
 		}
 
-		//if (isDirty && history != null) {
+		if (isDirty && history != null) {
 			short level = GetLevel(scale);
-			fpsGraph.DrawGraph(            graphArea, scale, level, history);
-			cellCountTotalGraph.DrawGraph( graphArea, scale, level, history);
-			cellCountJawGraph.DrawGraph(   graphArea, scale, level, history);
-			cellCountLeafGraph.DrawGraph(  graphArea, scale, level, history);
+			fpsGraph.DrawGraph(graphArea, scale, level, history);
+			ppsGraph.DrawGraph(graphArea, scale, level, history);
+			cellCountTotalGraph.DrawGraph(graphArea, scale, level, history);
+			cellCountJawGraph.DrawGraph(graphArea, scale, level, history);
+			cellCountLeafGraph.DrawGraph(graphArea, scale, level, history);
 
 			timeRuler.UpdateGraphics(graphArea, scale);
 			flags.UpdateGraphics(graphArea, scale, level, history);
-			//isDirty = false;
-		//}
+			isDirty = false;
+		}
 	}
 
 	private void UpdateGraphics() {

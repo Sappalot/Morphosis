@@ -4,6 +4,7 @@ using System.Collections.Generic;
 [Serializable]
 public class RecordData {
 	public float fps;
+	public float pps;
 	public float cellCountTotal;
 	public float cellCountJaw;
 	public float cellCountLeaf;

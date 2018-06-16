@@ -2,6 +2,7 @@
 
 public class Record {
 	float fps;
+	float pps;
 	float cellCountTotal;
 	float cellCountJaw;
 	float cellCountLeaf;
@@ -17,6 +18,7 @@ public class Record {
 
 	public void Clear() {
 		fps =            0f;
+		pps =            0f;
 		cellCountTotal = 0f;
 		cellCountJaw =   0f;
 		cellCountLeaf =  0f;
@@ -45,6 +47,9 @@ public class Record {
 		if (type == RecordEnum.fps) {
 			return fps;
 		}
+		if (type == RecordEnum.pps) {
+			return pps;
+		}
 		if (type == RecordEnum.cellCountTotal) {
 			return cellCountTotal;
 		}
@@ -60,6 +65,9 @@ public class Record {
 	public void Add(RecordEnum type, float value) {
 		if (type == RecordEnum.fps) {
 			fps = value;
+		}
+		if (type == RecordEnum.pps) {
+			pps = value;
 		}
 		if (type == RecordEnum.cellCountTotal) {
 			cellCountTotal = value;
@@ -79,6 +87,7 @@ public class Record {
 	// Save
 	public RecordData UpdateData() {
 		recordData.fps = fps;
+		recordData.pps = pps;
 		recordData.cellCountTotal = cellCountTotal;
 		recordData.cellCountJaw = cellCountJaw;
 		recordData.cellCountLeaf = cellCountLeaf;
@@ -96,6 +105,7 @@ public class Record {
 	// Load
 	public void ApplyData(RecordData recordData) {
 		fps =            recordData.fps;
+		pps =            recordData.pps;
 		cellCountTotal = recordData.cellCountTotal;
 		cellCountJaw =   recordData.cellCountJaw;
 		cellCountLeaf =  recordData.cellCountLeaf;

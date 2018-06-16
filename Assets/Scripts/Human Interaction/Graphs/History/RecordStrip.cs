@@ -18,6 +18,7 @@ public class RecordStrip {
 
 	private RecordEnum[] types = new RecordEnum[] {
 		RecordEnum.fps,
+		RecordEnum.pps,
 		RecordEnum.cellCountTotal,
 		RecordEnum.cellCountJaw,
 		RecordEnum.cellCountLeaf };

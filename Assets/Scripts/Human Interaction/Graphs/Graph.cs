@@ -20,6 +20,10 @@ public class Graph : MonoBehaviour {
 		textCanvas.GetComponent<RectTransform>().position = new Vector2(graphArea.center.x, graphArea.center.y);
 	}
 
+	public void Start() {
+		text.color = line.material.color;
+	}
+
 	private int oldPositionCount = 0;
 	public void DrawGraph(Rect graphArea, float scale, short level, History history) {
 		float levelScale = scale * Mathf.Pow(2f, level);
