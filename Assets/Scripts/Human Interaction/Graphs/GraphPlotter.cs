@@ -2,6 +2,7 @@
 
 public class GraphPlotter : MonoSingleton<GraphPlotter> {
 	public TimeRuler timeRuler;
+	public Flags flags;
 
 	public float zoomStepSpeed = 0.1f;
 
@@ -36,6 +37,11 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 		//Debug.Log(scale);
 	}
 
+	public override void Init() {
+		Debug.Log("Init plotter");
+		gameObject.SetActive(false);
+	}
+
 	void Start() {
 		res = new Vector2i();
 	}
@@ -58,19 +64,22 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 			graphArea.yMax = viewport.graphPlotterArea.center.y + viewport.graphPlotterArea.height / 2f - topMargin;
 			UpdateGraphics();
 
-			//graphs
+			// graphs
 			fpsGraph.UpdateCanvas(           graphArea);
 			cellCountTotalGraph.UpdateCanvas(graphArea);
 			cellCountJawGraph.UpdateCanvas(  graphArea);
 			cellCountLeafGraph.UpdateCanvas( graphArea);
 
-			//ruler
+			// ruler
 			timeRuler.UpdateCanvas(graphArea);
+
+			// flags
+			flags.UpdateCanvas(graphArea);
 
 			res = new Vector2i((int)viewport.graphPlotterArea.width, (int)viewport.graphPlotterArea.height);
 		}
 
-		if (isDirty && history != null) {
+		//if (isDirty && history != null) {
 			short level = GetLevel(scale);
 			fpsGraph.DrawGraph(            graphArea, scale, level, history);
 			cellCountTotalGraph.DrawGraph( graphArea, scale, level, history);
@@ -78,9 +87,9 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 			cellCountLeafGraph.DrawGraph(  graphArea, scale, level, history);
 
 			timeRuler.UpdateGraphics(graphArea, scale);
-
+			flags.UpdateGraphics(graphArea, scale, level, history);
 			//isDirty = false;
-		}
+		//}
 	}
 
 	private void UpdateGraphics() {

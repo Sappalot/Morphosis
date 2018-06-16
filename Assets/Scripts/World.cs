@@ -2,6 +2,7 @@
 using SerializerFree;
 using SerializerFree.Serializers;
 using System.IO;
+using System.Collections.Generic;
 
 public class World : MonoSingleton<World> {
 	[HideInInspector]
@@ -43,15 +44,15 @@ public class World : MonoSingleton<World> {
 			return;
 		}
 		//Handle time from here to not get locked out
-		if (GlobalPanel.instance.physicsTimeScaleSilder.value < 0f || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+		if ((!GlobalPanel.instance.isRunPhysics || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) && !doSave) {
 			Time.timeScale = 0f;
-			aimSpeedLowPass = 0f;
+			//aimSpeedLowPass = 0f;
 			World.instance.life.UpdateStructure();
 			GlobalPanel.instance.physicsTimeScaleWantText.text = "II";
 		} else if (GlobalPanel.instance.physicsUpdatesPerSecond == 0f) {
 			//kick start physics
 			Time.timeScale = 1f;
-			aimSpeedLowPass = 1f;
+			//aimSpeedLowPass = 1f;
 		}
 
 		if (GlobalPanel.instance.graphicsCreatures.isOn) {
@@ -65,8 +66,19 @@ public class World : MonoSingleton<World> {
 		//}
 	}
 
+	public History history = new History();
 
-	private History history = new History();
+	private List<HistoryEvent> historyEvents = new List<HistoryEvent>();
+	public void AddHistoryEvent(HistoryEvent historyEvent) {
+		historyEvents.Add(historyEvent);
+	}
+
+	private bool doSave = false;
+	public void Save() {
+		doSave = true;
+		Time.timeScale = 1f; // if paused we need to tick one more tick
+		GlobalPanel.instance.OnPausePhysicsClicked();
+	}
 
 	//private int redGCText = 0;
 	//private int garbageFixed = 0;
@@ -90,8 +102,7 @@ public class World : MonoSingleton<World> {
 		//}
 
 		life.UpdateStructure();
-
-		worldTicks++; //The only place where time is increased
+		
 		life.UpdatePhysics(worldTicks);
 		if (GlobalPanel.instance.physicsTeleport.isOn) {
 			Portals.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
@@ -101,37 +112,51 @@ public class World : MonoSingleton<World> {
 		}
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 		if (worldTicks % 20 == 0) {
-			Record record = new Record(); //Only place where records are created
-			record.Add(RecordEnum.fps, GlobalPanel.instance.frameRate);
-			record.Add(RecordEnum.cellCountTotal, life.cellAliveCount);
-			record.Add(RecordEnum.cellCountJaw, life.GetCellAliveCount(CellTypeEnum.Jaw));
-			record.Add(RecordEnum.cellCountLeaf, life.GetCellAliveCount(CellTypeEnum.Leaf));
-			history.AddRecord(record);
-			GraphPlotter.instance.MakeDirty();
-		}
 
-
-		float isSpeed = GlobalPanel.instance.physicsUpdatesPerSecond * Time.fixedDeltaTime;
-		float desiredSpeed = GlobalPanel.instance.physicsTimeScaleSilder.value / 5f;
-
-		if (GlobalPanel.instance.fpsGuardToggle.isOn) {
-			float quickness = 0.2f;
-			float newAimSpeed = 0f;
-			if (GlobalPanel.instance.frameRate > GlobalPanel.instance.fpsGuardSlider.value) {
-				newAimSpeed = aimSpeedLowPass + Mathf.Sign(desiredSpeed - aimSpeedLowPass) * Time.fixedUnscaledDeltaTime * 0.6f;
+			if (worldTicks == 0) {
+				Record record = new Record();
+				record.SetTagText("Big Bang", true);
+				record.Add(RecordEnum.fps,            0);
+				record.Add(RecordEnum.cellCountTotal, 0);
+				record.Add(RecordEnum.cellCountJaw,   0);
+				record.Add(RecordEnum.cellCountLeaf,  0);
+				history.AddRecord(record);
+				GraphPlotter.instance.MakeDirty();
 			} else {
-				newAimSpeed = aimSpeedLowPass - Time.fixedUnscaledDeltaTime * 0.6f;
+				if(doSave) {
+					AddHistoryEvent(new HistoryEvent("Saved", true));
+					CreateRecord();
+					DoSave("save.txt");
+					doSave = false;
+				} else {
+					CreateRecord();
+				}
 			}
-			aimSpeedLowPass = aimSpeedLowPass * (1f - quickness) + newAimSpeed * quickness;
-			if (desiredSpeed < aimSpeedLowPass) {
-				aimSpeedLowPass = Mathf.Max(0f, desiredSpeed);
-			}
-		} else {
-			aimSpeedLowPass = Mathf.Max(0f, desiredSpeed);
+
 		}
+		worldTicks++; //The only place where time is increased
+
+		//float isSpeed = GlobalPanel.instance.physicsUpdatesPerSecond * Time.fixedDeltaTime;
+		//float desiredSpeed = GlobalPanel.instance.physicsTimeScaleSilder.value / 5f;
+
+		//if (GlobalPanel.instance.fpsGuardToggle.isOn) {
+		//	float quickness = 0.2f;
+		//	float newAimSpeed = 0f;
+		//	if (GlobalPanel.instance.frameRate > GlobalPanel.instance.fpsGuardSlider.value) {
+		//		newAimSpeed = aimSpeedLowPass + Mathf.Sign(desiredSpeed - aimSpeedLowPass) * Time.fixedUnscaledDeltaTime * 0.6f;
+		//	} else {
+		//		newAimSpeed = aimSpeedLowPass - Time.fixedUnscaledDeltaTime * 0.6f;
+		//	}
+		//	aimSpeedLowPass = aimSpeedLowPass * (1f - quickness) + newAimSpeed * quickness;
+		//	if (desiredSpeed < aimSpeedLowPass) {
+		//		aimSpeedLowPass = Mathf.Max(0f, desiredSpeed);
+		//	}
+		//} else {
+		//	aimSpeedLowPass = Mathf.Max(0f, desiredSpeed);
+		//}
 		//Time.timeScale = Mathf.Max(0f, aimSpeedLowPass);
-		GlobalPanel.instance.physicsTimeScaleIsText.text = string.Format("{0:F1}", isSpeed);
-		GlobalPanel.instance.physicsTimeScaleWantText.text = string.Format("{0:F1}", Mathf.Max(1f, desiredSpeed));
+		//GlobalPanel.instance.physicsTimeScaleIsText.text = string.Format("{0:F1}", isSpeed);
+		//GlobalPanel.instance.physicsTimeScaleWantText.text = string.Format("{0:F1}", Mathf.Max(1f, desiredSpeed));
 
 		//gravityAngle += Time.fixedDeltaTime * 5f;
 		//if (gravityAngle > 360f) {
@@ -140,9 +165,31 @@ public class World : MonoSingleton<World> {
 		//float gravityFactor = 200f;
 		//Physics2D.gravity = new Vector2(Mathf.Cos(gravityAngle * Mathf.Deg2Rad) * gravityFactor, Mathf.Sin(gravityAngle * Mathf.Deg2Rad) * gravityFactor);
 	}
-	public float aimSpeedLowPass;
+	//public float aimSpeedLowPass;
 
 	private float gravityAngle;
+
+	public void CreateRecord() {
+		Record record = new Record();
+		if (historyEvents.Count > 0) {
+			string eventText = "";
+			bool line = false;
+			for (int i = 0; i < historyEvents.Count; i++) {
+				eventText += historyEvents[i].text + " ";
+				line |= historyEvents[i].showLine;
+			}
+			historyEvents.Clear();
+			record.SetTagText(eventText, line);
+		}
+
+		record.Add(RecordEnum.fps, GlobalPanel.instance.frameRate);
+		record.Add(RecordEnum.cellCountTotal, life.cellAliveCount);
+		record.Add(RecordEnum.cellCountJaw, life.GetCellAliveCount(CellTypeEnum.Jaw));
+		record.Add(RecordEnum.cellCountLeaf, life.GetCellAliveCount(CellTypeEnum.Leaf));
+
+		history.AddRecord(record);
+		GraphPlotter.instance.MakeDirty();
+	}
 
 	//Save load
 	public void Restart() {
@@ -189,7 +236,11 @@ public class World : MonoSingleton<World> {
 	}
 
 	//private string path = "F:/Morfosis/";
-	public void Save(string filename) {
+	private void DoSave(string filename) {
+		//AddHistoryEvent(new HistoryEvent("Saved", true));
+		//CreateRecord();
+		//--
+
 		GlobalPanel.instance.physicsTimeScaleSilder.value = -20f; //pause
 		Time.timeScale = 0;
 
@@ -208,6 +259,8 @@ public class World : MonoSingleton<World> {
 			filename = "save.txt";
 		}
 		File.WriteAllText(path + filename, worldToSave);
+
+
 	}
 
 	private WorldData worldData = new WorldData();

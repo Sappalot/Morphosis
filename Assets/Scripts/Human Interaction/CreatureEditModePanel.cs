@@ -27,11 +27,13 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 
 	public void OnClickedPhenotypeEditMode() {
 		m_mode = CreatureEditModeEnum.Phenotype;
+		GlobalPanel.instance.isRunPhysicsGrayOut = false;
 		UpdateAllAccordingToEditMode();
 	}
 
 	public void OnClickedGenotypeEditMode() {
 		m_mode = CreatureEditModeEnum.Genotype;
+		GlobalPanel.instance.isRunPhysicsGrayOut = true;
 		UpdateAllAccordingToEditMode();
 		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -43,7 +45,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 		foreach (Creature c in World.instance.life.creatures) {
 			c.BringCurrentGenoPhenoPositionAndRotationToOther();
 			c.MakeDirtyGraphics();
-		}
+		}		
 		isDirty = true;
 	}
 	

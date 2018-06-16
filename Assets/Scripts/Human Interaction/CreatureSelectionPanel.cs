@@ -281,6 +281,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public void OnDeleteClicked() {
 		for (int index = 0; index < selection.Count; index++) {
 			World.instance.life.KillCreatureSafe(selection[index], true);
+			World.instance.AddHistoryEvent(new HistoryEvent("x", false));
 		}
 		ClearSelection();
 	}
@@ -371,7 +372,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
 	}
 
-	//TODO soul ==> creature
 	private void AddCoppiesToMoveCreature(List<Creature> originalCreatureList) {
 		List<Creature> copies = new List<Creature>();
 		Dictionary<string, string> originalToCopy = new Dictionary<string, string>();
@@ -557,11 +557,17 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			foreach (Creature c in moveCreatures) {
 				c.Release(PhenoGenoEnum.Phenotype);
 				SpawnAddEffect(c.phenotype.originCell.position);
+				World.instance.AddHistoryEvent(new HistoryEvent("+", false));
+				//World.instance.history.StampTag("+");
+				//Debug.Log("+");
 			}
 		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
 			foreach (Creature c in moveCreatures) {
 				c.Release(PhenoGenoEnum.Genotype);
 				SpawnAddEffect(c.genotype.originCell.position);
+				World.instance.AddHistoryEvent(new HistoryEvent("+", false));
+				//World.instance.history.StampTag("+");
+				//Debug.Log("+");
 			}
 		}
 	}

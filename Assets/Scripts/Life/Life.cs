@@ -223,7 +223,7 @@ public class Life : MonoBehaviour {
 		creature.generation = 1;
 
 		SpawnAddEffect(position);
-
+		World.instance.AddHistoryEvent(new HistoryEvent("+", false));
 		return creature;
 	}
 
@@ -235,7 +235,7 @@ public class Life : MonoBehaviour {
 		creature.generation = 1;
 
 		SpawnAddEffect(position);
-
+		World.instance.AddHistoryEvent(new HistoryEvent("+", false));
 		return creature;
 	}
 
@@ -248,7 +248,6 @@ public class Life : MonoBehaviour {
 
 		creature.hasPhenotypeCollider = false;
 		creature.hasGenotypeCollider = false;
-
 		return creature;
 	}
 
@@ -264,7 +263,6 @@ public class Life : MonoBehaviour {
 		//Let generation be same as mothers
 
 		clone.bornTick = bornTick;
-
 		return clone;
 	}
 

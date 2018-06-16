@@ -32,7 +32,9 @@ public class RecordStrip {
 			foreach (RecordEnum t in types) {
 				records[i].Add(t, 0f);
 			}
+			records[i].tag = null;
 		}
+
 		cursor = 0;
 		lowpassCounter = 0;
 	}
@@ -47,18 +49,35 @@ public class RecordStrip {
 		foreach (RecordEnum t in types) {
 			records[cursor].Add(t, other.Get(t));
 		}
+		records[cursor].tag = other.tag;
+		records[cursor].showLine = other.showLine;
 
 		lowpassCounter++;
 
 		if (lowpassCounter == 2) {
 			Record lowpassRecord = new Record();
 
+			Record todayRecord = records[cursor];
+			Record yesterdayRecord = records[GetWrappedCursor(cursor - 1)];
+			
+			//merge values
 			foreach (RecordEnum t in types) {
-				Record todayRecord = records[cursor];
-				Record yesterdayRecord = records[GetWrappedCursor(cursor - 1)];
-
 				lowpassRecord.Add(t, (todayRecord.Get(t) + yesterdayRecord.Get(t)) / 2f);
 			}
+
+			//merge tags
+			if (todayRecord.HasTag() || yesterdayRecord.HasTag()) {
+				if (todayRecord.HasTag() && yesterdayRecord.HasTag()) {
+					lowpassRecord.tag = (yesterdayRecord.tag + todayRecord.tag); //merge;
+				} else if (yesterdayRecord.HasTag()) {
+					lowpassRecord.tag = (yesterdayRecord.tag);
+				} else {
+					lowpassRecord.tag = (todayRecord.tag);
+				}
+			}
+
+			lowpassRecord.showLine = todayRecord.showLine | yesterdayRecord.showLine;
+
 			lowpassCounter = 0;
 			return lowpassRecord;
 		}

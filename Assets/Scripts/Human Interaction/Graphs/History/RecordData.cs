@@ -8,6 +8,9 @@ public class RecordData {
 	public float cellCountJaw;
 	public float cellCountLeaf;
 
+
+	public string tag;
+	public bool showLine;
 	//public Dictionary<RecordEnum, float> entries = new Dictionary<RecordEnum, float>();
 	//public String testString;
 }

@@ -6,7 +6,8 @@ public class Record {
 	float cellCountJaw;
 	float cellCountLeaf;
 
-	string tag;
+	public string tag = null;
+	public bool showLine = false;
 
 	//private Dictionary<RecordEnum, float> entries = new Dictionary<RecordEnum, float>();
 
@@ -19,7 +20,26 @@ public class Record {
 		cellCountTotal = 0f;
 		cellCountJaw =   0f;
 		cellCountLeaf =  0f;
+		tag = "";
 	}
+
+	public bool HasTag() {
+		return tag != null && tag != "";
+	}
+
+	public void SetTagText(string text, bool drawLine) {
+		tag = text;
+		showLine = drawLine;
+	}
+
+	//public void ExtendTagText(string text, bool drawLine) {
+	//	if (HasTag()) {
+	//		tag = tag + " " + text;
+	//		tagLine |= drawLine;
+	//	} else {
+	//		SetTagText(text, drawLine);
+	//	}
+	//}
 
 	public float Get(RecordEnum type) {
 		if (type == RecordEnum.fps) {
@@ -62,6 +82,9 @@ public class Record {
 		recordData.cellCountTotal = cellCountTotal;
 		recordData.cellCountJaw = cellCountJaw;
 		recordData.cellCountLeaf = cellCountLeaf;
+
+		recordData.tag = tag;
+		recordData.showLine = showLine;
 		//recordData.entries = new Dictionary<RecordEnum, float>();
 		//foreach (KeyValuePair<RecordEnum, float> entry in entries) {
 		//	recordData.entries.Add(entry.Key, entry.Value);
@@ -76,6 +99,9 @@ public class Record {
 		cellCountTotal = recordData.cellCountTotal;
 		cellCountJaw =   recordData.cellCountJaw;
 		cellCountLeaf =  recordData.cellCountLeaf;
+
+		tag = recordData.tag;
+		showLine = recordData.showLine;
 		//foreach (KeyValuePair<RecordEnum, float> entry in recordData.entries) {
 		//	entries.Add(entry.Key, entry.Value);
 		//}
