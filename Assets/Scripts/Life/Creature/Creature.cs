@@ -152,6 +152,17 @@ public class Creature : MonoBehaviour {
 		return childrenAlive;
 	}
 
+	public List<Creature> GetAttachedChildren() {
+		List<Creature> childrenAliveAndAttached = new List<Creature>();
+		foreach (string id in children_.Keys) {
+			Creature found = World.instance.life.GetCreature(id);
+			if (found != null && GetRelationToChild(found.id) == FamilyMemberState.AliveAndAttached) {
+				childrenAliveAndAttached.Add(found);
+			}
+		}
+		return childrenAliveAndAttached;
+	}
+
 	public List<string> GetChildrenIdIncDead() {
 		List<string> ids = new List<string>();
 		foreach (string id in children_.Keys) {
@@ -743,7 +754,7 @@ public class Creature : MonoBehaviour {
 					cantGrowMore = 0;
 				} else if (reason.fullyGrown) {
 					cantGrowMore = int.MaxValue;
-				} else if ((reason.roomBound && !reason.energyBound && !reason.respawnTimeBound)) {
+				} else if (((reason.roomBound || reason.poseBound) && !reason.energyBound && !reason.respawnTimeBound)) {
 					cantGrowMore++; // wait a while before giving up on finding a spot to grow another cell
 				}
 			}

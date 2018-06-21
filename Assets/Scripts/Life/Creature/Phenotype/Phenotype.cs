@@ -273,6 +273,19 @@ public class Phenotype : MonoBehaviour {
 					continue;
 				}
 
+				// test if the new cell would be built in a position which is close enough to ALL neighbours growing it
+				foreach (Cell builder in builderCells) {
+					float distance = Vector2.Distance(spawnPosition, builder.position);
+					if (distance > GlobalSettings.instance.phenotype.cellBuildMaxDistance) {
+						noGrowthReason.poseBound = true;
+						Debug.Log("Pose Bound!!!");
+						break;
+					}
+				}
+				if (noGrowthReason.poseBound) {
+					continue;
+				}
+
 				// test if neighbours can afford to build cell, when pitching in all together
 				float newCellEnergy = 30f;
 				float buildBaseEnergy = GlobalSettings.instance.phenotype.cellBuildCost;
@@ -287,7 +300,7 @@ public class Phenotype : MonoBehaviour {
 						float giftFactor = buildBaseEnergy / sumExtraEnergy;
 						foreach (Cell builder in builderCells) {
 							if (builder.energy > buildBaseEnergy) {
-								builder.energy -= (builder.energy - buildBaseEnergy) * giftFactor;
+								builder.energy -= (builder.energy - buildBaseEnergy) * giftFactor; // neighbour donating energy
 							}
 						}
 						newCellEnergy = buildBaseEnergy;
@@ -297,9 +310,11 @@ public class Phenotype : MonoBehaviour {
 					}
 				}
 
+				// test if too far away from root
 				if (Vector2.Distance(spawnPosition, originCell.position) > 8f) {
 					Debug.Log("Building too far far away!!!!");
 				}
+
 				Cell newCell = SpawnCell(creature, geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, spawnPosition, false, newCellEnergy);
 				UpdateNeighbourReferencesIntraBody(); //We need to know our neighbours in order to update vectors correctly 
 				newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
@@ -406,7 +421,11 @@ public class Phenotype : MonoBehaviour {
 			UpdateNeighbourReferencesInterBody(creature);
 
 			//Springs
-			UpdateSpringsInterAndIntraBody(creature);
+			UpdateSpringsConnections();
+			UpdatePlacentaSpringConnections(creature);
+			foreach (Creature child in creature.GetAttachedChildren()) {
+				child.phenotype.UpdatePlacentaSpringConnections(child); // make child reconnect its placenta springs to me as my placenta cells to child might have changed
+			}
 
 			//Groups
 			UpdateGroupsInterBody(motherId);
@@ -498,11 +517,18 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	private void UpdateSpringsInterAndIntraBody(Creature creature) {
+	private void UpdateSpringsConnections() {
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
 			cell.UpdateSpringConnectionsIntra();
-			cell.UpdateSpringConnectionsInter(creature);
+		}
+	}
+
+	//Called from mother upon me as child to reconnect placenta springs
+	public void UpdatePlacentaSpringConnections(Creature creature) {
+		for (int index = 0; index < cellList.Count; index++) {
+			Cell cell = cellList[index];
+			cell.UpdatePlacentaSpringConnections(creature);
 		}
 	}
 
@@ -1202,7 +1228,8 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		leafCellTick++;
-		if (leafCellTick >= (int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed)) {
+		//if (leafCellTick >= (int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed)) {
+		if (leafCellTick >= (int)GlobalSettings.instance.quality.leafCellTickPeriod) {
 			leafCellTick = 0;
 		}
 
@@ -1276,7 +1303,7 @@ public class Phenotype : MonoBehaviour {
 			} else if (jawCellTick == 0 && cell.GetCellType() == CellTypeEnum.Jaw) {
 				cell.UpdateCellFunction(GlobalSettings.instance.quality.jawCellTickPeriod, worldTick);
 			} else if (leafCellTick == 0 && cell.GetCellType() == CellTypeEnum.Leaf) {
-				cell.UpdateCellFunction((int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed), worldTick);
+				cell.UpdateCellFunction((int)GlobalSettings.instance.quality.leafCellTickPeriod, worldTick);
 			} else if (muscleCellTick == 0 && cell.GetCellType() == CellTypeEnum.Muscle) {
 				cell.UpdateCellFunction(GlobalSettings.instance.quality.muscleCellTickPeriod, worldTick);
 			} else if (rootCellTick == 0 && cell.GetCellType() == CellTypeEnum.Root) {

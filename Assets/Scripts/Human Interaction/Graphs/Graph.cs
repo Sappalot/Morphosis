@@ -9,6 +9,7 @@ public class Graph : MonoBehaviour {
 	public Text text;
 
 	public RecordEnum type;
+	public CellTypeEnum cellType; // just for the color
 	//public short level;
 	public string textPrefix;
 	public string textPostfix;
@@ -21,7 +22,19 @@ public class Graph : MonoBehaviour {
 	}
 
 	public void Start() {
-		text.color = line.material.color;
+		if (type == RecordEnum.cellCountEgg ||
+			type == RecordEnum.cellCountFungal ||
+			type == RecordEnum.cellCountJaw ||
+			type == RecordEnum.cellCountLeaf ||
+			type == RecordEnum.cellCountMuscle ||
+			type == RecordEnum.cellCountRoot ||
+			type == RecordEnum.cellCountShell ||
+			type == RecordEnum.cellCountVein ) {
+			text.color = line.material.color = ColorScheme.instance.ToColor(cellType);
+		} else {
+			text.color = line.material.color;
+		}
+		
 	}
 
 	private int oldPositionCount = 0;

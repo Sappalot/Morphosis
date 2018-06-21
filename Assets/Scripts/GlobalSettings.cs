@@ -132,8 +132,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		//General
 		public float cellBuildCost = 10f; //Energy Cost to build cell, J (Newly built cell will have this energy at start of its life)
 		public float cellBuildNeededRadius = 0.35f; //m
+		public float cellBuildMaxDistance = 1.5f; //m // All neighbours contributing to a new build must be closer than this distance, or new cell can't be built
 
-		// Rebuild
+													// Rebuild
 		public float cellRebuildCooldown = 40f; //s, before a cell which was killed/deleted can be rebuilt
 
 		//Detatch
@@ -143,7 +144,6 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public int detatchCompletionPersistance = 5; // How many times will we retry to find a spot to grow next cell in before we give up and realize that it is time to detatch (1 ==> give up (and detatch) after failing one time)
 
 		//Teleport
-		public float telefragDamage = 1f; //damage on obstracting creature in J/s
 		public float telepokeImpulseStrength = 1f;
 
 		//Sterile
@@ -158,6 +158,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public int fungalCellTickPeriod =  50;
 		public int jawCellTickPeriod =     50;
 		public AnimationCurve leafCellTickPeriodAtSpeed; // Period length in ticks (0.1s) at certain speeds
+		public int leafCellTickPeriod =    50;
 		public int muscleCellTickPeriod =   5;
 		public int rootCellTickPeriod =    50;
 		public int shellCellTickPeriod =   50;

@@ -101,11 +101,6 @@ public class History {
 		return strips[level].GetRecord(timeAgo);
 	}
 
-	//public void StampTag(string text, bool drawLine) {
-	//	strips[0].GetRecord(0).SetTagText(text, drawLine);
-	//	//strips[0].GetRecord(0).ExtendTagText(text, drawLine);
-	//}
-
 	public int GetLowpassCounter(int level) {
 		return strips[level].lowpassCounter;
 	}

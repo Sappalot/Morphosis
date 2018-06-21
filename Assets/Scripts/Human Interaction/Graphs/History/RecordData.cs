@@ -5,13 +5,17 @@ using System.Collections.Generic;
 public class RecordData {
 	public float fps;
 	public float pps;
+
 	public float cellCountTotal;
+	public float cellCountEgg;
+	public float cellCountFungal;
 	public float cellCountJaw;
 	public float cellCountLeaf;
-
+	public float cellCountMuscle;
+	public float cellCountRoot;
+	public float cellCountShell;
+	public float cellCountVein;
 
 	public string tag;
 	public bool showLine;
-	//public Dictionary<RecordEnum, float> entries = new Dictionary<RecordEnum, float>();
-	//public String testString;
 }

@@ -9,16 +9,11 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 	public ResizeViewport viewport;
 	public LineRenderer frameLine;
 
-	public Graph fpsGraph;
-	public Graph ppsGraph;
+	public Graph[] graphs;
 
-	public Graph cellCountTotalGraph;
-	public Graph cellCountJawGraph;
-	public Graph cellCountLeafGraph;
-
-	public float topMargin;   //set from inspector
-	public float bottomMargin;//set from inspector
-	public float rightMargin; //set from inspector
+	public float topMargin;    //set from inspector
+	public float bottomMargin; //set from inspector
+	public float rightMargin;  //set from inspector
 
 	[HideInInspector]
 	public History history;
@@ -41,7 +36,6 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 	}
 
 	public override void Init() {
-		Debug.Log("Init plotter");
 		gameObject.SetActive(false);
 	}
 
@@ -68,11 +62,9 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 			UpdateGraphics();
 
 			// graphs
-			fpsGraph.UpdateCanvas(           graphArea);
-			ppsGraph.UpdateCanvas(graphArea);
-			cellCountTotalGraph.UpdateCanvas(graphArea);
-			cellCountJawGraph.UpdateCanvas(  graphArea);
-			cellCountLeafGraph.UpdateCanvas( graphArea);
+			foreach (Graph g in graphs) {
+				g.UpdateCanvas(graphArea);
+			}
 
 			// ruler
 			timeRuler.UpdateCanvas(graphArea);
@@ -85,11 +77,9 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 
 		if (isDirty && history != null) {
 			short level = GetLevel(scale);
-			fpsGraph.DrawGraph(graphArea, scale, level, history);
-			ppsGraph.DrawGraph(graphArea, scale, level, history);
-			cellCountTotalGraph.DrawGraph(graphArea, scale, level, history);
-			cellCountJawGraph.DrawGraph(graphArea, scale, level, history);
-			cellCountLeafGraph.DrawGraph(graphArea, scale, level, history);
+			foreach (Graph g in graphs) {
+				g.DrawGraph(graphArea, scale, level, history);
+			}
 
 			timeRuler.UpdateGraphics(graphArea, scale);
 			flags.UpdateGraphics(graphArea, scale, level, history);

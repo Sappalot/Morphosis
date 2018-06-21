@@ -34,10 +34,15 @@ public class LeafCell : Cell {
 	private float GetEnergyLoss(RaycastHit2D hit, float energyLossAir) {
 		CollisionType type = GetCollisionType(hit);
 
+		int attachedMotherCellCount = 0;
+		if (creature.IsAttachedToMother()) {
+			attachedMotherCellCount = creature.GetMother().cellCount;
+		}
+
 		if (type == CollisionType.ownCell) {
-			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.clusterCellCount); //J / m;
+			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.cellCount); //J / m // creature.clusterCellCount
 		} else if (type == CollisionType.othersCell) {
-			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.clusterCellCount); //J / m;
+			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.cellCount); //J / m //creature.clusterCellCount
 		} else {
 			//Wall
 			return energyLossAir * 1000f; //J / m; 
@@ -46,7 +51,7 @@ public class LeafCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		if (GlobalPanel.instance.physicsLeaf.isOn) {
-			effectConsumptionInternal = GlobalSettings.instance.phenotype.leafCellEffectCost * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount);
+			effectConsumptionInternal = GlobalSettings.instance.phenotype.leafCellEffectCost; //* GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount); //costy!!
 			////-- test
 			//effectProductionInternal = 0.5f * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount);
 			//base.UpdateCellFunction(deltaTicks, worldTicks);
@@ -160,7 +165,7 @@ public class LeafCell : Cell {
 			}
 
 			if (debugRender) {
-				float stayTime = GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(creature.phenotype.speed) * 0.1f * 20f;
+				float stayTime = GlobalSettings.instance.quality.leafCellTickPeriod * 0.1f * 20f;
 				Debug.DrawLine(start, start + direction * maxRange, Color.black, stayTime);
 				Debug.DrawLine(start, start + direction * rayRange, Color.white, stayTime);
 			}
@@ -202,7 +207,12 @@ public class LeafCell : Cell {
 				m_lowPassExposure += exposureRecord[i];
 			}
 			m_lowPassExposure /= exposureRecordCount;
-			effectProductionInternal = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount);
+
+			int attachedMotherCellCount = 0;
+			if (creature.IsAttachedToMother()) {
+				attachedMotherCellCount = creature.GetMother().cellCount;
+			}
+			effectProductionInternal = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.cellCount); //costy!! creature.clusterCellCount
 
 			if (CellPanel.instance.selectedCell == this) {
 				LeafCellPanel.instance.MakeDirty();

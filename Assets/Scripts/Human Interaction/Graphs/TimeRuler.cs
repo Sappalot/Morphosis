@@ -14,7 +14,7 @@ public class TimeRuler : MonoBehaviour {
 
 	public void UpdateGraphics(Rect graphArea, float scale) {
 		if (scale > 40f) {
-			explanation.text = "s ago";
+			explanation.text = "(seconds ago)";
 
 			numbers[0].GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
 			numbers[0].text = "now";
@@ -50,7 +50,7 @@ public class TimeRuler : MonoBehaviour {
 			numbers[10].text = "10";
 
 		} else if (scale > 5f) {
-			explanation.text = "s ago";
+			explanation.text = "(seconds ago)";
 
 			numbers[0].GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
 			numbers[0].text = "now";
@@ -96,7 +96,7 @@ public class TimeRuler : MonoBehaviour {
 			numbers[23].text = "";
 			numbers[24].text = "";
 		} else if (scale > 0.5f) {
-			explanation.text = "m ago";
+			explanation.text = "(minutes ago)";
 
 			numbers[0].GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
 			numbers[0].text = "now";
@@ -150,7 +150,7 @@ public class TimeRuler : MonoBehaviour {
 			numbers[23].text = "";
 			numbers[24].text = "";
 		} else if (scale > 0.1f) {
-			explanation.text = "m ago";
+			explanation.text = "(minutes ago)";
 
 			numbers[0].GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
 			numbers[0].text = "now";
@@ -196,7 +196,7 @@ public class TimeRuler : MonoBehaviour {
 			numbers[23].text = "";
 			numbers[24].text = "";
 		} else if (scale > 0.006f) {
-			explanation.text = "h ago";
+			explanation.text = "(hours ago)";
 
 			numbers[0].GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
 			numbers[0].text = "now";
@@ -274,7 +274,7 @@ public class TimeRuler : MonoBehaviour {
 			numbers[24].text = "24";
 
 		} else if (scale > 0f) {
-			explanation.text = "d ago";
+			explanation.text = "(days ago)";
 
 			numbers[0].GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, 0f);
 			numbers[0].text = "now";
@@ -350,8 +350,6 @@ public class TimeRuler : MonoBehaviour {
 
 			numbers[24].GetComponent<RectTransform>().anchoredPosition = new Vector2(-scale * 100f * 24f * 3600f, 0f);
 			numbers[24].text = "100";
-
 		}
-
 	}
 }

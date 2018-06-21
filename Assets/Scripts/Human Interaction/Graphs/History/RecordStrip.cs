@@ -20,8 +20,14 @@ public class RecordStrip {
 		RecordEnum.fps,
 		RecordEnum.pps,
 		RecordEnum.cellCountTotal,
+		RecordEnum.cellCountEgg,
+		RecordEnum.cellCountFungal,
 		RecordEnum.cellCountJaw,
-		RecordEnum.cellCountLeaf };
+		RecordEnum.cellCountLeaf,
+		RecordEnum.cellCountMuscle,
+		RecordEnum.cellCountRoot,
+		RecordEnum.cellCountShell,
+		RecordEnum.cellCountVein };
 
 	public void Init() {
 		Clear();
@@ -31,7 +37,7 @@ public class RecordStrip {
 		for (int i = 0; i < records.Length; i++) {
 			records[i] = new Record();
 			foreach (RecordEnum t in types) {
-				records[i].Add(t, 0f);
+				records[i].Set(t, 0f);
 			}
 			records[i].tag = null;
 		}
@@ -48,7 +54,7 @@ public class RecordStrip {
 		records[cursor].Clear(); // clear oldes record to use it again
 
 		foreach (RecordEnum t in types) {
-			records[cursor].Add(t, other.Get(t));
+			records[cursor].Set(t, other.Get(t));
 		}
 		records[cursor].tag = other.tag;
 		records[cursor].showLine = other.showLine;
@@ -63,7 +69,7 @@ public class RecordStrip {
 			
 			//merge values
 			foreach (RecordEnum t in types) {
-				lowpassRecord.Add(t, (todayRecord.Get(t) + yesterdayRecord.Get(t)) / 2f);
+				lowpassRecord.Set(t, (todayRecord.Get(t) + yesterdayRecord.Get(t)) / 2f);
 			}
 
 			//merge tags

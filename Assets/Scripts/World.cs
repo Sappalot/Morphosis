@@ -65,7 +65,7 @@ public class World : MonoSingleton<World> {
 	}
 
 	private bool doSave = false;
-	private bool doPostLoad = false;
+	private bool stopAfterOneSecond = false;
 
 	public void Save() {
 		doSave = true;
@@ -93,11 +93,17 @@ public class World : MonoSingleton<World> {
 			if (worldTicks == 0) {
 				Record record = new Record();
 				record.SetTagText("Big Bang", true);
-				record.Add(RecordEnum.fps,            0);
-				record.Add(RecordEnum.pps,            0);
-				record.Add(RecordEnum.cellCountTotal, 0);
-				record.Add(RecordEnum.cellCountJaw,   0);
-				record.Add(RecordEnum.cellCountLeaf,  0);
+				record.Set(RecordEnum.fps,             0);
+				record.Set(RecordEnum.pps,             0);
+				record.Set(RecordEnum.cellCountTotal,  0);
+				record.Set(RecordEnum.cellCountEgg,    0);
+				record.Set(RecordEnum.cellCountFungal, 0);
+				record.Set(RecordEnum.cellCountJaw,    0);
+				record.Set(RecordEnum.cellCountLeaf,   0);
+				record.Set(RecordEnum.cellCountMuscle, 0);
+				record.Set(RecordEnum.cellCountRoot,   0);
+				record.Set(RecordEnum.cellCountShell , 0);
+				record.Set(RecordEnum.cellCountVein,   0);
 				history.AddRecord(record);
 				GraphPlotter.instance.MakeDirty();
 			} else {
@@ -111,9 +117,9 @@ public class World : MonoSingleton<World> {
 				}
 			}
 
-			if (doPostLoad) {
+			if (stopAfterOneSecond) {
 				GlobalPanel.instance.SelectPausePhysics();
-				doPostLoad = false;
+				stopAfterOneSecond = false;
 			}
 		}
 		worldTicks++; //The only place where time is increased
@@ -143,11 +149,18 @@ public class World : MonoSingleton<World> {
 			record.SetTagText(eventText, line);
 		}
 
-		record.Add(RecordEnum.fps, GlobalPanel.instance.frameRate);
-		record.Add(RecordEnum.pps, GlobalPanel.instance.physicsUpdatesPerSecond);
-		record.Add(RecordEnum.cellCountTotal, life.cellAliveCount);
-		record.Add(RecordEnum.cellCountJaw, life.GetCellAliveCount(CellTypeEnum.Jaw));
-		record.Add(RecordEnum.cellCountLeaf, life.GetCellAliveCount(CellTypeEnum.Leaf));
+		record.Set(RecordEnum.fps, GlobalPanel.instance.frameRate);
+		record.Set(RecordEnum.pps, GlobalPanel.instance.physicsUpdatesPerSecond);
+
+		record.Set(RecordEnum.cellCountTotal,  life.cellAliveCount);
+		record.Set(RecordEnum.cellCountEgg,    life.GetCellAliveCount(CellTypeEnum.Egg));
+		record.Set(RecordEnum.cellCountFungal, life.GetCellAliveCount(CellTypeEnum.Fungal));
+		record.Set(RecordEnum.cellCountJaw,    life.GetCellAliveCount(CellTypeEnum.Jaw));
+		record.Set(RecordEnum.cellCountLeaf,   life.GetCellAliveCount(CellTypeEnum.Leaf));
+		record.Set(RecordEnum.cellCountMuscle, life.GetCellAliveCount(CellTypeEnum.Muscle));
+		record.Set(RecordEnum.cellCountRoot,   life.GetCellAliveCount(CellTypeEnum.Root));
+		record.Set(RecordEnum.cellCountShell,  life.GetCellAliveCount(CellTypeEnum.Shell));
+		record.Set(RecordEnum.cellCountVein,   life.GetCellAliveCount(CellTypeEnum.Vein));
 
 		history.AddRecord(record);
 		GraphPlotter.instance.MakeDirty();
@@ -171,6 +184,9 @@ public class World : MonoSingleton<World> {
 		PrisonWall.instance.Restart();
 
 		history.Clear();
+
+		GlobalPanel.instance.SelectRunPhysics();
+		stopAfterOneSecond = true;
 	}
 
 	public void Load(string filename) {
@@ -192,7 +208,7 @@ public class World : MonoSingleton<World> {
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 
 		GlobalPanel.instance.SelectRunPhysics();
-		doPostLoad = true;
+		stopAfterOneSecond = true;
 	}
 
 	private void DoSave(string filename) {

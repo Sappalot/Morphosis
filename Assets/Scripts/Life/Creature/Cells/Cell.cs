@@ -62,7 +62,7 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public int groups = 0;
 
-	protected SpringJoint2D[] placentaSprings;
+	protected SpringJoint2D[] placentaSprings; //only if i am an origo cell, the springs go to placenta cells on my mother
 
 	private List<JawCell> predators = new List<JawCell>(); //Who is eating on me
 
@@ -711,7 +711,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	//Phenotype
-	public void UpdateSpringConnectionsInter(Creature creature) {
+	public void UpdatePlacentaSpringConnections(Creature creature) {
 		// Here we connect origin cell to placenta of mother only
 		if (placentaSprings != null) {
 			for (int i = 0; i < placentaSprings.Length; i++) {
@@ -760,6 +760,11 @@ public abstract class Cell : MonoBehaviour {
 
 				if (lastWasNeighbor && isOrigin && ((neighbourCreature.id == motherId && lastHost == creature) || neighbourCreature == creature && lastHost.id == motherId)) {
 					// When the mother origin is finding an adjacent child neighbour, she should just ignore it when it comes to groups
+					groups++;
+				}
+
+				if (lastWasNeighbor && lastHost != neighbourCreature && lastHost != creature && neighbourCreature != creature) {
+					// A neighbour child was found which should not stick with previous neighbour child
 					groups++;
 				}
 
