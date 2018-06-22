@@ -32,7 +32,7 @@ public class Phenotype : MonoBehaviour {
 		foreach (Cell c in cellList) {
 			c.theRigidBody.AddForce(impulse, ForceMode2D.Impulse);
 		}
-	}	
+	}
 
 	[HideInInspector]
 	public Color individualColor = Color.black;
@@ -129,6 +129,12 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 		return count;
+	}
+
+	public float longestEdge {
+		get {
+			return edges.longestEdge;
+		}
 	}
 
 	public bool IsPartlyInside(Rect area) {
@@ -422,7 +428,6 @@ public class Phenotype : MonoBehaviour {
 
 			//Springs
 			RepairBrokenSprings();
-			UpdateSpringsBreakingForce();
 			UpdateSpringsConnections();
 			UpdatePlacentaSpringConnections(creature);
 			foreach (Creature child in creature.GetAttachedChildren()) {
@@ -440,8 +445,8 @@ public class Phenotype : MonoBehaviour {
 
 			//Debug
 			UpdateSpringsFrequenze(); //testing only
+			UpdateSpringsBreakingForce();
 
-			
 
 			//test with no muscel collider
 			EnableCollider(true);
@@ -906,7 +911,8 @@ public class Phenotype : MonoBehaviour {
 		KillAllCells(false); //Kill Cell (when origin) will set isAlive = false;
 		cellList.Clear();
 		cellMap.Clear();
-
+		detatchmentKick = null;
+		
 		//Perifery edges
 		edges.OnRecycle();
 

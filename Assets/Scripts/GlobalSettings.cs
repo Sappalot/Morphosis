@@ -151,6 +151,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		//Springs
 		public float springBreakingForce = 100f; // N
+		public float springBreakingForceMuscle = 100f; // N
 	}
 	public Phenotype phenotype;
 

@@ -44,9 +44,14 @@ public class Flags : MonoBehaviour {
 
 				borrowedFlag = flagPool[flagCursor];
 
-				bool draw = history.GetRecord(level, stepsAgo).showLine; //history.GetRecord(level, stepsAgo).tag == "Big Bang";
+				bool draw = history.GetRecord(level, stepsAgo).tagShowLine; //history.GetRecord(level, stepsAgo).tag == "Big Bang";
 				borrowedFlag.SetPosition(graphArea, - levelScale * stepsAgo, draw);
-				borrowedFlag.text.text = history.GetRecord(level, stepsAgo).tag;
+				borrowedFlag.text.text = history.GetRecord(level, stepsAgo).tagText;
+
+				Color color = history.GetRecord(level, stepsAgo).color;
+				borrowedFlag.text.color =      color;
+				borrowedFlag.line.startColor = color;
+				borrowedFlag.line.endColor =   color;
 
 				flagCursor++;
 			}

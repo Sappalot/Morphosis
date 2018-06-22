@@ -15,12 +15,22 @@ public class Record {
 	float cellCountShell;
 	float cellCountVein;
 
-	public string tag = null;
-	public bool showLine = false;
+	public string tagText = null;
+	public bool tagShowLine = false;
+	public float tagRed = 1f;
+	public float tagGreen = 1f;
+	public float tagBlue = 1f;
+
+	public Color color {
+		get {
+			return new Color(tagRed, tagGreen, tagBlue, 1f);
+		}
+	}
 
 	public void Clear() {
 		fps =             0f;
 		pps =             0f;
+
 		cellCountTotal =  0f;
 		cellCountEgg =    0f;
 		cellCountFungal = 0f;
@@ -30,16 +40,24 @@ public class Record {
 		cellCountRoot =   0f;
 		cellCountShell =  0f;
 		cellCountVein =   0f;
-		tag = "";
+
+		tagText =         "";
+		tagShowLine =     false;
+		tagRed =          1f;
+		tagGreen =        1f;
+		tagBlue =         1f;
 	}
 
 	public bool HasTag() {
-		return tag != null && tag != "";
+		return tagText != null && tagText != "";
 	}
 
-	public void SetTagText(string text, bool drawLine) {
-		tag = text;
-		showLine = drawLine;
+	public void SetTagText(string text, Color color, bool drawLine) {
+		tagText =     text;
+		tagShowLine = drawLine;
+		tagRed =      color.r;
+		tagGreen =    color.g;
+		tagBlue =     color.b;
 	}
 
 	public float Get(RecordEnum type) {
@@ -133,8 +151,11 @@ public class Record {
 		recordData.cellCountShell =  cellCountShell;
 		recordData.cellCountVein =   cellCountVein;
 
-		recordData.tag =             tag;
-		recordData.showLine =        showLine;
+		recordData.tagText =         tagText;
+		recordData.showLine =        tagShowLine;
+		recordData.tagRed =          tagRed;
+		recordData.tagGreen =        tagGreen;
+		recordData.tagBlue =         tagBlue;
 
 		return recordData;
 	}
@@ -154,7 +175,10 @@ public class Record {
 		cellCountShell =  recordData.cellCountShell;
 		cellCountVein =   recordData.cellCountVein;
 
-		tag =             recordData.tag;
-		showLine =        recordData.showLine;
+		tagText =         recordData.tagText;
+		tagShowLine =     recordData.showLine;
+		tagRed =          recordData.tagRed;
+		tagGreen =        recordData.tagGreen;
+		tagBlue =         recordData.tagBlue;
 	}
 }

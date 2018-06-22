@@ -92,7 +92,7 @@ public class World : MonoSingleton<World> {
 
 			if (worldTicks == 0) {
 				Record record = new Record();
-				record.SetTagText("Big Bang", true);
+				record.SetTagText("Big Bang", Color.white, true);
 				record.Set(RecordEnum.fps,             0);
 				record.Set(RecordEnum.pps,             0);
 				record.Set(RecordEnum.cellCountTotal,  0);
@@ -108,7 +108,7 @@ public class World : MonoSingleton<World> {
 				GraphPlotter.instance.MakeDirty();
 			} else {
 				if(doSave) {
-					AddHistoryEvent(new HistoryEvent("Saved", true));
+					AddHistoryEvent(new HistoryEvent("Saved", true, Color.white));
 					CreateRecord();
 					DoSave("save.txt");
 					doSave = false;
@@ -141,12 +141,15 @@ public class World : MonoSingleton<World> {
 		if (historyEvents.Count > 0) {
 			string eventText = "";
 			bool line = false;
+			Color averageColor = Color.black;
 			for (int i = 0; i < historyEvents.Count; i++) {
 				eventText += historyEvents[i].text + " ";
 				line |= historyEvents[i].showLine;
+				averageColor += historyEvents[i].color;
 			}
+			averageColor /= historyEvents.Count;
 			historyEvents.Clear();
-			record.SetTagText(eventText, line);
+			record.SetTagText(eventText, averageColor, line);
 		}
 
 		record.Set(RecordEnum.fps, GlobalPanel.instance.frameRate);

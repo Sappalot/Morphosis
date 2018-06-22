@@ -36,6 +36,13 @@ public class Edge : MonoBehaviour {
 		}
 
 	}
+
+	public float length {
+		get {
+			return Vector2.Distance(parentCell.position, childCell.position);
+		}
+	}
+
 	private void Start() {
 		mainArrow.SetActive(false);
 		normalArrow.SetActive(false);

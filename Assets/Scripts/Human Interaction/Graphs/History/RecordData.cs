@@ -16,6 +16,9 @@ public class RecordData {
 	public float cellCountShell;
 	public float cellCountVein;
 
-	public string tag;
+	public string tagText;
 	public bool showLine;
+	public float tagRed;
+	public float tagGreen;
+	public float tagBlue;
 }

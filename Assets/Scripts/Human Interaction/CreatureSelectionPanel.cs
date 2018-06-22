@@ -281,7 +281,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public void OnDeleteClicked() {
 		for (int index = 0; index < selection.Count; index++) {
 			World.instance.life.KillCreatureSafe(selection[index], true);
-			World.instance.AddHistoryEvent(new HistoryEvent("x", false));
+			World.instance.AddHistoryEvent(new HistoryEvent("x", false, Color.gray));
 		}
 		ClearSelection();
 	}
@@ -557,7 +557,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			foreach (Creature c in moveCreatures) {
 				c.Release(PhenoGenoEnum.Phenotype);
 				SpawnAddEffect(c.phenotype.originCell.position);
-				World.instance.AddHistoryEvent(new HistoryEvent("+", false));
+				World.instance.AddHistoryEvent(new HistoryEvent("+", false, Color.gray));
 				//World.instance.history.StampTag("+");
 				//Debug.Log("+");
 			}
@@ -565,7 +565,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			foreach (Creature c in moveCreatures) {
 				c.Release(PhenoGenoEnum.Genotype);
 				SpawnAddEffect(c.genotype.originCell.position);
-				World.instance.AddHistoryEvent(new HistoryEvent("+", false));
+				World.instance.AddHistoryEvent(new HistoryEvent("+", false, Color.gray));
 				//World.instance.history.StampTag("+");
 				//Debug.Log("+");
 			}

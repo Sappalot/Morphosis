@@ -32,7 +32,7 @@ public class PrisonWall : MonoSingleton<PrisonWall> {
 			escapistCleanupTicks = 0;
 
 			if (killList.Count > 0) {
-				World.instance.AddHistoryEvent(new HistoryEvent("Runners Killed: " + killList.Count, false));
+				World.instance.AddHistoryEvent(new HistoryEvent("RK: " + killList.Count, false, Color.red));
 			}
 		}
 	}

@@ -308,19 +308,28 @@ public abstract class Cell : MonoBehaviour {
 
 	public void UpdateSpringsBreakingForce() {
 		if (northSpring != null) {
-			northSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
-		} else {
-			Debug.LogError("Spring missing, that should exist at this point");
+			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north));
+			if (GetCellType() == CellTypeEnum.Muscle || (neighbourCell != null && neighbourCell.GetCellType() == CellTypeEnum.Muscle)) {
+				northSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForceMuscle;
+			} else {
+				northSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
+			}
 		}
 		if (southWestSpring != null) {
-			southWestSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
-		} else {
-			Debug.LogError("Spring missing, that should exist at this point");
+			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.southWest));
+			if (GetCellType() == CellTypeEnum.Muscle || (neighbourCell != null && neighbourCell.GetCellType() == CellTypeEnum.Muscle)) {
+				southWestSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForceMuscle;
+			} else {
+				southWestSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
+			}
 		}
 		if (southEastSpring != null) {
-			southEastSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
-		} else {
-			Debug.LogError("Spring missing, that should exist at this point");
+			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.southEast));
+			if (GetCellType() == CellTypeEnum.Muscle || (neighbourCell != null && neighbourCell.GetCellType() == CellTypeEnum.Muscle)) {
+				southEastSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForceMuscle;
+			} else {
+				southEastSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
+			}
 		}
 	}
 
@@ -701,8 +710,8 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	void OnJointBreak2D(Joint2D brokenJoint) {
-		World.instance.life.KillCellSafe(this, World.instance.worldTicks);
-		World.instance.AddHistoryEvent(new HistoryEvent("Joint broke", false));
+		World.instance.life.KillCreatureSafe(creature, true);
+		World.instance.AddHistoryEvent(new HistoryEvent("BK", false, Color.red));
 	}
 
 	public void RepairBrokenSprings() {
@@ -722,6 +731,7 @@ public abstract class Cell : MonoBehaviour {
 		spring.autoConfigureConnectedAnchor = false;
 		spring.autoConfigureDistance = false;
 		spring.distance = 1f;
+		spring.connectedBody = null;
 		return spring;
 	}
 

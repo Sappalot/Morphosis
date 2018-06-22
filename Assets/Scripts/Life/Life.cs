@@ -223,7 +223,7 @@ public class Life : MonoBehaviour {
 		creature.generation = 1;
 
 		SpawnAddEffect(position);
-		World.instance.AddHistoryEvent(new HistoryEvent("+", false));
+		World.instance.AddHistoryEvent(new HistoryEvent("+", false, Color.gray));
 		return creature;
 	}
 
@@ -235,7 +235,7 @@ public class Life : MonoBehaviour {
 		creature.generation = 1;
 
 		SpawnAddEffect(position);
-		World.instance.AddHistoryEvent(new HistoryEvent("+", false));
+		World.instance.AddHistoryEvent(new HistoryEvent("+", false, Color.gray));
 		return creature;
 	}
 
@@ -431,7 +431,7 @@ public class Life : MonoBehaviour {
 				}
 				sterileKilledCount += sterileKilled;
 				if (sterileKilled > 0) {
-					World.instance.AddHistoryEvent(new HistoryEvent("Sterile Killed: " + sterileKilled, false));
+					World.instance.AddHistoryEvent(new HistoryEvent("SK: " + sterileKilled, false, Color.red));
 				}
 			}
 		}

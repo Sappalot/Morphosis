@@ -39,7 +39,7 @@ public class RecordStrip {
 			foreach (RecordEnum t in types) {
 				records[i].Set(t, 0f);
 			}
-			records[i].tag = null;
+			records[i].tagText = null;
 		}
 
 		cursor = 0;
@@ -56,8 +56,12 @@ public class RecordStrip {
 		foreach (RecordEnum t in types) {
 			records[cursor].Set(t, other.Get(t));
 		}
-		records[cursor].tag = other.tag;
-		records[cursor].showLine = other.showLine;
+		records[cursor].tagText =     other.tagText;
+		records[cursor].tagShowLine = other.tagShowLine;
+		records[cursor].tagRed =      other.tagRed;
+		records[cursor].tagGreen =    other.tagGreen;
+		records[cursor].tagBlue =     other.tagBlue;
+
 
 		lowpassCounter++;
 
@@ -75,15 +79,24 @@ public class RecordStrip {
 			//merge tags
 			if (todayRecord.HasTag() || yesterdayRecord.HasTag()) {
 				if (todayRecord.HasTag() && yesterdayRecord.HasTag()) {
-					lowpassRecord.tag = (yesterdayRecord.tag + todayRecord.tag); //merge;
+					lowpassRecord.tagText =  (yesterdayRecord.tagText + todayRecord.tagText); //merge;
+					lowpassRecord.tagRed =   (yesterdayRecord.tagRed +   todayRecord.tagRed)   / 2f;
+					lowpassRecord.tagGreen = (yesterdayRecord.tagGreen + todayRecord.tagGreen) / 2f;
+					lowpassRecord.tagBlue =  (yesterdayRecord.tagBlue +  todayRecord.tagBlue)  / 2f;
 				} else if (yesterdayRecord.HasTag()) {
-					lowpassRecord.tag = (yesterdayRecord.tag);
+					lowpassRecord.tagText =  yesterdayRecord.tagText;
+					lowpassRecord.tagRed =   yesterdayRecord.tagRed;
+					lowpassRecord.tagGreen = yesterdayRecord.tagGreen;
+					lowpassRecord.tagBlue =  yesterdayRecord.tagBlue;
 				} else {
-					lowpassRecord.tag = (todayRecord.tag);
+					lowpassRecord.tagText =  todayRecord.tagText;
+					lowpassRecord.tagRed =   todayRecord.tagRed;
+					lowpassRecord.tagGreen = todayRecord.tagGreen;
+					lowpassRecord.tagBlue =  todayRecord.tagBlue;
 				}
 			}
 
-			lowpassRecord.showLine = todayRecord.showLine | yesterdayRecord.showLine;
+			lowpassRecord.tagShowLine = todayRecord.tagShowLine | yesterdayRecord.tagShowLine;
 
 			lowpassCounter = 0;
 			return lowpassRecord;

@@ -5,6 +5,35 @@ using System.Linq;
 // The container of genotype(genes) and phenotype(body)
 // Holds information that does not fit into genes or body 
 public class Creature : MonoBehaviour {
+	//wing force
+	[Range(0f, 1f)]
+	public float wingDrag = 0.1f;
+
+	[Range(0f, 1f)]
+	public float f1 = 0.1f;
+
+	[Range(0f, 5f)]
+	public float wingF2 = 0.15f;
+
+	[Range(0f, 40f)]
+	public float wingPow = 2f;
+
+	[Range(0f, 100f)]
+	public float wingMax = 5f;
+
+	//muscle
+	[Range(0f, 0.5f)]
+	public float muscleRadiusDiff = 0.1f;
+
+	[Range(-1f, 1f)]
+	public float muscleContractRetract = -0.14f;
+
+	[Range(0f, 20f)]
+	public float muscleSpeed = 6.55f;
+
+	public Genotype genotype;
+	public Phenotype phenotype;
+
 	public SpriteRenderer creturePosition;
 	public SpriteRenderer phenotypePosition;
 	public SpriteRenderer phenotypeCellsPosition;
@@ -24,6 +53,13 @@ public class Creature : MonoBehaviour {
 	//Dont keep any direct reference to avoid keeping references to killed relatives (which are then recycled)
 	private Mother mother;
 	private Dictionary<string, Child> children = new Dictionary<string, Child>(); // each entry contains both string and child (child is allways a reference ID, which may or may not be found in life)
+
+	//time
+	private int growTicks;
+	//time ^
+
+	private bool detatch = false;
+	private int cantGrowMore = 0;
 
 	public void ClearMotherAndChildren() {
 		ClearMother();
@@ -227,42 +263,11 @@ public class Creature : MonoBehaviour {
 		return (worldTicks - bornTick) * Time.fixedDeltaTime;
 	}
 
-	//wing force
-	[Range(0f, 1f)]
-	public float wingDrag = 0.1f;
-
-	[Range(0f, 1f)]
-	public float f1 = 0.1f;
-
-	[Range(0f, 5f)]
-	public float wingF2 = 0.15f;
-
-	[Range(0f, 40f)]
-	public float wingPow = 2f;
-
-	[Range(0f, 100f)]
-	public float wingMax = 5f;
-
-	//muscle
-	[Range(0f, 0.5f)]
-	public float muscleRadiusDiff = 0.1f;
-
-	[Range(-1f, 1f)]
-	public float muscleContractRetract = -0.14f;
-
-	[Range(0f, 20f)]
-	public float muscleSpeed = 6.55f;
-
-	public Genotype genotype;
-	public Phenotype phenotype;
-
 	public float energy {
 		get {
 			return phenotype.energy;
 		}
 	}
-
-
 
 	//Dead or alive counts
 	public bool allowedToChangeGenome {
@@ -425,6 +430,13 @@ public class Creature : MonoBehaviour {
 	public void Clear() {
 		id = "";
 		nickname = "";
+		generation = 0;
+		creation = CreatureCreationEnum.Unset;
+
+		detatch = false;
+		cantGrowMore = 0;
+		growTicks = 0;
+
 		ClearMotherAndChildren();
 		genotype.GenomeEmpty();
 	}
@@ -626,13 +638,6 @@ public class Creature : MonoBehaviour {
 		return phenotype.UpdateKillWeakCells(worldTicks);
 	}
 
-	//time
-	private int growTicks;
-	//time ^
-
-	private bool detatch = false;
-	private int cantGrowMore = 0;
-
 	//Returns true if creature grew
 	public void UpdatePhysics(ulong worldTicks) {
 		//time
@@ -648,6 +653,7 @@ public class Creature : MonoBehaviour {
 		// Execute detatch
 		if (GlobalPanel.instance.physicsDetatch.isOn && detatch) { // At this point we are sure that our origin cell had time to get to know its neighbours (including mother placenta)
 			DetatchFromMother(true, true);
+
 			PhenotypePanel.instance.MakeDirty();
 			CellPanel.instance.MakeDirty();
 			cantGrowMore = 0;
@@ -666,6 +672,8 @@ public class Creature : MonoBehaviour {
 					cantGrowMore = int.MaxValue;
 				} else if (((reason.roomBound || reason.poseBound) && !reason.energyBound && !reason.respawnTimeBound)) {
 					cantGrowMore++; // wait a while before giving up on finding a spot to grow another cell
+				} else {
+					cantGrowMore = 0;
 				}
 			}
 			// ☠ ꕕ Haha, make use of these

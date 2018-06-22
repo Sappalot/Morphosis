@@ -80,14 +80,6 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		}
 	}
 
-	// Operation
-	public Toggle fpsGuardToggle;
-	public Slider fpsGuardSlider;
-	public Text fpsGuardText;
-	public void OnFpsGuardSliderMoved() {
-		fpsGuardText.text = "FPS Guard: " + fpsGuardSlider.value;
-	}
-
 	public Toggle physicsTeleport;
 	public Toggle physicsTelepoke;
 	public Toggle physicsKillFugitive;
@@ -142,14 +134,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		OnRunPhysicsClicked();
 	}
 
-	// Operation
-	public Slider garbageCollectPeriodSlider; // time in seconds
-	public Text garbageCollectText;
-	public Text garbageCollectPeriodText;
-	public void OnGarbageColectPeriodSliderMoved() {
-		garbageCollectPeriodText.text = garbageCollectPeriodSlider.value == 0 ? "Period: --" : ("Period: " + garbageCollectPeriodSlider.value + " s");
-	}
-
+	// History
+	public InputField historyGraphNote;
 
 	private void Update() {
 		frameCount++;
@@ -262,38 +248,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		}
 	}
 
-	public void OnClickRecreateScene() {
-		//World.instance.Save("temp.txt");
-		//StartCoroutine("load");
-		//ActivateScene();
-		//System.GC.Collect();
-	}
-
-	private bool shouldRecreate = true;
-	private void TryRecreateWorld() {
-		if (shouldRecreate) {
-			World.instance.Load("temp.txt");
-			shouldRecreate = false;
-		}
-	}
-
-	public void OnClickLoadBack() {
-		World.instance.Load("temp.txt");
-	}
-
-	private AsyncOperation async;
-
-	private IEnumerator load() {
-		async = SceneManager.LoadSceneAsync("MainScene");
-		async.allowSceneActivation = false;
-		while (!async.isDone) {
-			yield return null;
-		}
-		Debug.Log("Done loading scene");
-		
-	}
-
-	private void ActivateScene() {
-		async.allowSceneActivation = true;
+	public void OnAddHistoryNoteClicked() {
+		World.instance.AddHistoryEvent(new HistoryEvent(historyGraphNote.text, false, new Color(0.5f, 0.5f, 0f)));
 	}
 }
