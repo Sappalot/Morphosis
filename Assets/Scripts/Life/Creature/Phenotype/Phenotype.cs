@@ -754,19 +754,23 @@ public class Phenotype : MonoBehaviour {
 					mother.phenotype.detatchmentKick = new Dictionary<Cell, Vector2>();
 					detatchmentKick = new Dictionary<Cell, Vector2>();
 					Vector2 offspringForce = Vector2.zero;
-					float kickFactorMother = GlobalSettings.instance.phenotype.detatchmentKick * mother.phenotype.cellCount + GlobalSettings.instance.phenotype.detatchmentKickSquare * mother.phenotype.cellCount * mother.phenotype.cellCount;
-					float kickFactorChild = GlobalSettings.instance.phenotype.detatchmentKick * cellCount + GlobalSettings.instance.phenotype.detatchmentKickSquare * cellCount * cellCount;
+					// The size of mother ==> child kick magnitude
+					// The size of child  ==> mother kick magnitude
+					float kickFactorMother  = GlobalSettings.instance.phenotype.detatchmentKick * mother.phenotype.cellCount + GlobalSettings.instance.phenotype.detatchmentKickSquare * mother.phenotype.cellCount * mother.phenotype.cellCount;
+					float kickFactorChild =   GlobalSettings.instance.phenotype.detatchmentKick * cellCount +                  GlobalSettings.instance.phenotype.detatchmentKickSquare * cellCount * cellCount;
 
-					//impulses are negated, but may be of different magnitude, poor Newton!
-					//That way big creatures slides roughly the length of small ones
+					//float averageKickFactor = (kickFactorChild + kickFactorMother) / 2f;
+
+					// Impulses are negated, but may be of different magnitude, poor Newton!
+					// That way big creatures slides roughly the length of small ones
 					for (int i = 0; i < 6; i++) {
 						if (childOrigin.HasNeighbourCell(i) && childOrigin.GetNeighbourCell(i).creature.id != creature.id) {
 							Vector2 placentaForce = (childOrigin.GetNeighbourCell(i).position - childOrigin.position).normalized / placentaCount;
-							mother.phenotype.detatchmentKick.Add(childOrigin.GetNeighbourCell(i), placentaForce * kickFactorMother);
+							mother.phenotype.detatchmentKick.Add(childOrigin.GetNeighbourCell(i), placentaForce * kickFactorMother); //kickFactorMother
 							offspringForce -= placentaForce; //same magnitude but negated
 						}
 					}
-					detatchmentKick.Add(childOrigin, offspringForce * kickFactorChild);
+					detatchmentKick.Add(childOrigin, offspringForce * kickFactorChild); //kickFactorChild
 				}
 			}
 
@@ -933,15 +937,19 @@ public class Phenotype : MonoBehaviour {
 		for (int index = 0; index < cellList.Count; index++) {
 			if (cellList[index].isOrigin) {
 				cellList[index].ShowTriangle(true); // Debug
-				if (!creature.HasMother()) {
-					if (!creature.HasChildren()) {
-						cellList[index].SetTriangleColor(ColorScheme.instance.noRelativesArrow);
+				if (!creature.HasMotherIncDead()) {
+					if (!creature.HasChildrenIncDead()) {
+						// No mother, No children
+						cellList[index].SetTriangleColor(ColorScheme.instance.noRelativesArrow); // green
 					} else {
+						// No mother, Yes children
 						cellList[index].SetTriangleColor(ColorScheme.instance.noMotherArrow);
 					}
 				} else if (creature.IsAttachedToMother()) {
+					// Yes mother, attached
 					cellList[index].SetTriangleColor(ColorScheme.instance.motherAttachedArrow);
 				} else {
+					// Yes mother, not attached
 					cellList[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
 				}
 			} else {

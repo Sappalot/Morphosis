@@ -126,9 +126,9 @@ public class Creature : MonoBehaviour {
 
 	// Thll mother to see me as connected
 	public void SetAttachedToMother(bool attached) {
-		Creature mother = GetMother();
-		if (mother != null) {
-			mother.SetAttachedToChild(id, attached);
+		Creature m = GetMother();
+		if (m != null) {
+			m.SetAttachedToChild(id, attached);
 		}
 	}
 
@@ -570,96 +570,6 @@ public class Creature : MonoBehaviour {
 		genotype.hasCollider = CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype && !genotype.isGrabbed;
 	}
 
-	// Load / Save
-
-	private CreatureData creatureData = new CreatureData();
-
-	public void StoreState() {
-		BringOtherGenoPhenoPositionAndRotationToCurrent();
-		UpdateData();
-	}
-
-	public void RestoreState() {
-		genotype.ApplyData(creatureData.genotypeData);
-		isDirtyGraphics = true;
-	}
-
-	//Everything is deep cloned even the id. Change this not to have trouble
-	public void Clone(Creature original) {
-		ApplyData(original.UpdateData());
-	}
-
-	// Save
-	public CreatureData UpdateData() {
-		BringOtherGenoPhenoPositionAndRotationToCurrent(); //Do we really need this one??
-
-		//me
-		creatureData.id = id;
-		creatureData.nickname = nickname;
-		creatureData.creation = creation;
-		creatureData.generation = generation;
-
-		creatureData.bornTick = bornTick;
-		creatureData.deadTick = deadTick;
-		//todo: spieces
-
-		creatureData.genotypeData = genotype.UpdateData();
-		creatureData.phenotypeData = phenotype.UpdateData();
-
-		creatureData.growTicks = growTicks;
-
-		//Relatives
-		creatureData.childDataList.Clear();
-		List<Child> children = children_.Values.ToList();
-		for (int index = 0; index < children_.Values.Count; index++) {
-			Child child = children[index];
-			creatureData.childDataList.Add(child.UpdateData());
-		}
-		if (mother_ != null) {
-			creatureData.motherData = mother_.UpdateData();
-		} else {
-			creatureData.motherData = null;
-		}
-
-		return creatureData;
-	}
-
-	// Load
-	public void ApplyData(CreatureData creatureData) {
-		//me
-		nickname = creatureData.nickname;
-		id = creatureData.id;
-		creation = creatureData.creation;
-		generation = creatureData.generation;
-
-		bornTick = creatureData.bornTick;
-		deadTick = creatureData.deadTick;
-
-		genotype.ApplyData(creatureData.genotypeData);
-		Vector2 position = creatureData.genotypeData.originPosition;
-		float heading = creatureData.genotypeData.originHeading;
-		genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
-
-		growTicks = creatureData.growTicks;
-
-		phenotype.ApplyData(creatureData.phenotypeData, this);
-
-		//Relatives
-		ClearMotherAndChildren();
-		for (int index = 0; index < creatureData.childDataList.Count; index++) {
-			Child child = new Child();
-			child.ApplyData(creatureData.childDataList[index]);
-			AddChild(child);
-		}
-		if (creatureData.motherData != null && creatureData.motherData.id != "") {
-			mother_ = new Mother();
-			mother_.ApplyData(creatureData.motherData);
-			phenotype.connectionsDiffersFromCells = true;
-		}
-	}
-
-	// ^ Load / Save ^
-
 	// Update
 	public void UpdateGraphics() {
 		genotype.UpdateGraphics();
@@ -764,7 +674,7 @@ public class Creature : MonoBehaviour {
 			// Detatch child from mother
 			if (GlobalPanel.instance.physicsDetatch.isOn && IsAttachedToMother()) {
 				if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.cellCount >= phenotype.originCell.originDetatchSizeThreshold) ||
-					(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchCompletionPersistance)) {
+					(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchAfterCompletePersistance)) {
 					detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
 				}
 			}
@@ -803,4 +713,100 @@ public class Creature : MonoBehaviour {
 	public void OnBorrowToWorld() {
 		Clear();
 	}
+
+	// Load / Save
+
+	private CreatureData creatureData = new CreatureData();
+
+	public void StoreState() {
+		BringOtherGenoPhenoPositionAndRotationToCurrent();
+		UpdateData();
+	}
+
+	public void RestoreState() {
+		genotype.ApplyData(creatureData.genotypeData);
+		isDirtyGraphics = true;
+	}
+
+	//Everything is deep cloned even the id. Change this not to have trouble
+	public void Clone(Creature original) {
+		ApplyData(original.UpdateData());
+	}
+
+	// Save
+	public CreatureData UpdateData() {
+		BringOtherGenoPhenoPositionAndRotationToCurrent(); //Do we really need this one??
+
+		//me
+		creatureData.id = id;
+		creatureData.nickname = nickname;
+		creatureData.creation = creation;
+		creatureData.generation = generation;
+
+		creatureData.bornTick = bornTick;
+		creatureData.deadTick = deadTick;
+		//todo: spieces
+
+		creatureData.genotypeData = genotype.UpdateData();
+		creatureData.phenotypeData = phenotype.UpdateData();
+
+
+		//time
+		creatureData.growTicks = growTicks;
+		creatureData.cantGrowMore = cantGrowMore;
+		creatureData.detatch = detatch;
+
+		//Relatives
+		creatureData.childDataList.Clear();
+		List<Child> children = children_.Values.ToList();
+		for (int index = 0; index < children_.Values.Count; index++) {
+			Child child = children[index];
+			creatureData.childDataList.Add(child.UpdateData());
+		}
+		if (mother_ != null) {
+			creatureData.motherData = mother_.UpdateData();
+		} else {
+			creatureData.motherData = null;
+		}
+
+		return creatureData;
+	}
+
+	// Load
+	public void ApplyData(CreatureData creatureData) {
+		//me
+		nickname = creatureData.nickname;
+		id = creatureData.id;
+		creation = creatureData.creation;
+		generation = creatureData.generation;
+
+		bornTick = creatureData.bornTick;
+		deadTick = creatureData.deadTick;
+
+		genotype.ApplyData(creatureData.genotypeData);
+		Vector2 position = creatureData.genotypeData.originPosition;
+		float heading = creatureData.genotypeData.originHeading;
+		genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
+
+		growTicks = creatureData.growTicks;
+		cantGrowMore = creatureData.cantGrowMore;
+		detatch = creatureData.detatch;
+
+		phenotype.ApplyData(creatureData.phenotypeData, this);
+
+		//Relatives
+		ClearMotherAndChildren();
+		for (int index = 0; index < creatureData.childDataList.Count; index++) {
+			Child child = new Child();
+			child.ApplyData(creatureData.childDataList[index]);
+			AddChild(child);
+		}
+		if (creatureData.motherData != null && creatureData.motherData.id != "") {
+			mother_ = new Mother();
+			mother_.ApplyData(creatureData.motherData);
+			phenotype.connectionsDiffersFromCells = true;
+		}
+	}
+
+	// ^ Load / Save ^
 }

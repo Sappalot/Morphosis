@@ -14,10 +14,10 @@ public class CreatureData {
 	public GenotypeData genotypeData = new GenotypeData();
 	public PhenotypeData phenotypeData = new PhenotypeData();
 
+	public int growTicks;
+	public int cantGrowMore;
+	public bool detatch;
+
 	public MotherData motherData = null;
 	public List<ChildData> childDataList = new List<ChildData>();
-
-	public int growTicks;
-	public int detatchTicks;
-
 }
