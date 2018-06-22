@@ -306,6 +306,23 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
+	public void UpdateSpringsBreakingForce() {
+		if (northSpring != null) {
+			northSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
+		} else {
+			Debug.LogError("Spring missing, that should exist at this point");
+		}
+		if (southWestSpring != null) {
+			southWestSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
+		} else {
+			Debug.LogError("Spring missing, that should exist at this point");
+		}
+		if (southEastSpring != null) {
+			southEastSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
+		} else {
+			Debug.LogError("Spring missing, that should exist at this point");
+		}
+	}
 
 	virtual public bool IsContracting() {
 		return false;
@@ -681,6 +698,31 @@ public abstract class Cell : MonoBehaviour {
 				GetNeighbour(index).coreToThis = GetNeighbourCell(index).position - position;
 			}
 		}
+	}
+
+	void OnJointBreak2D(Joint2D brokenJoint) {
+		World.instance.life.KillCellSafe(this, World.instance.worldTicks);
+		World.instance.AddHistoryEvent(new HistoryEvent("Joint broke", false));
+	}
+
+	public void RepairBrokenSprings() {
+		if (northSpring == null) {
+			northSpring = CreateSpring();
+		}
+		if (southWestSpring == null) {
+			southWestSpring = CreateSpring();
+		}
+		if (southEastSpring == null) {
+			southEastSpring = CreateSpring();
+		}
+	}
+	private SpringJoint2D CreateSpring() {
+		SpringJoint2D spring = gameObject.AddComponent(typeof(SpringJoint2D)) as SpringJoint2D;
+		spring.enableCollision = false;
+		spring.autoConfigureConnectedAnchor = false;
+		spring.autoConfigureDistance = false;
+		spring.distance = 1f;
+		return spring;
 	}
 
 	public void UpdateSpringConnectionsIntra() {

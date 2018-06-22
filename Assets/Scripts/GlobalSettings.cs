@@ -148,6 +148,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		//Sterile
 		public float maxAgeAsChildless = 3600; //s
+
+		//Springs
+		public float springBreakingForce = 100f; // N
 	}
 	public Phenotype phenotype;
 

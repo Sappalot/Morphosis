@@ -421,6 +421,8 @@ public class Phenotype : MonoBehaviour {
 			UpdateNeighbourReferencesInterBody(creature);
 
 			//Springs
+			RepairBrokenSprings();
+			UpdateSpringsBreakingForce();
 			UpdateSpringsConnections();
 			UpdatePlacentaSpringConnections(creature);
 			foreach (Creature child in creature.GetAttachedChildren()) {
@@ -438,6 +440,8 @@ public class Phenotype : MonoBehaviour {
 
 			//Debug
 			UpdateSpringsFrequenze(); //testing only
+
+			
 
 			//test with no muscel collider
 			EnableCollider(true);
@@ -514,6 +518,13 @@ public class Phenotype : MonoBehaviour {
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
 			cell.UpdateGroups(motherId);
+		}
+	}
+
+	private void RepairBrokenSprings() {
+		for (int index = 0; index < cellList.Count; index++) {
+			Cell cell = cellList[index];
+			cell.RepairBrokenSprings();
 		}
 	}
 
@@ -912,6 +923,12 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	private void UpdateSpringsBreakingForce() {
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].UpdateSpringsBreakingForce();
+		}
+	}
+
 	public void ShowOutline(bool show) {
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].ShowOutline(show);
@@ -1102,61 +1119,6 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	// Load / Save
-
-	// Save
-	private PhenotypeData phenotypeData = new PhenotypeData();
-	public PhenotypeData UpdateData() {
-		phenotypeData.timeOffset = timeOffset;
-		phenotypeData.cellDataList.Clear();
-		for (int index = 0; index < cellList.Count; index++) {
-			Cell cell = cellList[index];
-			phenotypeData.cellDataList.Add(cell.UpdateData());
-		}
-		phenotypeData.differsFromGenotype = cellsDiffersFromGeneCells;
-
-		phenotypeData.eggCellTick =    eggCellTick;
-		phenotypeData.fungalCellTick = fungalCellTick;
-		phenotypeData.jawCellTick =    jawCellTick;
-		phenotypeData.leafCellTick =   leafCellTick;
-		phenotypeData.muscleCellTick = muscleCellTick;
-		phenotypeData.rootCellTick =   rootCellTick;
-		phenotypeData.shellCellTick =  shellCellTick;
-		phenotypeData.veinCellTick =   veinCellTick;
-
-		phenotypeData.veinTick =       veinTick;
-		return phenotypeData;
-	}
-
-	// Load
-	public void ApplyData(PhenotypeData phenotypeData, Creature creature) {
-		timeOffset = phenotypeData.timeOffset;
-
-		Setup(phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
-		for (int index = 0; index < phenotypeData.cellDataList.Count; index++) {
-			CellData cellData = phenotypeData.cellDataList[index];
-			Cell cell = InstantiateCell(creature.genotype.genome[cellData.geneIndex].type, cellData.mapPosition, creature);
-			cell.ApplyData(cellData, creature);
-		}
-		cellsDiffersFromGeneCells = false; //This work is done
-		connectionsDiffersFromCells = true; //We need to connect mothers with children
-
-		eggCellTick =    phenotypeData.eggCellTick;
-		fungalCellTick = phenotypeData.fungalCellTick;
-		jawCellTick =    phenotypeData.jawCellTick;
-		leafCellTick =   phenotypeData.leafCellTick;
-		muscleCellTick = phenotypeData.muscleCellTick;
-		rootCellTick =   phenotypeData.rootCellTick;
-		shellCellTick =  phenotypeData.shellCellTick;
-		veinCellTick =   phenotypeData.veinCellTick;
-
-		phenotypeData.veinTick = veinTick;
-
-		//Turn arrrows right
-		UpdateRotation();
-	}
-
-	// ^ Load / Save ^
 	// Update
 
 	public void UpdateGraphics(Creature creature) {
@@ -1352,5 +1314,61 @@ public class Phenotype : MonoBehaviour {
 		Clear();
 		isAlive = false;
 	}
-	// ^ pooling ^ 
+	// ^ pooling ^
+
+	// Load / Save
+
+	// Save
+	private PhenotypeData phenotypeData = new PhenotypeData();
+	public PhenotypeData UpdateData() {
+		phenotypeData.timeOffset = timeOffset;
+		phenotypeData.cellDataList.Clear();
+		for (int index = 0; index < cellList.Count; index++) {
+			Cell cell = cellList[index];
+			phenotypeData.cellDataList.Add(cell.UpdateData());
+		}
+		phenotypeData.differsFromGenotype = cellsDiffersFromGeneCells;
+
+		phenotypeData.eggCellTick = eggCellTick;
+		phenotypeData.fungalCellTick = fungalCellTick;
+		phenotypeData.jawCellTick = jawCellTick;
+		phenotypeData.leafCellTick = leafCellTick;
+		phenotypeData.muscleCellTick = muscleCellTick;
+		phenotypeData.rootCellTick = rootCellTick;
+		phenotypeData.shellCellTick = shellCellTick;
+		phenotypeData.veinCellTick = veinCellTick;
+
+		phenotypeData.veinTick = veinTick;
+		return phenotypeData;
+	}
+
+	// Load
+	public void ApplyData(PhenotypeData phenotypeData, Creature creature) {
+		timeOffset = phenotypeData.timeOffset;
+
+		Setup(phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
+		for (int index = 0; index < phenotypeData.cellDataList.Count; index++) {
+			CellData cellData = phenotypeData.cellDataList[index];
+			Cell cell = InstantiateCell(creature.genotype.genome[cellData.geneIndex].type, cellData.mapPosition, creature);
+			cell.ApplyData(cellData, creature);
+		}
+		cellsDiffersFromGeneCells = false; //This work is done
+		connectionsDiffersFromCells = true; //We need to connect mothers with children
+
+		eggCellTick = phenotypeData.eggCellTick;
+		fungalCellTick = phenotypeData.fungalCellTick;
+		jawCellTick = phenotypeData.jawCellTick;
+		leafCellTick = phenotypeData.leafCellTick;
+		muscleCellTick = phenotypeData.muscleCellTick;
+		rootCellTick = phenotypeData.rootCellTick;
+		shellCellTick = phenotypeData.shellCellTick;
+		veinCellTick = phenotypeData.veinCellTick;
+
+		phenotypeData.veinTick = veinTick;
+
+		//Turn arrrows right
+		UpdateRotation();
+	}
+
+	// ^ Load / Save ^
 }

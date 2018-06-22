@@ -422,11 +422,16 @@ public class Life : MonoBehaviour {
 
 		if (GlobalPanel.instance.physicsKillSterile.isOn) {
 			if (killSterileCreaturesTicks == 0) {
+				int sterileKilled = 0;
 				for (int index = 0; index < creatureList.Count; index++) {
 					if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAgeAsChildless && !creatureList[index].HasChildrenIncDead()) {
 						killCreatureList.Add(creatureList[index]);
-						sterileKilledCount++;
+						sterileKilled++;
 					}
+				}
+				sterileKilledCount += sterileKilled;
+				if (sterileKilled > 0) {
+					World.instance.AddHistoryEvent(new HistoryEvent("Sterile Killed: " + sterileKilled, false));
 				}
 			}
 		}

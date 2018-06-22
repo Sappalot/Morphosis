@@ -22,8 +22,8 @@ public class Creature : MonoBehaviour {
 
 	// Relations
 	//Dont keep any direct reference to avoid keeping references to killed relatives (which are then recycled)
-	private Mother mother_;
-	private Dictionary<string, Child> children_ = new Dictionary<string, Child>(); // each entry contains both string and child (child is allways a reference ID, which may or may not be found in life)
+	private Mother mother;
+	private Dictionary<string, Child> children = new Dictionary<string, Child>(); // each entry contains both string and child (child is allways a reference ID, which may or may not be found in life)
 
 	public void ClearMotherAndChildren() {
 		ClearMother();
@@ -31,18 +31,18 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void ClearMother() {
-		mother_ = null;
+		mother = null;
 	}
 
 	public void ClearChildren() {
-		children_.Clear();
+		children.Clear();
 	}
 
 	// Relations -> mother	
 
 	//do this when creature is born, copied or loaded
 	public void SetMother(string motherId) {
-		mother_ = new Mother(motherId);
+		mother = new Mother(motherId);
 	}
 
 	public bool HasMother() {
@@ -53,8 +53,8 @@ public class Creature : MonoBehaviour {
 		if (!HasMother()) {
 			return null;
 		}
-		if (World.instance.life.HasCreature(mother_.id)) {
-			return World.instance.life.GetCreature(mother_.id);
+		if (World.instance.life.HasCreature(mother.id)) {
+			return World.instance.life.GetCreature(mother.id);
 		}
 		return null;
 	}
@@ -64,10 +64,10 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void SetAttachedToChild(string childId, bool attached) {
-		if (!children_.ContainsKey(childId)) {
+		if (!children.ContainsKey(childId)) {
 			return;
 		}
-		children_[childId].isConnectedToMother = attached;
+		children[childId].isConnectedToMother = attached;
 	}
 
 	public bool HasMotherIncDead() {
@@ -75,17 +75,17 @@ public class Creature : MonoBehaviour {
 	}
 
 	public string GetMotherIdIncDead() {
-		if (mother_ != null) {
-			return mother_.id;
+		if (mother != null) {
+			return mother.id;
 		}
 		return null;
 	}
 
 	private FamilyMemberState GetRelationToMother() {
-		if (mother_ == null) {
+		if (mother == null) {
 			return FamilyMemberState.Unexisting;
 		} else {
-			Creature myMother = World.instance.life.GetCreature(mother_.id);
+			Creature myMother = World.instance.life.GetCreature(mother.id);
 			if (myMother != null) {
 				if (myMother.IsAttachedToChild(id)) {
 					return FamilyMemberState.AliveAndAttached;
@@ -100,7 +100,7 @@ public class Creature : MonoBehaviour {
 	// ^ Relations -> mother ^
 	// Relations -> children
 	public void AddChild(ChildData childData) {
-		children_.Add(childData.id, new Child(childData.id, childData.isConnectedToMother, childData.originMapPosition, childData.originBindCardinalIndex));
+		children.Add(childData.id, new Child(childData.id, childData.isConnectedToMother, childData.originMapPosition, childData.originBindCardinalIndex));
 	}
 
 	public bool HasChildren() {
@@ -108,20 +108,20 @@ public class Creature : MonoBehaviour {
 	}
 
 	public Creature GetChild(string id) {
-		if (!children_.ContainsKey(id)) {
+		if (!children.ContainsKey(id)) {
 			return null;
 		}
 		if (World.instance.life.HasCreature(id)) {
-			return World.instance.life.GetCreature(mother_.id);
+			return World.instance.life.GetCreature(mother.id);
 		}
 		return null;
 	}
 
 	public bool IsAttachedToChild(string id) {
-		if (!children_.ContainsKey(id)) {
+		if (!children.ContainsKey(id)) {
 			return false;
 		}
-		return children_[id].isConnectedToMother;
+		return children[id].isConnectedToMother;
 	}
 
 	// Thll mother to see me as connected
@@ -133,17 +133,17 @@ public class Creature : MonoBehaviour {
 	}
 
 	public Vector2i ChildOriginMapPosition(string id) {
-		return children_[id].originMapPosition;
+		return children[id].originMapPosition;
 	}
 
 	public int ChildOriginBindCardinalIndex(string id) {
-		return children_[id].originBindCardinalIndex;
+		return children[id].originBindCardinalIndex;
 	}
 
 	//if we have no children we leave a list full of null
 	public List<Creature> GetChildren() {
 		List<Creature> childrenAlive = new List<Creature>();
-		foreach (string id in children_.Keys) {
+		foreach (string id in children.Keys) {
 			Creature found = World.instance.life.GetCreature(id);
 			if (found != null) {
 				childrenAlive.Add(found);
@@ -154,7 +154,7 @@ public class Creature : MonoBehaviour {
 
 	public List<Creature> GetAttachedChildren() {
 		List<Creature> childrenAliveAndAttached = new List<Creature>();
-		foreach (string id in children_.Keys) {
+		foreach (string id in children.Keys) {
 			Creature found = World.instance.life.GetCreature(id);
 			if (found != null && GetRelationToChild(found.id) == FamilyMemberState.AliveAndAttached) {
 				childrenAliveAndAttached.Add(found);
@@ -165,7 +165,7 @@ public class Creature : MonoBehaviour {
 
 	public List<string> GetChildrenIdIncDead() {
 		List<string> ids = new List<string>();
-		foreach (string id in children_.Keys) {
+		foreach (string id in children.Keys) {
 			ids.Add(id);
 		}
 		return ids;
@@ -173,7 +173,7 @@ public class Creature : MonoBehaviour {
 
 	private int ChildrenCount() {
 		int count = 0;
-		foreach (Child c in children_.Values) {
+		foreach (Child c in children.Values) {
 			if (GetRelationToChild(c.id) == FamilyMemberState.AliveAndAttached || GetRelationToChild(c.id) == FamilyMemberState.AliveAndDetatched) {
 				count++;
 			}
@@ -182,17 +182,17 @@ public class Creature : MonoBehaviour {
 	}
 
 	public bool HasChildrenIncDead() {
-		return children_.Count > 0;
+		return children.Count > 0;
 	}
 
 	public int ChildrenCountIncDead() {
-		return children_.Count;
+		return children.Count;
 	}
 
 	private FamilyMemberState GetRelationToChild(string id) {
-		if (children_.ContainsKey(id)) {
+		if (children.ContainsKey(id)) {
 			if (World.instance.life.HasCreature(id)) {
-				if (children_[id].isConnectedToMother) {
+				if (children[id].isConnectedToMother) {
 					return FamilyMemberState.AliveAndAttached;
 				} else {
 					return FamilyMemberState.AliveAndDetatched;
@@ -206,7 +206,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	private void AddChild(Child child) {
-		children_.Add(child.id, child);
+		children.Add(child.id, child);
 	}
 
 	//  ^ Relations - children ^
@@ -758,13 +758,13 @@ public class Creature : MonoBehaviour {
 
 		//Relatives
 		creatureData.childDataList.Clear();
-		List<Child> children = children_.Values.ToList();
-		for (int index = 0; index < children_.Values.Count; index++) {
-			Child child = children[index];
+		List<Child> c = children.Values.ToList();
+		for (int index = 0; index < children.Values.Count; index++) {
+			Child child = c[index];
 			creatureData.childDataList.Add(child.UpdateData());
 		}
-		if (mother_ != null) {
-			creatureData.motherData = mother_.UpdateData();
+		if (mother != null) {
+			creatureData.motherData = mother.UpdateData();
 		} else {
 			creatureData.motherData = null;
 		}
@@ -802,8 +802,8 @@ public class Creature : MonoBehaviour {
 			AddChild(child);
 		}
 		if (creatureData.motherData != null && creatureData.motherData.id != "") {
-			mother_ = new Mother();
-			mother_.ApplyData(creatureData.motherData);
+			mother = new Mother();
+			mother.ApplyData(creatureData.motherData);
 			phenotype.connectionsDiffersFromCells = true;
 		}
 	}
