@@ -2,6 +2,11 @@
 
 static class CameraUtils {
 
+	public static float GetEffectScaleLazy() {
+		//Debug.Log(World.instance.worldCamera.orthographicSize);
+		return Mathf.Lerp(2f, 6f, Mathf.InverseLerp(10f, 50f, World.instance.worldCamera.orthographicSize));
+	}
+
 	public static bool IsObservedLazy(Vector3 position, float orthoMaxWidth) {
 		return IsInsideFrustum(World.instance.worldCamera, position) && World.instance.worldCamera.orthographicSize < orthoMaxWidth;
 	}

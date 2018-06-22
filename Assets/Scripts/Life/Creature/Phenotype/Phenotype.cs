@@ -735,7 +735,7 @@ public class Phenotype : MonoBehaviour {
 
 			if (playEffects && GlobalPanel.instance.graphicsEffects.isOn) {
 				float angle = originCell.heading - 90f;
-				EffectPlayer.instance.Play(EffectEnum.CreatureDetatch, originCell.position, angle);
+				EffectPlayer.instance.Play(EffectEnum.CreatureDetatch, originCell.position, angle, CameraUtils.GetEffectScaleLazy());
 			}
 
 			//Kick separation

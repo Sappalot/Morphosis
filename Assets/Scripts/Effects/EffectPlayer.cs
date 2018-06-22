@@ -8,12 +8,14 @@ public class EffectPlayer : MonoSingleton<EffectPlayer> {
 	public Sprite death;
 	public Sprite detatch;
 
-	public void Play(EffectEnum type, Vector2 position, float angle = 0f) {
-		Animator animator = EffectPool.instance.Borrow();
-		animator.transform.position = position;
-		animator.transform.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
-		animator.SetTrigger("expand");
-		animator.GetComponent<SpriteRenderer>().enabled = true;
+	public void Play(EffectEnum type, Vector2 position, float angle, float scale) {
+		Effect effect = EffectPool.instance.Borrow();
+		effect.transform.position = position;
+		effect.transform.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+		effect.transform.localScale = new Vector3(scale, scale, 0f);
+		effect.animator.SetTrigger("expand");
+		effect.spriteRenderer.enabled = true;
 
 		Sprite sprite = null;
 		if (type == EffectEnum.CreatureAdd) {
@@ -25,14 +27,14 @@ public class EffectPlayer : MonoSingleton<EffectPlayer> {
 		} else if (type == EffectEnum.CreatureDetatch) {
 			sprite = detatch;
 		}
-		animator.GetComponent<SpriteRenderer>().sprite = sprite;
+		effect.spriteRenderer.sprite = sprite; 
 
-		animator.GetComponent<DelayedAnimationDelete>().StopWhenDone();
+		effect.delayedAnimationDelete.StopWhenDone();
 
 	}
 
-	public void Stop(Animator animator) {
-		animator.GetComponent<SpriteRenderer>().enabled = false;
-		EffectPool.instance.Return(animator);
+	public void Stop(Effect effect) {
+		effect.spriteRenderer.enabled = false;
+		EffectPool.instance.Return(effect);
 	}
 }

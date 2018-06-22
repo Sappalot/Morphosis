@@ -81,7 +81,7 @@ public class Life : MonoBehaviour {
 		}
 
 		if (playEffects && GlobalPanel.instance.graphicsEffects.isOn) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureBorn, eggCell.position);
+			EffectPlayer.instance.Play(EffectEnum.CreatureBorn, eggCell.position, 0f, CameraUtils.GetEffectScaleLazy());
 		}
 
 		Creature mother = eggCell.creature;
@@ -155,7 +155,7 @@ public class Life : MonoBehaviour {
 
 		if (playEffects && GlobalPanel.instance.graphicsEffects.isOn) {
 			//Animator birth = Instantiate(creatureDeathEffectPrefab, creature.phenotype.originCell.position, Quaternion.Euler(0f, 0f, 0f));
-			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, creature.phenotype.originCell.position);
+			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, creature.phenotype.originCell.position, 0f, CameraUtils.GetEffectScaleLazy());
 		}
 
 		creature.KillAllCells(true); // for the fx :)
@@ -268,13 +268,13 @@ public class Life : MonoBehaviour {
 
 	private void SpawnAddEffect(Vector2 position) {
 		if (GlobalPanel.instance.graphicsEffects.isOn) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureAdd, position);
+			EffectPlayer.instance.Play(EffectEnum.CreatureAdd, position, 0f, CameraUtils.GetEffectScaleLazy());
 		}
 	}
 
 	private void SpawnBirthEffect(Vector2 position) {
 		if (GlobalPanel.instance.graphicsEffects.isOn) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureBorn, position);
+			EffectPlayer.instance.Play(EffectEnum.CreatureBorn, position, 0f, CameraUtils.GetEffectScaleLazy());
 		}
 	}
 

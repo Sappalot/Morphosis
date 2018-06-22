@@ -3,9 +3,9 @@ using UnityEngine;
 
 
 public class EffectPool : MonoSingleton<EffectPool> {
-	public Animator creatureDeathEffectPrefab;
+	public Effect creatureDeathEffectPrefab;
 	private int serialNumber = 0;
-	private Queue<Animator> storedQueues = new Queue<Animator>();
+	private Queue<Effect> storedQueues = new Queue<Effect>();
 
 	public override void Init() {
 
@@ -13,46 +13,46 @@ public class EffectPool : MonoSingleton<EffectPool> {
 
 	//Borrow an expand animator
 	//TODO: other animators as well
-	public Animator Borrow() {
+	public Effect Borrow() {
 		if (!GlobalSettings.instance.pooling.effects) {
 			return Instantiate();
 		}
 
-		Animator animator = null;
-		Animator poppedAnimator = PopAnimator();
+		Effect effect = null;
+		Effect poppedEffect = PopEffect();
 
-		if (poppedAnimator != null) {
-			animator = poppedAnimator;
+		if (poppedEffect != null) {
+			effect = poppedEffect;
 		} else {
-			animator = Instantiate();
+			effect = Instantiate();
 		}
 
-		animator.transform.parent = transform.parent;
-		return animator;
+		effect.transform.parent = transform.parent;
+		return effect;
 	}
 
-	public void Return(Animator animator) {
+	public void Return(Effect effect) {
 		if (!GlobalSettings.instance.pooling.effects) {
-			Destroy(animator.gameObject);
+			Destroy(effect.gameObject);
 			return;
 		}
 
-		animator.transform.parent = transform;
-		storedQueues.Enqueue(animator);
+		effect.transform.parent = transform;
+		storedQueues.Enqueue(effect);
 	}
 
-	private Animator PopAnimator() {
+	private Effect PopEffect() {
 		if (storedQueues.Count > 0) {
-			Animator animator = storedQueues.Dequeue();
-			return animator;
+			Effect effect = storedQueues.Dequeue();
+			return effect;
 		}
 		return null;
 	}
 
-	private Animator Instantiate() {
-		Animator animator = Instantiate(creatureDeathEffectPrefab, Vector3.zero, Quaternion.Euler(0f, 0f, 0f));
-		animator.transform.parent = transform;
-		animator.name = "Sprite Expand " + serialNumber++;
-		return animator;
+	private Effect Instantiate() {
+		Effect effect = Instantiate(creatureDeathEffectPrefab, Vector3.zero, Quaternion.Euler(0f, 0f, 0f));
+		effect.transform.parent = transform;
+		effect.name = "Sprite Expand " + serialNumber++;
+		return effect;
 	}
 }
