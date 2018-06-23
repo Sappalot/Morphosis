@@ -9,5 +9,5 @@ public class WorldData {
 
 	public LifeData lifeData;
 	public HistoryData historyData; //we should be able to load files without data
-	//terrain data...
+	public TerrainData terrainData;
 }

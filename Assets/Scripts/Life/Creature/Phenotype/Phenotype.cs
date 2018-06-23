@@ -284,7 +284,6 @@ public class Phenotype : MonoBehaviour {
 					float distance = Vector2.Distance(spawnPosition, builder.position);
 					if (distance > GlobalSettings.instance.phenotype.cellBuildMaxDistance) {
 						noGrowthReason.poseBound = true;
-						Debug.Log("Pose Bound!!!");
 						break;
 					}
 				}
@@ -606,7 +605,7 @@ public class Phenotype : MonoBehaviour {
 		//Check if mothers placenta is gone
 		if (creature.HasMother() && disturbedCell.isOrigin && !deletedCell.IsSameCreature(disturbedCell)) {
 			if (!IsOriginNeighbouringMothersPlacenta(creature)) {
-				DetatchFromMother(creature, false, true);
+				DetatchFromMother(creature, false, false);
 			}
 		}
 
@@ -1205,7 +1204,7 @@ public class Phenotype : MonoBehaviour {
 
 		leafCellTick++;
 		//if (leafCellTick >= (int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed)) {
-		if (leafCellTick >= (int)GlobalSettings.instance.quality.leafCellTickPeriod) {
+		if (leafCellTick >= (int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed)) {
 			leafCellTick = 0;
 		}
 
@@ -1279,7 +1278,7 @@ public class Phenotype : MonoBehaviour {
 			} else if (jawCellTick == 0 && cell.GetCellType() == CellTypeEnum.Jaw) {
 				cell.UpdateCellFunction(GlobalSettings.instance.quality.jawCellTickPeriod, worldTick);
 			} else if (leafCellTick == 0 && cell.GetCellType() == CellTypeEnum.Leaf) {
-				cell.UpdateCellFunction((int)GlobalSettings.instance.quality.leafCellTickPeriod, worldTick);
+				cell.UpdateCellFunction((int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed), worldTick);
 			} else if (muscleCellTick == 0 && cell.GetCellType() == CellTypeEnum.Muscle) {
 				cell.UpdateCellFunction(GlobalSettings.instance.quality.muscleCellTickPeriod, worldTick);
 			} else if (rootCellTick == 0 && cell.GetCellType() == CellTypeEnum.Root) {

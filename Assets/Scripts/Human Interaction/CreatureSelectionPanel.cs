@@ -688,19 +688,19 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 
 		//Keys
-		if (Input.GetKeyDown(KeyCode.M)) {
+		if (Input.GetKeyDown(KeyCode.M) && !GlobalPanel.instance.isWritingHistoryNote) {
 			OnMoveClicked();
 		}
-		if (Input.GetKeyDown(KeyCode.R)) {
+		if (Input.GetKeyDown(KeyCode.R) && !GlobalPanel.instance.isWritingHistoryNote) {
 			OnRotateClicked();
 		}
-		if (Input.GetKeyDown(KeyCode.C)) {
+		if (Input.GetKeyDown(KeyCode.C) && !GlobalPanel.instance.isWritingHistoryNote) {
 			OnCopyClicked();
 		}
-		if (Input.GetKeyDown(KeyCode.Delete)) {
+		if (Input.GetKeyDown(KeyCode.Delete) && !GlobalPanel.instance.isWritingHistoryNote) {
 			OnDeleteClicked();
 		}
-		if (Input.GetKeyDown(KeyCode.B)) {
+		if (Input.GetKeyDown(KeyCode.B) && !GlobalPanel.instance.isWritingHistoryNote) {
 			OnCombineClicked();
 		}
 

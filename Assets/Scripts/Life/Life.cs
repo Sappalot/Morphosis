@@ -148,9 +148,9 @@ public class Life : MonoBehaviour {
 
 	//This is the only way, where the creature GO is deleted
 	public void KillCreatureSafe(Creature creature, bool playEffects) {
-		creature.DetatchFromMother(false, true);
+		creature.DetatchFromMother(false, playEffects);
 		foreach (Creature child in creature.GetChildren()) {
-			child.DetatchFromMother(false, true);
+			child.DetatchFromMother(false, playEffects);
 		}
 
 		if (playEffects && GlobalPanel.instance.graphicsEffects.isOn) {
@@ -160,7 +160,7 @@ public class Life : MonoBehaviour {
 
 		creature.KillAllCells(true); // for the fx :)
 
-		creature.OnRecycle(); //Not only when using creature pool
+		
 		creatureDeadCount++;
 
 		//TODO: Return root cell to pool
@@ -171,12 +171,14 @@ public class Life : MonoBehaviour {
 		Cell[] forgottenGeneCells = creature.genotype.geneCellsTransform.GetComponents<Cell>();
 		deletedCellCount += forgottenGeneCells.Length;
 
-		
+
 
 		//This is the only place where creature is recycled / destroyed
-		CreaturePool.instance.Recycle(creature);
-		creatureDictionary.Remove(creature.id);
+		creatureDictionary.Remove(creature.id); // Ooops we need to remove it before OnRecycle! OnRecycle will change the id so it wont be found when trying to remove
 		creatureList.Remove(creature);
+
+		creature.OnRecycle(); //Not only when using creature pool
+		CreaturePool.instance.Recycle(creature);
 
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		CreatureSelectionPanel.instance.MakeDirty();
@@ -353,7 +355,7 @@ public class Life : MonoBehaviour {
 		KillAllCreatures();
 		for (int index = 0; index < lifeData.creatureList.Count; index++) {
 			CreatureData creatureData = lifeData.creatureList[index];
-			Creature creature = InstantiateCreature(creatureData.id); // Creatres soul as
+			Creature creature = InstantiateCreature(creatureData.id);
 			creature.ApplyData(creatureData);
 		}
 		creatureDeadCount = lifeData.creatureDeadCount;

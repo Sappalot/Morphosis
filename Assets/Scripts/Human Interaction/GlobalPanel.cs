@@ -79,6 +79,44 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			physicsGrayOut.gameObject.SetActive(value);
 		}
 	}
+	//--
+	public Toggle fpsGuardToggle;
+	public Text fpsGuardText;
+	public Slider fpsGuardSlider;
+	private bool ignoreSliderMoved;
+
+	//public 
+	public void OnFpsGuardSliderMoved() {
+		if (ignoreSliderMoved) {
+			return;
+		}
+
+		World.instance.terrain.pidCircle.fpsGoal = fpsGuardSlider.value;
+		UpdateFpsSliderText();
+	}
+
+	public void UpdateSliderAndToggleValue() {
+		ignoreSliderMoved = true;
+		fpsGuardSlider.value = World.instance.terrain.pidCircle.fpsGoal;
+		fpsGuardToggle.isOn = World.instance.terrain.pidCircle.isOn;
+		ignoreSliderMoved = false;
+		UpdateFpsSliderText();
+	}
+
+	public void OnFpsGuardToggleChanged() {
+		if (ignoreSliderMoved) {
+			return;
+		}
+		World.instance.terrain.pidCircle.isOn = fpsGuardToggle.isOn;
+	}
+
+	private void UpdateFpsSliderText() {
+		fpsGuardText.text = "Fps: " + World.instance.terrain.pidCircle.fpsGoal;
+	}
+	//ignoreSliderMoved =treue;
+	//fertilizeSlider.value =               GenePanel.instance.selectedGene.eggCellFertilizeThreshold;
+	//ignoreSliderMoved = false;
+	//---
 
 	public Toggle physicsTeleport;
 	public Toggle physicsTelepoke;
@@ -203,9 +241,9 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			edgePoolCount.text = "Edges: " + World.instance.life.edgePool.storedCount + " + " + World.instance.life.edgePool.loanedCount + " = " + (World.instance.life.edgePool.storedCount + World.instance.life.edgePool.loanedCount);
 
 			veinPoolCount.text = "Veins: " + World.instance.life.veinPool.storedCount + " + " + World.instance.life.veinPool.loanedCount + " = " + (World.instance.life.veinPool.storedCount + World.instance.life.veinPool.loanedCount);
-		}
 
-		//TryRecreateWorld();
+			UpdateFpsSliderText();
+		}
 	}
 
 	private void FixedUpdate() {
@@ -250,5 +288,11 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	public void OnAddHistoryNoteClicked() {
 		World.instance.AddHistoryEvent(new HistoryEvent(historyGraphNote.text, false, new Color(0.5f, 0.5f, 0f)));
+	}
+
+	public bool isWritingHistoryNote {
+		get {
+			return historyGraphNote.isFocused;
+		}
 	}
 }

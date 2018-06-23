@@ -9,6 +9,8 @@ public class World : MonoSingleton<World> {
 	public Life life;
 	public Life lifePrefab;
 
+	public Terrain terrain;
+
 	public GameObject cellPrefab;
 
 	public Camera worldCamera;
@@ -36,6 +38,7 @@ public class World : MonoSingleton<World> {
 		CreateLife();
 
 		history.Init();
+		terrain.Init();
 		GraphPlotter.instance.history = history;
 	}
 
@@ -122,6 +125,9 @@ public class World : MonoSingleton<World> {
 				stopAfterOneSecond = false;
 			}
 		}
+
+		terrain.UpdatePhysics();
+
 		worldTicks++; //The only place where time is increased
 
 
@@ -188,6 +194,8 @@ public class World : MonoSingleton<World> {
 
 		history.Clear();
 
+		terrain.Restart();
+
 		GlobalPanel.instance.SelectRunPhysics();
 		stopAfterOneSecond = true;
 	}
@@ -242,7 +250,7 @@ public class World : MonoSingleton<World> {
 		worldData.lifeData = life.UpdateData();
 		worldData.worldTicks = worldTicks;
 		worldData.historyData = history.UpdateData();
-
+		worldData.terrainData = terrain.UpdateData();
 		worldData.runnersKilledCount = PrisonWall.instance.runnersKilledCount;
 	}
 
@@ -256,7 +264,7 @@ public class World : MonoSingleton<World> {
 		} else {
 			history.Clear();
 		}
-		
+		terrain.ApplyData(worldData.terrainData);
 		PrisonWall.instance.runnersKilledCount = worldData.runnersKilledCount;
 	}
 

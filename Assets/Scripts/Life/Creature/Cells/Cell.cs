@@ -281,7 +281,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	virtual public void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		didUpdateFunctionThisFrame = 1; // Just for update visuals
+		didUpdateFunctionThisFrame = 5; // Just for update visuals
 	}
 
 	virtual public void UpdateRadius(ulong fixedTime) { }

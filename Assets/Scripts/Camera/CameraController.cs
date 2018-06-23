@@ -78,16 +78,16 @@ public class CameraController : MouseDrag {
 		float horizontalMove = 0f;
 		float verticalMove = 0f;
 
-		if (Input.GetKey(KeyCode.A)) {
+		if (Input.GetKey(KeyCode.A) && !GlobalPanel.instance.isWritingHistoryNote) {
 			horizontalMove = -1;
 		}
-		if (Input.GetKey(KeyCode.D)) {
+		if (Input.GetKey(KeyCode.D) && !GlobalPanel.instance.isWritingHistoryNote) {
 			horizontalMove = 1;
 		}
-		if (Input.GetKey(KeyCode.S)) {
+		if (Input.GetKey(KeyCode.S) && !GlobalPanel.instance.isWritingHistoryNote) {
 			verticalMove = -1;
 		}
-		if (Input.GetKey(KeyCode.W)) {
+		if (Input.GetKey(KeyCode.W) && !GlobalPanel.instance.isWritingHistoryNote) {
 			verticalMove = 1;
 		}
 

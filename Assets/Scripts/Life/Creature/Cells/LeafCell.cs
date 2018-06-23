@@ -165,7 +165,7 @@ public class LeafCell : Cell {
 			}
 
 			if (debugRender) {
-				float stayTime = GlobalSettings.instance.quality.leafCellTickPeriod * 0.1f * 20f;
+				float stayTime = GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(creature.phenotype.speed) * 0.1f * 20f;
 				Debug.DrawLine(start, start + direction * maxRange, Color.black, stayTime);
 				Debug.DrawLine(start, start + direction * rayRange, Color.white, stayTime);
 			}

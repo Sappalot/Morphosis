@@ -148,7 +148,7 @@ public class Creature : MonoBehaviour {
 			return null;
 		}
 		if (World.instance.life.HasCreature(id)) {
-			return World.instance.life.GetCreature(mother.id);
+			return World.instance.life.GetCreature(id); // Was mother.id ??
 		}
 		return null;
 	}

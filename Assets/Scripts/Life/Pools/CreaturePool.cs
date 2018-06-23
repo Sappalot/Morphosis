@@ -43,7 +43,6 @@ public class CreaturePool : MonoSingleton<CreaturePool> {
 			return;
 		}
 
-		creature.OnRecycle();
 		creature.transform.parent = transform;
 		creature.gameObject.SetActive(false);
 		storedQueue.Enqueue(creature);
