@@ -67,7 +67,7 @@ public class Edges : MonoBehaviour {
 			}
 
 			//Periphery
-			if (GlobalPanel.instance.graphicsPeriphery.isOn && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+			if (GlobalPanel.instance.graphicsPeriphery.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 				peripheryLoop.enabled = true;
 				if (index < peripheryLoop.positionCount) {
 					if (edgeList[index].parentCell != null) {

@@ -772,7 +772,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 		placentaSprings = new SpringJoint2D[0];
 
-		if (this != creature.phenotype.originCell || !creature.IsAttachedToMother()) {
+		if (this != creature.phenotype.originCell || !creature.IsAttachedToMotherAlive()) {
 			return;
 		}
 		//This is creatures origin cell and creature has a connected mother
@@ -780,7 +780,7 @@ public abstract class Cell : MonoBehaviour {
 		List<Cell> placentaCells = new List<Cell>();
 		for (int index = 0; index < 6; index++) {
 			Cell neighbour = GetNeighbourCell(index);
-			if (neighbour != null && neighbour.creature == creature.GetMother()) {
+			if (neighbour != null && neighbour.creature == creature.GetMotherAlive()) {
 				placentaCells.Add(neighbour);
 				neighbour.isPlacenta = true;
 			}
@@ -939,7 +939,7 @@ public abstract class Cell : MonoBehaviour {
 
 	//TODO: update cell graphics from here
 	public void UpdateGraphics() {
-		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.type) {
 				if (creature.phenotype.visualTelepoke > 0) {
 					filledCircleSprite.color = Color.white;
@@ -963,7 +963,7 @@ public abstract class Cell : MonoBehaviour {
 					filledCircleSprite.color = Color.blue;
 				}
 			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.childCountCreature) {
-				float value = 0.05f + creature.ChildrenCountIncDead() * 0.1f;
+				float value = 0.05f + creature.ChildrenCountDeadOrAlive() * 0.1f;
 				filledCircleSprite.color = ColorScheme.instance.cellCreatureChildCount.Evaluate(value);
 			} else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.predatorPray) {
 				//float effectValue = 0.5f + effectExternal * 0.02f;

@@ -76,7 +76,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 			selectedGene.type = CellTypeEnum.Vein;
 		}
 
-		if (trueChange && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+		if (trueChange && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			GenotypePanel.instance.MakeDirty();
 			GenomePanel.instance.MakeDirty();
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {

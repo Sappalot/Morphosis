@@ -13,7 +13,6 @@ public class Graph : MonoBehaviour {
 	//public short level;
 	public string textPrefix;
 	public string textPostfix;
-	public float maxValue = 200;
 	public short decimals;
 
 	public void UpdateCanvas(Rect graphArea) {
@@ -38,7 +37,7 @@ public class Graph : MonoBehaviour {
 	}
 
 	private int oldPositionCount = 0;
-	public void DrawGraph(Rect graphArea, float scale, short level, History history) {
+	public void DrawGraph(Rect graphArea, float scale, short level, History history, float maxValue) {
 		float levelScale = scale * Mathf.Pow(2f, level);
 
 		int positionCount = Mathf.CeilToInt(graphArea.width / levelScale) + 1;

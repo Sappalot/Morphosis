@@ -340,16 +340,16 @@ public class Genotype : MonoBehaviour {
 		}
 
 		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].ShowTriangle(true); // Debug
+			geneCellList[index].ShowTriangle(true);
 			if (geneCellList[index].isOrigin) {
-				geneCellList[index].ShowTriangle(true); // Debug
-				if (!creature.HasMother()) {
-					if (!creature.HasChildren()) {
+				geneCellList[index].ShowTriangle(true);
+				if (!creature.HasMotherDeadOrAlive()) {
+					if (!creature.HasChildrenDeadOrAlive()) {
 						geneCellList[index].SetTriangleColor(ColorScheme.instance.noRelativesArrow);
 					} else {
 						geneCellList[index].SetTriangleColor(ColorScheme.instance.noMotherArrow);
 					}
-				} else if (creature.IsAttachedToMother()) {
+				} else if (creature.IsAttachedToMotherAlive()) {
 					geneCellList[index].SetTriangleColor(ColorScheme.instance.motherAttachedArrow);
 				} else {
 					geneCellList[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);

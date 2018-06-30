@@ -35,8 +35,8 @@ public class LeafCell : Cell {
 		CollisionType type = GetCollisionType(hit);
 
 		int attachedMotherCellCount = 0;
-		if (creature.IsAttachedToMother()) {
-			attachedMotherCellCount = creature.GetMother().cellCount;
+		if (creature.IsAttachedToMotherAlive()) {
+			attachedMotherCellCount = creature.GetMotherAlive().cellCount;
 		}
 
 		if (type == CollisionType.ownCell) {
@@ -209,8 +209,8 @@ public class LeafCell : Cell {
 			m_lowPassExposure /= exposureRecordCount;
 
 			int attachedMotherCellCount = 0;
-			if (creature.IsAttachedToMother()) {
-				attachedMotherCellCount = creature.GetMother().cellCount;
+			if (creature.IsAttachedToMotherAlive()) {
+				attachedMotherCellCount = creature.GetMotherAlive().cellCount;
 			}
 			effectProductionInternal = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.cellCount); //costy!! creature.clusterCellCount
 

@@ -8,6 +8,7 @@ public class Life : MonoBehaviour {
 	public GeneCellPool geneCellPool;
 	public VeinPool veinPool;
 	public EdgePool edgePool;
+	public RelationArrows relationArrows;
 
 	public Creature creaturePrefab;
 
@@ -23,6 +24,17 @@ public class Life : MonoBehaviour {
 	//debug
 	[HideInInspector]
 	public int deletedCellCount = 0;
+
+	LowPassCounter creatureBirthsPerSecond = new LowPassCounter(20);
+	LowPassCounter creatureDeathsPerSecond = new LowPassCounter(20);
+
+	public float GetCreatureBirthsPerSecond() {
+		return creatureBirthsPerSecond.GetAndStepLowPassCount();
+	}
+
+	public float GetCreatureDeathsPerSecond() {
+		return creatureDeathsPerSecond.GetAndStepLowPassCount();
+	}
 
 	public int creatureAliveCount {
 		get {
@@ -112,9 +124,9 @@ public class Life : MonoBehaviour {
 		childData.isConnectedToMother = true; // Connected from the start
 		childData.originMapPosition = eggCell.mapPosition; //As seen from mothers frame of reference
 		childData.originBindCardinalIndex = eggCell.bindCardinalIndex; //As seen from mothers frame of reference
-		mother.AddChild(childData);
+		mother.AddChildReference(childData);
 
-		child.SetMother(mother.id);
+		child.SetMotherReference(mother.id);
 
 		PhenotypePanel.instance.MakeDirty();
 		CreatureSelectionPanel.instance.MakeDirty();
@@ -135,6 +147,8 @@ public class Life : MonoBehaviour {
 		}
 		creatureDictionary.Clear();
 		creatureList.Clear();
+		creatureBirthsPerSecond.Clear();
+		creatureBirthsPerSecond.Clear();
 	}
 
 	//When pressing delete, use effects
@@ -149,7 +163,7 @@ public class Life : MonoBehaviour {
 	//This is the only way, where the creature GO is deleted
 	public void KillCreatureSafe(Creature creature, bool playEffects) {
 		creature.DetatchFromMother(false, playEffects);
-		foreach (Creature child in creature.GetChildren()) {
+		foreach (Creature child in creature.GetChildrenAlive()) {
 			child.DetatchFromMother(false, playEffects);
 		}
 
@@ -183,6 +197,8 @@ public class Life : MonoBehaviour {
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		CreatureSelectionPanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
+
+		creatureDeathsPerSecond.IncreaseCounter();
 	}
 
 	public List<Creature> GetPhenotypesInside(Rect area) {
@@ -286,6 +302,8 @@ public class Life : MonoBehaviour {
 			throw new System.Exception("Generated ID was not unique.");
 		}
 
+		creatureBirthsPerSecond.IncreaseCounter();
+
 		return InstantiateCreature(id);
 	}
 
@@ -373,6 +391,9 @@ public class Life : MonoBehaviour {
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdateGraphics();
 		}
+
+		relationArrows.creature = CreatureSelectionPanel.instance.soloSelected;
+		relationArrows.UpdateGraphics();
 	}
 
 	// If (editPhenotype) updated from FixedUpdate
@@ -426,7 +447,7 @@ public class Life : MonoBehaviour {
 			if (killSterileCreaturesTicks == 0) {
 				int sterileKilled = 0;
 				for (int index = 0; index < creatureList.Count; index++) {
-					if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAgeAsChildless && !creatureList[index].HasChildrenIncDead()) {
+					if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAgeAsChildless && !creatureList[index].HasChildrenDeadOrAlive()) {
 						killCreatureList.Add(creatureList[index]);
 						sterileKilled++;
 					}

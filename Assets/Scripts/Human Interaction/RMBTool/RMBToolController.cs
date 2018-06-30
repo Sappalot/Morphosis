@@ -13,7 +13,7 @@ public class RMBToolController : MouseDrag {
 		// implement this for start of dragging
 		if (mouseButton == 1 && !EventSystem.current.IsPointerOverGameObject()) {
 			downPositionMouse = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
-			if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spring && CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+			if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spring && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 				
 				Cell cell = World.instance.life.GetCellAt(downPositionMouse);
 				if (cell != null) {
@@ -24,22 +24,22 @@ public class RMBToolController : MouseDrag {
 					spring.GetComponent<LineRenderer>().SetPosition(0, spring.connectedBody.transform.position);
 					spring.GetComponent<LineRenderer>().enabled = true;
 				}
-			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.simple) {
+			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spawnEmbryo) {
 				if (GlobalPanel.instance.soundCreatures.isOn) {
 					Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 				}
-				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 					World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f, World.instance.worldTicks);
-				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+				} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 					World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f, World.instance.worldTicks);
 				}				
-			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.freak) {
+			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spawnFreak) {
 				if (GlobalPanel.instance.soundCreatures.isOn) {
 					Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 				}
-				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, World.instance.worldTicks);
-				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+				} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, World.instance.worldTicks);
 				}
 			}

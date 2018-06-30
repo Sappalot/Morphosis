@@ -5,21 +5,19 @@ using System.IO;
 using System.Collections.Generic;
 
 public class World : MonoSingleton<World> {
-	[HideInInspector]
 	public Life life;
-	public Life lifePrefab;
-
 	public Terrain terrain;
-
-	public GameObject cellPrefab;
-
 	public Camera worldCamera;
-	private string worldName = "Gaia";
+	public History history = new History();
 	[HideInInspector]
 	public ulong worldTicks = 0;
 
+	private string worldName = "Gaia";
+	private bool doSave = false;
+	private List<HistoryEvent> historyEvents = new List<HistoryEvent>();
+
 	public void KillAllCreatures() {
-		World.instance.life.KillAllCreatures();
+		life.KillAllCreatures();
 		CreatureSelectionPanel.instance.ClearSelection();
 	}
 
@@ -35,19 +33,14 @@ public class World : MonoSingleton<World> {
 		//excluding: turn cell graphics to correct angle, scale mussle cells
 		//World.instance.life.EvoFixedUpdate(fixedTime);
 
-		CreateLife();
-
 		history.Init();
 		terrain.Init();
 		GraphPlotter.instance.history = history;
 	}
 
 	private void Update() {
-		if (life == null) {
-			return;
-		}
 		//Handle time from here to not get locked out
-		if ((!GlobalPanel.instance.isRunPhysics || CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) && !doSave) {
+		if ((!GlobalPanel.instance.isRunPhysics || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) && !doSave) {
 			Time.timeScale = 0f;
 			life.UpdateStructure();
 		} else if (GlobalPanel.instance.physicsUpdatesPerSecond == 0f) {
@@ -60,27 +53,11 @@ public class World : MonoSingleton<World> {
 		}
 	}
 
-	public History history = new History();
-
-	private List<HistoryEvent> historyEvents = new List<HistoryEvent>();
 	public void AddHistoryEvent(HistoryEvent historyEvent) {
 		historyEvents.Add(historyEvent);
 	}
 
-	private bool doSave = false;
-	private bool stopAfterOneSecond = false;
-
-	public void Save() {
-		doSave = true;
-		Time.timeScale = 1f; // if paused we need to tick one more tick
-		GlobalPanel.instance.SelectPausePhysics();
-	}
-
 	private void FixedUpdate() {
-		if (life == null) {
-			return;
-		}
-
 		life.UpdateStructure();
 		
 		life.UpdatePhysics(worldTicks);
@@ -107,6 +84,10 @@ public class World : MonoSingleton<World> {
 				record.Set(RecordEnum.cellCountRoot,   0);
 				record.Set(RecordEnum.cellCountShell , 0);
 				record.Set(RecordEnum.cellCountVein,   0);
+				record.Set(RecordEnum.creatureCount,   0);
+				record.Set(RecordEnum.creatureBirthsPerSecond, 0);
+				record.Set(RecordEnum.creatureDeathsPerSecond, 0);
+
 				history.AddRecord(record);
 				GraphPlotter.instance.MakeDirty();
 			} else {
@@ -119,28 +100,12 @@ public class World : MonoSingleton<World> {
 					CreateRecord();
 				}
 			}
-
-			if (stopAfterOneSecond) {
-				GlobalPanel.instance.SelectPausePhysics();
-				stopAfterOneSecond = false;
-			}
 		}
 
 		terrain.UpdatePhysics();
 
 		worldTicks++; //The only place where time is increased
-
-
-
-		//gravityAngle += Time.fixedDeltaTime * 5f;
-		//if (gravityAngle > 360f) {
-		//	gravityAngle -= 360f;
-		//}
-		//float gravityFactor = 200f;
-		//Physics2D.gravity = new Vector2(Mathf.Cos(gravityAngle * Mathf.Deg2Rad) * gravityFactor, Mathf.Sin(gravityAngle * Mathf.Deg2Rad) * gravityFactor);
 	}
-
-	private float gravityAngle;
 
 	public void CreateRecord() {
 		Record record = new Record();
@@ -171,6 +136,10 @@ public class World : MonoSingleton<World> {
 		record.Set(RecordEnum.cellCountShell,  life.GetCellAliveCount(CellTypeEnum.Shell));
 		record.Set(RecordEnum.cellCountVein,   life.GetCellAliveCount(CellTypeEnum.Vein));
 
+		record.Set(RecordEnum.creatureCount, life.creatureAliveCount);
+		record.Set(RecordEnum.creatureBirthsPerSecond, life.GetCreatureBirthsPerSecond());
+		record.Set(RecordEnum.creatureDeathsPerSecond, life.GetCreatureDeathsPerSecond());
+
 		history.AddRecord(record);
 		GraphPlotter.instance.MakeDirty();
 	}
@@ -196,8 +165,8 @@ public class World : MonoSingleton<World> {
 
 		terrain.Restart();
 
-		GlobalPanel.instance.SelectRunPhysics();
-		stopAfterOneSecond = true;
+		GlobalPanel.instance.SelectPausePhysics();
+		GraphPlotter.instance.MakeDirty();
 	}
 
 	public void Load(string filename) {
@@ -218,8 +187,8 @@ public class World : MonoSingleton<World> {
 		CreatureSelectionPanel.instance.ClearSelection();
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 
-		GlobalPanel.instance.SelectRunPhysics();
-		stopAfterOneSecond = true;
+		GlobalPanel.instance.SelectPausePhysics();
+		GraphPlotter.instance.MakeDirty();
 	}
 
 	private void DoSave(string filename) {
@@ -240,9 +209,17 @@ public class World : MonoSingleton<World> {
 			filename = "save.txt";
 		}
 		File.WriteAllText(path + filename, worldToSave);
+
+		GlobalPanel.instance.SelectPausePhysics();
+		GraphPlotter.instance.MakeDirty();
 	}
 
 	private WorldData worldData = new WorldData();
+
+	public void Save() {
+		doSave = true;
+		Time.timeScale = 1f; // if paused we need to tick one more tick
+	}
 
 	// Save
 	private void UpdateData() {
@@ -266,25 +243,5 @@ public class World : MonoSingleton<World> {
 		}
 		terrain.ApplyData(worldData.terrainData);
 		PrisonWall.instance.runnersKilledCount = worldData.runnersKilledCount;
-	}
-
-	public string GetWorldData() {
-		UpdateData();
-		return Serializer.Serialize(worldData, new UnityJsonSerializer());
-	}
-
-	public void CreateWorldFromData(string data) {
-		//CreateLife();
-
-		WorldData loadedWorld = Serializer.Deserialize<WorldData>(data, new UnityJsonSerializer());
-		ApplyData(loadedWorld);
-		CreatureEditModePanel.instance.UpdateAllAccordingToEditMode();
-		CreatureSelectionPanel.instance.ClearSelection();
-		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
-	}
-
-	public void CreateLife() {
-		life = Instantiate(lifePrefab, transform);
-		life.name = "Life";
 	}
 }

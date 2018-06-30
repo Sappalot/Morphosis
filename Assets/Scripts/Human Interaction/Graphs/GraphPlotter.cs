@@ -9,7 +9,7 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 	public ResizeViewport viewport;
 	public LineRenderer frameLine;
 
-	public Graph[] graphs;
+	public GraphGroup[] graphGroups;
 
 	public float topMargin;    //set from inspector
 	public float bottomMargin; //set from inspector
@@ -62,8 +62,8 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 			UpdateGraphics();
 
 			// graphs
-			foreach (Graph g in graphs) {
-				g.UpdateCanvas(graphArea);
+			foreach (GraphGroup g in graphGroups) {
+				g.UpdateCanvases(graphArea);
 			}
 
 			// ruler
@@ -77,8 +77,9 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 
 		if (isDirty && history != null) {
 			short level = GetLevel(scale);
-			foreach (Graph g in graphs) {
-				g.DrawGraph(graphArea, scale, level, history);
+			foreach (GraphGroup g in graphGroups) {
+				g.UpdateIsActive();
+				g.DrawGraphs(graphArea, scale, level, history);
 			}
 
 			timeRuler.UpdateGraphics(graphArea, scale);

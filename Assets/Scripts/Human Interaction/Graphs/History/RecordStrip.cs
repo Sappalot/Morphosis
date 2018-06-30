@@ -27,7 +27,10 @@ public class RecordStrip {
 		RecordEnum.cellCountMuscle,
 		RecordEnum.cellCountRoot,
 		RecordEnum.cellCountShell,
-		RecordEnum.cellCountVein };
+		RecordEnum.cellCountVein,
+		RecordEnum.creatureCount,
+		RecordEnum.creatureBirthsPerSecond,
+		RecordEnum.creatureDeathsPerSecond};
 
 	public void Init() {
 		Clear();

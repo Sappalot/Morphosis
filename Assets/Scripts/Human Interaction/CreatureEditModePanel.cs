@@ -8,31 +8,31 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 
 	private bool isDirty = true;
 
-	private CreatureEditModeEnum m_mode;
-	public CreatureEditModeEnum mode {
+	private PhenoGenoEnum m_mode;
+	public PhenoGenoEnum mode {
 		get {
 			return m_mode;
 		}
 	}
 
 	public void Start() {
-		m_mode = CreatureEditModeEnum.Phenotype;
+		m_mode = PhenoGenoEnum.Phenotype;
 		isDirty = true;
 	}
 
 	public void Restart() {
-		m_mode = CreatureEditModeEnum.Phenotype;
+		m_mode = PhenoGenoEnum.Phenotype;
 		isDirty = true;
 	}
 
 	public void OnClickedPhenotypeEditMode() {
-		m_mode = CreatureEditModeEnum.Phenotype;
+		m_mode = PhenoGenoEnum.Phenotype;
 		GlobalPanel.instance.isRunPhysicsGrayOut = false;
 		UpdateAllAccordingToEditMode();
 	}
 
 	public void OnClickedGenotypeEditMode() {
-		m_mode = CreatureEditModeEnum.Genotype;
+		m_mode = PhenoGenoEnum.Genotype;
 		GlobalPanel.instance.isRunPhysicsGrayOut = true;
 		UpdateAllAccordingToEditMode();
 		GenePanel.instance.MakeDirty();
@@ -53,13 +53,12 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update CreatureEditModePanel");
-			phenotypeImage.color = (mode == CreatureEditModeEnum.Phenotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-			genotypeImage.color = (mode == CreatureEditModeEnum.Genotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-			historyImage.color = (mode == CreatureEditModeEnum.History) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+			phenotypeImage.color = (mode == PhenoGenoEnum.Phenotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+			genotypeImage.color = (mode == PhenoGenoEnum.Genotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 
 			//TODO: set enabled true/false, then dirty mark
-			PhenotypePanel.instance.gameObject.SetActive(mode == CreatureEditModeEnum.Phenotype);
-			GenotypePanel.instance.gameObject.SetActive(mode == CreatureEditModeEnum.Genotype);
+			PhenotypePanel.instance.gameObject.SetActive(mode == PhenoGenoEnum.Phenotype);
+			GenotypePanel.instance.gameObject.SetActive(mode == PhenoGenoEnum.Genotype);
 
 			isDirty = false;
 		}

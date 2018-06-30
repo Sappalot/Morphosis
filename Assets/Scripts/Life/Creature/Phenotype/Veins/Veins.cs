@@ -43,7 +43,7 @@ public class Veins : MonoBehaviour {
 				if (cell.HasNeighbourCell(cardinalIndex)) {
 					Cell neighbour = cell.GetNeighbourCell(cardinalIndex);
 					// dont build veins to mother placnta, beacuse she builds to me and we dont want to double build
-					if (creature.HasMother() && creature.GetMother().id == neighbour.creature.id) {
+					if (creature.HasMotherAlive() && creature.GetMotherAlive().id == neighbour.creature.id) {
 						continue;
 					}
 					if (!HasVein(cell, neighbour)) {

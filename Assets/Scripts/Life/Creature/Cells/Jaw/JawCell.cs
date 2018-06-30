@@ -63,11 +63,11 @@ public class JawCell : Cell {
 
 		if (prayCell != null && prayCell.creature != creature) {
 			// dont eat mother, grandma is OK (what about other siblings and cousins in the same cluster?)
-			if (creature.HasMother() && creature.GetMother().id == prayCell.creature.id) {
+			if (creature.HasMotherAlive() && creature.GetMotherAlive().id == prayCell.creature.id) {
 				return;
 			}
 			// don't eat children, grandchildren is OK (what about other siblings and cousins in the same cluster?)
-			foreach (Creature child in creature.GetChildren()) { //Note: all references in children are not updated at this point
+			foreach (Creature child in creature.GetChildrenAlive()) { //Note: all references in children are not updated at this point
 				if (prayCell.creature == child) {
 					return;
 				}

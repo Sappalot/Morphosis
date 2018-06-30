@@ -15,6 +15,10 @@ public class Record {
 	float cellCountShell;
 	float cellCountVein;
 
+	float creatureCount;
+	float creatureBirthsPerSecond;
+	float creatureDeathsPerSecond;
+
 	public string tagText = null;
 	public bool tagShowLine = false;
 	public float tagRed = 1f;
@@ -40,6 +44,10 @@ public class Record {
 		cellCountRoot =   0f;
 		cellCountShell =  0f;
 		cellCountVein =   0f;
+
+		creatureCount =           0f;
+		creatureBirthsPerSecond = 0f;
+		creatureDeathsPerSecond = 0f;
 
 		tagText =         "";
 		tagShowLine =     false;
@@ -94,6 +102,17 @@ public class Record {
 		if (type == RecordEnum.cellCountVein) {
 			return cellCountVein;
 		}
+
+		if (type == RecordEnum.creatureCount) {
+			return creatureCount;
+		}
+		if (type == RecordEnum.creatureBirthsPerSecond) {
+			return creatureBirthsPerSecond;
+		}
+		if (type == RecordEnum.creatureDeathsPerSecond) {
+			return creatureDeathsPerSecond;
+		}
+
 		return 0f;
 	}
 
@@ -132,6 +151,16 @@ public class Record {
 		if (type == RecordEnum.cellCountVein) {
 			cellCountVein = value;
 		}
+
+		if (type == RecordEnum.creatureCount) {
+			creatureCount = value;
+		}
+		if (type == RecordEnum.creatureBirthsPerSecond) {
+			creatureBirthsPerSecond = value;
+		}
+		if (type == RecordEnum.creatureDeathsPerSecond) {
+			creatureDeathsPerSecond = value;
+		}
 	}
 
 	private RecordData recordData = new RecordData();
@@ -150,6 +179,10 @@ public class Record {
 		recordData.cellCountRoot =   cellCountRoot;
 		recordData.cellCountShell =  cellCountShell;
 		recordData.cellCountVein =   cellCountVein;
+
+		recordData.creatureCount =           creatureCount;
+		recordData.creatureBirthsPerSecond = creatureBirthsPerSecond;
+		recordData.creatureDeathsPerSecond = creatureDeathsPerSecond;
 
 		recordData.tagText =         tagText;
 		recordData.showLine =        tagShowLine;
@@ -174,6 +207,10 @@ public class Record {
 		cellCountRoot =   recordData.cellCountRoot;
 		cellCountShell =  recordData.cellCountShell;
 		cellCountVein =   recordData.cellCountVein;
+
+		creatureCount =           recordData.creatureCount;
+		creatureBirthsPerSecond = recordData.creatureBirthsPerSecond;
+		creatureDeathsPerSecond = recordData.creatureDeathsPerSecond;
 
 		tagText =         recordData.tagText;
 		tagShowLine =     recordData.showLine;

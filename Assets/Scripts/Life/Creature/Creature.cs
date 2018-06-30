@@ -61,32 +61,33 @@ public class Creature : MonoBehaviour {
 	private bool detatch = false;
 	private int cantGrowMore = 0;
 
-	public void ClearMotherAndChildren() {
-		ClearMother();
-		ClearChildren();
+	public void ClearMotherAndChildrenReferences() {
+		ClearMotherReference();
+		ClearChildrenReferences();
 	}
 
-	public void ClearMother() {
+	public void ClearMotherReference() {
 		mother = null;
 	}
 
-	public void ClearChildren() {
+	public void ClearChildrenReferences() {
 		children.Clear();
 	}
 
 	// Relations -> mother	
 
 	//do this when creature is born, copied or loaded
-	public void SetMother(string motherId) {
+	public void SetMotherReference(string motherId) {
 		mother = new Mother(motherId);
 	}
 
-	public bool HasMother() {
+	public bool HasMotherAlive() {
+		Debug.Assert(GetRelationToMother() != FamilyMemberState.Error || GetRelationToMother() != FamilyMemberState.Unexisting);
 		return GetRelationToMother() == FamilyMemberState.AliveAndAttached || GetRelationToMother() == FamilyMemberState.AliveAndDetatched;
 	}
 
-	public Creature GetMother() {
-		if (!HasMother()) {
+	public Creature GetMotherAlive() {
+		if (!HasMotherAlive()) {
 			return null;
 		}
 		if (World.instance.life.HasCreature(mother.id)) {
@@ -95,8 +96,12 @@ public class Creature : MonoBehaviour {
 		return null;
 	}
 
-	public bool IsAttachedToMother() {
+	public bool IsAttachedToMotherAlive() {
 		return GetRelationToMother() == FamilyMemberState.AliveAndAttached;
+	}
+
+	public bool IsDetatchedWithMotherAlive() {
+		return GetRelationToMother() == FamilyMemberState.AliveAndDetatched;
 	}
 
 	public void SetAttachedToChild(string childId, bool attached) {
@@ -106,11 +111,11 @@ public class Creature : MonoBehaviour {
 		children[childId].isConnectedToMother = attached;
 	}
 
-	public bool HasMotherIncDead() {
+	public bool HasMotherDeadOrAlive() {
 		return GetRelationToMother() == FamilyMemberState.AliveAndAttached || GetRelationToMother() == FamilyMemberState.AliveAndDetatched || GetRelationToMother() == FamilyMemberState.Dead;
 	}
 
-	public string GetMotherIdIncDead() {
+	public string GetMotherIdDeadOrAlive() {
 		if (mother != null) {
 			return mother.id;
 		}
@@ -123,7 +128,7 @@ public class Creature : MonoBehaviour {
 		} else {
 			Creature myMother = World.instance.life.GetCreature(mother.id);
 			if (myMother != null) {
-				if (myMother.IsAttachedToChild(id)) {
+				if (myMother.IsAttachedToChildAlive(id)) {
 					return FamilyMemberState.AliveAndAttached;
 				} else {
 					return FamilyMemberState.AliveAndDetatched;
@@ -135,15 +140,15 @@ public class Creature : MonoBehaviour {
 	}
 	// ^ Relations -> mother ^
 	// Relations -> children
-	public void AddChild(ChildData childData) {
+	public void AddChildReference(ChildData childData) {
 		children.Add(childData.id, new Child(childData.id, childData.isConnectedToMother, childData.originMapPosition, childData.originBindCardinalIndex));
 	}
 
-	public bool HasChildren() {
-		return ChildrenCount() > 0;
+	public bool HasChildrenAlive() {
+		return ChildrenCountAlive() > 0;
 	}
 
-	public Creature GetChild(string id) {
+	public Creature GetChildAlive(string id) {
 		if (!children.ContainsKey(id)) {
 			return null;
 		}
@@ -153,7 +158,7 @@ public class Creature : MonoBehaviour {
 		return null;
 	}
 
-	public bool IsAttachedToChild(string id) {
+	public bool IsAttachedToChildAlive(string id) {
 		if (!children.ContainsKey(id)) {
 			return false;
 		}
@@ -161,8 +166,8 @@ public class Creature : MonoBehaviour {
 	}
 
 	// Thll mother to see me as connected
-	public void SetAttachedToMother(bool attached) {
-		Creature m = GetMother();
+	public void SetAttachedToMotherAlive(bool attached) {
+		Creature m = GetMotherAlive();
 		if (m != null) {
 			m.SetAttachedToChild(id, attached);
 		}
@@ -177,7 +182,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	//if we have no children we leave a list full of null
-	public List<Creature> GetChildren() {
+	public List<Creature> GetChildrenAlive() {
 		List<Creature> childrenAlive = new List<Creature>();
 		foreach (string id in children.Keys) {
 			Creature found = World.instance.life.GetCreature(id);
@@ -188,7 +193,7 @@ public class Creature : MonoBehaviour {
 		return childrenAlive;
 	}
 
-	public List<Creature> GetAttachedChildren() {
+	public List<Creature> GetAttachedChildrenAlive() {
 		List<Creature> childrenAliveAndAttached = new List<Creature>();
 		foreach (string id in children.Keys) {
 			Creature found = World.instance.life.GetCreature(id);
@@ -199,7 +204,18 @@ public class Creature : MonoBehaviour {
 		return childrenAliveAndAttached;
 	}
 
-	public List<string> GetChildrenIdIncDead() {
+	public List<Creature> GetDetatchedChildrenAlive() {
+		List<Creature> childrenAliveAndDetatched = new List<Creature>();
+		foreach (string id in children.Keys) {
+			Creature found = World.instance.life.GetCreature(id);
+			if (found != null && GetRelationToChild(found.id) == FamilyMemberState.AliveAndDetatched) {
+				childrenAliveAndDetatched.Add(found);
+			}
+		}
+		return childrenAliveAndDetatched;
+	}
+
+	public List<string> GetChildrenIdDeadOrAlive() {
 		List<string> ids = new List<string>();
 		foreach (string id in children.Keys) {
 			ids.Add(id);
@@ -207,7 +223,7 @@ public class Creature : MonoBehaviour {
 		return ids;
 	}
 
-	private int ChildrenCount() {
+	public int ChildrenCountAlive() {
 		int count = 0;
 		foreach (Child c in children.Values) {
 			if (GetRelationToChild(c.id) == FamilyMemberState.AliveAndAttached || GetRelationToChild(c.id) == FamilyMemberState.AliveAndDetatched) {
@@ -217,12 +233,16 @@ public class Creature : MonoBehaviour {
 		return count;
 	}
 
-	public bool HasChildrenIncDead() {
+	public bool HasChildrenDeadOrAlive() {
 		return children.Count > 0;
 	}
 
-	public int ChildrenCountIncDead() {
+	public int ChildrenCountDeadOrAlive() {
 		return children.Count;
+	}
+
+	public int ChildrenCountDead() {
+		return ChildrenCountDeadOrAlive() - ChildrenCountAlive();
 	}
 
 	private FamilyMemberState GetRelationToChild(string id) {
@@ -272,7 +292,7 @@ public class Creature : MonoBehaviour {
 	//Dead or alive counts
 	public bool allowedToChangeGenome {
 		get {
-			return !(HasMotherIncDead() || HasChildrenIncDead());
+			return !(HasMotherDeadOrAlive() || HasChildrenDeadOrAlive());
 		}
 	}
 
@@ -303,12 +323,12 @@ public class Creature : MonoBehaviour {
 		}
 
 		// mother
-		if (creature.HasMother() && !allreadyInList.Contains(creature.GetMother())) {
-			AddConnectedCreatures(creature.GetMother(), creature, allreadyInList);
+		if (creature.HasMotherAlive() && !allreadyInList.Contains(creature.GetMotherAlive())) {
+			AddConnectedCreatures(creature.GetMotherAlive(), creature, allreadyInList);
 		}
 
 		//children
-		foreach (Creature child in creature.GetChildren()) {
+		foreach (Creature child in creature.GetChildrenAlive()) {
 			AddConnectedCreatures(child, creature, allreadyInList);
 		}
 
@@ -325,12 +345,12 @@ public class Creature : MonoBehaviour {
 			return false;
 		}
 
-		if (from.HasMother() && from == to && from.IsAttachedToMother()) {
+		if (from.HasMotherAlive() && from == to && from.IsAttachedToMotherAlive()) {
 			return true;
 		}
 
-		foreach (Creature child in from.GetChildren()) {
-			if (child != null && from != null && to != null && from.IsAttachedToChild(to.id)) {
+		foreach (Creature child in from.GetChildrenAlive()) {
+			if (child != null && from != null && to != null && from.IsAttachedToChildAlive(to.id)) {
 				return true;
 			}
 		}
@@ -437,7 +457,7 @@ public class Creature : MonoBehaviour {
 		cantGrowMore = 0;
 		growTicks = 0;
 
-		ClearMotherAndChildren();
+		ClearMotherAndChildrenReferences();
 		genotype.GenomeEmpty();
 	}
 
@@ -556,30 +576,30 @@ public class Creature : MonoBehaviour {
 
 	// Update according to type
 	public void BringCurrentGenoPhenoPositionAndRotationToOther() {
-		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			phenotype.MoveToGenotype(this);
-		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			genotype.MoveToPhenotype(this);
 		}
 	}
 
 	private void BringOtherGenoPhenoPositionAndRotationToCurrent() {
-		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			genotype.MoveToPhenotype(this);
-		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			phenotype.MoveToGenotype(this);
 		}
 	}
 
 	private void ShowCurrentGenoPhenoAndHideOther() {
-		phenotype.Show(CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype); //Don't use SetActive() since it clears rigigdBody velocity
-		genotype.gameObject.SetActive(CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype);
+		phenotype.Show(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype); //Don't use SetActive() since it clears rigigdBody velocity
+		genotype.gameObject.SetActive(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype);
 	}
 
 	//Don't enable collider if grabbed, thou
 	private void EnableCurrentGenoPhenoColliderAndDisableOther() {
-		phenotype.hasCollider = CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && !phenotype.isGrabbed;
-		genotype.hasCollider = CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype && !genotype.isGrabbed;
+		phenotype.hasCollider = CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !phenotype.isGrabbed;
+		genotype.hasCollider = CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && !genotype.isGrabbed;
 	}
 
 	// Update
@@ -594,7 +614,7 @@ public class Creature : MonoBehaviour {
 			ShowCurrentGenoPhenoAndHideOther();
 			EnableCurrentGenoPhenoColliderAndDisableOther();
 
-			if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 				//phenotype.ShowShadow(false);
 				phenotype.UpdateOutline(this, CreatureSelectionPanel.instance.IsSelected(this), CreatureSelectionPanel.instance.IsSelectedCluster(this));
 
@@ -603,7 +623,7 @@ public class Creature : MonoBehaviour {
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
 					phenotype.ShowCellSelected(CellPanel.instance.selectedCell, true);
 				}
-			} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+			} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 				//Show selected or not
 				//phenotype.ShowOutline(false);
 				genotype.UpdateOutline(this, CreatureSelectionPanel.instance.IsSelected(this));
@@ -629,7 +649,7 @@ public class Creature : MonoBehaviour {
 			isDirtyGraphics = true;
 		}
 
-		if (phenotype.UpdateConnectionsFromCellsBody(this, HasMother() ? GetMother().id : "no mother")) {
+		if (phenotype.UpdateConnectionsFromCellsBody(this, HasMotherAlive() ? GetMotherAlive().id : "no mother")) {
 			isDirtyGraphics = true;
 		}
 	}
@@ -680,7 +700,7 @@ public class Creature : MonoBehaviour {
 			//Debug.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
 
 			// Detatch child from mother
-			if (GlobalPanel.instance.physicsDetatch.isOn && IsAttachedToMother()) {
+			if (GlobalPanel.instance.physicsDetatch.isOn && IsAttachedToMotherAlive()) {
 				if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.cellCount >= phenotype.originCell.originDetatchSizeThreshold) ||
 					(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energy >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchAfterCompletePersistance)) {
 					detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
@@ -803,7 +823,7 @@ public class Creature : MonoBehaviour {
 		phenotype.ApplyData(creatureData.phenotypeData, this);
 
 		//Relatives
-		ClearMotherAndChildren();
+		ClearMotherAndChildrenReferences();
 		for (int index = 0; index < creatureData.childDataList.Count; index++) {
 			Child child = new Child();
 			child.ApplyData(creatureData.childDataList[index]);

@@ -16,6 +16,10 @@ public class RecordData {
 	public float cellCountShell;
 	public float cellCountVein;
 
+	public float creatureCount;
+	public float creatureBirthsPerSecond;
+	public float creatureDeathsPerSecond;
+
 	public string tagText;
 	public bool showLine;
 	public float tagRed;

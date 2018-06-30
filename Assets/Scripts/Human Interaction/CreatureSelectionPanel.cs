@@ -261,15 +261,15 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	// Select
 	public void OnSelectMotherClicked() {
-		if (hasSoloSelected && soloSelected.HasMother() && soloSelected.GetMother() != null) {
-			Select(soloSelected.GetMother());
+		if (hasSoloSelected && soloSelected.HasMotherAlive() && soloSelected.GetMotherAlive() != null) {
+			Select(soloSelected.GetMotherAlive());
 		}
 	}
 
 	public void OnSelectChildrenClicked() {
-		if (hasSoloSelected && soloSelected.HasChildren()) {
+		if (hasSoloSelected && soloSelected.HasChildrenAlive()) {
 			List<Creature> select = new List<Creature>();
-			foreach(Creature child in soloSelected.GetChildren()) {
+			foreach(Creature child in soloSelected.GetChildrenAlive()) {
 				select.Add(child);
 			}
 			Select(select);
@@ -311,12 +311,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		List<Creature> attachedUnselectedChildren = new List<Creature>();
 		foreach (Creature creature in selection) {
 			//mother
-			if (creature.HasMother() && !selection.Contains(creature.GetMother())) {
+			if (creature.HasMotherAlive() && !selection.Contains(creature.GetMotherAlive())) {
 				creature.DetatchFromMother(false, true);
 			}
 
 			//children
-			foreach (Creature child in creature.GetChildren()) {
+			foreach (Creature child in creature.GetChildrenAlive()) {
 				if (!selection.Contains(child) && child != null) {
 					child.DetatchFromMother(false, true);
 				}
@@ -350,10 +350,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			genomes.Add(source.genotype.genome);
 		}
 
-		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			Creature mergeling = World.instance.life.SpawnCreatureMergling(genomes, Vector2.zero, 90f, World.instance.worldTicks);
 			moveCreatures.Add(mergeling);
-		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			Creature mergeling = World.instance.life.SpawnCreatureMergling(genomes, Vector2.zero, 90f, World.instance.worldTicks);
 			moveCreatures.Add(mergeling);
 		}
@@ -388,20 +388,20 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			Creature creatureCopy = World.instance.life.GetCreature(copy.id);
 			Creature creatureOriginal = World.instance.life.GetCreature(copyToOriginal[copy.id]);
 
-			creatureCopy.ClearMotherAndChildren();
+			creatureCopy.ClearMotherAndChildrenReferences();
 
 			// mother
-			if (originalCreatureList.Find(c => c.id == creatureOriginal.GetMotherIdIncDead())) {
+			if (originalCreatureList.Find(c => c.id == creatureOriginal.GetMotherIdDeadOrAlive())) {
 				//my mother is among the creatures which was coppied
-				string copyId = originalToCopy[creatureOriginal.GetMotherIdIncDead()];
-				creatureCopy.SetMother(copyId);
+				string copyId = originalToCopy[creatureOriginal.GetMotherIdDeadOrAlive()];
+				creatureCopy.SetMotherReference(copyId);
 			}
 
 			//children
-			List<string> creatureOriginalChildIdList = creatureOriginal.GetChildrenIdIncDead();
+			List<string> creatureOriginalChildIdList = creatureOriginal.GetChildrenIdDeadOrAlive();
 
 			// Narly code below !!
-			for (int i = 0; i < creatureOriginal.ChildrenCountIncDead(); i++) {
+			for (int i = 0; i < creatureOriginal.ChildrenCountDeadOrAlive(); i++) {
 				//For each child of the current original
 
 				//SoulReference childReference = soulOriginal.childSoulReferences[i];
@@ -414,10 +414,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 					// Our copy child reference is the same as the original, but poits at another creature child
 					childData.id =                      originalToCopy[creatureOriginalsChildId];
-					childData.isConnectedToMother =     creatureOriginal.IsAttachedToChild(creatureOriginalsChildId);
+					childData.isConnectedToMother =     creatureOriginal.IsAttachedToChildAlive(creatureOriginalsChildId);
 					childData.originMapPosition =       creatureOriginal.ChildOriginMapPosition(creatureOriginalsChildId); //As seen from mothers frame of reference
 					childData.originBindCardinalIndex = creatureOriginal.ChildOriginBindCardinalIndex(creatureOriginalsChildId);
-					creatureCopy.AddChild(childData);
+					creatureCopy.AddChildReference(childData);
 
 
 				}
@@ -429,7 +429,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	public void StartMoveCreatures() {
 		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
-		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 
 			foreach (Creature c in moveCreatures) {
 				c.Grab(PhenoGenoEnum.Phenotype);
@@ -440,7 +440,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			foreach (Creature c in moveCreatures) {
 				moveOffset.Add(c, (Vector2)c.transform.position - MoveCreaturesCenterPhenotype);
 			}
-		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			foreach (Creature c in moveCreatures) {
 				c.Grab(PhenoGenoEnum.Genotype);
 			}
@@ -466,7 +466,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		moveCreatures.AddRange(selection);
 
 		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
-		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			foreach (Creature c in moveCreatures) {
 				c.Grab(PhenoGenoEnum.Phenotype);
 			}
@@ -476,7 +476,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			}
 			zeroRotationVector = (Vector2)mousePosition - MoveCreaturesCenterPhenotype;
 			rotationCenter = MoveCreaturesCenterPhenotype;
-		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			foreach (Creature c in moveCreatures) {
 				c.Grab(PhenoGenoEnum.Genotype);
 			}
@@ -553,7 +553,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (GlobalPanel.instance.soundCreatures.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
-		if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			foreach (Creature c in moveCreatures) {
 				c.Release(PhenoGenoEnum.Phenotype);
 				SpawnAddEffect(c.phenotype.originCell.position);
@@ -561,7 +561,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				//World.instance.history.StampTag("+");
 				//Debug.Log("+");
 			}
-		} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			foreach (Creature c in moveCreatures) {
 				c.Release(PhenoGenoEnum.Genotype);
 				SpawnAddEffect(c.genotype.originCell.position);
@@ -616,12 +616,15 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 				motherButtonText.color = Color.gray;
 				motherButton.gameObject.SetActive(true);
+				childrenButtonText.text = "Mother";
 
 				fatherButtonText.color = Color.gray;
 				fatherButton.gameObject.SetActive(true);
+				childrenButtonText.text = "Father";
 
 				childrenButtonText.color = Color.gray;
 				childrenButton.gameObject.SetActive(true);
+				childrenButtonText.text = "Children";
 				// ^ left side ^
 
 
@@ -640,20 +643,25 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				// left side
 				spiecesButtonText.color = Color.black;
 
-				motherButtonText.color = Color.red;
-				motherButton.gameObject.SetActive(soloSelected.HasMotherIncDead()); //show even if mother is dead
 
+				motherButtonText.color = Color.red;
+				if (soloSelected.HasMotherDeadOrAlive()) {
+					motherButton.gameObject.SetActive(true); //show even if mother is dead
+					motherButtonText.text = soloSelected.HasMotherAlive() ? "Mother" : "(Mother)";
+				} else {
+					motherButton.gameObject.SetActive(false);
+				}
+
+				//TODO: father
 				fatherButtonText.color = Color.red;
 				fatherButton.gameObject.SetActive(false);
 
 				childrenButtonText.color = Color.red;
-				if (soloSelected.HasChildrenIncDead()) {
+				if (soloSelected.HasChildrenDeadOrAlive()) {
 					childrenButton.gameObject.SetActive(true); //show even if mother is dead
-					if (soloSelected.ChildrenCountIncDead() == 1) {
-						childrenButtonText.text = "1 Child";
-					} else {
-						childrenButtonText.text = soloSelected.ChildrenCountIncDead() + " Children";
-					}
+					int alive = soloSelected.ChildrenCountAlive();
+					int dead = soloSelected.ChildrenCountDeadOrAlive() - alive;
+					childrenButtonText.text = "Cn: " + (alive > 0 ? alive.ToString() : "") + (dead > 0 ? "+(" + dead.ToString() + ")" : "");
 				} else {
 					childrenButton.gameObject.SetActive(false);
 				}
@@ -731,9 +739,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				//rotate around own center
 				c.transform.localRotation = Quaternion.Euler(0, 0, RotateCreaturesAngle);
 
-				if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype) {
+				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 					c.phenotype.originCell.heading = startCreatureHeading[c] + RotateCreaturesAngle;
-				} else if (CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Genotype) {
+				} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 					c.genotype.originCell.heading = startCreatureHeading[c] + RotateCreaturesAngle;
 				}
 			}

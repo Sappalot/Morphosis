@@ -141,6 +141,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	//Graphics
 	public Toggle graphicsCreatures;
+	public Toggle graphicsRelations;
 	public Toggle graphicsPeriphery;
 	public Toggle graphicsEffects;
 	public Toggle graphicsMuscleForces;
@@ -191,7 +192,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 			//pps
 			physicsUpdatesPerSecond = physicsUpdateCount / timeCount;
-			pps.text = CreatureEditModePanel.instance.mode == CreatureEditModeEnum.Phenotype && timeCount > 0f ? string.Format("PPS: {0:F1}", physicsUpdateCount / timeCount) : "PPS: ---";
+			pps.text = CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && timeCount > 0f ? string.Format("PPS: {0:F1}", physicsUpdateCount / timeCount) : "PPS: ---";
 			physicsUpdateCount = 0;
 			timeCount = 0;
 

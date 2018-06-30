@@ -15,4 +15,9 @@ public enum RecordEnum {
 	cellCountRoot,
 	cellCountShell,
 	cellCountVein,
+
+	creatureCount,
+	creatureBirthsPerSecond,
+	creatureDeathsPerSecond,
+	
 }
