@@ -85,7 +85,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
 				cellType.text = "Type:";
 				cellEnergy.text = "Energy:";
-				cellEffect.text = "Effect:";
+				cellEffect.text = "P cell:";
 				cellNeighbours.text = "Neighbours:";
 				connectionGroupCount.text = "Con. Groups: ";
 				predators.text = "Eating on me:";
@@ -96,8 +96,14 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isOrigin ? " (O)" : "") + (selectedCell.isPlacenta ? " (P)" : "");
 			cellEnergy.text = string.Format("Energy: {0:F2}J", selectedCell.energy);
-			cellEffect.text = string.Format("Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.effectProduction, selectedCell.effectConsumption, selectedCell.effect);
-			
+
+			if (PhenotypePanel.instance.effectMeasure == PhenotypePanel.EffectMeasureEnum.CellEffectExclusiveFlux || PhenotypePanel.instance.effectMeasure == PhenotypePanel.EffectMeasureEnum.CellEffectAverageExclusiveFlux) {
+				//Total effect excluding energy inport/export to attached 
+				cellEffect.text = string.Format("P cell: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, false, false), selectedCell.GetEffectDown(true, false, false), selectedCell.GetEffect(true, false, false));
+			} else {
+				cellEffect.text = string.Format("P cell: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, true, true), selectedCell.GetEffectDown(true, true, true), selectedCell.GetEffect(true, true, true));
+			}
+
 			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnectedRelatives) + " + ("  + selectedCell.neighbourCountConnectedRelatives + ")";
 			connectionGroupCount.text = "Con. Groups: " + selectedCell.groups;
 			predators.text = "Eating on me: " + selectedCell.predatorCount;

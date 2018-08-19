@@ -150,7 +150,6 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		type,
 		energy,
 		effect,
-		effectCreature,
 		leafExposure,
 		childCountCreature,
 		predatorPray,

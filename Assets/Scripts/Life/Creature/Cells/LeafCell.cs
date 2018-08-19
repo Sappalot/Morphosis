@@ -51,7 +51,7 @@ public class LeafCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		if (GlobalPanel.instance.physicsLeaf.isOn) {
-			effectConsumptionInternal = GlobalSettings.instance.phenotype.leafCellEffectCost; //* GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount); //costy!!
+			effectDownInternal = GlobalSettings.instance.phenotype.leafCellEffectCost; //* GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount); //costy!!
 			////-- test
 			//effectProductionInternal = 0.5f * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount);
 			//base.UpdateCellFunction(deltaTicks, worldTicks);
@@ -212,15 +212,15 @@ public class LeafCell : Cell {
 			if (creature.IsAttachedToMotherAlive()) {
 				attachedMotherCellCount = creature.GetMotherAlive().cellCount;
 			}
-			effectProductionInternal = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.cellCount); //costy!! creature.clusterCellCount
+			effectUpInternal = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.cellCount); //costy!! creature.clusterCellCount
 
 			if (CellPanel.instance.selectedCell == this) {
 				LeafCellPanel.instance.MakeDirty();
 			}
 			base.UpdateCellFunction(deltaTicks, worldTicks);
 		} else {
-			effectProductionInternal = 0f;
-			effectConsumptionInternal = 0f;
+			effectUpInternal = 0f;
+			effectDownInternal = 0f;
 			m_lowPassExposure = 0.33f;
 		}
 	}

@@ -658,6 +658,13 @@ public class Creature : MonoBehaviour {
 		return phenotype.UpdateKillWeakCells(worldTicks);
 	}
 
+	public void SetFluxEffectToZero() {
+		foreach (Cell cell in phenotype.cellList) {
+			cell.effectFluxFromSelf = 0f;
+			cell.effectFluxToSelf = 0f;
+		}
+	}
+	
 	//Returns true if creature grew
 	public void UpdatePhysics(ulong worldTicks) {
 		//time

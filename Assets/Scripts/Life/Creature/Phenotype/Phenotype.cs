@@ -56,30 +56,28 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public float effectProduction {
-		get {
-			float effect = 0;
-			foreach (Cell cell in cellList) {
-				effect += cell.effectProduction;
-			}
-			return effect;
+	public float GetEffect(bool production, bool fluxSelf, bool fluxAttached) {
+		float effect = 0;
+		foreach (Cell cell in cellList) {
+			effect += cell.GetEffect(production, fluxSelf, fluxAttached);
 		}
+		return effect;
 	}
 
-	public float effectConsumption {
-		get {
-			float effect = 0;
-			foreach (Cell cell in cellList) {
-				effect += cell.effectConsumption;
-			}
-			return effect;
+	public float GetEffectDown(bool production, bool fluxSelf, bool fluxAttached) {
+		float effect = 0;
+		foreach (Cell cell in cellList) {
+			effect += cell.GetEffectDown(production, fluxSelf, fluxAttached);
 		}
+		return effect;
 	}
 
-	public float effect {
-		get {
-			return effectProduction - effectConsumption;
+	public float GetEffectUp(bool production, bool fluxSelf, bool fluxAttached) {
+		float effect = 0;
+		foreach (Cell cell in cellList) {
+			effect += cell.GetEffectUp(production, fluxSelf, fluxAttached);
 		}
+		return effect;
 	}
 
 	public bool hasPlacentaSpringsToMother {
@@ -580,12 +578,6 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public void SetZeroIfNegative(float amount) {
-		for (int index = 0; index < cellCount; index++) {
-			cellList[index].energy = Mathf.Max(cellList[index].energy, Cell.maxEnergy);
-		}
-	}
-
 	public bool IsOriginNeighbouringMothersPlacenta(Creature creature) {
 		Debug.Assert(creature.HasMotherAlive());
 
@@ -792,12 +784,15 @@ public class Phenotype : MonoBehaviour {
 			//me
 			creature.SetAttachedToMotherAlive(false);
 			connectionsDiffersFromCells = true;
+			originCell.effectFluxFromMotherAttached = 0f;
 
 			//mother
 			creature.GetMotherAlive().phenotype.connectionsDiffersFromCells = true;
+			foreach (Cell cell in creature.GetMotherAlive().phenotype.cellList) {
+				cell.effectFluxToChildrenAttached = 0f;
+			}
 
 			CreatureSelectionPanel.instance.MakeDirty();
-
 			CreatureSelectionPanel.instance.UpdateSelectionCluster();
 			return true;
 		}
@@ -1289,22 +1284,40 @@ public class Phenotype : MonoBehaviour {
 				cell.UpdateCellFunction(GlobalSettings.instance.quality.veinCellTickPeriod, worldTick);
 			}
 
-			if (cellEnergyTick == 0) {
-				cell.UpdateEnergy(GlobalSettings.instance.quality.cellEnergyTickPeriod, worldTick);
-			}
+			//if (cellEnergyTick == 0) {
+			//	cell.UpdateEnergy(GlobalSettings.instance.quality.cellEnergyTickPeriod, worldTick);
+			//}
 		}
 
-		
+
 		if (veinTick == 0) {
 			if (GlobalPanel.instance.physicsOsmosis.isOn) {
-				veins.UpdateEffectAndEnergy(GlobalSettings.instance.quality.veinTickPeriod);
+				veins.UpdateEffect(GlobalSettings.instance.quality.veinTickPeriod);
+				veins.UpdateCellsPlacentaEffects(); //used to display effect in panel
+			}
+
+			for (int index = 0; index < cellList.Count; index++) {
+				Cell cell = cellList[index];
+				cell.UpdateEnergy(GlobalSettings.instance.quality.cellEnergyTickPeriod);
 			}
 		}
-		
 
 		//Viual
 		if (visualTelepoke > 0) {
 			visualTelepoke--;
+		}
+	}
+
+	public void UpdateFluxEffect() {
+		if (GlobalPanel.instance.physicsOsmosis.isOn) {
+			veins.UpdateEffect(1);
+		}
+	}
+
+	public void UpdateEnergy() {
+		for (int index = 0; index < cellList.Count; index++) {
+			Cell cell = cellList[index];
+			cell.UpdateEnergy(1);
 		}
 	}
 

@@ -14,19 +14,19 @@ public class JawCell : Cell {
 		}
 		if (GlobalPanel.instance.physicsJaw.isOn) {
 			mouth.gameObject.SetActive(true);
-			effectConsumptionInternal = GlobalSettings.instance.phenotype.jawCellEffectCost;
+			effectDownInternal = GlobalSettings.instance.phenotype.jawCellEffectCost;
 
 			//Hack release pray
 			RemoveNullPrays(); //We need this one not to run into null refs once in a blue moon
 			JawCellPanel.instance.MakeDirty();
 
-			effectProductionExternal = eatEffect;
+			effectUpPredPray = eatEffect;
 
 			base.UpdateCellFunction(deltaTicks, worldTicks);
 		} else {
 			mouth.gameObject.SetActive(false);
-			effectConsumptionInternal = 0f;
-			effectProductionExternal = 0f;
+			effectDownInternal = 0f;
+			effectUpPredPray = 0f;
 		}
 	}
 

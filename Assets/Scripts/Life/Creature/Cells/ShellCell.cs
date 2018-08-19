@@ -2,13 +2,13 @@
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		if (GlobalPanel.instance.physicsShell.isOn) {
-			effectConsumptionInternal = GlobalSettings.instance.phenotype.shellCellEffectCost;
-			effectProductionInternal = 0f;
+			effectDownInternal = GlobalSettings.instance.phenotype.shellCellEffectCost;
+			effectUpInternal = 0f;
 
 			base.UpdateCellFunction(deltaTicks, worldTicks);
 		} else {
-			effectConsumptionInternal = 0f;
-			effectProductionInternal = 0f;
+			effectDownInternal = 0f;
+			effectUpInternal = 0f;
 		}
 	}
 

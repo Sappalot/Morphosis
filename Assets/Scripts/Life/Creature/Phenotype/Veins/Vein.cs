@@ -6,6 +6,8 @@ public class Vein : MonoBehaviour {
 	private EdgeAttachment attachmentFront;
 	private EdgeAttachment attachmentBack;
 
+	public bool isPlacentaVein;
+
 	public EffectEnum effectType = EffectEnum.LowLow;
 	public enum EffectEnum {
 		LowLow,
@@ -32,9 +34,15 @@ public class Vein : MonoBehaviour {
 		return false;
 	}
 
+	public void ClearCellFluxEffect() {
+
+	}
+
 	public void Setup(Cell parentCell, Cell childCell, int directionChildToParentCell) {
 		attachmentFront = new EdgeAttachment(parentCell, (directionChildToParentCell + 3) % 6);
 		attachmentBack = new EdgeAttachment(childCell, directionChildToParentCell);
+
+		isPlacentaVein = parentCell.creature.id != childCell.creature.id;
 
 		if (!GlobalPanel.instance.physicsVein.isOn) {
 			effectType = EffectEnum.LowLow;
@@ -67,14 +75,24 @@ public class Vein : MonoBehaviour {
 
 				float intencity = Mathf.Abs(flowEffectFrontToBack) * 10f;
 				if (flowEffectFrontToBack > 0f) { //start to end
-					mainArrow.GetComponent<LineRenderer>().startColor = new Color(intencity, intencity, intencity);
-					mainArrow.GetComponent<LineRenderer>().endColor = new Color(intencity, intencity, intencity);
 
+					if (!isPlacentaVein) {
+						mainArrow.GetComponent<LineRenderer>().startColor = new Color(intencity, intencity, intencity);
+						mainArrow.GetComponent<LineRenderer>().endColor = new Color(intencity, intencity, intencity);
+					} else {
+						mainArrow.GetComponent<LineRenderer>().startColor = new Color(intencity, intencity, 0f);
+						mainArrow.GetComponent<LineRenderer>().endColor = new Color(intencity, intencity, 0f);
+					}
 					mainArrow.GetComponent<LineRenderer>().startWidth = Mathf.Max(0f, width - intencity); ;
 					mainArrow.GetComponent<LineRenderer>().endWidth = width;
 				} else {
-					mainArrow.GetComponent<LineRenderer>().startColor = new Color(intencity, intencity, intencity);
-					mainArrow.GetComponent<LineRenderer>().endColor = new Color(intencity, intencity, intencity);
+					if (!isPlacentaVein) {
+						mainArrow.GetComponent<LineRenderer>().startColor = new Color(intencity, intencity, intencity);
+						mainArrow.GetComponent<LineRenderer>().endColor = new Color(intencity, intencity, intencity);
+					} else {
+						mainArrow.GetComponent<LineRenderer>().startColor = new Color(intencity, intencity, 0f);
+						mainArrow.GetComponent<LineRenderer>().endColor = new Color(intencity, intencity, 0f);
+					}
 
 					mainArrow.GetComponent<LineRenderer>().startWidth = width;
 					mainArrow.GetComponent<LineRenderer>().endWidth = Mathf.Max(0f, width - intencity); ;
@@ -100,8 +118,8 @@ public class Vein : MonoBehaviour {
 		}
 	}
 
-	private float flowEffectFrontToBack;
-	public void UpdateEnergyFluxEffect() {
+	public float flowEffectFrontToBack;
+	public void UpdateFluxEffect() {
 		float moreEnergyFront = frontCell.energy - backCell.energy;
 		flowEffectFrontToBack = Mathf.Clamp(moreEnergyFront, -100f, 100f) * flowEffectFactor;
 	}

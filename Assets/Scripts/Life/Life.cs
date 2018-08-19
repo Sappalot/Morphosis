@@ -426,9 +426,23 @@ public class Life : MonoBehaviour {
 		}
 
 		// ^ Ticks ^
+
+
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdatePhysics(worldTicks);
 		}
+
+		//for (int index = 0; index < creatureList.Count; index++) {
+		//	creatureList[index].SetFluxEffectToZero();
+		//}
+
+		//for (int index = 0; index < creatureList.Count; index++) {
+		//	creatureList[index].phenotype.UpdateFluxEffect();
+		//}
+
+		//for (int index = 0; index < creatureList.Count; index++) {
+		//	creatureList[index].phenotype.UpdateEnergy();
+		//}
 
 		killCreatureList.Clear();
 
