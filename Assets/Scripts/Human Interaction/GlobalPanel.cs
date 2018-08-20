@@ -149,6 +149,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public enum CellGraphicsEnum {
 		type,
 		energy,
+		flux,
 		effect,
 		leafExposure,
 		childCountCreature,
