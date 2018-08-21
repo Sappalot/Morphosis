@@ -10,6 +10,9 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public Text creatureEffectAverage;
 	public CellPanel cellPanel;
 
+	public Toggle followToggle;
+	public Toggle yawToggle;
+
 	private bool isDirty = true;
 
 	public Dropdown effectMeasuredDropdown;

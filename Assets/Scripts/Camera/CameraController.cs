@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class CameraController : MouseDrag {
@@ -19,6 +20,7 @@ public class CameraController : MouseDrag {
 			downPositionCamera = camera.transform.position;
 			isDragging = true;
 
+			TryReleaseCameraLock();
 			//Debug.Log("MouseButton" + mouseButton + " START Drag");
 		}
 	}
@@ -53,7 +55,34 @@ public class CameraController : MouseDrag {
 
 		UpdatePositionViaKeys();
 		UpdateSize();
+
+		camera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+		if (PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !Input.GetMouseButton(0)) {
+			if (CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive) {
+				Vector2 focus = CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position;
+				camera.transform.position = new Vector3(focus.x, focus.y, camera.transform.position.z);
+				if (PhenotypePanel.instance.yawToggle.isOn) {
+					camera.transform.localRotation = Quaternion.Euler(0f, 0f, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
+				} 
+			} else if (CreatureSelectionPanel.instance.selectionCount > 1) {
+				List<Creature> selection = CreatureSelectionPanel.instance.selection;
+				int count = 0;
+				Vector2 sum = new Vector2();
+				foreach (Creature c in selection) {
+					if (c.phenotype.isAlive) {
+						sum += c.phenotype.originCell.position;
+						count++;
+					}
+				}
+				if (count >  0) {
+					sum /= count;
+					camera.transform.position = new Vector3(sum.x, sum.y, camera.transform.position.z);
+				}
+			} 
+		}
 	}
+
+	
 
 	private void UpdateSize() {
 		if (Input.GetAxis("Mouse ScrollWheel") < 0) {
@@ -80,20 +109,30 @@ public class CameraController : MouseDrag {
 
 		if (Input.GetKey(KeyCode.A) && !GlobalPanel.instance.isWritingHistoryNote) {
 			horizontalMove = -1;
+			TryReleaseCameraLock();
 		}
 		if (Input.GetKey(KeyCode.D) && !GlobalPanel.instance.isWritingHistoryNote) {
 			horizontalMove = 1;
+			TryReleaseCameraLock();
 		}
 		if (Input.GetKey(KeyCode.S) && !GlobalPanel.instance.isWritingHistoryNote) {
 			verticalMove = -1;
+			TryReleaseCameraLock();
 		}
 		if (Input.GetKey(KeyCode.W) && !GlobalPanel.instance.isWritingHistoryNote) {
 			verticalMove = 1;
+			TryReleaseCameraLock();
 		}
 
 		camera.transform.position += new Vector3(
 			horizontalMove * cameraMoveSpeed  * 2f * camera.orthographicSize * Time.deltaTime,
 			verticalMove * cameraMoveSpeed * 2f * camera.orthographicSize * Time.deltaTime,
 			0f);
+	}
+
+	private void TryReleaseCameraLock() {
+		if (CreatureSelectionPanel.instance.hasSelection && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+			PhenotypePanel.instance.followToggle.isOn = false;
+		}
 	}
 }
