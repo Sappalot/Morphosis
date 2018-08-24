@@ -661,7 +661,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 					childrenButton.gameObject.SetActive(true); //show even if mother is dead
 					int alive = soloSelected.ChildrenCountAlive();
 					int dead = soloSelected.ChildrenCountDeadOrAlive() - alive;
-					childrenButtonText.text = "Cn: " + (alive > 0 ? alive.ToString() : "") + (dead > 0 ? "+(" + dead.ToString() + ")" : "");
+					childrenButtonText.text = "Cn: " + (alive > 0 ? alive.ToString() : "") + (alive > 0 && dead > 0 ? "+" : "") + (dead > 0 ? "(" + dead.ToString() + ")" : "");
 				} else {
 					childrenButton.gameObject.SetActive(false);
 				}

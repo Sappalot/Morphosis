@@ -77,21 +77,21 @@ public class Vein : MonoBehaviour {
 				if (flowEffectFrontToBack > 0f) { //start to end
 
 					if (!isPlacentaVein) {
-						mainArrow.GetComponent<LineRenderer>().startColor = new Color(intencity, intencity, intencity);
-						mainArrow.GetComponent<LineRenderer>().endColor = new Color(intencity, intencity, intencity);
-					} else {
 						mainArrow.GetComponent<LineRenderer>().startColor = new Color(intencity, intencity, 0f);
 						mainArrow.GetComponent<LineRenderer>().endColor = new Color(intencity, intencity, 0f);
+					} else {
+						mainArrow.GetComponent<LineRenderer>().startColor = new Color(intencity, intencity, intencity);
+						mainArrow.GetComponent<LineRenderer>().endColor = new Color(intencity, intencity, intencity);
 					}
 					mainArrow.GetComponent<LineRenderer>().startWidth = Mathf.Max(0f, width - intencity); ;
 					mainArrow.GetComponent<LineRenderer>().endWidth = width;
 				} else {
 					if (!isPlacentaVein) {
-						mainArrow.GetComponent<LineRenderer>().startColor = new Color(intencity, intencity, intencity);
-						mainArrow.GetComponent<LineRenderer>().endColor = new Color(intencity, intencity, intencity);
-					} else {
 						mainArrow.GetComponent<LineRenderer>().startColor = new Color(intencity, intencity, 0f);
 						mainArrow.GetComponent<LineRenderer>().endColor = new Color(intencity, intencity, 0f);
+					} else {
+						mainArrow.GetComponent<LineRenderer>().startColor = new Color(intencity, intencity, intencity);
+						mainArrow.GetComponent<LineRenderer>().endColor = new Color(intencity, intencity, intencity);
 					}
 
 					mainArrow.GetComponent<LineRenderer>().startWidth = width;

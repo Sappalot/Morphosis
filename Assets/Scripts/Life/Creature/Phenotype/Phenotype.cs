@@ -56,6 +56,18 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public float energyPerCellAverage {
+		get {
+			return energy / cellCount;
+		}
+	}
+
+	public float energyFullness {
+		get {
+			return energyPerCellAverage / GlobalSettings.instance.phenotype.cellMaxEnergy;
+		}
+	}
+
 	public float GetEffect(bool production, bool fluxSelf, bool fluxAttached) {
 		float effect = 0;
 		foreach (Cell cell in cellList) {
@@ -574,7 +586,7 @@ public class Phenotype : MonoBehaviour {
 
 	public void ChangeEnergy(float amount) {
 		for (int count = 0; count < cellCount; count++) {
-			cellList[count].energy = Mathf.Clamp(cellList[count].energy + amount, -25f, Cell.maxEnergy);
+			cellList[count].energy = Mathf.Clamp(cellList[count].energy + amount, -25f, GlobalSettings.instance.phenotype.cellMaxEnergy);
 		}
 	}
 

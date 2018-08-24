@@ -120,10 +120,6 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	// metabolism
-	[HideInInspector]
-	public static float maxEnergy = 100f;
-
 	[HideInInspector]
 	private float m_energy;
 	public float energy {
@@ -134,6 +130,14 @@ public abstract class Cell : MonoBehaviour {
 			m_energy = value;
 		}
 	}
+
+	[HideInInspector]
+	public float energyFullness {
+		get {
+			return energy / GlobalSettings.instance.phenotype.cellMaxEnergy;
+		}
+	}
+	
 
 	// Effect
 
@@ -326,7 +330,7 @@ public abstract class Cell : MonoBehaviour {
 
 	//production effect is updated by each cell type in their own way
 	public void UpdateEnergy(int deltaTicks) {
-		energy = Mathf.Clamp(energy + GetEffect(true, true, true) * deltaTicks * Time.fixedDeltaTime, -13f, maxEnergy);
+		energy = Mathf.Clamp(energy + GetEffect(true, true, true) * deltaTicks * Time.fixedDeltaTime, -13f, GlobalSettings.instance.phenotype.cellMaxEnergy);
 		didUpdateEnergyThisFrame = 2;
 	}
 
@@ -1000,8 +1004,7 @@ public abstract class Cell : MonoBehaviour {
 				}
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.energy) {
-				float life = energy / Cell.maxEnergy;
-				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(life);
+				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(energyFullness);
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.flux) {
 				float intensity = 0.2f;

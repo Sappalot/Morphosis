@@ -55,7 +55,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public void OnClickHeal() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			selectedCell.energy = Mathf.Min(selectedCell.energy + 5f, Cell.maxEnergy);
+			selectedCell.energy = Mathf.Min(selectedCell.energy + 5f, GlobalSettings.instance.phenotype.cellMaxEnergy);
 
 			PhenotypePanel.instance.MakeDirty();
 			MakeDirty();
@@ -95,7 +95,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			}
 
 			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isOrigin ? " (O)" : "") + (selectedCell.isPlacenta ? " (P)" : "");
-			cellEnergy.text = string.Format("Energy: {0:F2}J", selectedCell.energy);
+			cellEnergy.text = string.Format("Energy: {0:F2}% ({1:F2}/{2:F2}J)", selectedCell.energyFullness * 100f, selectedCell.energy, GlobalSettings.instance.phenotype.cellMaxEnergy);
 
 			if (PhenotypePanel.instance.effectMeasure == PhenotypePanel.EffectMeasureEnum.CellEffectExclusiveFlux || PhenotypePanel.instance.effectMeasure == PhenotypePanel.EffectMeasureEnum.CellEffectAverageExclusiveFlux) {
 				//Total effect excluding energy inport/export to attached 

@@ -98,7 +98,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 			creatureAge.text = "Age: " + TimeUtil.GetTimeString((ulong)(solo.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime));
 			creatureCellCount.text = "Cells: " + solo.cellCount + " (" + solo.cellsCountFullyGrown + ")";
-			creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energy / solo.phenotype.cellCount);
+			creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energyFullness * 100f);
 
 			if (effectMeasure ==      EffectMeasureEnum.CellEffectExclusiveFlux) {
 				//Total effect excluding energy inport/export to attached 
