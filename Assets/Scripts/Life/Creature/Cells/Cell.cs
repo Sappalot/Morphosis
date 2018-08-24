@@ -327,7 +327,7 @@ public abstract class Cell : MonoBehaviour {
 	//production effect is updated by each cell type in their own way
 	public void UpdateEnergy(int deltaTicks) {
 		energy = Mathf.Clamp(energy + GetEffect(true, true, true) * deltaTicks * Time.fixedDeltaTime, -13f, maxEnergy);
-		didUpdateEnergyThisFrame = 1;
+		didUpdateEnergyThisFrame = 2;
 	}
 
 	virtual public void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
@@ -989,6 +989,8 @@ public abstract class Cell : MonoBehaviour {
 
 	//TODO: update cell graphics from here
 	public void UpdateGraphics() {
+		openCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
+
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.type) {
 				if (creature.phenotype.visualTelepoke > 0) {
@@ -1056,7 +1058,6 @@ public abstract class Cell : MonoBehaviour {
 				if (predatorCount > 0) {
 					filledCircleSprite.color = Color.red;
 				}
-
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.typeAndPredatorPray) {
 				float effectValue = 0.5f + effectPredPray * 0.02f;
@@ -1070,6 +1071,7 @@ public abstract class Cell : MonoBehaviour {
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.update) {
 				filledCircleSprite.color = didUpdateFunctionThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
+				//openCircleSprite.color = didUpdateEnergyThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
 			}
 			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.creation) {
 				if (creature.creation == CreatureCreationEnum.Born) {
@@ -1099,14 +1101,6 @@ public abstract class Cell : MonoBehaviour {
 		}
 		UpdateRotation(); //costy, update only if cell has direction and is in frustum
 		UpdateFlipSide();
-
-		//Updated from muscle cells update instead
-		//UpdateRadius(fixedTime);
-		//UpdateSpringLengths(); // It is costy to update spring length
-
-		//if (isTick && GlobalPanel.instance.effectsUpdateMetabolism.isOn) {
-		//	UpdateMetabolism(deltaTickTime);
-		//}
 
 		didUpdateFunctionThisFrame--; //  Just for visuals
 		didUpdateEnergyThisFrame--; //  Just for visuals

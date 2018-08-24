@@ -19,9 +19,9 @@ public class Veins : MonoBehaviour {
 		veinList.Clear();
 	}
 
-	public void UpdateGraphics(bool showVeins) {
+	public void UpdateGraphics(bool thisCreatureIsSoloSelected) {
 		for (int index = 0; index < veinList.Count; index++) {
-			veinList[index].UpdateGraphics(showVeins);
+			veinList[index].UpdateGraphics(thisCreatureIsSoloSelected);
 		}
 	}
 

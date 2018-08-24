@@ -124,7 +124,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Toggle physicsKillSterile;
 	public Toggle physicsGrow;
 	public Toggle physicsDetatch;
-	public Toggle physicsOsmosis;
+	public Toggle physicsFlux;
 
 	public Toggle physicsEgg;
 	public Toggle physicsFungal;
@@ -165,6 +165,14 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			return (CellGraphicsEnum)graphicsCellDropdown.value;
 		}
 	}
+
+	[HideInInspector]
+	public bool isGraphicsCellEnergyRelated {
+		get {
+			return graphicsCell == GlobalPanel.CellGraphicsEnum.energy || graphicsCell == GlobalPanel.CellGraphicsEnum.flux || graphicsCell == GlobalPanel.CellGraphicsEnum.effect;
+		}
+	}
+	
 
 	// Sound
 	public Toggle soundCreatures;

@@ -1124,7 +1124,7 @@ public class Phenotype : MonoBehaviour {
 	public void UpdateGraphics(Creature creature) {
 		//TODO: Update cells flip triangles here
 
-		edges.UpdateGraphics();
+		edges.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(creature));
 		veins.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(creature));
 
 		if (isDirty) {
@@ -1277,16 +1277,13 @@ public class Phenotype : MonoBehaviour {
 			} else if (veinCellTick == 0 && cell.GetCellType() == CellTypeEnum.Vein) {
 				cell.UpdateCellFunction(GlobalSettings.instance.quality.veinCellTickPeriod, worldTick);
 			}
-
-			//if (cellEnergyTick == 0) {
-			//	cell.UpdateEnergy(GlobalSettings.instance.quality.cellEnergyTickPeriod, worldTick);
-			//}
 		}
 
-
-		if (veinTick == 0 && GlobalPanel.instance.physicsOsmosis.isOn) {
-			veins.UpdateEffect(GlobalSettings.instance.quality.veinTickPeriod);
-			veins.UpdateCellsPlacentaEffects(); //used to display effect in panel
+		if (veinTick == 0) {
+			if (GlobalPanel.instance.physicsFlux.isOn) {
+				veins.UpdateEffect(GlobalSettings.instance.quality.veinTickPeriod);
+				veins.UpdateCellsPlacentaEffects(); //used to display effect in panel
+			}
 
 			for (int index = 0; index < cellList.Count; index++) {
 				Cell cell = cellList[index];
@@ -1301,7 +1298,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public void UpdateFluxEffect() {
-		if (GlobalPanel.instance.physicsOsmosis.isOn) {
+		if (GlobalPanel.instance.physicsFlux.isOn) {
 			veins.UpdateEffect(1);
 		}
 	}
