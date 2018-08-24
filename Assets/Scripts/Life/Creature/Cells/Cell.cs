@@ -153,7 +153,7 @@ public abstract class Cell : MonoBehaviour {
 	public float effectUpInternal = 0f; // production, excluding jaw
 
 	[HideInInspector]
-	public float effectDownInternal = 0;
+	public float effectDownInternal = 0; // conumption, exclding jaw
 
 	public float effectPredPray {
 		get {
@@ -324,7 +324,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	//Note: effecteConsumption external changes over time in the same manner for all cells but is integrated with different periods depending on cell
+	//production effect is updated by each cell type in their own way
 	public void UpdateEnergy(int deltaTicks) {
 		energy = Mathf.Clamp(energy + GetEffect(true, true, true) * deltaTicks * Time.fixedDeltaTime, -13f, maxEnergy);
 		didUpdateEnergyThisFrame = 1;

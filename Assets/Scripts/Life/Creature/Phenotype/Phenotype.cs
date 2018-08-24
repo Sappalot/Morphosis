@@ -24,7 +24,7 @@ public class Phenotype : MonoBehaviour {
 
 	public int visualTelepoke { get; private set; }
 	public void Telepoke(Vector2 impulse) {
-		visualTelepoke = GlobalSettings.instance.quality.portalTeleportPeriod;
+		visualTelepoke = GlobalSettings.instance.quality.portalTeleportTickPeriod;
 		AddImpulse(impulse);
 	}
 
@@ -1171,8 +1171,6 @@ public class Phenotype : MonoBehaviour {
 	private int shellCellTick;
 	private int veinCellTick;
 
-	private int cellEnergyTick;
-
 	private int veinTick;
 
 	//time ^
@@ -1223,10 +1221,6 @@ public class Phenotype : MonoBehaviour {
 			veinCellTick = 0;
 		}
 
-		cellEnergyTick++;
-		if (cellEnergyTick >= GlobalSettings.instance.quality.cellEnergyTickPeriod) {
-			cellEnergyTick = 0;
-		}
 
 		veinTick++;
 		if (veinTick >= GlobalSettings.instance.quality.veinTickPeriod) {
@@ -1290,15 +1284,13 @@ public class Phenotype : MonoBehaviour {
 		}
 
 
-		if (veinTick == 0) {
-			if (GlobalPanel.instance.physicsOsmosis.isOn) {
-				veins.UpdateEffect(GlobalSettings.instance.quality.veinTickPeriod);
-				veins.UpdateCellsPlacentaEffects(); //used to display effect in panel
-			}
+		if (veinTick == 0 && GlobalPanel.instance.physicsOsmosis.isOn) {
+			veins.UpdateEffect(GlobalSettings.instance.quality.veinTickPeriod);
+			veins.UpdateCellsPlacentaEffects(); //used to display effect in panel
 
 			for (int index = 0; index < cellList.Count; index++) {
 				Cell cell = cellList[index];
-				cell.UpdateEnergy(GlobalSettings.instance.quality.cellEnergyTickPeriod);
+				cell.UpdateEnergy(GlobalSettings.instance.quality.veinTickPeriod);
 			}
 		}
 

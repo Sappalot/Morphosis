@@ -17,7 +17,7 @@ public class PrisonWall : MonoSingleton<PrisonWall> {
 	private int escapistCleanupTicks = 0;
 	public void UpdatePhysics(List<Creature> creatures, ulong worldTicks) {
 		escapistCleanupTicks++;
-		if (escapistCleanupTicks >= GlobalSettings.instance.quality.escapistCleanupPeriod) {
+		if (escapistCleanupTicks >= GlobalSettings.instance.quality.escapistCleanupTickPeriod) {
 
 			List<Creature> killList = new List<Creature>();
 			foreach (Creature inmate in creatures) {

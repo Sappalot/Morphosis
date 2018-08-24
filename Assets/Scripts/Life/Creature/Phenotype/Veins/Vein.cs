@@ -73,7 +73,7 @@ public class Vein : MonoBehaviour {
 				mainArrow.GetComponent<LineRenderer>().SetPosition(1, frontCell.transform.position);  // front = start = 1
 				mainArrow.GetComponent<LineRenderer>().SetPosition(0, backCell.transform.position); // back = end = 0
 
-				float intencity = Mathf.Abs(flowEffectFrontToBack) * 10f;
+				float intencity = Mathf.Abs(flowEffectFrontToBack);
 				if (flowEffectFrontToBack > 0f) { //start to end
 
 					if (!isPlacentaVein) {
@@ -108,11 +108,11 @@ public class Vein : MonoBehaviour {
 	private float width {
 		get {
 			if (effectType == EffectEnum.LowLow) {
-				return 0.1f;
-			} else if (effectType == EffectEnum.LowHigh) {
 				return 0.2f;
-			} else if (effectType == EffectEnum.HighHigh) {
+			} else if (effectType == EffectEnum.LowHigh) {
 				return 0.3f;
+			} else if (effectType == EffectEnum.HighHigh) {
+				return 0.4f;
 			}
 			return 0f;
 		}

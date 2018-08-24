@@ -130,21 +130,22 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float veinFluxEffectStrong = 0.5f; //W
 
 		//General
-		public float cellBuildCost = 10f; //Energy Cost to build cell, J (Newly built cell will have this energy at start of its life)
-		public float cellBuildNeededRadius = 0.35f; //m
-		public float cellBuildMaxDistance = 1.5f; //m // All neighbours contributing to a new build must be closer than this distance, or new cell can't be built
+		public float cellMaxEnergy = 100f; // J
 
-													// Rebuild
+		//General -> build
+		public float cellBuildCost = 10f; //Energy Cost to build cell, J (Newly built cell will have this energy at start of its life)
+		public float cellBuildNeededRadius = 0.35f; //m | a new cell can be built only if there is an empty spot with this radius or more, at the build location (walls are excluded but should be included)
+		public float cellBuildMaxDistance = 1.5f; //m | All neighbours contributing to a new build must be closer than this distance, or new cell can't be built
 		public float cellRebuildCooldown = 40f; //s, before a cell which was killed/deleted can be rebuilt
 
-		//Detatch
+		//General ->Detatch
 		public float detatchmentKick = 0.05f; //N
 		public float detatchmentKickSquare = 0.05f; //N
 		public float detatchSlideDuration = 10; // s
 		public int detatchAfterCompletePersistance = 5; // How many times will we retry to find a spot to grow next cell in before we give up and realize that it is time to detatch (1 ==> give up (and detatch) after failing one time)
 
-		//Teleport
-		public float telepokeImpulseStrength = 1f;
+		//General -> Teleport
+		public float telepokeImpulseStrength = 1f; // N / teleport tick | impulse applied every teleport tick
 
 		//Sterile
 		public float maxAgeAsChildless = 3600; //s
@@ -168,15 +169,14 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public int shellCellTickPeriod =   50;
 		public int veinCellTickPeriod =    50;
 
-		public int cellEnergyTickPeriod = 5;
 		public int veinTickPeriod = 5;
 		public int growTickPeriod = 30; // Detatch attempt has same period as grow
 
-		public int killSterileCreaturesTickPeriod = 300;
+		public int killSterileCreaturesTickPeriod = 6000;
 
 		// Terrain
-		public int portalTeleportPeriod = 10;
-		public int escapistCleanupPeriod = 10;
+		public int portalTeleportTickPeriod = 40;
+		public int escapistCleanupTickPeriod = 1200;
 		public int pidTickPeriod = 20;
 
 		//Panels
