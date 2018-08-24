@@ -85,9 +85,10 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		//Egg Cell
 		public float eggCellEffectCost = 0.2f; //W
 											   //           eggCellEffect                        0.0 W
-		public float eggCellFertilizeThresholdMin = 30f; //J
+		public float eggCellFertilizeThresholdMin = 0.3f; //cell energy fullness J/J
+		public float eggCellFertilizeThresholdMax = 0.99f; //cell energy fullness J/J
 
-		//Fungal Cell
+														  //Fungal Cell
 		public float fungalCellEffectCost = 0f; // W
 		public float fungalCellEffect = 0.1f; // W
 

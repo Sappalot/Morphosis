@@ -2,12 +2,12 @@
 
 public class Gene {
 	// Egg cell
-	public float eggCellFertilizeThreshold = 40f; // J
+	public float eggCellFertilizeThreshold = 40f; //J ==> part of max energy (* 100 to get  %)
 	public bool eggCellCanFertilizeWhenAttached = true;
 
 	public ChildDetatchModeEnum eggCellDetatchMode = ChildDetatchModeEnum.Size;
 	public float eggCellDetatchSizeThreshold = 5; //J 
-	public float eggCellDetatchEnergyThreshold = 45; //J 
+	public float eggCellDetatchEnergyThreshold = 45; //J ==> part of max energy(* 100 to get  %)
 
 	//Jaw Cell
 	//bool: eat mother, eat child, eat sibling 
@@ -55,10 +55,10 @@ public class Gene {
 		}
 
 		//Egg
-		float spread = 6f;
+		float spread = 0.06f; // TODO move toGlobal settings
 		mut = Random.Range(0, gs.mutation.eggCellFertilizeThresholdLeave + gs.mutation.eggCellFertilizeThresholdRandom * strength);
 		if (mut < gs.mutation.eggCellFertilizeThresholdRandom * strength) {
-			eggCellFertilizeThreshold = Mathf.Clamp(eggCellFertilizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellFertilizeThresholdMin, 99f); // J 
+			eggCellFertilizeThreshold = Mathf.Clamp(eggCellFertilizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellFertilizeThresholdMin, gs.phenotype.eggCellFertilizeThresholdMax); // Cell energy fullness J/J
 		}
 	
 		mut = Random.Range(0, gs.mutation.eggCellCanFertilizeWhenAttachedLeave + gs.mutation.eggCellCanFertilizeWhenAttachedChange * strength);
@@ -66,10 +66,10 @@ public class Gene {
 			eggCellCanFertilizeWhenAttached = !eggCellCanFertilizeWhenAttached; //toggle
 		}
 
-		spread = 2f;
+		spread = 2f; // TODO move toGlobal settings
 		mut = Random.Range(0, gs.mutation.eggCellDetatchSizeThresholdLeave + gs.mutation.eggCellDetatchSizeThresholdRandom * strength);
 		if (mut < gs.mutation.eggCellDetatchSizeThresholdRandom * strength) {
-			eggCellDetatchSizeThreshold = Mathf.Clamp(eggCellDetatchSizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), 1f, 30f); // J
+			eggCellDetatchSizeThreshold = Mathf.Clamp(eggCellDetatchSizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), 1f, 30f); // count
 		}
 
 		spread = 6f;
@@ -145,7 +145,12 @@ public class Gene {
 		index = geneData.index;
 
 		// Egg
-		eggCellFertilizeThreshold = geneData.eggCellFertilizeThreshold;
+		//backward compatibility
+		if (geneData.eggCellFertilizeThreshold > 1) {// if more than 100% must be old (where we measured cell energy)
+			eggCellFertilizeThreshold = geneData.eggCellFertilizeThreshold / 100f;
+		} else {
+			eggCellFertilizeThreshold = geneData.eggCellFertilizeThreshold;
+		}
 		eggCellCanFertilizeWhenAttached = geneData.eggCellCanFertilizeWhenAttached;
 		eggCellDetatchMode = geneData.eggCellDetatchMode;
 		eggCellDetatchSizeThreshold = geneData.eggCellDetatchSizeThreshold;

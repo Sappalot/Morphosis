@@ -70,21 +70,23 @@ public abstract class Cell : MonoBehaviour {
 	private int didUpdateEnergyThisFrame = 0;
 
 	//---- Egg only
+
 	[HideInInspector]
-	public float eggCellFertilizeThreshold; // J
+	public float eggCellFertilizeThreshold; // J ==> part of max energy (* 100 to get  %)
 
 	[HideInInspector]
 	public bool eggCellCanFertilizeWhenAttached;
 
 	[HideInInspector]
-	public ChildDetatchModeEnum eggCellDetatchMode;
+	public ChildDetatchModeEnum eggCellDetatchMode; 
 
 	[HideInInspector]
 	public float eggCellDetatchSizeThreshold; //J 
 
 	[HideInInspector]
-	public float eggCellDetatchEnergyThreshold; //J 
-												//---- Egg only ^
+	public float eggCellDetatchEnergyThreshold; //==> part of max energy (* 100 to get  %) 
+	
+	//---- Egg only ^
 
 	//---- Origin only
 	[HideInInspector]
@@ -94,7 +96,7 @@ public abstract class Cell : MonoBehaviour {
 	public float originDetatchSizeThreshold;
 
 	[HideInInspector]
-	public float originDetatchEnergyThreshold; // J  If we have more energy than this in the origin cell and it is attached with mother, it will separate
+	public float originDetatchEnergyThreshold; // J ==> part of max energy (* 100 to get  %), If we have more energy than this in the origin cell and it is attached with mother, it will separate
 											   //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
 											   //--- Origin only ^
 
@@ -974,9 +976,15 @@ public abstract class Cell : MonoBehaviour {
 		radius = cellData.radius;
 		theRigidBody.velocity = cellData.velocity;
 		energy = cellData.energy;
-
+		
 		// Egg
-		eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold;
+		// backward compatibility
+		if (cellData.eggCellFertilizeThreshold > 1f) { // if more than 100% must be old (where we measured cell energy)
+			eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold / 100f;
+		} else {
+			eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold;
+		}
+		
 		eggCellDetatchMode = cellData.eggCellDetatchMode;
 		eggCellDetatchSizeThreshold = cellData.eggCellDetatchSizeThreshold;
 		eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold;

@@ -20,6 +20,13 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 
 	private bool ignoreSliderMoved = false; // Work around
 
+	private void Awake() {
+		ignoreSliderMoved = true;
+		fertilizeSlider.minValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMin;
+		fertilizeSlider.maxValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMax;
+		ignoreSliderMoved = false;
+	}
+
 	public void SetInteractable(bool interactable) {
 		fertilizeSlider.interactable = interactable;
 		canFertilizeWhenAttachedToggle.interactable = interactable;
@@ -111,9 +118,9 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 			}
 
 			if (CellPanel.instance.selectedCell != null) {
-				fertilizeSliderText.text =     string.Format("EN ≥ {0:F1} J",        GenePanel.instance.selectedGene.eggCellFertilizeThreshold);
+				fertilizeSliderText.text =     string.Format("Cell E ≥ {0:F1}%?",       GenePanel.instance.selectedGene.eggCellFertilizeThreshold * 100f);
 				detatchSizeSliderText.text =   string.Format("Size ≥ {0:F0} Cells", GenePanel.instance.selectedGene.eggCellDetatchSizeThreshold);
-				detatchEnergySliderText.text = string.Format("EN ≥ {0:F1} J",        GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold);
+				detatchEnergySliderText.text = string.Format("EN ≥ {0:F1} J",       GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold);
 			}
 
 			isDirty = false;
