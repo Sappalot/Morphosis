@@ -10,7 +10,8 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 	public Toggle detatchSizeToggle;
 	public Toggle detatchEnergyToggle;
 
-	public Text detatchSizeSliderText;
+	public Text detatchSizeSliderTextPercentage;
+	public Text detatchSizeSliderTextCellCount;
 	public Text detatchEnergySliderText;
 
 	public Slider detatchSizeSlider;
@@ -24,6 +25,12 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 		ignoreSliderMoved = true;
 		fertilizeSlider.minValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMin;
 		fertilizeSlider.maxValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMax;
+
+		detatchSizeSlider.minValue = GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMin;
+		detatchSizeSlider.maxValue = GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax;
+
+		detatchEnergySlider.minValue = GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMin;
+		detatchEnergySlider.maxValue = GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax;
 		ignoreSliderMoved = false;
 	}
 
@@ -118,9 +125,23 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 			}
 
 			if (CellPanel.instance.selectedCell != null) {
-				fertilizeSliderText.text =     string.Format("Cell E ≥ {0:F1}%?",       GenePanel.instance.selectedGene.eggCellFertilizeThreshold * 100f);
-				detatchSizeSliderText.text =   string.Format("Size ≥ {0:F0} Cells", GenePanel.instance.selectedGene.eggCellDetatchSizeThreshold);
-				detatchEnergySliderText.text = string.Format("EN ≥ {0:F1} J",       GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold);
+				fertilizeSliderText.text =     string.Format("Egg E ≥ {0:F1}%",           GenePanel.instance.selectedGene.eggCellFertilizeThreshold * 100f);
+				detatchSizeSliderTextPercentage.text =   string.Format("Size ≥ {0:F1}%",  GenePanel.instance.selectedGene.eggCellDetatchSizeThreshold * 100f);
+				int cellCount = CreatureSelectionPanel.instance.soloSelected.genotype.geneCellCount;
+				detatchSizeSliderTextCellCount.text = string.Format("{0:F0} of {1:F0} cells", Mathf.Clamp(Mathf.RoundToInt(GenePanel.instance.selectedGene.eggCellDetatchSizeThreshold * cellCount), 1, cellCount), cellCount);
+				if (GenePanel.instance.selectedGene.eggCellDetatchSizeThreshold > 1f) {
+					detatchSizeSliderTextPercentage.color = Color.red;
+					detatchSizeSliderTextCellCount.text = "";
+				} else {
+					detatchSizeSliderTextPercentage.color = Color.black;
+				}
+
+				detatchEnergySliderText.text = string.Format("Origin E ≥ {0:F1}%",                GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold * 100f);
+				if (GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold > 1f) {
+					detatchEnergySliderText.color = Color.red;
+				} else {
+					detatchEnergySliderText.color = Color.black;
+				}
 			}
 
 			isDirty = false;

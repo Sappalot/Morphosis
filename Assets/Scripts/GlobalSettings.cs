@@ -88,7 +88,13 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float eggCellFertilizeThresholdMin = 0.3f; //cell energy fullness J/J
 		public float eggCellFertilizeThresholdMax = 0.99f; //cell energy fullness J/J
 
-														  //Fungal Cell
+		public float eggCellDetatchSizeThresholdMin = 0.01f;   //creature completeness count/count
+		public float eggCellDetatchSizeThresholdMax = 1f; //creature completeness count/count
+
+		public float eggCellDetatchEnergyThresholdMin = 0f;   //cell energy fullness J/J
+		public float eggCellDetatchEnergyThresholdMax = 1.1f; //cell energy fullness J/J
+
+														   //Fungal Cell
 		public float fungalCellEffectCost = 0f; // W
 		public float fungalCellEffect = 0.1f; // W
 

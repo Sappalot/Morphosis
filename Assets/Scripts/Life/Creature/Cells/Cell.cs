@@ -975,24 +975,49 @@ public abstract class Cell : MonoBehaviour {
 		lastTime = cellData.lastTime;
 		radius = cellData.radius;
 		theRigidBody.velocity = cellData.velocity;
-		energy = cellData.energy;
+		energy = Mathf.Min(cellData.energy, GlobalSettings.instance.phenotype.cellMaxEnergy);
 		
 		// Egg
-		// backward compatibility
-		if (cellData.eggCellFertilizeThreshold > 1f) { // if more than 100% must be old (where we measured cell energy)
+		// fertilize
+		if (cellData.eggCellFertilizeThreshold > GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMax) { // if more than 100% must be old (where we measured cell energy)
 			eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold / 100f;
 		} else {
 			eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold;
 		}
 		
+		// detatch mode
 		eggCellDetatchMode = cellData.eggCellDetatchMode;
-		eggCellDetatchSizeThreshold = cellData.eggCellDetatchSizeThreshold;
-		eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold;
+
+		// detatch size
+		if (cellData.eggCellDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
+			eggCellDetatchSizeThreshold = cellData.eggCellDetatchSizeThreshold / 30f;
+		} else {
+			eggCellDetatchSizeThreshold = cellData.eggCellDetatchSizeThreshold;
+		}
+
+		// detatch energy
+		if (cellData.eggCellDetatchEnergyThreshold > GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax) { // if more than 100% must be old (where we measured cell energy)
+			eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold / 100f;
+		} else {
+			eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold;
+		}
 
 		// Origin
 		originDetatchMode = cellData.originDetatchMode;
-		originDetatchSizeThreshold = cellData.originDetatchSizeThreshold;
-		originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold;
+
+		// detatch size
+		if (cellData.originDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
+			originDetatchSizeThreshold = cellData.originDetatchSizeThreshold / 30f;
+		} else {
+			originDetatchSizeThreshold = cellData.originDetatchSizeThreshold;
+		}
+
+		// detatch energy
+		if (cellData.originDetatchEnergyThreshold > GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax) { // if more than 100% must be old (where we measured cell energy)
+			originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold / 100f;
+		} else {
+			originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold;
+		}
 
 		this.creature = creature;
 	}

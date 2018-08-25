@@ -2,12 +2,12 @@
 
 public class Gene {
 	// Egg cell
-	public float eggCellFertilizeThreshold = 40f; //J ==> part of max energy (* 100 to get  %)
+	public float eggCellFertilizeThreshold = 0.4f; //part of max energy (* 100 to get  %)
 	public bool eggCellCanFertilizeWhenAttached = true;
 
 	public ChildDetatchModeEnum eggCellDetatchMode = ChildDetatchModeEnum.Size;
-	public float eggCellDetatchSizeThreshold = 5; //J 
-	public float eggCellDetatchEnergyThreshold = 45; //J ==> part of max energy(* 100 to get  %)
+	public float eggCellDetatchSizeThreshold = 0.5f; // completeness count / max count 
+	public float eggCellDetatchEnergyThreshold = 0.4f; //part of max energy(* 100 to get  %)
 
 	//Jaw Cell
 	//bool: eat mother, eat child, eat sibling 
@@ -66,16 +66,16 @@ public class Gene {
 			eggCellCanFertilizeWhenAttached = !eggCellCanFertilizeWhenAttached; //toggle
 		}
 
-		spread = 2f; // TODO move toGlobal settings
+		spread = 0.1f; // TODO move toGlobal settings
 		mut = Random.Range(0, gs.mutation.eggCellDetatchSizeThresholdLeave + gs.mutation.eggCellDetatchSizeThresholdRandom * strength);
 		if (mut < gs.mutation.eggCellDetatchSizeThresholdRandom * strength) {
-			eggCellDetatchSizeThreshold = Mathf.Clamp(eggCellDetatchSizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), 1f, 30f); // count
+			eggCellDetatchSizeThreshold = Mathf.Clamp(eggCellDetatchSizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellDetatchSizeThresholdMin, gs.phenotype.eggCellDetatchSizeThresholdMax); // count / max count
 		}
 
-		spread = 6f;
+		spread = 0.06f;
 		mut = Random.Range(0, gs.mutation.eggCellDetatchEnergyThresholdLeave + gs.mutation.eggCellDetatchEnergyThresholdRandom * strength);
 		if (mut < gs.mutation.eggCellDetatchEnergyThresholdRandom * strength) {
-			eggCellDetatchEnergyThreshold = Mathf.Clamp(eggCellDetatchEnergyThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), 0f, 110); // J
+			eggCellDetatchEnergyThreshold = Mathf.Clamp(eggCellDetatchEnergyThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellDetatchEnergyThresholdMin, gs.phenotype.eggCellDetatchEnergyThresholdMax); // J
 		}
 
 		//arrangements
@@ -146,15 +146,26 @@ public class Gene {
 
 		// Egg
 		//backward compatibility
-		if (geneData.eggCellFertilizeThreshold > 1) {// if more than 100% must be old (where we measured cell energy)
+		if (geneData.eggCellFertilizeThreshold > GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMax) {// if more than 100% must be old (where we measured cell energy)
 			eggCellFertilizeThreshold = geneData.eggCellFertilizeThreshold / 100f;
 		} else {
 			eggCellFertilizeThreshold = geneData.eggCellFertilizeThreshold;
 		}
 		eggCellCanFertilizeWhenAttached = geneData.eggCellCanFertilizeWhenAttached;
 		eggCellDetatchMode = geneData.eggCellDetatchMode;
-		eggCellDetatchSizeThreshold = geneData.eggCellDetatchSizeThreshold;
-		eggCellDetatchEnergyThreshold = geneData.eggCellDetatchEnergyThreshold;
+
+		if (geneData.eggCellDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
+			eggCellDetatchSizeThreshold = geneData.eggCellDetatchSizeThreshold / 30f;
+		} else {
+			eggCellDetatchSizeThreshold = geneData.eggCellDetatchSizeThreshold;
+		}
+
+		if (geneData.eggCellDetatchEnergyThreshold > GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax) {
+			eggCellDetatchEnergyThreshold = geneData.eggCellDetatchEnergyThreshold / 100f;
+		} else {
+			eggCellDetatchEnergyThreshold = geneData.eggCellDetatchEnergyThreshold;
+		}
+		
 
 		arrangements[0].ApplyData(geneData.arrangementData[0]);
 		arrangements[1].ApplyData(geneData.arrangementData[1]);
