@@ -10,6 +10,7 @@ public enum CellTypeEnum {
 	Root,
 	Shell,
 	Vein,
+	Error,
 }
 /*
 Void,

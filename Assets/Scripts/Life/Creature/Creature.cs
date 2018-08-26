@@ -706,13 +706,12 @@ public class Creature : MonoBehaviour {
 			// ☠ ꕕ Haha, make use of these
 			//Debug.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
 
-			Debug.Log("C id: " + id + ", " + phenotype.originCell.originDetatchMode);
 			// Detatch child from mother
 			if (GlobalPanel.instance.physicsDetatch.isOn && IsAttachedToMotherAlive()) {
 				if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.originCell.originDetatchSizeThreshold < 1f && phenotype.cellCount >= Mathf.Clamp(Mathf.RoundToInt(phenotype.originCell.originDetatchSizeThreshold * genotype.geneCellCount), 1, genotype.geneCellCount)) ||
-					(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energyFullness >= 0.50f)) {
+					(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energyFullness >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchAfterCompletePersistance)) {
 
-					//(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energyFullness >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchAfterCompletePersistance)) {
+					//) {
 
 					detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
 				}

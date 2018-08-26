@@ -40,6 +40,9 @@ public class LeafCell : Cell {
 		}
 
 		if (type == CollisionType.ownCell) {
+			if (GetCollisionCellType(hit) == CellTypeEnum.Shell) {
+				return 0f; // hack with transparent shells
+			}
 			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.cellCount); //J / m // creature.clusterCellCount
 		} else if (type == CollisionType.othersCell) {
 			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.cellCount); //J / m //creature.clusterCellCount
@@ -258,6 +261,13 @@ public class LeafCell : Cell {
 			}
 		}
 		return CollisionType.otherObstacle;
+	}
+
+	private CellTypeEnum GetCollisionCellType(RaycastHit2D hit) {
+		if (hit.collider.gameObject.GetComponent<Cell>() != null) {
+			return hit.collider.gameObject.GetComponent<Cell>().GetCellType();
+		}
+		return CellTypeEnum.Error;
 	}
 
 	private Color GetColorForCollisionType(CollisionType type) {
