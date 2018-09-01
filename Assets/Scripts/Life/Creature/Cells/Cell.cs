@@ -6,7 +6,6 @@ using System.Linq;
 public abstract class Cell : MonoBehaviour {
 	
 	//------- Inspector
-
 	public SpriteRenderer cellSelectedSprite; //transparent
 	public SpriteRenderer triangleSprite;
 	public SpriteRenderer openCircleSprite; //cell type colour
@@ -19,8 +18,8 @@ public abstract class Cell : MonoBehaviour {
 	public SpringJoint2D northSpring;
 	public SpringJoint2D southEastSpring;
 	public SpringJoint2D southWestSpring;
-
 	//----- ^ Inspector ^
+
 	[HideInInspector]
 	public int poolPosition;
 
@@ -72,7 +71,7 @@ public abstract class Cell : MonoBehaviour {
 	//---- Egg only
 
 	[HideInInspector]
-	public float eggCellFertilizeThreshold; // J ==> part of max energy (* 100 to get  %)
+	public float eggCellFertilizeThreshold; //part of max energy (* 100 to get  %)
 
 	[HideInInspector]
 	public bool eggCellCanFertilizeWhenAttached;
@@ -81,10 +80,10 @@ public abstract class Cell : MonoBehaviour {
 	public ChildDetatchModeEnum eggCellDetatchMode; 
 
 	[HideInInspector]
-	public float eggCellDetatchSizeThreshold; //J 
+	public float eggCellDetatchSizeThreshold; //part of creature (* 100 to get  %)
 
 	[HideInInspector]
-	public float eggCellDetatchEnergyThreshold; //==> part of max energy (* 100 to get  %) 
+	public float eggCellDetatchEnergyThreshold; //part of max energy (* 100 to get  %) 
 	
 	//---- Egg only ^
 
@@ -98,7 +97,7 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public float originDetatchEnergyThreshold; // J ==> part of max energy (* 100 to get  %), If we have more energy than this in the origin cell and it is attached with mother, it will separate
 											   //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
-											   //--- Origin only ^
+	//--- Origin only ^
 
 
 
@@ -924,102 +923,12 @@ public abstract class Cell : MonoBehaviour {
 					creature.StoreState();
 				}
 				CreatureSelectionPanel.instance.Select(creature, this);
-				GenePanel.instance.MakeDirty();
+				GeneNeighboursPanel.instance.MakeDirty();
 				GenomePanel.instance.MakeDirty();
 				GenomePanel.instance.MakeScrollDirty();
 				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 			}
 		}
-	}
-
-	// Save
-	private CellData cellData = new CellData();
-	public CellData UpdateData() {
-		cellData.position = transform.position;
-		cellData.heading = heading;
-		cellData.bindCardinalIndex = bindCardinalIndex;
-		cellData.geneIndex = gene.index;
-		cellData.mapPosition = mapPosition;
-		cellData.buildOrderIndex = buildOrderIndex;
-		cellData.flipSide = flipSide;
-		cellData.timeOffset = timeOffset;
-		cellData.lastTime = lastTime;
-		cellData.radius = radius;
-		cellData.velocity = theRigidBody.velocity;
-		cellData.energy = energy;
-
-		//Egg
-		cellData.eggCellFertilizeThreshold = eggCellFertilizeThreshold;
-		cellData.eggCellDetatchMode = eggCellDetatchMode;
-		cellData.eggCellDetatchSizeThreshold = eggCellDetatchSizeThreshold;
-		cellData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
-
-		// Origin
-		cellData.originDetatchMode = originDetatchMode;
-		cellData.originDetatchSizeThreshold = originDetatchSizeThreshold;
-		cellData.originDetatchEnergyThreshold = originDetatchEnergyThreshold;
-
-		return cellData;
-	}
-
-	// Load
-	public void ApplyData(CellData cellData, Creature creature) {
-		transform.position = cellData.position;
-		heading = cellData.heading;
-		bindCardinalIndex = cellData.bindCardinalIndex;
-		gene = creature.genotype.genome[cellData.geneIndex];
-		mapPosition = cellData.mapPosition;
-		buildOrderIndex = cellData.buildOrderIndex;
-		flipSide = cellData.flipSide;
-		timeOffset = cellData.timeOffset;
-		lastTime = cellData.lastTime;
-		radius = cellData.radius;
-		theRigidBody.velocity = cellData.velocity;
-		energy = Mathf.Min(cellData.energy, GlobalSettings.instance.phenotype.cellMaxEnergy);
-		
-		// Egg
-		// fertilize
-		if (cellData.eggCellFertilizeThreshold > GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMax) { // if more than 100% must be old (where we measured cell energy)
-			eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold / 100f;
-		} else {
-			eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold;
-		}
-		
-		// detatch mode
-		eggCellDetatchMode = cellData.eggCellDetatchMode;
-
-		// detatch size
-		if (cellData.eggCellDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
-			eggCellDetatchSizeThreshold = cellData.eggCellDetatchSizeThreshold / 30f;
-		} else {
-			eggCellDetatchSizeThreshold = cellData.eggCellDetatchSizeThreshold;
-		}
-
-		// detatch energy
-		if (cellData.eggCellDetatchEnergyThreshold > GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax) { // if more than 100% must be old (where we measured cell energy)
-			eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold / 100f;
-		} else {
-			eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold;
-		}
-
-		// Origin
-		originDetatchMode = cellData.originDetatchMode;
-
-		// detatch size
-		if (cellData.originDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
-			originDetatchSizeThreshold = cellData.originDetatchSizeThreshold / 30f;
-		} else {
-			originDetatchSizeThreshold = cellData.originDetatchSizeThreshold;
-		}
-
-		// detatch energy
-		if (cellData.originDetatchEnergyThreshold > GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax) { // if more than 100% must be old (where we measured cell energy)
-			originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold / 100f;
-		} else {
-			originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold;
-		}
-
-		this.creature = creature;
 	}
 
 	// Update
@@ -1200,4 +1109,93 @@ public abstract class Cell : MonoBehaviour {
 
 	virtual public void OnBorrowToWorld() {}
 
+	// Save
+	private CellData cellData = new CellData();
+	public CellData UpdateData() {
+		cellData.position = transform.position;
+		cellData.heading = heading;
+		cellData.bindCardinalIndex = bindCardinalIndex;
+		cellData.geneIndex = gene.index;
+		cellData.mapPosition = mapPosition;
+		cellData.buildOrderIndex = buildOrderIndex;
+		cellData.flipSide = flipSide;
+		cellData.timeOffset = timeOffset;
+		cellData.lastTime = lastTime;
+		cellData.radius = radius;
+		cellData.velocity = theRigidBody.velocity;
+		cellData.energy = energy;
+
+		//Egg
+		cellData.eggCellFertilizeThreshold = eggCellFertilizeThreshold;
+		cellData.eggCellDetatchMode = eggCellDetatchMode;
+		cellData.eggCellDetatchSizeThreshold = eggCellDetatchSizeThreshold;
+		cellData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
+
+		// Origin
+		cellData.originDetatchMode = originDetatchMode;
+		cellData.originDetatchSizeThreshold = originDetatchSizeThreshold;
+		cellData.originDetatchEnergyThreshold = originDetatchEnergyThreshold;
+
+		return cellData;
+	}
+
+	// Load
+	public void ApplyData(CellData cellData, Creature creature) {
+		transform.position = cellData.position;
+		heading = cellData.heading;
+		bindCardinalIndex = cellData.bindCardinalIndex;
+		gene = creature.genotype.genome[cellData.geneIndex];
+		mapPosition = cellData.mapPosition;
+		buildOrderIndex = cellData.buildOrderIndex;
+		flipSide = cellData.flipSide;
+		timeOffset = cellData.timeOffset;
+		lastTime = cellData.lastTime;
+		radius = cellData.radius;
+		theRigidBody.velocity = cellData.velocity;
+		energy = Mathf.Min(cellData.energy, GlobalSettings.instance.phenotype.cellMaxEnergy);
+
+		// Egg
+		// fertilize
+		if (cellData.eggCellFertilizeThreshold > GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMax) { // if more than 100% must be old (where we measured cell energy)
+			eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold / 100f;
+		} else {
+			eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold;
+		}
+
+		// detatch mode
+		eggCellDetatchMode = cellData.eggCellDetatchMode;
+
+		// detatch size
+		if (cellData.eggCellDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
+			eggCellDetatchSizeThreshold = cellData.eggCellDetatchSizeThreshold / 30f;
+		} else {
+			eggCellDetatchSizeThreshold = cellData.eggCellDetatchSizeThreshold;
+		}
+
+		// detatch energy
+		if (cellData.eggCellDetatchEnergyThreshold > GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax) { // if more than 100% must be old (where we measured cell energy)
+			eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold / 100f;
+		} else {
+			eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold;
+		}
+
+		// Origin
+		originDetatchMode = cellData.originDetatchMode;
+
+		// detatch size
+		if (cellData.originDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
+			originDetatchSizeThreshold = cellData.originDetatchSizeThreshold / 30f;
+		} else {
+			originDetatchSizeThreshold = cellData.originDetatchSizeThreshold;
+		}
+
+		// detatch energy
+		if (cellData.originDetatchEnergyThreshold > GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax) { // if more than 100% must be old (where we measured cell energy)
+			originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold / 100f;
+		} else {
+			originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold;
+		}
+
+		this.creature = creature;
+	}
 }

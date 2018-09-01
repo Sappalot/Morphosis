@@ -58,7 +58,11 @@ public class Phenotype : MonoBehaviour {
 
 	public float energyPerCellAverage {
 		get {
-			return energy / cellCount;
+			if (cellCount > 0) {
+				return energy / cellCount;
+			} else {
+				return 0;
+			}
 		}
 	}
 
@@ -131,7 +135,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public int GetCellCount(CellTypeEnum type) {
+	public int GetCellOfTypeCount(CellTypeEnum type) {
 		int count = 0;
 		foreach (Cell c in cellList) {
 			if (c.GetCellType() == type) {

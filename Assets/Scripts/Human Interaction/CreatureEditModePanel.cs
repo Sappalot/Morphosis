@@ -4,7 +4,6 @@ using UnityEngine.UI;
 public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	public Image phenotypeImage;
 	public Image genotypeImage;
-	public Image historyImage;
 
 	private bool isDirty = true;
 
@@ -35,7 +34,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 		m_mode = PhenoGenoEnum.Genotype;
 		GlobalPanel.instance.isRunPhysicsGrayOut = true;
 		UpdateAllAccordingToEditMode();
-		GenePanel.instance.MakeDirty();
+		GeneNeighboursPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeScrollDirty();
 	}
@@ -56,10 +55,8 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 			phenotypeImage.color = (mode == PhenoGenoEnum.Phenotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 			genotypeImage.color = (mode == PhenoGenoEnum.Genotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 
-			//TODO: set enabled true/false, then dirty mark
 			PhenotypePanel.instance.gameObject.SetActive(mode == PhenoGenoEnum.Phenotype);
 			GenotypePanel.instance.gameObject.SetActive(mode == PhenoGenoEnum.Genotype);
-
 			isDirty = false;
 		}
 	}

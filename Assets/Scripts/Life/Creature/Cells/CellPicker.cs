@@ -21,7 +21,7 @@ public class CellPicker : MonoBehaviour {
 					creature.StoreState();
 				}
 				CreatureSelectionPanel.instance.Select(creature, cell);
-				GenePanel.instance.MakeDirty();
+				GeneNeighboursPanel.instance.MakeDirty();
 				GenomePanel.instance.MakeDirty();
 				GenomePanel.instance.MakeScrollDirty();
 				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();

@@ -204,6 +204,10 @@ public class Creature : MonoBehaviour {
 		return childrenAliveAndAttached;
 	}
 
+	public int GetAttachedChildrenAliveCount() {
+		return GetAttachedChildrenAlive().Count();
+	}
+
 	public List<Creature> GetDetatchedChildrenAlive() {
 		List<Creature> childrenAliveAndDetatched = new List<Creature>();
 		foreach (string id in children.Keys) {
@@ -629,7 +633,7 @@ public class Creature : MonoBehaviour {
 				genotype.UpdateOutline(this, CreatureSelectionPanel.instance.IsSelected(this));
 				genotype.ShowGeneCellsSelected(false);
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
-					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
+					genotype.ShowGeneCellsSelectedWithGene(GeneNeighboursPanel.instance.selectedGene, true);
 				}
 
 				genotype.UpdateFlipSides();

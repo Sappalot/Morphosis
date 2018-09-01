@@ -24,10 +24,21 @@ public class Genotype : MonoBehaviour {
 	private CellMap geneCellMap = new CellMap();
 	private bool isDirty = true;
 
+	//Full size of creature
 	public int geneCellCount {
 		get {
 			return geneCellList.Count;
 		}
+	}
+
+	public int GetGeneCellOfTypeCount(CellTypeEnum type) {
+		int count = 0;
+		foreach (Cell c in geneCellList) {
+			if (c.GetCellType() == type) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public Cell originCell {

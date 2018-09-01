@@ -55,7 +55,7 @@ public class Life : MonoBehaviour {
 	public int GetCellAliveCount(CellTypeEnum type) {
 		int count = 0;
 		foreach (Creature c in creatures) {
-			count += c.phenotype.GetCellCount(type);
+			count += c.phenotype.GetCellOfTypeCount(type);
 		}
 		return count;
 	}

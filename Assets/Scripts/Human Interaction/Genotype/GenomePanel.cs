@@ -68,7 +68,7 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
 
 				// horizontalNormalizedPosition causes faulty update. Fix it!! 
 				for (int index = 0; index < genomeGenes.Length; index++) {
-					if (genomeGenes[index].gene == GenePanel.instance.selectedGene) {
+					if (genomeGenes[index].gene == GeneNeighboursPanel.instance.selectedGene) {
 						scrollRect.horizontalNormalizedPosition = (float)index / ((float)genomeGenes.Length - 1f);
 					}
 				}

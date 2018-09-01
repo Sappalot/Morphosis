@@ -5,7 +5,7 @@ public class ArrangementPanel : MonoBehaviour {
 	public Toggle enableToggle;
 	public GameObject circles;
 	[HideInInspector]
-	public GenePanel genePanel;
+	public GeneNeighboursPanel genePanel;
 
 	public Image grayOut;
 	public GameObject arrangementButtons;
@@ -175,7 +175,7 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	public void OnClickedSetReference() {
-		GenePanel.instance.SetAskingForGeneReference(this);
+		GeneNeighboursPanel.instance.SetAskingForGeneReference(this);
 		MouseAction.instance.actionState = MouseActionStateEnum.selectGene;
 	}
 
@@ -185,7 +185,7 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	private void MakeAllGenomeStuffDirty() {
-		GenePanel.instance.MakeDirty();
+		GeneNeighboursPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;

@@ -2,9 +2,12 @@
 using UnityEngine.UI;
 
 public class CellPanel : MonoSingleton<CellPanel> {
+	public EnergyBar energyBar;
+
 	public Text cellType;
-	public Text cellEnergy;
 	public Text cellEffect;
+	public Text isOrigo;
+	public Text isPlacenta;
 	public Text cellNeighbours;
 	public Text connectionGroupCount;
 	public Text detatchThreshold;
@@ -85,8 +88,10 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			//Nothing to represent
 			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
 				cellType.text = "Type:";
-				cellEnergy.text = "Energy:";
+				energyBar.isOn = false;
 				cellEffect.text = "P cell:";
+				isOrigo.text = "-";
+				isPlacenta.text = "-";
 				cellNeighbours.text = "Neighbours:";
 				connectionGroupCount.text = "Con. Groups: ";
 				detatchThreshold.text = "Detatch: ";
@@ -96,8 +101,12 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				return;
 			}
 
-			cellType.text = "Type: " + selectedCell.gene.type.ToString() + (selectedCell.isOrigin ? " (O)" : "") + (selectedCell.isPlacenta ? " (P)" : "");
-			cellEnergy.text = string.Format("Energy: {0:F2}% ({1:F2}/{2:F2}J)", selectedCell.energyFullness * 100f, selectedCell.energy, GlobalSettings.instance.phenotype.cellMaxEnergy);
+			cellType.text = "Type: " + selectedCell.gene.type.ToString();
+			energyBar.isOn = true;
+			energyBar.fullness = selectedCell.energyFullness;
+			energyBar.effect = selectedCell.GetEffect(true, true, true);
+
+			//cellEnergy.text = string.Format("Energy: {0:F2}% ({1:F2}/{2:F2}J)", selectedCell.energyFullness * 100f, selectedCell.energy, GlobalSettings.instance.phenotype.cellMaxEnergy);
 
 			if (PhenotypePanel.instance.effectMeasure == PhenotypePanel.EffectMeasureEnum.CellEffectExclusiveFlux || PhenotypePanel.instance.effectMeasure == PhenotypePanel.EffectMeasureEnum.CellEffectAverageExclusiveFlux) {
 				//Total effect excluding energy inport/export to attached 
@@ -106,7 +115,9 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				cellEffect.text = string.Format("P cell: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, true, true), selectedCell.GetEffectDown(true, true, true), selectedCell.GetEffect(true, true, true));
 			}
 
-			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnectedRelatives) + " + ("  + selectedCell.neighbourCountConnectedRelatives + ")";
+			isOrigo.text = selectedCell.isOrigin ? "Origin" : "...";
+			isPlacenta.text = selectedCell.isPlacenta ? "Placenta" : "...";
+			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnectedRelatives) + ((selectedCell.neighbourCountConnectedRelatives > 0) ? (" + "  + selectedCell.neighbourCountConnectedRelatives + " relatives") : "");
 			connectionGroupCount.text = "Con. Groups: " + selectedCell.groups;
 			predators.text = "Eating on me: " + selectedCell.predatorCount;
 			detatchThreshold.text = "Detatch: " + selectedCell.originDetatchMode;

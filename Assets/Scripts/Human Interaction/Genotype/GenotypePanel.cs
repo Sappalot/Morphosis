@@ -22,6 +22,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		}
 	}
 
+
+
 	override public void Init() {
 		viewedFlipSide = FlipSideEnum.BlackWhite; 
 		isDirty = true;
@@ -35,8 +37,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.MakeDirty();
+		GeneNeighboursPanel.instance.selectedGene = null;
+		GeneNeighboursPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -48,8 +50,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.MakeDirty();
+		GeneNeighboursPanel.instance.selectedGene = null;
+		GeneNeighboursPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -61,8 +63,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.MakeDirty();
+		GeneNeighboursPanel.instance.selectedGene = null;
+		GeneNeighboursPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -74,8 +76,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.MakeDirty();
+		GeneNeighboursPanel.instance.selectedGene = null;
+		GeneNeighboursPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -88,22 +90,22 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		GenomePanel.instance.MakeDirty();
-		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.MakeDirty();
+		GeneNeighboursPanel.instance.selectedGene = null;
+		GeneNeighboursPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
 	public void OnClickedBlackWhite() {
 		viewedFlipSide = FlipSideEnum.BlackWhite;
 		isDirty = true;
-		GenePanel.instance.MakeDirty();
+		GeneNeighboursPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
 	public void OnClickedWhiteBlack() {
 		viewedFlipSide = FlipSideEnum.WhiteBlack;
 		isDirty = true;
-		GenePanel.instance.MakeDirty();
+		GeneNeighboursPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 

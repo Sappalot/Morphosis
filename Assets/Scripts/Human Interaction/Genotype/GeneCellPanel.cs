@@ -1,4 +1,7 @@
-﻿public class GenePanel : MonoSingleton<GenePanel> {
+﻿using UnityEngine;
+using UnityEngine.UI;
+
+public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 
 	private bool isDirty = true;
 	public void MakeDirty() {
@@ -11,5 +14,5 @@
 
 			isDirty = false;
 		}
-	} 
+	}
 }

@@ -2,9 +2,11 @@
 using UnityEngine.UI;
 
 public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
+	public EnergyBar energyBar;
+
 	public Text creatureAge;
-	public Text creatureCellCount;
-	public Text creatureEnergy;
+	//public Text creatureSize;
+	public SizeBar sizeBar;
 	public Text creatureSpeed;
 	public Text creatureEffect;
 	public Text creatureEffectAverage;
@@ -74,10 +76,12 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 				Debug.Log("Update PhenotypePanel");
 			//Nothing to represent
 			Creature solo = CreatureSelectionPanel.instance.soloSelected;
-			if (solo == null) {
+			if (solo == null || !solo.phenotype.isAlive) {
 				creatureAge.text = "Age:";
-				creatureCellCount.text = "Cells: ";
-				creatureEnergy.text = "Energy:";
+				//creatureSize.text = "Size: ";
+				energyBar.isOn = false;
+				sizeBar.isOn = false;
+				//creatureEnergy.text = "Energy:";
 				if (effectMeasure == EffectMeasureEnum.CellEffectExclusiveFlux) {
 					creatureEffect.text = "P body:";
 				}
@@ -97,8 +101,15 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			}
 
 			creatureAge.text = "Age: " + TimeUtil.GetTimeString((ulong)(solo.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime));
-			creatureCellCount.text = "Cells: " + solo.cellCount + " (" + solo.cellsCountFullyGrown + ")";
-			creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energyFullness * 100f);
+			//creatureSize.text = "Size: " + solo.cellCount + " (" + solo.cellsCountFullyGrown + ")";
+
+			energyBar.isOn = true;
+			energyBar.fullness = solo.phenotype.energyFullness;
+			energyBar.effect = solo.phenotype.GetEffect(true, true, true) / solo.phenotype.cellCount;
+
+			sizeBar.isOn = true;
+			sizeBar.UpdateBar(solo.genotype.geneCellCount, solo.phenotype.cellCount, solo.genotype.GetGeneCellOfTypeCount(CellTypeEnum.Egg), solo.phenotype.GetCellOfTypeCount(CellTypeEnum.Egg), solo.GetAttachedChildrenAliveCount());
+			//creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energyFullness * 100f);
 
 			if (effectMeasure ==      EffectMeasureEnum.CellEffectExclusiveFlux) {
 				//Total effect excluding energy inport/export to attached 
