@@ -2,34 +2,37 @@
 using UnityEngine.UI;
 
 public class CellPanel : MonoSingleton<CellPanel> {
+	// Metabolism
+
+	public Text typeHeading;
+
+	//----- Shold be same as the top of GeneCellPanel 
+	[Header("Metabolism")]
 	public EnergyBar energyBar;
+	public Text effect;
 
-	public Text cellType;
-	public Text cellEffect;
-
-	public Text effectFromNeighbours;
-	public Text effectToNeighbours;
-	public Text effectFromMother;
-	public Text effectToChildren;
+	public Text effectFromNeighbours; //kill me
+	public Text effectToNeighbours; //kill me
+	public Text effectFromMother; //kill me
+	public Text effectToChildren; //kill me
 
 	public Text isOrigo;
 	public Text isPlacenta;
-	public Text cellNeighbours;
+	public Text neighboursCount; //own cells + attached cells (mother + children)
+	public Text connectedVeinsCount; //number of veins connected to me, non placenta + children
 	public Text connectionGroupCount;
-	public Text veinsConnectedCount;
-	public Text detatchThreshold;
-	public Text predators; //number of Jaw cells eating on me
+
+	public Text eatingOnMeCount; //number of Jaw cells eating on me
 
 	public Dropdown metabolismCellTypeDropdown;
+
+	//----- ^ Shold be same as the top of GeneCellPanel ^
 
 	// Metabolism -> specific
 	public MetabolismCellPanel eggCellPanel;
 	public MetabolismCellPanel jawCellPanel;
 	public MetabolismCellPanel leafCellPanel;
 	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[3];
-
-	private bool isDirty = true;
-	private Cell m_selectedCell;
 
 	override public void Init() {
 		isDirty = true;
@@ -42,6 +45,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		}
 	}
 
+	private bool isDirty = true;
 	public void MakeDirty() {
 		isDirty = true;
 
@@ -50,6 +54,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		leafCellPanel.MakeDirty(); 
 	}
 
+	private Cell m_selectedCell;
 	public Cell selectedCell {
 		get {
 			if (m_selectedCell != null) {
@@ -103,14 +108,13 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				Debug.Log("Update CellPanel");
 			}
 
-			//Allways off
-			eggCellPanel.gameObject.SetActive(false);
-			jawCellPanel.gameObject.SetActive(false);
-			leafCellPanel.gameObject.SetActive(false);
+			//All off, we may turn on 1 of them later 
+			foreach (MetabolismCellPanel m in metabolismCellPanels) {
+				m.gameObject.SetActive(false);
+			}
 
-			metabolismCellTypeDropdown.interactable = false;
+			metabolismCellTypeDropdown.interactable = false; //can't change cell type
 
-			//Allways off ^
 			energyBar.effectMeasure = EffectTempEnum.None;
 			if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.effect) {
 				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal) {
@@ -124,14 +128,15 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 			//Nothing to represent
 			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
-				cellType.text = "Cell";
+				typeHeading.text = "Cell:";
+
 				energyBar.isOn = false;
 				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
-					cellEffect.text = "Total Effect: ";
+					effect.text = "Total Effect: ";
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
-					cellEffect.text = "Production Effect: ";
+					effect.text = "Production Effect: ";
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
-					cellEffect.text = "Flux Effect: ";
+					effect.text = "Flux Effect: ";
 				}
 				effectFromNeighbours.text = "P me <= neighbours:";
 				effectToNeighbours.text = "P me => neighbours:";
@@ -139,45 +144,41 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				effectToChildren.text = "P me => children:";
 				isOrigo.text = "-";
 				isPlacenta.text = "-";
-				cellNeighbours.text = "Neighbours:";
-				connectionGroupCount.text = "Con. Groups: ";
-				veinsConnectedCount.text = "Veins: ";
-				detatchThreshold.text = "Detatch: ";
-				predators.text = "Eating on me:";
+				neighboursCount.text = "Neighbours:";
+				connectionGroupCount.text = "Connection Groups:";
+				connectedVeinsCount.text = "Veins:";
+				eatingOnMeCount.text = "Eating on me:";
 
 				isDirty = false;
 				return;
 			}
+			typeHeading.text = "Cell: " + selectedCell.GetCellType().ToString();
 
-			cellType.text = "Cell: " + selectedCell.gene.type.ToString();
 			energyBar.isOn = true;
 			energyBar.fullness = selectedCell.energyFullness;
 			energyBar.effectTotal = selectedCell.GetEffect(true, true, true);
 			energyBar.effectProd = selectedCell.GetEffect(true, false, false);
 			energyBar.effectFlux = selectedCell.GetEffect(false, true, true);
 
-			//cellEnergy.text = string.Format("Energy: {0:F2}% ({1:F2}/{2:F2}J)", selectedCell.energyFullness * 100f, selectedCell.energy, GlobalSettings.instance.phenotype.cellMaxEnergy);
-
 			if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
-				cellEffect.text = string.Format("Total Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, true, true), selectedCell.GetEffectDown(true, true, true), selectedCell.GetEffect(true, true, true));
+				effect.text = string.Format("Total Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, true, true), selectedCell.GetEffectDown(true, true, true), selectedCell.GetEffect(true, true, true));
 			} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
-				cellEffect.text = string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, false, false), selectedCell.GetEffectDown(true, false, false), selectedCell.GetEffect(true, false, false));
+				effect.text = string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, false, false), selectedCell.GetEffectDown(true, false, false), selectedCell.GetEffect(true, false, false));
 			} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
-				cellEffect.text = string.Format("Flux Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(false, true, true), selectedCell.GetEffectDown(false, true, true), selectedCell.GetEffect(false, true, true));
+				effect.text = string.Format("Flux Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(false, true, true), selectedCell.GetEffectDown(false, true, true), selectedCell.GetEffect(false, true, true));
 			}
 
-			effectFromNeighbours.text = string.Format("P me <= neighbours: {0:F2}W", selectedCell.effectFluxFromSelf);
-			effectToNeighbours.text =   string.Format("P me => neighbours: {0:F2}W", selectedCell.effectFluxToSelf);
-			effectFromMother.text =     string.Format("P me <= mother: {0:F2}W",     selectedCell.effectFluxFromMotherAttached);
-			effectToChildren.text =     string.Format("P me => children: {0:F2}W",   selectedCell.effectFluxToChildrenAttached);
+			effectFromNeighbours.text = string.Format("P me <= neighbours: {0:F2}W", selectedCell.effectFluxFromSelf); //kill me
+			effectToNeighbours.text =   string.Format("P me => neighbours: {0:F2}W", selectedCell.effectFluxToSelf); //kill me
+			effectFromMother.text =     string.Format("P me <= mother: {0:F2}W",     selectedCell.effectFluxFromMotherAttached); //kill me
+			effectToChildren.text =     string.Format("P me => children: {0:F2}W",   selectedCell.effectFluxToChildrenAttached); //kill me
 
 			isOrigo.text = selectedCell.isOrigin ? "Origin" : "...";
 			isPlacenta.text = selectedCell.isPlacenta ? "Placenta" : "...";
-			cellNeighbours.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnectedRelatives) + ((selectedCell.neighbourCountConnectedRelatives > 0) ? (" + "  + selectedCell.neighbourCountConnectedRelatives + " relatives") : "");
-			connectionGroupCount.text = "Con. Groups: " + selectedCell.groups;
-			veinsConnectedCount.text = "Veins: " + selectedCell.creature.phenotype.NonPlacentaVeinsConnectedToCellCount(selectedCell) + " + " + selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) + "p"; 
-			predators.text = "Eating on me: " + selectedCell.predatorCount;
-			detatchThreshold.text = "Detatch: " + selectedCell.originDetatchMode;
+			neighboursCount.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnectedRelatives) + ((selectedCell.neighbourCountConnectedRelatives > 0) ? (" + "  + selectedCell.neighbourCountConnectedRelatives + " rel.") : "");
+			connectionGroupCount.text = "Connection Groups: " + selectedCell.groups;
+			connectedVeinsCount.text = "Veins: " + selectedCell.creature.phenotype.NonPlacentaVeinsConnectedToCellCount(selectedCell) + (selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) > 0 ? (" + " + selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) + " children") : "") ; 
+			eatingOnMeCount.text = "Eating on me: " + selectedCell.predatorCount;
 
 			if (selectedCell.GetCellType() == CellTypeEnum.Egg) {
 				metabolismCellTypeDropdown.value = 0;

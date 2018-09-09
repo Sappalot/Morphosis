@@ -2,21 +2,33 @@
 using UnityEngine.UI;
 
 public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
+	// Metabolism 
 
-	// Metabolism
+	//-----Shold be same as the top of CellPanel
 	[Header("Metabolism")]
+	public Text energy; // just an E 
 	public EnergyBar energyBar;
 	public Text effect;
+
+	public Text effectFromNeighbours; //kill me
+	public Text effectToNeighbours; //kill me
+	public Text effectFromMother; //kill me
+	public Text effectToChildren; //kill me
+
 	public Text isOrigin;
 	public Text isPlacenta;
-	public Text neighbours;
+	public Text neighboursCount;
+	public Text connectedVeinsCount; //number of veins connected to me, non placenta + children
 	public Text connectionGroupCount;
-	public Text detatchThreshold;
-	public Text eatingOnMe; //number of Jaw cells eating on me
+	public Text eatingOnMeCount; //number of Jaw cells eating on me
 
 	public Text healButtonText;
 	public Text hurtButtonText;
 	public Text deleteButtonText;
+
+	public Dropdown metabolismCellTypeDropdown;
+
+	//----- ^ Shold be same as the top of CellPanel ^
 
 	// Metabolism -> specific
 	public MetabolismCellPanel eggCellPanel;
@@ -24,7 +36,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 	public MetabolismCellPanel leafCellPanel;
 	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[3];
 
-	public Dropdown metabolismCellTypeDropdown;
+	
 
 	override public void Init() {
 		isDirty = true;
@@ -84,16 +96,32 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update GenePanel");
+				Debug.Log("Update GeneCellPanel");
 			}
 
 			foreach (MetabolismCellPanel m in metabolismCellPanels) {
 				m.gameObject.SetActive(false);
 			}
 
-			//Metabolism
-			effect.text = "P cell: -";
+			metabolismCellTypeDropdown.interactable = false;
+
+			energy.color = Color.gray;
+
+			//All metabolism stuff off
+			effect.text = "Effect: -";
 			effect.color = Color.gray;
+
+			effectFromNeighbours.text = "P me <= neighbours: -";
+			effectFromNeighbours.color = Color.gray;
+
+			effectToNeighbours.text = "P me => neighbours: -";
+			effectToNeighbours.color = Color.gray;
+
+			effectFromMother.text = "P me <= mother: -";
+			effectFromMother.color = Color.gray;
+
+			effectToChildren.text = "P me => children: -";
+			effectToChildren.color = Color.gray;
 
 			isOrigin.text = "-";
 			isOrigin.color = Color.gray;
@@ -101,17 +129,17 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 			isPlacenta.text = "-";
 			isPlacenta.color = Color.gray;
 
-			neighbours.text = "Neighbours: -";
-			neighbours.color = Color.gray;
+			neighboursCount.text = "Neighbours: -";
+			neighboursCount.color = Color.gray;
 
-			connectionGroupCount.text = "Con. Groups: -";
+			connectedVeinsCount.text = "Veins: - ";
+			connectedVeinsCount.color = Color.gray;
+
+			connectionGroupCount.text = "Connection Groups: -";
 			connectionGroupCount.color = Color.gray;
 
-			detatchThreshold.text = "Detatch: ?"; //todo
-			detatchThreshold.color = Color.gray;
-
-			eatingOnMe.text = "Eating on me: -";
-			eatingOnMe.color = Color.gray;
+			eatingOnMeCount.text = "Eating on me: -";
+			eatingOnMeCount.color = Color.gray;
 
 			deleteButtonText.color = Color.gray;
 			healButtonText.color = Color.gray;
@@ -129,8 +157,6 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 			//allow interactionclo
 
 			metabolismCellTypeDropdown.interactable = CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
-			//eggGenePanel.SetInteractable(CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome);
-
 
 			ignoreMenuChange = true;
 			if (GenePanel.instance.selectedGene.type == CellTypeEnum.Egg) {
