@@ -11,7 +11,31 @@ public class Veins : MonoBehaviour {
 		return veinList.Find(v => v.IsPair(cellA, cellB)) != null;
 	}
 
-	private void Clear() {
+	public int VeinsConnectedToCellCount(Cell cell) {
+		int count = 0;
+		foreach (Vein v in veinList) {
+			if (v.frontCell == cell || v.backCell == cell) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	public int PlacentaVeinsConnectedToCellCount(Cell cell) {
+		int count = 0;
+		foreach (Vein v in veinList) {
+			if ((v.frontCell == cell || v.backCell == cell) && v.isPlacentaVein) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	public int NonPlacentaVeinsConnectedToCellCount(Cell cell) {
+		return VeinsConnectedToCellCount(cell) - PlacentaVeinsConnectedToCellCount(cell);
+	}
+
+	public void Clear() {
 		for (int index = 0; index < veinList.Count; index++) {
 			//Destroy(veinList[index].gameObject);
 			World.instance.life.veinPool.Recycle(veinList[index]);
@@ -47,8 +71,20 @@ public class Veins : MonoBehaviour {
 				continue;
 			}
 
-			vein.frontCell.effectFluxFromSelf += vein.flowEffectFrontToBack;
-			vein.backCell.effectFluxToSelf += vein.flowEffectFrontToBack;
+			//front cell
+			if (vein.flowEffectFrontToBack > 0f) {
+				vein.frontCell.effectFluxToSelf += vein.flowEffectFrontToBack;
+			} else {
+				vein.frontCell.effectFluxFromSelf += (-vein.flowEffectFrontToBack);
+			}
+			
+			//back cell
+			if (vein.flowEffectFrontToBack > 0f) {
+				vein.backCell.effectFluxFromSelf += vein.flowEffectFrontToBack;
+			} else {
+				vein.backCell.effectFluxToSelf += (-vein.flowEffectFrontToBack);
+			}
+			
 		}
 	}
 

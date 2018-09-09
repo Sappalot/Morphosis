@@ -11,7 +11,7 @@ public class Pray {
 
 	public void UpdateMetabolism(Cell predatorCell) {
 		float ramSpeed = GetRamSpeed(predatorCell, cell);
-		float jawEatEffect = 50f; // GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(Mathf.Max(0f, ramSpeed));
+		//float jawEatEffect = 50f; // GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(Mathf.Max(0f, ramSpeed));
 
 		bool isShell = cell.GetCellType() == CellTypeEnum.Shell;
 		//foreach (Cell c in cell.GetNeighbourCells()) {
@@ -21,14 +21,14 @@ public class Pray {
 		//}
 
 		if (cell.GetCellType() == CellTypeEnum.Jaw) {
-			prayEatenEffect =   jawEatEffect;
-			predatorEatEffect = jawEatEffect * GlobalSettings.instance.phenotype.jawCellMutualEatKindness;
+			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect;
+			predatorEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellMutualEatKindness;
 		} else if (isShell && GlobalPanel.instance.physicsShell) {
-			prayEatenEffect = jawEatEffect * GlobalSettings.instance.phenotype.shellCellWeaknessFactor;
-			predatorEatEffect = jawEatEffect * GlobalSettings.instance.phenotype.shellCellWeaknessFactor * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
+			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.shellCellWeaknessFactor;
+			predatorEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.shellCellWeaknessFactor * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
 		} else {
-			prayEatenEffect = jawEatEffect;
-			predatorEatEffect = jawEatEffect * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
+			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect;
+			predatorEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
 		}
 	}
 

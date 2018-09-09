@@ -2,13 +2,13 @@
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		if (GlobalPanel.instance.physicsVein.isOn) {
-			effectDownInternal = GlobalSettings.instance.phenotype.veinCellEffectCost;
-			effectUpInternal = 0f;
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.veinCellEffectCost;
+			effectProductionInternalUp = 0f;
 
 			base.UpdateCellFunction(deltaTicks, worldTicks);
 		} else {
-			effectDownInternal = 0f;
-			effectUpInternal = 0f;
+			effectProductionInternalDown = 0f;
+			effectProductionInternalUp = 0f;
 		}
 	}
 

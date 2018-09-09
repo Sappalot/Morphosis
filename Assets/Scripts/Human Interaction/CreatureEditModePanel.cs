@@ -35,6 +35,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 		GlobalPanel.instance.isRunPhysicsGrayOut = true;
 		UpdateAllAccordingToEditMode();
 		GeneNeighboursPanel.instance.MakeDirty();
+		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeScrollDirty();
 	}

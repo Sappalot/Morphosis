@@ -365,7 +365,6 @@ public class Creature : MonoBehaviour {
 		phenotype.DetatchFromMother(this, applyKick, playEffects);
 	}
 
-
 	// ^ Relatives ^
 
 	private bool isDirtyGraphics = false;
@@ -633,7 +632,7 @@ public class Creature : MonoBehaviour {
 				genotype.UpdateOutline(this, CreatureSelectionPanel.instance.IsSelected(this));
 				genotype.ShowGeneCellsSelected(false);
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
-					genotype.ShowGeneCellsSelectedWithGene(GeneNeighboursPanel.instance.selectedGene, true);
+					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
 				}
 
 				genotype.UpdateFlipSides();

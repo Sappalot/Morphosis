@@ -13,18 +13,6 @@ public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 		isDirty = true;
 	}
 
-	// TODO: move to genePanel
-	private Gene m_selectedGene;
-	public Gene selectedGene {
-		get {
-			return m_selectedGene != null ? m_selectedGene : (CreatureSelectionPanel.instance.hasSoloSelected ? CreatureSelectionPanel.instance.soloSelected.genotype.originCell.gene : null);
-		}
-		set {
-			m_selectedGene = value;
-			isDirty = true;
-		}
-	}
-
 	public ReferenceGraphics[] referenceGraphics;
 	public ReferenceGraphics centerReferenceGraphics;
 
@@ -53,24 +41,24 @@ public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 
 	//----
 	public void OnCellTypeDropdownChanged() {
-		bool trueChange = (int)selectedGene.type != cellTypeDropdown.value;
+		bool trueChange = (int)GenePanel.instance.selectedGene.type != cellTypeDropdown.value;
 
 		if (cellTypeDropdown.value == 0) {
-			selectedGene.type = CellTypeEnum.Egg;
+			GenePanel.instance.selectedGene.type = CellTypeEnum.Egg;
 		} else if (cellTypeDropdown.value == 1) {
-			selectedGene.type = CellTypeEnum.Fungal;
+			GenePanel.instance.selectedGene.type = CellTypeEnum.Fungal;
 		} else if (cellTypeDropdown.value == 2) {
-			selectedGene.type = CellTypeEnum.Jaw;
+			GenePanel.instance.selectedGene.type = CellTypeEnum.Jaw;
 		} else if (cellTypeDropdown.value == 3) {
-			selectedGene.type = CellTypeEnum.Leaf;
+			GenePanel.instance.selectedGene.type = CellTypeEnum.Leaf;
 		} else if (cellTypeDropdown.value == 4) {
-			selectedGene.type = CellTypeEnum.Muscle;
+			GenePanel.instance.selectedGene.type = CellTypeEnum.Muscle;
 		} else if (cellTypeDropdown.value == 5) {
-			selectedGene.type = CellTypeEnum.Root;
+			GenePanel.instance.selectedGene.type = CellTypeEnum.Root;
 		} else if (cellTypeDropdown.value == 6) {
-			selectedGene.type = CellTypeEnum.Shell;
+			GenePanel.instance.selectedGene.type = CellTypeEnum.Shell;
 		} else if (cellTypeDropdown.value == 7) {
-			selectedGene.type = CellTypeEnum.Vein;
+			GenePanel.instance.selectedGene.type = CellTypeEnum.Vein;
 		}
 
 		if (trueChange && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
@@ -107,7 +95,7 @@ public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 			eggGenePanel.gameObject.SetActive(false);
 
 			//Nothing to represent
-			if (selectedGene == null) {
+			if (GenePanel.instance.selectedGene == null) {
 				for (int index = 0; index < arrangementPanels.Length; index++) {
 					if (arrangementPanels[index] != null) {
 						arrangementPanels[index].arrangement = null;
@@ -132,37 +120,37 @@ public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 
 			for (int index = 0; index < arrangementPanels.Length; index++) {
 				if (arrangementPanels[index] != null) {
-					arrangementPanels[index].arrangement = selectedGene.arrangements[index];
+					arrangementPanels[index].arrangement = GenePanel.instance.selectedGene.arrangements[index];
 				}
 			}
 
 			//perifier
 			for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
-				referenceGraphics[cardinalIndex].reference = selectedGene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
+				referenceGraphics[cardinalIndex].reference = GenePanel.instance.selectedGene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
 			}
-			centerReferenceGraphics.reference = new GeneReference(selectedGene, GenotypePanel.instance.viewedFlipSide);
+			centerReferenceGraphics.reference = new GeneReference(GenePanel.instance.selectedGene, GenotypePanel.instance.viewedFlipSide);
 
 			//Gene Settings
 			cellTypeDropdown.gameObject.SetActive(true);
 
-			if (selectedGene.type == CellTypeEnum.Egg) {
+			if (GenePanel.instance.selectedGene.type == CellTypeEnum.Egg) {
 				cellTypeDropdown.value = 0;
 				eggGenePanel.gameObject.SetActive(true);
 				eggGenePanel.MakeDirty();
 				eggGenePanel.MakeSlidersDirty();
-			} else if (selectedGene.type == CellTypeEnum.Fungal) {
+			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Fungal) {
 				cellTypeDropdown.value = 1;
-			} else if (selectedGene.type == CellTypeEnum.Jaw) {
+			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Jaw) {
 				cellTypeDropdown.value = 2;
-			} else if (selectedGene.type == CellTypeEnum.Leaf) {
+			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Leaf) {
 				cellTypeDropdown.value = 3;
-			} else if (selectedGene.type == CellTypeEnum.Muscle) {
+			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Muscle) {
 				cellTypeDropdown.value = 4;
-			} else if (selectedGene.type == CellTypeEnum.Root) {
+			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Root) {
 				cellTypeDropdown.value = 5;
-			} else if (selectedGene.type == CellTypeEnum.Shell) {
+			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Shell) {
 				cellTypeDropdown.value = 6;
-			} else if (selectedGene.type == CellTypeEnum.Vein) {
+			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Vein) {
 				cellTypeDropdown.value = 7;
 			}
 

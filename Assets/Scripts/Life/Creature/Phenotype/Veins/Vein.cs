@@ -34,10 +34,6 @@ public class Vein : MonoBehaviour {
 		return false;
 	}
 
-	public void ClearCellFluxEffect() {
-
-	}
-
 	public void Setup(Cell parentCell, Cell childCell, int directionChildToParentCell) {
 		attachmentFront = new EdgeAttachment(parentCell, (directionChildToParentCell + 3) % 6);
 		attachmentBack = new EdgeAttachment(childCell, directionChildToParentCell);
@@ -58,15 +54,13 @@ public class Vein : MonoBehaviour {
 		}
 	}
 
-
-
 	private bool IsHighEfficiency(CellTypeEnum cellType) {
 		return cellType == CellTypeEnum.Vein;
 	}
 
 	public void UpdateGraphics(bool thisCreatureIsSoloSelected) {
 		//TODO: If draw wings && inside frustum
-		if (thisCreatureIsSoloSelected && GlobalPanel.instance.isGraphicsCellEnergyRelated && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+		if (thisCreatureIsSoloSelected && PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			if (frontCell != null && backCell != null) {
 				mainArrow.SetActive(true);
 				//draw main
@@ -145,5 +139,6 @@ public class Vein : MonoBehaviour {
 	public void OnRecycle() {
 		attachmentFront = null;
 		attachmentBack = null;
+		isPlacentaVein = false;
 	}
 }

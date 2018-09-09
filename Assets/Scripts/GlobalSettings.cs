@@ -101,6 +101,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		//Jaw Cell
 		public float jawCellEffectCost = 0.2f; //W
 		public AnimationCurve jawCellEatEffectAtSpeed; //W stolen from pray depending on ram speed
+		public float jawCellEatEffect = 50f; //W raw eat effect, damaging pray. Only jawCellEatEffect * jawCellEatEffect will gain predator
 		public float jawCellEatEarnFactor = 0.5f; // how big part of the total jawCellEatEffect that is gaining jaw cell J/J
 		//public int jawCellEatLinger = 5; // jawCellEatLinger * jawCellTickPeriod is the time after jaw cell has left pray, that it will still chew on it
 		public float jawCellMutualEatKindness = 0.2f; // How much we gain from eating others creature jaw (compared to normal cells, which are 1)

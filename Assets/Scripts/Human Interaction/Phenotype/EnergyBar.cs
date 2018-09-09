@@ -6,8 +6,30 @@ public class EnergyBar : MonoBehaviour {
 	public Image bar;
 	public Text text;
 
-	public Image effectArrowPos;
-	public Image effectArrowNeg;
+	public Image effectArrowTotalPos;
+	public Image effectArrowTotalNeg;
+	public Text totalText;
+
+	public Image effectArrowProdPos;
+	public Image effectArrowProdNeg;
+	public Text prodText;
+
+	public Image effectArrowFluxPos;
+	public Image effectArrowFluxNeg;
+	public Text fluxText;
+
+	public Color colorSelected;
+	public Color colorNotSelected;
+
+	public float alphaArrow = 0.5f;
+
+	public EffectTempEnum effectMeasure {
+		set {
+			totalText.color = value == EffectTempEnum.Total ? colorSelected : colorNotSelected;
+			prodText.color = value == EffectTempEnum.Production ? colorSelected : colorNotSelected;
+			fluxText.color = value == EffectTempEnum.Flux ? colorSelected : colorNotSelected;
+		}
+	}
 
 	private float m_fullness = 1f;
 	public float fullness {
@@ -28,30 +50,88 @@ public class EnergyBar : MonoBehaviour {
 		}
 	}
 
-	private float m_effect = 0f;
-	public float effect {
+	private float m_effectTotal = 0f;
+	public float effectTotal {
 		get {
-			return m_effect;
+			return m_effectTotal;
 		}
 		set {
-			m_effect = value;
+			m_effectTotal = value;
 			if (!isOn) {
 				return;
 			}
 			//arrow
 			float backgroundWidth = background.rectTransform.rect.width;
-			if (m_effect >= 0f) {
-				effectArrowPos.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowPos.rectTransform.anchoredPosition.y);
-				effectArrowPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (m_effect / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
-				effectArrowPos.color = ColorScheme.instance.cellGradientEffect.Evaluate(0.5f + m_effect * 0.1f);
+			if (m_effectTotal >= 0f) {
+				effectArrowTotalPos.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowTotalPos.rectTransform.anchoredPosition.y);
+				effectArrowTotalPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (m_effectTotal / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
+				effectArrowTotalPos.color = ColorScheme.instance.cellGradientEffect.Evaluate(0.5f + m_effectTotal * 0.1f);
 
-				effectArrowNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowTotalNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
 			} else {
-				effectArrowNeg.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowPos.rectTransform.anchoredPosition.y);
-				effectArrowNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, -(m_effect / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
-				effectArrowNeg.color = ColorScheme.instance.cellGradientEffect.Evaluate(0.5f + m_effect * 0.1f);
+				effectArrowTotalNeg.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowTotalPos.rectTransform.anchoredPosition.y);
+				effectArrowTotalNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, -(m_effectTotal / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
+				effectArrowTotalNeg.color = ColorScheme.instance.cellGradientEffect.Evaluate(0.5f + m_effectTotal * 0.1f);
 
-				effectArrowPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowTotalPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+			}
+
+		}
+	}
+
+	private float m_effectProd = 0f;
+	public float effectProd {
+		get {
+			return m_effectProd;
+		}
+		set {
+			m_effectProd = value;
+			if (!isOn) {
+				return;
+			}
+			//arrow
+			float backgroundWidth = background.rectTransform.rect.width;
+			Color color = ColorScheme.instance.cellGradientEffect.Evaluate(0.5f + m_effectProd * 0.1f);
+			if (m_effectProd >= 0f) {
+				effectArrowProdPos.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowProdPos.rectTransform.anchoredPosition.y);
+				effectArrowProdPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (m_effectProd / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
+				effectArrowProdPos.color = new Color(color.r, color.g, color.b, alphaArrow);
+				effectArrowProdNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+			} else {
+				effectArrowProdNeg.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowProdPos.rectTransform.anchoredPosition.y);
+				effectArrowProdNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, -(m_effectProd / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
+				effectArrowProdNeg.color = new Color(color.r, color.g, color.b, alphaArrow);
+				effectArrowProdPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+			}
+
+		}
+	}
+
+	private float m_effectFlux = 0f;
+	public float effectFlux {
+		get {
+			return m_effectFlux;
+		}
+		set {
+			m_effectFlux = value;
+			if (!isOn) {
+				return;
+			}
+			//arrow
+			float backgroundWidth = background.rectTransform.rect.width;
+			Color color = ColorScheme.instance.cellGradientEffect.Evaluate(0.5f + m_effectFlux * 0.1f);
+			if (m_effectFlux >= 0f) {
+				effectArrowFluxPos.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowFluxPos.rectTransform.anchoredPosition.y);
+				effectArrowFluxPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (m_effectFlux / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
+				effectArrowFluxPos.color = new Color(color.r, color.g, color.b, alphaArrow);
+
+				effectArrowFluxNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+			} else {
+				effectArrowFluxNeg.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowFluxPos.rectTransform.anchoredPosition.y);
+				effectArrowFluxNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, -(m_effectFlux / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
+				effectArrowFluxNeg.color = new Color(color.r, color.g, color.b, alphaArrow);
+
+				effectArrowFluxPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
 			}
 
 		}
@@ -69,10 +149,20 @@ public class EnergyBar : MonoBehaviour {
 				text.text = "";
 				background.color = Color.gray;
 
-				effectArrowPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
-				effectArrowNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
-				effectArrowPos.color = Color.gray;
-				effectArrowNeg.color = Color.gray;
+				effectArrowTotalPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowTotalNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowTotalPos.color = Color.gray;
+				effectArrowTotalNeg.color = Color.gray;
+
+				effectArrowProdPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowProdNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowProdPos.color = Color.gray;
+				effectArrowProdNeg.color = Color.gray;
+
+				effectArrowFluxPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowFluxNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowFluxPos.color = Color.gray;
+				effectArrowFluxNeg.color = Color.gray;
 			}
 		}
 	}

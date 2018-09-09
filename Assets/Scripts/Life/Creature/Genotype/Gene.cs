@@ -13,7 +13,7 @@ public class Gene {
 	//bool: eat mother, eat child, eat sibling 
 
 
-	public CellTypeEnum m_type = CellTypeEnum.Leaf;
+	private CellTypeEnum m_type = CellTypeEnum.Leaf;
 	public CellTypeEnum type {
 		get {
 			if (index == 0 && m_type == CellTypeEnum.Egg) {

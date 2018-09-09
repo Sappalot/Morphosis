@@ -17,20 +17,6 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 	private bool isDirty = true;
 
-	public Dropdown effectMeasuredDropdown;
-	public enum EffectMeasureEnum {
-		CellEffectExclusiveFlux,
-		CellEffectInclusiveFlux,
-		CellEffectAverageExclusiveFlux,
-		CellEffectAverageInclusiveFlux,
-	}
-	[HideInInspector]
-	public EffectMeasureEnum effectMeasure {
-		get {
-			return (EffectMeasureEnum)effectMeasuredDropdown.value;
-		}
-	}
-
 	public void OnGrowClicked() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.TryGrow(false, 1, true);
@@ -76,24 +62,32 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 				Debug.Log("Update PhenotypePanel");
 			//Nothing to represent
 			Creature solo = CreatureSelectionPanel.instance.soloSelected;
+
+			energyBar.effectMeasure = EffectTempEnum.None;
+			if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.effect) {
+				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
+					energyBar.effectMeasure = EffectTempEnum.Total;
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
+					energyBar.effectMeasure = EffectTempEnum.Production;
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
+					energyBar.effectMeasure = EffectTempEnum.Flux;
+				}
+			}
+
 			if (solo == null || !solo.phenotype.isAlive) {
 				creatureAge.text = "Age:";
 				//creatureSize.text = "Size: ";
 				energyBar.isOn = false;
 				sizeBar.isOn = false;
-				//creatureEnergy.text = "Energy:";
-				if (effectMeasure == EffectMeasureEnum.CellEffectExclusiveFlux) {
-					creatureEffect.text = "P body:";
+				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
+					creatureEffect.text = "Total Effect/Cell: ";
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction  || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
+					creatureEffect.text = "Production Effect/Cell: ";
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux  || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
+					creatureEffect.text = "Flux Effect/Cell: ";
 				}
-				else if (effectMeasure == EffectMeasureEnum.CellEffectInclusiveFlux) {
-					creatureEffect.text = "P body:";
-				}
-				else if (effectMeasure == EffectMeasureEnum.CellEffectAverageExclusiveFlux) {
-					creatureEffect.text = "P/cell avg.:";
-				}
-				else if (effectMeasure == EffectMeasureEnum.CellEffectAverageInclusiveFlux) {
-					creatureEffect.text = "P/cell avg.:";
-				}
+
+				//creatureEffect.text = "P/cell avg.:";
 				creatureSpeed.text = "Speed:";
 
 				isDirty = false;
@@ -105,25 +99,20 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 			energyBar.isOn = true;
 			energyBar.fullness = solo.phenotype.energyFullness;
-			energyBar.effect = solo.phenotype.GetEffect(true, true, true) / solo.phenotype.cellCount;
+			energyBar.effectTotal = solo.phenotype.GetEffectPerCell(true, true);
+			energyBar.effectProd = solo.phenotype.GetEffectPerCell(true, false);
+			energyBar.effectFlux = solo.phenotype.GetEffectPerCell(false, true);
 
 			sizeBar.isOn = true;
 			sizeBar.UpdateBar(solo.genotype.geneCellCount, solo.phenotype.cellCount, solo.genotype.GetGeneCellOfTypeCount(CellTypeEnum.Egg), solo.phenotype.GetCellOfTypeCount(CellTypeEnum.Egg), solo.GetAttachedChildrenAliveCount());
 			//creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energyFullness * 100f);
 
-			if (effectMeasure ==      EffectMeasureEnum.CellEffectExclusiveFlux) {
-				//Total effect excluding energy inport/export to attached 
-				creatureEffect.text = string.Format("P body: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUp(true, false, false), solo.phenotype.GetEffectDown(true, false, false), solo.phenotype.GetEffect(true, false, false));
-			}
-			else if (effectMeasure == EffectMeasureEnum.CellEffectInclusiveFlux) {
-				//Total effect including energy inport/export to attached 
-				creatureEffect.text = string.Format("P body: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUp(true, false, true), solo.phenotype.GetEffectDown(true, false, true), solo.phenotype.GetEffect(true, false, true));
-			}
-			else if (effectMeasure == EffectMeasureEnum.CellEffectAverageExclusiveFlux) {
-				creatureEffect.text = string.Format("P/cell avg.: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUp(true, false, false) / solo.phenotype.cellCount, solo.phenotype.GetEffectDown(true, false, false) / solo.phenotype.cellCount, solo.phenotype.GetEffect(true, false, false) / solo.phenotype.cellCount);
-			}
-			else if (effectMeasure == EffectMeasureEnum.CellEffectAverageInclusiveFlux) {
-				creatureEffect.text = string.Format("P/cell avg.: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUp(true, false, true) / solo.phenotype.cellCount, solo.phenotype.GetEffectDown(true, false, true) / solo.phenotype.cellCount, solo.phenotype.GetEffect(true, false, true) / solo.phenotype.cellCount);
+			if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
+				creatureEffect.text = string.Format("Total Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUpPerCell(true, true), solo.phenotype.GetEffectDownPerCell(true, true), solo.phenotype.GetEffectPerCell(true, true));
+			} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
+				creatureEffect.text = string.Format("Production Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUpPerCell(true, false), solo.phenotype.GetEffectDownPerCell(true, false), solo.phenotype.GetEffectPerCell(true, false));
+			} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
+				creatureEffect.text = string.Format("Flux Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUpPerCell(false, true), solo.phenotype.GetEffectDownPerCell(false, true), solo.phenotype.GetEffectPerCell(false, true));
 			}
 
 			creatureSpeed.text = string.Format("Speed: {0:F2} m/s", solo.phenotype.speed);

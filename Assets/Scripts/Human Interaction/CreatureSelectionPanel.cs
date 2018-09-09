@@ -70,10 +70,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	public Gene selectedGene {
 		get {
-			return GeneNeighboursPanel.instance.selectedGene;
+			return GenePanel.instance.selectedGene;
 		}
 		set {
-			GeneNeighboursPanel.instance.selectedGene = value;
+			GenePanel.instance.selectedGene = value;
 		}
 	}
 
@@ -109,7 +109,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		isDirty = true;
 		phenotypePanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
-		GeneNeighboursPanel.instance.selectedGene = null;
+		GenePanel.instance.selectedGene = null;
 		LockedUnlockedPanel.instance.MakeDirty();
 
 		SetCellAndGeneSelectionToOrigin();
@@ -124,7 +124,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	public void SetCellAndGeneSelectionToOrigin() {
 		selectedCell = null;
-		GeneNeighboursPanel.instance.selectedGene = null;
+		GenePanel.instance.selectedGene = null;
 		isDirty = true;
 	}
 
@@ -138,7 +138,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		selectedCell = cell;
 
-		GeneNeighboursPanel.instance.selectedGene = cell.gene;
+		GenePanel.instance.selectedGene = cell.gene;
 		LockedUnlockedPanel.instance.MakeDirty();
 
 		creature.MakeDirtyGraphics();

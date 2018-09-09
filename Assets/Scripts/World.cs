@@ -48,7 +48,7 @@ public class World : MonoSingleton<World> {
 			Time.timeScale = 1f;
 		}
 
-		if (GlobalPanel.instance.graphicsCreatures.isOn) {
+		if (PhenotypeGraphicsPanel.instance.graphicsCreatures.isOn) {
 			life.UpdateGraphics();
 		}
 	}

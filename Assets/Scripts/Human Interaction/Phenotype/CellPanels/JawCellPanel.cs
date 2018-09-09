@@ -1,14 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class JawCellPanel : MonoSingleton<JawCellPanel> {
+public class JawCellPanel : MetabolismCellPanel {
 
 	public Text prayCellCount;
-
-	private bool isDirty = false;
-	public void MakeDirty() {
-		isDirty = true;
-	}
 
 	private void Update() {
 		if (isDirty) {
@@ -16,8 +11,14 @@ public class JawCellPanel : MonoSingleton<JawCellPanel> {
 				Debug.Log("Update CellPanel");
 			}
 
-			if (CellPanel.instance.selectedCell != null) {
-				prayCellCount.text = "Pray count: " + (CellPanel.instance.selectedCell as JawCell).prayCount;
+			if (mode == PhenoGenoEnum.Phenotype) {
+				if (CellPanel.instance.selectedCell != null) {
+					prayCellCount.text = "Pray count: " + (CellPanel.instance.selectedCell as JawCell).prayCount;
+					prayCellCount.color = Color.black;
+				}				
+			} else if (mode == PhenoGenoEnum.Genotype) {
+				prayCellCount.text = "Pray count: -";
+				prayCellCount.color = Color.gray;
 			}
 
 			isDirty = false;

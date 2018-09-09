@@ -4,8 +4,8 @@ public class EggCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		if (GlobalPanel.instance.physicsEgg.isOn) {
-			effectUpInternal = 0f;
-			effectDownInternal = GlobalSettings.instance.phenotype.eggCellEffectCost;
+			effectProductionInternalUp = 0f;
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCellEffectCost;
 
 			if (energyFullness > eggCellFertilizeThreshold && (eggCellCanFertilizeWhenAttached || !creature.phenotype.hasPlacentaSpringsToMother) && shouldFertilize == -1) {
 				shouldFertilize = 0; // Random.Range(0, 60);
@@ -13,8 +13,8 @@ public class EggCell : Cell {
 
 			base.UpdateCellFunction(deltaTicks, worldTicks);
 		} else {
-			effectUpInternal = 0f;
-			effectDownInternal = 0f;
+			effectProductionInternalUp = 0f;
+			effectProductionInternalDown = 0f;
 		}
 	}
 

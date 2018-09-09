@@ -57,7 +57,7 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 			return;
 		}
 
-		GeneNeighboursPanel.instance.selectedGene.eggCellFertilizeThreshold = fertilizeSlider.value;
+		GenePanel.instance.selectedGene.eggCellFertilizeThreshold = fertilizeSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnEggChanged();
 		}
@@ -69,7 +69,7 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 			return;
 		}
 
-		GeneNeighboursPanel.instance.selectedGene.eggCellCanFertilizeWhenAttached = canFertilizeWhenAttachedToggle.isOn;
+		GenePanel.instance.selectedGene.eggCellCanFertilizeWhenAttached = canFertilizeWhenAttachedToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnEggChanged();
 		}
@@ -81,7 +81,7 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 			return;
 		}
 
-		GeneNeighboursPanel.instance.selectedGene.eggCellDetatchMode = detatchSizeToggle.isOn ? ChildDetatchModeEnum.Size : ChildDetatchModeEnum.Energy;
+		GenePanel.instance.selectedGene.eggCellDetatchMode = detatchSizeToggle.isOn ? ChildDetatchModeEnum.Size : ChildDetatchModeEnum.Energy;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnEggChanged();
 		}
@@ -93,7 +93,7 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 			return;
 		}
 
-		GeneNeighboursPanel.instance.selectedGene.eggCellDetatchSizeThreshold = detatchSizeSlider.value;
+		GenePanel.instance.selectedGene.eggCellDetatchSizeThreshold = detatchSizeSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnEggChanged();
 		}
@@ -105,7 +105,7 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 			return;
 		}
 
-		GeneNeighboursPanel.instance.selectedGene.eggCellDetatchEnergyThreshold = detatchEnergySlider.value;
+		GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold = detatchEnergySlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnEggChanged();
 		}
@@ -125,19 +125,19 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 			}
 
 			if (CellPanel.instance.selectedCell != null) {
-				fertilizeSliderText.text =     string.Format("Egg E ≥ {0:F1}%",           GeneNeighboursPanel.instance.selectedGene.eggCellFertilizeThreshold * 100f);
-				detatchSizeSliderTextPercentage.text =   string.Format("Size ≥ {0:F1}%",  GeneNeighboursPanel.instance.selectedGene.eggCellDetatchSizeThreshold * 100f);
+				fertilizeSliderText.text =     string.Format("Egg E ≥ {0:F1}%", GenePanel.instance.selectedGene.eggCellFertilizeThreshold * 100f);
+				detatchSizeSliderTextPercentage.text =   string.Format("Size ≥ {0:F1}%", GenePanel.instance.selectedGene.eggCellDetatchSizeThreshold * 100f);
 				int cellCount = CreatureSelectionPanel.instance.soloSelected.genotype.geneCellCount;
-				detatchSizeSliderTextCellCount.text = string.Format("{0:F0} of {1:F0} cells", Mathf.Clamp(Mathf.RoundToInt(GeneNeighboursPanel.instance.selectedGene.eggCellDetatchSizeThreshold * cellCount), 1, cellCount), cellCount);
-				if (GeneNeighboursPanel.instance.selectedGene.eggCellDetatchSizeThreshold > 1f) {
+				detatchSizeSliderTextCellCount.text = string.Format("{0:F0} of {1:F0} cells", Mathf.Clamp(Mathf.RoundToInt(GenePanel.instance.selectedGene.eggCellDetatchSizeThreshold * cellCount), 1, cellCount), cellCount);
+				if (GenePanel.instance.selectedGene.eggCellDetatchSizeThreshold > 1f) {
 					detatchSizeSliderTextPercentage.color = Color.red;
 					detatchSizeSliderTextCellCount.text = "";
 				} else {
 					detatchSizeSliderTextPercentage.color = Color.black;
 				}
 
-				detatchEnergySliderText.text = string.Format("Origin E ≥ {0:F1}%",                GeneNeighboursPanel.instance.selectedGene.eggCellDetatchEnergyThreshold * 100f);
-				if (GeneNeighboursPanel.instance.selectedGene.eggCellDetatchEnergyThreshold > 1f) {
+				detatchEnergySliderText.text = string.Format("Origin E ≥ {0:F1}%", GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold * 100f);
+				if (GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold > 1f) {
 					detatchEnergySliderText.color = Color.red;
 				} else {
 					detatchEnergySliderText.color = Color.black;
@@ -154,14 +154,14 @@ public class EggGenePanel : MonoSingleton<EggGenePanel> {
 
 			if (CellPanel.instance.selectedCell != null) {
 				ignoreSliderMoved = true;
-				fertilizeSlider.value =               GeneNeighboursPanel.instance.selectedGene.eggCellFertilizeThreshold;
-				canFertilizeWhenAttachedToggle.isOn = GeneNeighboursPanel.instance.selectedGene.eggCellCanFertilizeWhenAttached;
+				fertilizeSlider.value = GenePanel.instance.selectedGene.eggCellFertilizeThreshold;
+				canFertilizeWhenAttachedToggle.isOn = GenePanel.instance.selectedGene.eggCellCanFertilizeWhenAttached;
 
-				detatchSizeToggle.isOn =              GeneNeighboursPanel.instance.selectedGene.eggCellDetatchMode == ChildDetatchModeEnum.Size;
-				detatchEnergyToggle.isOn =            GeneNeighboursPanel.instance.selectedGene.eggCellDetatchMode == ChildDetatchModeEnum.Energy;
+				detatchSizeToggle.isOn = GenePanel.instance.selectedGene.eggCellDetatchMode == ChildDetatchModeEnum.Size;
+				detatchEnergyToggle.isOn = GenePanel.instance.selectedGene.eggCellDetatchMode == ChildDetatchModeEnum.Energy;
 
-				detatchSizeSlider.value =             GeneNeighboursPanel.instance.selectedGene.eggCellDetatchSizeThreshold;
-				detatchEnergySlider.value =           GeneNeighboursPanel.instance.selectedGene.eggCellDetatchEnergyThreshold;
+				detatchSizeSlider.value = GenePanel.instance.selectedGene.eggCellDetatchSizeThreshold;
+				detatchEnergySlider.value = GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold;
 
 				ignoreSliderMoved = false;
 			}

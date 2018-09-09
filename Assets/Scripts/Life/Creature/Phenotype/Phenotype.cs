@@ -56,7 +56,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public float energyPerCellAverage {
+	public float energyPerCell {
 		get {
 			if (cellCount > 0) {
 				return energy / cellCount;
@@ -68,9 +68,11 @@ public class Phenotype : MonoBehaviour {
 
 	public float energyFullness {
 		get {
-			return energyPerCellAverage / GlobalSettings.instance.phenotype.cellMaxEnergy;
+			return energyPerCell / GlobalSettings.instance.phenotype.cellMaxEnergy;
 		}
 	}
+
+	// ---------------- EFFECT -----------------------------
 
 	public float GetEffect(bool production, bool fluxSelf, bool fluxAttached) {
 		float effect = 0;
@@ -94,6 +96,32 @@ public class Phenotype : MonoBehaviour {
 			effect += cell.GetEffectUp(production, fluxSelf, fluxAttached);
 		}
 		return effect;
+	}
+
+	public float GetEffectPerCell(bool production, bool fluxAttached) {
+		return GetEffect(production, false, fluxAttached) / cellCount;
+	}
+
+	public float GetEffectDownPerCell(bool production, bool fluxAttached) {
+		return GetEffectDown(production, false, fluxAttached) / cellCount;
+	}
+
+	public float GetEffectUpPerCell(bool production, bool fluxAttached) {
+		return GetEffectUp(production, false, fluxAttached) / cellCount;
+	}
+
+	// --------------- ^ EFFECT ^ ------------------------
+
+	public int VeinsConnectedToCellCount(Cell cell) {
+		return veins.VeinsConnectedToCellCount(cell);
+	}
+
+	public int PlacentaVeinsConnectedToCellCount(Cell cell) {
+		return veins.PlacentaVeinsConnectedToCellCount(cell);
+	}
+
+	public int NonPlacentaVeinsConnectedToCellCount(Cell cell) {
+		return veins.NonPlacentaVeinsConnectedToCellCount(cell);
 	}
 
 	public bool hasPlacentaSpringsToMother {
@@ -633,14 +661,14 @@ public class Phenotype : MonoBehaviour {
 	//This is the one and only final place where cell is removed
 	// fixedTime = 0 ==> no mar will be set to when this cell can be regrown again
 	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects, ulong worldTicks) {
-		if (playEffects && (GlobalPanel.instance.soundCreatures.isOn || (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.graphicsEffects.isOn))) {
+		if (playEffects && (GlobalPanel.instance.soundCreatures.isOn || (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypeGraphicsPanel.instance.graphicsEffects.isOn))) {
 			bool isObserved = CameraUtils.IsObservedLazy(deleteCell.position, GlobalSettings.instance.orthoMaxHorizonFx);
 
 			if (GlobalPanel.instance.soundCreatures.isOn && isObserved) {
 				Audio.instance.CellDeath(CameraUtils.GetEffectStrengthLazy());
 			}
 		
-			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.graphicsEffects.isOn && isObserved) {
+			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypeGraphicsPanel.instance.graphicsEffects.isOn && isObserved) {
 				SpawnCellDeathEffect(deleteCell.position, Color.red);
 				SpawnCellDeleteBloodEffect(deleteCell);
 			}
@@ -750,13 +778,13 @@ public class Phenotype : MonoBehaviour {
 				if (GlobalPanel.instance.soundCreatures.isOn) {
 					Audio.instance.CreatureDetatch(CameraUtils.GetEffectStrengthLazy());
 				}
-				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.graphicsEffects.isOn) {
+				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypeGraphicsPanel.instance.graphicsEffects.isOn) {
 					Cell originCell = creature.phenotype.originCell;
 					SpawnCellDetatchBloodEffect(originCell);
 				}
 			}
 
-			if (playEffects && GlobalPanel.instance.graphicsEffects.isOn) {
+			if (playEffects && PhenotypeGraphicsPanel.instance.graphicsEffects.isOn) {
 				float angle = originCell.heading - 90f;
 				EffectPlayer.instance.Play(EffectEnum.CreatureDetatch, originCell.position, angle, CameraUtils.GetEffectScaleLazy());
 			}
@@ -798,11 +826,13 @@ public class Phenotype : MonoBehaviour {
 			}
 
 			//me
+			veins.Clear();
 			creature.SetAttachedToMotherAlive(false);
 			connectionsDiffersFromCells = true;
 			originCell.effectFluxFromMotherAttached = 0f;
 
 			//mother
+			creature.GetMotherAlive().phenotype.veins.Clear();
 			creature.GetMotherAlive().phenotype.connectionsDiffersFromCells = true;
 			foreach (Cell cell in creature.GetMotherAlive().phenotype.cellList) {
 				cell.effectFluxToChildrenAttached = 0f;
@@ -1298,7 +1328,7 @@ public class Phenotype : MonoBehaviour {
 		if (veinTick == 0) {
 			if (GlobalPanel.instance.physicsFlux.isOn) {
 				veins.UpdateEffect(GlobalSettings.instance.quality.veinTickPeriod);
-				veins.UpdateCellsPlacentaEffects(); //used to display effect in panel
+				veins.UpdateCellsPlacentaEffects();
 			}
 
 			for (int index = 0; index < cellList.Count; index++) {

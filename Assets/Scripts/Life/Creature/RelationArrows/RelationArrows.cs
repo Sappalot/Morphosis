@@ -18,7 +18,7 @@ public class RelationArrows : MonoBehaviour {
 	}
 
 	public void UpdateGraphics() {
-		if (!GlobalPanel.instance.graphicsRelations.isOn || creature == null) {
+		if (!PhenotypeGraphicsPanel.instance.graphicsRelations.isOn || creature == null) {
 			gameObject.SetActive(false);
 			return;
 		}

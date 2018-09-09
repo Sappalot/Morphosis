@@ -22,8 +22,6 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		}
 	}
 
-
-
 	override public void Init() {
 		viewedFlipSide = FlipSideEnum.BlackWhite; 
 		isDirty = true;
@@ -37,8 +35,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GeneNeighboursPanel.instance.selectedGene = null;
-		GeneNeighboursPanel.instance.MakeDirty();
+		GenePanel.instance.selectedGene = null;
+		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -50,8 +48,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GeneNeighboursPanel.instance.selectedGene = null;
-		GeneNeighboursPanel.instance.MakeDirty();
+		GenePanel.instance.selectedGene = null;
+		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -63,8 +61,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GeneNeighboursPanel.instance.selectedGene = null;
-		GeneNeighboursPanel.instance.MakeDirty();
+		GenePanel.instance.selectedGene = null;
+		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -76,8 +74,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GeneNeighboursPanel.instance.selectedGene = null;
-		GeneNeighboursPanel.instance.MakeDirty();
+		GenePanel.instance.selectedGene = null;
+		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -90,8 +88,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		GenomePanel.instance.MakeDirty();
-		GeneNeighboursPanel.instance.selectedGene = null;
-		GeneNeighboursPanel.instance.MakeDirty();
+		GenePanel.instance.selectedGene = null;
+		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 

@@ -54,13 +54,13 @@ public class LeafCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		if (GlobalPanel.instance.physicsLeaf.isOn) {
-			effectDownInternal = GlobalSettings.instance.phenotype.leafCellEffectCost; //* GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount); //costy!!
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.leafCellEffectCost; //* GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount); //costy!!
 																					   ////-- test
 																					   //effectProductionInternal = 0.5f * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount);
 																					   //base.UpdateCellFunction(deltaTicks, worldTicks);
 																					   //return;
 																					   ////--
-			bool debugRender = GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.leafExposure && CreatureSelectionPanel.instance.selectedCell == this;
+			bool debugRender = PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure && CreatureSelectionPanel.instance.selectedCell == this;
 
 			float startEnergy = 2f; //matters only graphically during debug
 			float maxRange = GlobalSettings.instance.phenotype.leafCellSunMaxRange; // how many meters an unblocked light beam will travel
@@ -215,15 +215,15 @@ public class LeafCell : Cell {
 			if (creature.IsAttachedToMotherAlive()) {
 				attachedMotherCellCount = creature.GetMotherAlive().cellCount;
 			}
-			effectUpInternal = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.cellCount); //costy!! creature.clusterCellCount
+			effectProductionInternalUp = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.cellCount); //costy!! creature.clusterCellCount
 
 			if (CellPanel.instance.selectedCell == this) {
-				LeafCellPanel.instance.MakeDirty();
+				CellPanel.instance.leafCellPanel.MakeDirty();
 			}
 			base.UpdateCellFunction(deltaTicks, worldTicks);
 		} else {
-			effectUpInternal = 0f;
-			effectDownInternal = 0f;
+			effectProductionInternalUp = 0f;
+			effectProductionInternalDown = 0f;
 			m_lowPassExposure = 0.33f;
 		}
 	}

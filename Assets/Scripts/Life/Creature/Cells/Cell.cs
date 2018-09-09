@@ -140,39 +140,39 @@ public abstract class Cell : MonoBehaviour {
 	}
 	
 
-	// Effect
+	// -------------------------------EFFECT -----------------------------------------
 
 	public float GetEffect(bool production, bool fluxSelf, bool fluxAttached) {
 		return GetEffectUp(production, fluxSelf, fluxAttached) - GetEffectDown(production, fluxSelf, fluxAttached);
 	}
 
 	public float GetEffectDown(bool production, bool fluxSelf, bool fluxAttached) {
-		return (production ? effectDownInternal + effectDownPredPray : 0f) + (fluxSelf ? effectFluxSelfDown : 0f) + (fluxAttached ? effectFluxAttachedDown : 0f);
+		return (production ? effectProductionInternalDown + effectProductionPredPrayDown : 0f) + (fluxSelf ? effectFluxSelfDown : 0f) + (fluxAttached ? effectFluxAttachedDown : 0f);
 	}
 
 	public float GetEffectUp(bool production, bool fluxSelf, bool fluxAttached) {
-		return (production ? effectUpInternal + effectUpPredPray : 0f) + (fluxSelf ? effectFluxSelfUp : 0f) + (fluxAttached ? effectFluxAttachedUp : 0f);
+		return (production ? effectProductionInternalUp + effectProductionPredPrayUp : 0f) + (fluxSelf ? effectFluxSelfUp : 0f) + (fluxAttached ? effectFluxAttachedUp : 0f);
 	}
 
 	[HideInInspector]
-	public float effectUpInternal = 0f; // production, excluding jaw
+	public float effectProductionInternalUp = 0f; // production, excluding jaw
 
 	[HideInInspector]
-	public float effectDownInternal = 0; // conumption, exclding jaw
+	public float effectProductionInternalDown = 0; // conumption, exclding jaw
 
-	public float effectPredPray {
+	public float effectProductionPredPray {
 		get {
-			return effectUpPredPray - effectDownPredPray;
+			return effectProductionPredPrayUp - effectProductionPredPrayDown;
 		}
 	}
 
-	//How much am i stealing from other creatures
+	//How much are my jaws stealing from other creatures
 	[HideInInspector]
-	public float effectUpPredPray;
+	public float effectProductionPredPrayUp;
 
 	//How much damage are all predators inflicting on me?
 	//Check with all Jaw cells eating on me. They know and keep up to date
-	public float effectDownPredPray {
+	public float effectProductionPredPrayDown {
 		get {
 			float loss = 0f;
 			foreach (JawCell predator in predators) {
@@ -185,7 +185,7 @@ public abstract class Cell : MonoBehaviour {
 	//net effect
 	public float effectFluxSelf {
 		get {
-			return effectFluxToSelf - effectFluxFromSelf;
+			return effectFluxFromSelf - effectFluxToSelf;
 		}
 	}
 
@@ -193,17 +193,15 @@ public abstract class Cell : MonoBehaviour {
 	public float effectFluxToSelf = 0; //energy i am giving to neighbours / time
 
 	[HideInInspector]
-	public float effectFluxFromSelf = 0f; //eneryg i am receiving from mother / time
+	public float effectFluxFromSelf = 0f; //eneryg i am receiving from neighbours / time
 
-	// Will not be negative a negative value will appear in effectAttachedDown instead
-	public float effectFluxSelfUp {
+	public float effectFluxSelfDown {
 		get {
 			return (effectFluxToSelf > 0f ? effectFluxToSelf : 0f) + (effectFluxFromSelf < 0f ? -effectFluxFromSelf : 0f); // Don't forget the brackets!!
 		}
 	}
 
-	// Will not be negative a negative value will appear in effectAttachedUp instead
-	public float effectFluxSelfDown {
+	public float effectFluxSelfUp {
 		get {
 			return (effectFluxFromSelf > 0f ? effectFluxFromSelf : 0f) + (effectFluxToSelf < 0f ? -effectFluxToSelf : 0f);
 		}
@@ -236,7 +234,7 @@ public abstract class Cell : MonoBehaviour {
 			return (effectFluxToChildrenAttached < 0f ? -effectFluxToChildrenAttached : 0f) + (effectFluxFromMotherAttached > 0f ? effectFluxFromMotherAttached : 0f);
 		}
 	}
-	// ^ Effect ^
+	// ^---------------- EFFECT ---------------------------^
 
 	public bool hasPlacentaSprings {
 		get {
@@ -938,40 +936,46 @@ public abstract class Cell : MonoBehaviour {
 		openCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
 
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
-			if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.type) {
+			if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.type) {
 				if (creature.phenotype.visualTelepoke > 0) {
 					filledCircleSprite.color = Color.white;
 				} else {
 					filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
 				}
 			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.energy) {
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.energy) {
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(energyFullness);
 			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.flux) {
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.flux) {
 				float intensity = 0.2f;
 				float red = Mathf.Min(GetEffectDown(false, true, true) * intensity, 1f);
 				float green = Mathf.Min(GetEffectUp(false, true, true) * intensity, 1f);
 				filledCircleSprite.color = new Color(red, green, 0f);
 			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.effect) {
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.effect) {
 				float effectValue = 0f;
 
-				if (     PhenotypePanel.instance.effectMeasure == PhenotypePanel.EffectMeasureEnum.CellEffectExclusiveFlux) {
-					effectValue = 0.5f + GetEffect(true, false, false) * 0.1f;
-				}
-				else if (PhenotypePanel.instance.effectMeasure == PhenotypePanel.EffectMeasureEnum.CellEffectInclusiveFlux) {
+				if (     PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal) {
 					effectValue = 0.5f + GetEffect(true, true, true) * 0.1f;
 				}
-				else if (PhenotypePanel.instance.effectMeasure == PhenotypePanel.EffectMeasureEnum.CellEffectAverageExclusiveFlux) {
-					effectValue = 0.5f + (creature.phenotype.GetEffect(true, false, false) / creature.phenotype.cellCount) * 0.1f;
+				else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction) {
+					effectValue = 0.5f + GetEffect(true, false, false) * 0.1f;
 				}
-				else if (PhenotypePanel.instance.effectMeasure == PhenotypePanel.EffectMeasureEnum.CellEffectAverageInclusiveFlux) {
-					effectValue = 0.5f + (creature.phenotype.GetEffect(true, false, true) / creature.phenotype.cellCount) * 0.1f;
+				else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux) {
+					effectValue = 0.5f + GetEffect(false, true, true) * 0.1f;
+				}
+				else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
+					effectValue = 0.5f + creature.phenotype.GetEffectPerCell(true, true) * 0.1f;
+				}
+				else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
+					effectValue = 0.5f + creature.phenotype.GetEffectPerCell(true, false) * 0.1f;
+				}
+				else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
+					effectValue = 0.5f + creature.phenotype.GetEffectPerCell(false, true) * 0.1f;
 				}
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.leafExposure) {
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure) {
 				if (GetCellType() == CellTypeEnum.Leaf) {
 					float effectValue = (this as LeafCell).lowPassExposure;
 					filledCircleSprite.color = ColorScheme.instance.cellGradientLeafExposure.Evaluate(effectValue);
@@ -979,11 +983,11 @@ public abstract class Cell : MonoBehaviour {
 					filledCircleSprite.color = Color.blue;
 				}
 			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.childCountCreature) {
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.childCountCreature) {
 				float value = 0.05f + creature.ChildrenCountDeadOrAlive() * 0.1f;
 				filledCircleSprite.color = ColorScheme.instance.cellCreatureChildCount.Evaluate(value);
 			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.predatorPray) {
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.predatorPray) {
 				//float effectValue = 0.5f + effectExternal * 0.02f;
 				//filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 				//if (effectExternal == 0f) {
@@ -1004,21 +1008,21 @@ public abstract class Cell : MonoBehaviour {
 					filledCircleSprite.color = Color.red;
 				}
 			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.typeAndPredatorPray) {
-				float effectValue = 0.5f + effectPredPray * 0.02f;
-				if (effectPredPray == 0f) {
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.typeAndPredatorPray) {
+				float effectValue = 0.5f + effectProductionPredPray * 0.02f;
+				if (effectProductionPredPray == 0f) {
 					filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
-				} else if (GetCellType() == CellTypeEnum.Jaw && effectPredPray < 0f) {
+				} else if (GetCellType() == CellTypeEnum.Jaw && effectProductionPredPray < 0f) {
 					filledCircleSprite.color = Color.white;
 				} else {
 					filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 				}
 			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.update) {
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.update) {
 				filledCircleSprite.color = didUpdateFunctionThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
 				//openCircleSprite.color = didUpdateEnergyThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
 			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.creation) {
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.creation) {
 				if (creature.creation == CreatureCreationEnum.Born) {
 					filledCircleSprite.color = Color.magenta;
 				} else if (creature.creation == CreatureCreationEnum.Cloned) {
@@ -1028,7 +1032,7 @@ public abstract class Cell : MonoBehaviour {
 					filledCircleSprite.color = Color.cyan;
 				}
 			}
-			else if (GlobalPanel.instance.graphicsCell == GlobalPanel.CellGraphicsEnum.individual) {
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.individual) {
 				filledCircleSprite.color = creature.phenotype.individualColor;
 			}
 		} else {
@@ -1105,6 +1109,11 @@ public abstract class Cell : MonoBehaviour {
 		if (southEastSpring != null) {
 			southEastSpring.distance = 1f;
 		}
+
+		effectFluxFromMotherAttached = 0f;
+		effectFluxToChildrenAttached = 0f;
+		effectFluxToSelf =   0f;
+		effectFluxFromSelf = 0f;
 	}
 
 	virtual public void OnBorrowToWorld() {}

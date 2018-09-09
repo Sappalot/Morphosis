@@ -139,39 +139,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	public RectTransform physicsAimFillBar;
 
-	//Graphics
-	public Toggle graphicsCreatures;
-	public Toggle graphicsRelations;
-	public Toggle graphicsPeriphery;
-	public Toggle graphicsEffects;
-	public Toggle graphicsMuscleForces;
-	public Dropdown graphicsCellDropdown;
-	public enum CellGraphicsEnum {
-		type,
-		energy,
-		flux,
-		effect,
-		leafExposure,
-		childCountCreature,
-		predatorPray,
-		typeAndPredatorPray,
-		update,
-		creation,
-		individual,
-	}
-	[HideInInspector]
-	public CellGraphicsEnum graphicsCell {
-		get {
-			return (CellGraphicsEnum)graphicsCellDropdown.value;
-		}
-	}
-
-	[HideInInspector]
-	public bool isGraphicsCellEnergyRelated {
-		get {
-			return graphicsCell == GlobalPanel.CellGraphicsEnum.energy || graphicsCell == GlobalPanel.CellGraphicsEnum.flux || graphicsCell == GlobalPanel.CellGraphicsEnum.effect;
-		}
-	}
+	
 	
 
 	// Sound
