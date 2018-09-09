@@ -34,6 +34,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public MetabolismCellPanel leafCellPanel;
 	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[3];
 
+	public OriginCellPanel originCellPanel;
+
 	override public void Init() {
 		isDirty = true;
 		metabolismCellPanels[0] = eggCellPanel;
@@ -43,15 +45,20 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
 			m.mode = PhenoGenoEnum.Phenotype;
 		}
+
+		originCellPanel.mode = PhenoGenoEnum.Phenotype;
+		MakeDirty();
 	}
 
 	private bool isDirty = true;
 	public void MakeDirty() {
 		isDirty = true;
 
-		eggCellPanel.MakeDirty();
-		jawCellPanel.MakeDirty();
-		leafCellPanel.MakeDirty(); 
+		foreach (MetabolismCellPanel m in metabolismCellPanels) {
+			m.MakeDirty();
+		}
+
+		originCellPanel.MakeDirty();
 	}
 
 	private Cell m_selectedCell;
@@ -203,6 +210,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Vein) {
 				metabolismCellTypeDropdown.value = 7;
 			}
+
+			originCellPanel.MakeDirty();
 
 			isDirty = false;
 		}

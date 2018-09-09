@@ -36,7 +36,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 	public MetabolismCellPanel leafCellPanel;
 	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[3];
 
-	
+	public OriginCellPanel originCellPanel;
 
 	override public void Init() {
 		isDirty = true;
@@ -47,6 +47,9 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
 			m.mode = PhenoGenoEnum.Genotype;
 		}
+
+		originCellPanel.mode = PhenoGenoEnum.Genotype;
+		MakeDirty();
 	}
 
 	private bool isDirty = true;
@@ -55,6 +58,8 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
 			m.MakeDirty();
 		}
+
+		originCellPanel.MakeDirty();
 	}
 
 	private bool ignoreMenuChange;
@@ -163,6 +168,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 				metabolismCellTypeDropdown.value = 0;
 				eggCellPanel.gameObject.SetActive(true);
 				eggCellPanel.MakeDirty();
+				//(eggCellPanel as EggCellPanel).MakeSlidersDirty();
 			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Fungal) {
 				metabolismCellTypeDropdown.value = 1;
 			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Jaw) {
@@ -183,6 +189,8 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 				metabolismCellTypeDropdown.value = 7;
 			}
 			ignoreMenuChange = false;
+
+			originCellPanel.MakeDirty();
 
 			isDirty = false;
 		}
