@@ -4,14 +4,18 @@ public class Gene {
 	// Egg cell
 	public float eggCellFertilizeThreshold = 0.4f; //part of max energy (* 100 to get  %)
 	public bool eggCellCanFertilizeWhenAttached = true;
-
 	public ChildDetatchModeEnum eggCellDetatchMode = ChildDetatchModeEnum.Size;
 	public float eggCellDetatchSizeThreshold = 0.5f; // completeness count / max count 
 	public float eggCellDetatchEnergyThreshold = 0.4f; //part of max energy(* 100 to get  %)
+	// ^ Egg cell ^
 
-	//Jaw Cell
-	//bool: eat mother, eat child, eat sibling 
-
+	// Jaw Cell
+	public bool jawCellCannibalizeKin;
+	public bool jawCellCannibalizeMother;
+	public bool jawCellCannibalizeFather;
+	public bool jawCellCannibalizeSiblings;
+	public bool jawCellCannibalizeChildren;
+	// ^ Jaw Cell ^
 
 	private CellTypeEnum m_type = CellTypeEnum.Leaf;
 	public CellTypeEnum type {
@@ -54,7 +58,7 @@ public class Gene {
 			type = (CellTypeEnum)Random.Range(0, 8);
 		}
 
-		//Egg
+		// Egg
 		float spread = 0.06f; // TODO move toGlobal settings
 		mut = Random.Range(0, gs.mutation.eggCellFertilizeThresholdLeave + gs.mutation.eggCellFertilizeThresholdRandom * strength);
 		if (mut < gs.mutation.eggCellFertilizeThresholdRandom * strength) {
@@ -66,7 +70,7 @@ public class Gene {
 			eggCellCanFertilizeWhenAttached = !eggCellCanFertilizeWhenAttached; //toggle
 		}
 
-		spread = 0.1f; // TODO move toGlobal settings
+		spread = 0.06f; // TODO move toGlobal settings
 		mut = Random.Range(0, gs.mutation.eggCellDetatchSizeThresholdLeave + gs.mutation.eggCellDetatchSizeThresholdRandom * strength);
 		if (mut < gs.mutation.eggCellDetatchSizeThresholdRandom * strength) {
 			eggCellDetatchSizeThreshold = Mathf.Clamp(eggCellDetatchSizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellDetatchSizeThresholdMin, gs.phenotype.eggCellDetatchSizeThresholdMax); // count / max count
@@ -77,6 +81,11 @@ public class Gene {
 		if (mut < gs.mutation.eggCellDetatchEnergyThresholdRandom * strength) {
 			eggCellDetatchEnergyThreshold = Mathf.Clamp(eggCellDetatchEnergyThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellDetatchEnergyThresholdMin, gs.phenotype.eggCellDetatchEnergyThresholdMax); // J
 		}
+		// ^ Egg ^
+
+		// Jaw
+
+		// ^ Jaw ^
 
 		//arrangements
 		arrangements[0].Mutate(strength);
@@ -136,6 +145,13 @@ public class Gene {
 		geneData.arrangementData[1] = arrangements[1].UpdateData();
 		geneData.arrangementData[2] = arrangements[2].UpdateData();
 
+		// Jaw
+		geneData.jawCellCannibalizeKin =      jawCellCannibalizeKin;
+		geneData.jawCellCannibalizeMother =   jawCellCannibalizeMother;
+		geneData.jawCellCannibalizeFather =   jawCellCannibalizeFather;
+		geneData.jawCellCannibalizeSiblings = jawCellCannibalizeSiblings;
+		geneData.jawCellCannibalizeChildren = jawCellCannibalizeChildren;
+
 		return geneData;
 	}
 
@@ -165,7 +181,13 @@ public class Gene {
 		} else {
 			eggCellDetatchEnergyThreshold = geneData.eggCellDetatchEnergyThreshold;
 		}
-		
+
+		// Jaw
+		jawCellCannibalizeKin =      geneData.jawCellCannibalizeKin;
+		jawCellCannibalizeMother =   geneData.jawCellCannibalizeMother;
+		jawCellCannibalizeFather =   geneData.jawCellCannibalizeFather;
+		jawCellCannibalizeSiblings = geneData.jawCellCannibalizeSiblings;
+		jawCellCannibalizeChildren = geneData.jawCellCannibalizeChildren;
 
 		arrangements[0].ApplyData(geneData.arrangementData[0]);
 		arrangements[1].ApplyData(geneData.arrangementData[1]);

@@ -350,7 +350,7 @@ public class Phenotype : MonoBehaviour {
 								builder.energy -= (builder.energy - buildBaseEnergy) * giftFactor; // neighbour donating energy
 							}
 						}
-						newCellEnergy = buildBaseEnergy;
+						newCellEnergy = buildBaseEnergy * GlobalSettings.instance.phenotype.cellNewlyBuiltKeepFactor;
 					} else {
 						noGrowthReason.energyBound = true;
 						continue;
@@ -917,12 +917,20 @@ public class Phenotype : MonoBehaviour {
 
 		// Gene settings
 		// Egg
-		// form gene to eggCell
+		// form gene (egg settings) to cell (egg settings)
 		cell.eggCellFertilizeThreshold =       gene.eggCellFertilizeThreshold;
 		cell.eggCellCanFertilizeWhenAttached = gene.eggCellCanFertilizeWhenAttached;
 		cell.eggCellDetatchMode =              gene.eggCellDetatchMode;
 		cell.eggCellDetatchSizeThreshold =     gene.eggCellDetatchSizeThreshold; 
 		cell.eggCellDetatchEnergyThreshold =   gene.eggCellDetatchEnergyThreshold;
+
+		// Jaw
+		// form gene (jaw settings) to cell (jaw settings)
+		cell.jawCellCannibalizeKin =      gene.jawCellCannibalizeKin;
+		cell.jawCellCannibalizeMother =   gene.jawCellCannibalizeMother;
+		cell.jawCellCannibalizeFather =   gene.jawCellCannibalizeFather;
+		cell.jawCellCannibalizeSiblings = gene.jawCellCannibalizeSiblings;
+		cell.jawCellCannibalizeChildren = gene.jawCellCannibalizeChildren;
 
 		return cell;
 	}

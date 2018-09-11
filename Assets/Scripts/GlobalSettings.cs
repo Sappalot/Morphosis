@@ -143,6 +143,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		//General -> build
 		public float cellBuildCost = 10f; //Energy Cost to build cell, J (Newly built cell will have this energy at start of its life)
+		public float cellNewlyBuiltKeepFactor = 1f; //How much of the energy spent on cell that will fill up new cell built
 		public float cellBuildNeededRadius = 0.35f; //m | a new cell can be built only if there is an empty spot with this radius or more, at the build location (walls are excluded but should be included)
 		public float cellBuildMaxDistance = 1.5f; //m | All neighbours contributing to a new build must be closer than this distance, or new cell can't be built
 		public float cellRebuildCooldown = 40f; //s, before a cell which was killed/deleted can be rebuilt

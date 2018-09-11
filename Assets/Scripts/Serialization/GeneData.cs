@@ -11,5 +11,12 @@ public class GeneData {
 	public float eggCellDetatchSizeThreshold; //J 
 	public float eggCellDetatchEnergyThreshold; //J 
 
+	//Jaw
+	public bool jawCellCannibalizeKin;
+	public bool jawCellCannibalizeMother;
+	public bool jawCellCannibalizeFather;
+	public bool jawCellCannibalizeSiblings;
+	public bool jawCellCannibalizeChildren;
+
 	public ArrangementData[] arrangementData = new ArrangementData[3];
 }

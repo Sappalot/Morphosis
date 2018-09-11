@@ -84,9 +84,20 @@ public abstract class Cell : MonoBehaviour {
 
 	[HideInInspector]
 	public float eggCellDetatchEnergyThreshold; //part of max energy (* 100 to get  %) 
-	
-	//---- Egg only ^
 
+	//---- Egg only ^
+	//---- Jaw Only
+	[HideInInspector]
+	public bool jawCellCannibalizeKin;
+	[HideInInspector]
+	public bool jawCellCannibalizeMother;
+	[HideInInspector]
+	public bool jawCellCannibalizeFather;
+	[HideInInspector]
+	public bool jawCellCannibalizeSiblings;
+	[HideInInspector]
+	public bool jawCellCannibalizeChildren;
+	//---- Jaw Only ^
 	//---- Origin only
 	[HideInInspector]
 	public ChildDetatchModeEnum originDetatchMode;
@@ -1135,10 +1146,17 @@ public abstract class Cell : MonoBehaviour {
 		cellData.energy = energy;
 
 		//Egg
-		cellData.eggCellFertilizeThreshold = eggCellFertilizeThreshold;
-		cellData.eggCellDetatchMode = eggCellDetatchMode;
-		cellData.eggCellDetatchSizeThreshold = eggCellDetatchSizeThreshold;
+		cellData.eggCellFertilizeThreshold =     eggCellFertilizeThreshold;
+		cellData.eggCellDetatchMode =            eggCellDetatchMode;
+		cellData.eggCellDetatchSizeThreshold =   eggCellDetatchSizeThreshold;
 		cellData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
+
+		// Jaw
+		cellData.jawCellCannibalizeKin =      jawCellCannibalizeKin;
+		cellData.jawCellCannibalizeMother =   jawCellCannibalizeMother;
+		cellData.jawCellCannibalizeFather =   jawCellCannibalizeFather;
+		cellData.jawCellCannibalizeSiblings = jawCellCannibalizeSiblings;
+		cellData.jawCellCannibalizeChildren = jawCellCannibalizeChildren;
 
 		// Origin
 		cellData.originDetatchMode = originDetatchMode;
@@ -1187,6 +1205,13 @@ public abstract class Cell : MonoBehaviour {
 		} else {
 			eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold;
 		}
+
+		// Jaw
+		jawCellCannibalizeKin =      cellData.jawCellCannibalizeKin;
+		jawCellCannibalizeMother =   cellData.jawCellCannibalizeMother;
+		jawCellCannibalizeFather =   cellData.jawCellCannibalizeFather;
+		jawCellCannibalizeSiblings = cellData.jawCellCannibalizeSiblings;
+		jawCellCannibalizeChildren = cellData.jawCellCannibalizeChildren;
 
 		// Origin
 		originDetatchMode = cellData.originDetatchMode;

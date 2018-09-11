@@ -62,16 +62,28 @@ public class JawCell : Cell {
 		Cell prayCell = other.GetComponent<Cell>();
 
 		if (prayCell != null && prayCell.creature != creature) {
-			// dont eat mother, grandma is OK (what about other siblings and cousins in the same cluster?)
-			if (creature.HasMotherAlive() && creature.GetMotherAlive().id == prayCell.creature.id) {
+
+			Creature pray = prayCell.creature;
+			// spare mother
+			if (!jawCellCannibalizeMother && creature.HasMotherAlive() && creature.GetMotherAlive().id == pray.id) {
 				return;
 			}
-			// don't eat children, grandchildren is OK (what about other siblings and cousins in the same cluster?)
-			foreach (Creature child in creature.GetChildrenAlive()) { //Note: all references in children are not updated at this point
-				if (prayCell.creature == child) {
-					return;
+
+			// spare siblings
+			if (!jawCellCannibalizeSiblings && creature.HasMotherDeadOrAlive() && pray.HasMotherDeadOrAlive() && creature.GetMotherIdDeadOrAlive() == pray.GetMotherIdDeadOrAlive()) {
+				return;
+			}
+
+			// spare children
+			if (!jawCellCannibalizeChildren) {
+				foreach (Creature child in creature.GetChildrenAlive()) { //Note: all references in children are not updated at this point
+					if (pray == child) {
+						return;
+					}
 				}
 			}
+
+			//TODO: spare Kin and father s well
 
 			//Add this one to list of prays to add at update
 			PairPredatorPray(this, prayCell);
@@ -84,7 +96,7 @@ public class JawCell : Cell {
 
 	//Called from cell mouth
 	public void TriggerExit(Collider2D other) {
-		if (other.gameObject.layer == 2) { //dont trigger other's mouth colliders, only on cells
+		if (other.gameObject.layer == 2) { //don't trigger other's mouth colliders, only on cells
 			return;
 		}
 

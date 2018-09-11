@@ -52,7 +52,7 @@ public class EggCellPanel : MetabolismCellPanel {
 
 		GenePanel.instance.selectedGene.eggCellFertilizeThreshold = fertilizeSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnEggChanged();
+			OnChanged();
 		}
 		MakeDirty();
 	}
@@ -64,7 +64,7 @@ public class EggCellPanel : MetabolismCellPanel {
 
 		GenePanel.instance.selectedGene.eggCellCanFertilizeWhenAttached = canFertilizeWhenAttachedToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnEggChanged();
+			OnChanged();
 		}
 		MakeDirty();
 	}
@@ -76,7 +76,7 @@ public class EggCellPanel : MetabolismCellPanel {
 
 		GenePanel.instance.selectedGene.eggCellDetatchMode = detatchSizeToggle.isOn ? ChildDetatchModeEnum.Size : ChildDetatchModeEnum.Energy;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnEggChanged();
+			OnChanged();
 		}
 		MakeDirty();
 	}
@@ -88,7 +88,7 @@ public class EggCellPanel : MetabolismCellPanel {
 
 		GenePanel.instance.selectedGene.eggCellDetatchSizeThreshold = detatchSizeSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnEggChanged();
+			OnChanged();
 		}
 		MakeDirty();
 	}
@@ -100,15 +100,9 @@ public class EggCellPanel : MetabolismCellPanel {
 
 		GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold = detatchEnergySlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnEggChanged();
+			OnChanged();
 		}
 		MakeDirty();
-	}
-
-	private void OnEggChanged() {
-		CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
-		CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
-		CreatureSelectionPanel.instance.soloSelected.generation = 1;
 	}
 
 	private void Update() {
@@ -137,31 +131,27 @@ public class EggCellPanel : MetabolismCellPanel {
 				detatchEnergySlider.interactable = false;
 
 			} else if (mode == PhenoGenoEnum.Genotype) {
-				bool unlocked = false;
-				if (CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome) {
-					unlocked = true;
-				}
 				fertilizeHeadingText.color = Color.black;
 
 				fertilizeSliderText.color = Color.black;
-				fertilizeSlider.interactable = unlocked;
+				fertilizeSlider.interactable = isUnlocked();
 
 				canFertilizeWhenAttachedText.color = Color.black;
-				canFertilizeWhenAttachedToggle.interactable = unlocked;
+				canFertilizeWhenAttachedToggle.interactable = isUnlocked();
 
 				fertilizeButtonText.color = Color.gray;
 
 				detatchHeadingText.color = Color.black;
 
-				detatchSizeToggle.interactable =   unlocked;
-				detatchEnergyToggle.interactable = unlocked;
+				detatchSizeToggle.interactable = isUnlocked();
+				detatchEnergyToggle.interactable = isUnlocked();
 
 				detatchSizeSliderTextPercentage.color = Color.black;
 				detatchSizeSliderTextCellCount.color = Color.black;
-				detatchSizeSlider.interactable = unlocked;
+				detatchSizeSlider.interactable = isUnlocked();
 
 				detatchEnergySliderText.color = Color.black;
-				detatchEnergySlider.interactable = unlocked;
+				detatchEnergySlider.interactable = isUnlocked();
 			}
 
 			if (GenePanel.instance.selectedGene != null) {

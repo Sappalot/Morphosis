@@ -1,12 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 	public GameObject circles;
-
-	// Gene panels
-	//TODO move inside cell (setting) panel
-	//public EggGenePanel eggGenePanel;
 
 	private bool isDirty = true;
 	public void MakeDirty() {
@@ -18,9 +13,6 @@ public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 
 	public ArrangementPanel arrangementPanelTemplate;
 	private ArrangementPanel[] arrangementPanels = new ArrangementPanel[3];
-
-	//Gene Settings
-	public Dropdown cellTypeDropdown;
 
 	override public void Init() {
 		RectTransform originalTransform = arrangementPanelTemplate.GetComponent<RectTransform>();
@@ -39,40 +31,6 @@ public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 		arrangementPanelTemplate.arrangementButtons.SetActive(false);
 	}
 
-	//----
-	public void OnCellTypeDropdownChanged() {
-		//bool trueChange = (int)GenePanel.instance.selectedGene.type != cellTypeDropdown.value;
-
-		//if (cellTypeDropdown.value == 0) {
-		//	GenePanel.instance.selectedGene.type = CellTypeEnum.Egg;
-		//} else if (cellTypeDropdown.value == 1) {
-		//	GenePanel.instance.selectedGene.type = CellTypeEnum.Fungal;
-		//} else if (cellTypeDropdown.value == 2) {
-		//	GenePanel.instance.selectedGene.type = CellTypeEnum.Jaw;
-		//} else if (cellTypeDropdown.value == 3) {
-		//	GenePanel.instance.selectedGene.type = CellTypeEnum.Leaf;
-		//} else if (cellTypeDropdown.value == 4) {
-		//	GenePanel.instance.selectedGene.type = CellTypeEnum.Muscle;
-		//} else if (cellTypeDropdown.value == 5) {
-		//	GenePanel.instance.selectedGene.type = CellTypeEnum.Root;
-		//} else if (cellTypeDropdown.value == 6) {
-		//	GenePanel.instance.selectedGene.type = CellTypeEnum.Shell;
-		//} else if (cellTypeDropdown.value == 7) {
-		//	GenePanel.instance.selectedGene.type = CellTypeEnum.Vein;
-		//}
-
-		//if (trueChange && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-		//	GenotypePanel.instance.MakeDirty();
-		//	GenomePanel.instance.MakeDirty();
-		//	if (CreatureSelectionPanel.instance.hasSoloSelected) {
-		//		CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
-		//		CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
-		//		CreatureSelectionPanel.instance.soloSelected.generation = 1;
-		//	}
-		//	isDirty = true;
-		//}
-	}
-
 	private ArrangementPanel arrangementPanelAskingForReference;
 	public void SetAskingForGeneReference(ArrangementPanel arrangementPanel) {
 		arrangementPanelAskingForReference = arrangementPanel;
@@ -83,7 +41,6 @@ public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 
 		MakeDirty();
 		GenomePanel.instance.MakeDirty();
-		//GenomePanel.instance.MakeScrollDirty();
 		CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 	}
 
@@ -91,8 +48,6 @@ public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update GenePanel");
-
-			//eggGenePanel.gameObject.SetActive(false);
 
 			//Nothing to represent
 			if (GenePanel.instance.selectedGene == null) {
@@ -104,17 +59,9 @@ public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 
 				circles.SetActive(false);
 
-				//cellTypeDropdown.gameObject.SetActive(false);
 				isDirty = false;
 				return;
 			}
-
-			//allow interaction
-			if (CreatureSelectionPanel.instance.hasSoloSelected) {
-				//cellTypeDropdown.interactable = CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
-				//eggGenePanel.SetInteractable(CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome);
-			}
-
 
 			circles.SetActive(true);
 
@@ -129,32 +76,6 @@ public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 				referenceGraphics[cardinalIndex].reference = GenePanel.instance.selectedGene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
 			}
 			centerReferenceGraphics.reference = new GeneReference(GenePanel.instance.selectedGene, GenotypePanel.instance.viewedFlipSide);
-
-			//Gene Settings
-			//cellTypeDropdown.gameObject.SetActive(true);
-
-
-			//Kill below
-			if (GenePanel.instance.selectedGene.type == CellTypeEnum.Egg) {
-				cellTypeDropdown.value = 0;
-				//eggGenePanel.gameObject.SetActive(true);
-				//eggGenePanel.MakeDirty();
-				//eggGenePanel.MakeSlidersDirty();
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Fungal) {
-				cellTypeDropdown.value = 1;
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Jaw) {
-				cellTypeDropdown.value = 2;
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Leaf) {
-				cellTypeDropdown.value = 3;
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Muscle) {
-				cellTypeDropdown.value = 4;
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Root) {
-				cellTypeDropdown.value = 5;
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Shell) {
-				cellTypeDropdown.value = 6;
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Vein) {
-				cellTypeDropdown.value = 7;
-			}
 
 			isDirty = false;
 		}
