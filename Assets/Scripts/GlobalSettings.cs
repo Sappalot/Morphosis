@@ -24,13 +24,28 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float eggCellCanFertilizeWhenAttachedChange = 10f;
 
 		public float eggCellDetatchModeLeave = 1000f;
-		public float eggCellDetatchModeChange = 5f;
+		public float eggCellDetatchModeChange = 10f;
 
 		public float eggCellDetatchSizeThresholdLeave = 1000f;
 		public float eggCellDetatchSizeThresholdRandom = 10f;
 
 		public float eggCellDetatchEnergyThresholdLeave = 1000f;
 		public float eggCellDetatchEnergyThresholdRandom = 10f;
+
+		public float jawCellCannibalizeKinLeave = 1000f;
+		public float jawCellCannibalizeKinChange = 10f;
+
+		public float jawCellCannibalizeMotherLeave = 1000f;
+		public float jawCellCannibalizeMotherChange = 10f;
+
+		public float jawCellCannibalizeFatherLeave = 1000f;
+		public float jawCellCannibalizeFatherChange = 10f;
+
+		public float jawCellCannibalizeSiblingsLeave = 1000f;
+		public float jawCellCannibalizeSiblingsChange = 10f;
+
+		public float jawCellCannibalizeChildrenLeave = 1000f;
+		public float jawCellCannibalizeChildrenChange = 10f;
 
 		public float isEnabledLeave = 100f;
 		public float isEnabledToggle = 1f;

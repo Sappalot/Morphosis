@@ -84,7 +84,30 @@ public class Gene {
 		// ^ Egg ^
 
 		// Jaw
+		mut = Random.Range(0, gs.mutation.jawCellCannibalizeKinLeave + gs.mutation.jawCellCannibalizeKinChange * strength);
+		if (mut < gs.mutation.jawCellCannibalizeKinChange * strength) {
+			jawCellCannibalizeKin = !jawCellCannibalizeKin;
+		}
 
+		mut = Random.Range(0, gs.mutation.jawCellCannibalizeMotherLeave + gs.mutation.jawCellCannibalizeMotherChange * strength);
+		if (mut < gs.mutation.jawCellCannibalizeMotherChange * strength) {
+			jawCellCannibalizeMother = !jawCellCannibalizeMother;
+		}
+
+		mut = Random.Range(0, gs.mutation.jawCellCannibalizeFatherLeave + gs.mutation.jawCellCannibalizeFatherChange * strength);
+		if (mut < gs.mutation.jawCellCannibalizeFatherChange * strength) {
+			jawCellCannibalizeFather = !jawCellCannibalizeFather;
+		}
+
+		mut = Random.Range(0, gs.mutation.jawCellCannibalizeSiblingsLeave + gs.mutation.jawCellCannibalizeSiblingsChange * strength);
+		if (mut < gs.mutation.jawCellCannibalizeSiblingsChange * strength) {
+			jawCellCannibalizeSiblings = !jawCellCannibalizeSiblings;
+		}
+
+		mut = Random.Range(0, gs.mutation.jawCellCannibalizeChildrenLeave + gs.mutation.jawCellCannibalizeChildrenChange * strength);
+		if (mut < gs.mutation.jawCellCannibalizeChildrenChange * strength) {
+			jawCellCannibalizeChildren = !jawCellCannibalizeChildren;
+		}
 		// ^ Jaw ^
 
 		//arrangements
