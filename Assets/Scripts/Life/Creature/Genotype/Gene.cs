@@ -17,6 +17,11 @@ public class Gene {
 	public bool jawCellCannibalizeChildren;
 	// ^ Jaw Cell ^
 
+	// Origin
+	public int originPulsePeriodTicks = 40;
+	// ^ Origin ^
+
+
 	private CellTypeEnum m_type = CellTypeEnum.Leaf;
 	public CellTypeEnum type {
 		get {
@@ -34,6 +39,12 @@ public class Gene {
 		}
 	}
 	public int index;
+	public bool isOrigin {
+		get {
+			return index == 0;
+		}
+	}
+
 
 	public readonly Arrangement[] arrangements = new Arrangement[3];
 
@@ -110,6 +121,8 @@ public class Gene {
 		}
 		// ^ Jaw ^
 
+		// TODO: Origin
+
 		//arrangements
 		arrangements[0].Mutate(strength);
 		arrangements[1].Mutate(strength);
@@ -175,6 +188,9 @@ public class Gene {
 		geneData.jawCellCannibalizeSiblings = jawCellCannibalizeSiblings;
 		geneData.jawCellCannibalizeChildren = jawCellCannibalizeChildren;
 
+		// Origin
+		geneData.originPulsePeriodTicks =     originPulsePeriodTicks;
+
 		return geneData;
 	}
 
@@ -211,6 +227,9 @@ public class Gene {
 		jawCellCannibalizeFather =   geneData.jawCellCannibalizeFather;
 		jawCellCannibalizeSiblings = geneData.jawCellCannibalizeSiblings;
 		jawCellCannibalizeChildren = geneData.jawCellCannibalizeChildren;
+
+		// Origin
+		originPulsePeriodTicks = geneData.originPulsePeriodTicks;
 
 		arrangements[0].ApplyData(geneData.arrangementData[0]);
 		arrangements[1].ApplyData(geneData.arrangementData[1]);

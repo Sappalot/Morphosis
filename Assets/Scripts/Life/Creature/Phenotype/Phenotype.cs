@@ -934,6 +934,9 @@ public class Phenotype : MonoBehaviour {
 		cell.jawCellCannibalizeSiblings = gene.jawCellCannibalizeSiblings;
 		cell.jawCellCannibalizeChildren = gene.jawCellCannibalizeChildren;
 
+		// Origin
+		cell.originPulsePeriodTicks =     gene.originPulsePeriodTicks;
+
 		return cell;
 	}
 

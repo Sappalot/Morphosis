@@ -18,5 +18,6 @@ public class GeneData {
 	public bool jawCellCannibalizeSiblings;
 	public bool jawCellCannibalizeChildren;
 
+	public int originPulsePeriodTicks; // ticks / complete wave
 	public ArrangementData[] arrangementData = new ArrangementData[3];
 }

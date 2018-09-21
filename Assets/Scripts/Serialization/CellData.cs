@@ -15,6 +15,7 @@ public class CellData {
 	public Vector2 velocity;
 	public float timeOffset; //To be removed
 	public float lastTime; //Last time muscle cell was updated
+	public float energy;
 
 	// Egg
 	public float eggCellFertilizeThreshold;
@@ -33,6 +34,7 @@ public class CellData {
 	public ChildDetatchModeEnum originDetatchMode;
 	public float originDetatchSizeThreshold;
 	public float originDetatchEnergyThreshold;
-
-	public float energy;
+	public int originPulseTick;
+	public int originPulsePeriodTicks;
+	
 }

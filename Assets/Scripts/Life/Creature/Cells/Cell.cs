@@ -108,6 +108,7 @@ public abstract class Cell : MonoBehaviour {
 											   //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
 	[HideInInspector]
 	public int originPulseTick = 0;
+	public int originPulsePeriodTicks;
 	//--- Origin only ^
 
 
@@ -352,7 +353,7 @@ public abstract class Cell : MonoBehaviour {
 	//Origin only
 	public void UpdatePulse() {
 		originPulseTick++;
-		if (originPulseTick >= 20) { // 1 sec
+		if (originPulseTick >= originPulsePeriodTicks) {
 			originPulseTick = 0;
 		}
 	}
@@ -1125,7 +1126,6 @@ public abstract class Cell : MonoBehaviour {
 
 		originPulseTick = 0;
 
-
 		if (northSpring != null) {
 			northSpring.distance = 1f;
 		}
@@ -1174,9 +1174,11 @@ public abstract class Cell : MonoBehaviour {
 		cellData.jawCellCannibalizeChildren = jawCellCannibalizeChildren;
 
 		// Origin
-		cellData.originDetatchMode = originDetatchMode;
-		cellData.originDetatchSizeThreshold = originDetatchSizeThreshold;
+		cellData.originDetatchMode =            originDetatchMode;
+		cellData.originDetatchSizeThreshold =   originDetatchSizeThreshold;
 		cellData.originDetatchEnergyThreshold = originDetatchEnergyThreshold;
+		cellData.originPulseTick = originPulseTick;
+		cellData.originPulsePeriodTicks =       originPulsePeriodTicks;
 
 		return cellData;
 	}
@@ -1244,6 +1246,9 @@ public abstract class Cell : MonoBehaviour {
 		} else {
 			originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold;
 		}
+
+		originPulseTick =        cellData.originPulseTick;
+		originPulsePeriodTicks = cellData.originPulsePeriodTicks;
 
 		this.creature = creature;
 	}

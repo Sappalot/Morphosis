@@ -148,6 +148,10 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float veinCellEffectCost = 0.1f; //W
 												//           veinCellEffect                       0.0 W
 
+		//Origin
+		public float originPulseFrequenzyMin = 0.05f;
+		public float originPulseFrequenzyMax = 2f;
+
 		//Veins
 		public float veinFluxEffectWeak = 0.05f; //W
 		public float veinFluxEffectMedium = 0.25f; //W
