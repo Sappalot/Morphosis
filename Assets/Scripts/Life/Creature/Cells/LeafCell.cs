@@ -53,13 +53,8 @@ public class LeafCell : Cell {
 	}
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		if (GlobalPanel.instance.physicsLeaf.isOn) {
-			effectProductionInternalDown = GlobalSettings.instance.phenotype.leafCellEffectCost; //* GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount); //costy!!
-																					   ////-- test
-																					   //effectProductionInternal = 0.5f * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.clusterCellCount);
-																					   //base.UpdateCellFunction(deltaTicks, worldTicks);
-																					   //return;
-																					   ////--
+		if (PhenotypePhysicsPanel.instance.functionLeaf.isOn) {
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.leafCellEffectCost;
 			bool debugRender = PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure && CreatureSelectionPanel.instance.selectedCell == this;
 
 			float startEnergy = 2f; //matters only graphically during debug

@@ -1,7 +1,7 @@
 ﻿public class RootCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		if (GlobalPanel.instance.physicsRoot.isOn) {
+		if (PhenotypePhysicsPanel.instance.functionRoot.isOn) {
 			effectProductionInternalDown = GlobalSettings.instance.phenotype.rootCellEffectCost;
 			effectProductionInternalUp = 0f;
 

@@ -107,7 +107,7 @@ public class PidCircle : MonoBehaviour {
 		fpsErrorD = 0f;
 
 		UpdateCircle();
-		GlobalPanel.instance.UpdateSliderAndToggleValue(); //sets it to the fpsGoal of this class
+		PhenotypePhysicsPanel.instance.UpdateSliderAndToggleValue(); //sets it to the fpsGoal of this class
 	}
 
 	// Load / Sava
@@ -138,6 +138,6 @@ public class PidCircle : MonoBehaviour {
 		fpsErrorD = pidCircleData.fpsErrorD;
 
 		UpdateCircle();
-		GlobalPanel.instance.UpdateSliderAndToggleValue();
+		PhenotypePhysicsPanel.instance.UpdateSliderAndToggleValue();
 	}
 }

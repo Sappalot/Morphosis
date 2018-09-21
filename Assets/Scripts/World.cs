@@ -48,7 +48,7 @@ public class World : MonoSingleton<World> {
 			Time.timeScale = 1f;
 		}
 
-		if (PhenotypeGraphicsPanel.instance.graphicsCreatures.isOn) {
+		if (GlobalPanel.instance.graphicsCreaturesToggle.isOn) {
 			life.UpdateGraphics();
 		}
 	}
@@ -61,10 +61,10 @@ public class World : MonoSingleton<World> {
 		life.UpdateStructure();
 		
 		life.UpdatePhysics(worldTicks);
-		if (GlobalPanel.instance.physicsTeleport.isOn) {
+		if (PhenotypePhysicsPanel.instance.teleport.isOn) {
 			Portals.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
 		}
-		if (GlobalPanel.instance.physicsKillFugitive.isOn) {
+		if (PhenotypePhysicsPanel.instance.killFugitive.isOn) {
 			PrisonWall.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
 		}
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);

@@ -4,7 +4,6 @@ using UnityEngine.UI;
 public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public EnergyBar energyBar;
 
-	public Text creatureAge;
 	//public Text creatureSize;
 	public SizeBar sizeBar;
 	public Text creatureSpeed;
@@ -75,8 +74,6 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			}
 
 			if (solo == null || !solo.phenotype.isAlive) {
-				creatureAge.text = "Age:";
-				//creatureSize.text = "Size: ";
 				energyBar.isOn = false;
 				sizeBar.isOn = false;
 				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
@@ -87,15 +84,11 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 					creatureEffect.text = "Flux Effect/Cell: ";
 				}
 
-				//creatureEffect.text = "P/cell avg.:";
 				creatureSpeed.text = "Speed:";
 
 				isDirty = false;
 				return;
 			}
-
-			creatureAge.text = "Age: " + TimeUtil.GetTimeString((ulong)(solo.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime));
-			//creatureSize.text = "Size: " + solo.cellCount + " (" + solo.cellsCountFullyGrown + ")";
 
 			energyBar.isOn = true;
 			energyBar.fullness = solo.phenotype.energyFullness;

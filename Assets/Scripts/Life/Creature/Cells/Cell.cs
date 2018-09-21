@@ -45,7 +45,7 @@ public abstract class Cell : MonoBehaviour {
 	public float radius = 0.5f;
 
 	[HideInInspector]
-	public float timeOffset;
+	public float timeOffset; // unused
 
 	//  The direction the cell is facing in creature space
 	[HideInInspector]
@@ -101,13 +101,13 @@ public abstract class Cell : MonoBehaviour {
 	//---- Origin only
 	[HideInInspector]
 	public ChildDetatchModeEnum originDetatchMode;
-
 	[HideInInspector]
 	public float originDetatchSizeThreshold;
-
 	[HideInInspector]
 	public float originDetatchEnergyThreshold; // J ==> part of max energy (* 100 to get  %), If we have more energy than this in the origin cell and it is attached with mother, it will separate
 											   //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
+	[HideInInspector]
+	public int originPulseTick = 0;
 	//--- Origin only ^
 
 
@@ -344,8 +344,17 @@ public abstract class Cell : MonoBehaviour {
 		didUpdateEnergyThisFrame = 2;
 	}
 
+	//Note function only called if extended cell type is enabled
 	virtual public void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		didUpdateFunctionThisFrame = 5; // Just for update visuals
+	}
+
+	//Origin only
+	public void UpdatePulse() {
+		originPulseTick++;
+		if (originPulseTick >= 20) { // 1 sec
+			originPulseTick = 0;
+		}
 	}
 
 	virtual public void UpdateRadius(ulong fixedTime) { }
@@ -1046,6 +1055,9 @@ public abstract class Cell : MonoBehaviour {
 			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.individual) {
 				filledCircleSprite.color = creature.phenotype.individualColor;
 			}
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.pulse) {
+				filledCircleSprite.color = isOrigin && originPulseTick == 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
+			}
 		} else {
 			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
 		}
@@ -1110,6 +1122,9 @@ public abstract class Cell : MonoBehaviour {
 
 		radius = 0.5f;
 		transform.localScale = new Vector3(1f, 1f, 1f);
+
+		originPulseTick = 0;
+
 
 		if (northSpring != null) {
 			northSpring.distance = 1f;

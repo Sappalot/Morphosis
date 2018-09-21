@@ -1,7 +1,7 @@
 ﻿public class VeinCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		if (GlobalPanel.instance.physicsVein.isOn) {
+		if (PhenotypePhysicsPanel.instance.functionVein.isOn) {
 			effectProductionInternalDown = GlobalSettings.instance.phenotype.veinCellEffectCost;
 			effectProductionInternalUp = 0f;
 

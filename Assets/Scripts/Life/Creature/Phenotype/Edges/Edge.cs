@@ -90,7 +90,7 @@ public class Edge : MonoBehaviour {
 
 	public void UpdateGraphics() {
 		//TODO: If draw wings && inside frustum
-		if (PhenotypeGraphicsPanel.instance.graphicsMuscleForces.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+		if (GlobalPanel.instance.graphicsMuscleForcesToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			if (frontCell != null && backCell != null) {
 
 				//mainArrow.SetActive(true);

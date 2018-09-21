@@ -11,6 +11,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	public Text selectedCreatureText;
 	public Text creatureCreatedText;
+	public Text creatureAgeText;
 
 	//right side
 	public Text moveButtonText;
@@ -603,6 +604,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			if (selection.Count == 0) {
 				selectedCreatureText.text = "";
 				creatureCreatedText.text = "";
+				creatureAgeText.text = "";
 
 				//right side
 				moveButtonText.color = Color.gray;
@@ -630,9 +632,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 			} else if (selection.Count == 1) {
 				selectedCreatureText.text = soloSelected.id; // soloSelected.nickname;
-															 //motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
+				//motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
 
 				creatureCreatedText.text = soloSelected.creation.ToString() + (soloSelected.creation != CreatureCreationEnum.Forged ? ", Generation: " + soloSelected.generation : "");
+				creatureAgeText.text = "Age: " + TimeUtil.GetTimeString((ulong)(soloSelected.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime));
+
 				//right side
 				moveButtonText.color = Color.black;
 				rotateButtonText.color = Color.black;
@@ -670,6 +674,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			} else {
 				selectedCreatureText.text = selection.Count + " Creatures";
 				creatureCreatedText.text = "-";
+				creatureAgeText.text = "-";
 
 				//right side
 				moveButtonText.color = Color.black;

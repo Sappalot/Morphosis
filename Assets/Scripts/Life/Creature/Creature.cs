@@ -661,13 +661,6 @@ public class Creature : MonoBehaviour {
 		return phenotype.UpdateKillWeakCells(worldTicks);
 	}
 
-	public void SetFluxEffectToZero() {
-		foreach (Cell cell in phenotype.cellList) {
-			cell.effectFluxFromSelf = 0f;
-			cell.effectFluxToSelf = 0f;
-		}
-	}
-	
 	//Returns true if creature grew
 	public void UpdatePhysics(ulong worldTicks) {
 		//time
@@ -681,7 +674,7 @@ public class Creature : MonoBehaviour {
 		int didGrowCount = 0;
 
 		// Execute detatch
-		if (GlobalPanel.instance.physicsDetatch.isOn && detatch) { // At this point we are sure that our origin cell had time to get to know its neighbours (including mother placenta)
+		if (PhenotypePhysicsPanel.instance.detatch.isOn && detatch) { // At this point we are sure that our origin cell had time to get to know its neighbours (including mother placenta)
 			DetatchFromMother(true, true);
 
 			PhenotypePanel.instance.MakeDirty();
@@ -691,7 +684,7 @@ public class Creature : MonoBehaviour {
 		}
 
 		if (growTicks == 0) {
-			if (GlobalPanel.instance.physicsGrow.isOn) {
+			if (PhenotypePhysicsPanel.instance.grow.isOn) {
 				NoGrowthReason reason;
 				didGrowCount = phenotype.TryGrow(this, false, 1, false, true, worldTicks, false, out reason);
 				if (didGrowCount > 0) {
@@ -710,37 +703,64 @@ public class Creature : MonoBehaviour {
 			//Debug.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
 
 			// Detatch child from mother
-			if (GlobalPanel.instance.physicsDetatch.isOn && IsAttachedToMotherAlive()) {
+			if (PhenotypePhysicsPanel.instance.detatch.isOn && IsAttachedToMotherAlive()) {
 				if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.originCell.originDetatchSizeThreshold < 1f && phenotype.cellCount >= Mathf.Clamp(Mathf.RoundToInt(phenotype.originCell.originDetatchSizeThreshold * genotype.geneCellCount), 1, genotype.geneCellCount)) ||
 					(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energyFullness >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchAfterCompletePersistance)) {
-
-					//) {
 
 					detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
 				}
 			}
 		}
 
+		//// Execute pending Egg Fertilize
+		//// If Egg was disabled there is no point checking here either
+		//if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
+		//	Cell fertilizeCell = null;
+		//	foreach (Cell c in phenotype.cellList) {
+		//		if (c is EggCell) {
+		//			EggCell eggCell = c as EggCell;
+		//			if (eggCell.shouldFertilize == 0) {
+		//				fertilizeCell = eggCell;
+		//				eggCell.shouldFertilize = -1;
+		//				break;
+		//			}
+		//			//else if (eggCell.shouldFertilize > 0) {
+		//			//	eggCell.shouldFertilize--;
+		//			//}
+		//		}
+		//	}
+		//	if (fertilizeCell != null) {
+		//		World.instance.life.FertilizeCreature(fertilizeCell, true, worldTicks, false);
+		//		PhenotypePanel.instance.MakeDirty();
+		//		CellPanel.instance.MakeDirty();
+		//	}
+		//}
+	}
+
+	public void UpdateFertilize(ulong worldTicks) {
 		// Execute pending Egg Fertilize
 		// If Egg was disabled there is no point checking here either
-		if (GlobalPanel.instance.physicsEgg.isOn) {
-			Cell fertilizeCell = null;
-			foreach (Cell c in phenotype.cellList) {
-				if (c is EggCell) {
-					EggCell eggCell = c as EggCell;
-					if (eggCell.shouldFertilize == 0) {
-						fertilizeCell = eggCell;
-						eggCell.shouldFertilize = -1;
-						break;
-					} else if (eggCell.shouldFertilize > 0) {
-						eggCell.shouldFertilize--;
+		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
+			if (phenotype.originCell.originPulseTick == 0) { // Allways fertilize at start of pulse
+				Cell fertilizeCell = null;
+				foreach (Cell c in phenotype.cellList) {
+					if (c is EggCell) {
+						EggCell eggCell = c as EggCell;
+						if (eggCell.shouldFertilize == 0) {
+							fertilizeCell = eggCell;
+							eggCell.shouldFertilize = -1;
+							break;
+						}
+						//else if (eggCell.shouldFertilize > 0) {
+						//	eggCell.shouldFertilize--;
+						//}
 					}
 				}
-			}
-			if (fertilizeCell != null) {
-				World.instance.life.FertilizeCreature(fertilizeCell, true, worldTicks, false);
-				PhenotypePanel.instance.MakeDirty();
-				CellPanel.instance.MakeDirty();
+				if (fertilizeCell != null) {
+					World.instance.life.FertilizeCreature(fertilizeCell, true, worldTicks, false);
+					PhenotypePanel.instance.MakeDirty();
+					CellPanel.instance.MakeDirty();
+				}
 			}
 		}
 	}

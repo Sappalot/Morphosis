@@ -3,12 +3,14 @@
 public class EggCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		if (GlobalPanel.instance.physicsEgg.isOn) {
+		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
 			effectProductionInternalUp = 0f;
 			effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCellEffectCost;
 
-			if (energyFullness > eggCellFertilizeThreshold && (eggCellCanFertilizeWhenAttached || !creature.phenotype.hasPlacentaSpringsToMother) && shouldFertilize == -1) {
-				shouldFertilize = 0; // Random.Range(0, 60);
+			if (creature.phenotype.originCell.originPulseTick == 0) {
+				if (energyFullness > eggCellFertilizeThreshold && (eggCellCanFertilizeWhenAttached || !creature.phenotype.hasPlacentaSpringsToMother) && shouldFertilize == -1) {
+					shouldFertilize = 0; // Random.Range(0, 60);
+				}
 			}
 
 			base.UpdateCellFunction(deltaTicks, worldTicks);

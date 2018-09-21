@@ -142,7 +142,6 @@ public class Phenotype : MonoBehaviour {
 	[HideInInspector]
 	public float timeOffset;
 
-
 	[HideInInspector]
 	public bool isGrabbed { get; private set; }
 	[HideInInspector]
@@ -254,7 +253,7 @@ public class Phenotype : MonoBehaviour {
 		return TryGrow(creature, forceGrow, creature.genotype.geneCellCount, true, false, 0, true, out reason);
 	}
 
-	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects, ulong worldTicks, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
+	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects, ulong worldTick, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
 		noGrowthReason = new NoGrowthReason();
 		
 		int growCellCount = 0;
@@ -306,7 +305,7 @@ public class Phenotype : MonoBehaviour {
 
 				// test if long enough time has passed since cell was killed
 				if (!enableInstantRegrowth && cellMap.HasKilledTimeStamp(geneCell.mapPosition)) {
-					if (worldTicks < cellMap.KilledTimeStamp(geneCell.mapPosition) + GlobalSettings.instance.phenotype.cellRebuildCooldown / Time.fixedDeltaTime) {
+					if (worldTick < cellMap.KilledTimeStamp(geneCell.mapPosition) + GlobalSettings.instance.phenotype.cellRebuildCooldown / Time.fixedDeltaTime) {
 						noGrowthReason.respawnTimeBound = true;
 						continue;
 					} else {
@@ -371,8 +370,10 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 		if (growCellCount > 0) {
-			if (!IsSliding((float)worldTicks)) {
-				SetTrueCellDrag(); //make slow
+			if (IsSliding((float)worldTick)) {
+				SetCellDragSlide();
+			} else {
+				SetCellDragNormal();
 			}
 			//if (playEffects) {
 			//	Audio.instance.CellBirth();
@@ -661,14 +662,14 @@ public class Phenotype : MonoBehaviour {
 	//This is the one and only final place where cell is removed
 	// fixedTime = 0 ==> no mar will be set to when this cell can be regrown again
 	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects, ulong worldTicks) {
-		if (playEffects && (GlobalPanel.instance.soundCreatures.isOn || (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypeGraphicsPanel.instance.graphicsEffects.isOn))) {
+		if (playEffects && (GlobalPanel.instance.soundCreatures.isOn || (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.graphicsEffectsToggle.isOn))) {
 			bool isObserved = CameraUtils.IsObservedLazy(deleteCell.position, GlobalSettings.instance.orthoMaxHorizonFx);
 
 			if (GlobalPanel.instance.soundCreatures.isOn && isObserved) {
 				Audio.instance.CellDeath(CameraUtils.GetEffectStrengthLazy());
 			}
 		
-			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypeGraphicsPanel.instance.graphicsEffects.isOn && isObserved) {
+			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.graphicsEffectsToggle.isOn && isObserved) {
 				SpawnCellDeathEffect(deleteCell.position, Color.red);
 				SpawnCellDeleteBloodEffect(deleteCell);
 			}
@@ -778,13 +779,13 @@ public class Phenotype : MonoBehaviour {
 				if (GlobalPanel.instance.soundCreatures.isOn) {
 					Audio.instance.CreatureDetatch(CameraUtils.GetEffectStrengthLazy());
 				}
-				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypeGraphicsPanel.instance.graphicsEffects.isOn) {
+				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
 					Cell originCell = creature.phenotype.originCell;
 					SpawnCellDetatchBloodEffect(originCell);
 				}
 			}
 
-			if (playEffects && PhenotypeGraphicsPanel.instance.graphicsEffects.isOn) {
+			if (playEffects && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
 				float angle = originCell.heading - 90f;
 				EffectPlayer.instance.Play(EffectEnum.CreatureDetatch, originCell.position, angle, CameraUtils.GetEffectScaleLazy());
 			}
@@ -856,8 +857,13 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	private ulong kickTickStamp = 0;
-	
-	private void SetTrueCellDrag() {
+	private ulong slideDurationTicks = 10;
+
+	public bool IsSliding(float worldTicks) {
+		return kickTickStamp > 0 && worldTicks < kickTickStamp + slideDurationTicks;
+	}
+
+	private void SetCellDragNormal() {
 		foreach (Cell cell in cellList) {
 			if (cell.GetCellType() == CellTypeEnum.Leaf) {
 				cell.theRigidBody.drag = 0.15f;
@@ -867,13 +873,9 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public bool IsSliding(float worldTicks) {
-		return kickTickStamp > 0 && worldTicks < kickTickStamp + (ulong)(GlobalSettings.instance.phenotype.detatchSlideDuration / Time.fixedDeltaTime);
-	}
-
-	private void SetSlideCellDrag() {
+	private void SetCellDragSlide() {
 		foreach (Cell cell in cellList) {
-			cell.theRigidBody.drag = 0.2f;
+			cell.theRigidBody.drag = 0.5f;
 		}
 	}
 
@@ -1250,7 +1252,6 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		leafCellTick++;
-		//if (leafCellTick >= (int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed)) {
 		if (leafCellTick >= (int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed)) {
 			leafCellTick = 0;
 		}
@@ -1275,23 +1276,13 @@ public class Phenotype : MonoBehaviour {
 			veinCellTick = 0;
 		}
 
-
 		veinTick++;
 		if (veinTick >= GlobalSettings.instance.quality.veinTickPeriod) {
 			veinTick = 0;
 		}
 		//time ^
-
-		// Detatchment Kick
-		if (detatchmentKick != null) {
-			SetSlideCellDrag();
-			ApplyDetatchKick();
-			kickTickStamp = worldTick;
-		}
-		if (kickTickStamp > 0 && worldTick > kickTickStamp + (ulong)(GlobalSettings.instance.phenotype.detatchSlideDuration / Time.fixedDeltaTime)) {
-			SetTrueCellDrag(); //make slow
-			kickTickStamp = 0;
-		}
+		TryInitiateDetatchemntSlide(creature, worldTick);
+		TryFinalizeDetatchmentSlide(creature, worldTick);
 
 		// Whole body
 		Vector2 velocitySum = new Vector3();
@@ -1303,7 +1294,7 @@ public class Phenotype : MonoBehaviour {
 
 		// We are applying force only if mussceles are set to contract
 		// Edges, let edge-wings apply proper forces to neighbouring cells, caused by muscle edges swiming through ether
-		if (GlobalPanel.instance.physicsMuscle.isOn) {
+		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
 			edges.UpdatePhysics(velocity, creature);
 		}
 
@@ -1311,10 +1302,15 @@ public class Phenotype : MonoBehaviour {
 			cellList[index].UpdatePhysics(); //rotation
 		}
 
+		if (!IsSliding(worldTick)) {
+			originCell.UpdatePulse(); // only origin
+		}
+
 		//Metabolism
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
-			if (eggCellTick == 0 && cell.GetCellType() == CellTypeEnum.Egg) {
+
+			if (cell.GetCellType() == CellTypeEnum.Egg) {
 				cell.UpdateCellFunction(GlobalSettings.instance.quality.eggCellTickPeriod, worldTick);
 			} else if (fungalCellTick == 0 && cell.GetCellType() == CellTypeEnum.Fungal) {
 				cell.UpdateCellFunction(GlobalSettings.instance.quality.fungalCellTickPeriod, worldTick);
@@ -1334,7 +1330,7 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		if (veinTick == 0) {
-			if (GlobalPanel.instance.physicsFlux.isOn) {
+			if (PhenotypePhysicsPanel.instance.flux.isOn) {
 				veins.UpdateEffect(GlobalSettings.instance.quality.veinTickPeriod);
 				veins.UpdateCellsPlacentaEffects();
 			}
@@ -1351,22 +1347,31 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public void UpdateFluxEffect() {
-		if (GlobalPanel.instance.physicsFlux.isOn) {
-			veins.UpdateEffect(1);
-		}
-	}
-
-	public void UpdateEnergy() {
-		for (int index = 0; index < cellList.Count; index++) {
-			Cell cell = cellList[index];
-			cell.UpdateEnergy(1);
-		}
-	}
-
 	public void UpdateRotation() {
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].UpdatePhysics();
+		}
+	}
+
+	private void TryInitiateDetatchemntSlide(Creature creature, ulong worldTick) {
+		// Detatchment Kick
+		if (detatchmentKick != null) {
+			ApplyDetatchKick();
+			ulong durationTicks = (ulong)(GlobalSettings.instance.phenotype.detatchSlideDurationTicks - GlobalSettings.instance.phenotype.detatchSlideDurationTicksRandomDiff + GlobalSettings.instance.phenotype.detatchSlideDurationTicksRandomDiff * Random.value + GlobalSettings.instance.phenotype.detatchSlideDurationTicksRandomDiff * Random.value);
+			foreach (Creature c in creature.creaturesInCluster) {
+				c.phenotype.SetCellDragSlide();
+				c.phenotype.kickTickStamp = worldTick;
+				c.phenotype.slideDurationTicks = durationTicks;
+				c.phenotype.originCell.originPulseTick = originCell.originPulseTick;
+			}
+		}
+	}
+
+	//
+	private void TryFinalizeDetatchmentSlide(Creature creature, ulong worldTick) {
+		if (kickTickStamp > 0 && worldTick > kickTickStamp + slideDurationTicks) {
+			SetCellDragNormal(); //make slow
+			kickTickStamp = 0;
 		}
 	}
 

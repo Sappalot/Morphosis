@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GlobalPanel : MonoSingleton<GlobalPanel> {
-
 	public float frameRate { get; private set; }
+	public float physicsUpdatesPerSecond { get; private set; }
 
 	//Debug
 	public Text worldNameAndTimeText;
@@ -63,7 +63,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 	public Text worldSaveDirerectory;
 
-	//Physics
+	//Time
+	[HideInInspector]
 	public bool isRunPhysics;
 	public Image pausePhysicsImage;
 	public Image runPhysicsImage;
@@ -80,67 +81,16 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		}
 	}
 	//--
-	public Toggle fpsGuardToggle;
-	public Text fpsGuardText;
-	public Slider fpsGuardSlider;
-	private bool ignoreSliderMoved;
 
-	//public 
-	public void OnFpsGuardSliderMoved() {
-		if (ignoreSliderMoved) {
-			return;
-		}
+	//Graphics general
+	public Toggle graphicsRelationsToggle;
 
-		World.instance.terrain.pidCircle.fpsGoal = fpsGuardSlider.value;
-		UpdateFpsSliderText();
-	}
+	//phenotype graphics
+	public Toggle graphicsCreaturesToggle;
+	public Toggle graphicsPeripheryToggle;
+	public Toggle graphicsEffectsToggle;
+	public Toggle graphicsMuscleForcesToggle;
 
-	public void UpdateSliderAndToggleValue() {
-		ignoreSliderMoved = true;
-		fpsGuardSlider.value = World.instance.terrain.pidCircle.fpsGoal;
-		fpsGuardToggle.isOn = World.instance.terrain.pidCircle.isOn;
-		ignoreSliderMoved = false;
-		UpdateFpsSliderText();
-	}
-
-	public void OnFpsGuardToggleChanged() {
-		if (ignoreSliderMoved) {
-			return;
-		}
-		World.instance.terrain.pidCircle.isOn = fpsGuardToggle.isOn;
-	}
-
-	private void UpdateFpsSliderText() {
-		fpsGuardText.text = "Fps: " + World.instance.terrain.pidCircle.fpsGoal;
-	}
-	//ignoreSliderMoved =treue;
-	//fertilizeSlider.value =               GenePanel.instance.selectedGene.eggCellFertilizeThreshold;
-	//ignoreSliderMoved = false;
-	//---
-
-	public Toggle physicsTeleport;
-	public Toggle physicsTelepoke;
-	public Toggle physicsKillFugitive;
-	public Toggle physicsKillSterile;
-	public Toggle physicsGrow;
-	public Toggle physicsDetatch;
-	public Toggle physicsFlux;
-
-	public Toggle physicsEgg;
-	public Toggle physicsFungal;
-	public Toggle physicsJaw;
-	public Toggle physicsLeaf;
-	public Toggle physicsMuscle; public Toggle physicsMuscleEffect;
-	public Toggle physicsRoot;
-	public Toggle physicsShell;
-	public Toggle physicsVein;
-
-	public float physicsUpdatesPerSecond { get; private set; }
-
-	public RectTransform physicsAimFillBar;
-
-	
-	
 
 	// Sound
 	public Toggle soundCreatures;
@@ -219,7 +169,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 			veinPoolCount.text = "Veins: " + World.instance.life.veinPool.storedCount + " + " + World.instance.life.veinPool.loanedCount + " = " + (World.instance.life.veinPool.storedCount + World.instance.life.veinPool.loanedCount);
 
-			UpdateFpsSliderText();
+			PhenotypePhysicsPanel.instance.UpdateFpsSliderText();
 		}
 	}
 

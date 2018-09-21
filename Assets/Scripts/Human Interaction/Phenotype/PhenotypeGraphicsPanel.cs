@@ -3,11 +3,7 @@ using UnityEngine.UI;
 
 public class PhenotypeGraphicsPanel : MonoSingleton<PhenotypeGraphicsPanel> {
 	//Graphics
-	public Toggle graphicsCreatures;
-	public Toggle graphicsRelations;
-	public Toggle graphicsPeriphery;
-	public Toggle graphicsEffects;
-	public Toggle graphicsMuscleForces;
+
 	public Dropdown graphicsCellDropdown;
 	public enum CellGraphicsEnum {
 		type,
@@ -21,6 +17,7 @@ public class PhenotypeGraphicsPanel : MonoSingleton<PhenotypeGraphicsPanel> {
 		update,
 		creation,
 		individual,
+		pulse,
 	}
 	[HideInInspector]
 	public CellGraphicsEnum graphicsCell {

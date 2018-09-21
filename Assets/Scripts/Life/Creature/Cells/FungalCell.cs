@@ -1,7 +1,7 @@
 ﻿public class FungalCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		if (GlobalPanel.instance.physicsFungal.isOn) {
+		if (PhenotypePhysicsPanel.instance.functionFungal.isOn) {
 			effectProductionInternalDown = GlobalSettings.instance.phenotype.fungalCellEffectCost;
 			effectProductionInternalUp = 0f;
 			base.UpdateCellFunction(deltaTicks, worldTicks);

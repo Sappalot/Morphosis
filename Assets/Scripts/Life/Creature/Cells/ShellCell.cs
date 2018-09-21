@@ -1,7 +1,7 @@
 ﻿public class ShellCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		if (GlobalPanel.instance.physicsShell.isOn) {
+		if (PhenotypePhysicsPanel.instance.functionShell.isOn) {
 			effectProductionInternalDown = GlobalSettings.instance.phenotype.shellCellEffectCost;
 			effectProductionInternalUp = 0f;
 

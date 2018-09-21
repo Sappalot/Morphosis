@@ -40,7 +40,7 @@ public class Vein : MonoBehaviour {
 
 		isPlacentaVein = parentCell.creature.id != childCell.creature.id;
 
-		if (!GlobalPanel.instance.physicsVein.isOn) {
+		if (!PhenotypePhysicsPanel.instance.functionVein.isOn) {
 			effectType = EffectEnum.LowLow;
 			return;
 		}

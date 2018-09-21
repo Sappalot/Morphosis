@@ -15,13 +15,13 @@ public class MuscleCell : Cell {
 	}
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		if (GlobalPanel.instance.physicsMuscleEffect.isOn && GlobalPanel.instance.physicsMuscle.isOn) {
+		if (PhenotypePhysicsPanel.instance.effectMuscle.isOn && PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
 			effectProductionInternalDown = GlobalSettings.instance.phenotype.muscleCellEffectCost;
 		} else {
 			effectProductionInternalDown = 0f;
 		}
 		effectProductionInternalUp = 0f;
-		if (GlobalPanel.instance.physicsMuscle.isOn) {
+		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
 			UpdateRadius(worldTicks);
 			UpdateSpringLengths();
 

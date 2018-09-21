@@ -12,7 +12,7 @@ public class JawCell : Cell {
 		if (deleteFlagged) {
 			return;
 		}
-		if (GlobalPanel.instance.physicsJaw.isOn) {
+		if (PhenotypePhysicsPanel.instance.functionJaw.isOn) {
 			mouth.gameObject.SetActive(true);
 			effectProductionInternalDown = GlobalSettings.instance.phenotype.jawCellEffectCost;
 

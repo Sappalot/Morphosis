@@ -92,7 +92,7 @@ public class Life : MonoBehaviour {
 			Audio.instance.EggCellFertilize(CameraUtils.GetEffectStrengthLazy());
 		}
 
-		if (playEffects && PhenotypeGraphicsPanel.instance.graphicsEffects.isOn) {
+		if (playEffects && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
 			EffectPlayer.instance.Play(EffectEnum.CreatureBorn, eggCell.position, 0f, CameraUtils.GetEffectScaleLazy());
 		}
 
@@ -118,6 +118,7 @@ public class Life : MonoBehaviour {
 		child.phenotype.originCell.originDetatchMode = eggCell.eggCellDetatchMode;
 		child.phenotype.originCell.originDetatchSizeThreshold = eggCell.eggCellDetatchSizeThreshold;
 		child.phenotype.originCell.originDetatchEnergyThreshold = eggCell.eggCellDetatchEnergyThreshold; // form mothers eggCell to childs origin
+		child.phenotype.originCell.originPulseTick = mother.phenotype.originCell.originPulseTick; // should be 0 for both allready...
 
 		ChildData childData = new ChildData();
 		childData.id = child.id; // a creature carying a child with an id that can not be found in life ==> child concidered dead to mother
@@ -167,7 +168,7 @@ public class Life : MonoBehaviour {
 			child.DetatchFromMother(false, playEffects);
 		}
 
-		if (playEffects && PhenotypeGraphicsPanel.instance.graphicsEffects.isOn) {
+		if (playEffects && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
 			//Animator birth = Instantiate(creatureDeathEffectPrefab, creature.phenotype.originCell.position, Quaternion.Euler(0f, 0f, 0f));
 			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, creature.phenotype.originCell.position, 0f, CameraUtils.GetEffectScaleLazy());
 		}
@@ -285,13 +286,13 @@ public class Life : MonoBehaviour {
 	}
 
 	private void SpawnAddEffect(Vector2 position) {
-		if (PhenotypeGraphicsPanel.instance.graphicsEffects.isOn) {
+		if (GlobalPanel.instance.graphicsEffectsToggle.isOn) {
 			EffectPlayer.instance.Play(EffectEnum.CreatureAdd, position, 0f, CameraUtils.GetEffectScaleLazy());
 		}
 	}
 
 	private void SpawnBirthEffect(Vector2 position) {
-		if (PhenotypeGraphicsPanel.instance.graphicsEffects.isOn) {
+		if (GlobalPanel.instance.graphicsEffectsToggle.isOn) {
 			EffectPlayer.instance.Play(EffectEnum.CreatureBorn, position, 0f, CameraUtils.GetEffectScaleLazy());
 		}
 	}
@@ -426,23 +427,13 @@ public class Life : MonoBehaviour {
 		}
 
 		// ^ Ticks ^
-
-
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdatePhysics(worldTicks);
 		}
 
-		//for (int index = 0; index < creatureList.Count; index++) {
-		//	creatureList[index].SetFluxEffectToZero();
-		//}
-
-		//for (int index = 0; index < creatureList.Count; index++) {
-		//	creatureList[index].phenotype.UpdateFluxEffect();
-		//}
-
-		//for (int index = 0; index < creatureList.Count; index++) {
-		//	creatureList[index].phenotype.UpdateEnergy();
-		//}
+		for (int index = 0; index < creatureList.Count; index++) {
+			creatureList[index].UpdateFertilize(worldTicks);
+		}
 
 		killCreatureList.Clear();
 
@@ -457,7 +448,7 @@ public class Life : MonoBehaviour {
 			}
 		}
 
-		if (GlobalPanel.instance.physicsKillSterile.isOn) {
+		if (PhenotypePhysicsPanel.instance.killSterile.isOn) {
 			if (killSterileCreaturesTicks == 0) {
 				int sterileKilled = 0;
 				for (int index = 0; index < creatureList.Count; index++) {
@@ -479,6 +470,7 @@ public class Life : MonoBehaviour {
 
 		if (phenotypePanelTicks == 0) {
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
+				CreatureSelectionPanel.instance.MakeDirty();
 				PhenotypePanel.instance.MakeDirty();
 				CellPanel.instance.MakeDirty();
 			}

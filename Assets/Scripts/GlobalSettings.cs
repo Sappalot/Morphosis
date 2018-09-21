@@ -166,7 +166,8 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		//General ->Detatch
 		public float detatchmentKick = 0.05f; //N
 		public float detatchmentKickSquare = 0.05f; //N
-		public float detatchSlideDuration = 10; // s
+		public float detatchSlideDurationTicks = 10; // s
+		public float detatchSlideDurationTicksRandomDiff = 2; // s
 		public int detatchAfterCompletePersistance = 5; // How many times will we retry to find a spot to grow next cell in before we give up and realize that it is time to detatch (1 ==> give up (and detatch) after failing one time)
 
 		//General -> Teleport
