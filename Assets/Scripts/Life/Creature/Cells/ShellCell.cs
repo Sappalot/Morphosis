@@ -12,6 +12,10 @@
 		}
 	}
 
+	public override void SetNormalDrag() {
+		theRigidBody.drag = GlobalSettings.instance.phenotype.normalShellDrag;
+	}
+
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Shell;
 	}

@@ -42,6 +42,8 @@ public class OriginCellPanel : MonoBehaviour {
 
 	private void Update() {
 		if (isDirty) {
+			ignoreSliderMoved = true;
+
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update CellPanel");
 			}
@@ -78,7 +80,7 @@ public class OriginCellPanel : MonoBehaviour {
 					pulseFrequenzySliderText.color = Color.gray;
 					pulseFrequenzySlider.interactable = false;
 
-					pulseWaveCompletenessText.text = string.Format("Wave complete: {0:F1} of {1:F0} ticks", originCell.originPulseTick, originCell.originPulsePeriodTicks);
+					pulseWaveCompletenessText.text = string.Format("Wave complete: {0:F1} of {1:F0} ticks, completeness {2:F2}", originCell.originPulseTick, originCell.originPulsePeriodTicks, originCell.originPulseCompleteness);
 					pulseWaveCompletenessText.color = Color.black;
 				} else if (mode == PhenoGenoEnum.Genotype) {
 					pulseWaveCompletenessText.text = "Wave complete: -";
@@ -91,7 +93,9 @@ public class OriginCellPanel : MonoBehaviour {
 				pulseFrequenzySlider.value = 1f / (GenePanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime);
 				pulseFrequenzySliderText.text = string.Format("Ferquenzy: {0:F2} Hz ==> Period: {1:F2} s = {2:F0} ticks", 1f / (GenePanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime), GenePanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime, GenePanel.instance.selectedGene.originPulsePeriodTicks);
 
-			} 
+			}
+
+			ignoreSliderMoved = false;
 
 			isDirty = false;
 		}

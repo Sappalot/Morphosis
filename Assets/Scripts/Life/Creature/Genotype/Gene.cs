@@ -18,7 +18,19 @@ public class Gene {
 	// ^ Jaw Cell ^
 
 	// Origin
-	public int originPulsePeriodTicks = 40;
+	public int originPulsePeriodTicks = 80;
+
+	public float originPulsePeriod {
+		get {
+			return originPulsePeriodTicks * Time.fixedDeltaTime;
+		}
+	}
+
+	public float originPulseFequenzy {
+		get {
+			return 1f / originPulsePeriod;
+		}
+	}
 	// ^ Origin ^
 
 
@@ -121,7 +133,12 @@ public class Gene {
 		}
 		// ^ Jaw ^
 
-		// TODO: Origin
+		// Origo
+		spread = 40;
+		mut = Random.Range(0, gs.mutation.OriginPulseFrequenzyLeave + gs.mutation.OriginPulseFrequenzyRandom * strength);
+		if (mut < gs.mutation.OriginPulseFrequenzyRandom * strength) {
+			originPulsePeriodTicks = (int)Mathf.Clamp(originPulsePeriodTicks - spread + Random.Range(0, spread) + Random.Range(0, spread), 1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMax), 1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMin));
+		}
 
 		//arrangements
 		arrangements[0].Mutate(strength);
@@ -229,7 +246,7 @@ public class Gene {
 		jawCellCannibalizeChildren = geneData.jawCellCannibalizeChildren;
 
 		// Origin
-		originPulsePeriodTicks = geneData.originPulsePeriodTicks;
+		originPulsePeriodTicks = geneData.originPulsePeriodTicks == 0 ? 80 : geneData.originPulsePeriodTicks;
 
 		arrangements[0].ApplyData(geneData.arrangementData[0]);
 		arrangements[1].ApplyData(geneData.arrangementData[1]);

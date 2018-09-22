@@ -109,6 +109,24 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public int originPulseTick = 0;
 	public int originPulsePeriodTicks;
+
+	public float originPulsePeriod {
+		get {
+			return originPulsePeriodTicks * Time.fixedDeltaTime;
+		}
+	}
+
+	public float originPulseFequenzy {
+		get {
+			return 1f / originPulsePeriod;
+		}
+	}
+
+	public float originPulseCompleteness {
+		get {
+			return (float)originPulseTick / (float)originPulsePeriodTicks;
+		}
+	}
 	//--- Origin only ^
 
 
@@ -247,6 +265,16 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 	// ^---------------- EFFECT ---------------------------^
+
+	// Drag
+	virtual public void SetNormalDrag() {
+		theRigidBody.drag = GlobalSettings.instance.phenotype.normalDrag;
+	}
+
+	virtual public void SetSlideDrag() {
+		theRigidBody.drag = GlobalSettings.instance.phenotype.slideDrag;
+	}
+	// ^ Drag ^
 
 	public bool hasPlacentaSprings {
 		get {
@@ -1248,7 +1276,8 @@ public abstract class Cell : MonoBehaviour {
 		}
 
 		originPulseTick =        cellData.originPulseTick;
-		originPulsePeriodTicks = cellData.originPulsePeriodTicks;
+		originPulsePeriodTicks = cellData.originPulsePeriodTicks == 0 ? 80 : cellData.originPulsePeriodTicks;
+			// Mathf.Clamp(cellData.originPulsePeriodTicks, Mathf.CeilToInt(1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMax)), Mathf.CeilToInt(1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMin)));
 
 		this.creature = creature;
 	}

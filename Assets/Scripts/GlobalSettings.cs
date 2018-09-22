@@ -47,6 +47,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float jawCellCannibalizeChildrenLeave = 1000f;
 		public float jawCellCannibalizeChildrenChange = 10f;
 
+		public float OriginPulseFrequenzyLeave = 1000f;
+		public float OriginPulseFrequenzyRandom = 10f;
+
 		public float isEnabledLeave = 100f;
 		public float isEnabledToggle = 1f;
 
@@ -132,7 +135,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public AnimationCurve leafCellSunLossFactorOtherCell; // Effect lost (W/ m) others body penetrated : at phenotype size
 
 		//Muscle Cell
-		public float muscleCellEffectCost = 0.4f; //W
+		public float muscleCellEffectCostPerHz = 0.4f; //W
 												  //           muscleCellEffect                     0.0 W
 
 		//Root cell
@@ -167,14 +170,19 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float cellBuildMaxDistance = 1.5f; //m | All neighbours contributing to a new build must be closer than this distance, or new cell can't be built
 		public float cellRebuildCooldown = 40f; //s, before a cell which was killed/deleted can be rebuilt
 
-		//General ->Detatch
+		//General -> Detatch
 		public float detatchmentKick = 0.05f; //N
 		public float detatchmentKickSquare = 0.05f; //N
 		public float detatchSlideDurationTicks = 10; // s
 		public float detatchSlideDurationTicksRandomDiff = 2; // s
 		public int detatchAfterCompletePersistance = 5; // How many times will we retry to find a spot to grow next cell in before we give up and realize that it is time to detatch (1 ==> give up (and detatch) after failing one time)
 
-		//General -> Teleport
+		// General -> Drag
+		public float normalDrag = 0.15f;
+		public float normalShellDrag = 1f;
+		public float slideDrag = 0.05f;
+
+		// General -> Teleport
 		public float telepokeImpulseStrength = 1f; // N / teleport tick | impulse applied every teleport tick
 
 		//Sterile

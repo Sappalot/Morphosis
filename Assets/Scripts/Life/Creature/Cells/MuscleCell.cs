@@ -16,7 +16,7 @@ public class MuscleCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		if (PhenotypePhysicsPanel.instance.effectMuscle.isOn && PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
-			effectProductionInternalDown = GlobalSettings.instance.phenotype.muscleCellEffectCost;
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.muscleCellEffectCostPerHz * originPulseFequenzy;
 		} else {
 			effectProductionInternalDown = 0f;
 		}
@@ -39,13 +39,13 @@ public class MuscleCell : Cell {
 		float radiusDiff = creature.muscleRadiusDiff;
 		float curveOffset = creature.muscleContractRetract;
 
-		modularTime = worldTicks * Time.fixedDeltaTime * muscleSpeed;
+		//modularTime = worldTicks * Time.fixedDeltaTime * muscleSpeed;
 
-		float deltaTime = worldTicks * Time.fixedDeltaTime - lastTime;
-		lastTime = worldTicks * Time.fixedDeltaTime;
+		//float deltaTime = worldTicks * Time.fixedDeltaTime - lastTime;
+		//lastTime = worldTicks * Time.fixedDeltaTime;
 
 		//Debug.Log("offset" + timeOffset);
-		float expandContract = Mathf.Sign(curveOffset + Mathf.Cos(modularTime / (2f * Mathf.PI)));
+		float expandContract = Mathf.Sign(curveOffset + Mathf.Cos(creature.phenotype.originCell.originPulseCompleteness * (2f * Mathf.PI)));
 		float radiusGoal = 0.5f - 0.5f * radiusDiff + 0.5f * radiusDiff * expandContract;
 
 		//float goingSmallSpeed = 0.5f * 4f * 0f; //units per second

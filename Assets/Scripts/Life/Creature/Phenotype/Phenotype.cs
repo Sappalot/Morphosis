@@ -3,15 +3,6 @@ using System.Collections.Generic;
 
 // The physical creature defined by all its cells
 public class Phenotype : MonoBehaviour {
-	public EggCell eggCellPrefab;
-	public FungalCell fungalCellPrefab;
-	public JawCell jawCellPrefab;
-	public LeafCell leafCellPrefab;
-	public MuscleCell muscleCellPrefab;
-	public RootCell rootCellPrefab;
-	public ShellCell shellCellPrefab;
-	public VeinCell veinCellPrefab;
-
 	public Animator creatureDetatchEffectPrefab;
 
 	// Effects
@@ -865,17 +856,13 @@ public class Phenotype : MonoBehaviour {
 
 	private void SetCellDragNormal() {
 		foreach (Cell cell in cellList) {
-			if (cell.GetCellType() == CellTypeEnum.Leaf) {
-				cell.theRigidBody.drag = 0.15f;
-			} else {
-				cell.theRigidBody.drag = 0.15f;
-			}
+			cell.SetNormalDrag();
 		}
 	}
 
 	private void SetCellDragSlide() {
 		foreach (Cell cell in cellList) {
-			cell.theRigidBody.drag = 0.5f;
+			cell.SetSlideDrag();
 		}
 	}
 
@@ -936,6 +923,8 @@ public class Phenotype : MonoBehaviour {
 
 		// Origin
 		cell.originPulsePeriodTicks =     gene.originPulsePeriodTicks;
+
+		cell.SetNormalDrag();
 
 		return cell;
 	}
