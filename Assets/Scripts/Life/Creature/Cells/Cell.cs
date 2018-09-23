@@ -69,13 +69,6 @@ public abstract class Cell : MonoBehaviour {
 	private int didUpdateEnergyThisFrame = 0;
 
 	//---- Egg only
-
-	[HideInInspector]
-	public float eggCellFertilizeThreshold; //part of max energy (* 100 to get  %)
-
-	[HideInInspector]
-	public bool eggCellCanFertilizeWhenAttached;
-
 	[HideInInspector]
 	public ChildDetatchModeEnum eggCellDetatchMode; 
 
@@ -86,18 +79,7 @@ public abstract class Cell : MonoBehaviour {
 	public float eggCellDetatchEnergyThreshold; //part of max energy (* 100 to get  %) 
 
 	//---- Egg only ^
-	//---- Jaw Only
-	[HideInInspector]
-	public bool jawCellCannibalizeKin;
-	[HideInInspector]
-	public bool jawCellCannibalizeMother;
-	[HideInInspector]
-	public bool jawCellCannibalizeFather;
-	[HideInInspector]
-	public bool jawCellCannibalizeSiblings;
-	[HideInInspector]
-	public bool jawCellCannibalizeChildren;
-	//---- Jaw Only ^
+
 	//---- Origin only
 	[HideInInspector]
 	public ChildDetatchModeEnum originDetatchMode;
@@ -129,7 +111,20 @@ public abstract class Cell : MonoBehaviour {
 	}
 	//--- Origin only ^
 
+	// Axon
+	public bool isAxonEnabled {
+		get {
+			return gene.axonIsEnabled;
+		}
+	}
 
+	public float axonPulseValue {
+		get {
+			return Mathf.Cos(creature.phenotype.originCell.originPulseCompleteness * 2f * Mathf.PI);
+		}
+	}
+
+	// ^ Axon ^
 
 	// Controlled by cell mouth of other creature
 	public void AddPredator(JawCell predator) {
@@ -1085,7 +1080,17 @@ public abstract class Cell : MonoBehaviour {
 				filledCircleSprite.color = creature.phenotype.individualColor;
 			}
 			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.pulse) {
-				filledCircleSprite.color = isOrigin && originPulseTick == 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
+				//filledCircleSprite.color = isOrigin && originPulseTick == 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
+				float red = 0f;
+				float green = 0f;
+				if (axonPulseValue > 0) {
+					red = 0f;
+					green = 0.5f + axonPulseValue * 0.5f;
+				} else {
+					red = 0.5f + axonPulseValue * 0.5f;
+					green = 0f;
+				}
+				filledCircleSprite.color = isAxonEnabled ? new Color(red, green, 0f) : Color.blue;
 			}
 		} else {
 			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
@@ -1189,17 +1194,9 @@ public abstract class Cell : MonoBehaviour {
 		cellData.energy = energy;
 
 		//Egg
-		cellData.eggCellFertilizeThreshold =     eggCellFertilizeThreshold;
 		cellData.eggCellDetatchMode =            eggCellDetatchMode;
 		cellData.eggCellDetatchSizeThreshold =   eggCellDetatchSizeThreshold;
 		cellData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
-
-		// Jaw
-		cellData.jawCellCannibalizeKin =      jawCellCannibalizeKin;
-		cellData.jawCellCannibalizeMother =   jawCellCannibalizeMother;
-		cellData.jawCellCannibalizeFather =   jawCellCannibalizeFather;
-		cellData.jawCellCannibalizeSiblings = jawCellCannibalizeSiblings;
-		cellData.jawCellCannibalizeChildren = jawCellCannibalizeChildren;
 
 		// Origin
 		cellData.originDetatchMode =            originDetatchMode;
@@ -1227,13 +1224,6 @@ public abstract class Cell : MonoBehaviour {
 		energy = Mathf.Min(cellData.energy, GlobalSettings.instance.phenotype.cellMaxEnergy);
 
 		// Egg
-		// fertilize
-		if (cellData.eggCellFertilizeThreshold > GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMax) { // if more than 100% must be old (where we measured cell energy)
-			eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold / 100f;
-		} else {
-			eggCellFertilizeThreshold = cellData.eggCellFertilizeThreshold;
-		}
-
 		// detatch mode
 		eggCellDetatchMode = cellData.eggCellDetatchMode;
 
@@ -1250,13 +1240,6 @@ public abstract class Cell : MonoBehaviour {
 		} else {
 			eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold;
 		}
-
-		// Jaw
-		jawCellCannibalizeKin =      cellData.jawCellCannibalizeKin;
-		jawCellCannibalizeMother =   cellData.jawCellCannibalizeMother;
-		jawCellCannibalizeFather =   cellData.jawCellCannibalizeFather;
-		jawCellCannibalizeSiblings = cellData.jawCellCannibalizeSiblings;
-		jawCellCannibalizeChildren = cellData.jawCellCannibalizeChildren;
 
 		// Origin
 		originDetatchMode = cellData.originDetatchMode;

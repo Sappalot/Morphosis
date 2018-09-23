@@ -8,7 +8,7 @@ public class EggCell : Cell {
 			effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCellEffectCost;
 
 			if (creature.phenotype.originCell.originPulseTick == 0) {
-				if (energyFullness > eggCellFertilizeThreshold && (eggCellCanFertilizeWhenAttached || !creature.phenotype.hasPlacentaSpringsToMother) && shouldFertilize == -1) {
+				if (energyFullness > gene.eggCellFertilizeThreshold && (gene.eggCellCanFertilizeWhenAttached || !creature.phenotype.hasPlacentaSpringsToMother) && shouldFertilize == -1) {
 					shouldFertilize = 0; // Random.Range(0, 60);
 				}
 			}

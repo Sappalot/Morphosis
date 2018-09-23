@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 public abstract class MetabolismCellPanel : MonoBehaviour {
+	[HideInInspector]
 	public PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 
 	protected bool isDirty = false;

@@ -34,6 +34,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public MetabolismCellPanel leafCellPanel;
 	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[3];
 
+	public AxonCellPanel axonCellPanel;
 	public OriginCellPanel originCellPanel;
 
 	override public void Init() {
@@ -46,6 +47,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			m.mode = PhenoGenoEnum.Phenotype;
 		}
 
+		axonCellPanel.mode = PhenoGenoEnum.Phenotype;
 		originCellPanel.mode = PhenoGenoEnum.Phenotype;
 		MakeDirty();
 	}
@@ -57,7 +59,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
 			m.MakeDirty();
 		}
-
+		axonCellPanel.MakeDirty();
 		originCellPanel.MakeDirty();
 	}
 

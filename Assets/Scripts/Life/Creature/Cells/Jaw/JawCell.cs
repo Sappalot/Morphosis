@@ -65,17 +65,17 @@ public class JawCell : Cell {
 
 			Creature pray = prayCell.creature;
 			// spare mother
-			if (!jawCellCannibalizeMother && creature.HasMotherAlive() && creature.GetMotherAlive().id == pray.id) {
+			if (!gene.jawCellCannibalizeMother && creature.HasMotherAlive() && creature.GetMotherAlive().id == pray.id) {
 				return;
 			}
 
 			// spare siblings
-			if (!jawCellCannibalizeSiblings && creature.HasMotherDeadOrAlive() && pray.HasMotherDeadOrAlive() && creature.GetMotherIdDeadOrAlive() == pray.GetMotherIdDeadOrAlive()) {
+			if (!gene.jawCellCannibalizeSiblings && creature.HasMotherDeadOrAlive() && pray.HasMotherDeadOrAlive() && creature.GetMotherIdDeadOrAlive() == pray.GetMotherIdDeadOrAlive()) {
 				return;
 			}
 
 			// spare children
-			if (!jawCellCannibalizeChildren) {
+			if (!gene.jawCellCannibalizeChildren) {
 				foreach (Creature child in creature.GetChildrenAlive()) { //Note: all references in children are not updated at this point
 					if (pray == child) {
 						return;

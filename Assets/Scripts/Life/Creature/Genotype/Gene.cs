@@ -4,6 +4,7 @@ public class Gene {
 	// Egg cell
 	public float eggCellFertilizeThreshold = 0.4f; //part of max energy (* 100 to get  %)
 	public bool eggCellCanFertilizeWhenAttached = true;
+	// Has to be stored in childs origin cell, so that inf can be kept when i'm gone
 	public ChildDetatchModeEnum eggCellDetatchMode = ChildDetatchModeEnum.Size;
 	public float eggCellDetatchSizeThreshold = 0.5f; // completeness count / max count 
 	public float eggCellDetatchEnergyThreshold = 0.4f; //part of max energy(* 100 to get  %)
@@ -16,6 +17,15 @@ public class Gene {
 	public bool jawCellCannibalizeSiblings;
 	public bool jawCellCannibalizeChildren;
 	// ^ Jaw Cell ^
+
+	// Axon
+	public bool axonIsEnabled;
+	public float axonFromOriginOffset;
+	public bool axonIsFromOriginPlus180;
+	public float axonFromMeOffset;
+	public float axonRelaxContract;
+	public bool axonIsReverse;
+	// ^ Axon ^
 
 	// Origin
 	public int originPulsePeriodTicks = 80;
@@ -205,8 +215,22 @@ public class Gene {
 		geneData.jawCellCannibalizeSiblings = jawCellCannibalizeSiblings;
 		geneData.jawCellCannibalizeChildren = jawCellCannibalizeChildren;
 
+		// Axon
+		geneData.axonIsEnabled = axonIsEnabled;
+		geneData.axonFromOriginOffset = axonFromOriginOffset;
+		geneData.axonIsFromOriginPlus180 = axonIsFromOriginPlus180;
+		geneData.axonFromMeOffset = axonFromMeOffset;
+		geneData.axonRelaxContract = axonRelaxContract;
+		geneData.axonIsReverse = axonIsReverse;
+
+
 		// Origin
 		geneData.originPulsePeriodTicks =     originPulsePeriodTicks;
+
+		// 3 Arrangements
+		geneData.arrangementData[0] = arrangements[0].UpdateData();
+		geneData.arrangementData[1] = arrangements[1].UpdateData();
+		geneData.arrangementData[2] = arrangements[2].UpdateData();
 
 		return geneData;
 	}
@@ -245,12 +269,20 @@ public class Gene {
 		jawCellCannibalizeSiblings = geneData.jawCellCannibalizeSiblings;
 		jawCellCannibalizeChildren = geneData.jawCellCannibalizeChildren;
 
+		// Axon
+		axonIsEnabled =             geneData.axonIsEnabled;
+		axonFromOriginOffset =      geneData.axonFromOriginOffset;
+		axonIsFromOriginPlus180 =   geneData.axonIsFromOriginPlus180;
+		axonFromMeOffset =          geneData.axonFromMeOffset;
+		axonRelaxContract =         geneData.axonRelaxContract;
+		axonIsReverse =             geneData.axonIsReverse;
+
 		// Origin
 		originPulsePeriodTicks = geneData.originPulsePeriodTicks == 0 ? 80 : geneData.originPulsePeriodTicks;
 
+		// 3 Arrangements
 		arrangements[0].ApplyData(geneData.arrangementData[0]);
 		arrangements[1].ApplyData(geneData.arrangementData[1]);
 		arrangements[2].ApplyData(geneData.arrangementData[2]);
 	}
 }
-

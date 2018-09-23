@@ -18,17 +18,9 @@ public class CellData {
 	public float energy;
 
 	// Egg
-	public float eggCellFertilizeThreshold;
 	public ChildDetatchModeEnum eggCellDetatchMode;
 	public float eggCellDetatchSizeThreshold;
 	public float eggCellDetatchEnergyThreshold;
-
-	//Jaw
-	public bool jawCellCannibalizeKin;
-	public bool jawCellCannibalizeMother;
-	public bool jawCellCannibalizeFather;
-	public bool jawCellCannibalizeSiblings;
-	public bool jawCellCannibalizeChildren;
 
 	// Origin
 	public ChildDetatchModeEnum originDetatchMode;

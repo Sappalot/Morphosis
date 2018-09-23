@@ -18,6 +18,14 @@ public class GeneData {
 	public bool jawCellCannibalizeSiblings;
 	public bool jawCellCannibalizeChildren;
 
+	// Axon
+	public bool axonIsEnabled;
+	public float axonFromOriginOffset;
+	public bool axonIsFromOriginPlus180;
+	public float axonFromMeOffset;
+	public float axonRelaxContract;
+	public bool axonIsReverse;
+
 	public int originPulsePeriodTicks; // ticks / complete wave
 	public ArrangementData[] arrangementData = new ArrangementData[3];
 }
