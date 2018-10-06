@@ -1,13 +1,25 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class PrisonWall : MonoSingleton<PrisonWall> {
+public class TerrainPerimeter : MonoSingleton<TerrainPerimeter> {
 
 	public GameObject legalArea;
 
 	//TODO: Update uppon load
 
 	public int runnersKilledCount;
+
+	public bool IsCompletelyInside(Creature creature) {
+		return creature.phenotype.IsCompletelyInside(legalRect);
+	}
+
+	public bool KillIfOutside(Creature creature) {
+		if (!IsCompletelyInside(creature)) {
+			World.instance.life.KillCreatureSafe(creature, false);
+			return true;
+		}
+		return false;
+	}
 
 	private Rect legalRect;
 	public void Start() {

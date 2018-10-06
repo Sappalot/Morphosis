@@ -4,6 +4,7 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Gradient cellGradientEnergy;
 	public Gradient cellGradientEffect;
 	public Gradient cellGradientLeafExposure;
+	public Gradient cellGradientLeafGreenExposure;
 	public Gradient cellGradientRamSpeed;
 	public Gradient cellCreatureChildCount;
 

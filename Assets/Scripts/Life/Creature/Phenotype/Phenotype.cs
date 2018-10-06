@@ -143,13 +143,19 @@ public class Phenotype : MonoBehaviour {
 	private Vector2 velocity = new Vector2();
 	private Vector2 spawnPosition;
 	private float spawnHeading;
-	private CellMap cellMap = new CellMap();
+	public CellMap cellMap = new CellMap();
 	private bool isDirty = true;
 
 	//Grown cells
 	public int cellCount {
 		get {
 			return cellMap.cellCount;
+		}
+	}
+
+	public int opaqueCellCount {
+		get {
+			return cellMap.opaqueCellCount;
 		}
 	}
 
@@ -256,6 +262,9 @@ public class Phenotype : MonoBehaviour {
 
 		if (cellList.Count == 0) {
 			SpawnCell(creature, genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, spawnPosition, true, 30f);
+			if (originCell.GetCellType() == CellTypeEnum.Muscle) {
+				((MuscleCell)originCell).UpdateMasterAxon(); // master axon will be me in this case
+			}
 
 			//EvoFixedUpdate(creature, 0f); //Do we really need to do this here?
 			originCell.heading = spawnHeading;
@@ -357,6 +366,9 @@ public class Phenotype : MonoBehaviour {
 				newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
 				newCell.UpdateRotation(); //Rotation is needed in order to place subsequent cells right
 				newCell.UpdateFlipSide(); // Just graphics
+				if (newCell.GetCellType() == CellTypeEnum.Muscle) {
+					((MuscleCell)newCell).UpdateMasterAxon();
+				}
 				growCellCount++;
 			}
 		}
@@ -369,6 +381,7 @@ public class Phenotype : MonoBehaviour {
 			//if (playEffects) {
 			//	Audio.instance.CellBirth();
 			//}
+
 
 			PhenotypePanel.instance.MakeDirty();
 			connectionsDiffersFromCells = true;
@@ -425,7 +438,9 @@ public class Phenotype : MonoBehaviour {
 
 		List<Cell> cells = new List<Cell>();
 		foreach (Creature creature in World.instance.life.creatures) { // creature.creaturesInCluster
-			cells.AddRange(creature.phenotype.cellList);
+			if (Vector2.SqrMagnitude(creature.GetOriginPosition(PhenoGenoEnum.Phenotype) - originCell.position ) < 12f * 12f) {
+				cells.AddRange(creature.phenotype.cellList);
+			}
 		}
 
 		foreach (Cell cell in cells) {
@@ -614,6 +629,10 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public void DistributeEnergy(float amount) {
+		ChangeEnergy(amount / cellCount);
+	}
+
 	public bool IsOriginNeighbouringMothersPlacenta(Creature creature) {
 		Debug.Assert(creature.HasMotherAlive());
 
@@ -687,7 +706,10 @@ public class Phenotype : MonoBehaviour {
 		World.instance.life.cellPool.Recycle(deleteCell);
 
 		if (deleteDebris) {
-			DeleteDebris(); 
+			float deletedBranchEnergy = DeleteDebris();
+			if (GlobalSettings.instance.phenotype.reclaimCutBranchEnergy) {
+				DistributeEnergy(deletedBranchEnergy);
+			}
 		}
 
 		//Mark cell as destroyed so we don't try to build it back emediatly
@@ -705,17 +727,20 @@ public class Phenotype : MonoBehaviour {
 		CreatureSelectionPanel.instance.UpdateSelectionCluster();
 	}
 
-	private void DeleteDebris() {
+	private float DeleteDebris() {
 		List<Vector2i> keepers = cellMap.IsConnectedTo(originCell.mapPosition);
 		List<Cell> debris = new List<Cell>();
-		foreach (Cell c in cellList) {
-			if (keepers.Find(p => p == c.mapPosition) == null) {
-				debris.Add(c);
+		foreach (Cell cell in cellList) {
+			if (keepers.Find(p => p == cell.mapPosition) == null) {
+				debris.Add(cell);
 			}
 		}
-		for (int i = 0; i < debris.Count; i++) {
-			KillCell(debris[i], false, true, 0);
+		float deletedEnergy = 0f;
+		foreach (Cell cell in debris) {
+			deletedEnergy += cell.energy; 
+			KillCell(cell, false, true, 0);
 		}
+		return deletedEnergy;
 	}
 
 	public void SpawnCellDeathEffect(Vector2 position, Color color) {
@@ -911,9 +936,6 @@ public class Phenotype : MonoBehaviour {
 		cell.eggCellDetatchSizeThreshold =     gene.eggCellDetatchSizeThreshold; 
 		cell.eggCellDetatchEnergyThreshold =   gene.eggCellDetatchEnergyThreshold;
 
-		// Origin
-		cell.originPulsePeriodTicks =     gene.originPulsePeriodTicks;
-
 		cell.SetNormalDrag();
 
 		return cell;
@@ -964,6 +986,14 @@ public class Phenotype : MonoBehaviour {
 	private void UpdateSpringsBreakingForce() {
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].UpdateSpringsBreakingForce();
+		}
+	}
+
+	private void UpdateMasterAxons() {
+		for (int index = 0; index < cellList.Count; index++) {
+			if (cellList[index].GetCellType() == CellTypeEnum.Muscle) {
+				((MuscleCell)cellList[index]).UpdateMasterAxon();
+			}
 		}
 	}
 
@@ -1293,7 +1323,9 @@ public class Phenotype : MonoBehaviour {
 			Cell cell = cellList[index];
 
 			if (cell.GetCellType() == CellTypeEnum.Egg) {
-				cell.UpdateCellFunction(GlobalSettings.instance.quality.eggCellTickPeriod, worldTick);
+				if (originCell.originPulseTick == 0) {
+					cell.UpdateCellFunction(GlobalSettings.instance.quality.eggCellTickPeriod, worldTick);
+				}
 			} else if (fungalCellTick == 0 && cell.GetCellType() == CellTypeEnum.Fungal) {
 				cell.UpdateCellFunction(GlobalSettings.instance.quality.fungalCellTickPeriod, worldTick);
 			} else if (jawCellTick == 0 && cell.GetCellType() == CellTypeEnum.Jaw) {
@@ -1416,6 +1448,7 @@ public class Phenotype : MonoBehaviour {
 
 		//Turn arrrows right
 		UpdateRotation();
+		UpdateMasterAxons();
 	}
 
 	// ^ Load / Save ^

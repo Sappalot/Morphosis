@@ -13,21 +13,31 @@ public class JawCell : Cell {
 			return;
 		}
 		if (PhenotypePhysicsPanel.instance.functionJaw.isOn) {
-			mouth.gameObject.SetActive(true);
-			effectProductionInternalDown = GlobalSettings.instance.phenotype.jawCellEffectCost;
+			if (IsIdle()) {
+				mouth.gameObject.SetActive(false);
+				effectProductionPredPrayUp = 0f;
+				effectProductionInternalDown = GlobalSettings.instance.phenotype.idleCellEffectCost;
+			} else {
+				mouth.gameObject.SetActive(true);
+				effectProductionInternalDown = GlobalSettings.instance.phenotype.jawCellEffectCost;
 
-			//Hack release pray
-			RemoveNullPrays(); //We need this one not to run into null refs once in a blue moon
-			CellPanel.instance.jawCellPanel.MakeDirty();
+				//Hack release pray
+				RemoveNullPrays(); //We need this one not to run into null refs once in a blue moon
+				CellPanel.instance.jawCellPanel.MakeDirty();
 
-			effectProductionPredPrayUp = eatEffect;
+				effectProductionPredPrayUp = eatEffect;
+			}
 
 			base.UpdateCellFunction(deltaTicks, worldTicks);
 		} else {
 			mouth.gameObject.SetActive(false);
-			effectProductionInternalDown = 0f;
 			effectProductionPredPrayUp = 0f;
+			effectProductionInternalDown = 0f;
 		}
+	}
+
+	override public bool IsIdle() {
+		return gene.jawCellIdleWhenAttached && creature.IsAttachedToMotherAlive();
 	}
 
 	private float eatEffect {

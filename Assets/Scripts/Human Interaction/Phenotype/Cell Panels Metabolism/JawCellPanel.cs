@@ -22,7 +22,8 @@ public class JawCellPanel : MetabolismCellPanel {
 	public Toggle cannibalizeChildrenToggle;
 	public Text cannibalizeChildrenText;
 
-	private bool ignoreSliderMoved;
+	public Text idleWhenAttachedText;
+	public Toggle idleWhenAttachedToggle;
 
 	public void OnChangedCannibalizeKin() {
 		if (ignoreSliderMoved) {
@@ -64,6 +65,18 @@ public class JawCellPanel : MetabolismCellPanel {
 		ApplyChange();
 	}
 
+	public void OnIdleWhenAttachedToggleChanged() {
+		if (ignoreSliderMoved) {
+			return;
+		}
+
+		GenePanel.instance.selectedGene.jawCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
+		if (CreatureSelectionPanel.instance.hasSoloSelected) {
+			OnChanged();
+		}
+		MakeDirty();
+	}
+
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
@@ -91,6 +104,9 @@ public class JawCellPanel : MetabolismCellPanel {
 
 					cannibalizeChildrenToggle.interactable = false;
 					cannibalizeChildrenText.color = Color.gray;
+
+					idleWhenAttachedText.color = Color.gray;
+					idleWhenAttachedToggle.interactable = false;
 				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
 				prayCellCount.text = "Eating on cells: -";
@@ -112,6 +128,9 @@ public class JawCellPanel : MetabolismCellPanel {
 
 				cannibalizeChildrenToggle.interactable = isUnlocked();
 				cannibalizeChildrenText.color = isUnlockedColor();
+
+				idleWhenAttachedText.color = Color.black;
+				idleWhenAttachedToggle.interactable = isUnlocked();
 			}
 
 			if (GenePanel.instance.selectedGene != null) {
@@ -122,6 +141,8 @@ public class JawCellPanel : MetabolismCellPanel {
 				cannibalizeFatherToggle.isOn = GenePanel.instance.selectedGene.jawCellCannibalizeFather;
 				cannibalizeSiblingsToggle.isOn = GenePanel.instance.selectedGene.jawCellCannibalizeSiblings;
 				cannibalizeChildrenToggle.isOn = GenePanel.instance.selectedGene.jawCellCannibalizeChildren;
+
+				idleWhenAttachedToggle.isOn = GenePanel.instance.selectedGene.jawCellIdleWhenAttached;
 
 				ignoreSliderMoved = false;
 			}

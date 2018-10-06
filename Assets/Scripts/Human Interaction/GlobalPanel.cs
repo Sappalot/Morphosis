@@ -132,7 +132,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			//creatures
 			creatureAliveCount.text = "Alive: " + World.instance.life.creatureAliveCount + ", Cells: " + World.instance.life.cellAliveCount;
 			creatureDeadCount.text = "Dead: " + World.instance.life.creatureDeadCount;
-			runnersKilledCount.text = "Runners Killed: " + PrisonWall.instance.runnersKilledCount;
+			runnersKilledCount.text = "Runners Killed: " + TerrainPerimeter.instance.runnersKilledCount;
 			sterileKilledCount.text = "Sterile Killed: " + World.instance.life.sterileKilledCount;
 
 			//Creature Pool

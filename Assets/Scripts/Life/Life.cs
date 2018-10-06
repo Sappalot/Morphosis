@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System;
 
 public class Life : MonoBehaviour {
+
+	// TODO: Move to Morphosis, since they are used in freezer as well
 	public CreaturePool creaturePool;
 	public CellPool cellPool;
 	public GeneCellPool geneCellPool;
@@ -186,8 +188,6 @@ public class Life : MonoBehaviour {
 		Cell[] forgottenGeneCells = creature.genotype.geneCellsTransform.GetComponents<Cell>();
 		deletedCellCount += forgottenGeneCells.Length;
 
-
-
 		//This is the only place where creature is recycled / destroyed
 		creatureDictionary.Remove(creature.id); // Ooops we need to remove it before OnRecycle! OnRecycle will change the id so it wont be found when trying to remove
 		creatureList.Remove(creature);
@@ -198,6 +198,7 @@ public class Life : MonoBehaviour {
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		CreatureSelectionPanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
+		GenePanel.instance.MakeDirty();
 
 		creatureDeathsPerSecond.IncreaseCounter();
 	}

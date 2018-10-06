@@ -499,10 +499,13 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		MouseAction.instance.actionState = MouseActionStateEnum.rotateCreatures;
 	}
 
-	public void PlaceHoveringCreatures() {
+	public List<Creature> PlaceHoveringCreatures() {
 		if (GlobalPanel.instance.soundCreatures.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
+		List<Creature> placedCreatures = new List<Creature>();
+		placedCreatures.AddRange(moveCreatures);
+
 		ReleaseMoveCreatures();
 		startCreatureHeading.Clear();
 
@@ -514,9 +517,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		moveOffset.Clear();
 
 		MouseAction.instance.actionState = MouseActionStateEnum.free;
+
+		return placedCreatures;
 	}
 
-	public void PasteHoveringCreatures() {
+	public List<Creature> PasteHoveringCreatures() {
 		if (GlobalPanel.instance.soundCreatures.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
@@ -533,12 +538,17 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		AddCoppiesToMoveCreature(continueMoveCopy);
 		StartMoveCreatures();
 		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
+
+		return continueMoveCopy;
 	}
 
-	public void PasteHoveringMergling() {
+	public List<Creature> PasteHoveringMergling() {
 		if (GlobalPanel.instance.soundCreatures.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
+		List<Creature> merglings = new List<Creature>();
+		merglings.AddRange(moveCreatures);
+
 		ReleaseMoveCreatures();
 
 		startCreatureHeading.Clear();
@@ -548,6 +558,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		moveCreatures.Clear();
 
 		OnCombineClicked();
+
+		return merglings;
 	}
 
 	private void ReleaseMoveCreatures() {

@@ -28,22 +28,23 @@ public class RMBToolController : MouseDrag {
 				if (GlobalPanel.instance.soundCreatures.isOn) {
 					Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 				}
-				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
-					World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f, World.instance.worldTicks);
-				} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-					World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f, World.instance.worldTicks);
-				}				
+				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
+					Creature spawned = World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f, World.instance.worldTicks);
+					if (!TerrainPerimeter.instance.IsCompletelyInside(spawned)) {
+						World.instance.life.KillCreatureSafe(spawned, false);
+					}
+				}
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spawnFreak) {
 				if (GlobalPanel.instance.soundCreatures.isOn) {
 					Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 				}
-				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
-					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, World.instance.worldTicks);
-				} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-					World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, World.instance.worldTicks);
+				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
+					Creature spawned = World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, World.instance.worldTicks);
+					if (!TerrainPerimeter.instance.IsCompletelyInside(spawned)) {
+						World.instance.life.KillCreatureSafe(spawned, false);
+					}
 				}
 			}
-
 		}
 	}
 

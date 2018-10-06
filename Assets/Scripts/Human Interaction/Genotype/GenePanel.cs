@@ -8,7 +8,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 	private Gene m_selectedGene;
 	public Gene selectedGene {
 		get {
-			return m_selectedGene != null ? m_selectedGene : (CreatureSelectionPanel.instance.hasSoloSelected ? CreatureSelectionPanel.instance.soloSelected.genotype.originCell.gene : null);
+			return m_selectedGene != null ? m_selectedGene : (CreatureSelectionPanel.instance.hasSoloSelected ? (CreatureSelectionPanel.instance.soloSelected.genotype.hasGenes ? CreatureSelectionPanel.instance.soloSelected.genotype.originCell.gene : null) : null);
 		}
 		set {
 			m_selectedGene = value;

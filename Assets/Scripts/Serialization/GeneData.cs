@@ -4,19 +4,26 @@ public class GeneData {
 	public CellTypeEnum type = CellTypeEnum.Leaf;
 	public int index;
 
-	//Egg
+	// Egg
 	public float eggCellFertilizeThreshold; // J
-	public bool eggCellCanFertilizeWhenAttached;
 	public ChildDetatchModeEnum eggCellDetatchMode; //J 
 	public float eggCellDetatchSizeThreshold; //J 
-	public float eggCellDetatchEnergyThreshold; //J 
+	public float eggCellDetatchEnergyThreshold; //J
+	public bool eggCellIdleWhenAttached;
 
-	//Jaw
+	// Jaw
 	public bool jawCellCannibalizeKin;
 	public bool jawCellCannibalizeMother;
 	public bool jawCellCannibalizeFather;
 	public bool jawCellCannibalizeSiblings;
 	public bool jawCellCannibalizeChildren;
+	public bool jawCellIdleWhenAttached;
+
+	// Leaf
+	public bool leafCellIdleWhenAttached;
+
+	// Muscle
+	public bool muscleCellIdleWhenAttached;
 
 	// Axon
 	public bool axonIsEnabled;

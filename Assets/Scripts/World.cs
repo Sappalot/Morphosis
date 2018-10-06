@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class World : MonoSingleton<World> {
 	public Life life;
 	public Terrain terrain;
-	public Camera worldCamera;
+	
 	public History history = new History();
 	[HideInInspector]
 	public ulong worldTicks = 0;
@@ -21,7 +21,7 @@ public class World : MonoSingleton<World> {
 		CreatureSelectionPanel.instance.ClearSelection();
 	}
 
-	private void Start () {
+	public void Init() {
 		//for (int y = 0; y < 32; y++) {
 		//	for (int x = 0; x < 32; x++) {
 		//		GameObject.Instantiate(cellPrefab, new Vector3(10f + x * 2f, 10f + y * 2f, 0f), Quaternion.identity, this.transform);
@@ -65,7 +65,7 @@ public class World : MonoSingleton<World> {
 			Portals.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
 		}
 		if (PhenotypePhysicsPanel.instance.killFugitive.isOn) {
-			PrisonWall.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
+			TerrainPerimeter.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
 		}
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 		if (worldTicks % 20 == 0) {
@@ -159,7 +159,7 @@ public class World : MonoSingleton<World> {
 		
 		CreatureEditModePanel.instance.Restart();
 		RMBToolModePanel.instance.Restart();
-		PrisonWall.instance.Restart();
+		TerrainPerimeter.instance.Restart();
 
 		history.Clear();
 
@@ -228,7 +228,7 @@ public class World : MonoSingleton<World> {
 		worldData.worldTicks = worldTicks;
 		worldData.historyData = history.UpdateData();
 		worldData.terrainData = terrain.UpdateData();
-		worldData.runnersKilledCount = PrisonWall.instance.runnersKilledCount;
+		worldData.runnersKilledCount = TerrainPerimeter.instance.runnersKilledCount;
 	}
 
 	// Load
@@ -242,6 +242,6 @@ public class World : MonoSingleton<World> {
 			history.Clear();
 		}
 		terrain.ApplyData(worldData.terrainData);
-		PrisonWall.instance.runnersKilledCount = worldData.runnersKilledCount;
+		TerrainPerimeter.instance.runnersKilledCount = worldData.runnersKilledCount;
 	}
 }

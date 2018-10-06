@@ -35,6 +35,18 @@ public class CellMap {
 		}
 	}
 
+	public int opaqueCellCount {
+		get {
+			int count = 0;
+			foreach (Cell c in grid.Values) {
+				if (c.GetCellType() != CellTypeEnum.Shell) {
+					count++;
+				}
+			}
+			return count;
+		}
+	}
+
 	public void Clear() {
 		grid.Clear();
 		illegalPositions.Clear();
@@ -47,6 +59,15 @@ public class CellMap {
 	public Cell GetCell(Vector2i gridPosition) {
 		if (grid.ContainsKey(new GridPosition(gridPosition))) {
 			return grid[new GridPosition(gridPosition)];
+		}
+		return null;
+	}
+
+	public Vector2i GetCellGridPositionUpBranch(Vector2i gridPosition) {
+		Cell here = GetCell(gridPosition);
+		if (here != null) {
+			int backCardinalDirection = AngleUtil.CardinalIndexRawToSafe(here.bindCardinalIndex + 3);
+			return GetGridNeighbourGridPosition(gridPosition, backCardinalDirection);
 		}
 		return null;
 	}

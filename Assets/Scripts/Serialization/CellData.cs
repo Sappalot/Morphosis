@@ -27,6 +27,4 @@ public class CellData {
 	public float originDetatchSizeThreshold;
 	public float originDetatchEnergyThreshold;
 	public int originPulseTick;
-	public int originPulsePeriodTicks;
-	
 }

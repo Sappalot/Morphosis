@@ -32,7 +32,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public MetabolismCellPanel eggCellPanel;
 	public MetabolismCellPanel jawCellPanel;
 	public MetabolismCellPanel leafCellPanel;
-	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[3];
+	public MetabolismCellPanel muscleCellPanel;
+	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[4];
 
 	public AxonCellPanel axonCellPanel;
 	public OriginCellPanel originCellPanel;
@@ -42,6 +43,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		metabolismCellPanels[0] = eggCellPanel;
 		metabolismCellPanels[1] = jawCellPanel;
 		metabolismCellPanels[2] = leafCellPanel;
+		metabolismCellPanels[3] = muscleCellPanel;
 
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
 			m.mode = PhenoGenoEnum.Phenotype;
@@ -205,6 +207,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				leafCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Muscle) {
 				metabolismCellTypeDropdown.value = 4;
+				muscleCellPanel.gameObject.SetActive(true);
+				muscleCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Root) {
 				metabolismCellTypeDropdown.value = 5;
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Shell) {

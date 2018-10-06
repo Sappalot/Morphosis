@@ -27,8 +27,6 @@ public class AxonCellPanel : MetabolismCellPanel {
 
 	// TODO: Graph
 
-	private bool ignoreSliderMoved = false;
-
 	private void Awake() {
 		ignoreSliderMoved = true;
 		fromOriginOffsetSlider.minValue = 0f;

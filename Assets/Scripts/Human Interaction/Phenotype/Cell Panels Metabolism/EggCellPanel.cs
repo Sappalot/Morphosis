@@ -6,9 +6,6 @@ public class EggCellPanel : MetabolismCellPanel {
 	public Text fertilizeSliderText;
 	public Slider fertilizeSlider;
 
-	public Text canFertilizeWhenAttachedText;
-	public Toggle canFertilizeWhenAttachedToggle;
-
 	public Text fertilizeButtonText;
 
 	public Text detatchHeadingText;
@@ -23,7 +20,8 @@ public class EggCellPanel : MetabolismCellPanel {
 	public Text detatchEnergySliderText;
 	public Slider detatchEnergySlider;
 
-	private bool ignoreSliderMoved = false;
+	public Text idleWhenAttachedText;
+	public Toggle idleWhenAttachedToggle;
 
 	private void Awake() {
 		ignoreSliderMoved = true;
@@ -51,18 +49,6 @@ public class EggCellPanel : MetabolismCellPanel {
 		}
 
 		GenePanel.instance.selectedGene.eggCellFertilizeThreshold = fertilizeSlider.value;
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
-		}
-		MakeDirty();
-	}
-
-	public void OnCanFertilizeWhenAttachedToggleChanged() {
-		if (ignoreSliderMoved) {
-			return;
-		}
-
-		GenePanel.instance.selectedGene.eggCellCanFertilizeWhenAttached = canFertilizeWhenAttachedToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnChanged();
 		}
@@ -105,6 +91,18 @@ public class EggCellPanel : MetabolismCellPanel {
 		MakeDirty();
 	}
 
+	public void OnIdleWhenAttachedToggleChanged() {
+		if (ignoreSliderMoved) {
+			return;
+		}
+
+		GenePanel.instance.selectedGene.eggCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
+		if (CreatureSelectionPanel.instance.hasSoloSelected) {
+			OnChanged();
+		}
+		MakeDirty();
+	}
+
 	private void Update() {
 		if (isDirty) {
 			if (mode == PhenoGenoEnum.Phenotype) {
@@ -112,9 +110,6 @@ public class EggCellPanel : MetabolismCellPanel {
 
 				fertilizeSliderText.color = Color.gray;
 				fertilizeSlider.interactable = false;
-
-				canFertilizeWhenAttachedText.color = Color.gray;
-				canFertilizeWhenAttachedToggle.interactable = false;
 
 				fertilizeButtonText.color = Color.black;
 
@@ -130,14 +125,14 @@ public class EggCellPanel : MetabolismCellPanel {
 				detatchEnergySliderText.color = Color.gray;
 				detatchEnergySlider.interactable = false;
 
+				idleWhenAttachedText.color = Color.gray;
+				idleWhenAttachedToggle.interactable = false;
+
 			} else if (mode == PhenoGenoEnum.Genotype) {
 				fertilizeHeadingText.color = Color.black;
 
 				fertilizeSliderText.color = Color.black;
 				fertilizeSlider.interactable = isUnlocked();
-
-				canFertilizeWhenAttachedText.color = Color.black;
-				canFertilizeWhenAttachedToggle.interactable = isUnlocked();
 
 				fertilizeButtonText.color = Color.gray;
 
@@ -152,6 +147,9 @@ public class EggCellPanel : MetabolismCellPanel {
 
 				detatchEnergySliderText.color = Color.black;
 				detatchEnergySlider.interactable = isUnlocked();
+
+				idleWhenAttachedText.color = Color.black;
+				idleWhenAttachedToggle.interactable = isUnlocked();
 			}
 
 			if (GenePanel.instance.selectedGene != null) {
@@ -160,8 +158,6 @@ public class EggCellPanel : MetabolismCellPanel {
 				fertilizeSlider.value = GenePanel.instance.selectedGene.eggCellFertilizeThreshold;
 				fertilizeSliderText.text = string.Format("Egg Energy ≥ {0:F1}%", GenePanel.instance.selectedGene.eggCellFertilizeThreshold * 100f);
 				
-				canFertilizeWhenAttachedToggle.isOn = GenePanel.instance.selectedGene.eggCellCanFertilizeWhenAttached;
-
 				detatchSizeToggle.isOn = GenePanel.instance.selectedGene.eggCellDetatchMode == ChildDetatchModeEnum.Size;
 				detatchEnergyToggle.isOn = GenePanel.instance.selectedGene.eggCellDetatchMode == ChildDetatchModeEnum.Energy;
 
@@ -172,6 +168,8 @@ public class EggCellPanel : MetabolismCellPanel {
 
 				detatchEnergySlider.value = GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold;
 				detatchEnergySliderText.text = string.Format("Can't grow more and cell energy ≥ {0:F1}%", GenePanel.instance.selectedGene.eggCellDetatchEnergyThreshold * 100f);
+
+				idleWhenAttachedToggle.isOn = GenePanel.instance.selectedGene.eggCellIdleWhenAttached;
 
 				ignoreSliderMoved = false;
 			}

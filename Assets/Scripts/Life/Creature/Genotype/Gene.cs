@@ -3,11 +3,11 @@
 public class Gene {
 	// Egg cell
 	public float eggCellFertilizeThreshold = 0.4f; //part of max energy (* 100 to get  %)
-	public bool eggCellCanFertilizeWhenAttached = true;
 	// Has to be stored in childs origin cell, so that inf can be kept when i'm gone
 	public ChildDetatchModeEnum eggCellDetatchMode = ChildDetatchModeEnum.Size;
 	public float eggCellDetatchSizeThreshold = 0.5f; // completeness count / max count 
 	public float eggCellDetatchEnergyThreshold = 0.4f; //part of max energy(* 100 to get  %)
+	public bool eggCellIdleWhenAttached = false;
 	// ^ Egg cell ^
 
 	// Jaw Cell
@@ -16,10 +16,28 @@ public class Gene {
 	public bool jawCellCannibalizeFather;
 	public bool jawCellCannibalizeSiblings;
 	public bool jawCellCannibalizeChildren;
+	public bool jawCellIdleWhenAttached = false;
 	// ^ Jaw Cell ^
 
+	// Leaf Cell
+	public bool leafCellIdleWhenAttached = false;
+	// ^ Leaf Cell ^
+
+	// Muscle Cell
+	public bool muscleCellIdleWhenAttached = false;
+	// ^ Muscle Cell ^
+
 	// Axon
-	public bool axonIsEnabled;
+	private bool m_axonIsEnabled;
+	public bool axonIsEnabled {
+		get {
+			return m_axonIsEnabled || isOrigin;
+		}
+		set {
+			m_axonIsEnabled = value;
+		}
+	}
+	
 	public float axonFromOriginOffset;
 	public bool axonIsFromOriginPlus180;
 	public float axonFromMeOffset;
@@ -97,11 +115,6 @@ public class Gene {
 		if (mut < gs.mutation.eggCellFertilizeThresholdRandom * strength) {
 			eggCellFertilizeThreshold = Mathf.Clamp(eggCellFertilizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellFertilizeThresholdMin, gs.phenotype.eggCellFertilizeThresholdMax); // Cell energy fullness J/J
 		}
-	
-		mut = Random.Range(0, gs.mutation.eggCellCanFertilizeWhenAttachedLeave + gs.mutation.eggCellCanFertilizeWhenAttachedChange * strength);
-		if (mut < gs.mutation.eggCellCanFertilizeWhenAttachedChange * strength) {
-			eggCellCanFertilizeWhenAttached = !eggCellCanFertilizeWhenAttached; //toggle
-		}
 
 		spread = 0.06f; // TODO move toGlobal settings
 		mut = Random.Range(0, gs.mutation.eggCellDetatchSizeThresholdLeave + gs.mutation.eggCellDetatchSizeThresholdRandom * strength);
@@ -113,6 +126,11 @@ public class Gene {
 		mut = Random.Range(0, gs.mutation.eggCellDetatchEnergyThresholdLeave + gs.mutation.eggCellDetatchEnergyThresholdRandom * strength);
 		if (mut < gs.mutation.eggCellDetatchEnergyThresholdRandom * strength) {
 			eggCellDetatchEnergyThreshold = Mathf.Clamp(eggCellDetatchEnergyThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellDetatchEnergyThresholdMin, gs.phenotype.eggCellDetatchEnergyThresholdMax); // J
+		}
+
+		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
+		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
+			eggCellIdleWhenAttached = !eggCellIdleWhenAttached; //toggle
 		}
 		// ^ Egg ^
 
@@ -141,7 +159,63 @@ public class Gene {
 		if (mut < gs.mutation.jawCellCannibalizeChildrenChange * strength) {
 			jawCellCannibalizeChildren = !jawCellCannibalizeChildren;
 		}
+
+		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
+		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
+			jawCellIdleWhenAttached = !jawCellIdleWhenAttached; //toggle
+		}
 		// ^ Jaw ^
+
+		// Leaf
+		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
+		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
+			leafCellIdleWhenAttached = !leafCellIdleWhenAttached; //toggle
+		}
+		// ^ Leaf ^ 
+
+		// Muscle
+		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
+		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
+			muscleCellIdleWhenAttached = !muscleCellIdleWhenAttached; //toggle
+		}
+		// ^ Muscle ^
+
+		// Axon
+		mut = Random.Range(0, gs.mutation.axonEnabledLeave + gs.mutation.axonEnabledChange * strength);
+		if (mut < gs.mutation.axonEnabledChange * strength) {
+			axonIsEnabled = !axonIsEnabled; //toggle
+		}
+
+		spread = 45f;
+		mut = Random.Range(0, gs.mutation.axonFromOriginOffsetLeave + gs.mutation.axonFromOriginOffsetChange * strength);
+		if (mut < gs.mutation.axonFromOriginOffsetChange * strength) {
+			axonFromOriginOffset = Mathf.Clamp(axonFromOriginOffset - spread + Random.Range(0f, spread) + Random.Range(0f, spread), 0f, 360f);
+		}
+
+		mut = Random.Range(0, gs.mutation.axonIsFromOriginPlus180Leave + gs.mutation.axonIsFromOriginPlus180Change * strength);
+		if (mut < gs.mutation.axonIsFromOriginPlus180Change * strength) {
+			axonIsFromOriginPlus180 = !axonIsFromOriginPlus180; //toggle
+		}
+
+		spread = 45f;
+		mut = Random.Range(0, gs.mutation.axonFromMeOffsetLeave + gs.mutation.axonFromMeOffsetChange * strength);
+		if (mut < gs.mutation.axonFromMeOffsetChange * strength) {
+			axonFromMeOffset = Mathf.Clamp(axonFromMeOffset - spread + Random.Range(0f, spread) + Random.Range(0f, spread), 0f, 360f);
+		}
+
+		spread = 0.25f;
+		mut = Random.Range(0, gs.mutation.axonRelaxContractLeave + gs.mutation.axonRelaxContractChange * strength);
+		if (mut < gs.mutation.axonRelaxContractChange * strength) {
+			axonRelaxContract = Mathf.Clamp(axonRelaxContract - spread + Random.Range(0f, spread) + Random.Range(0f, spread), -1f, 1f);
+		}
+
+		mut = Random.Range(0, gs.mutation.axonIsReverseLeave + gs.mutation.axonIsReverseChange * strength);
+		if (mut < gs.mutation.axonIsReverseChange * strength) {
+			axonIsReverse = !axonIsReverse; //toggle
+		}
+
+
+		// ^ Axon ^ 
 
 		// Origo
 		spread = 40;
@@ -199,14 +273,10 @@ public class Gene {
 
 		// Egg
 		geneData.eggCellFertilizeThreshold = eggCellFertilizeThreshold;
-		geneData.eggCellCanFertilizeWhenAttached = eggCellCanFertilizeWhenAttached;
 		geneData.eggCellDetatchMode = eggCellDetatchMode;
 		geneData.eggCellDetatchSizeThreshold = eggCellDetatchSizeThreshold;
 		geneData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
-
-		geneData.arrangementData[0] = arrangements[0].UpdateData();
-		geneData.arrangementData[1] = arrangements[1].UpdateData();
-		geneData.arrangementData[2] = arrangements[2].UpdateData();
+		geneData.eggCellIdleWhenAttached = eggCellIdleWhenAttached;
 
 		// Jaw
 		geneData.jawCellCannibalizeKin =      jawCellCannibalizeKin;
@@ -214,6 +284,13 @@ public class Gene {
 		geneData.jawCellCannibalizeFather =   jawCellCannibalizeFather;
 		geneData.jawCellCannibalizeSiblings = jawCellCannibalizeSiblings;
 		geneData.jawCellCannibalizeChildren = jawCellCannibalizeChildren;
+		geneData.jawCellIdleWhenAttached =    jawCellIdleWhenAttached;
+
+		// Leaf
+		geneData.leafCellIdleWhenAttached = leafCellIdleWhenAttached;
+
+		// Muscle
+		geneData.muscleCellIdleWhenAttached = muscleCellIdleWhenAttached;
 
 		// Axon
 		geneData.axonIsEnabled = axonIsEnabled;
@@ -223,6 +300,9 @@ public class Gene {
 		geneData.axonRelaxContract = axonRelaxContract;
 		geneData.axonIsReverse = axonIsReverse;
 
+		geneData.arrangementData[0] = arrangements[0].UpdateData();
+		geneData.arrangementData[1] = arrangements[1].UpdateData();
+		geneData.arrangementData[2] = arrangements[2].UpdateData();
 
 		// Origin
 		geneData.originPulsePeriodTicks =     originPulsePeriodTicks;
@@ -247,20 +327,18 @@ public class Gene {
 		} else {
 			eggCellFertilizeThreshold = geneData.eggCellFertilizeThreshold;
 		}
-		eggCellCanFertilizeWhenAttached = geneData.eggCellCanFertilizeWhenAttached;
 		eggCellDetatchMode = geneData.eggCellDetatchMode;
-
 		if (geneData.eggCellDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
 			eggCellDetatchSizeThreshold = geneData.eggCellDetatchSizeThreshold / 30f;
 		} else {
 			eggCellDetatchSizeThreshold = geneData.eggCellDetatchSizeThreshold;
 		}
-
 		if (geneData.eggCellDetatchEnergyThreshold > GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax) {
 			eggCellDetatchEnergyThreshold = geneData.eggCellDetatchEnergyThreshold / 100f;
 		} else {
 			eggCellDetatchEnergyThreshold = geneData.eggCellDetatchEnergyThreshold;
 		}
+		eggCellIdleWhenAttached = geneData.eggCellIdleWhenAttached;
 
 		// Jaw
 		jawCellCannibalizeKin =      geneData.jawCellCannibalizeKin;
@@ -268,6 +346,13 @@ public class Gene {
 		jawCellCannibalizeFather =   geneData.jawCellCannibalizeFather;
 		jawCellCannibalizeSiblings = geneData.jawCellCannibalizeSiblings;
 		jawCellCannibalizeChildren = geneData.jawCellCannibalizeChildren;
+		jawCellIdleWhenAttached =    geneData.jawCellIdleWhenAttached;
+
+		// Leaf
+		leafCellIdleWhenAttached = geneData.leafCellIdleWhenAttached;
+
+		// Muscle
+		muscleCellIdleWhenAttached = geneData.muscleCellIdleWhenAttached;
 
 		// Axon
 		axonIsEnabled =             geneData.axonIsEnabled;

@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class LeafCellPanel : MetabolismCellPanel {
+public class MuscleCellPanel : MetabolismCellPanel {
 
-	public Text exposure;
+	//public Text exposure;
 
 	public Text idleWhenAttachedText;
 	public Toggle idleWhenAttachedToggle;
@@ -13,7 +13,7 @@ public class LeafCellPanel : MetabolismCellPanel {
 			return;
 		}
 
-		GenePanel.instance.selectedGene.leafCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
+		GenePanel.instance.selectedGene.muscleCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnChanged();
 		}
@@ -29,29 +29,30 @@ public class LeafCellPanel : MetabolismCellPanel {
 
 			if (mode == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					exposure.text = string.Format("Exposure: {0:F2}%", (CellPanel.instance.selectedCell as LeafCell).lowPassExposure * 100f);
-					exposure.color = Color.black;
+					//exposure.text = string.Format("Exposure: {0:F2}%", (CellPanel.instance.selectedCell as LeafCell).lowPassExposure * 100f);
+					//exposure.color = Color.black;
 
 					idleWhenAttachedText.color = Color.gray;
 					idleWhenAttachedToggle.interactable = false;
 				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
-				exposure.text = "Exposure : -";
-				exposure.color = Color.gray;
+				//exposure.text = "Exposure : -";
+				//exposure.color = Color.gray;
 
 				idleWhenAttachedText.color = Color.black;
 				idleWhenAttachedToggle.interactable = isUnlocked();
 			}
 
+
 			if (GenePanel.instance.selectedGene != null) {
 				ignoreSliderMoved = true;
 
-				idleWhenAttachedToggle.isOn = GenePanel.instance.selectedGene.leafCellIdleWhenAttached;
+				idleWhenAttachedToggle.isOn = GenePanel.instance.selectedGene.muscleCellIdleWhenAttached;
 
 				ignoreSliderMoved = false;
 			}
 
-			isDirty = false;
+			isDirty = false; 
 		}
 	}
 }

@@ -34,7 +34,8 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 	public MetabolismCellPanel eggCellPanel;
 	public MetabolismCellPanel jawCellPanel;
 	public MetabolismCellPanel leafCellPanel;
-	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[3];
+	public MetabolismCellPanel muscleCellPanel;
+	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[4];
 
 	public AxonCellPanel axonCellPanel;
 	public OriginCellPanel originCellPanel;
@@ -44,10 +45,12 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 		metabolismCellPanels[0] = eggCellPanel;
 		metabolismCellPanels[1] = jawCellPanel;
 		metabolismCellPanels[2] = leafCellPanel;
+		metabolismCellPanels[3] = muscleCellPanel;
 
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
 			m.mode = PhenoGenoEnum.Genotype;
 		}
+
 		axonCellPanel.mode = PhenoGenoEnum.Genotype;
 		originCellPanel.mode = PhenoGenoEnum.Genotype;
 		MakeDirty();
@@ -87,7 +90,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 			GenePanel.instance.selectedGene.type = CellTypeEnum.Vein;
 		}
 
-
+		GeneNeighboursPanel.instance.MakeDirty();
 		GenotypePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
@@ -182,6 +185,8 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 				leafCellPanel.MakeDirty();
 			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Muscle) {
 				metabolismCellTypeDropdown.value = 4;
+				muscleCellPanel.gameObject.SetActive(true);
+				muscleCellPanel.MakeDirty();
 			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Root) {
 				metabolismCellTypeDropdown.value = 5;
 			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Shell) {

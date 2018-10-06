@@ -61,6 +61,22 @@ public class Creature : MonoBehaviour {
 	private bool detatch = false;
 	private int cantGrowMore = 0;
 
+	public void Freeze() {
+		creation = CreatureCreationEnum.Frozen;
+		generation = 0;
+		phenotype.DetatchFromMother(this, false, false);
+		ClearMotherAndChildrenReferences();
+		phenotype.cellsDiffersFromGeneCells = true;
+	}
+
+	public void Defrost() {
+		creation = CreatureCreationEnum.Cloned; //TODO: mark it as defrosted?
+		generation = 1;
+		phenotype.DetatchFromMother(this, false, false); // should not be connected
+		ClearMotherAndChildrenReferences(); // should not have any
+		phenotype.cellsDiffersFromGeneCells = true;
+	}
+
 	public void ClearMotherAndChildrenReferences() {
 		ClearMotherReference();
 		ClearChildrenReferences();
@@ -381,6 +397,12 @@ public class Creature : MonoBehaviour {
 	public int cellCount {
 		get {
 			return phenotype.cellCount;
+		}
+	}
+
+	public int opaqueCellCount {
+		get {
+			return phenotype.opaqueCellCount;
 		}
 	}
 
@@ -711,30 +733,6 @@ public class Creature : MonoBehaviour {
 				}
 			}
 		}
-
-		//// Execute pending Egg Fertilize
-		//// If Egg was disabled there is no point checking here either
-		//if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
-		//	Cell fertilizeCell = null;
-		//	foreach (Cell c in phenotype.cellList) {
-		//		if (c is EggCell) {
-		//			EggCell eggCell = c as EggCell;
-		//			if (eggCell.shouldFertilize == 0) {
-		//				fertilizeCell = eggCell;
-		//				eggCell.shouldFertilize = -1;
-		//				break;
-		//			}
-		//			//else if (eggCell.shouldFertilize > 0) {
-		//			//	eggCell.shouldFertilize--;
-		//			//}
-		//		}
-		//	}
-		//	if (fertilizeCell != null) {
-		//		World.instance.life.FertilizeCreature(fertilizeCell, true, worldTicks, false);
-		//		PhenotypePanel.instance.MakeDirty();
-		//		CellPanel.instance.MakeDirty();
-		//	}
-		//}
 	}
 
 	public void UpdateFertilize(ulong worldTicks) {
@@ -746,14 +744,11 @@ public class Creature : MonoBehaviour {
 				foreach (Cell c in phenotype.cellList) {
 					if (c is EggCell) {
 						EggCell eggCell = c as EggCell;
-						if (eggCell.shouldFertilize == 0) {
+						if (eggCell.shouldFertilize) {
 							fertilizeCell = eggCell;
-							eggCell.shouldFertilize = -1;
+							eggCell.shouldFertilize = false;
 							break;
 						}
-						//else if (eggCell.shouldFertilize > 0) {
-						//	eggCell.shouldFertilize--;
-						//}
 					}
 				}
 				if (fertilizeCell != null) {

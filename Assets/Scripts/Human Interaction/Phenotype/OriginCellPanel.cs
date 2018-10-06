@@ -80,7 +80,7 @@ public class OriginCellPanel : MonoBehaviour {
 					pulseFrequenzySliderText.color = Color.gray;
 					pulseFrequenzySlider.interactable = false;
 
-					pulseWaveCompletenessText.text = string.Format("Wave complete: {0:F1} of {1:F0} ticks, completeness {2:F2}", originCell.originPulseTick, originCell.originPulsePeriodTicks, originCell.originPulseCompleteness);
+					pulseWaveCompletenessText.text = string.Format("Wave complete: {0:F1} of {1:F0} ticks, completeness {2:F2}", originCell.originPulseTick, originCell.gene.originPulsePeriodTicks, originCell.originPulseCompleteness);
 					pulseWaveCompletenessText.color = Color.black;
 				} else if (mode == PhenoGenoEnum.Genotype) {
 					pulseWaveCompletenessText.text = "Wave complete: -";

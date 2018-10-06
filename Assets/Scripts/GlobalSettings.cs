@@ -20,9 +20,6 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float eggCellFertilizeThresholdLeave = 100f;
 		public float eggCellFertilizeThresholdRandom = 10f;
 
-		public float eggCellCanFertilizeWhenAttachedLeave = 1000f;
-		public float eggCellCanFertilizeWhenAttachedChange = 10f;
-
 		public float eggCellDetatchModeLeave = 1000f;
 		public float eggCellDetatchModeChange = 10f;
 
@@ -46,6 +43,29 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		public float jawCellCannibalizeChildrenLeave = 1000f;
 		public float jawCellCannibalizeChildrenChange = 10f;
+
+		// General cell
+		public float cellIdleWhenAttachedLeave = 1000f;
+		public float cellIdleWhenAttachedChange = 10f;
+		// ^ General Cell ^
+
+		public float axonEnabledLeave = 1000f;
+		public float axonEnabledChange = 10f;
+
+		public float axonFromOriginOffsetLeave = 1000f;
+		public float axonFromOriginOffsetChange = 50f;
+
+		public float axonIsFromOriginPlus180Leave = 1000f;
+		public float axonIsFromOriginPlus180Change = 10f;
+
+		public float axonFromMeOffsetLeave = 1000f;
+		public float axonFromMeOffsetChange = 10f;
+
+		public float axonRelaxContractLeave = 1000f;
+		public float axonRelaxContractChange = 10f;
+
+		public float axonIsReverseLeave = 1000f;
+		public float axonIsReverseChange = 10f;
 
 		public float OriginPulseFrequenzyLeave = 1000f;
 		public float OriginPulseFrequenzyRandom = 10f;
@@ -114,7 +134,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 														   //Fungal Cell
 		public float fungalCellEffectCost = 0f; // W
-		public float fungalCellEffect = 0.1f; // W
+		public float[] fungalCellEffect = new float[6]; // W
 
 		//Jaw Cell
 		public float jawCellEffectCost = 0.2f; //W
@@ -161,7 +181,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float veinFluxEffectStrong = 0.5f; //W
 
 		//General
+		public float idleCellEffectCost = 0.05f;
 		public float cellMaxEnergy = 100f; // J
+		public bool reclaimCutBranchEnergy = true; //when a branch is detatched, its energy will be reclaimed and distributed among cells in creature
 
 		//General -> build
 		public float cellBuildCost = 10f; //Energy Cost to build cell, J (Newly built cell will have this energy at start of its life)

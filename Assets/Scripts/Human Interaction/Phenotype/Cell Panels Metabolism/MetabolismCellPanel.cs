@@ -3,6 +3,7 @@
 public abstract class MetabolismCellPanel : MonoBehaviour {
 	[HideInInspector]
 	public PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
+	protected bool ignoreSliderMoved = false;
 
 	protected bool isDirty = false;
 	public void MakeDirty() {

@@ -24,6 +24,12 @@ public class Genotype : MonoBehaviour {
 	private CellMap geneCellMap = new CellMap();
 	private bool isDirty = true;
 
+	public bool hasGenes {
+		get {
+			return geneCellList != null && geneCellList.Count > 0;
+		}
+	}
+
 	//Full size of creature
 	public int geneCellCount {
 		get {
@@ -52,6 +58,44 @@ public class Genotype : MonoBehaviour {
 			return geneCellList.Count > 0;
 		}
 	}
+
+	public Cell GetClosestAxonGeneCellUpBranch(Vector2i position) {
+		Vector2i currentPosition = position;
+		for (int rep = 0; rep < 10; rep++) {
+			Cell cellAtPosition = geneCellMap.GetCell(currentPosition);
+			if (cellAtPosition.isAxonEnabled) { 
+				return cellAtPosition;
+			}
+			// there should be an axone at origin, since it is forced to be there
+			if (currentPosition.x == 0 && currentPosition.y == 0) {
+				Debug.LogError("We are at root now but no axone was found");
+			}
+			currentPosition = geneCellMap.GetCellGridPositionUpBranch(currentPosition);
+		}
+		Debug.LogError("We should have been climbing all the way to the root by now!");
+		return null;
+	}
+
+	public int? GetDistanceToClosestAxonGeneCellUpBranch(Vector2i position) {
+		int distance = 0;
+		Vector2i currentPosition = position;
+		for (int rep = 0; rep < 10; rep++) {
+			Cell cellAtPosition = geneCellMap.GetCell(currentPosition);
+			if (cellAtPosition.isAxonEnabled) {
+				return distance;
+			}
+			if (currentPosition.x == 0 && currentPosition.y == 0) {
+				Debug.LogError("We are at root now but no axone was found");
+				return null;
+			}
+			currentPosition = geneCellMap.GetCellGridPositionUpBranch(currentPosition);
+			distance++;
+		}
+		Debug.LogError("We should have been climbing all the way to the root by now!");
+		return null;
+	}
+
+
 
 	//Hack
 	public Gene[] GetMutatedClone(float strength) {

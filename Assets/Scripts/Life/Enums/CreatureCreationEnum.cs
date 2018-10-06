@@ -3,4 +3,5 @@
 	Cloned,
 	Forged,
 	Born,
+	Frozen,
 }

@@ -88,28 +88,32 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public float originDetatchEnergyThreshold; // J ==> part of max energy (* 100 to get  %), If we have more energy than this in the origin cell and it is attached with mother, it will separate
 											   //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
+
+	// Origin only
 	[HideInInspector]
 	public int originPulseTick = 0;
-	public int originPulsePeriodTicks;
 
 	public float originPulsePeriod {
 		get {
-			return originPulsePeriodTicks * Time.fixedDeltaTime;
+			Debug.Assert(isOrigin);
+			return gene.originPulsePeriodTicks * Time.fixedDeltaTime;
 		}
 	}
 
 	public float originPulseFequenzy {
 		get {
+			Debug.Assert(isOrigin);
 			return 1f / originPulsePeriod;
 		}
 	}
 
 	public float originPulseCompleteness {
 		get {
-			return (float)originPulseTick / (float)originPulsePeriodTicks;
+			Debug.Assert(isOrigin);
+			return (float)originPulseTick / (float)gene.originPulsePeriodTicks;
 		}
 	}
-	//--- Origin only ^
+	// ^ Origin only ^
 
 	// Axon
 	public bool isAxonEnabled {
@@ -118,10 +122,19 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public float axonPulseValue {
-		get {
-			return Mathf.Cos(creature.phenotype.originCell.originPulseCompleteness * 2f * Mathf.PI);
+	public float GetAxonPulseValue(int distance) {
+		float fromOriginOffset = (gene.axonFromOriginOffset + (gene.axonIsFromOriginPlus180 && flipSide == FlipSideEnum.WhiteBlack ? 180f : 0f)) / 360f;
+		float fromMeOffest = (gene.axonFromMeOffset * distance) / 360f;
+		if (!gene.axonIsReverse) {
+			return Mathf.Cos((fromOriginOffset + fromMeOffest + creature.phenotype.originCell.originPulseCompleteness) * 2f * Mathf.PI) + gene.axonRelaxContract;
+		} else {
+			return Mathf.Cos((fromOriginOffset + fromMeOffest - creature.phenotype.originCell.originPulseCompleteness) * 2f * Mathf.PI) + gene.axonRelaxContract; // is this really the right way of reversing????!!!!
 		}
+		
+	}
+
+	public bool IsAxonePulseContracting(int distance) {
+		return isAxonEnabled && GetAxonPulseValue(distance) > 0;
 	}
 
 	// ^ Axon ^
@@ -376,7 +389,7 @@ public abstract class Cell : MonoBehaviour {
 	//Origin only
 	public void UpdatePulse() {
 		originPulseTick++;
-		if (originPulseTick >= originPulsePeriodTicks) {
+		if (originPulseTick >= gene.originPulsePeriodTicks) {
 			originPulseTick = 0;
 		}
 	}
@@ -985,6 +998,12 @@ public abstract class Cell : MonoBehaviour {
 					filledCircleSprite.color = Color.white;
 				} else {
 					filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
+					if (GetCellType() == CellTypeEnum.Leaf) {
+						filledCircleSprite.color = ColorScheme.instance.cellGradientLeafGreenExposure.Evaluate((this as LeafCell).lowPassExposure);
+					}
+					if (IsIdle()) {
+						filledCircleSprite.color = Color.black;
+					}
 				}
 			}
 			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.energy) {
@@ -1021,8 +1040,7 @@ public abstract class Cell : MonoBehaviour {
 			}
 			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure) {
 				if (GetCellType() == CellTypeEnum.Leaf) {
-					float effectValue = (this as LeafCell).lowPassExposure;
-					filledCircleSprite.color = ColorScheme.instance.cellGradientLeafExposure.Evaluate(effectValue);
+					filledCircleSprite.color = ColorScheme.instance.cellGradientLeafExposure.Evaluate((this as LeafCell).lowPassExposure);
 				} else {
 					filledCircleSprite.color = Color.blue;
 				}
@@ -1081,16 +1099,35 @@ public abstract class Cell : MonoBehaviour {
 			}
 			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.pulse) {
 				//filledCircleSprite.color = isOrigin && originPulseTick == 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
-				float red = 0f;
-				float green = 0f;
-				if (axonPulseValue > 0) {
-					red = 0f;
-					green = 0.5f + axonPulseValue * 0.5f;
+				if (isAxonEnabled) {
+					float red = 0f;
+					float green = 0f;
+					float blue = 0f;
+					green = blue = 0.5f + GetAxonPulseValue(0) * 0.5f;
+					filledCircleSprite.color = new Color(red, green, blue);
+				} else if (GetCellType() == CellTypeEnum.Muscle) {
+					if (((MuscleCell)this).masterAxonGridPosition == null) {
+						filledCircleSprite.color = Color.black; // has no masterAxonGridPosition, should have
+					} else {
+						Cell masterAxon = creature.phenotype.cellMap.GetCell(((MuscleCell)this).masterAxonGridPosition);
+						if (masterAxon == null) {
+							filledCircleSprite.color = Color.gray; // has a masterAxonGridPosition, but there is no cell there (could be killed or unborn)
+						} else {
+							if (((MuscleCell)this).masterAxoneDistance != null) {
+								float red = 0f;
+								float green = 0f;
+								float blue = 0f;
+								red = green = 0.5f + masterAxon.GetAxonPulseValue((int)((MuscleCell)this).masterAxoneDistance) * 0.5f;
+								filledCircleSprite.color = new Color(red, green, blue);
+							}
+						}
+					}
+
+
+
 				} else {
-					red = 0.5f + axonPulseValue * 0.5f;
-					green = 0f;
+					filledCircleSprite.color = Color.blue;
 				}
-				filledCircleSprite.color = isAxonEnabled ? new Color(red, green, 0f) : Color.blue;
 			}
 		} else {
 			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
@@ -1113,6 +1150,10 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// ^ Update ^
+
+	virtual public bool IsIdle() {
+		return false;
+	}
 
 	//Phenotype only
 	virtual public void OnRecycleCell() {
@@ -1203,7 +1244,6 @@ public abstract class Cell : MonoBehaviour {
 		cellData.originDetatchSizeThreshold =   originDetatchSizeThreshold;
 		cellData.originDetatchEnergyThreshold = originDetatchEnergyThreshold;
 		cellData.originPulseTick = originPulseTick;
-		cellData.originPulsePeriodTicks =       originPulsePeriodTicks;
 
 		return cellData;
 	}
@@ -1258,9 +1298,7 @@ public abstract class Cell : MonoBehaviour {
 			originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold;
 		}
 
-		originPulseTick =        cellData.originPulseTick;
-		originPulsePeriodTicks = cellData.originPulsePeriodTicks == 0 ? 80 : cellData.originPulsePeriodTicks;
-			// Mathf.Clamp(cellData.originPulsePeriodTicks, Mathf.CeilToInt(1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMax)), Mathf.CeilToInt(1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMin)));
+		originPulseTick = cellData.originPulseTick;
 
 		this.creature = creature;
 	}
