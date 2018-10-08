@@ -349,7 +349,7 @@ public class Life : MonoBehaviour {
 	public LifeData UpdateData() {
 		//UpdateSoulReferences();
 
-		lifeData.lastId = idGenerator.number;
+		lifeData.lastId = idGenerator.worldNumber;
 
 		//Creatures
 		lifeData.creatureList.Clear();
@@ -369,7 +369,7 @@ public class Life : MonoBehaviour {
 
 	// Load
 	public void ApplyData(LifeData lifeData) {
-		idGenerator.number = lifeData.lastId;
+		idGenerator.worldNumber = lifeData.lastId;
 
 		// Create all creatures
 		KillAllCreatures();
@@ -477,6 +477,5 @@ public class Life : MonoBehaviour {
 			}
 		}
 	}
-
 	// ^ Update ^
 }

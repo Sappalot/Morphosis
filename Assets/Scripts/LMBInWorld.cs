@@ -13,11 +13,9 @@ public class LMBInWorld : MonoBehaviour {
 					return;
 				}
 				CreatureSelectionPanel.instance.ClearSelection();
-			} else if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures
-				|| MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures) {
-
+			} else if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures) {
 				List<Creature> creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
-				UpdateCreaturePostPlaced(creatures, true);
+				UpdateCreaturePostPlaced(creatures, false, false);
 			} else if (MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures) {
 				List<Creature> creatures;
 				if (Input.GetKey(KeyCode.LeftControl)) {
@@ -25,7 +23,7 @@ public class LMBInWorld : MonoBehaviour {
 				} else {
 					creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
 				}
-				UpdateCreaturePostPlaced(creatures, true);
+				UpdateCreaturePostPlaced(creatures, true, true);
 			} else if (MouseAction.instance.actionState == MouseActionStateEnum.combineMoveCreatures) {
 				List<Creature> creatures;
 				if (Input.GetKey(KeyCode.LeftControl)) {
@@ -33,23 +31,31 @@ public class LMBInWorld : MonoBehaviour {
 				} else {
 					creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
 				}
-				UpdateCreaturePostPlaced(creatures, false);
+				UpdateCreaturePostPlaced(creatures, false, false);
 			}
 		}
 	}
 
-	private void UpdateCreaturePostPlaced(List<Creature> creatures, bool canFreeze) {
+	private void UpdateCreaturePostPlaced(List<Creature> creatures, bool canFreeze, bool canDefrost) {
 		foreach (Creature c in creatures) {
 			if (TerrainPerimeter.instance.IsCompletelyInside(c)) {
 				if (c.creation == CreatureCreationEnum.Frozen) {
-					c.Defrost();
+					if (canDefrost) {
+						c.Defrost();
+					} else {
+						World.instance.life.KillCreatureSafe(c, true); // should be killed from freezer instead
+					}
 				} 
-			} else if (Freezer.instance.IsCompletelyInside(c) && canFreeze) {
+			} else if (Freezer.instance.IsCompletelyInside(c)) {
 				if (c.creation != CreatureCreationEnum.Frozen) {
-					c.Freeze();
+					if (canFreeze) {
+						c.Freeze();
+					} else {
+						World.instance.life.KillCreatureSafe(c, true);
+					}
 				}
 			} else {
-				World.instance.life.KillCreatureSafe(c, true); // creature placed in the void
+				World.instance.life.KillCreatureSafe(c, true); // Where was it picked from?? Kill it there!!
 			}
 		}
 	}
