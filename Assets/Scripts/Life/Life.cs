@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 
 public class Life : MonoBehaviour {
-	private IdGenerator idGenerator = new IdGenerator();
+	private IdGenerator idGenerator = new IdGenerator("id");
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
 	private List<Creature> creatureList = new List<Creature>(); // All enbodied creatures (the once that we can see and play with)
 
@@ -152,7 +152,7 @@ public class Life : MonoBehaviour {
 		}
 	}
 
-	//This is the only way, where the creature GO is deleted
+	//This is the only way, where the world creature GO is deleted
 	public void KillCreatureSafe(Creature creature, bool playEffects) {
 		creature.DetatchFromMother(false, playEffects);
 		foreach (Creature child in creature.GetChildrenAlive()) {
@@ -298,7 +298,7 @@ public class Life : MonoBehaviour {
 		return InstantiateCreature(id);
 	}
 
-	private Creature InstantiateCreature(String id) {
+	private Creature InstantiateCreature(string id) {
 		Creature creature = Morphosis.instance.creaturePool.Borrow();
 		creature.gameObject.SetActive(true);
 		creature.name = "Creature " + id;
@@ -330,14 +330,13 @@ public class Life : MonoBehaviour {
 	}
 
 	// Load Save
-
 	private LifeData lifeData = new LifeData();
 
 	// Save
 	public LifeData UpdateData() {
 		//UpdateSoulReferences();
 
-		lifeData.lastId = idGenerator.worldNumber;
+		lifeData.lastId = idGenerator.serialNumber;
 
 		//Creatures
 		lifeData.creatureList.Clear();
@@ -357,7 +356,7 @@ public class Life : MonoBehaviour {
 
 	// Load
 	public void ApplyData(LifeData lifeData) {
-		idGenerator.worldNumber = lifeData.lastId;
+		idGenerator.serialNumber = lifeData.lastId;
 
 		// Create all creatures
 		KillAllCreatures();

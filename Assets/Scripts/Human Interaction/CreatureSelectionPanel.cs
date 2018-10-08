@@ -42,6 +42,34 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	private bool isDirty = true;
 
+	public enum TemperatureState {
+		Defrosted,
+		Frozen,
+		Mixed,
+		Error,
+	}
+
+	static TemperatureState GetTemperatureState(List<Creature> creatures) {
+		int defrosted = 0;
+		int frozen = 0;
+		foreach (Creature c in creatures) {
+			if (c.creation != CreatureCreationEnum.Frozen) {
+				defrosted++;
+			}
+			if (c.creation == CreatureCreationEnum.Frozen) {
+				frozen++;
+			}
+		}
+		if (frozen > 0 && defrosted > 0) {
+			return TemperatureState.Mixed;
+		} else if (frozen > 0 && defrosted == 0) {
+			return TemperatureState.Frozen;
+		} else if (defrosted > 0 && frozen == 0) {
+			return TemperatureState.Defrosted;
+		}
+		return TemperatureState.Error;
+	}
+
 	public void MakeDirty() {
 		isDirty = true;
 	}
@@ -368,17 +396,26 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (!hasSelection) {
 			return;
 		}
-		AddCoppiesToMoveCreature(selection);
+		TemperatureState temperatureState = GetTemperatureState(selection);
+		if (temperatureState == TemperatureState.Defrosted) {
+			AddDefrostedCoppiesToMoveCreature(selection);
+		} else if (temperatureState == TemperatureState.Frozen) {
+			//TODO: copy 1 frozen
+		} else {
+			return; // mixed or error
+		}
+		
 		StartMoveCreatures();
 		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
 	}
 
-	private void AddCoppiesToMoveCreature(List<Creature> originalCreatureList) {
+	private void AddDefrostedCoppiesToMoveCreature(List<Creature> originalCreatureList) {
 		List<Creature> copies = new List<Creature>();
 		Dictionary<string, string> originalToCopy = new Dictionary<string, string>();
 		Dictionary<string, string> copyToOriginal = new Dictionary<string, string>();
+
 		foreach (Creature originalCreature in originalCreatureList) {
-			Creature copy = World.instance.life.SpawnCreatureCopy(originalCreature, World.instance.worldTicks); // will instantiate souls as well
+			Creature copy = World.instance.life.SpawnCreatureCopy(originalCreature, World.instance.worldTicks); // add new creature to life creature list
 			moveCreatures.Add(copy);
 			copies.Add(copy);
 			originalToCopy.Add(originalCreature.id, copy.id);
@@ -499,7 +536,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		MouseAction.instance.actionState = MouseActionStateEnum.rotateCreatures;
 	}
 
-	public List<Creature> PlaceHoveringCreatures() {
+	public List<Creature> PlaceHoveringCreatures() { //final creature
 		if (GlobalPanel.instance.soundCreatures.isOn) {
 			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 		}
@@ -535,7 +572,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		moveOffset.Clear();
 
 		moveCreatures.Clear();
-		AddCoppiesToMoveCreature(continueMoveCopy);
+		AddDefrostedCoppiesToMoveCreature(continueMoveCopy);
 		StartMoveCreatures();
 		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
 
@@ -560,6 +597,67 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		OnCombineClicked();
 
 		return merglings;
+	}
+
+	public enum MoveCreatureType {
+		Move,
+		Copy,
+		Combine,
+	}
+
+	public bool CanPlaceMoveCreatures(MoveCreatureType type) {
+		int frozenCount = 0;
+		int worldCount = 0;
+		int insideWorldCount = 0;
+		int insideFreezerCount = 0;
+
+		foreach (Creature c in moveCreatures) {
+			if (c.creation == CreatureCreationEnum.Frozen) {
+				frozenCount++;
+			} else {
+				worldCount++;
+			}
+			if (TerrainPerimeter.instance.IsCompletelyInside(c)) {
+				insideWorldCount++;
+			}
+			if (Freezer.instance.IsCompletelyInside(c)) {
+				insideFreezerCount++;
+			}
+		}
+
+		if (type == MoveCreatureType.Move) {
+			// world ==> world
+			if (frozenCount == 0 && worldCount > 0 && worldCount == insideWorldCount && insideFreezerCount == 0) {
+				return true;
+			}
+			// freezer ==> freezer
+			if (worldCount == 0 && frozenCount == 1 && insideFreezerCount == 1 && insideWorldCount == 0) {
+				return true;
+			}
+		} else if (type == MoveCreatureType.Copy) {
+			// world ==> world
+			if (frozenCount == 0 && worldCount > 0 && worldCount == insideWorldCount && insideFreezerCount == 0) {
+				return true;
+			}
+			// world ==> freezer
+			if (frozenCount == 0 && worldCount == 1 && insideFreezerCount == 1 && insideWorldCount == 0) {
+				return true;
+			}
+			// freezer ==> world
+			if (worldCount == 0 && frozenCount == 1 && insideFreezerCount == 0 && insideWorldCount == 1) {
+				return true;
+			}
+			// freezer ==> freezer
+			if (worldCount == 0 && frozenCount == 1 && insideFreezerCount == 1 && insideWorldCount == 0) {
+				return true;
+			}
+		} else if (type == MoveCreatureType.Combine) {
+			// world ==> world
+			if (frozenCount == 0 && worldCount > 1 && worldCount == insideWorldCount && insideFreezerCount == 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void ReleaseMoveCreatures() {

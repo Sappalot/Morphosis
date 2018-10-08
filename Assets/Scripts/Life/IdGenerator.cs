@@ -1,12 +1,12 @@
 ﻿public class IdGenerator {
-	public long worldNumber = 0;
-	public long freezerNumber = 0;
+	public long serialNumber = 0;
+	private string prefix = ""; // todo prefix should not really be needed since creatures are allready separated between world and freezer
 
-	public string GetUniqueWorldId() {
-		return "id" + worldNumber++;
+	public IdGenerator(string prefix) {
+		this.prefix = prefix;
 	}
 
-	public string GetUniqueFreezerId() {
-		return "f" + freezerNumber++;
+	public string GetUniqueWorldId() {
+		return prefix + serialNumber++;
 	}
 }

@@ -13,50 +13,54 @@ public class LMBInWorld : MonoBehaviour {
 					return;
 				}
 				CreatureSelectionPanel.instance.ClearSelection();
-			} else if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures) {
+			} else if ((MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures)
+				&& CreatureSelectionPanel.instance.CanPlaceMoveCreatures(CreatureSelectionPanel.MoveCreatureType.Move)) {
 				List<Creature> creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
-				UpdateCreaturePostPlaced(creatures, false, false);
-			} else if (MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures) {
+
+			} else if (MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures
+				&& CreatureSelectionPanel.instance.CanPlaceMoveCreatures(CreatureSelectionPanel.MoveCreatureType.Copy)) {
 				List<Creature> creatures;
 				if (Input.GetKey(KeyCode.LeftControl)) {
 					creatures = CreatureSelectionPanel.instance.PasteHoveringCreatures();
 				} else {
 					creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
 				}
-				UpdateCreaturePostPlaced(creatures, true, true);
-			} else if (MouseAction.instance.actionState == MouseActionStateEnum.combineMoveCreatures) {
+				
+			} else if (MouseAction.instance.actionState == MouseActionStateEnum.combineMoveCreatures
+				&& CreatureSelectionPanel.instance.CanPlaceMoveCreatures(CreatureSelectionPanel.MoveCreatureType.Combine)) {
 				List<Creature> creatures;
 				if (Input.GetKey(KeyCode.LeftControl)) {
 					creatures = CreatureSelectionPanel.instance.PasteHoveringMergling();
 				} else {
 					creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
 				}
-				UpdateCreaturePostPlaced(creatures, false, false);
 			}
 		}
 	}
 
-	private void UpdateCreaturePostPlaced(List<Creature> creatures, bool canFreeze, bool canDefrost) {
-		foreach (Creature c in creatures) {
-			if (TerrainPerimeter.instance.IsCompletelyInside(c)) {
-				if (c.creation == CreatureCreationEnum.Frozen) {
-					if (canDefrost) {
-						c.Defrost();
-					} else {
-						World.instance.life.KillCreatureSafe(c, true); // should be killed from freezer instead
-					}
-				} 
-			} else if (Freezer.instance.IsCompletelyInside(c)) {
-				if (c.creation != CreatureCreationEnum.Frozen) {
-					if (canFreeze) {
-						c.Freeze();
-					} else {
-						World.instance.life.KillCreatureSafe(c, true);
-					}
-				}
-			} else {
-				World.instance.life.KillCreatureSafe(c, true); // Where was it picked from?? Kill it there!!
-			}
-		}
-	}
+
+
+	//private void UpdateCreaturePostPlaced(List<Creature> creatures, bool canFreeze, bool canDefrost) {
+	//	foreach (Creature c in creatures) {
+	//		if (TerrainPerimeter.instance.IsCompletelyInside(c)) {
+	//			if (c.creation == CreatureCreationEnum.Frozen) {
+	//				if (canDefrost) {
+	//					c.Defrost();
+	//				} else {
+	//					World.instance.life.KillCreatureSafe(c, true); // should be killed from freezer instead
+	//				}
+	//			} 
+	//		} else if (Freezer.instance.IsCompletelyInside(c)) {
+	//			if (c.creation != CreatureCreationEnum.Frozen) {
+	//				if (canFreeze) {
+	//					c.Freeze();
+	//				} else {
+	//					World.instance.life.KillCreatureSafe(c, true);
+	//				}
+	//			}
+	//		} else {
+	//			World.instance.life.KillCreatureSafe(c, true); // Where was it picked from?? Kill it there!!
+	//		}
+	//	}
+	//}
 }
