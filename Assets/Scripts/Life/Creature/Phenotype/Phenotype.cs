@@ -703,7 +703,7 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		// Clean up cell: Has vereybodey forgotten about me? Should be right, mate!
-		World.instance.life.cellPool.Recycle(deleteCell);
+		Morphosis.instance.cellPool.Recycle(deleteCell);
 
 		if (deleteDebris) {
 			float deletedBranchEnergy = DeleteDebris();
@@ -945,7 +945,7 @@ public class Phenotype : MonoBehaviour {
 	private Cell InstantiateCell(CellTypeEnum type, Vector2i mapPosition, Creature creature) {
 		Cell cell = null;
 
-		cell = World.instance.life.cellPool.Borrow(type);
+		cell = Morphosis.instance.cellPool.Borrow(type);
 
 		//haxzor workaround, may caus phisics to explode
 		//Cell is activated in Update instead of here

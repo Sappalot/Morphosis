@@ -21,9 +21,6 @@ public class Freezer : MonoSingleton<Freezer> {
 		legalRect = new Rect(legalArea.transform.position, legalArea.transform.localScale);
 	}
 
-
-
-
 	public void Load() {
 
 	}

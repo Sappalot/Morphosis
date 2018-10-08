@@ -38,7 +38,7 @@ public class Veins : MonoBehaviour {
 	public void Clear() {
 		for (int index = 0; index < veinList.Count; index++) {
 			//Destroy(veinList[index].gameObject);
-			World.instance.life.veinPool.Recycle(veinList[index]);
+			Morphosis.instance.veinPool.Recycle(veinList[index]);
 		}
 		veinList.Clear();
 	}
@@ -136,7 +136,7 @@ public class Veins : MonoBehaviour {
 					}
 					if (!HasVein(cell, neighbour)) {
 						//Vein vein = (Instantiate(veinPrefab, transform.position, Quaternion.identity) as Vein);
-						Vein vein = World.instance.life.veinPool.Borrow();
+						Vein vein = Morphosis.instance.veinPool.Borrow();
 
 						vein.transform.parent = transform;
 						vein.transform.position = transform.position;

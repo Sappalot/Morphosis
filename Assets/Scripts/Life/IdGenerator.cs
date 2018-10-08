@@ -2,12 +2,8 @@
 	public long worldNumber = 0;
 	public long freezerNumber = 0;
 
-	public string GetUniqueId() {
-		return "id" + worldNumber++;
-	}
-
 	public string GetUniqueWorldId() {
-		return "w" + worldNumber++;
+		return "id" + worldNumber++;
 	}
 
 	public string GetUniqueFreezerId() {

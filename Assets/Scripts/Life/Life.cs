@@ -3,17 +3,6 @@ using System.Collections.Generic;
 using System;
 
 public class Life : MonoBehaviour {
-
-	// TODO: Move to Morphosis, since they are used in freezer as well
-	public CreaturePool creaturePool;
-	public CellPool cellPool;
-	public GeneCellPool geneCellPool;
-	public VeinPool veinPool;
-	public EdgePool edgePool;
-	public RelationArrows relationArrows;
-
-	public Creature creaturePrefab;
-
 	private IdGenerator idGenerator = new IdGenerator();
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
 	private List<Creature> creatureList = new List<Creature>(); // All enbodied creatures (the once that we can see and play with)
@@ -63,7 +52,7 @@ public class Life : MonoBehaviour {
 	}
 
 	public string GetUniqueIdStamp() {
-		return idGenerator.GetUniqueId();
+		return idGenerator.GetUniqueWorldId();
 	}
 
 	public List<Creature> creatures	{
@@ -299,7 +288,7 @@ public class Life : MonoBehaviour {
 	}
 
 	private Creature InstantiateCreature() {
-		string id = idGenerator.GetUniqueId();
+		string id = idGenerator.GetUniqueWorldId();
 		if (creatureDictionary.ContainsKey(id)) {
 			throw new System.Exception("Generated ID was not unique.");
 		}
@@ -310,8 +299,7 @@ public class Life : MonoBehaviour {
 	}
 
 	private Creature InstantiateCreature(String id) {
-		//Creature creature = (Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity) as Creature); //TODO: borrow from pool instead
-		Creature creature = creaturePool.Borrow();
+		Creature creature = Morphosis.instance.creaturePool.Borrow();
 		creature.gameObject.SetActive(true);
 		creature.name = "Creature " + id;
 		
@@ -394,8 +382,8 @@ public class Life : MonoBehaviour {
 			creatureList[index].UpdateGraphics();
 		}
 
-		relationArrows.creature = CreatureSelectionPanel.instance.soloSelected;
-		relationArrows.UpdateGraphics();
+		Morphosis.instance.relationArrows.creature = CreatureSelectionPanel.instance.soloSelected;
+		Morphosis.instance.relationArrows.UpdateGraphics();
 	}
 
 	// If (editPhenotype) updated from FixedUpdate
