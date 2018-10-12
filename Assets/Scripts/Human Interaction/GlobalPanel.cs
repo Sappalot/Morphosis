@@ -178,6 +178,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	public void OnRestartClicked() {
+		Freezer.instance.Save();
 		Morphosis.instance.Restart();
 	}
 

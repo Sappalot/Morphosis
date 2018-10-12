@@ -65,6 +65,7 @@ public class Creature : MonoBehaviour {
 		creation = CreatureCreationEnum.Frozen;
 		generation = 0;
 		phenotype.DetatchFromMother(this, false, false);
+		phenotype.SetEnergy(30f);
 		ClearMotherAndChildrenReferences();
 		phenotype.cellsDiffersFromGeneCells = true;
 	}
@@ -685,12 +686,12 @@ public class Creature : MonoBehaviour {
 			isDirtyGraphics = true;
 		}
 
-		if (phenotype.UpdateCellsFromGeneCells(this, genotype.originCell.position, genotype.originCell.heading)) {
+		if (genotype.hasOriginCell && phenotype.UpdateCellsFromGeneCells(this, genotype.originCell.position, genotype.originCell.heading)) {
 			phenotype.connectionsDiffersFromCells = true;
 			isDirtyGraphics = true;
 		}
 
-		if (phenotype.UpdateConnectionsFromCellsBody(this, HasMotherAlive() ? GetMotherAlive().id : "no mother")) {
+		if (genotype.hasOriginCell && phenotype.UpdateConnectionsFromCellsBody(this, HasMotherAlive() ? GetMotherAlive().id : "no mother")) {
 			isDirtyGraphics = true;
 		}
 	}

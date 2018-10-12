@@ -346,8 +346,10 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void MoveToPhenotype(Creature creature) {
-		MoveTo(creature.phenotype.originCell.position);
-		TurnTo(creature.phenotype.originCell.heading);
+		if (creature.phenotype.isAlive) {
+			MoveTo(creature.phenotype.originCell.position);
+			TurnTo(creature.phenotype.originCell.heading);
+		}
 	}
 
 	//Make origin cell point in this direction while the rest of the cells tags along

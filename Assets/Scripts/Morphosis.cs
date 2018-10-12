@@ -28,7 +28,7 @@ public class Morphosis : MonoSingleton<Morphosis> {
 
 	private void FixedUpdate() {
 		World.instance.UpdatePhysics();
-		//Freezer.instance.UpdatePhysics();
+		Freezer.instance.UpdatePhysics();
 	}
 
 	public void OnExit() {

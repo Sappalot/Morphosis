@@ -629,6 +629,18 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public void SetEnergy(float amount) {
+		for (int count = 0; count < cellCount; count++) {
+			cellList[count].energy = Mathf.Clamp(amount, 0f, GlobalSettings.instance.phenotype.cellMaxEnergy);
+		}
+	}
+
+	public void ChangeEnergyFull() {
+		for (int count = 0; count < cellCount; count++) {
+			cellList[count].energy = GlobalSettings.instance.phenotype.cellMaxEnergy;
+		}
+	}
+
 	public void DistributeEnergy(float amount) {
 		ChangeEnergy(amount / cellCount);
 	}
