@@ -21,7 +21,7 @@ public class World : MonoSingleton<World> {
 		CreatureSelectionPanel.instance.ClearSelection();
 	}
 
-	public void Init() {
+	public new void Init() {
 		//for (int y = 0; y < 32; y++) {
 		//	for (int x = 0; x < 32; x++) {
 		//		GameObject.Instantiate(cellPrefab, new Vector3(10f + x * 2f, 10f + y * 2f, 0f), Quaternion.identity, this.transform);
@@ -38,7 +38,7 @@ public class World : MonoSingleton<World> {
 		GraphPlotter.instance.history = history;
 	}
 
-	private void Update() {
+	public void UpdateGraphics() {
 		//Handle time from here to not get locked out
 		if ((!GlobalPanel.instance.isRunPhysics || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) && !doSave) {
 			Time.timeScale = 0f;
@@ -57,7 +57,7 @@ public class World : MonoSingleton<World> {
 		historyEvents.Add(historyEvent);
 	}
 
-	private void FixedUpdate() {
+	public void UpdatePhysics() {
 		life.UpdateStructure();
 		
 		life.UpdatePhysics(worldTicks);
@@ -151,11 +151,11 @@ public class World : MonoSingleton<World> {
 		KillAllCreatures();
 		worldTicks = 0;
 		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
-		for (int y = 1; y <= 1; y++) {
-			for (int x = 1; x <= 1; x++) {
-				World.instance.life.SpawnCreatureJellyfish(new Vector3(100f + x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f), worldTicks);
-			}
-		}
+		//for (int y = 1; y <= 1; y++) {
+		//	for (int x = 1; x <= 1; x++) {
+		//		//World.instance.life.SpawnCreatureJellyfish(new Vector3(100f + x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f), worldTicks);
+		//	}
+		//}
 		
 		CreatureEditModePanel.instance.Restart();
 		RMBToolModePanel.instance.Restart();

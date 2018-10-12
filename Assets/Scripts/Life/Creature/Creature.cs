@@ -61,7 +61,7 @@ public class Creature : MonoBehaviour {
 	private bool detatch = false;
 	private int cantGrowMore = 0;
 
-	public void Freeze() {
+	public void OnFreeze() {
 		creation = CreatureCreationEnum.Frozen;
 		generation = 0;
 		phenotype.DetatchFromMother(this, false, false);
@@ -69,12 +69,13 @@ public class Creature : MonoBehaviour {
 		phenotype.cellsDiffersFromGeneCells = true;
 	}
 
-	public void Defrost() {
+	public void OnDefrost() {
 		creation = CreatureCreationEnum.Cloned; //TODO: mark it as defrosted?
 		generation = 1;
 		phenotype.DetatchFromMother(this, false, false); // should not be connected
 		ClearMotherAndChildrenReferences(); // should not have any
 		phenotype.cellsDiffersFromGeneCells = true;
+		bornTick = World.instance.worldTicks;
 	}
 
 	public void ClearMotherAndChildrenReferences() {
@@ -285,6 +286,21 @@ public class Creature : MonoBehaviour {
 		children.Add(child.id, child);
 	}
 
+	public bool HasRelativeWithId(string id) {
+		if (GetMotherIdDeadOrAlive() == id) {
+			return true;
+		}
+		if (HasChildrenDeadOrAlive()) {
+			List<string> childrenIds = GetChildrenIdDeadOrAlive();
+			foreach (string childId in childrenIds) {
+				if (childId == id) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	//  ^ Relations - children ^
 	//  ^ Relations ^
 
@@ -312,7 +328,7 @@ public class Creature : MonoBehaviour {
 	//Dead or alive counts
 	public bool allowedToChangeGenome {
 		get {
-			return !(HasMotherDeadOrAlive() || HasChildrenDeadOrAlive());
+			return !(HasMotherDeadOrAlive() || HasChildrenDeadOrAlive()) && creation != CreatureCreationEnum.Frozen;
 		}
 	}
 
@@ -664,7 +680,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void UpdateStructure() {
-		if (genotype.UpdateGeneCellsFromGenome(this, genotype.originCell.position, genotype.originCell.heading)) {
+		if (genotype.hasOriginCell && genotype.UpdateGeneCellsFromGenome(this, genotype.originCell.position, genotype.originCell.heading)) {
 			phenotype.cellsDiffersFromGeneCells = true;
 			isDirtyGraphics = true;
 		}

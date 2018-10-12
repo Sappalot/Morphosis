@@ -30,6 +30,20 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
+	public bool IsCompletelyInside(Rect area) {
+		float cellRadius = 0.5f;
+		float top = area.y + area.height / 2f - cellRadius;
+		float bottom = area.y - area.height / 2f + cellRadius;
+		float left = area.x - area.width / 2f + cellRadius;
+		float right = area.x + area.width / 2f - cellRadius;
+		foreach (Cell cell in geneCellList) {
+			if (cell.position.x > right || cell.position.x < left || cell.position.y > top || cell.position.y < bottom) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	//Full size of creature
 	public int geneCellCount {
 		get {

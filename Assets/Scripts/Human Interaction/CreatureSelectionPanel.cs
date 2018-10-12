@@ -88,6 +88,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 	}
 
+	public bool hasFrozenSoloSelected {
+		get {
+			return selection.Count == 1 && GetTemperatureState(selection) == TemperatureState.Frozen;
+		}
+	}
+
 	public Cell selectedCell {
 		get {
 			return CellPanel.instance.selectedCell;
@@ -115,6 +121,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public bool hasSelection { 
 		get {
 			return selection.Count > 0;
+		}
+	}
+
+	public bool hasDefrostedSelection {
+		get {
+			return selection.Count > 0 && GetTemperatureState(selection) == TemperatureState.Defrosted;
 		}
 	}
 
@@ -397,10 +409,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			return;
 		}
 		TemperatureState temperatureState = GetTemperatureState(selection);
-		if (temperatureState == TemperatureState.Defrosted) {
+		if (hasDefrostedSelection) {
 			AddDefrostedCoppiesToMoveCreature(selection);
-		} else if (temperatureState == TemperatureState.Frozen) {
-			//TODO: copy 1 frozen
+		} else if (hasFrozenSoloSelected) {
+			Creature copy = Freezer.instance.SpawnCreatureCopy(soloSelected);
+			moveCreatures.Add(copy);
 		} else {
 			return; // mixed or error
 		}
@@ -415,7 +428,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		Dictionary<string, string> copyToOriginal = new Dictionary<string, string>();
 
 		foreach (Creature originalCreature in originalCreatureList) {
-			Creature copy = World.instance.life.SpawnCreatureCopy(originalCreature, World.instance.worldTicks); // add new creature to life creature list
+			Creature copy = World.instance.life.SpawnCreatureCopy(originalCreature, World.instance.worldTicks); // Add new creature to life creature list
 			moveCreatures.Add(copy);
 			copies.Add(copy);
 			originalToCopy.Add(originalCreature.id, copy.id);
@@ -605,7 +618,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		Combine,
 	}
 
-	public bool CanPlaceMoveCreatures(MoveCreatureType type) {
+	public bool CanPlaceMoveCreatures(MoveCreatureType type, bool pressingLeftControl) {
 		int frozenCount = 0;
 		int worldCount = 0;
 		int insideWorldCount = 0;
@@ -640,15 +653,15 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				return true;
 			}
 			// world ==> freezer
-			if (frozenCount == 0 && worldCount == 1 && insideFreezerCount == 1 && insideWorldCount == 0) {
+			if (frozenCount == 0 && worldCount == 1 && insideFreezerCount == 1 && insideWorldCount == 0 && !pressingLeftControl) {
 				return true;
 			}
 			// freezer ==> world
-			if (worldCount == 0 && frozenCount == 1 && insideFreezerCount == 0 && insideWorldCount == 1) {
+			if (worldCount == 0 && frozenCount == 1 && insideFreezerCount == 0 && insideWorldCount == 1 && !pressingLeftControl) {
 				return true;
 			}
 			// freezer ==> freezer
-			if (worldCount == 0 && frozenCount == 1 && insideFreezerCount == 1 && insideWorldCount == 0) {
+			if (worldCount == 0 && frozenCount == 1 && insideFreezerCount == 1 && insideWorldCount == 0 && !pressingLeftControl) {
 				return true;
 			}
 		} else if (type == MoveCreatureType.Combine) {
@@ -744,8 +757,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				selectedCreatureText.text = soloSelected.id; // soloSelected.nickname;
 				//motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
 
-				creatureCreatedText.text = soloSelected.creation.ToString() + (soloSelected.creation != CreatureCreationEnum.Forged ? ", Generation: " + soloSelected.generation : "");
-				creatureAgeText.text = "Age: " + TimeUtil.GetTimeString((ulong)(soloSelected.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime));
+				creatureCreatedText.text = soloSelected.creation.ToString() + (soloSelected.creation != CreatureCreationEnum.Forged && soloSelected.creation != CreatureCreationEnum.Frozen ? ", Generation: " + soloSelected.generation : "");
+				creatureAgeText.text = soloSelected.creation == CreatureCreationEnum.Frozen ? "" : "Age: " + TimeUtil.GetTimeString((ulong)(soloSelected.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime));
 
 				//right side
 				moveButtonText.color = Color.black;
@@ -864,6 +877,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		//debug markers
 		foreach (Creature c in World.instance.life.creatures) {
+			//c.ShowMarkers(IsSelected(c));
+			c.ShowMarkers(false);
+		}
+
+		foreach (Creature c in Freezer.instance.creatures) {
 			//c.ShowMarkers(IsSelected(c));
 			c.ShowMarkers(false);
 		}

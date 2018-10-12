@@ -45,7 +45,11 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 		foreach (Creature c in World.instance.life.creatures) {
 			c.BringCurrentGenoPhenoPositionAndRotationToOther();
 			c.MakeDirtyGraphics();
-		}		
+		}
+		foreach (Creature c in Freezer.instance.creatures) {
+			c.BringCurrentGenoPhenoPositionAndRotationToOther();
+			c.MakeDirtyGraphics();
+		}
 		isDirty = true;
 	}
 	

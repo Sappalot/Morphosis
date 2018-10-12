@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using SerializerFree;
+using SerializerFree.Serializers;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class Freezer : MonoSingleton<Freezer> {
@@ -9,13 +12,12 @@ public class Freezer : MonoSingleton<Freezer> {
 	[HideInInspector]
 	public int deletedCellCount = 0;
 
-	private IdGenerator idGenerator = new IdGenerator("f");
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
 	private List<Creature> creatureList = new List<Creature>();
 	private Rect legalRect;
 
-	public string GetUniqueIdStamp() {
-		return idGenerator.GetUniqueWorldId();
+	public void Start() {
+		legalRect = new Rect(legalArea.transform.position, legalArea.transform.localScale);
 	}
 
 	public List<Creature> creatures {
@@ -84,7 +86,7 @@ public class Freezer : MonoSingleton<Freezer> {
 		GenePanel.instance.MakeDirty();
 	}
 
-	public Creature SpawnCreatureCopy(Creature original, ulong bornTick) {
+	public Creature SpawnCreatureCopy(Creature original) {
 		Creature clone = InstantiateCreature();
 		string id = clone.id;
 		clone.Clone(original);
@@ -95,12 +97,12 @@ public class Freezer : MonoSingleton<Freezer> {
 		clone.creation = CreatureCreationEnum.Frozen;
 		//Let generation be same as mothers
 
-		clone.bornTick = bornTick;
+		clone.bornTick = 0; // We dont care how long it has been frozen, doesn't make any sence when loading together with different world
 		return clone;
 	}
 
 	private Creature InstantiateCreature() {
-		string id = idGenerator.GetUniqueWorldId();
+		string id = Morphosis.instance.idGenerator.GetUniqueId();
 		if (creatureDictionary.ContainsKey(id)) {
 			throw new System.Exception("Generated ID was not unique.");
 		}
@@ -111,13 +113,13 @@ public class Freezer : MonoSingleton<Freezer> {
 	private Creature InstantiateCreature(string id) {
 		Creature creature = Morphosis.instance.creaturePool.Borrow();
 		creature.gameObject.SetActive(true);
-		creature.name = "Creature " + id;
+		creature.name = "F-Creature " + id;
 
 		creature.transform.parent = this.transform;
 		creatureDictionary.Add(id, creature);
 		creatureList.Add(creature);
 		creature.id = id;
-		creature.nickname = "Nick " + id; //dafault
+		creature.nickname = "F-Nick " + id; //dafault
 
 		return creature;
 	}
@@ -131,10 +133,13 @@ public class Freezer : MonoSingleton<Freezer> {
 		}
 		return null;
 	}
-	//----
-
+	
 	public bool IsCompletelyInside(Creature creature) {
-		return creature.phenotype.IsCompletelyInside(legalRect);
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+			return creature.phenotype.IsCompletelyInside(legalRect);
+		} else {
+			return creature.genotype.IsCompletelyInside(legalRect);
+		}
 	}
 
 	public bool KillIfOutside(Creature creature) {
@@ -145,29 +150,83 @@ public class Freezer : MonoSingleton<Freezer> {
 		return false;
 	}
 
-	public void Start() {
-		legalRect = new Rect(legalArea.transform.position, legalArea.transform.localScale);
+	// When freezing
+	public void AddCreature(Creature creature) {
+		creatureDictionary.Add(creature.id, creature);
+		creatureList.Add(creature);
+	}
+
+	// When defrosting
+	public void RemoveCreature(Creature creature) {
+		creatureDictionary.Remove(creature.id);
+		creatureList.Remove(creature);
+	}
+
+	public void UpdateGraphics() {
+		for (int index = 0; index < creatureList.Count; index++) {
+			creatureList[index].UpdateGraphics();
+		}
+	}
+
+	public void UpdatePhysics() {
+		foreach (Creature c in creatureList) {
+			c.UpdateStructure();
+		}
+	}
+
+	public void Load() {
+		string filename = "freezer.txt";
+
+		string path = "F:/Morfosis/";
+		if (!File.Exists(path + filename)) {
+			Save();
+		}
+		string serializedString = File.ReadAllText(path + filename);
+
+		FreezerData loadedFreezer = Serializer.Deserialize<FreezerData>(serializedString, new UnityJsonSerializer());
+		ApplyData(loadedFreezer);
 	}
 
 	// Load / Save
-	private LifeData lifeData = new LifeData();
-
-	public void Load() {
-
-	}
-
 	public void Save() {
+		UpdateData();
 
+		string path = path = "F:/Morfosis/";
+		string freezerToSave = Serializer.Serialize(freezerData, new UnityJsonSerializer());
+		if (!Directory.Exists(path)) {
+			Directory.CreateDirectory(path);
+		}
+		string filename = "freezer.txt";
+		File.WriteAllText(path + filename, freezerToSave);
 	}
+
+	private FreezerData freezerData = new FreezerData();
 
 	// Save
-	private void UpdateData() {
+	private FreezerData UpdateData() {
+		//Creatures
+		freezerData.creatureList.Clear();
+		freezerData.creatureDictionary.Clear();
 
+		for (int index = 0; index < creatureList.Count; index++) {
+			Creature creature = creatureList[index];
+			CreatureData data = creature.UpdateData();
+			freezerData.creatureList.Add(data);
+			freezerData.creatureDictionary.Add(data.id, data);
+		}
+
+		return freezerData;
 	}
 
 	// Load
-	private void ApplyData(WorldData worldData) {
-
+	private void ApplyData(FreezerData freezerData) {
+		KillAllCreatures();
+		for (int index = 0; index < freezerData.creatureList.Count; index++) {
+			CreatureData creatureData = freezerData.creatureList[index];
+			creatureData.id = Morphosis.instance.idGenerator.GetUniqueId(); // Freezer ids will allways start from scratch
+			Creature creature = InstantiateCreature(creatureData.id);
+			creature.ApplyData(creatureData);
+		}
 	}
 
 	// ^ Load / Save ^

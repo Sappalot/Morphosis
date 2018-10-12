@@ -178,11 +178,11 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	public void OnRestartClicked() {
-		World.instance.Restart();
+		Morphosis.instance.Restart();
 	}
 
 	public void OnLoadClicked() {
-		World.instance.Load("save.txt");
+		Morphosis.instance.LoadWorld("save.txt");
 	}
 
 	public void OnSaveClicked() {
@@ -215,6 +215,11 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	public void OnAddHistoryNoteClicked() {
 		World.instance.AddHistoryEvent(new HistoryEvent(historyGraphNote.text, false, new Color(0.5f, 0.5f, 0f)));
+	}
+
+	//Called on all MonoBehaviours on quitting application
+	void OnApplicationQuit() {
+		Freezer.instance.Save();
 	}
 
 	public bool isWritingHistoryNote {

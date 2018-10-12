@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 
 public class Life : MonoBehaviour {
-	private IdGenerator idGenerator = new IdGenerator("id");
+
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
 	private List<Creature> creatureList = new List<Creature>(); // All enbodied creatures (the once that we can see and play with)
 
@@ -18,6 +18,15 @@ public class Life : MonoBehaviour {
 
 	LowPassCounter creatureBirthsPerSecond = new LowPassCounter(20);
 	LowPassCounter creatureDeathsPerSecond = new LowPassCounter(20);
+
+	public bool IsUsingId(string id) {
+		foreach (Creature c in creatureList) {
+			if (c.id == id || c.HasRelativeWithId(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public float GetCreatureBirthsPerSecond() {
 		return creatureBirthsPerSecond.GetAndStepLowPassCount();
@@ -49,10 +58,6 @@ public class Life : MonoBehaviour {
 			count += c.phenotype.GetCellOfTypeCount(type);
 		}
 		return count;
-	}
-
-	public string GetUniqueIdStamp() {
-		return idGenerator.GetUniqueWorldId();
 	}
 
 	public List<Creature> creatures	{
@@ -177,10 +182,9 @@ public class Life : MonoBehaviour {
 		Cell[] forgottenGeneCells = creature.genotype.geneCellsTransform.GetComponents<Cell>();
 		deletedCellCount += forgottenGeneCells.Length;
 
-		//This is the only place where creature is recycled / destroyed
-		creatureDictionary.Remove(creature.id); // Ooops we need to remove it before OnRecycle! OnRecycle will change the id so it wont be found when trying to remove
-		creatureList.Remove(creature);
+		RemoveCreature(creature); // Ooops we need to remove it before OnRecycle! OnRecycle will change the id so it wont be found when trying to remove
 
+		//This is the only place where creature is recycled / destroyed
 		creature.OnRecycle(); //Not only when using creature pool
 		CreaturePool.instance.Recycle(creature);
 
@@ -190,6 +194,18 @@ public class Life : MonoBehaviour {
 		GenePanel.instance.MakeDirty();
 
 		creatureDeathsPerSecond.IncreaseCounter();
+	}
+
+	// When leaving to freezer
+	public void RemoveCreature(Creature creature) {
+		creatureDictionary.Remove(creature.id); // Ooops we need to remove it before OnRecycle! OnRecycle will change the id so it wont be found when trying to remove
+		creatureList.Remove(creature);
+	}
+
+	// When defrosting
+	public void AddCreature(Creature creature) {
+		creatureDictionary.Add(creature.id, creature);
+		creatureList.Add(creature);
 	}
 
 	public List<Creature> GetPhenotypesInside(Rect area) {
@@ -260,6 +276,7 @@ public class Life : MonoBehaviour {
 		return creature;
 	}
 
+	// A deep copy with a unique id (different than clone that is) 
 	public Creature SpawnCreatureCopy(Creature original, ulong bornTick) {
 		Creature clone = InstantiateCreature();
 		string id = clone.id;
@@ -288,7 +305,7 @@ public class Life : MonoBehaviour {
 	}
 
 	private Creature InstantiateCreature() {
-		string id = idGenerator.GetUniqueWorldId();
+		string id = Morphosis.instance.idGenerator.GetUniqueId();
 		if (creatureDictionary.ContainsKey(id)) {
 			throw new System.Exception("Generated ID was not unique.");
 		}
@@ -328,49 +345,6 @@ public class Life : MonoBehaviour {
 			creatures[index].MakeDirtyGraphics();
 		}
 	}
-
-	// Load Save
-	private LifeData lifeData = new LifeData();
-
-	// Save
-	public LifeData UpdateData() {
-		//UpdateSoulReferences();
-
-		lifeData.lastId = idGenerator.serialNumber;
-
-		//Creatures
-		lifeData.creatureList.Clear();
-		lifeData.creatureDictionary.Clear();
-		lifeData.creatureDeadCount = creatureDeadCount;
-		lifeData.sterileKilledCount = sterileKilledCount;
-
-		for (int index = 0; index < creatureList.Count; index++) {
-			Creature creature = creatureList[index];
-			CreatureData data = creature.UpdateData();
-			lifeData.creatureList.Add(data);
-			lifeData.creatureDictionary.Add(data.id, data);
-		}
-
-		return lifeData;
-	}
-
-	// Load
-	public void ApplyData(LifeData lifeData) {
-		idGenerator.serialNumber = lifeData.lastId;
-
-		// Create all creatures
-		KillAllCreatures();
-		for (int index = 0; index < lifeData.creatureList.Count; index++) {
-			CreatureData creatureData = lifeData.creatureList[index];
-			Creature creature = InstantiateCreature(creatureData.id);
-			creature.ApplyData(creatureData);
-		}
-		creatureDeadCount = lifeData.creatureDeadCount;
-		sterileKilledCount = lifeData.sterileKilledCount;
-
-	}
-
-	// ^ Load Save ^
 
 	// Update
 
@@ -465,4 +439,47 @@ public class Life : MonoBehaviour {
 		}
 	}
 	// ^ Update ^
+
+	// Load Save
+	private LifeData lifeData = new LifeData();
+
+	// Save
+	public LifeData UpdateData() {
+		//UpdateSoulReferences();
+
+		lifeData.lastId = Morphosis.instance.idGenerator.serialNumber;
+
+		//Creatures
+		lifeData.creatureList.Clear();
+		lifeData.creatureDictionary.Clear();
+		lifeData.creatureDeadCount = creatureDeadCount;
+		lifeData.sterileKilledCount = sterileKilledCount;
+
+		for (int index = 0; index < creatureList.Count; index++) {
+			Creature creature = creatureList[index];
+			CreatureData data = creature.UpdateData();
+			lifeData.creatureList.Add(data);
+			lifeData.creatureDictionary.Add(data.id, data);
+		}
+
+		return lifeData;
+	}
+
+	// Load
+	public void ApplyData(LifeData lifeData) {
+		Morphosis.instance.idGenerator.serialNumber = lifeData.lastId;
+
+		// Create all creatures
+		KillAllCreatures();
+		for (int index = 0; index < lifeData.creatureList.Count; index++) {
+			CreatureData creatureData = lifeData.creatureList[index];
+			Creature creature = InstantiateCreature(creatureData.id);
+			creature.ApplyData(creatureData);
+		}
+		creatureDeadCount = lifeData.creatureDeadCount;
+		sterileKilledCount = lifeData.sterileKilledCount;
+
+	}
+
+	// ^ Load Save ^
 }

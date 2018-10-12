@@ -2,6 +2,7 @@
 using SerializerFree;
 using SerializerFree.Serializers;
 public class Morphosis : MonoSingleton<Morphosis> {
+	public IdGenerator idGenerator = new IdGenerator();
 	public new Camera camera;
 
 	// TODO: Move to Morphosis, since they are used in freezer as well
@@ -13,16 +14,44 @@ public class Morphosis : MonoSingleton<Morphosis> {
 	public RelationArrows relationArrows;
 
 	private void Start () {
-		Freezer.instance.Load();
-		World.instance.Init(); // Just 1 world, lots of work keeping several instances at once
 		// TODO: load last world
+		// Creature id's will be set from file
+		World.instance.Init(); // Just 1 world, lots of work keeping several instances at once
+
+		Restart();
+	}
+
+	private void Update() {
+		World.instance.UpdateGraphics();
+		Freezer.instance.UpdateGraphics();
+	}
+
+	private void FixedUpdate() {
+		World.instance.UpdatePhysics();
+		//Freezer.instance.UpdatePhysics();
 	}
 
 	public void OnExit() {
 		Freezer.instance.Save();
 	}
 
-	// TODO: keep morphosis data in save file
-	// camera position
-	// last world played
+	public void MoveFreezerCreatureIdsToFreeRange() {
+		idGenerator.RenameToUniqueIds(Freezer.instance.creatures);
+	}
+
+	public void Restart() {
+		idGenerator.Restart();
+		Freezer.instance.Load();
+		World.instance.Restart();
+	}
+
+	public void LoadWorld(string filename) {
+		Restart();
+		World.instance.Load(filename);
+		instance.MoveFreezerCreatureIdsToFreeRange();
+	}
+
+		// TODO: keep morphosis data in save file
+		// camera position
+		// last world played
 }
