@@ -61,6 +61,16 @@ public class Creature : MonoBehaviour {
 	private bool detatch = false;
 	private int cantGrowMore = 0;
 
+	public string sceneGraphName {
+		get {
+			if (creation == CreatureCreationEnum.Frozen) {
+				return "F-Creature " + id;
+			} else {
+				return "Creature " + id;
+			}
+		}
+	}
+
 	public void OnFreeze() {
 		creation = CreatureCreationEnum.Frozen;
 		generation = 0;
@@ -559,7 +569,11 @@ public class Creature : MonoBehaviour {
 
 			transform.parent = null;
 			transform.position = originCellPosition;
-			transform.parent = World.instance.life.transform;
+			if (creation == CreatureCreationEnum.Frozen) {
+				transform.parent = Freezer.instance.transform;
+			} else {
+				transform.parent = World.instance.life.transform;
+			}
 		} else if (type == PhenoGenoEnum.Genotype) {
 			phenotype.hasDirtyPosition = true;
 
@@ -572,7 +586,11 @@ public class Creature : MonoBehaviour {
 
 			transform.parent = null;
 			transform.position = originCellPosition;
-			transform.parent = World.instance.life.transform;
+			if (creation == CreatureCreationEnum.Frozen) {
+				transform.parent = Freezer.instance.transform;
+			} else {
+				transform.parent = World.instance.life.transform;
+			}
 		}
 		isDirtyGraphics = true;
 	}

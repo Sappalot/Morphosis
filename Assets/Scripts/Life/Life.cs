@@ -206,6 +206,9 @@ public class Life : MonoBehaviour {
 	public void AddCreature(Creature creature) {
 		creatureDictionary.Add(creature.id, creature);
 		creatureList.Add(creature);
+
+		creature.transform.parent = transform;
+		creature.name = creature.sceneGraphName;
 	}
 
 	public List<Creature> GetPhenotypesInside(Rect area) {
@@ -318,13 +321,14 @@ public class Life : MonoBehaviour {
 	private Creature InstantiateCreature(string id) {
 		Creature creature = Morphosis.instance.creaturePool.Borrow();
 		creature.gameObject.SetActive(true);
-		creature.name = "Creature " + id;
-		
-		creature.transform.parent = this.transform;
+
 		creatureDictionary.Add(id, creature);
 		creatureList.Add(creature);
 		creature.id = id;
 		creature.nickname = "Nick " + id; //dafault
+
+		creature.transform.parent = transform;
+		creature.name = creature.sceneGraphName;
 
 		return creature;
 	}

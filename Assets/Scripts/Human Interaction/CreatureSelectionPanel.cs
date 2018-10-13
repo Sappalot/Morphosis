@@ -321,7 +321,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	// Delete
 	public void OnDeleteClicked() {
 		for (int index = 0; index < selection.Count; index++) {
-			World.instance.life.KillCreatureSafe(selection[index], true);
+			if (selection[index].creation == CreatureCreationEnum.Frozen) {
+				Freezer.instance.KillCreatureSafe(selection[index], true);
+			} else {
+				World.instance.life.KillCreatureSafe(selection[index], true);
+			}
+			
 			World.instance.AddHistoryEvent(new HistoryEvent("x", false, Color.gray));
 		}
 		ClearSelection();

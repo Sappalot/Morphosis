@@ -10,7 +10,12 @@ public class TerrainPerimeter : MonoSingleton<TerrainPerimeter> {
 	public int runnersKilledCount;
 
 	public bool IsCompletelyInside(Creature creature) {
-		return creature.phenotype.IsCompletelyInside(legalRect);
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+			return creature.phenotype.IsCompletelyInside(legalRect);
+		} else {
+			return creature.genotype.IsCompletelyInside(legalRect);
+		}
+		
 	}
 
 	public bool KillIfOutside(Creature creature) {

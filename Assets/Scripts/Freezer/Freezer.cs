@@ -113,13 +113,15 @@ public class Freezer : MonoSingleton<Freezer> {
 	private Creature InstantiateCreature(string id) {
 		Creature creature = Morphosis.instance.creaturePool.Borrow();
 		creature.gameObject.SetActive(true);
-		creature.name = "F-Creature " + id;
-
-		creature.transform.parent = this.transform;
 		creatureDictionary.Add(id, creature);
 		creatureList.Add(creature);
 		creature.id = id;
+
 		creature.nickname = "F-Nick " + id; //dafault
+
+		creature.creation = CreatureCreationEnum.Frozen;
+		creature.transform.parent = transform;
+		creature.name = creature.sceneGraphName;
 
 		return creature;
 	}
@@ -154,6 +156,9 @@ public class Freezer : MonoSingleton<Freezer> {
 	public void AddCreature(Creature creature) {
 		creatureDictionary.Add(creature.id, creature);
 		creatureList.Add(creature);
+
+		creature.transform.parent = transform;
+		creature.name = creature.sceneGraphName;
 	}
 
 	// When defrosting
@@ -223,7 +228,7 @@ public class Freezer : MonoSingleton<Freezer> {
 		KillAllCreatures();
 		for (int index = 0; index < freezerData.creatureList.Count; index++) {
 			CreatureData creatureData = freezerData.creatureList[index];
-			creatureData.id = Morphosis.instance.idGenerator.GetUniqueId(); // Freezer ids will allways start from scratch
+			creatureData.id = Morphosis.instance.idGenerator.GetUniqueId(); // Freezer ids will allways start from scratch, then moved to range after load when other creatures are loaded
 			Creature creature = InstantiateCreature(creatureData.id);
 			creature.ApplyData(creatureData);
 		}
