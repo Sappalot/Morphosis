@@ -16,7 +16,7 @@ public class LMBInWorld : MonoBehaviour {
 			} else if ((MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures)
 				&& CreatureSelectionPanel.instance.CanPlaceMoveCreatures(CreatureSelectionPanel.MoveCreatureType.Move, Input.GetKey(KeyCode.LeftControl))) {
 				List<Creature> creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
-				// TODO: if moved within freezer save feezer
+
 			} else if (MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures
 				&& CreatureSelectionPanel.instance.CanPlaceMoveCreatures(CreatureSelectionPanel.MoveCreatureType.Copy, Input.GetKey(KeyCode.LeftControl))) {
 				List<Creature> creatures;
@@ -25,9 +25,7 @@ public class LMBInWorld : MonoBehaviour {
 				} else {
 					creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
 					if (creatures.Count == 1) {
-						if (TryFreezeCreature(creatures[0])) { // should just be 1 at this point
-							Freezer.instance.Save();
-						}
+						TryFreezeCreature(creatures[0]); // should just be 1 at this point
 						TryDefrostCreature(creatures[0]);
 					}
 				}

@@ -999,7 +999,12 @@ public abstract class Cell : MonoBehaviour {
 				} else {
 					filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
 					if (GetCellType() == CellTypeEnum.Leaf) {
-						filledCircleSprite.color = ColorScheme.instance.cellGradientLeafGreenExposure.Evaluate((this as LeafCell).lowPassExposure);
+						if (creature.creation != CreatureCreationEnum.Frozen) {
+							filledCircleSprite.color = ColorScheme.instance.cellGradientLeafGreenExposure.Evaluate((this as LeafCell).lowPassExposure);
+						} else {
+							filledCircleSprite.color = ColorScheme.instance.cellGradientLeafGreenExposure.Evaluate(0.34f);
+						}
+						
 					}
 					if (IsIdle()) {
 						filledCircleSprite.color = Color.black;

@@ -50,8 +50,4 @@ public class Morphosis : MonoSingleton<Morphosis> {
 		World.instance.Load(filename);
 		instance.MoveFreezerCreatureIdsToFreeRange();
 	}
-
-		// TODO: keep morphosis data in save file
-		// camera position
-		// last world played
 }

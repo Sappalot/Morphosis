@@ -30,7 +30,7 @@ public class LeafCell : Cell {
 			raycastHitArray = new RaycastHit2D[(int)GlobalSettings.instance.phenotype.leafCellSunMaxRange];
 		}
 		for (int i = 0; i < exposureRecord.Length; i++) {
-			exposureRecord[i] = 0.6f; // 0.33f boost
+			exposureRecord[i] = 0.4f; // a little boost
 		}
 		base.OnBorrowToWorld();
 	}
