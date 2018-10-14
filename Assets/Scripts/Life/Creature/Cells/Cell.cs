@@ -967,16 +967,16 @@ public abstract class Cell : MonoBehaviour {
 	private void OnMouseDown() {
 		if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject() && MouseAction.instance.actionState == MouseActionStateEnum.free) {
 			if (Input.GetKey(KeyCode.LeftControl)) {
+				if (creature.creation == CreatureCreationEnum.Frozen || 
+					(creature.creation != CreatureCreationEnum.Frozen && CreatureSelectionPanel.instance.hasSelection && CreatureSelectionPanel.instance.GetSelectionTemperatureState() == CreatureSelectionPanel.TemperatureState.Frozen)) {
+					return;
+				}
 				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
 					CreatureSelectionPanel.instance.RemoveFromSelection(creature);
 				} else {
 					CreatureSelectionPanel.instance.AddToSelection(creature);
-					creature.StoreState();
 				}
 			} else {
-				if (CreatureSelectionPanel.instance.soloSelected != creature) {
-					creature.StoreState();
-				}
 				CreatureSelectionPanel.instance.Select(creature, this);
 				GeneNeighboursPanel.instance.MakeDirty();
 				GenomePanel.instance.MakeDirty();

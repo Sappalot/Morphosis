@@ -809,11 +809,6 @@ public class Creature : MonoBehaviour {
 
 	private CreatureData creatureData = new CreatureData();
 
-	public void StoreState() {
-		BringOtherGenoPhenoPositionAndRotationToCurrent();
-		UpdateData();
-	}
-
 	public void RestoreState() {
 		genotype.ApplyData(creatureData.genotypeData);
 		isDirtyGraphics = true;

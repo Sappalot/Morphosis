@@ -49,6 +49,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		Error,
 	}
 
+	public TemperatureState GetSelectionTemperatureState() {
+		return GetTemperatureState(selection);
+	}
+
 	static TemperatureState GetTemperatureState(List<Creature> creatures) {
 		int defrosted = 0;
 		int frozen = 0;
@@ -288,12 +292,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	private void DirtyMarkSelectionCluster() {
 		for (int index = 0; index < selectionCluster.Count; index++) {
 			selectionCluster[index].MakeDirtyGraphics();
-		}
-	}
-
-	public void StoreAllSelectedsState() {
-		for (int index = 0; index < selection.Count; index++) {
-			selection[index].StoreState();
 		}
 	}
 
