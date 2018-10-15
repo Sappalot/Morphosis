@@ -30,6 +30,21 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
+	public Cell GetCellAtPosition(Vector2 position) {
+		if (IsInsideBoundingCircle(position)) {
+			foreach (Cell geneCell in geneCellList) {
+				if (GeometryUtils.IsPointInsideCircle(position, geneCell.position, geneCell.radius)) {
+					return geneCell;
+				}
+			}
+		}
+		return null;
+	}
+
+	public bool IsInsideBoundingCircle(Vector2 position) {
+		return Vector2.SqrMagnitude(originCell.position - position) < Mathf.Pow(Creature.maxRadius * 2f, 2f);
+	}
+
 	public bool IsCompletelyInside(Rect area) {
 		float cellRadius = 0.5f;
 		float top = area.y + area.height / 2f - cellRadius;
@@ -493,12 +508,6 @@ public class Genotype : MonoBehaviour {
 		creature.phenotype.MoveToGenotype(creature);
 	}
 
-	private void SetCollider(bool on) {
-		foreach (Cell cell in geneCellList) {
-			cell.GetComponent<Collider2D>().enabled = on;
-		}
-	}
-
 	private bool m_hasCollider = false;
 	public bool hasCollider {
 		get {
@@ -552,16 +561,6 @@ public class Genotype : MonoBehaviour {
 
 	// Update
 
-	public void UpdateGraphics() {
-		if (isDirty) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
-				Debug.Log("Update Creature Genotype");
-
-			SetCollider(hasCollider);
-			//SetElevated(isElevated);
-			isDirty = false;
-		}
-	}
 
 	//private void EvoUpdateCells() {
 	//	//TODO: only if creature inside frustum && should be shown

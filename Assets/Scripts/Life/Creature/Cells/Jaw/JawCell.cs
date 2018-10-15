@@ -171,6 +171,7 @@ public class JawCell : Cell {
 	}
 
 	public override void OnBorrowToWorld() {
+		base.OnBorrowToWorld();
 		deleteFlagged = false;
 		//base.OnRecycleCell(); //is this one really needed? should have been done when recycling allready
 	}

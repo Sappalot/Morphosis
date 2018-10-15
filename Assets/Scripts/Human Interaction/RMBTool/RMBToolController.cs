@@ -15,7 +15,7 @@ public class RMBToolController : MouseDrag {
 			downPositionMouse = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 			if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spring && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 				
-				Cell cell = World.instance.life.GetCellAt(downPositionMouse);
+				Cell cell = World.instance.life.GetCellAtPosition(downPositionMouse);
 				if (cell != null) {
 					spring.connectedBody = cell.theRigidBody;
 					spring.anchor = downPositionMouse;
@@ -24,25 +24,19 @@ public class RMBToolController : MouseDrag {
 					spring.GetComponent<LineRenderer>().SetPosition(0, spring.connectedBody.transform.position);
 					spring.GetComponent<LineRenderer>().enabled = true;
 				}
-			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spawnEmbryo) {
+			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spawnEmbryo && TerrainPerimeter.instance.IsInside(camera.ScreenToWorldPoint(Input.mousePosition))) {
 				if (GlobalPanel.instance.soundCreatures.isOn) {
 					Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 				}
 				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 					Creature spawned = World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f, World.instance.worldTicks);
-					if (!TerrainPerimeter.instance.IsCompletelyInside(spawned)) {
-						World.instance.life.KillCreatureSafe(spawned, false);
-					}
 				}
-			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spawnFreak) {
+			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spawnFreak && TerrainPerimeter.instance.IsInside(camera.ScreenToWorldPoint(Input.mousePosition))) {
 				if (GlobalPanel.instance.soundCreatures.isOn) {
 					Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
 				}
 				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 					Creature spawned = World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, World.instance.worldTicks);
-					if (!TerrainPerimeter.instance.IsCompletelyInside(spawned)) {
-						World.instance.life.KillCreatureSafe(spawned, false);
-					}
 				}
 			}
 		}

@@ -589,7 +589,32 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
+	public void DisablePhysicsComponents() {
+
+		//My own 3 springs to others
+		if (northSpring != null) {
+			northSpring.enabled = false;
+		}
+		if (southEastSpring != null) {
+			southEastSpring.enabled = false;
+		}
+		if (southWestSpring != null) {
+			southWestSpring.enabled = false;
+		}
+
+		//My placenta springs
+		if (placentaSprings != null) {
+			foreach (SpringJoint2D placentaSpring in placentaSprings) {
+				placentaSpring.enabled = false;
+			}
+		}
+
+		theRigidBody.simulated = false;
+	}
+
 	public void RemovePhysicsComponents() {
+		CircleCollider2D collider = gameObject.GetComponent<CircleCollider2D>();
+		Destroy(collider);
 
 		SpringJoint2D[] springJoints = gameObject.GetComponents<SpringJoint2D>();
 		foreach (SpringJoint2D springJoint in springJoints) {
@@ -963,30 +988,34 @@ public abstract class Cell : MonoBehaviour {
 
 	}
 
-	// Only for LMB
-	private void OnMouseDown() {
-		if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject() && MouseAction.instance.actionState == MouseActionStateEnum.free) {
-			if (Input.GetKey(KeyCode.LeftControl)) {
-				if (creature.creation == CreatureCreationEnum.Frozen || 
-					(creature.creation != CreatureCreationEnum.Frozen && CreatureSelectionPanel.instance.hasSelection && CreatureSelectionPanel.instance.GetSelectionTemperatureState() == CreatureSelectionPanel.TemperatureState.Frozen)) {
-					return;
-				}
-				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
-					CreatureSelectionPanel.instance.RemoveFromSelection(creature);
-				} else {
-					CreatureSelectionPanel.instance.AddToSelection(creature);
-				}
-			} else {
-				CreatureSelectionPanel.instance.Select(creature, this);
-				GeneNeighboursPanel.instance.MakeDirty();
-				GenomePanel.instance.MakeDirty();
-				GenomePanel.instance.MakeScrollDirty();
-				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
-			}
-		}
-	}
+	//// Only for LMB
+	//private void OnMouseDown() {
+	//	if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject() && MouseAction.instance.actionState == MouseActionStateEnum.free) {
+	//		if (Input.GetKey(KeyCode.LeftControl)) {
+	//			if (creature.creation == CreatureCreationEnum.Frozen || 
+	//				(creature.creation != CreatureCreationEnum.Frozen && CreatureSelectionPanel.instance.hasSelection && CreatureSelectionPanel.instance.GetSelectionTemperatureState() == CreatureSelectionPanel.TemperatureState.Frozen)) {
+	//				return;
+	//			}
+	//			if (CreatureSelectionPanel.instance.IsSelected(creature)) {
+	//				CreatureSelectionPanel.instance.RemoveFromSelection(creature);
+	//			} else {
+	//				CreatureSelectionPanel.instance.AddToSelection(creature);
+	//			}
+	//		} else {
+	//			CreatureSelectionPanel.instance.Select(creature, this);
+	//			GeneNeighboursPanel.instance.MakeDirty();
+	//			GenomePanel.instance.MakeDirty();
+	//			GenomePanel.instance.MakeScrollDirty();
+	//			CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
+	//		}
+	//	}
+	//}
 
 	// Update
+
+	public bool IsInsideCircle(Vector2 position) {
+		return Vector2.SqrMagnitude(this.position - position) < Mathf.Pow(radius * 2f, 2f);
+	}
 
 	//TODO: update cell graphics from here
 	public void UpdateGraphics() {
@@ -1162,6 +1191,8 @@ public abstract class Cell : MonoBehaviour {
 
 	//Phenotype only
 	virtual public void OnRecycleCell() {
+		theRigidBody.simulated = true; //physics seem to have problem when borrowing cells and then enabling RB, it should be ok to enable it here since cell is disabled anyway
+
 		foreach (JawCell predator in predators) {
 			predator.RemovePray(this); // make jaw forget about me as a pray of his
 		}

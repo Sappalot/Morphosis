@@ -4,15 +4,44 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class LMBInWorld : MonoBehaviour {
+	public new Camera camera;
 
 	//Bevare of LMB Mouse Drag in selectionController
 	private void OnMouseDown() {
 		if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject()) {
 			if (MouseAction.instance.actionState == MouseActionStateEnum.free) { 
-				if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftShift)) {
+				if (Input.GetKey(KeyCode.LeftShift)) {
 					return;
 				}
-				CreatureSelectionPanel.instance.ClearSelection();
+				Vector2 pickPosition = camera.ScreenToWorldPoint(Input.mousePosition);
+				Cell cell = Morphosis.instance.GetCellAtPosition(pickPosition);
+
+				if (cell == null) {
+					if (!Input.GetKey(KeyCode.LeftControl)) {
+						CreatureSelectionPanel.instance.ClearSelection();
+					}
+					return;
+				}
+				Creature creature = cell.creature;
+
+				if (Input.GetKey(KeyCode.LeftControl)) {
+					if (creature.creation == CreatureCreationEnum.Frozen ||
+						(CreatureSelectionPanel.instance.hasSelection && CreatureSelectionPanel.instance.GetSelectionTemperatureState() == CreatureSelectionPanel.TemperatureState.Frozen)) {
+						return;
+					}
+					if (CreatureSelectionPanel.instance.IsSelected(creature)) {
+						CreatureSelectionPanel.instance.RemoveFromSelection(creature);
+					} else {
+						CreatureSelectionPanel.instance.AddToSelection(creature);
+					}
+				} else {
+					CreatureSelectionPanel.instance.Select(creature, cell);
+					GeneNeighboursPanel.instance.MakeDirty();
+					GenomePanel.instance.MakeDirty();
+					GenomePanel.instance.MakeScrollDirty();
+					CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
+				}
+
 			} else if ((MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures)
 				&& CreatureSelectionPanel.instance.CanPlaceMoveCreatures(CreatureSelectionPanel.MoveCreatureType.Move, Input.GetKey(KeyCode.LeftControl))) {
 				List<Creature> creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
@@ -25,7 +54,7 @@ public class LMBInWorld : MonoBehaviour {
 				} else {
 					creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
 					if (creatures.Count == 1) {
-						TryFreezeCreature(creatures[0]); // should just be 1 at this point
+						TryFreezeCreature(creatures[0]);
 						TryDefrostCreature(creatures[0]);
 					}
 				}
@@ -44,9 +73,9 @@ public class LMBInWorld : MonoBehaviour {
 	//TODO move to some util
 	static bool TryFreezeCreature(Creature creature) {
 		if (Freezer.instance.IsCompletelyInside(creature) && creature.creation != CreatureCreationEnum.Frozen) {
-			creature.OnFreeze();
 			World.instance.life.RemoveCreature(creature);
 			Freezer.instance.AddCreature(creature);
+			creature.OnFreeze();
 			return true;
 		}
 		return false;
@@ -60,23 +89,5 @@ public class LMBInWorld : MonoBehaviour {
 			return true;
 		}
 		return false;
-	}
-
-	private void UpdateCreaturePostPlaced(List<Creature> creatures, bool canFreeze, bool canDefrost) {
-		foreach (Creature c in creatures) {
-			if (TerrainPerimeter.instance.IsCompletelyInside(c)) {
-				if (c.creation == CreatureCreationEnum.Frozen) {
-					if (canDefrost) {
-						c.OnDefrost();
-					}
-				}
-			} else if (Freezer.instance.IsCompletelyInside(c)) {
-				if (c.creation != CreatureCreationEnum.Frozen) {
-					if (canFreeze) {
-						c.OnFreeze();
-					}
-				}
-			} 
-		}
 	}
 }

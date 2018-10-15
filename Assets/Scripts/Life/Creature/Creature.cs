@@ -5,6 +5,8 @@ using System.Linq;
 // The container of genotype(genes) and phenotype(body)
 // Holds information that does not fit into genes or body 
 public class Creature : MonoBehaviour {
+	public const float maxRadius = 5.5f;
+	
 	//wing force
 	[Range(0f, 1f)]
 	public float wingDrag = 0.1f;
@@ -77,7 +79,12 @@ public class Creature : MonoBehaviour {
 		phenotype.DetatchFromMother(this, false, false);
 		phenotype.SetEnergy(30f);
 		ClearMotherAndChildrenReferences();
+		//--
 		phenotype.cellsDiffersFromGeneCells = true;
+		phenotype.UpdateCellsFromGeneCells(this, GetOriginPosition(PhenoGenoEnum.Phenotype), GetOriginHeading(PhenoGenoEnum.Phenotype));
+		phenotype.DisablePhysicsComponents();
+		//--
+		
 	}
 
 	public void OnDefrost() {
@@ -556,8 +563,12 @@ public class Creature : MonoBehaviour {
 		phenotype.ShowCellSelected(cell, on);
 	}
 
-	public Cell GetCellAt(Vector2 position) {
-		return phenotype.GetCellAt(position);
+	public Cell GetCellAtPosition(Vector2 position) {
+		return phenotype.GetCellAtPosition(position);
+	}
+
+	public Cell GetGeneCellAtPosition(Vector2 position) {
+		return genotype.GetCellAtPosition(position);
 	}
 
 	public void Grab(PhenoGenoEnum type) {
@@ -664,7 +675,6 @@ public class Creature : MonoBehaviour {
 
 	// Update
 	public void UpdateGraphics() {
-		genotype.UpdateGraphics();
 		phenotype.UpdateGraphics(this);
 
 		if (isDirtyGraphics) {

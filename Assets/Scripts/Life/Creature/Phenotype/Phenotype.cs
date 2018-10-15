@@ -146,6 +146,12 @@ public class Phenotype : MonoBehaviour {
 	public CellMap cellMap = new CellMap();
 	private bool isDirty = true;
 
+	public void DisablePhysicsComponents() {
+		foreach (Cell c in cellList) {
+			c.DisablePhysicsComponents();
+		}
+	}
+
 	//Grown cells
 	public int cellCount {
 		get {
@@ -437,8 +443,8 @@ public class Phenotype : MonoBehaviour {
 		//return c == null || !(c is CircleCollider2D); //the isCircleCollider2D test is there to avoid count collision with the big world touch square collider
 
 		List<Cell> cells = new List<Cell>();
-		foreach (Creature creature in World.instance.life.creatures) { // creature.creaturesInCluster
-			if (Vector2.SqrMagnitude(creature.GetOriginPosition(PhenoGenoEnum.Phenotype) - originCell.position ) < 12f * 12f) {
+		foreach (Creature creature in World.instance.life.creatures) {
+			if (Vector2.SqrMagnitude(creature.GetOriginPosition(PhenoGenoEnum.Phenotype) - originCell.position ) < Mathf.Pow(Creature.maxRadius * 2f, 2f)) {
 				cells.AddRange(creature.phenotype.cellList);
 			}
 		}
@@ -1169,17 +1175,19 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public Cell GetCellAt(Vector2 position) {
-		foreach (Cell cell in cellList) {
-			if (IsPointInsideCircle(position, cell.position, cell.radius + 0.2f)) {
-				return cell;
+	public Cell GetCellAtPosition(Vector2 position) {
+		if (IsInsideBoundingCircle(position)) {
+			foreach (Cell cell in cellList) {
+				if (GeometryUtils.IsPointInsideCircle(position, cell.position, cell.radius)) {
+					return cell;
+				}
 			}
 		}
 		return null;
 	}
 
-	private bool IsPointInsideCircle(Vector2 point, Vector2 center, float radius) {
-		return Mathf.Pow((point.x - center.x), 2) + Mathf.Pow((point.y - center.y), 2) < Mathf.Pow(radius, 2);
+	public bool IsInsideBoundingCircle(Vector2 position) {
+		return Vector2.SqrMagnitude(originCell.position - position) < Mathf.Pow(Creature.maxRadius * 2f, 2f);
 	}
 
 	private void SetCollider(bool on) {
@@ -1393,7 +1401,6 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	//
 	private void TryFinalizeDetatchmentSlide(Creature creature, ulong worldTick) {
 		if (kickTickStamp > 0 && worldTick > kickTickStamp + slideDurationTicks) {
 			SetCellDragNormal(); //make slow

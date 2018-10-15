@@ -9,6 +9,18 @@ public class TerrainPerimeter : MonoSingleton<TerrainPerimeter> {
 
 	public int runnersKilledCount;
 
+	public bool IsInside(Vector2 position) {
+		float top = legalRect.y + legalRect.height / 2f;
+		float bottom = legalRect.y - legalRect.height / 2f;
+		float left = legalRect.x - legalRect.width / 2f;
+		float right = legalRect.x + legalRect.width / 2f;
+
+		if (position.x > right || position.x < left || position.y > top || position.y < bottom) {
+			return false;
+		}
+		return true;
+	}
+
 	public bool IsCompletelyInside(Creature creature) {
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			return creature.phenotype.IsCompletelyInside(legalRect);

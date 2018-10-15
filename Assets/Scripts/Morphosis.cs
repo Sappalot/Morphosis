@@ -21,6 +21,24 @@ public class Morphosis : MonoSingleton<Morphosis> {
 		Restart();
 	}
 
+	public Cell GetCellAtPosition(Vector2 pickPosition) {
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+			if (TerrainPerimeter.instance.IsInside(pickPosition)) {
+				return World.instance.life.GetCellAtPosition(pickPosition);
+			} else if (Freezer.instance.IsInside(pickPosition)) {
+				return Freezer.instance.GetCellAtPosition(pickPosition);
+			}
+		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
+			if (TerrainPerimeter.instance.IsInside(pickPosition)) {
+				return World.instance.life.GetGeneCellAtPosition(pickPosition);
+			} else if (Freezer.instance.IsInside(pickPosition)) {
+				return Freezer.instance.GetGeneCellAtPosition(pickPosition);
+			}
+		}
+		return null;
+	}
+
+
 	private void Update() {
 		World.instance.UpdateGraphics();
 		Freezer.instance.UpdateGraphics();

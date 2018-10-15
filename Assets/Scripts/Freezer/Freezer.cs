@@ -126,16 +126,38 @@ public class Freezer : MonoSingleton<Freezer> {
 		return creature;
 	}
 
-	public Cell GetCellAt(Vector2 position) {
+	public Cell GetCellAtPosition(Vector2 position) {
 		foreach (Creature creature in creatureList) {
-			Cell found = creature.GetCellAt(position);
+			Cell found = creature.GetCellAtPosition(position);
 			if (found != null) {
 				return found;
 			}
 		}
 		return null;
 	}
-	
+
+	public Cell GetGeneCellAtPosition(Vector2 position) {
+		foreach (Creature creature in creatureList) {
+			Cell found = creature.GetGeneCellAtPosition(position);
+			if (found != null) {
+				return found;
+			}
+		}
+		return null;
+	}
+
+	public bool IsInside(Vector2 position) {
+		float top = legalRect.y + legalRect.height / 2f;
+		float bottom = legalRect.y - legalRect.height / 2f;
+		float left = legalRect.x - legalRect.width / 2f;
+		float right = legalRect.x + legalRect.width / 2f;
+
+		if (position.x > right || position.x < left || position.y > top || position.y < bottom) {
+			return false;
+		}
+		return true;
+	}
+
 	public bool IsCompletelyInside(Creature creature) {
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			return creature.phenotype.IsCompletelyInside(legalRect);
@@ -215,9 +237,11 @@ public class Freezer : MonoSingleton<Freezer> {
 
 		for (int index = 0; index < creatureList.Count; index++) {
 			Creature creature = creatureList[index];
-			CreatureData data = creature.UpdateData();
-			freezerData.creatureList.Add(data);
-			freezerData.creatureDictionary.Add(data.id, data);
+			if (IsCompletelyInside(creature)) {
+				CreatureData data = creature.UpdateData();
+				freezerData.creatureList.Add(data);
+				freezerData.creatureDictionary.Add(data.id, data);
+			}
 		}
 
 		return freezerData;
@@ -231,6 +255,7 @@ public class Freezer : MonoSingleton<Freezer> {
 			creatureData.id = Morphosis.instance.idGenerator.GetUniqueId(); // Freezer ids will allways start from scratch, then moved to range after load when other creatures are loaded
 			Creature creature = InstantiateCreature(creatureData.id);
 			creature.ApplyData(creatureData);
+			creature.OnFreeze();
 		}
 	}
 

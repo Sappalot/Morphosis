@@ -10,4 +10,8 @@ static class GeometryUtils {
 	public static bool AreCirclesIntersecting(Vector2 centerA, float radiusA, Vector2 centerB, float radiusB) {
 		return Vector2.Distance(centerA, centerB) < radiusA + radiusB;
 	}
+
+	public static bool IsPointInsideCircle(Vector2 point, Vector2 center, float radius) {
+		return Mathf.Pow((point.x - center.x), 2) + Mathf.Pow((point.y - center.y), 2) < Mathf.Pow(radius, 2);
+	}
 }

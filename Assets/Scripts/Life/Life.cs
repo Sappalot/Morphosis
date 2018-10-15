@@ -19,6 +19,26 @@ public class Life : MonoBehaviour {
 	LowPassCounter creatureBirthsPerSecond = new LowPassCounter(20);
 	LowPassCounter creatureDeathsPerSecond = new LowPassCounter(20);
 
+	public Cell GetCellAtPosition(Vector2 position) {
+		foreach (Creature creature in creatureList) {
+			Cell found = creature.GetCellAtPosition(position);
+			if (found != null) {
+				return found;
+			}
+		}
+		return null;
+	}
+
+	public Cell GetGeneCellAtPosition(Vector2 position) {
+		foreach (Creature creature in creatureList) {
+			Cell found = creature.GetGeneCellAtPosition(position);
+			if (found != null) {
+				return found;
+			}
+		}
+		return null;
+	}
+
 	public bool IsUsingId(string id) {
 		foreach (Creature c in creatureList) {
 			if (c.id == id || c.HasRelativeWithId(id)) {
@@ -331,16 +351,6 @@ public class Life : MonoBehaviour {
 		creature.name = creature.sceneGraphName;
 
 		return creature;
-	}
-
-	public Cell GetCellAt(Vector2 position) {
-		foreach (Creature creature in creatureList) {
-			Cell found =  creature.GetCellAt(position);
-			if (found != null) {
-				return found;
-			}
-		}
-		return null;
 	}
 
 	//----------------
