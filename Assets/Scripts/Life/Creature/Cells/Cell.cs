@@ -590,7 +590,6 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void DisablePhysicsComponents() {
-
 		//My own 3 springs to others
 		if (northSpring != null) {
 			northSpring.enabled = false;
@@ -603,7 +602,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 
 		//My placenta springs
-		if (placentaSprings != null) {
+		if (hasPlacentaSprings) {
 			foreach (SpringJoint2D placentaSpring in placentaSprings) {
 				placentaSpring.enabled = false;
 			}
@@ -616,10 +615,13 @@ public abstract class Cell : MonoBehaviour {
 		CircleCollider2D collider = gameObject.GetComponent<CircleCollider2D>();
 		Destroy(collider);
 
+		//Destroy hexagonal springs and placenta springs
 		SpringJoint2D[] springJoints = gameObject.GetComponents<SpringJoint2D>();
 		foreach (SpringJoint2D springJoint in springJoints) {
 			Destroy(springJoint);
 		}
+		placentaSprings = new SpringJoint2D[0];
+
 		Destroy(theRigidBody);
 	}
 
@@ -988,41 +990,17 @@ public abstract class Cell : MonoBehaviour {
 
 	}
 
-	//// Only for LMB
-	//private void OnMouseDown() {
-	//	if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject() && MouseAction.instance.actionState == MouseActionStateEnum.free) {
-	//		if (Input.GetKey(KeyCode.LeftControl)) {
-	//			if (creature.creation == CreatureCreationEnum.Frozen || 
-	//				(creature.creation != CreatureCreationEnum.Frozen && CreatureSelectionPanel.instance.hasSelection && CreatureSelectionPanel.instance.GetSelectionTemperatureState() == CreatureSelectionPanel.TemperatureState.Frozen)) {
-	//				return;
-	//			}
-	//			if (CreatureSelectionPanel.instance.IsSelected(creature)) {
-	//				CreatureSelectionPanel.instance.RemoveFromSelection(creature);
-	//			} else {
-	//				CreatureSelectionPanel.instance.AddToSelection(creature);
-	//			}
-	//		} else {
-	//			CreatureSelectionPanel.instance.Select(creature, this);
-	//			GeneNeighboursPanel.instance.MakeDirty();
-	//			GenomePanel.instance.MakeDirty();
-	//			GenomePanel.instance.MakeScrollDirty();
-	//			CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
-	//		}
-	//	}
-	//}
-
 	// Update
-
-	public bool IsInsideCircle(Vector2 position) {
-		return Vector2.SqrMagnitude(this.position - position) < Mathf.Pow(radius * 2f, 2f);
-	}
 
 	//TODO: update cell graphics from here
 	public void UpdateGraphics() {
 		openCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
 
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
-			if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.type) {
+			if (creature.creation == CreatureCreationEnum.Frozen) {
+				filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
+			}
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.type) {
 				if (creature.phenotype.visualTelepoke > 0) {
 					filledCircleSprite.color = Color.white;
 				} else {
@@ -1218,6 +1196,7 @@ public abstract class Cell : MonoBehaviour {
 				Destroy(placentaSpring);
 			}
 		}
+		placentaSprings = new SpringJoint2D[0];
 
 		ShowOnTop(false);
 

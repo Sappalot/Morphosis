@@ -481,18 +481,11 @@ public class Genotype : MonoBehaviour {
 
 	public void Grab() {
 		isGrabbed = true;
-		foreach (Cell cell in geneCellList) {
-			cell.GetComponent<Collider2D>().enabled = false;
-		}
 		MoveOriginToOrigo();
 	}
 
 	public void Release(Creature creature) {
 		isGrabbed = false;
-		foreach (Cell cell in geneCellList) {
-			cell.GetComponent<Collider2D>().enabled = true;
-		}
-
 		foreach (Cell cell in geneCellList) {
 			cell.transform.parent = null;
 		}

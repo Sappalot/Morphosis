@@ -223,12 +223,12 @@ public class LeafCell : Cell {
 		CollisionType type = GetCollisionType(hit);
 
 		if (type == CollisionType.ownCell) {
-			if (GetCollisionCellType(hit) == CellTypeEnum.Shell) {
+			if (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal) {
 				return energyLossAir;
 			}
 			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.cellCount); //J / m
 		} else if (type == CollisionType.othersCell) {
-			if (GetCollisionCellType(hit) == CellTypeEnum.Shell) {
+			if (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal) {
 				return energyLossAir;
 			}
 			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.cellCount); //J / m
@@ -242,9 +242,9 @@ public class LeafCell : Cell {
 		CollisionType type = GetCollisionType(hit);
 
 		if (type == CollisionType.ownCell) {
-			return (GetCollisionCellType(hit) == CellTypeEnum.Shell);
+			return (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal);
 		} else if (type == CollisionType.othersCell) {
-			return (GetCollisionCellType(hit) == CellTypeEnum.Shell) ;
+			return (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal) ;
 		} else {
 			return false;
 		}

@@ -29,7 +29,14 @@ public class Life : MonoBehaviour {
 		return null;
 	}
 
-	public Cell GetGeneCellAtPosition(Vector2 position) {
+	public Cell GetGeneCellAtPosition(Vector2 position, Creature soloSelected = null) {
+		if (soloSelected != null) {
+			Cell found = soloSelected.GetGeneCellAtPosition(position);
+			if (found != null) {
+				return found;
+			}
+		}
+
 		foreach (Creature creature in creatureList) {
 			Cell found = creature.GetGeneCellAtPosition(position);
 			if (found != null) {

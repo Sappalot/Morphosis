@@ -30,7 +30,7 @@ public class Morphosis : MonoSingleton<Morphosis> {
 			}
 		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			if (TerrainPerimeter.instance.IsInside(pickPosition)) {
-				return World.instance.life.GetGeneCellAtPosition(pickPosition);
+				return World.instance.life.GetGeneCellAtPosition(pickPosition, CreatureSelectionPanel.instance.soloSelected);
 			} else if (Freezer.instance.IsInside(pickPosition)) {
 				return Freezer.instance.GetGeneCellAtPosition(pickPosition);
 			}
@@ -64,6 +64,7 @@ public class Morphosis : MonoSingleton<Morphosis> {
 	}
 
 	public void LoadWorld(string filename) {
+		Freezer.instance.Save();
 		Restart();
 		World.instance.Load(filename);
 		instance.MoveFreezerCreatureIdsToFreeRange();
