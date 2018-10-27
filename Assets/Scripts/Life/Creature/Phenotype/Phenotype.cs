@@ -842,10 +842,8 @@ public class Phenotype : MonoBehaviour {
 					Vector2 offspringForce = Vector2.zero;
 					// The size of mother ==> child kick magnitude
 					// The size of child  ==> mother kick magnitude
-					float kickFactorMother  = GlobalSettings.instance.phenotype.detatchmentKick * mother.phenotype.cellCount + GlobalSettings.instance.phenotype.detatchmentKickSquare * mother.phenotype.cellCount * mother.phenotype.cellCount;
-					float kickFactorChild =   GlobalSettings.instance.phenotype.detatchmentKick * cellCount +                  GlobalSettings.instance.phenotype.detatchmentKickSquare * cellCount * cellCount;
-
-					//float averageKickFactor = (kickFactorChild + kickFactorMother) / 2f;
+					float kickFactorMother = GlobalSettings.instance.phenotype.detatchmentKickAtCellCount.Evaluate(mother.phenotype.cellCount);
+					float kickFactorChild = GlobalSettings.instance.phenotype.detatchmentKickAtCellCount.Evaluate(cellCount);
 
 					// Impulses are negated, but may be of different magnitude, poor Newton!
 					// That way big creatures slides roughly the length of small ones

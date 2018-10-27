@@ -122,7 +122,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	public class Phenotype {
 		//Egg Cell
 		public float eggCellEffectCost = 0.2f; //W
-											   //           eggCellEffect                        0.0 W
+
 		public float eggCellFertilizeThresholdMin = 0.3f; //cell energy fullness J/J
 		public float eggCellFertilizeThresholdMax = 0.99f; //cell energy fullness J/J
 
@@ -132,16 +132,16 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float eggCellDetatchEnergyThresholdMin = 0f;   //cell energy fullness J/J
 		public float eggCellDetatchEnergyThresholdMax = 1.1f; //cell energy fullness J/J
 
-														   //Fungal Cell
+		//Fungal Cell
 		public float fungalCellEffectCost = 0f; // W
-		public float[] fungalCellEffect = new float[6]; // W
+		public float fungalCellStrengthFactor = 0.25f; // 1=> as easy as other cells, 0.5 => weak, 20 ==> strong
 
 		//Jaw Cell
 		public float jawCellEffectCost = 0.2f; //W
 		public AnimationCurve jawCellEatEffectAtSpeed; //W stolen from pray depending on ram speed
 		public float jawCellEatEffect = 50f; //W raw eat effect, damaging pray. Only jawCellEatEffect * jawCellEatEffect will gain predator
 		public float jawCellEatEarnFactor = 0.5f; // how big part of the total jawCellEatEffect that is gaining jaw cell J/J
-		//public int jawCellEatLinger = 5; // jawCellEatLinger * jawCellTickPeriod is the time after jaw cell has left pray, that it will still chew on it
+		
 		public float jawCellMutualEatKindness = 0.2f; // How much we gain from eating others creature jaw (compared to normal cells, which are 1)
 													 // The other creature are loosing more than i gain, and vice versa ==> Both are losing, energy is being lost (when fighting) 
 													 // A factor of 1 means 2 jaw cells are not affecting each other, zero sum
@@ -165,7 +165,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		//Shell Cell
 		public float shellCellEffectCost = 0.1f; //W
 												 //           shellCellEffect =                    0.0 W
-		public float shellCellWeaknessFactor = 0.02f; // 1=> as easy as other cells, 0 => inpossible to eat
+		public float shellCellStrengthFactor = 20f; // 1=> as easy as other cells, 0.5 => weak, 20 ==> strong
 
 		//Vein Cell
 		public float veinCellEffectCost = 0.1f; //W
@@ -193,8 +193,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float cellRebuildCooldown = 40f; //s, before a cell which was killed/deleted can be rebuilt
 
 		//General -> Detatch
-		public float detatchmentKick = 0.05f; //N
-		public float detatchmentKickSquare = 0.05f; //N
+		public AnimationCurve detatchmentKickAtCellCount;
 		public float detatchSlideDurationTicks = 10; // s
 		public float detatchSlideDurationTicksRandomDiff = 2; // s
 		public int detatchAfterCompletePersistance = 5; // How many times will we retry to find a spot to grow next cell in before we give up and realize that it is time to detatch (1 ==> give up (and detatch) after failing one time)

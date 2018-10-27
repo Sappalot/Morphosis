@@ -13,20 +13,19 @@ public class Pray {
 		float ramSpeed = GetRamSpeed(predatorCell, cell);
 		//float jawEatEffect = 50f; // GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(Mathf.Max(0f, ramSpeed));
 
-		bool isShell = cell.GetCellType() == CellTypeEnum.Shell;
-		//foreach (Cell c in cell.GetNeighbourCells()) {
-		//	if (c.GetCellType() == CellTypeEnum.Shell) {
-		//		isShell = true;
-		//	}
-		//}
-
 		if (cell.GetCellType() == CellTypeEnum.Jaw) {
 			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect;
 			predatorEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellMutualEatKindness;
-		} else if (isShell && PhenotypePhysicsPanel.instance.functionShell) {
-			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.shellCellWeaknessFactor;
-			predatorEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.shellCellWeaknessFactor * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
-		} else {
+		}
+		else if (cell.GetCellType() == CellTypeEnum.Shell && PhenotypePhysicsPanel.instance.functionShell) {
+			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect / GlobalSettings.instance.phenotype.shellCellStrengthFactor;
+			predatorEatEffect = (GlobalSettings.instance.phenotype.jawCellEatEffect / GlobalSettings.instance.phenotype.shellCellStrengthFactor) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
+		}
+		else if (cell.GetCellType() == CellTypeEnum.Fungal) {
+			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect / GlobalSettings.instance.phenotype.fungalCellStrengthFactor;
+			predatorEatEffect = (GlobalSettings.instance.phenotype.jawCellEatEffect / GlobalSettings.instance.phenotype.fungalCellStrengthFactor) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
+		}
+		else {
 			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect;
 			predatorEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
 		}
