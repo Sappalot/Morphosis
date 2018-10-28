@@ -7,6 +7,8 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Gradient cellGradientLeafGreenExposure;
 	public Gradient cellGradientRamSpeed;
 	public Gradient cellCreatureChildCount;
+	public Gradient creatureAgeGradient;
+	public Gradient creatureAgeTextGradient;
 
 	public Color selectedButton;
 	public Color notSelectedButton;

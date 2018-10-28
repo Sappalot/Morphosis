@@ -207,7 +207,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float telepokeImpulseStrength = 1f; // N / teleport tick | impulse applied every teleport tick
 
 		//Sterile
-		public float maxAgeAsChildless = 3600; //s
+		public ulong maxAge = 3600; //s
 
 		//Springs
 		public float springBreakingForce = 100f; // N
@@ -231,7 +231,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public int veinTickPeriod = 5;
 		public int growTickPeriod = 30; // Detatch attempt has same period as grow
 
-		public int killSterileCreaturesTickPeriod = 6000;
+		public int killOldCreaturesTickPeriod = 6000;
 
 		// Terrain
 		public int portalTeleportTickPeriod = 40;

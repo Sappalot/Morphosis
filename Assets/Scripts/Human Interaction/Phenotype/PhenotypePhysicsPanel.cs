@@ -39,7 +39,7 @@ public class PhenotypePhysicsPanel : MonoSingleton<PhenotypePhysicsPanel> {
 	public Toggle teleport;
 	public Toggle telepoke;
 	public Toggle killFugitive;
-	public Toggle killSterile;
+	public Toggle killOld;
 	public Toggle grow;
 	public Toggle detatch;
 	public Toggle flux;

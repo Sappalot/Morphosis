@@ -333,8 +333,12 @@ public class Creature : MonoBehaviour {
 		return worldTicks - bornTick;
 	}
 
-	public float GetAge(ulong worldTicks) {
+	public float GetAge(ulong worldTicks) { // Age in seconds
 		return (worldTicks - bornTick) * Time.fixedDeltaTime;
+	}
+
+	public float GetAgeNormalized(ulong worldTicks) { // Age in seconds
+		return ((worldTicks - bornTick) * Time.fixedDeltaTime) / GlobalSettings.instance.phenotype.maxAge;
 	}
 
 	public float energy {

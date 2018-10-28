@@ -1134,12 +1134,12 @@ public abstract class Cell : MonoBehaviour {
 							}
 						}
 					}
-
-
-
 				} else {
 					filledCircleSprite.color = Color.blue;
 				}
+			}
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.age) {
+				filledCircleSprite.color = ColorScheme.instance.creatureAgeGradient.Evaluate(creature.GetAgeNormalized(World.instance.worldTicks));
 			}
 		} else {
 			filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());

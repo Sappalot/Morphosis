@@ -2,13 +2,16 @@
 using UnityEngine.UI;
 
 public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
-	public EnergyBar energyBar;
+	
 
 	//public Text creatureSize;
 	public SizeBar sizeBar;
+	public EnergyBar energyBar;
+	public AgeBar ageBar;
 	public Text creatureSpeed;
 	public Text creatureEffect;
 	public Text creatureEffectAverage;
+	public Text creatureAgeText;
 	public CellPanel cellPanel;
 
 	public Toggle followToggle;
@@ -74,8 +77,9 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			}
 
 			if (solo == null || !solo.phenotype.isAlive) {
-				energyBar.isOn = false;
 				sizeBar.isOn = false;
+				energyBar.isOn = false;
+				ageBar.isOn = false;
 				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
 					creatureEffect.text = "Total Effect/Cell: ";
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction  || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
@@ -84,11 +88,15 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 					creatureEffect.text = "Flux Effect/Cell: ";
 				}
 
+				creatureAgeText.text = "";
 				creatureSpeed.text = "Speed:";
 
 				isDirty = false;
 				return;
 			}
+
+			sizeBar.isOn = true;
+			sizeBar.UpdateBar(solo.genotype.geneCellCount, solo.phenotype.cellCount, solo.genotype.GetGeneCellOfTypeCount(CellTypeEnum.Egg), solo.phenotype.GetCellOfTypeCount(CellTypeEnum.Egg), solo.GetAttachedChildrenAliveCount());
 
 			energyBar.isOn = true;
 			energyBar.fullness = solo.phenotype.energyFullness;
@@ -96,8 +104,6 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			energyBar.effectProd = solo.phenotype.GetEffectPerCell(true, false);
 			energyBar.effectFlux = solo.phenotype.GetEffectPerCell(false, true);
 
-			sizeBar.isOn = true;
-			sizeBar.UpdateBar(solo.genotype.geneCellCount, solo.phenotype.cellCount, solo.genotype.GetGeneCellOfTypeCount(CellTypeEnum.Egg), solo.phenotype.GetCellOfTypeCount(CellTypeEnum.Egg), solo.GetAttachedChildrenAliveCount());
 			//creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energyFullness * 100f);
 
 			if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
@@ -107,6 +113,14 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
 				creatureEffect.text = string.Format("Flux Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUpPerCell(false, true), solo.phenotype.GetEffectDownPerCell(false, true), solo.phenotype.GetEffectPerCell(false, true));
 			}
+
+			if (solo.creation != CreatureCreationEnum.Frozen) {
+				ulong ageInSeconds = (ulong)(solo.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime);
+				creatureAgeText.text = "Age: " + TimeUtil.GetTimeString(ageInSeconds);
+				ageBar.isOn = true;
+				ageBar.SetAge(ageInSeconds, GlobalSettings.instance.phenotype.maxAge);
+			}
+
 
 			creatureSpeed.text = string.Format("Speed: {0:F2} m/s", solo.phenotype.speed);
 

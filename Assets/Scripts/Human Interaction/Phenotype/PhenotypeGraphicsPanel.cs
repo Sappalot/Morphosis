@@ -18,6 +18,7 @@ public class PhenotypeGraphicsPanel : MonoSingleton<PhenotypeGraphicsPanel> {
 		creation,
 		individual,
 		pulse,
+		age,
 	}
 	[HideInInspector]
 	public CellGraphicsEnum graphicsCell {

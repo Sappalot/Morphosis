@@ -8,7 +8,7 @@ public class Life : MonoBehaviour {
 	private List<Creature> creatureList = new List<Creature>(); // All enbodied creatures (the once that we can see and play with)
 
 	[HideInInspector]
-	public int sterileKilledCount;
+	public int oldKilledCount;
 
 	public int creatureDeadCount { get; private set; }
 
@@ -390,7 +390,7 @@ public class Life : MonoBehaviour {
 	}
 
 	private int phenotypePanelTicks;
-	private int killSterileCreaturesTicks;
+	private int killOldCreaturesTicks;
 
 	// Phenotype only, updated from FixedUpdate
 	// Everything that needs to be updated as the biological clock is ticking, wings, cell tasks, energy
@@ -404,9 +404,9 @@ public class Life : MonoBehaviour {
 			phenotypePanelTicks = 0;
 		}
 
-		killSterileCreaturesTicks++;
-		if (killSterileCreaturesTicks >= GlobalSettings.instance.quality.killSterileCreaturesTickPeriod) {
-			killSterileCreaturesTicks = 0;
+		killOldCreaturesTicks++;
+		if (killOldCreaturesTicks >= GlobalSettings.instance.quality.killOldCreaturesTickPeriod) {
+			killOldCreaturesTicks = 0;
 		}
 
 		// ^ Ticks ^
@@ -431,18 +431,18 @@ public class Life : MonoBehaviour {
 			}
 		}
 
-		if (PhenotypePhysicsPanel.instance.killSterile.isOn) {
-			if (killSterileCreaturesTicks == 0) {
-				int sterileKilled = 0;
+		if (PhenotypePhysicsPanel.instance.killOld.isOn) {
+			if (killOldCreaturesTicks == 0) {
+				int oldKilled = 0;
 				for (int index = 0; index < creatureList.Count; index++) {
-					if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAgeAsChildless && !creatureList[index].HasChildrenDeadOrAlive()) {
+					if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAge) {
 						killCreatureList.Add(creatureList[index]);
-						sterileKilled++;
+						oldKilled++;
 					}
 				}
-				sterileKilledCount += sterileKilled;
-				if (sterileKilled > 0) {
-					World.instance.AddHistoryEvent(new HistoryEvent("SK: " + sterileKilled, false, Color.red));
+				oldKilledCount += oldKilled;
+				if (oldKilled > 0) {
+					World.instance.AddHistoryEvent(new HistoryEvent("Old: " + oldKilled, false, Color.red));
 				}
 			}
 		}
@@ -474,7 +474,7 @@ public class Life : MonoBehaviour {
 		lifeData.creatureList.Clear();
 		lifeData.creatureDictionary.Clear();
 		lifeData.creatureDeadCount = creatureDeadCount;
-		lifeData.sterileKilledCount = sterileKilledCount;
+		lifeData.sterileKilledCount = oldKilledCount;
 
 		for (int index = 0; index < creatureList.Count; index++) {
 			Creature creature = creatureList[index];
@@ -498,7 +498,7 @@ public class Life : MonoBehaviour {
 			creature.ApplyData(creatureData);
 		}
 		creatureDeadCount = lifeData.creatureDeadCount;
-		sterileKilledCount = lifeData.sterileKilledCount;
+		oldKilledCount = lifeData.sterileKilledCount;
 
 	}
 
