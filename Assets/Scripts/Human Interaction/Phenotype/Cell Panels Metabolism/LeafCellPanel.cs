@@ -13,7 +13,7 @@ public class LeafCellPanel : MetabolismCellPanel {
 			return;
 		}
 
-		GenePanel.instance.selectedGene.leafCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
+		selectedGene.leafCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnChanged();
 		}
@@ -26,27 +26,26 @@ public class LeafCellPanel : MetabolismCellPanel {
 				Debug.Log("Update CellPanel");
 			}
 
-
 			if (mode == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
 					exposure.text = string.Format("Exposure: {0:F2}%", (CellPanel.instance.selectedCell as LeafCell).lowPassExposure * 100f);
 					exposure.color = Color.black;
 
-					idleWhenAttachedText.color = Color.gray;
+					idleWhenAttachedText.color = ColorScheme.instance.grayedOutGenotype;
 					idleWhenAttachedToggle.interactable = false;
 				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
 				exposure.text = "Exposure : -";
-				exposure.color = Color.gray;
+				exposure.color = ColorScheme.instance.grayedOutPhenotype;
 
 				idleWhenAttachedText.color = Color.black;
 				idleWhenAttachedToggle.interactable = isUnlocked();
 			}
 
-			if (GenePanel.instance.selectedGene != null) {
+			if (selectedGene != null) {
 				ignoreSliderMoved = true;
 
-				idleWhenAttachedToggle.isOn = GenePanel.instance.selectedGene.leafCellIdleWhenAttached;
+				idleWhenAttachedToggle.isOn = selectedGene.leafCellIdleWhenAttached;
 
 				ignoreSliderMoved = false;
 			}

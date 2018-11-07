@@ -109,53 +109,32 @@ public class AxonCellPanel : MetabolismCellPanel {
 
 	private void Update() {
 		if (isDirty) {
-			if (mode == PhenoGenoEnum.Phenotype || (mode == PhenoGenoEnum.Genotype && GenePanel.instance.selectedGene == null)) {
-				enabledToggle.interactable = false;
-				enabledText.color = Color.gray;
 
-				fromOriginOffsetText.color = Color.gray;
-				fromOriginDeg0Text.color = Color.gray;
-				fromOriginDeg360Text.color = Color.gray;
-				fromOriginOffsetSlider.interactable = false;
-				fromOriginPlus180Toggle.interactable = false;
-				fromOriginPlus180Text.color = Color.gray;
+			Color textColor = mode == PhenoGenoEnum.Phenotype ? ColorScheme.instance.grayedOutGenotype : Color.black;
+			bool interractable = mode == PhenoGenoEnum.Genotype && isUnlocked();
 
-				fromMeOffsetText.color = Color.gray;
-				fromMeDeg0Text.color = Color.gray;
-				fromMeDeg360Text.color = Color.gray;
-				fromMeOffsetSlider.interactable = false;
+			enabledToggle.interactable = interractable;
+			enabledText.color = textColor;
 
-				relaxContractRelaxContractText.color = Color.gray;
-				relaxContractRelaxText.color = Color.gray;
-				relaxContractContractText.color = Color.gray;
-				relaxContractSlider.interactable = false;
+			fromOriginOffsetText.color = textColor;
+			fromOriginDeg0Text.color = textColor;
+			fromOriginDeg360Text.color = textColor;
+			fromOriginOffsetSlider.interactable = interractable;
+			fromOriginPlus180Toggle.interactable = interractable;
+			fromOriginPlus180Text.color = textColor;
 
-				reverseToggle.interactable = false;
-				reverseText.color = Color.gray;
-			} else if (mode == PhenoGenoEnum.Genotype) {
-				enabledToggle.interactable = isUnlocked();
-				enabledText.color = Color.black;
+			fromMeOffsetText.color = textColor;
+			fromMeDeg0Text.color = textColor;
+			fromMeDeg360Text.color = textColor;
+			fromMeOffsetSlider.interactable = interractable;
 
-				fromOriginOffsetText.color = Color.black;
-				fromOriginDeg0Text.color = Color.black;
-				fromOriginDeg360Text.color = Color.black;
-				fromOriginOffsetSlider.interactable = isUnlocked();
-				fromOriginPlus180Toggle.interactable = isUnlocked();
-				fromOriginPlus180Text.color = Color.black;
+			relaxContractRelaxContractText.color = textColor;
+			relaxContractRelaxText.color = textColor;
+			relaxContractContractText.color = textColor;
+			relaxContractSlider.interactable = interractable;
 
-				fromMeOffsetText.color = Color.black;
-				fromMeDeg0Text.color = Color.black;
-				fromMeDeg360Text.color = Color.black;
-				fromMeOffsetSlider.interactable = isUnlocked();
-
-				relaxContractRelaxContractText.color = Color.black;
-				relaxContractRelaxText.color = Color.black;
-				relaxContractContractText.color = Color.black;
-				relaxContractSlider.interactable = isUnlocked();
-
-				reverseToggle.interactable = isUnlocked();
-				reverseText.color = Color.black;
-			}
+			reverseToggle.interactable = interractable;
+			reverseText.color = textColor;
 
 			if (GenePanel.instance.selectedGene != null) {
 				ignoreSliderMoved = true;

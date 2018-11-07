@@ -44,6 +44,12 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float jawCellCannibalizeChildrenLeave = 1000f;
 		public float jawCellCannibalizeChildrenChange = 10f;
 
+		public float shellCellArmorClassLeave = 1000f;
+		public float shellCellArmorClassChange = 10f;
+
+		public float shellCellTransparancyClassLeave = 1000f;
+		public float shellCellTransparancyClassChange = 10f;
+
 		// General cell
 		public float cellIdleWhenAttachedLeave = 1000f;
 		public float cellIdleWhenAttachedChange = 10f;
@@ -153,6 +159,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float leafCellSunMaxRange = 25.0f; //m
 		public AnimationCurve leafCellSunLossFactorOwnCell;// Effect lost (W / m) own body penetrated : at phenotype size
 		public AnimationCurve leafCellSunLossFactorOtherCell; // Effect lost (W/ m) others body penetrated : at phenotype size
+		public float leafCellDefaultExposure = 0.33f; 
 
 		//Muscle Cell
 		public float muscleCellEffectCostPerHz = 0.4f; //W
@@ -164,7 +171,13 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		//Shell Cell
 		public float shellCellEffectCost = 0.1f; //W
-												 //           shellCellEffect =                    0.0 W
+		public AnimationCurve shellCellEffectCostAtArmor;
+		public AnimationCurve shellCellEffectCostMultiplierAtTransparancy; //cheeper the more transparent (when armor class constant) beacuse blocking leaf more
+		public AnimationCurve shellCellStrengthAtArmor;
+		public AnimationCurve shellCellArmorAtNormalizedArmorClass; // sets how the values (strength & cost) are distributed over the buttons (along x-axis)
+		
+
+		//           shellCellEffect =                    0.0 W
 		public float shellCellStrengthFactor = 20f; // 1=> as easy as other cells, 0.5 => weak, 20 ==> strong
 
 		//Vein Cell
@@ -181,8 +194,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float veinFluxEffectStrong = 0.5f; //W
 
 		//General
-		public float idleCellEffectCost = 0.05f;
+		public float cellIdleEffectCost = 0.05f;
 		public float cellMaxEnergy = 100f; // J
+		public float cellDefaultEnergy = 0.33f;
 		public bool reclaimCutBranchEnergy = true; //when a branch is detatched, its energy will be reclaimed and distributed among cells in creature
 
 		//General -> build
@@ -200,7 +214,8 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		// General -> Drag
 		public float normalDrag = 0.15f;
-		public float normalShellDrag = 1f;
+		public float normalShellDrag = 0.15f;
+		public float normalLeafDrag = 0.15f;
 		public float slideDrag = 0.05f;
 
 		// General -> Teleport

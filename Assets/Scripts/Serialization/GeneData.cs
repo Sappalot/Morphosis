@@ -25,6 +25,9 @@ public class GeneData {
 	// Muscle
 	public bool muscleCellIdleWhenAttached;
 
+	public int shellCellArmourClass;
+	public int shellCellTransparancyClass;
+
 	// Axon
 	public bool axonIsEnabled;
 	public float axonFromOriginOffset;

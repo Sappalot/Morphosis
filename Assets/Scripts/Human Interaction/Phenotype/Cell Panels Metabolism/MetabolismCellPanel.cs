@@ -22,12 +22,23 @@ public abstract class MetabolismCellPanel : MonoBehaviour {
 	}
 
 	public Color isUnlockedColor() {
-		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome ? Color.black : Color.gray;
+		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome ? Color.black : ColorScheme.instance.grayedOut;
 	}
 
 	public void OnChanged() {
 		CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
 		CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
 		CreatureSelectionPanel.instance.soloSelected.generation = 1;
+	}
+
+	public Gene selectedGene {
+		get {
+			if (mode == PhenoGenoEnum.Phenotype) {
+				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
+			} else {
+				return GenePanel.instance.selectedGene;
+			}
+			
+		}
 	}
 }

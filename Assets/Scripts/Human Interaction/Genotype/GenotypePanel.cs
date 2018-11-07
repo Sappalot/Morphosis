@@ -40,20 +40,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		GenomePanel.instance.MakeDirty();
 	}
 
-	public void OnClickedMutateAbsolute() {
-		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
-			if (creature.allowedToChangeGenome) {
-				creature.MutateAbsolute(GlobalSettings.instance.mutation.masterMutationStrength * 10f);
-				creature.creation = CreatureCreationEnum.Forged;
-			}
-		}
-		CreatureSelectionPanel.instance.MakeDirty();
-		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.MakeDirty();
-		GenomePanel.instance.MakeDirty();
-	}
-
-	public void OnClickedMutateCummulative() {
+	public void OnClickedMutate() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			if (creature.allowedToChangeGenome) {
 				creature.MutateCummulative(GlobalSettings.instance.mutation.masterMutationStrength * 10f);
@@ -74,20 +61,6 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.MakeDirty();
-		GenomePanel.instance.MakeDirty();
-	}
-
-	//To be removed
-	public void OnClickedRevert() {
-		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
-			if (creature.allowedToChangeGenome) { //sould not really be needed... but anyway to make sure
-				creature.RestoreState();
-				creature.creation = CreatureCreationEnum.Forged; //we have been tinkering with it allready
-			}
-		}
-		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.selectedGene = null;
 		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();

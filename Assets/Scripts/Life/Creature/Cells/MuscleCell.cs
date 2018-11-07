@@ -35,7 +35,7 @@ public class MuscleCell : Cell {
 		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
 			if (IsIdle()) {
 				effectProductionInternalUp = 0f;
-				effectProductionInternalDown = GlobalSettings.instance.phenotype.idleCellEffectCost;
+				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
 
 				scale.localScale = new Vector3(1f, 1f, 1f); //costy, only if in frustum and close
 				scaleIsDirty = true;

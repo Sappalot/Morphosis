@@ -29,7 +29,7 @@ public class JawCellPanel : MetabolismCellPanel {
 		if (ignoreSliderMoved) {
 			return;
 		}
-		GenePanel.instance.selectedGene.jawCellCannibalizeKin = cannibalizeKinToggle.isOn;
+		selectedGene.jawCellCannibalizeKin = cannibalizeKinToggle.isOn;
 		ApplyChange();
 	}
 
@@ -37,7 +37,7 @@ public class JawCellPanel : MetabolismCellPanel {
 		if (ignoreSliderMoved) {
 			return;
 		}
-		GenePanel.instance.selectedGene.jawCellCannibalizeMother = cannibalizeMotherToggle.isOn;
+		selectedGene.jawCellCannibalizeMother = cannibalizeMotherToggle.isOn;
 		ApplyChange();
 	}
 
@@ -45,7 +45,7 @@ public class JawCellPanel : MetabolismCellPanel {
 		if (ignoreSliderMoved) {
 			return;
 		}
-		GenePanel.instance.selectedGene.jawCellCannibalizeFather = cannibalizeFatherToggle.isOn;
+		selectedGene.jawCellCannibalizeFather = cannibalizeFatherToggle.isOn;
 		ApplyChange();
 	}
 
@@ -53,7 +53,7 @@ public class JawCellPanel : MetabolismCellPanel {
 		if (ignoreSliderMoved) {
 			return;
 		}
-		GenePanel.instance.selectedGene.jawCellCannibalizeSiblings = cannibalizeSiblingsToggle.isOn;
+		selectedGene.jawCellCannibalizeSiblings = cannibalizeSiblingsToggle.isOn;
 		ApplyChange();
 	}
 
@@ -61,7 +61,7 @@ public class JawCellPanel : MetabolismCellPanel {
 		if (ignoreSliderMoved) {
 			return;
 		}
-		GenePanel.instance.selectedGene.jawCellCannibalizeChildren = cannibalizeChildrenToggle.isOn;
+		selectedGene.jawCellCannibalizeChildren = cannibalizeChildrenToggle.isOn;
 		ApplyChange();
 	}
 
@@ -70,7 +70,7 @@ public class JawCellPanel : MetabolismCellPanel {
 			return;
 		}
 
-		GenePanel.instance.selectedGene.jawCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
+		selectedGene.jawCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnChanged();
 		}
@@ -88,29 +88,29 @@ public class JawCellPanel : MetabolismCellPanel {
 					prayCellCount.text = "Eating on cells: " + (CellPanel.instance.selectedCell as JawCell).prayCount;
 					prayCellCount.color = Color.black;
 
-					cannibalizeText.color = Color.gray;
+					cannibalizeText.color = ColorScheme.instance.grayedOutGenotype;
 
 					cannibalizeKinToggle.interactable = false;
-					cannibalizeKinText.color = Color.gray;
+					cannibalizeKinText.color = ColorScheme.instance.grayedOutGenotype;
 
 					cannibalizeMotherToggle.interactable = false;
-					cannibalizeMotherText.color = Color.gray;
+					cannibalizeMotherText.color = ColorScheme.instance.grayedOutGenotype;
 
 					cannibalizeFatherToggle.interactable = false;
-					cannibalizeFatherText.color = Color.gray;
+					cannibalizeFatherText.color = ColorScheme.instance.grayedOutGenotype;
 
 					cannibalizeSiblingsToggle.interactable = false;
-					cannibalizeSiblingsText.color = Color.gray;
+					cannibalizeSiblingsText.color = ColorScheme.instance.grayedOutGenotype;
 
 					cannibalizeChildrenToggle.interactable = false;
-					cannibalizeChildrenText.color = Color.gray;
+					cannibalizeChildrenText.color = ColorScheme.instance.grayedOutGenotype;
 
-					idleWhenAttachedText.color = Color.gray;
+					idleWhenAttachedText.color = ColorScheme.instance.grayedOutGenotype;
 					idleWhenAttachedToggle.interactable = false;
 				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
 				prayCellCount.text = "Eating on cells: -";
-				prayCellCount.color = Color.gray;
+				prayCellCount.color = ColorScheme.instance.grayedOutPhenotype;
 
 				cannibalizeText.color = isUnlockedColor();
 
@@ -133,16 +133,16 @@ public class JawCellPanel : MetabolismCellPanel {
 				idleWhenAttachedToggle.interactable = isUnlocked();
 			}
 
-			if (GenePanel.instance.selectedGene != null) {
+			if (selectedGene != null) {
 				ignoreSliderMoved = true;
 
-				cannibalizeKinToggle.isOn = GenePanel.instance.selectedGene.jawCellCannibalizeKin;
-				cannibalizeMotherToggle.isOn = GenePanel.instance.selectedGene.jawCellCannibalizeMother;
-				cannibalizeFatherToggle.isOn = GenePanel.instance.selectedGene.jawCellCannibalizeFather;
-				cannibalizeSiblingsToggle.isOn = GenePanel.instance.selectedGene.jawCellCannibalizeSiblings;
-				cannibalizeChildrenToggle.isOn = GenePanel.instance.selectedGene.jawCellCannibalizeChildren;
+				cannibalizeKinToggle.isOn = selectedGene.jawCellCannibalizeKin;
+				cannibalizeMotherToggle.isOn = selectedGene.jawCellCannibalizeMother;
+				cannibalizeFatherToggle.isOn = selectedGene.jawCellCannibalizeFather;
+				cannibalizeSiblingsToggle.isOn = selectedGene.jawCellCannibalizeSiblings;
+				cannibalizeChildrenToggle.isOn = selectedGene.jawCellCannibalizeChildren;
 
-				idleWhenAttachedToggle.isOn = GenePanel.instance.selectedGene.jawCellIdleWhenAttached;
+				idleWhenAttachedToggle.isOn = selectedGene.jawCellIdleWhenAttached;
 
 				ignoreSliderMoved = false;
 			}

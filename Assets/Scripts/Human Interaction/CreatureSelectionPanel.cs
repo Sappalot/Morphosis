@@ -731,24 +731,24 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				creatureCreatedText.text = "";
 
 				//right side
-				moveButtonText.color = Color.gray;
-				rotateButtonText.color = Color.gray;
-				deleteButtonText.color = Color.gray;
-				cloneButtonText.color = Color.gray;
-				combineButtonText.color = Color.gray;
+				moveButtonText.color = ColorScheme.instance.grayedOut;
+				rotateButtonText.color = ColorScheme.instance.grayedOut;
+				deleteButtonText.color = ColorScheme.instance.grayedOut;
+				cloneButtonText.color = ColorScheme.instance.grayedOut;
+				combineButtonText.color = ColorScheme.instance.grayedOut;
 				// ^ right side ^
 				// left side
-				spiecesButtonText.color = Color.gray;
+				spiecesButtonText.color = ColorScheme.instance.grayedOut;
 
-				motherButtonText.color = Color.gray;
+				motherButtonText.color = ColorScheme.instance.grayedOut;
 				motherButton.gameObject.SetActive(true);
 				childrenButtonText.text = "Mother";
 
-				fatherButtonText.color = Color.gray;
+				fatherButtonText.color = ColorScheme.instance.grayedOut;
 				fatherButton.gameObject.SetActive(true);
 				childrenButtonText.text = "Father";
 
-				childrenButtonText.color = Color.gray;
+				childrenButtonText.color = ColorScheme.instance.grayedOut;
 				childrenButton.gameObject.SetActive(true);
 				childrenButtonText.text = "Children";
 				// ^ left side ^
@@ -808,15 +808,15 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				combineButtonText.color = Color.black;
 				// ^ right side ^
 				// left side
-				spiecesButtonText.color = Color.gray;
+				spiecesButtonText.color = ColorScheme.instance.grayedOut;
 
-				motherButtonText.color = Color.gray;
+				motherButtonText.color = ColorScheme.instance.grayedOut;
 				motherButton.gameObject.SetActive(true);
 
-				fatherButtonText.color = Color.gray;
+				fatherButtonText.color = ColorScheme.instance.grayedOut;
 				fatherButton.gameObject.SetActive(true);
 
-				childrenButtonText.color = Color.gray;
+				childrenButtonText.color = ColorScheme.instance.grayedOut;
 				childrenButton.gameObject.SetActive(true);
 				// ^ left side ^
 			}

@@ -7,12 +7,21 @@ public class LeafCell : Cell {
 	private const int exposureRecordMaxCapacity = 10;
 	private float[] exposureRecord = new float[exposureRecordMaxCapacity];
 	private int exposureRecorCursor = 0;
-	private int exposureRecordCount = 0;
+	//private int exposureRecordCount = 0;
 
-	private float m_lowPassExposure = 0.6f; // 0.33f boost
+	private const float defaultLowPasExposure = 0.33f;
+
+	private float m_lowPassExposure = defaultLowPasExposure;
 	public float lowPassExposure {
 		get {
 			return m_lowPassExposure;
+		}
+		set {
+			for (int i = 0; i < exposureRecordMaxCapacity; i++) {
+				exposureRecord[i] = value;
+			}
+			m_lowPassExposure = value;
+			exposureRecorCursor = 0;
 		}
 	}
 
@@ -29,17 +38,20 @@ public class LeafCell : Cell {
 		if (raycastHitArray == null) {
 			raycastHitArray = new RaycastHit2D[(int)GlobalSettings.instance.phenotype.leafCellSunMaxRange];
 		}
-		for (int i = 0; i < exposureRecord.Length; i++) {
-			exposureRecord[i] = 0.4f; // a little boost
-		}
+		SetDefaultState();
 		base.OnBorrowToWorld();
+	}
+
+	public override void SetDefaultState() {
+		base.SetDefaultState();
+		lowPassExposure = GlobalSettings.instance.phenotype.leafCellDefaultExposure;
 	}
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		if (PhenotypePhysicsPanel.instance.functionLeaf.isOn) {
 			if (IsIdle()) {
 				effectProductionInternalUp = 0f;
-				effectProductionInternalDown = GlobalSettings.instance.phenotype.idleCellEffectCost;
+				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
 			} else {
 				effectProductionInternalDown = GlobalSettings.instance.phenotype.leafCellEffectCost;
 				bool debugRender = PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure && CreatureSelectionPanel.instance.selectedCell == this;
@@ -92,10 +104,12 @@ public class LeafCell : Cell {
 							enterExit.Add(new HitPoint(HitType.beginAir, beginAirDistance));
 							enterExit.Add(new HitPoint(HitType.beginBody, hit.distance));
 							float energyBefore = rayEnergy;
-							rayEnergy -= 1f * GetEnergyLoss(previousHit, energyLossAir);//energyLossOtherBody;
-							if (IsTransparentCell(previousHit)) {
-								transparentTravelDistance += 1f;
-							}
+							rayEnergy -= GetEnergyLoss(previousHit, energyLossAir);//energyLossOtherBody;
+																				   //if (IsTransparentCell(previousHit)) {
+																				   //	transparentTravelDistance += 1f;
+																				   //}
+							transparentTravelDistance += GetTransparencyOfHit(previousHit);
+
 							if (debugRender) {
 								DrawEnergyLine(GetCollisionColor(previousHit), start, direction, previousHit.distance, previousHit.distance + 1f, energyBefore, rayEnergy);
 							}
@@ -117,10 +131,11 @@ public class LeafCell : Cell {
 							//the body that was hit this time is tight togeter with the previous one
 							enterExit.Add(new HitPoint(HitType.insideBody, hit.distance));
 							float energyBefore = rayEnergy;
-							rayEnergy -= 1f * GetEnergyLoss(previousHit, energyLossAir);//energyLossOtherBody;
-							if (IsTransparentCell(previousHit)) {
-								transparentTravelDistance += 1f;
-							}
+							rayEnergy -= GetEnergyLoss(previousHit, energyLossAir);//energyLossOtherBody;
+																				   //if (IsTransparentCell(previousHit)) {
+																				   //	transparentTravelDistance += 1f;
+																				   //}
+							transparentTravelDistance += GetTransparencyOfHit(previousHit);
 							if (debugRender) {
 								DrawEnergyLine(GetCollisionColor(previousHit), start, direction, previousHit.distance, hit.distance, energyBefore, rayEnergy);
 							}
@@ -139,10 +154,11 @@ public class LeafCell : Cell {
 					enterExit.Add(new HitPoint(HitType.beginAir, enterExit[enterExit.Count - 1].distance + 1f));
 
 					float energyBefore = rayEnergy;
-					rayEnergy -= 1f * GetEnergyLoss(hit, energyLossAir);//energyLossOtherBody;
-					if (IsTransparentCell(hit)) {
-						transparentTravelDistance += 1f;
-					}
+					rayEnergy -= GetEnergyLoss(hit, energyLossAir);//energyLossOtherBody;
+																   //if (IsTransparentCell(hit)) {
+																   //	transparentTravelDistance += 1f;
+																   //}
+					transparentTravelDistance += GetTransparencyOfHit(hit);
 					if (debugRender) {
 						DrawEnergyLine(GetCollisionColor(hit), start, direction, hit.distance, hit.distance + 1f, energyBefore, rayEnergy);
 					}
@@ -193,13 +209,13 @@ public class LeafCell : Cell {
 				if (exposureRecorCursor >= exposureRecordMaxCapacity) {
 					exposureRecorCursor = 0;
 				}
-				exposureRecordCount = (int)Mathf.Min(exposureRecordMaxCapacity, exposureRecordCount + 1);
+				//exposureRecordCount = (int)Mathf.Min(exposureRecordMaxCapacity, exposureRecordCount + 1);
 
 				m_lowPassExposure = 0f;
-				for (int i = 0; i < exposureRecordCount; i++) {
+				for (int i = 0; i < exposureRecordMaxCapacity; i++) {
 					m_lowPassExposure += exposureRecord[i];
 				}
-				m_lowPassExposure /= exposureRecordCount;
+				m_lowPassExposure /= exposureRecordMaxCapacity;
 
 				int attachedMotherCellCount = 0;
 				if (creature.IsAttachedToMotherAlive()) {
@@ -223,15 +239,19 @@ public class LeafCell : Cell {
 		CollisionType type = GetCollisionType(hit);
 
 		if (type == CollisionType.ownCell) {
-			if (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal) {
-				return energyLossAir;
-			}
-			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.cellCount); //J / m
+			float transparencyAtHit = GetTransparencyOfHit(hit);
+			return Mathf.Lerp(energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.cellCount), energyLossAir, transparencyAtHit);
+			//if (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal) {
+			//	return energyLossAir;
+			//}
+			//return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.cellCount); //J / m
 		} else if (type == CollisionType.othersCell) {
-			if (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal) {
-				return energyLossAir;
-			}
-			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.cellCount); //J / m
+			float transparencyAtHit = GetTransparencyOfHit(hit);
+			return Mathf.Lerp(energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.cellCount), energyLossAir, transparencyAtHit);
+			//if (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal) {
+			//	return energyLossAir;
+			//}
+			//return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.cellCount); //J / m
 		} else {
 			//Wall
 			return energyLossAir * 1000f; //J / m; 
@@ -244,10 +264,18 @@ public class LeafCell : Cell {
 		if (type == CollisionType.ownCell) {
 			return (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal);
 		} else if (type == CollisionType.othersCell) {
-			return (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal) ;
+			return (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal);
 		} else {
 			return false;
 		}
+	}
+
+	public float GetTransparencyOfHit(RaycastHit2D hit) {
+		Cell hitCell = hit.collider.gameObject.GetComponent<Cell>();
+		if (hitCell != null) {
+			return hitCell.transparency;
+		}
+		return 0f;
 	}
 
 	//Opt. this array should contain enoug fields to store all hits
@@ -309,5 +337,17 @@ public class LeafCell : Cell {
 
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Leaf;
+	}
+
+	public override void SetNormalDrag() {
+		theRigidBody.drag = GlobalSettings.instance.phenotype.normalLeafDrag;
+	}
+
+	public override Color GetColor(PhenoGenoEnum phenoGeno) {
+		if (phenoGeno == PhenoGenoEnum.Genotype) {
+			return ColorScheme.instance.ToColor(GetCellType());
+		} else {
+			return ColorScheme.instance.cellGradientLeafGreenExposure.Evaluate(lowPassExposure);
+		}
 	}
 }

@@ -77,7 +77,7 @@ public class Creature : MonoBehaviour {
 		creation = CreatureCreationEnum.Frozen;
 		generation = 0;
 		phenotype.DetatchFromMother(this, false, false);
-		phenotype.SetEnergy(30f);
+		phenotype.SetAllCellStatesToDefault();
 		ClearMotherAndChildrenReferences();
 		//--
 		phenotype.cellsDiffersFromGeneCells = true;
@@ -92,6 +92,7 @@ public class Creature : MonoBehaviour {
 		generation = 1;
 		phenotype.DetatchFromMother(this, false, false); // should not be connected
 		ClearMotherAndChildrenReferences(); // should not have any
+		phenotype.SetAllCellStatesToDefault();
 		phenotype.cellsDiffersFromGeneCells = true;
 		bornTick = World.instance.worldTicks;
 	}
@@ -705,8 +706,7 @@ public class Creature : MonoBehaviour {
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
 					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
 				}
-
-				genotype.UpdateFlipSides();
+				genotype.UpdateGraphics();
 			}
 			isDirtyGraphics = false;
 		}
@@ -734,6 +734,7 @@ public class Creature : MonoBehaviour {
 
 	//Returns true if creature grew
 	public void UpdatePhysics(ulong worldTicks) {
+		
 		//time
 		growTicks++;
 		if (growTicks >= GlobalSettings.instance.quality.growTickPeriod) {

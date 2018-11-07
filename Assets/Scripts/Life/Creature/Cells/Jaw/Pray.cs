@@ -18,8 +18,8 @@ public class Pray {
 			predatorEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellMutualEatKindness;
 		}
 		else if (cell.GetCellType() == CellTypeEnum.Shell && PhenotypePhysicsPanel.instance.functionShell) {
-			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect / GlobalSettings.instance.phenotype.shellCellStrengthFactor;
-			predatorEatEffect = (GlobalSettings.instance.phenotype.jawCellEatEffect / GlobalSettings.instance.phenotype.shellCellStrengthFactor) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
+			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect / cell.strength;
+			predatorEatEffect = (GlobalSettings.instance.phenotype.jawCellEatEffect / cell.strength) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
 		}
 		else if (cell.GetCellType() == CellTypeEnum.Fungal) {
 			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect / GlobalSettings.instance.phenotype.fungalCellStrengthFactor;

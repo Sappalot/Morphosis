@@ -175,6 +175,16 @@ public class Phenotype : MonoBehaviour {
 		return count;
 	}
 
+	public int GetShellCellOfMaterialCount(ShellCell.ShellMaterial material) {
+		int count = 0;
+		foreach (Cell c in cellList) {
+			if (c.GetCellType() == CellTypeEnum.Shell && (c as ShellCell).material == material) {
+				count++;
+			}
+		}
+		return count;
+	}
+
 	public float longestEdge {
 		get {
 			return edges.longestEdge;
@@ -677,6 +687,12 @@ public class Phenotype : MonoBehaviour {
 		connectionsDiffersFromCells = true;
 	}
 
+	public void SetAllCellStatesToDefault() {
+		foreach (Cell c in cellList) {
+			c.SetDefaultState();
+		}
+	}
+
 	//This will make origin inaccessible
 	
 	public void KillAllCells(bool effects) {
@@ -741,7 +757,6 @@ public class Phenotype : MonoBehaviour {
 		connectionsDiffersFromCells = true;
 
 		CreatureSelectionPanel.instance.MakeDirty();
-
 		CreatureSelectionPanel.instance.UpdateSelectionCluster();
 	}
 

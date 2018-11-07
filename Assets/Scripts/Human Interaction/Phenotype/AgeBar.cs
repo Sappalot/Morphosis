@@ -33,8 +33,7 @@ public class AgeBar : MonoBehaviour {
 			if (!m_isOn) {
 				bar.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
 				text.text = "";
-				background.color = Color.gray;
-
+				background.color = ColorScheme.instance.grayedOut;
 			}
 		}
 	}

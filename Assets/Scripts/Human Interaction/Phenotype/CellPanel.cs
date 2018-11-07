@@ -30,10 +30,14 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	// Metabolism -> specific
 	public MetabolismCellPanel eggCellPanel;
+	public MetabolismCellPanel fungalCellPanel;
 	public MetabolismCellPanel jawCellPanel;
 	public MetabolismCellPanel leafCellPanel;
 	public MetabolismCellPanel muscleCellPanel;
-	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[4];
+	public MetabolismCellPanel rootCellPanel;
+	public MetabolismCellPanel shellCellPanel;
+	public MetabolismCellPanel veinCellPanel;
+	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[8];
 
 	public AxonCellPanel axonCellPanel;
 	public OriginCellPanel originCellPanel;
@@ -41,9 +45,13 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	override public void Init() {
 		isDirty = true;
 		metabolismCellPanels[0] = eggCellPanel;
-		metabolismCellPanels[1] = jawCellPanel;
-		metabolismCellPanels[2] = leafCellPanel;
-		metabolismCellPanels[3] = muscleCellPanel;
+		metabolismCellPanels[1] = fungalCellPanel;
+		metabolismCellPanels[2] = jawCellPanel;
+		metabolismCellPanels[3] = leafCellPanel;
+		metabolismCellPanels[4] = muscleCellPanel;
+		metabolismCellPanels[5] = shellCellPanel;
+		metabolismCellPanels[6] = rootCellPanel;
+		metabolismCellPanels[7] = veinCellPanel;
 
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
 			m.mode = PhenoGenoEnum.Phenotype;
@@ -58,9 +66,15 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public void MakeDirty() {
 		isDirty = true;
 
-		foreach (MetabolismCellPanel m in metabolismCellPanels) {
-			m.MakeDirty();
-		}
+		eggCellPanel.MakeDirty();
+		fungalCellPanel.MakeDirty();
+		jawCellPanel.MakeDirty();
+		leafCellPanel.MakeDirty();
+		muscleCellPanel.MakeDirty();
+		shellCellPanel.MakeDirty();
+		rootCellPanel.MakeDirty();
+		veinCellPanel.MakeDirty();
+
 		axonCellPanel.MakeDirty();
 		originCellPanel.MakeDirty();
 	}
@@ -197,6 +211,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				eggCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Fungal) {
 				metabolismCellTypeDropdown.value = 1;
+				fungalCellPanel.gameObject.SetActive(true);
+				fungalCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Jaw) {
 				metabolismCellTypeDropdown.value = 2;
 				jawCellPanel.gameObject.SetActive(true);
@@ -211,10 +227,16 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				muscleCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Root) {
 				metabolismCellTypeDropdown.value = 5;
+				rootCellPanel.gameObject.SetActive(true);
+				rootCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Shell) {
 				metabolismCellTypeDropdown.value = 6;
+				shellCellPanel.gameObject.SetActive(true);
+				shellCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Vein) {
 				metabolismCellTypeDropdown.value = 7;
+				veinCellPanel.gameObject.SetActive(true);
+				veinCellPanel.MakeDirty();
 			}
 
 			originCellPanel.MakeDirty();

@@ -147,22 +147,22 @@ public class EnergyBar : MonoBehaviour {
 			if (!m_isOn) {
 				bar.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
 				text.text = "";
-				background.color = Color.gray;
+				background.color = ColorScheme.instance.grayedOut;
 
 				effectArrowTotalPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
 				effectArrowTotalNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
-				effectArrowTotalPos.color = Color.gray;
-				effectArrowTotalNeg.color = Color.gray;
+				effectArrowTotalPos.color = ColorScheme.instance.grayedOut;
+				effectArrowTotalNeg.color = ColorScheme.instance.grayedOut;
 
 				effectArrowProdPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
 				effectArrowProdNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
-				effectArrowProdPos.color = Color.gray;
-				effectArrowProdNeg.color = Color.gray;
+				effectArrowProdPos.color = ColorScheme.instance.grayedOut;
+				effectArrowProdNeg.color = ColorScheme.instance.grayedOut;
 
 				effectArrowFluxPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
 				effectArrowFluxNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
-				effectArrowFluxPos.color = Color.gray;
-				effectArrowFluxNeg.color = Color.gray;
+				effectArrowFluxPos.color = ColorScheme.instance.grayedOut;
+				effectArrowFluxNeg.color = ColorScheme.instance.grayedOut;
 			}
 		}
 	}

@@ -27,6 +27,11 @@ public class Gene {
 	public bool muscleCellIdleWhenAttached = false;
 	// ^ Muscle Cell ^
 
+	// Shell
+	public int shellCellArmorClass = 2;
+	public int shellCellTransparancyClass = 2;
+	// ^ Shell ^
+
 	// Axon
 	private bool m_axonIsEnabled;
 	public bool axonIsEnabled {
@@ -180,6 +185,25 @@ public class Gene {
 		}
 		// ^ Muscle ^
 
+		// Muscle
+		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
+		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
+			muscleCellIdleWhenAttached = !muscleCellIdleWhenAttached; //toggle
+		}
+		// ^ Muscle ^
+
+		// Shell
+		mut = Random.Range(0, gs.mutation.shellCellArmorClassLeave + gs.mutation.shellCellArmorClassChange * strength);
+		if (mut < gs.mutation.shellCellArmorClassChange * strength) {
+			shellCellArmorClass = Mathf.Clamp(shellCellArmorClass - 1 + Mathf.FloorToInt( Random.Range(0, 3)), 0, ShellCell.armourClassCount - 1);
+		}
+		mut = Random.Range(0, gs.mutation.shellCellTransparancyClassLeave + gs.mutation.shellCellTransparancyClassChange * strength);
+		if (mut < gs.mutation.shellCellTransparancyClassChange * strength) {
+			shellCellTransparancyClass = Mathf.Clamp(shellCellTransparancyClass - 1 + Mathf.FloorToInt(Random.Range(0, 3)), 0, ShellCell.transparencyClassCount - 1);
+		}
+		// ^ Shell ^
+
+
 		// Axon
 		mut = Random.Range(0, gs.mutation.axonEnabledLeave + gs.mutation.axonEnabledChange * strength);
 		if (mut < gs.mutation.axonEnabledChange * strength) {
@@ -292,6 +316,10 @@ public class Gene {
 		// Muscle
 		geneData.muscleCellIdleWhenAttached = muscleCellIdleWhenAttached;
 
+		// Shell
+		geneData.shellCellArmourClass = shellCellArmorClass;
+		geneData.shellCellTransparancyClass = shellCellTransparancyClass;
+
 		// Axon
 		geneData.axonIsEnabled = axonIsEnabled;
 		geneData.axonFromOriginOffset = axonFromOriginOffset;
@@ -353,6 +381,10 @@ public class Gene {
 
 		// Muscle
 		muscleCellIdleWhenAttached = geneData.muscleCellIdleWhenAttached;
+
+		// Shell
+		shellCellArmorClass = geneData.shellCellArmourClass;
+		shellCellTransparancyClass = geneData.shellCellTransparancyClass;
 
 		// Axon
 		axonIsEnabled =             geneData.axonIsEnabled;

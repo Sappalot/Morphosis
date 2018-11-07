@@ -21,6 +21,10 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color muscle;
 	public Color root;
 	public Color shell;
+	public Gradient shellArmourOpaque;
+	public Gradient shellArmourTransparent;
+	public Gradient shellArmourOpaqueClear;
+	public Gradient shellArmourTransparentClear;
 	public Color vein;
 
 	public Color outlineCluster;
@@ -31,9 +35,12 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color noMotherAttachedArrow;
 	public Color motherAttachedArrow;
 
-	public Color creatureLockedColor;
-	public Color creatureUnlockedColor;
+	public Color creatureLocked;
+	public Color creatureUnlocked;
 
+	public Color grayedOutGenotype;
+	public Color grayedOutPhenotype;
+	public Color grayedOut;
 
 	public Color ToColor(CellTypeEnum cellType) {
 		if (cellType == CellTypeEnum.Egg) {

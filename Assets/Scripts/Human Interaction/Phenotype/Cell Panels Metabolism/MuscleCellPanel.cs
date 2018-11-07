@@ -13,7 +13,7 @@ public class MuscleCellPanel : MetabolismCellPanel {
 			return;
 		}
 
-		GenePanel.instance.selectedGene.muscleCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
+		selectedGene.muscleCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnChanged();
 		}
@@ -26,28 +26,21 @@ public class MuscleCellPanel : MetabolismCellPanel {
 				Debug.Log("Update CellPanel");
 			}
 
-
 			if (mode == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					//exposure.text = string.Format("Exposure: {0:F2}%", (CellPanel.instance.selectedCell as LeafCell).lowPassExposure * 100f);
-					//exposure.color = Color.black;
-
-					idleWhenAttachedText.color = Color.gray;
+					idleWhenAttachedText.color = ColorScheme.instance.grayedOutGenotype;
 					idleWhenAttachedToggle.interactable = false;
 				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
-				//exposure.text = "Exposure : -";
-				//exposure.color = Color.gray;
-
 				idleWhenAttachedText.color = Color.black;
 				idleWhenAttachedToggle.interactable = isUnlocked();
 			}
 
 
-			if (GenePanel.instance.selectedGene != null) {
+			if (selectedGene != null) {
 				ignoreSliderMoved = true;
 
-				idleWhenAttachedToggle.isOn = GenePanel.instance.selectedGene.muscleCellIdleWhenAttached;
+				idleWhenAttachedToggle.isOn = selectedGene.muscleCellIdleWhenAttached;
 
 				ignoreSliderMoved = false;
 			}

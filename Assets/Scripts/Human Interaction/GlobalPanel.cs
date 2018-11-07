@@ -160,7 +160,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 			deletedCellCount.text = "Deleted Cells: " + World.instance.life.deletedCellCount;
 			if (World.instance.life.deletedCellCount == 0) {
-				deletedCellCount.color = Color.gray;
+				deletedCellCount.color = ColorScheme.instance.grayedOut;
 			} else {
 				deletedCellCount.color = Color.red;
 			}

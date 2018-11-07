@@ -6,6 +6,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 	//public Text creatureSize;
 	public SizeBar sizeBar;
+	public Text sizeText;
 	public EnergyBar energyBar;
 	public AgeBar ageBar;
 	public Text creatureSpeed;
@@ -97,6 +98,8 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 			sizeBar.isOn = true;
 			sizeBar.UpdateBar(solo.genotype.geneCellCount, solo.phenotype.cellCount, solo.genotype.GetGeneCellOfTypeCount(CellTypeEnum.Egg), solo.phenotype.GetCellOfTypeCount(CellTypeEnum.Egg), solo.GetAttachedChildrenAliveCount());
+
+			sizeText.text = "Size: " + solo.phenotype.cellCount + " / " + solo.genotype.geneCellCount;
 
 			energyBar.isOn = true;
 			energyBar.fullness = solo.phenotype.energyFullness;

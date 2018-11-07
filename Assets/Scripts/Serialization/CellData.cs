@@ -22,6 +22,9 @@ public class CellData {
 	public float eggCellDetatchSizeThreshold;
 	public float eggCellDetatchEnergyThreshold;
 
+	// Leaf
+	public float leafCellLowPassExposure;
+
 	// Origin
 	public ChildDetatchModeEnum originDetatchMode;
 	public float originDetatchSizeThreshold;

@@ -83,6 +83,10 @@ public class World : MonoSingleton<World> {
 				record.Set(RecordEnum.cellCountMuscle, 0);
 				record.Set(RecordEnum.cellCountRoot,   0);
 				record.Set(RecordEnum.cellCountShell , 0);
+				record.Set(RecordEnum.cellCountShellWood,    0);
+				record.Set(RecordEnum.cellCountShellMetal,   0);
+				record.Set(RecordEnum.cellCountShellGlass,   0);
+				record.Set(RecordEnum.cellCountShellDiamond, 0);
 				record.Set(RecordEnum.cellCountVein,   0);
 				record.Set(RecordEnum.creatureCount,   0);
 				record.Set(RecordEnum.creatureBirthsPerSecond, 0);
@@ -134,6 +138,10 @@ public class World : MonoSingleton<World> {
 		record.Set(RecordEnum.cellCountMuscle, life.GetCellAliveCount(CellTypeEnum.Muscle));
 		record.Set(RecordEnum.cellCountRoot,   life.GetCellAliveCount(CellTypeEnum.Root));
 		record.Set(RecordEnum.cellCountShell,  life.GetCellAliveCount(CellTypeEnum.Shell));
+		record.Set(RecordEnum.cellCountShellWood, life.GetShellCellOfMaterialAliveCount(ShellCell.ShellMaterial.Wood));
+		record.Set(RecordEnum.cellCountShellMetal, life.GetShellCellOfMaterialAliveCount(ShellCell.ShellMaterial.Metal));
+		record.Set(RecordEnum.cellCountShellGlass, life.GetShellCellOfMaterialAliveCount(ShellCell.ShellMaterial.Glass));
+		record.Set(RecordEnum.cellCountShellDiamond, life.GetShellCellOfMaterialAliveCount(ShellCell.ShellMaterial.Diamond));
 		record.Set(RecordEnum.cellCountVein,   life.GetCellAliveCount(CellTypeEnum.Vein));
 
 		record.Set(RecordEnum.creatureCount, life.creatureAliveCount);

@@ -32,10 +32,14 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 
 	// Metabolism -> specific
 	public MetabolismCellPanel eggCellPanel;
+	public MetabolismCellPanel fungalCellPanel;
 	public MetabolismCellPanel jawCellPanel;
 	public MetabolismCellPanel leafCellPanel;
 	public MetabolismCellPanel muscleCellPanel;
-	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[4];
+	public MetabolismCellPanel rootCellPanel;
+	public MetabolismCellPanel shellCellPanel;
+	public MetabolismCellPanel veinCellPanel;
+	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[8];
 
 	public AxonCellPanel axonCellPanel;
 	public OriginCellPanel originCellPanel;
@@ -43,9 +47,13 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 	override public void Init() {
 		isDirty = true;
 		metabolismCellPanels[0] = eggCellPanel;
-		metabolismCellPanels[1] = jawCellPanel;
-		metabolismCellPanels[2] = leafCellPanel;
-		metabolismCellPanels[3] = muscleCellPanel;
+		metabolismCellPanels[1] = fungalCellPanel;
+		metabolismCellPanels[2] = jawCellPanel;
+		metabolismCellPanels[3] = leafCellPanel;
+		metabolismCellPanels[4] = muscleCellPanel;
+		metabolismCellPanels[5] = shellCellPanel;
+		metabolismCellPanels[6] = rootCellPanel;
+		metabolismCellPanels[7] = veinCellPanel;
 
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
 			m.mode = PhenoGenoEnum.Genotype;
@@ -114,45 +122,45 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 
 			metabolismCellTypeDropdown.interactable = false;
 
-			energy.color = Color.gray;
+			energy.color = ColorScheme.instance.grayedOut;
 
 			//All metabolism stuff off
 			effect.text = "Effect: -";
-			effect.color = Color.gray;
+			effect.color = ColorScheme.instance.grayedOutPhenotype;
 
 			effectFromNeighbours.text = "P me <= neighbours: -";
-			effectFromNeighbours.color = Color.gray;
+			effectFromNeighbours.color = ColorScheme.instance.grayedOutPhenotype;
 
 			effectToNeighbours.text = "P me => neighbours: -";
-			effectToNeighbours.color = Color.gray;
+			effectToNeighbours.color = ColorScheme.instance.grayedOutPhenotype;
 
 			effectFromMother.text = "P me <= mother: -";
-			effectFromMother.color = Color.gray;
+			effectFromMother.color = ColorScheme.instance.grayedOutPhenotype;
 
 			effectToChildren.text = "P me => children: -";
-			effectToChildren.color = Color.gray;
+			effectToChildren.color = ColorScheme.instance.grayedOutPhenotype;
 
 			isOrigin.text = "-";
-			isOrigin.color = Color.gray;
+			isOrigin.color = ColorScheme.instance.grayedOutPhenotype;
 
 			isPlacenta.text = "-";
-			isPlacenta.color = Color.gray;
+			isPlacenta.color = ColorScheme.instance.grayedOutPhenotype;
 
 			neighboursCount.text = "Neighbours: -";
-			neighboursCount.color = Color.gray;
+			neighboursCount.color = ColorScheme.instance.grayedOutPhenotype;
 
 			connectedVeinsCount.text = "Veins: - ";
-			connectedVeinsCount.color = Color.gray;
+			connectedVeinsCount.color = ColorScheme.instance.grayedOutPhenotype;
 
 			connectionGroupCount.text = "Connection Groups: -";
-			connectionGroupCount.color = Color.gray;
+			connectionGroupCount.color = ColorScheme.instance.grayedOutPhenotype;
 
 			eatingOnMeCount.text = "Eating on me: -";
-			eatingOnMeCount.color = Color.gray;
+			eatingOnMeCount.color = ColorScheme.instance.grayedOutPhenotype;
 
-			deleteButtonText.color = Color.gray;
-			healButtonText.color = Color.gray;
-			hurtButtonText.color = Color.gray;
+			deleteButtonText.color = ColorScheme.instance.grayedOutPhenotype;
+			healButtonText.color = ColorScheme.instance.grayedOutPhenotype;
+			hurtButtonText.color = ColorScheme.instance.grayedOutPhenotype;
 
 			energyBar.isOn = false;
 
@@ -172,9 +180,10 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 				metabolismCellTypeDropdown.value = 0;
 				eggCellPanel.gameObject.SetActive(true);
 				eggCellPanel.MakeDirty();
-				//(eggCellPanel as EggCellPanel).MakeSlidersDirty();
 			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Fungal) {
 				metabolismCellTypeDropdown.value = 1;
+				fungalCellPanel.gameObject.SetActive(true);
+				fungalCellPanel.MakeDirty();
 			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Jaw) {
 				metabolismCellTypeDropdown.value = 2;
 				jawCellPanel.gameObject.SetActive(true);
@@ -189,10 +198,16 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 				muscleCellPanel.MakeDirty();
 			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Root) {
 				metabolismCellTypeDropdown.value = 5;
+				rootCellPanel.gameObject.SetActive(true);
+				rootCellPanel.MakeDirty();
 			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Shell) {
 				metabolismCellTypeDropdown.value = 6;
+				shellCellPanel.gameObject.SetActive(true);
+				shellCellPanel.MakeDirty();
 			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Vein) {
 				metabolismCellTypeDropdown.value = 7;
+				veinCellPanel.gameObject.SetActive(true);
+				veinCellPanel.MakeDirty();
 			}
 			ignoreMenuChange = false;
 

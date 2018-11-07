@@ -11,21 +11,22 @@ public class SizeBar : MonoBehaviour {
 	public Color colorEmptyEgg;
 	public Color colorOccupiedChild;
 
-	private Image[] images = new Image[100];
+	private const int xCount = 40;
+	private Image[] images = new Image[xCount * 2];
 
 	private void Start() {
 		squareTemplate.gameObject.SetActive(true);
 		for (int y = 0; y < 2; y++) {
-			for (int x = 0; x < 50; x++) {
-				images[y* 50 + x] = Instantiate(squareTemplate, panel);
-				images[y * 50 + x].rectTransform.anchoredPosition = new Vector2(x *7f, -y * 9f);
+			for (int x = 0; x < xCount; x++) {
+				images[y * xCount + x] = Instantiate(squareTemplate, panel);
+				images[y * xCount + x].rectTransform.anchoredPosition = new Vector2(x * 7f, -y * 9f);
 			}
 		}
 		squareTemplate.gameObject.SetActive(false);
 	}
 
 	public void UpdateBar(int totalSize, int builtSize, int totalEggCellCount, int builtEggCount, int attachedChildrenCount) {
-		for (int index = 0; index < 100; index++) {
+		for (int index = 0; index < xCount * 2; index++) {
 			images[index].gameObject.SetActive(index < totalSize);
 			int unbuiltEggLimit = totalEggCellCount - builtEggCount - attachedChildrenCount;
 			int builtEggLimit = totalEggCellCount - attachedChildrenCount;
@@ -54,7 +55,7 @@ public class SizeBar : MonoBehaviour {
 	
 	public bool isOn {
 		set {
-			for (int index = 0; index < 100; index++) {
+			for (int index = 0; index < xCount * 2; index++) {
 				images[index].gameObject.SetActive(value);
 			}
 		}

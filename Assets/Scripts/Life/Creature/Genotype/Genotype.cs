@@ -331,12 +331,6 @@ public class Genotype : MonoBehaviour {
 		return false;
 	}
 
-	public void UpdateFlipSides() {
-		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].UpdateFlipSide();
-		}
-	}
-
 	private Cell SpawnGeneCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide) {
 		Cell cell = Morphosis.instance.geneCellPool.Borrow(gene.type);
 
@@ -445,6 +439,13 @@ public class Genotype : MonoBehaviour {
 			}
 		}
 	}
+	public void UpdateGraphics() {
+		for (int index = 0; index < geneCellList.Count; index++) {
+			geneCellList[index].UpdateGraphics();
+			geneCellList[index].UpdateFlipSide();
+		}
+	}
+
 
 	public void ShowGeneCellsSelected(bool on) {
 		for (int index = 0; index < geneCellList.Count; index++) {

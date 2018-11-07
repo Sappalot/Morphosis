@@ -14,6 +14,10 @@ public enum RecordEnum {
 	cellCountMuscle,
 	cellCountRoot,
 	cellCountShell,
+	cellCountShellWood,
+	cellCountShellMetal,
+	cellCountShellGlass,
+	cellCountShellDiamond,
 	cellCountVein,
 
 	creatureCount,

@@ -16,7 +16,7 @@ public class JawCell : Cell {
 			if (IsIdle()) {
 				mouth.gameObject.SetActive(false);
 				effectProductionPredPrayUp = 0f;
-				effectProductionInternalDown = GlobalSettings.instance.phenotype.idleCellEffectCost;
+				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
 			} else {
 				mouth.gameObject.SetActive(true);
 				effectProductionInternalDown = GlobalSettings.instance.phenotype.jawCellEffectCost;
@@ -180,5 +180,13 @@ public class JawCell : Cell {
 
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Jaw;
+	}
+
+	override public Color GetColor(PhenoGenoEnum phenoGeno) {
+		if (phenoGeno == PhenoGenoEnum.Genotype) {
+			return ColorScheme.instance.ToColor(GetCellType());
+		} else {
+			return Color.Lerp(ColorScheme.instance.jaw, Color.white, Mathf.Min(0.5f, prayCount));
+;		}
 	}
 }

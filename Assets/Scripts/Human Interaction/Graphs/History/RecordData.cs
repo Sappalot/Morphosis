@@ -14,6 +14,10 @@ public class RecordData {
 	public float cellCountMuscle;
 	public float cellCountRoot;
 	public float cellCountShell;
+	public float cellCountShellWood;
+	public float cellCountShellMetal;
+	public float cellCountShellGlass;
+	public float cellCountShellDiamond;
 	public float cellCountVein;
 
 	public float creatureCount;
