@@ -38,6 +38,9 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color creatureLocked;
 	public Color creatureUnlocked;
 
+	public Color motherColor;
+	public Color fatherColor;
+
 	public Color grayedOutGenotype;
 	public Color grayedOutPhenotype;
 	public Color grayedOut;

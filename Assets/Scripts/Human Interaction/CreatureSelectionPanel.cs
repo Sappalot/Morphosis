@@ -772,7 +772,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				spiecesButtonText.color = Color.black;
 
 
-				motherButtonText.color = Color.red;
+				motherButtonText.color = ColorScheme.instance.motherColor;
 				if (soloSelected.HasMotherDeadOrAlive()) {
 					motherButton.gameObject.SetActive(true); //show even if mother is dead
 					motherButtonText.text = soloSelected.HasMotherAlive() ? "Mother" : "(Mother)";
@@ -781,10 +781,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				}
 
 				//TODO: father
-				fatherButtonText.color = Color.red;
+				fatherButtonText.color = ColorScheme.instance.fatherColor;
 				fatherButton.gameObject.SetActive(false);
 
-				childrenButtonText.color = Color.red;
+				childrenButtonText.color = Color.black;
 				if (soloSelected.HasChildrenDeadOrAlive()) {
 					childrenButton.gameObject.SetActive(true); //show even if mother is dead
 					int alive = soloSelected.ChildrenCountAlive();

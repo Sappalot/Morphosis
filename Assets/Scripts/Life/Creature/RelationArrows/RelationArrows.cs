@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 
 public class RelationArrows : MonoBehaviour {
-	public LineRenderer arrowTemplate;
+	
+	public LineRenderer arrowTemplateMother;
+	public LineRenderer arrowTemplateFather;
+	public LineRenderer arrowTemplateChild;
 	public List<LineRenderer> arrows = new List<LineRenderer>();
-
-	public Material materialMother;
-	public Material materialFather;
-	public Material materialChild;
 
 
 	[HideInInspector]
 	public Creature creature;
 
 	private void Awake() {
-		arrowTemplate.gameObject.SetActive(false);
+		arrowTemplateMother.gameObject.SetActive(false);
+		arrowTemplateFather.gameObject.SetActive(false);
+		arrowTemplateChild.gameObject.SetActive(false);
 	}
+
+	private const float hoverDistance = -20f;
 
 	public void UpdateGraphics() {
 		if (!GlobalPanel.instance.graphicsRelationsToggle.isOn || creature == null) {
@@ -29,20 +32,20 @@ public class RelationArrows : MonoBehaviour {
 		if (arrows.Count >= 1) {
 			motherArrow = arrows[0];
 		} else {
-			motherArrow = Instantiate(arrowTemplate);
+			motherArrow = Instantiate(arrowTemplateMother);
 			motherArrow.transform.parent = transform;
 			motherArrow.name = "Arrow from mother";
-			motherArrow.material = materialMother;
+			//motherArrow.material = materialMother;
 			motherArrow.gameObject.SetActive(true);
 			arrows.Add(motherArrow);
 		}
-		if (creature.IsDetatchedWithMotherAlive()) {
+		if (creature.HasMotherAlive()) {
 			motherArrow.gameObject.SetActive(true);
 			Vector2 mother = creature.GetMotherAlive().GetOriginPosition(CreatureEditModePanel.instance.mode);
-			motherArrow.SetPosition(0, new Vector3(mother.x, mother.y, -10f)); // tail
+			motherArrow.SetPosition(0, new Vector3(mother.x, mother.y, hoverDistance)); // tail
 
 			Vector2 me = creature.GetOriginPosition(CreatureEditModePanel.instance.mode);
-			motherArrow.SetPosition(1, new Vector3(me.x, me.y, -10f)); //head
+			motherArrow.SetPosition(1, new Vector3(me.x, me.y, hoverDistance)); //head
 		} else {
 			motherArrow.gameObject.SetActive(false);
 		}
@@ -52,30 +55,30 @@ public class RelationArrows : MonoBehaviour {
 		if (arrows.Count >= 2) {
 			fatherArrow = arrows[1];
 		} else {
-			fatherArrow = Instantiate(arrowTemplate);
+			fatherArrow = Instantiate(arrowTemplateFather);
 			fatherArrow.transform.parent = transform;
 			fatherArrow.name = "Arrow from father";
-			fatherArrow.material = materialFather;
+			//fatherArrow.material = materialFather;
 			fatherArrow.gameObject.SetActive(true);
 			arrows.Add(fatherArrow);
 		}
 		fatherArrow.gameObject.SetActive(false);
 
 		//Children
-		List<Creature> children = creature.GetDetatchedChildrenAlive();
+		List<Creature> children = creature.GetChildrenAlive();
 		for (int childIndex = 0; childIndex < children.Count; childIndex++) {
 			LineRenderer childArrow = null;
 			if (arrows.Count >= 3 + childIndex) {
 				childArrow = arrows[2 + childIndex];
 			} else {
-				childArrow = Instantiate(arrowTemplate);
+				childArrow = Instantiate(arrowTemplateChild);
 				childArrow.transform.parent = transform;
 				childArrow.name = "Arrow to child " + childIndex;
 
 				
 
-				Material m = new Material(materialChild);
-				childArrow.sharedMaterial = m;
+				//Material m = new Material(materialChild);
+				//childArrow.sharedMaterial = m;
 
 				childArrow.gameObject.SetActive(true);
 				arrows.Add(childArrow);
@@ -83,13 +86,13 @@ public class RelationArrows : MonoBehaviour {
 
 			childArrow.gameObject.SetActive(true);
 			Vector2 me = creature.GetOriginPosition(CreatureEditModePanel.instance.mode);
-			childArrow.SetPosition(0, new Vector3(me.x, me.y, -10f)); // tail
+			childArrow.SetPosition(0, new Vector3(me.x, me.y, hoverDistance)); // tail
 
 			Vector2 child = children[childIndex].GetOriginPosition(CreatureEditModePanel.instance.mode);
-			childArrow.SetPosition(1, new Vector3(child.x, child.y, -10f)); //head
+			childArrow.SetPosition(1, new Vector3(child.x, child.y, hoverDistance)); //head
 
-			float b = 0.5f + 0.3f * ((childIndex + 1f) / children.Count);
-			childArrow.sharedMaterial.color = new Color(b, b, b, 1f);
+			//float b = 0.5f + 0.3f * ((childIndex + 1f) / children.Count);
+			//childArrow.sharedMaterial.color = new Color(b, b, b, 1f);
 		}
 
 		// Hide the rest

@@ -170,7 +170,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float rootCellEarthMaxEffect = 2.0f; //W
 
 		//Shell Cell
-		public float shellCellEffectCost = 0.1f; //W
+		public float shellCellEffectCostDeprecated = 0.1f; //W 
 		public AnimationCurve shellCellEffectCostAtArmor;
 		public AnimationCurve shellCellEffectCostMultiplierAtTransparancy; //cheeper the more transparent (when armor class constant) beacuse blocking leaf more
 		public AnimationCurve shellCellStrengthAtArmor;
@@ -178,7 +178,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		
 
 		//           shellCellEffect =                    0.0 W
-		public float shellCellStrengthFactor = 20f; // 1=> as easy as other cells, 0.5 => weak, 20 ==> strong
+		public float shellCellStrengthFactorDeprecated = 20f; // 1=> as easy as other cells, 0.5 => weak, 20 ==> strong
 
 		//Vein Cell
 		public float veinCellEffectCost = 0.1f; //W
