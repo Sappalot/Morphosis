@@ -218,6 +218,13 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	private void Update() {
+		// Abort select gene
+		if (Input.GetKey(KeyCode.Escape)) {
+			if (MouseAction.instance.actionState == MouseActionStateEnum.selectGene) {
+				MouseAction.instance.actionState = MouseActionStateEnum.free;
+			}
+		}
+
 		if (isDirty) {
 			if(GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update ArrangementPanel");

@@ -152,6 +152,13 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public void EnablePhysicsComponents() {
+		foreach (Cell c in cellList) {
+			c.EnablePhysicsComponents();
+		}
+	}
+
+
 	//Grown cells
 	public int cellCount {
 		get {
@@ -1130,7 +1137,7 @@ public class Phenotype : MonoBehaviour {
 		foreach (Cell cell in cellList) {
 			cell.theRigidBody.isKinematic = true;
 			cell.theRigidBody.velocity = Vector2.zero;
-			//cell.GetComponent<Collider2D>().enabled = false;
+			cell.GetComponent<Collider2D>().enabled = false;
 		}
 		MoveOriginToOrigo();
 	}
@@ -1139,7 +1146,7 @@ public class Phenotype : MonoBehaviour {
 		isGrabbed = false;
 		foreach (Cell cell in cellList) {
 			cell.theRigidBody.isKinematic = false;
-			//cell.GetComponent<Collider2D>().enabled = true;
+			cell.GetComponent<Collider2D>().enabled = true;
 		}
 		foreach (Cell cell in cellList) {
 			cell.transform.parent = null;

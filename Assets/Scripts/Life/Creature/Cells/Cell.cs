@@ -627,6 +627,12 @@ public abstract class Cell : MonoBehaviour {
 		}
 
 		theRigidBody.simulated = false;
+		//theRigidBody.bodyType = RigidbodyType2D.Static;
+	}
+
+	public void EnablePhysicsComponents() {
+		//theRigidBody.simulated = true;
+		//theRigidBody.bodyType = RigidbodyType2D.Dynamic;
 	}
 
 	public void RemovePhysicsComponents() {

@@ -24,11 +24,6 @@ public class MouseAction : MonoSingleton<MouseAction> {
 		Vector2 pos;
 		RectTransformUtility.ScreenPointToLocalPointInRectangle(myCanvas.transform as RectTransform, Input.mousePosition, myCanvas.worldCamera, out pos);
 		transform.position = myCanvas.transform.TransformPoint(pos);
-
-		if (Input.GetKey(KeyCode.Escape)) {
-			actionState = MouseActionStateEnum.free;
-			UpdateText();
-		}
 	}
 
 	private void UpdateText() {

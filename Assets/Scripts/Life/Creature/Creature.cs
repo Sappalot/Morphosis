@@ -93,6 +93,7 @@ public class Creature : MonoBehaviour {
 		phenotype.DetatchFromMother(this, false, false); // should not be connected
 		ClearMotherAndChildrenReferences(); // should not have any
 		phenotype.SetAllCellStatesToDefault();
+		phenotype.EnablePhysicsComponents();
 		phenotype.cellsDiffersFromGeneCells = true;
 		bornTick = World.instance.worldTicks;
 	}
