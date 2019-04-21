@@ -41,7 +41,7 @@ public class JawCell : Cell {
 	}
 
 	private float eatEffect {
-		get { 
+		get {
 			float effect = 0f;
 			foreach (Pray pray in prays.Values) {
 				effect += pray.predatorEatEffect;
@@ -66,6 +66,9 @@ public class JawCell : Cell {
 			return;
 		}
 		if (deleteFlagged) {
+			return;
+		}
+		if (creature.phenotype.isGrabbed) { //dont eat others if i'm being dragged around of user (copy / move)
 			return;
 		}
 

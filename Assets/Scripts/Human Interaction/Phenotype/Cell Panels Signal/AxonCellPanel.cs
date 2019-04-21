@@ -136,13 +136,14 @@ public class AxonCellPanel : MetabolismCellPanel {
 			reverseToggle.interactable = interractable;
 			reverseText.color = textColor;
 
-			if (GenePanel.instance.selectedGene != null) {
+			if (GenePanel.instance.selectedGene != null && CreatureSelectionPanel.instance.hasSoloSelected) {
 				ignoreSliderMoved = true;
 
 				enabledToggle.isOn = GenePanel.instance.selectedGene.axonIsEnabled;
 				if (mode == PhenoGenoEnum.Genotype) {
 					fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", GenePanel.instance.selectedGene.axonFromOriginOffset);
 				} else if (mode == PhenoGenoEnum.Phenotype) {
+
 					if (GenePanel.instance.selectedGene.axonIsFromOriginPlus180 && CellPanel.instance.selectedCell.flipSide == FlipSideEnum.WhiteBlack) {
 						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1} + 180°", GenePanel.instance.selectedGene.axonFromOriginOffset);
 					} else {

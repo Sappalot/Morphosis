@@ -178,23 +178,33 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	public void OnRestartClicked() {
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+
 		Freezer.instance.Save();
 		Morphosis.instance.Restart();
 	}
 
 	public void OnLoadClicked() {
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+
 		Morphosis.instance.LoadWorld("save.txt");
 	}
 
 	public void OnSaveClicked() {
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+
 		World.instance.Save();
 	}
 
 	public void OnPausePhysicsClicked() {
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+
 		SelectPausePhysics();
 	}
 
 	public void SelectPausePhysics() {
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+
 		if (!isRunPhysicsGrayOut) {
 			pausePhysicsImage.color = ColorScheme.instance.selectedButton;
 			runPhysicsImage.color = ColorScheme.instance.notSelectedButton;
@@ -203,6 +213,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	public void OnRunPhysicsClicked() {
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+
 		SelectRunPhysics();
 	}
 
@@ -215,6 +227,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	public void OnAddHistoryNoteClicked() {
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+
 		World.instance.AddHistoryEvent(new HistoryEvent(historyGraphNote.text, false, new Color(0.5f, 0.5f, 0f)));
 	}
 

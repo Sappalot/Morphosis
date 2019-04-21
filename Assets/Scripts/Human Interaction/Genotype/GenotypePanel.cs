@@ -1,7 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class GenotypePanel : MonoSingleton<GenotypePanel> {
+	public GameObject genePanel;
+	public GameObject lowerPanel;
+
 	public Image blackWhiteImage;
 	public Image whiteBlackImage;
 
@@ -80,11 +84,19 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 		GenomePanel.instance.MakeDirty();
 	}
 
+	private IEnumerator UpdateIsVisible() {
+		yield return 0;
+		genePanel.SetActive((CreatureSelectionPanel.instance.hasSoloSelected && MouseAction.instance.actionState == MouseActionStateEnum.free) || MouseAction.instance.actionState == MouseActionStateEnum.selectGene);
+		lowerPanel.gameObject.SetActive((CreatureSelectionPanel.instance.hasSelection && MouseAction.instance.actionState == MouseActionStateEnum.free) || MouseAction.instance.actionState == MouseActionStateEnum.selectGene);
+	}
+
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update GenotypePanel");
 			}
+
+			StartCoroutine(UpdateIsVisible());
 
 			blackWhiteImage.color = (viewedFlipSide == FlipSideEnum.BlackWhite) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
 			whiteBlackImage.color = (viewedFlipSide == FlipSideEnum.WhiteBlack) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;

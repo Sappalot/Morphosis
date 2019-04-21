@@ -25,12 +25,20 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	}
 
 	public void OnClickedPhenotypeEditMode() {
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) {
+			return;
+		}
+
 		m_mode = PhenoGenoEnum.Phenotype;
 		GlobalPanel.instance.isRunPhysicsGrayOut = false;
 		UpdateAllAccordingToEditMode();
 	}
 
 	public void OnClickedGenotypeEditMode() {
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) {
+			return;
+		}
+
 		m_mode = PhenoGenoEnum.Genotype;
 		GlobalPanel.instance.isRunPhysicsGrayOut = true;
 		UpdateAllAccordingToEditMode();

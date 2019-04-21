@@ -1,10 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
-	
+
 
 	//public Text creatureSize;
+	public CellPanel cellPanel;
+	public GameObject bodyPanel;
 	public SizeBar sizeBar;
 	public Text sizeText;
 	public EnergyBar energyBar;
@@ -13,7 +16,6 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public Text creatureEffect;
 	public Text creatureEffectAverage;
 	public Text creatureAgeText;
-	public CellPanel cellPanel;
 
 	public Toggle followToggle;
 	public Toggle yawToggle;
@@ -58,12 +60,20 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public void MakeDirty() {
 		isDirty = true;
 	}
-	
+
+	private IEnumerator UpdateIsVisible() {
+		yield return 0;
+		bodyPanel.SetActive(CreatureSelectionPanel.instance.hasSelection && MouseAction.instance.actionState == MouseActionStateEnum.free);
+		cellPanel.gameObject.SetActive(CreatureSelectionPanel.instance.hasSoloSelected && MouseAction.instance.actionState == MouseActionStateEnum.free);
+	}
+
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update PhenotypePanel");
-			//Nothing to represent
+
+			StartCoroutine(UpdateIsVisible());
+
 			Creature solo = CreatureSelectionPanel.instance.soloSelected;
 
 			energyBar.effectMeasure = EffectTempEnum.None;
