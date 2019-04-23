@@ -25,18 +25,16 @@ public class RMBToolController : MouseDrag {
 					spring.GetComponent<LineRenderer>().enabled = true;
 				}
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spawnEmbryo && TerrainPerimeter.instance.IsInside(camera.ScreenToWorldPoint(Input.mousePosition))) {
-				if (GlobalPanel.instance.soundCreatures.isOn) {
-					Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
-				}
 				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 					Creature spawned = World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f, World.instance.worldTicks);
+					EffectsUtils.SpawnAddCreature(spawned);
+					HistoryUtil.SpawnAddCreatureEvent(1);
 				}
 			} else if (RMBToolModePanel.instance.toolMode == RMBToolModePanel.RMBToolMode.spawnFreak && TerrainPerimeter.instance.IsInside(camera.ScreenToWorldPoint(Input.mousePosition))) {
-				if (GlobalPanel.instance.soundCreatures.isOn) {
-					Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
-				}
 				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 					Creature spawned = World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, World.instance.worldTicks);
+					EffectsUtils.SpawnAddCreature(spawned);
+					HistoryUtil.SpawnAddCreatureEvent(1);
 				}
 			}
 		}

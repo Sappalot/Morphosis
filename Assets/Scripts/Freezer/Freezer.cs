@@ -50,18 +50,9 @@ public class Freezer : MonoSingleton<Freezer> {
 	}
 
 	public void KillCreatureSafe(Creature creature, bool playEffects) {
-		//creature.DetatchFromMother(false, playEffects);
-		//foreach (Creature child in creature.GetChildrenAlive()) {
-		//	child.DetatchFromMother(false, playEffects);
-		//}
-
-		if (playEffects && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
-			//Animator birth = Instantiate(creatureDeathEffectPrefab, creature.phenotype.originCell.position, Quaternion.Euler(0f, 0f, 0f));
-			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, creature.phenotype.originCell.position, 0f, CameraUtils.GetEffectScaleLazy());
-		}
+		Vector2 position = creature.GetOriginPosition(PhenoGenoEnum.Phenotype);
 
 		creature.KillAllCells(true); // for the fx :)
-
 
 		//creatureDeadCount++;
 
@@ -84,6 +75,13 @@ public class Freezer : MonoSingleton<Freezer> {
 		CreatureSelectionPanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
+
+		Audio.instance.CreatureDeath(1f);
+
+		// skull
+		if (playEffects && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
+			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, position, 0f, CameraUtils.GetEffectScaleLazy());
+		}
 	}
 
 	public Creature SpawnCreatureCopy(Creature original) {

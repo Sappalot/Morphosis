@@ -401,9 +401,9 @@ public class Phenotype : MonoBehaviour {
 			} else {
 				SetCellDragNormal();
 			}
-			//if (playEffects) {
-			//	Audio.instance.CellBirth();
-			//}
+			if (playEffects) {
+				Audio.instance.CellBirth(1f);
+			}
 
 
 			PhenotypePanel.instance.MakeDirty();
@@ -714,14 +714,14 @@ public class Phenotype : MonoBehaviour {
 	// fixedTime = 0 ==> no mar will be set to when this cell can be regrown again
 	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects, ulong worldTicks) {
 		if (playEffects && (GlobalPanel.instance.soundCreatures.isOn || (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.graphicsEffectsToggle.isOn))) {
-			bool isObserved = CameraUtils.IsObservedLazy(deleteCell.position, GlobalSettings.instance.orthoMaxHorizonFx);
+			bool isObserved = CameraUtils.IsObservedLazy(deleteCell.position, GlobalSettings.instance.orthoPlayFxLimit);
 
 			if (GlobalPanel.instance.soundCreatures.isOn && isObserved) {
 				Audio.instance.CellDeath(CameraUtils.GetEffectStrengthLazy());
 			}
 		
 			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.graphicsEffectsToggle.isOn && isObserved) {
-				SpawnCellDeathEffect(deleteCell.position, Color.red);
+				SpawnCellDeathEffect(deleteCell.position, deleteCell.GetColor());
 				SpawnCellDeleteBloodEffect(deleteCell);
 			}
 		}
@@ -831,10 +831,10 @@ public class Phenotype : MonoBehaviour {
 
 	public bool DetatchFromMother(Creature creature, bool applyKick, bool playEffects) {
 		if (creature.IsAttachedToMotherAlive()) {
-			if (playEffects && CameraUtils.IsObservedLazy(creature.phenotype.originCell.position, GlobalSettings.instance.orthoMaxHorizonFx)) {
-				if (GlobalPanel.instance.soundCreatures.isOn) {
-					Audio.instance.CreatureDetatch(CameraUtils.GetEffectStrengthLazy());
-				}
+			if (playEffects && CameraUtils.IsObservedLazy(creature.phenotype.originCell.position, GlobalSettings.instance.orthoPlayFxLimit)) {
+
+				Audio.instance.CreatureDetatch(1f);
+
 				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
 					Cell originCell = creature.phenotype.originCell;
 					SpawnCellDetatchBloodEffect(originCell);

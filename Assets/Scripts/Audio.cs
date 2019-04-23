@@ -1,41 +1,86 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Audio : MonoSingleton<Audio> {
-	public AudioSource audioSource;
-
-	public AudioClip[] placeCreature;
 	public AudioClip cellBirth;
 	public AudioClip cellDeath;
-	public AudioClip creatureDetatch;
-	public AudioClip eggCellFertilize;
 
-	public void PlaceCreature(float volume) {
-		audioSource.clip = placeCreature[Random.Range(0, placeCreature.Length)];
-		audioSource.volume = volume;
-		audioSource.Play();
+	public AudioClip[] creatureAdd;
+	public AudioClip creaturePlace;
+	public AudioClip creatureBirth;
+	public AudioClip creatureDetatch;
+	public AudioClip creatureTeleport;
+	public AudioClip[] creatureDeath;
+
+	private Dictionary<AudioClip, AudioSource> audioSource = new Dictionary<AudioClip, AudioSource>();
+
+	public AudioClip actionAbort;
+
+	void Awake() {
+		audioSource.Add(cellBirth, gameObject.AddComponent<AudioSource>());
+		audioSource.Add(cellDeath, gameObject.AddComponent<AudioSource>());
+
+		foreach (AudioClip a in creatureAdd) {
+			audioSource.Add(a, gameObject.AddComponent<AudioSource>());
+		}
+
+		audioSource.Add(creaturePlace, gameObject.AddComponent<AudioSource>());
+		audioSource.Add(creatureBirth, gameObject.AddComponent<AudioSource>());
+		audioSource.Add(creatureDetatch, gameObject.AddComponent<AudioSource>());
+		audioSource.Add(creatureTeleport, gameObject.AddComponent<AudioSource>());
+
+		foreach (AudioClip a in creatureDeath) {
+			audioSource.Add(a, gameObject.AddComponent<AudioSource>());
+		}
+
+		audioSource.Add(actionAbort, gameObject.AddComponent<AudioSource>());
+
+		foreach (KeyValuePair<AudioClip, AudioSource> pair in audioSource) {
+			pair.Value.clip = pair.Key;
+		}
 	}
 
-	public void CellBirth() {
-		audioSource.clip = cellBirth;
-		audioSource.Play();
+	public void CellBirth(float volume) {
+		Play(cellBirth, volume);
 	}
 
 	public void CellDeath(float volume) {
-		audioSource.clip = cellDeath;
-		audioSource.volume = volume;
-		audioSource.Play();
+		Play(cellDeath, volume);
+	}
+
+	public void CreatureAdd(float volume) {
+		Play(creatureAdd[Random.Range(0, creatureAdd.Length)], volume);
+	}
+
+	public void CreaturePlace(float volume) {
+		Play(creaturePlace, volume);
+	}
+
+	public void CreatureBirth(float volume) {
+		Play(creatureBirth, volume);
 	}
 
 	public void CreatureDetatch(float volume) {
-		audioSource.clip = creatureDetatch;
-		audioSource.volume = volume;
-		audioSource.Play();
+		Play(creatureDetatch, volume);
 	}
 
-	public void EggCellFertilize(float volume) {
-		audioSource.clip = eggCellFertilize;
-		audioSource.volume = volume;
-		audioSource.Play();
+	public void CreatureTeleport(float volume) {
+		Play(creatureTeleport, volume);
 	}
 
+	public void CreatureDeath(float volume) {
+		Play(creatureDeath[Random.Range(0, creatureAdd.Length)], volume);
+	}
+
+	public void ActionAbort(float volume) {
+		Play(actionAbort, volume);
+	}
+
+	private void Play(AudioClip clip, float volume) {
+		if (volume > 0f) {
+			audioSource[clip].volume = volume;
+			audioSource[clip].Play();
+		}
+	}
 }

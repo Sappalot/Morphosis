@@ -7,11 +7,7 @@ public class CellDetatch : MonoBehaviour {
 
 	public void Prime(Color explosionColor) {
 		blood.startColor = explosionColor;
-
-
 		blood.Play();
-
-
 		StartCoroutine(RemoveSelf());
 	}
 

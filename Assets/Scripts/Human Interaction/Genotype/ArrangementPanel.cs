@@ -221,6 +221,8 @@ public class ArrangementPanel : MonoBehaviour {
 		// Abort select gene
 		if (Input.GetKey(KeyCode.Escape)) {
 			if (MouseAction.instance.actionState == MouseActionStateEnum.selectGene) {
+				Audio.instance.ActionAbort(1f);
+
 				MouseAction.instance.actionState = MouseActionStateEnum.free;
 			}
 		}

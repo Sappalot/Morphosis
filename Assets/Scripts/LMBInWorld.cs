@@ -44,6 +44,7 @@ public class LMBInWorld : MonoBehaviour {
 
 			} else if ((MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures)
 				&& CreatureSelectionPanel.instance.CanPlaceMoveCreatures(CreatureSelectionPanel.MoveCreatureType.Move, Input.GetKey(KeyCode.LeftControl))) {
+				Audio.instance.CreaturePlace(1f);
 
 				List<Creature> creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
 
@@ -52,11 +53,11 @@ public class LMBInWorld : MonoBehaviour {
 				List<Creature> creatures;
 				if (Input.GetKey(KeyCode.LeftControl)) {
 					creatures = CreatureSelectionPanel.instance.PasteHoveringCreatures();
-					EffectsUtils.SpawnAddCreature(creatures, true, true);
+					EffectsUtils.SpawnAddCreatures(creatures);
 					HistoryUtil.SpawnAddCreatureEvent(creatures.Count);
 				} else {
 					creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
-					EffectsUtils.SpawnAddCreature(creatures, true, true);
+					EffectsUtils.SpawnAddCreatures(creatures);
 
 					if (creatures.Count == 1) {
 						TryFreezeCreature(creatures[0]);
@@ -74,7 +75,7 @@ public class LMBInWorld : MonoBehaviour {
 				} else {
 					creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
 				}
-				EffectsUtils.SpawnAddCreature(creatures, true, true);
+				EffectsUtils.SpawnAddCreatures(creatures);
 				HistoryUtil.SpawnAddCreatureEvent(creatures.Count);
 			}
 		}

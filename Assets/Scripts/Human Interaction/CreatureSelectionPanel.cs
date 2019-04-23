@@ -593,12 +593,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	private float RotateCreaturesAngle;
 	private Dictionary<Creature, float> startCreatureHeading = new Dictionary<Creature, float>();
 
-
-
 	public List<Creature> PlaceHoveringCreatures() { //final creature
-		if (GlobalPanel.instance.soundCreatures.isOn) {
-			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
-		}
 		List<Creature> placedCreatures = new List<Creature>();
 		placedCreatures.AddRange(moveCreatures);
 
@@ -621,9 +616,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public List<Creature> PasteHoveringCreatures() {
-		if (GlobalPanel.instance.soundCreatures.isOn) {
-			Audio.instance.PlaceCreature(CameraUtils.GetEffectStrengthLazy());
-		}
 		List<Creature> continueMoveCopy = new List<Creature>();
 		continueMoveCopy.AddRange(moveCreatures);
 
@@ -744,21 +736,18 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	private Dictionary<Creature, CreatureData> storedCreatures = new Dictionary<Creature, CreatureData>();
 	private void StoreCreatures(List<Creature> creatures) {
-		Debug.Log("Store");
 		foreach (Creature c in creatures) {
 			storedCreatures.Add(c, c.UpdateData());
 		}
 	}
 
 	private void RestoreCreatures() {
-		Debug.Log("Restore");
 		foreach (KeyValuePair<Creature, CreatureData> pair in storedCreatures) {
 			pair.Key.ApplyData(pair.Value);
 		}
 	}
 
 	private void ClearStoredCreatures() {
-		Debug.Log("Clear");
 		storedCreatures.Clear();
 	}
 
@@ -770,6 +759,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		// Abort copy / breed
 		if (Input.GetKey(KeyCode.Escape)) {
 			if (MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.combineMoveCreatures) {
+				Audio.instance.ActionAbort(1f);
+
 				List<Creature> killList = new List<Creature>(moveCreatures);
 				ReleaseMoveCreatures();
 				startCreatureHeading.Clear();
@@ -789,6 +780,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			}
 
 			if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures) {
+				Audio.instance.ActionAbort(1f);
+
 				RestoreCreatures();
 				ClearStoredCreatures();
 				ReleaseMoveCreatures();

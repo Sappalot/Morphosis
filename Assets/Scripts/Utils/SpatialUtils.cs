@@ -21,7 +21,8 @@ static class CameraUtils {
 	}
 
 	public static float GetEffectStrengthLazy() {
-		return GetEffectStrength(Morphosis.instance.camera, GlobalSettings.instance.orthoMinStrongFX, GlobalSettings.instance.orthoMaxHorizonFx);
+		return 1f;
+		//return GetEffectStrength(Morphosis.instance.camera, GlobalSettings.instance.orthoMinStrongFX, GlobalSettings.instance.orthoMaxHorizonFx);
 	}
 
 	public static float GetEffectStrength(Camera camera, float orthoMinStrongFX, float orthoMaxHorizonFx) {
@@ -35,4 +36,9 @@ static class CameraUtils {
 		}
 		return volume;
 	}
+
+	public static bool ShouldPlayFx(Vector2 position) {
+		return IsInsideFrustum(Morphosis.instance.camera, position) && Morphosis.instance.camera.orthographicSize < GlobalSettings.instance.orthoPlayFxLimit;
+	}
+
 }

@@ -120,8 +120,8 @@ public class Life : MonoBehaviour {
 	public void FertilizeCreature(Cell eggCell, bool playEffects, ulong worldTicks, bool wasForced) {
 		Debug.Assert(eggCell is EggCell, "You are not allowed to fertilize non Egg cell");
 
-		if (playEffects && GlobalPanel.instance.soundCreatures.isOn && CameraUtils.IsObservedLazy(eggCell.position, GlobalSettings.instance.orthoMaxHorizonFx)) {
-			Audio.instance.EggCellFertilize(CameraUtils.GetEffectStrengthLazy());
+		if (playEffects) {
+			Audio.instance.CreatureBirth(1f);
 		}
 
 		if (playEffects && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
@@ -195,19 +195,14 @@ public class Life : MonoBehaviour {
 
 	//This is the only way, where the world creature GO is deleted
 	public void KillCreatureSafe(Creature creature, bool playEffects) {
+		Vector2 position = creature.GetOriginPosition(PhenoGenoEnum.Phenotype);
+
 		creature.DetatchFromMother(false, playEffects);
 		foreach (Creature child in creature.GetChildrenAlive()) {
 			child.DetatchFromMother(false, playEffects);
 		}
 
-		if (playEffects && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
-			//Animator birth = Instantiate(creatureDeathEffectPrefab, creature.phenotype.originCell.position, Quaternion.Euler(0f, 0f, 0f));
-			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, creature.phenotype.originCell.position, 0f, CameraUtils.GetEffectScaleLazy());
-		}
-
 		creature.KillAllCells(true); // for the fx :)
-
-		
 		creatureDeadCount++;
 
 		//TODO: Return root cell to pool
@@ -230,6 +225,13 @@ public class Life : MonoBehaviour {
 		GenePanel.instance.MakeDirty();
 
 		creatureDeathsPerSecond.IncreaseCounter();
+
+		Audio.instance.CreatureDeath(1f);
+
+		// skull
+		if (playEffects && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
+			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, position, 0f, CameraUtils.GetEffectScaleLazy());
+		}
 	}
 
 	// When leaving to freezer

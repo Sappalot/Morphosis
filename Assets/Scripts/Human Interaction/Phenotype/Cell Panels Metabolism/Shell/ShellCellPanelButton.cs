@@ -25,6 +25,8 @@ public class ShellCellPanelButton : MonoBehaviour {
 		}
 
 		text.text = string.Format("-{0:F2}", ShellCell.GetEffectCost(armorClass, transparencyClass));
+		text.color = new Color(1f - ShellCell.GetColor(armorClass, transparencyClass).r, 1f - ShellCell.GetColor(armorClass, transparencyClass).g, 1f - ShellCell.GetColor(armorClass, transparencyClass).b);
+
 		buttonImage.fillCenter = false;
 		hasSelectedFrame = false;
 	}

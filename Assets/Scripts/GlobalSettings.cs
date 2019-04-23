@@ -271,9 +271,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	public Pooling pooling;
 
 	//Visual
-	public float orthoMinStrongFX = 10f;
-	public float orthoMaxHorizonFx = 30f;
-	public float orthoMaxHorizonDetailedCell = 50f;
+	//public float orthoMinStrongFX = 10f;
+	//public float orthoMaxHorizonFx = 30f;
+	public float orthoPlayFxLimit = 50f; //audio and particles
 
 	// DEBUG
 	public bool printoutAtDirtyMarkedUpdate = true;
