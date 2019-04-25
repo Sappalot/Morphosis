@@ -50,7 +50,7 @@ public class Graph : MonoBehaviour {
 	}
 
 	private int oldPositionCount = 0;
-	public void DrawGraph(Rect graphArea, float scale, short level, History history, float maxValue) {
+	public void DrawGraph(Rect graphArea, float scale, short level, History history, float maxValue, int textMeasureStepsAgo) {
 		float levelScale = scale * Mathf.Pow(2f, level);
 
 		int positionCount = Mathf.CeilToInt(graphArea.width / levelScale) + 1;
@@ -64,13 +64,19 @@ public class Graph : MonoBehaviour {
 			line.SetPosition(i, new Vector3(graphArea.xMax - levelScale * stepsAgo , graphArea.yMin + graphArea.height * (history.GetRecord(level, stepsAgo).Get(type) / maxValue), -1f));
 		}
 
-		text.GetComponent<RectTransform>().anchoredPosition = new Vector2(5, Mathf.Clamp(graphArea.height * (history.GetRecord(0, 0).Get(type) / maxValue), - 5f, graphArea.height + 5f));
+		text.GetComponent<RectTransform>().anchoredPosition = new Vector2(5, Mathf.Clamp(graphArea.height * (history.GetRecord(level, textMeasureStepsAgo).Get(type) / maxValue), - 5f, graphArea.height + 5f));
 		if (decimals == 1) {
-			text.text = string.Format("{0} {1:F1} {2}", textPrefix, history.GetRecord(0, 0).Get(type), textPostfix);
+			text.text = string.Format("{0} {1:F1} {2}", textPrefix, history.GetRecord(level, textMeasureStepsAgo).Get(type), textPostfix);
+		} else if (decimals == 2) {
+			text.text = string.Format("{0} {1:F2} {2}", textPrefix, history.GetRecord(level, textMeasureStepsAgo).Get(type), textPostfix);
+		} else if (decimals == 3) {
+			text.text = string.Format("{0} {1:F3} {2}", textPrefix, history.GetRecord(level, textMeasureStepsAgo).Get(type), textPostfix);
+		} else if (decimals == 4) {
+			text.text = string.Format("{0} {1:F4} {2}", textPrefix, history.GetRecord(level, textMeasureStepsAgo).Get(type), textPostfix);
 		} else {
-			text.text = string.Format("{0} {1:F0} {2}", textPrefix, history.GetRecord(0, 0).Get(type), textPostfix);
+			text.text = string.Format("{0} {1:F0} {2}", textPrefix, history.GetRecord(level, textMeasureStepsAgo).Get(type), textPostfix);
 		}
-		
+
 	}
 
 }

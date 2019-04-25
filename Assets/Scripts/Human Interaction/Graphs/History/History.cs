@@ -97,8 +97,8 @@ public class History {
 		}
 	}
 
-	public Record GetRecord(int level, int timeAgo) { // time in seconds * (2^level), 0 mans last record for all levels, 1 means 4 seconds for level2
-		return strips[level].GetRecord(timeAgo);
+	public Record GetRecord(int level, int stepsAgo) { // time in seconds * (2^level), 0 means last record for all levels, 1 means 4 seconds for level2
+		return strips[level].GetRecord(stepsAgo);
 	}
 
 	public int GetLowpassCounter(int level) {

@@ -20,7 +20,7 @@ public class GraphGroup : MonoBehaviour {
 		}
 	}
 
-	public void DrawGraphs(Rect graphArea, float scale, short level, History history) {
+	public void DrawGraphs(Rect graphArea, float scale, short level, History history, int textMeasureStepsAgo) {
 		float maxValue = 1000;
 		if (graphSettings != null) {
 			maxValue = graphSettings.maxValue;
@@ -28,7 +28,7 @@ public class GraphGroup : MonoBehaviour {
 			Debug.LogWarning("Warning: Graph knows no GraphSettings");
 		}
 		foreach (Graph g in graphs) {
-			g.DrawGraph(graphArea, scale, level, history, maxValue);
+			g.DrawGraph(graphArea, scale, level, history, maxValue, textMeasureStepsAgo);
 		}
 	}
 }

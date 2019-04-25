@@ -34,7 +34,9 @@ public class RecordStrip {
 		RecordEnum.cellCountVein,
 		RecordEnum.creatureCount,
 		RecordEnum.creatureBirthsPerSecond,
-		RecordEnum.creatureDeathsPerSecond};
+		RecordEnum.creatureDeathsPerSecond,
+		RecordEnum.health,
+	};
 
 	public void Init() {
 		Clear();

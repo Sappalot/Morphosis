@@ -56,6 +56,8 @@ public class CameraController : MouseDrag {
 		UpdatePositionViaKeys();
 		UpdateSize();
 
+		UpdateSampleTool();
+
 		camera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 		if (PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !Input.GetMouseButton(0)) {
 			if (CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive) {
@@ -82,8 +84,6 @@ public class CameraController : MouseDrag {
 		}
 	}
 
-	
-
 	private void UpdateSize() {
 		if (Input.GetAxis("Mouse ScrollWheel") < 0) {
 			if (GraphPlotter.instance.IsMouseInside()) {
@@ -101,6 +101,10 @@ public class CameraController : MouseDrag {
 		}
 
 		camera.orthographicSize = Mathf.Clamp(camera.orthographicSize, 1f, 300f);
+	}
+
+	private void UpdateSampleTool() {
+		//Debug.Log("Measure: " + GraphPlotter.instance.IsMouseInside());
 	}
 
 	private void UpdatePositionViaKeys() {

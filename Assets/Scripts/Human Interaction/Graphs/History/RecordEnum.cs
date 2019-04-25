@@ -23,5 +23,7 @@ public enum RecordEnum {
 	creatureCount,
 	creatureBirthsPerSecond,
 	creatureDeathsPerSecond,
+
+	health,
 	
 }

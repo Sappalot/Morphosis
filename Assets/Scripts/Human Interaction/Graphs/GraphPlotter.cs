@@ -3,6 +3,7 @@
 public class GraphPlotter : MonoSingleton<GraphPlotter> {
 	public TimeRuler timeRuler;
 	public Flags flags;
+	public GraphMeasuringTool measuringTool;
 
 	public float zoomStepSpeed = 0.1f;
 
@@ -50,8 +51,10 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 	}
 
 	public bool IsMouseInside() {
-		return gameObject.activeSelf && Input.mousePosition.y > viewport.windowSize.rect.height - (viewport.height + viewport.topMargin);
+		return gameObject.activeSelf && Input.mousePosition.y > viewport.windowSize.rect.height - (viewport.height + viewport.topMargin) && Input.mousePosition.y < viewport.windowSize.rect.height - viewport.topMargin;
 	}
+
+	private bool isMeasuringToolUsed;
 
 	private void Update() {
 		if (res.x != (int)viewport.graphPlotterArea.width || res.y != (int)viewport.graphPlotterArea.height) {
@@ -68,22 +71,46 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 
 			// ruler
 			timeRuler.UpdateCanvas(graphArea);
-
 			// flags
 			flags.UpdateCanvas(graphArea);
+			//measuring tool
+			measuringTool.UpdateCanvas(graphArea);
 
 			res = new Vector2i((int)viewport.graphPlotterArea.width, (int)viewport.graphPlotterArea.height);
 		}
 
-		if (isDirty && history != null) {
+		
+	
+		ulong secondsAgo = 0; //far in the future (that is rendered right of view)
+		int measureStepsAgo = 0;
+
+		if (Input.GetMouseButton(0) && IsMouseInside() && Input.mousePosition.x < graphArea.width) {
+			isMeasuringToolUsed = true;
+
+			float pixelsLeftOfNow = (graphArea.width - Input.mousePosition.x);
+			secondsAgo = (ulong)(pixelsLeftOfNow / scale); // scale = pixels / sec
+			short level = GetLevel(scale);
+			float levelScale = scale * Mathf.Pow(2f, level);
+			measureStepsAgo = (int)(pixelsLeftOfNow / levelScale);
+
+			measuringTool.gameObject.SetActive(true);
+			measuringTool.UpdateGraphics(graphArea, scale, secondsAgo);
+		} else if (isMeasuringToolUsed) {
+			isDirty = true;
+			isMeasuringToolUsed = false;
+			measuringTool.gameObject.SetActive(false);
+		}
+
+		if ((isDirty || isMeasuringToolUsed) && history != null) {
 			short level = GetLevel(scale);
 			foreach (GraphGroup g in graphGroups) {
 				g.UpdateIsActive();
-				g.DrawGraphs(graphArea, scale, level, history);
+				g.DrawGraphs(graphArea, scale, level, history, isMeasuringToolUsed ? measureStepsAgo : 0);
 			}
 
 			timeRuler.UpdateGraphics(graphArea, scale);
 			flags.UpdateGraphics(graphArea, scale, level, history);
+
 			isDirty = false;
 		}
 	}

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class RecordData {
 	public float fps;
 	public float pps;
+	public float health;
 
 	public float cellCountTotal;
 	public float cellCountEgg;

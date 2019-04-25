@@ -20,9 +20,7 @@ public class CreatureSelectionController : MouseDrag {
 	private List<Creature> alreadySelected;
 
 	public override void OnDraggingStart(int mouseButton) {
-		// implement this for start of dragging
-	
-		if (mouseButton == 0 && !EventSystem.current.IsPointerOverGameObject() && MouseAction.instance.actionState == MouseActionStateEnum.free) {
+		if (mouseButton == 0 && !EventSystem.current.IsPointerOverGameObject() && MouseAction.instance.actionState == MouseActionStateEnum.free && !GraphPlotter.instance.IsMouseInside()) {
 			downPositionMouse = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 
 			if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)) {

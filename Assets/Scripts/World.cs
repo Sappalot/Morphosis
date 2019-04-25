@@ -91,7 +91,7 @@ public class World : MonoSingleton<World> {
 				record.Set(RecordEnum.creatureCount,   0);
 				record.Set(RecordEnum.creatureBirthsPerSecond, 0);
 				record.Set(RecordEnum.creatureDeathsPerSecond, 0);
-
+				record.Set(RecordEnum.health,              0);
 				history.AddRecord(record);
 				GraphPlotter.instance.MakeDirty();
 			} else {
@@ -147,6 +147,8 @@ public class World : MonoSingleton<World> {
 		record.Set(RecordEnum.creatureCount, life.creatureAliveCount);
 		record.Set(RecordEnum.creatureBirthsPerSecond, life.GetCreatureBirthsPerSecond());
 		record.Set(RecordEnum.creatureDeathsPerSecond, life.GetCreatureDeathsPerSecond());
+
+		record.Set(RecordEnum.health, (GlobalPanel.instance.frameRate / 400f) + (float)(life.cellAliveCount / 6000f));
 
 		history.AddRecord(record);
 		GraphPlotter.instance.MakeDirty();

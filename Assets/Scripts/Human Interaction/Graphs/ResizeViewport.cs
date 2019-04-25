@@ -33,8 +33,6 @@ public class ResizeViewport : MonoBehaviour {
 			graphPlotterArea.width = viewportToResize.pixelWidth;
 			graphPlotterArea.height = height;
 			graphPlotterArea.center = gameObject.transform.position;
-
-
 		}
 	}
 }

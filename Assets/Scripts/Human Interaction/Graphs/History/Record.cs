@@ -5,6 +5,7 @@ public class Record {
 	float fps;
 	float pps;
 
+	float health;
 	float cellCountTotal;
 	float cellCountEgg;
 	float cellCountFungal;
@@ -23,6 +24,8 @@ public class Record {
 	float creatureBirthsPerSecond;
 	float creatureDeathsPerSecond;
 
+	
+
 	public string tagText = null;
 	public bool tagShowLine = false;
 	public float tagRed = 1f;
@@ -38,6 +41,7 @@ public class Record {
 	public void Clear() {
 		fps =             0f;
 		pps =             0f;
+		health =      0f;
 
 		cellCountTotal =  0f;
 		cellCountEgg =    0f;
@@ -82,6 +86,9 @@ public class Record {
 		}
 		if (type == RecordEnum.pps) {
 			return pps;
+		}
+		if (type == RecordEnum.health) {
+			return health;
 		}
 		if (type == RecordEnum.cellCountTotal) {
 			return cellCountTotal;
@@ -143,6 +150,9 @@ public class Record {
 		if (type == RecordEnum.pps) {
 			pps = value;
 		}
+		if (type == RecordEnum.health) {
+			health = value;
+		}
 
 		if (type == RecordEnum.cellCountTotal) {
 			cellCountTotal = value;
@@ -201,6 +211,7 @@ public class Record {
 	public RecordData UpdateData() {
 		recordData.fps =             fps;
 		recordData.pps =             pps;
+		recordData.health =      health;
 
 		recordData.cellCountTotal =  cellCountTotal;
 		recordData.cellCountEgg =    cellCountEgg;
@@ -233,6 +244,7 @@ public class Record {
 	public void ApplyData(RecordData recordData) {
 		fps =             recordData.fps;
 		pps =             recordData.pps;
+		health =      recordData.health;
 
 		cellCountTotal =        recordData.cellCountTotal;
 		cellCountEgg =          recordData.cellCountEgg;
