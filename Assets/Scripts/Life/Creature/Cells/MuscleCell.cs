@@ -93,7 +93,7 @@ public class MuscleCell : Cell {
 		radius = Mathf.Clamp(radius, 0.3f, 0.5f);
 		//radius = radiusGoal;
 
-		if (CameraUtils.IsObservedLazy(position, GlobalSettings.instance.orthoPlayFxLimit)) {
+		if (CameraUtils.IsInsideDetailedGraphicsVolume(position)) {
 			scale.localScale = new Vector3(radius * 2f, radius * 2f, 1f); //costy, only if in frustum and close
 			scaleIsDirty = true;
 		} else if (scaleIsDirty) {

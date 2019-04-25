@@ -273,7 +273,10 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	//Visual
 	//public float orthoMinStrongFX = 10f;
 	//public float orthoMaxHorizonFx = 30f;
-	public float orthoPlayFxLimit = 50f; //audio and particles
+	public float detailedGraphicsOrthoLimit = 50f;
+	//public float loudAudioOrthoLimit = 50f;
+	public AnimationCurve loudAudioVolumeAtOrtho;
+	public AnimationCurve quietAudioVolumeAtOrtho;
 
 	// DEBUG
 	public bool printoutAtDirtyMarkedUpdate = true;

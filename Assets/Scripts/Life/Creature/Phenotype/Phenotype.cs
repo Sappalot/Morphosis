@@ -273,7 +273,7 @@ public class Phenotype : MonoBehaviour {
 		return TryGrow(creature, forceGrow, creature.genotype.geneCellCount, true, false, 0, true, out reason);
 	}
 
-	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool playEffects, ulong worldTick, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
+	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool tryPlayEffects, ulong worldTick, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
 		noGrowthReason = new NoGrowthReason();
 		
 		int growCellCount = 0;
@@ -393,6 +393,14 @@ public class Phenotype : MonoBehaviour {
 					((MuscleCell)newCell).UpdateMasterAxon();
 				}
 				growCellCount++;
+
+				if (tryPlayEffects) {
+					bool hasAudio; float audioVolume;
+					CameraUtils.GetFxGrade(newCell.position, false, out hasAudio, out audioVolume);
+					if (hasAudio) {
+						Audio.instance.CellBirth(audioVolume * 0.25f);
+					}
+				}
 			}
 		}
 		if (growCellCount > 0) {
@@ -401,10 +409,6 @@ public class Phenotype : MonoBehaviour {
 			} else {
 				SetCellDragNormal();
 			}
-			if (playEffects) {
-				Audio.instance.CellBirth(1f);
-			}
-
 
 			PhenotypePanel.instance.MakeDirty();
 			connectionsDiffersFromCells = true;
@@ -712,17 +716,17 @@ public class Phenotype : MonoBehaviour {
 
 	//This is the one and only final place where cell is removed
 	// fixedTime = 0 ==> no mar will be set to when this cell can be regrown again
-	public void KillCell(Cell deleteCell, bool deleteDebris, bool playEffects, ulong worldTicks) {
-		if (playEffects && (GlobalPanel.instance.soundCreatures.isOn || (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.graphicsEffectsToggle.isOn))) {
-			bool isObserved = CameraUtils.IsObservedLazy(deleteCell.position, GlobalSettings.instance.orthoPlayFxLimit);
+	public void KillCell(Cell deleteCell, bool deleteDebris, bool tryPlayFx, ulong worldTicks) {
+		if (tryPlayFx) {
+			bool hasAudio; float audioVolume; bool hasParticles;
+			CameraUtils.GetFxGrade(deleteCell.position, false, out hasAudio, out audioVolume, out hasParticles);
 
-			if (GlobalPanel.instance.soundCreatures.isOn && isObserved) {
-				Audio.instance.CellDeath(CameraUtils.GetEffectStrengthLazy());
+			if (hasAudio) {
+				Audio.instance.CellDeath(audioVolume * 0.25f);
 			}
-		
-			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.graphicsEffectsToggle.isOn && isObserved) {
-				SpawnCellDeathEffect(deleteCell.position, deleteCell.GetColor());
-				SpawnCellDeleteBloodEffect(deleteCell);
+			if (hasParticles) {
+				SpawnCellShardsFx(deleteCell.position, deleteCell.GetColor());
+				SpawnCellBloodFromNeighboursFx(deleteCell);
 			}
 		}
 
@@ -783,12 +787,12 @@ public class Phenotype : MonoBehaviour {
 		return deletedEnergy;
 	}
 
-	public void SpawnCellDeathEffect(Vector2 position, Color color) {
+	public void SpawnCellShardsFx(Vector2 position, Color color) {
 		CellDeath death = Instantiate(cellDeathPrefab, position, Quaternion.identity);
 		death.Prime(color);
 	}
 
-	public void SpawnCellDeleteBloodEffect(Cell deleteCell) {
+	public void SpawnCellBloodFromNeighboursFx(Cell deleteCell) {
 		for (int i = 0; i < 6; i++) {
 			if (deleteCell.HasNeighbourCell(i)) {
 				Cell neighbourCell = deleteCell.GetNeighbourCell(i);
@@ -829,21 +833,24 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public bool DetatchFromMother(Creature creature, bool applyKick, bool playEffects) {
+	public bool DetatchFromMother(Creature creature, bool applyKick, bool tryPlayFx) {
 		if (creature.IsAttachedToMotherAlive()) {
-			if (playEffects && CameraUtils.IsObservedLazy(creature.phenotype.originCell.position, GlobalSettings.instance.orthoPlayFxLimit)) {
+			if (tryPlayFx) {
+				Cell originCell = creature.phenotype.originCell;
 
-				Audio.instance.CreatureDetatch(1f);
+				bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
+				CameraUtils.GetFxGrade(originCell.position, false, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
 
-				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
-					Cell originCell = creature.phenotype.originCell;
+				if (hasAudio) {
+					Audio.instance.CreatureDetatch(audioVolume);
+				}
+				if (hasParticles) {
 					SpawnCellDetatchBloodEffect(originCell);
 				}
-			}
-
-			if (playEffects && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
-				float angle = originCell.heading - 90f;
-				EffectPlayer.instance.Play(EffectEnum.CreatureDetatch, originCell.position, angle, CameraUtils.GetEffectScaleLazy());
+				if (hasMarker) {
+					float angle = originCell.heading - 90f;
+					EffectPlayer.instance.Play(EffectEnum.CreatureDetatch, originCell.position, angle, CameraUtils.GetMarkerScale());
+				}
 			}
 
 			//Kick separation

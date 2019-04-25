@@ -2,43 +2,98 @@
 
 static class CameraUtils {
 
-	public static float GetEffectScaleLazy() {
-		//Debug.Log(World.instance.worldCamera.orthographicSize);
+	public static float GetMarkerScale() {
 		return Mathf.Lerp(2f, 6f, Mathf.InverseLerp(10f, 50f, Morphosis.instance.camera.orthographicSize));
 	}
 
-	public static bool IsObservedLazy(Vector3 position, float orthoMaxWidth) {
-		return IsInsideFrustum(Morphosis.instance.camera, position) && Morphosis.instance.camera.orthographicSize < orthoMaxWidth;
+	public static void GetFxGrade(Vector2 position, bool isLoud, out bool hasAudio, out float audioVolume) {
+		hasAudio = false;
+		audioVolume = 0f;
+
+		if (GlobalPanel.instance.soundCreatures.isOn && (isLoud ? IsInsideLoudAudioVolume(position) : IsInsideQuietAudioVolume(position))) {
+			hasAudio = true;
+			audioVolume = GetAudioVolume(isLoud);
+		}
 	}
 
-	public static bool IsInsideFrustum(Camera camera, Vector3 position) {
+	public static void GetFxGrade(Vector2 position, bool isLoud, out bool hasAudio, out float audioVolume, out bool hasParticles) {
+		hasAudio = false;
+		audioVolume = 0f;
+		hasParticles = false;
+
+		bool insideFxVolume = IsInsideFrustum(position);
+		if (!insideFxVolume) {
+			return;
+		}
+
+		if (GlobalPanel.instance.soundCreatures.isOn && (isLoud ? IsInsideLoudAudioVolume(position) : IsInsideQuietAudioVolume(position))) {
+			hasAudio = true;
+			audioVolume = GetAudioVolume(isLoud);
+		}
+
+		if (GlobalPanel.instance.graphicsEffectsToggle.isOn && IsDetailedGraphicsDistance() && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.isRunPhysics) {
+			hasParticles = true;
+		}
+	}
+
+	public static void GetFxGrade(Vector2 position, bool isLoud, out bool hasAudio, out float audioVolume, out bool hasParticles, out bool hasMarker) {
+		hasAudio = false;
+		audioVolume = 0f;
+		hasParticles = false;
+		hasMarker = false;
+
+		if (!IsInsideFrustum(position)) {
+			return;
+		}
+
+
+		if (GlobalPanel.instance.soundCreatures.isOn && (isLoud ? IsInsideLoudAudioVolume(position) : IsInsideQuietAudioVolume(position))) {
+			hasAudio = true;
+			audioVolume = GetAudioVolume(isLoud);
+		}
+
+		if (GlobalPanel.instance.graphicsEffectsToggle.isOn) {
+			if (IsDetailedGraphicsDistance() && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.isRunPhysics) {
+				hasParticles = true;
+			}
+			hasMarker = true;
+		}
+	}
+
+	public static bool IsInsideDetailedGraphicsVolume(Vector2 position) {
+		return IsInsideFrustum(position) && IsDetailedGraphicsDistance();
+	}
+
+	private static bool IsInsideLoudAudioVolume(Vector2 position) {
+		return IsInsideFrustum(position) && IsLoudAudioDistance();
+	}
+
+	private static bool IsInsideQuietAudioVolume(Vector2 position) {
+		return IsInsideFrustum(position) && IsLoudAudioDistance();
+	}
+
+	private static float GetAudioVolume(bool isLoud) {
+		if (isLoud) {
+			return GlobalSettings.instance.loudAudioVolumeAtOrtho.Evaluate(Morphosis.instance.camera.orthographicSize);
+		} else {
+			return GlobalSettings.instance.quietAudioVolumeAtOrtho.Evaluate(Morphosis.instance.camera.orthographicSize);
+		}
+	}
+
+	private static bool IsInsideFrustum(Vector3 position) {
 		Vector3 viewportPosition = Morphosis.instance.camera.WorldToViewportPoint(position);
 		return viewportPosition.x > 0f && viewportPosition.x < 1f && viewportPosition.y > 0f && viewportPosition.y < 1f;
 	}
 
-	public static bool IsCloseEnoughLazy(float orthoMaxWidth) {
-		return Morphosis.instance.camera.orthographicSize < orthoMaxWidth;
+	private static bool IsDetailedGraphicsDistance() {
+		return Morphosis.instance.camera.orthographicSize < GlobalSettings.instance.detailedGraphicsOrthoLimit;
 	}
 
-	public static float GetEffectStrengthLazy() {
-		return 1f;
-		//return GetEffectStrength(Morphosis.instance.camera, GlobalSettings.instance.orthoMinStrongFX, GlobalSettings.instance.orthoMaxHorizonFx);
+	private static bool IsLoudAudioDistance() {
+		return Morphosis.instance.camera.orthographicSize < GlobalSettings.instance.loudAudioVolumeAtOrtho[GlobalSettings.instance.loudAudioVolumeAtOrtho.length - 1].time;
 	}
 
-	public static float GetEffectStrength(Camera camera, float orthoMinStrongFX, float orthoMaxHorizonFx) {
-		float volume = 0f;
-		if (camera.orthographicSize > orthoMaxHorizonFx) {
-			volume = 0f;
-		} else if (camera.orthographicSize < orthoMinStrongFX) {
-			volume = 1f;
-		} else {
-			volume = 1f - (camera.orthographicSize - orthoMinStrongFX) / (orthoMaxHorizonFx - orthoMinStrongFX);
-		}
-		return volume;
+	private static bool IsQuietAudioDistance() {
+		return Morphosis.instance.camera.orthographicSize < GlobalSettings.instance.loudAudioVolumeAtOrtho[GlobalSettings.instance.loudAudioVolumeAtOrtho.length - 1].time;
 	}
-
-	public static bool ShouldPlayFx(Vector2 position) {
-		return IsInsideFrustum(Morphosis.instance.camera, position) && Morphosis.instance.camera.orthographicSize < GlobalSettings.instance.orthoPlayFxLimit;
-	}
-
 }

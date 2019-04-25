@@ -93,9 +93,15 @@ public class Portal : MonoBehaviour {
 
 		if (canTeleport.Count > 0) {
 			foreach (Creature traveler in canTeleport) {
-				Audio.instance.CreatureTeleport(1f); // CameraUtils.GetAudioVolume(traveler.phenotype.originCell.position)
+				bool hasAudio; float audioVolume;
+				CameraUtils.GetFxGrade(traveler.phenotype.originCell.position, false, out hasAudio, out audioVolume);
+				if (hasAudio) {
+					Audio.instance.CreatureTeleport(audioVolume);
+				}
 				traveler.phenotype.Move(departureToArrival);
-				Audio.instance.CreatureTeleport(1f);
+				if (hasAudio) {
+					Audio.instance.CreatureTeleport(audioVolume);
+				}
 			}
 		}
 	}

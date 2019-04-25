@@ -78,9 +78,7 @@ public class Audio : MonoSingleton<Audio> {
 	}
 
 	private void Play(AudioClip clip, float volume) {
-		if (volume > 0f) {
-			audioSource[clip].volume = volume;
-			audioSource[clip].Play();
-		}
+		audioSource[clip].volume = volume;
+		audioSource[clip].Play();
 	}
 }

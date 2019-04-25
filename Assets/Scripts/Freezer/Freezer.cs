@@ -76,11 +76,13 @@ public class Freezer : MonoSingleton<Freezer> {
 		CellPanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
 
-		Audio.instance.CreatureDeath(1f);
-
-		// skull
-		if (playEffects && GlobalPanel.instance.graphicsEffectsToggle.isOn) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, position, 0f, CameraUtils.GetEffectScaleLazy());
+		bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
+		CameraUtils.GetFxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
+		if (hasAudio) {
+			Audio.instance.CreatureDeath(audioVolume);
+		}
+		if (hasMarker) {
+			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, position, 0f, CameraUtils.GetMarkerScale());
 		}
 	}
 
