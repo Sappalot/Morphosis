@@ -86,15 +86,20 @@ public class GraphPlotter : MonoSingleton<GraphPlotter> {
 
 		if (Input.GetMouseButton(0) && IsMouseInside() && Input.mousePosition.x < graphArea.width) {
 			isMeasuringToolUsed = true;
+			short level = GetLevel(scale);
 
 			float pixelsLeftOfNow = (graphArea.width - Input.mousePosition.x);
 			secondsAgo = (ulong)(pixelsLeftOfNow / scale); // scale = pixels / sec
-			short level = GetLevel(scale);
+			ulong secondsAgoClick = (secondsAgo / (ulong)Mathf.Pow(2f, level)) * (ulong)Mathf.Pow(2f, level);
+
+
+
+
 			float levelScale = scale * Mathf.Pow(2f, level);
 			measureStepsAgo = (int)(pixelsLeftOfNow / levelScale);
 
 			measuringTool.gameObject.SetActive(true);
-			measuringTool.UpdateGraphics(graphArea, scale, secondsAgo);
+			measuringTool.UpdateGraphics(graphArea, scale, secondsAgoClick);
 		} else if (isMeasuringToolUsed) {
 			isDirty = true;
 			isMeasuringToolUsed = false;
