@@ -30,6 +30,12 @@ public class Phenotype : MonoBehaviour {
 	[HideInInspector]
 	public Color outlineClusterColor = Color.black;
 
+	//private void DisableCellLabels() {
+	//	foreach (Cell cell in cellList) {
+	//		cell.SetLabelEnabled(false);
+	//	}
+	//}
+
 	[HideInInspector]
 	public Cell originCell {
 		get {
@@ -254,8 +260,9 @@ public class Phenotype : MonoBehaviour {
 	//SpawnPosition is the position where the center of the origin cell will appear in word space
 	private void Setup(Vector2 spawnPosition, float spawnHeading) {
 		timeOffset = 0f; // Random.Range(0f, 7f); //TODO: Remove
-		
+
 		Clear();
+
 		isAlive = true;
 		this.spawnPosition = spawnPosition;
 		this.spawnHeading = spawnHeading;
@@ -962,6 +969,7 @@ public class Phenotype : MonoBehaviour {
 
 	private Cell SpawnCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindCardinalIndex, FlipSideEnum flipSide, Vector2 position, bool modelSpace, float spawnEnergy) {
 		Cell cell = InstantiateCell(gene.type, mapPosition, creature);
+
 		Vector2 spawnPosition = (modelSpace ? CellMap.ToModelSpacePosition(mapPosition) : Vector2.zero) + position;
 		cell.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, 0f);
 

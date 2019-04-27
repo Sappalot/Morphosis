@@ -136,6 +136,7 @@ public class CellPool : MonoBehaviour {
 		} else if (type == CellTypeEnum.Vein) {
 			cell = (Instantiate(veinCellPrefab, Vector3.zero, Quaternion.identity) as Cell);
 		}
+		cell.Setup(PhenoGenoEnum.Phenotype);
 
 		cell.name = type.ToString() + serialNumber[type]++;
 		cell.transform.parent = transform;

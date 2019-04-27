@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using System.Linq;
+using UnityEngine.UI;
 
 public abstract class Cell : MonoBehaviour {
 	
@@ -60,6 +61,8 @@ public abstract class Cell : MonoBehaviour {
 
 	[HideInInspector]
 	public int groups = 0;
+
+	private PhenoGenoEnum phenoGeno = PhenoGenoEnum.Void;
 
 	protected SpringJoint2D[] placentaSprings; //only if i am an origo cell, the springs go to placenta cells on my mother
 
@@ -137,6 +140,27 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// ^ Axon ^
+
+	// Text ...
+	public Text label;
+	public Canvas labelCanvas;
+	public void SetLabelEnabled(bool enabled) {
+		labelCanvas.gameObject.SetActive(enabled);
+	}
+
+	public void SetLabelText(string text) {
+		label.text = text;
+	}
+
+	public void SetLabelColor(Color color) {
+		label.color = color;
+	}
+
+	public void SetCorrectLabelOrientation() {
+		labelCanvas.transform.rotation = Quaternion.identity;
+	}
+	
+	// ^ Text ^
 
 	// Controlled by cell mouth of other creature
 	public void AddPredator(JawCell predator) {
@@ -530,6 +554,12 @@ public abstract class Cell : MonoBehaviour {
 				s.sortingOrder = s.sortingOrder + 10;
 			}
 		}
+		if (isOnTop && !onTop) {
+			labelCanvas.sortingOrder = labelCanvas.sortingOrder - 10;
+		} else if (!isOnTop && onTop) {
+			labelCanvas.sortingOrder = labelCanvas.sortingOrder + 10;
+		}
+
 		if (!onTop) {
 			transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
 		} else {
@@ -599,6 +629,12 @@ public abstract class Cell : MonoBehaviour {
 		cellNeighbourDictionary.Add(5, southEastNeighbour);
 
 		UpdateOutline(false);
+	}
+
+	public void Setup(PhenoGenoEnum phenoGeno) {
+		this.phenoGeno = phenoGeno;
+
+		SetLabelEnabled(phenoGeno == PhenoGenoEnum.Genotype);
 	}
 
 	public void RemoveCellNeighbours() {
@@ -1020,7 +1056,9 @@ public abstract class Cell : MonoBehaviour {
 	public void UpdateGraphics() {
 		openCircleSprite.color = GetColor();
 
-		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+		if (phenoGeno == PhenoGenoEnum.Phenotype) {
+			SetLabelEnabled(false);
+
 			if (creature.creation == CreatureCreationEnum.Frozen) {
 				filledCircleSprite.color = GetColor();
 			}
@@ -1161,7 +1199,29 @@ public abstract class Cell : MonoBehaviour {
 				
 			}
 		} else {
-			filledCircleSprite.color = GetColor(); // ColorScheme.instance.ToColor(GetCellType());
+			if (GenotypeGraphicsPanel.instance.graphicsGeneCell == GenotypeGraphicsPanel.CellGraphicsEnum.type) {
+				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
+					SetLabelEnabled(true);
+					SetLabelText(gene.index.ToString());
+					SetLabelColor(new Color(1f - GetColor().r, 1f - GetColor().g, 1f - GetColor().b, 1f));
+					filledCircleSprite.color = GetColor();
+					SetCorrectLabelOrientation();
+				} else {
+					filledCircleSprite.color = GetColor();
+					SetLabelEnabled(false);
+				}
+			} else if (GenotypeGraphicsPanel.instance.graphicsGeneCell == GenotypeGraphicsPanel.CellGraphicsEnum.buildOrder) {
+				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
+					SetLabelEnabled(true);
+					SetLabelText(buildOrderIndex.ToString());
+					SetLabelColor(Color.gray);
+					filledCircleSprite.color = Color.black;
+					SetCorrectLabelOrientation();
+				} else {
+					filledCircleSprite.color = GetColor();
+					SetLabelEnabled(false);
+				}
+			}
 		}
 	}
 

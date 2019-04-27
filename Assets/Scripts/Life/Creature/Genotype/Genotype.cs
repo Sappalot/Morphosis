@@ -513,23 +513,6 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	//private void SetElevated(bool on) {
-	//	foreach (Cell cell in geneCellList) {
-	//		cellsTransform.localPosition = new Vector3(0f, 0f, on ? -1f : 0f);
-	//	}
-	//}
-
-	//private bool m_isElevated = false;
-	//public bool isElevated {
-	//	get {
-	//		return m_isElevated;
-	//	}
-	//	set {
-	//		m_isElevated = value;
-	//		isDirty = true;
-	//	}
-	//}
-
 	// Load / Save
 
 	private GenotypeData genotypeData = new GenotypeData();
@@ -554,14 +537,6 @@ public class Genotype : MonoBehaviour {
 	// ^ Load / Save ^
 
 	// Update
-
-
-	//private void EvoUpdateCells() {
-	//	//TODO: only if creature inside frustum && should be shown
-	//	for (int index = 0; index < geneCellList.Count; index++) {
-	//		geneCellList[index].UpdateGraphics();
-	//	}
-	//}
 
 	public void OnRecycle() {
 		Clear();
