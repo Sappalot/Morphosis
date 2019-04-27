@@ -22,9 +22,6 @@ public abstract class Cell : MonoBehaviour {
 	//----- ^ Inspector ^
 
 	[HideInInspector]
-	public int poolPosition;
-
-	[HideInInspector]
 	public Rigidbody2D theRigidBody;
 
 	[HideInInspector]
@@ -160,8 +157,22 @@ public abstract class Cell : MonoBehaviour {
 	public void SetCorrectLabelOrientation() {
 		labelCanvas.transform.rotation = Quaternion.identity;
 	}
-	
+
 	// ^ Text ^
+
+	// bleed particles...
+	private List<ParticlesCellBleed> currentParticlesBleed = new List<ParticlesCellBleed>();
+
+	public void DetatchBleedParticles() {
+		ParticlesCellBleed[] allBleed = GetComponentsInChildren<ParticlesCellBleed>();
+		foreach (ParticlesCellBleed bleed in allBleed) {
+			//bleed.gameObject.SetActive(false); // we don't want blood to linger while host cell is gone
+			bleed.transform.position = Vector2.zero;
+			bleed.transform.parent = Morphosis.instance.transform;
+		}
+	}
+
+	// ^ bleed particles ^
 
 	// Controlled by cell mouth of other creature
 	public void AddPredator(JawCell predator) {

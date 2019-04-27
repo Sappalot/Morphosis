@@ -735,6 +735,9 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 
+		//remove all of cells bleed particles (if it has any)
+		deleteCell.DetatchBleedParticles();
+
 		//Clean up neighbours
 		List<Cell> neightbourCells = deleteCell.GetNeighbourCells();
 		foreach (Cell neighbourCell in neightbourCells) {
@@ -793,7 +796,11 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public void SpawnParticlesCellScatter(Vector2 position, Color color) {
-		ParticlesCellScatter scatter = Instantiate(particlesCellScatterPrefab, position, Quaternion.identity);
+		//ParticlesCellScatter scatter = Instantiate(particlesCellScatterPrefab);
+		ParticlesCellScatter scatter = ParticlePool.instance.Borrow(ParticleTypeEnum.cellScatter) as ParticlesCellScatter;
+		scatter.transform.parent = Morphosis.instance.transform;
+		scatter.transform.position = position;
+		scatter.transform.rotation = Quaternion.identity;
 		scatter.Prime(color);
 	}
 
@@ -805,17 +812,20 @@ public class Phenotype : MonoBehaviour {
 				for (int neighbourCardinalIndex = 0; neighbourCardinalIndex < 6; neighbourCardinalIndex++) {
 					if (neighbourCell.GetNeighbourCell(neighbourCardinalIndex) == deleteCell) {
 						float angle = AngleUtil.CardinalIndexToAngle(neighbourCardinalIndex) + neighbourCell.angleDiffFromBindpose; //YEY :D
-						neighbourCell.creature.phenotype.SpawnCellBlood(neighbourCell, angle);
+						neighbourCell.creature.phenotype.SpawnCellBleed(neighbourCell, angle);
 					}
 				}
 			}
 		}
 	}
 
-	public void SpawnCellBlood(Cell cell, float heading) {
-		ParticlesCellBleed blood = Instantiate(particlesCellBleedPrefab, cell.position, Quaternion.Euler(0f, 0f, heading)); //Quaternion.Euler(0f, 0f, heading)
-		blood.Prime(Color.red);
-		blood.transform.parent = cell.transform;
+	public void SpawnCellBleed(Cell cell, float heading) {
+		//ParticlesCellBleed blood = Instantiate(particlesCellBleedPrefab); //Quaternion.Euler(0f, 0f, heading)
+		ParticlesCellBleed bleed = ParticlePool.instance.Borrow(ParticleTypeEnum.cellBleed) as ParticlesCellBleed;
+		bleed.transform.position = cell.position;
+		bleed.transform.rotation = Quaternion.Euler(0f, 0f, heading);
+		bleed.Prime(Color.red);
+		bleed.transform.parent = cell.transform;
 	}
 
 	public void SpawnCellDetatchBloodEffect(Cell detatchCell) {
@@ -827,13 +837,13 @@ public class Phenotype : MonoBehaviour {
 					if (neighbourCell.GetNeighbourCell(neighbourCardinalIndex) == detatchCell) {
 						//... at me
 						float angle = AngleUtil.CardinalIndexToAngle(neighbourCardinalIndex) + neighbourCell.angleDiffFromBindpose; //YEY :D
-						neighbourCell.creature.phenotype.SpawnCellBlood(neighbourCell, angle);
+						neighbourCell.creature.phenotype.SpawnCellBleed(neighbourCell, angle);
 					}
 				}
 
 				//me
 				float a = AngleUtil.CardinalIndexToAngle(i) + detatchCell.angleDiffFromBindpose;
-				SpawnCellBlood(detatchCell, a);
+				SpawnCellBleed(detatchCell, a);
 			}
 		}
 	}

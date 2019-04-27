@@ -294,7 +294,6 @@ public class Life : MonoBehaviour {
 		creature.creation = CreatureCreationEnum.Forged;
 		creature.generation = 1;
 
-		SpawnAddEffect(position);
 		World.instance.AddHistoryEvent(new HistoryEvent("+", false, Color.gray));
 		return creature;
 	}
@@ -306,7 +305,6 @@ public class Life : MonoBehaviour {
 		creature.creation = CreatureCreationEnum.Forged;
 		creature.generation = 1;
 
-		SpawnAddEffect(position);
 		World.instance.AddHistoryEvent(new HistoryEvent("+", false, Color.gray));
 		return creature;
 	}
