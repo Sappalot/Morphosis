@@ -33,7 +33,7 @@ public class Genotype : MonoBehaviour {
 	public Cell GetCellAtPosition(Vector2 position) {
 		if (IsInsideBoundingCircle(position)) {
 			foreach (Cell geneCell in geneCellList) {
-				if (GeometryUtils.IsPointInsideCircle(position, geneCell.position, geneCell.radius)) {
+				if (GeometryUtil.IsPointInsideCircle(position, geneCell.position, geneCell.radius)) {
 					return geneCell;
 				}
 			}

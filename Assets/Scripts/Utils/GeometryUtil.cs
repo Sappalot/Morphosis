@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-static class GeometryUtils {
+static class GeometryUtil {
 	
 	//angle in degrees
 	public static Vector2 GetVector(float angle, float length) {

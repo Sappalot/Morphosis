@@ -60,7 +60,7 @@ public class LeafCell : Cell {
 				float maxRange = GlobalSettings.instance.phenotype.leafCellSunMaxRange; // how many meters an unblocked light beam will travel
 				float energyLossAir = startEnergy / maxRange; //J / m (allways reaches max range if nothing blocks it)
 
-				Vector2 direction = GeometryUtils.GetVector(Random.Range(0f, 360f), 1f);
+				Vector2 direction = GeometryUtil.GetVector(Random.Range(0f, 360f), 1f);
 
 				Vector2 start = position + direction * (radius - 0.1f); // we have to start inside ourselves to be able to catch touching bart of neighbours
 				Vector2 perpendicular = new Vector2(-direction.y, direction.x); //debug shit

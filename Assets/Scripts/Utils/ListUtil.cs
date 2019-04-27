@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-static class ListUtils {
+static class ListUtil {
 	public static void Shuffle<T>(this IList<T> list) {
 		RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
 		int n = list.Count;

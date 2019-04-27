@@ -3,11 +3,9 @@ using System.Collections.Generic;
 
 // The physical creature defined by all its cells
 public class Phenotype : MonoBehaviour {
-	public Animator creatureDetatchEffectPrefab;
-
 	// Effects
-	public CellDeath cellDeathPrefab;
-	public CellDetatch cellDetatchPrefab;
+	public ParticlesCellScatter particlesCellScatterPrefab;
+	public ParticlesCellBleed particlesCellBleedPrefab;
 
 	public Transform cellsTransform;
 	public Edges edges; //AKA Wings
@@ -233,7 +231,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public void ShuffleCellUpdateOrder() {
-		ListUtils.Shuffle(cellList);
+		ListUtil.Shuffle(cellList);
 	}
 
 	public void InitiateEmbryo(Creature creature, Vector2 position, float heading) {
@@ -478,7 +476,7 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		foreach (Cell cell in cells) {
-			if (GeometryUtils.AreCirclesIntersecting(cell.position, cell.radius, tryPosition, tryRadius)) {
+			if (GeometryUtil.AreCirclesIntersecting(cell.position, cell.radius, tryPosition, tryRadius)) {
 				return false;
 			}
 		}
@@ -732,7 +730,7 @@ public class Phenotype : MonoBehaviour {
 				Audio.instance.CellDeath(audioVolume * 0.25f);
 			}
 			if (hasParticles) {
-				SpawnCellShardsFx(deleteCell.position, deleteCell.GetColor());
+				SpawnParticlesCellScatter(deleteCell.position, deleteCell.GetColor());
 				SpawnCellBloodFromNeighboursFx(deleteCell);
 			}
 		}
@@ -794,9 +792,9 @@ public class Phenotype : MonoBehaviour {
 		return deletedEnergy;
 	}
 
-	public void SpawnCellShardsFx(Vector2 position, Color color) {
-		CellDeath death = Instantiate(cellDeathPrefab, position, Quaternion.identity);
-		death.Prime(color);
+	public void SpawnParticlesCellScatter(Vector2 position, Color color) {
+		ParticlesCellScatter scatter = Instantiate(particlesCellScatterPrefab, position, Quaternion.identity);
+		scatter.Prime(color);
 	}
 
 	public void SpawnCellBloodFromNeighboursFx(Cell deleteCell) {
@@ -815,7 +813,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public void SpawnCellBlood(Cell cell, float heading) {
-		CellDetatch blood = Instantiate(cellDetatchPrefab, cell.position, Quaternion.Euler(0f, 0f, heading)); //Quaternion.Euler(0f, 0f, heading)
+		ParticlesCellBleed blood = Instantiate(particlesCellBleedPrefab, cell.position, Quaternion.Euler(0f, 0f, heading)); //Quaternion.Euler(0f, 0f, heading)
 		blood.Prime(Color.red);
 		blood.transform.parent = cell.transform;
 	}
@@ -1213,7 +1211,7 @@ public class Phenotype : MonoBehaviour {
 	public Cell GetCellAtPosition(Vector2 position) {
 		if (IsInsideBoundingCircle(position)) {
 			foreach (Cell cell in cellList) {
-				if (GeometryUtils.IsPointInsideCircle(position, cell.position, cell.radius)) {
+				if (GeometryUtil.IsPointInsideCircle(position, cell.position, cell.radius)) {
 					return cell;
 				}
 			}

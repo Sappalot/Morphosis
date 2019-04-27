@@ -83,7 +83,7 @@ public class Edges : MonoBehaviour {
 	} 
 
 	public void ShuffleEdgeUpdateOrder() {
-		ListUtils.Shuffle(edgeList);
+		ListUtil.Shuffle(edgeList);
 	}
 
 	public void GenerateWings(Creature creature, CellMap cellMap) {
