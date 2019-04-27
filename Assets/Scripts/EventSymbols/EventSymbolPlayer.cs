@@ -2,14 +2,14 @@
 using UnityEngine;
 
 
-public class EffectPlayer : MonoSingleton<EffectPlayer> {
+public class EventSymbolPlayer : MonoSingleton<EventSymbolPlayer> {
 	public Sprite add;
 	public Sprite born;
 	public Sprite death;
 	public Sprite detatch;
 
-	public void Play(EffectEnum type, Vector2 position, float angle, float scale) {
-		Effect effect = EffectPool.instance.Borrow();
+	public void Play(EventSymbolEnum type, Vector2 position, float angle, float scale) {
+		EventSymbol effect = EventSymbolPool.instance.Borrow();
 		effect.transform.position = position;
 		effect.transform.localRotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
@@ -18,13 +18,13 @@ public class EffectPlayer : MonoSingleton<EffectPlayer> {
 		effect.spriteRenderer.enabled = true;
 
 		Sprite sprite = null;
-		if (type == EffectEnum.CreatureAdd) {
+		if (type == EventSymbolEnum.CreatureAdd) {
 			sprite = add;
-		} else if (type == EffectEnum.CreatureBorn) {
+		} else if (type == EventSymbolEnum.CreatureBorn) {
 			sprite = born;
-		} else if (type == EffectEnum.CreatureDeath) {
+		} else if (type == EventSymbolEnum.CreatureDeath) {
 			sprite = death;
-		} else if (type == EffectEnum.CreatureDetatch) {
+		} else if (type == EventSymbolEnum.CreatureDetatch) {
 			sprite = detatch;
 		}
 		effect.spriteRenderer.sprite = sprite; 
@@ -33,8 +33,8 @@ public class EffectPlayer : MonoSingleton<EffectPlayer> {
 
 	}
 
-	public void Stop(Effect effect) {
+	public void Stop(EventSymbol effect) {
 		effect.spriteRenderer.enabled = false;
-		EffectPool.instance.Return(effect);
+		EventSymbolPool.instance.Return(effect);
 	}
 }

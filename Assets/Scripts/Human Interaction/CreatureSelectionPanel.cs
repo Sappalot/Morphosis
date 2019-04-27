@@ -719,7 +719,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	private void SpawnAddEffect(Vector2 position) {
 		if (MouseAction.instance.actionState == MouseActionStateEnum.combineMoveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureAdd, position, 0f, SpatialUtil.GetMarkerScale());
+			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureAdd, position, 0f, SpatialUtil.GetMarkerScale());
 		}
 	}
 

@@ -128,7 +128,7 @@ public class Life : MonoBehaviour {
 				Audio.instance.CreatureBirth(audioVolume);
 			}
 			if (hasMarker) {
-				EffectPlayer.instance.Play(EffectEnum.CreatureBorn, eggCell.position, 0f, SpatialUtil.GetMarkerScale());
+				EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureBorn, eggCell.position, 0f, SpatialUtil.GetMarkerScale());
 			}
 		}
 
@@ -236,7 +236,7 @@ public class Life : MonoBehaviour {
 			Audio.instance.CreatureDeath(audioVolume);
 		}
 		if (hasMarker) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, position, 0f, SpatialUtil.GetMarkerScale());
+			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDeath, position, 0f, SpatialUtil.GetMarkerScale());
 		}
 	}
 
@@ -341,13 +341,13 @@ public class Life : MonoBehaviour {
 
 	private void SpawnAddEffect(Vector2 position) {
 		if (GlobalPanel.instance.graphicsEffectsToggle.isOn) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureAdd, position, 0f, SpatialUtil.GetMarkerScale());
+			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureAdd, position, 0f, SpatialUtil.GetMarkerScale());
 		}
 	}
 
 	private void SpawnBirthEffect(Vector2 position) {
 		if (GlobalPanel.instance.graphicsEffectsToggle.isOn) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureBorn, position, 0f, SpatialUtil.GetMarkerScale());
+			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureBorn, position, 0f, SpatialUtil.GetMarkerScale());
 		}
 	}
 

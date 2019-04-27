@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class DelayedAnimationDelete : MonoBehaviour {
 	public float linger = 0f;
-	public Effect effect;
+	public EventSymbol effect;
 
 	public void StopWhenDone() {
 		StartCoroutine(Stop());
@@ -11,6 +11,6 @@ public class DelayedAnimationDelete : MonoBehaviour {
 
 	private IEnumerator Stop() {
 		yield return new WaitForSecondsRealtime(this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length + linger);
-		EffectPlayer.instance.Stop(effect);
+		EventSymbolPlayer.instance.Stop(effect);
 	}
 }

@@ -82,7 +82,7 @@ public class Freezer : MonoSingleton<Freezer> {
 			Audio.instance.CreatureDeath(audioVolume);
 		}
 		if (hasMarker) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, position, 0f, SpatialUtil.GetMarkerScale());
+			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDeath, position, 0f, SpatialUtil.GetMarkerScale());
 		}
 	}
 

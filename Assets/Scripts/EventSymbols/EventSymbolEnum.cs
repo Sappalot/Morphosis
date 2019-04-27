@@ -1,7 +1,7 @@
 ﻿using System;
 
 [Serializable]
-public enum EffectEnum {
+public enum EventSymbolEnum {
 	CreatureAdd,
 	CreatureBorn,
 	CreatureDeath,

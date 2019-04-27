@@ -854,7 +854,7 @@ public class Phenotype : MonoBehaviour {
 				}
 				if (hasMarker) {
 					float angle = originCell.heading - 90f;
-					EffectPlayer.instance.Play(EffectEnum.CreatureDetatch, originCell.position, angle, SpatialUtil.GetMarkerScale());
+					EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDetatch, originCell.position, angle, SpatialUtil.GetMarkerScale());
 				}
 			}
 
