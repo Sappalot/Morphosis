@@ -681,7 +681,7 @@ public class Creature : MonoBehaviour {
 
 	// Update
 	public void UpdateGraphics() {
-		if (SpatialUtils.IsInsideFrustum(phenotype.originCell.position)) {
+		if (SpatialUtil.IsInsideFrustum(phenotype.originCell.position)) {
 			phenotype.UpdateGraphics(this);
 		}
 

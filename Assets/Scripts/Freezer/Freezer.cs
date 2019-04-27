@@ -77,12 +77,12 @@ public class Freezer : MonoSingleton<Freezer> {
 		GenePanel.instance.MakeDirty();
 
 		bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
-		CameraUtils.GetFxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
+		SpatialUtil.GetFxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
 		if (hasAudio) {
 			Audio.instance.CreatureDeath(audioVolume);
 		}
 		if (hasMarker) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, position, 0f, CameraUtils.GetMarkerScale());
+			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, position, 0f, SpatialUtil.GetMarkerScale());
 		}
 	}
 
