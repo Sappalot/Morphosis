@@ -146,6 +146,7 @@ public abstract class Cell : MonoBehaviour {
 	public Canvas labelCanvas;
 	public void SetLabelEnabled(bool enabled) {
 		labelCanvas.gameObject.SetActive(enabled);
+		label.gameObject.SetActive(enabled);
 	}
 
 	public void SetLabelText(string text) {
@@ -635,6 +636,9 @@ public abstract class Cell : MonoBehaviour {
 		this.phenoGeno = phenoGeno;
 
 		SetLabelEnabled(phenoGeno == PhenoGenoEnum.Genotype);
+		if (phenoGeno == PhenoGenoEnum.Phenotype) {
+			Destroy(labelCanvas.gameObject);
+		}
 	}
 
 	public void RemoveCellNeighbours() {
@@ -1057,7 +1061,7 @@ public abstract class Cell : MonoBehaviour {
 		openCircleSprite.color = GetColor();
 
 		if (phenoGeno == PhenoGenoEnum.Phenotype) {
-			SetLabelEnabled(false);
+			//SetLabelEnabled(false);
 
 			if (creature.creation == CreatureCreationEnum.Frozen) {
 				filledCircleSprite.color = GetColor();

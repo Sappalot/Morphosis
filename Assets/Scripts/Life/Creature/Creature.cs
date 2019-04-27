@@ -681,7 +681,9 @@ public class Creature : MonoBehaviour {
 
 	// Update
 	public void UpdateGraphics() {
-		phenotype.UpdateGraphics(this);
+		if (CameraUtils.IsInsideFrustum(phenotype.originCell.position)) {
+			phenotype.UpdateGraphics(this);
+		}
 
 		if (isDirtyGraphics) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
