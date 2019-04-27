@@ -94,7 +94,7 @@ public class Portal : MonoBehaviour {
 		if (canTeleport.Count > 0) {
 			foreach (Creature traveler in canTeleport) {
 				bool hasAudio; float audioVolume;
-				CameraUtils.GetFxGrade(traveler.phenotype.originCell.position, false, out hasAudio, out audioVolume);
+				SpatialUtils.GetFxGrade(traveler.phenotype.originCell.position, false, out hasAudio, out audioVolume);
 				if (hasAudio) {
 					Audio.instance.CreatureTeleport(audioVolume);
 				}

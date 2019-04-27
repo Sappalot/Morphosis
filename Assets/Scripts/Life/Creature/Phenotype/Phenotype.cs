@@ -403,7 +403,7 @@ public class Phenotype : MonoBehaviour {
 
 				if (tryPlayEffects) {
 					bool hasAudio; float audioVolume;
-					CameraUtils.GetFxGrade(newCell.position, false, out hasAudio, out audioVolume);
+					SpatialUtils.GetFxGrade(newCell.position, false, out hasAudio, out audioVolume);
 					if (hasAudio) {
 						Audio.instance.CellBirth(audioVolume * 0.25f);
 					}
@@ -726,7 +726,7 @@ public class Phenotype : MonoBehaviour {
 	public void KillCell(Cell deleteCell, bool deleteDebris, bool tryPlayFx, ulong worldTicks) {
 		if (tryPlayFx) {
 			bool hasAudio; float audioVolume; bool hasParticles;
-			CameraUtils.GetFxGrade(deleteCell.position, false, out hasAudio, out audioVolume, out hasParticles);
+			SpatialUtils.GetFxGrade(deleteCell.position, false, out hasAudio, out audioVolume, out hasParticles);
 
 			if (hasAudio) {
 				Audio.instance.CellDeath(audioVolume * 0.25f);
@@ -846,7 +846,7 @@ public class Phenotype : MonoBehaviour {
 				Cell originCell = creature.phenotype.originCell;
 
 				bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
-				CameraUtils.GetFxGrade(originCell.position, false, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
+				SpatialUtils.GetFxGrade(originCell.position, false, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
 
 				if (hasAudio) {
 					Audio.instance.CreatureDetatch(audioVolume);
@@ -856,7 +856,7 @@ public class Phenotype : MonoBehaviour {
 				}
 				if (hasMarker) {
 					float angle = originCell.heading - 90f;
-					EffectPlayer.instance.Play(EffectEnum.CreatureDetatch, originCell.position, angle, CameraUtils.GetMarkerScale());
+					EffectPlayer.instance.Play(EffectEnum.CreatureDetatch, originCell.position, angle, SpatialUtils.GetMarkerScale());
 				}
 			}
 

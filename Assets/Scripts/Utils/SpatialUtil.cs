@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-static class CameraUtils {
+static class SpatialUtil {
 
 	public static float GetMarkerScale() {
 		return Mathf.Lerp(2f, 6f, Mathf.InverseLerp(10f, 50f, Morphosis.instance.camera.orthographicSize));

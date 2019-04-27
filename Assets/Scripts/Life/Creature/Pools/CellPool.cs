@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-
 public class CellPool : MonoBehaviour {
 	public EggCell eggCellPrefab;
 	public FungalCell fungalCellPrefab;

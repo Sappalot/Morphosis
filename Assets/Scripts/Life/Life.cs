@@ -122,13 +122,13 @@ public class Life : MonoBehaviour {
 
 		if (tryPlayFx) {
 			bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
-			CameraUtils.GetFxGrade(eggCell.position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
+			SpatialUtils.GetFxGrade(eggCell.position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
 
 			if (hasAudio) {
 				Audio.instance.CreatureBirth(audioVolume);
 			}
 			if (hasMarker) {
-				EffectPlayer.instance.Play(EffectEnum.CreatureBorn, eggCell.position, 0f, CameraUtils.GetMarkerScale());
+				EffectPlayer.instance.Play(EffectEnum.CreatureBorn, eggCell.position, 0f, SpatialUtils.GetMarkerScale());
 			}
 		}
 
@@ -231,12 +231,12 @@ public class Life : MonoBehaviour {
 		creatureDeathsPerSecond.IncreaseCounter();
 
 		bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
-		CameraUtils.GetFxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
+		SpatialUtils.GetFxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
 		if (hasAudio) {
 			Audio.instance.CreatureDeath(audioVolume);
 		}
 		if (hasMarker) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, position, 0f, CameraUtils.GetMarkerScale());
+			EffectPlayer.instance.Play(EffectEnum.CreatureDeath, position, 0f, SpatialUtils.GetMarkerScale());
 		}
 	}
 
@@ -341,13 +341,13 @@ public class Life : MonoBehaviour {
 
 	private void SpawnAddEffect(Vector2 position) {
 		if (GlobalPanel.instance.graphicsEffectsToggle.isOn) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureAdd, position, 0f, CameraUtils.GetMarkerScale());
+			EffectPlayer.instance.Play(EffectEnum.CreatureAdd, position, 0f, SpatialUtils.GetMarkerScale());
 		}
 	}
 
 	private void SpawnBirthEffect(Vector2 position) {
 		if (GlobalPanel.instance.graphicsEffectsToggle.isOn) {
-			EffectPlayer.instance.Play(EffectEnum.CreatureBorn, position, 0f, CameraUtils.GetMarkerScale());
+			EffectPlayer.instance.Play(EffectEnum.CreatureBorn, position, 0f, SpatialUtils.GetMarkerScale());
 		}
 	}
 
