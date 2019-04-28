@@ -5,5 +5,6 @@ using UnityEngine;
 public enum ParticleTypeEnum {
 	cellBleed,
 	cellScatter,
+	cellTeleport,
 	undefined,
 }

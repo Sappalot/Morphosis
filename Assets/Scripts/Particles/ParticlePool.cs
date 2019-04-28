@@ -4,6 +4,7 @@ using UnityEngine;
 public class ParticlePool : MonoSingleton<ParticlePool> {
 	public ParticlesCellBleed particlesCellBleedPrefab;
 	public ParticlesCellScatter particlesCellScatterPrefab;
+	public ParticlesCellTeleport particlesCellTeleportPrefab;
 
 	private List<bool> vacantPositions = new List<bool>();
 
@@ -19,6 +20,7 @@ public class ParticlePool : MonoSingleton<ParticlePool> {
 
 	private Queue<Particles> storedCellBleed = new Queue<Particles>();
 	private Queue<Particles> storedCellScatter = new Queue<Particles>();
+	private Queue<Particles> storedCellTeleport = new Queue<Particles>();
 
 	private Dictionary<ParticleTypeEnum, Queue<Particles>> storedQueues = new Dictionary<ParticleTypeEnum, Queue<Particles>>();
 	private Dictionary<ParticleTypeEnum, int> loanedCount = new Dictionary<ParticleTypeEnum, int>(); //How many cells of a specific type are we expected to get back, if they ere all deleted from the world
@@ -27,17 +29,21 @@ public class ParticlePool : MonoSingleton<ParticlePool> {
 	private void Awake() {
 		storedQueues.Add(ParticleTypeEnum.cellBleed, storedCellBleed);
 		storedQueues.Add(ParticleTypeEnum.cellScatter, storedCellScatter);
+		storedQueues.Add(ParticleTypeEnum.cellTeleport, storedCellTeleport);
 
 		loanedCount.Add(ParticleTypeEnum.cellBleed, 0);
 		loanedCount.Add(ParticleTypeEnum.cellScatter, 0);
+		loanedCount.Add(ParticleTypeEnum.cellTeleport, 0);
 
 		serialNumber.Add(ParticleTypeEnum.cellBleed, 0);
 		serialNumber.Add(ParticleTypeEnum.cellScatter, 0);
+		serialNumber.Add(ParticleTypeEnum.cellTeleport, 0);
 	}
 
 	public Particles Borrow(ParticleTypeEnum type) {
 		Particles borrowParticles = null;
 		Particles poppedParticles = PopParticles(storedQueues[type]);
+
 
 		if (poppedParticles != null) {
 			borrowParticles = poppedParticles;
@@ -58,14 +64,6 @@ public class ParticlePool : MonoSingleton<ParticlePool> {
 		particles.gameObject.SetActive(false);
 		storedQueues[particles.GetParticlesType()].Enqueue(particles);
 		loanedCount[particles.GetParticlesType()]--;
-
-
-		// ?? is this needed ??
-		//int pos = FirstVacantPosition();
-		//int y = pos / 100;
-		//int x = pos % 100;
-		//particles.transform.position = new Vector2(10f + 2f * x, 50f - y * 2f);
-		//OccupyPosition(pos);
 	}
 
 	private Particles PopParticles(Queue<Particles> queue) {
@@ -83,6 +81,8 @@ public class ParticlePool : MonoSingleton<ParticlePool> {
 			particles = (Instantiate(particlesCellBleedPrefab, Vector3.zero, Quaternion.identity) as Particles);
 		} else if (type == ParticleTypeEnum.cellScatter) {
 			particles = (Instantiate(particlesCellScatterPrefab, Vector3.zero, Quaternion.identity) as Particles);
+		} else if (type == ParticleTypeEnum.cellTeleport) {
+			particles = (Instantiate(particlesCellTeleportPrefab, Vector3.zero, Quaternion.identity) as Particles);
 		}
 
 		particles.name = type.ToString() + " " + serialNumber[type]++;

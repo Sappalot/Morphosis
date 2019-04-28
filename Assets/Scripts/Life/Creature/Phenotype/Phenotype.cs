@@ -722,6 +722,9 @@ public class Phenotype : MonoBehaviour {
 	//This is the one and only final place where cell is removed
 	// fixedTime = 0 ==> no mar will be set to when this cell can be regrown again
 	public void KillCell(Cell deleteCell, bool deleteDebris, bool tryPlayFx, ulong worldTicks) {
+		//remove all of cells bleed particles (if it has any)
+		deleteCell.DetatchBleedParticles();
+
 		if (tryPlayFx) {
 			bool hasAudio; float audioVolume; bool hasParticles;
 			SpatialUtil.GetFxGrade(deleteCell.position, false, out hasAudio, out audioVolume, out hasParticles);
@@ -734,9 +737,6 @@ public class Phenotype : MonoBehaviour {
 				SpawnCellBloodFromNeighboursFx(deleteCell);
 			}
 		}
-
-		//remove all of cells bleed particles (if it has any)
-		deleteCell.DetatchBleedParticles();
 
 		//Clean up neighbours
 		List<Cell> neightbourCells = deleteCell.GetNeighbourCells();
@@ -798,10 +798,14 @@ public class Phenotype : MonoBehaviour {
 	public void SpawnParticlesCellScatter(Vector2 position, Color color) {
 		//ParticlesCellScatter scatter = Instantiate(particlesCellScatterPrefab);
 		ParticlesCellScatter scatter = ParticlePool.instance.Borrow(ParticleTypeEnum.cellScatter) as ParticlesCellScatter;
-		scatter.transform.parent = Morphosis.instance.transform;
-		scatter.transform.position = position;
-		scatter.transform.rotation = Quaternion.identity;
-		scatter.Prime(color);
+		if (scatter == null) {
+			Debug.Log("We have a null scatter");
+		} else {
+			scatter.transform.parent = Morphosis.instance.transform;
+			scatter.transform.position = position;
+			scatter.transform.rotation = Quaternion.identity;
+			scatter.Prime(color);
+		}
 	}
 
 	public void SpawnCellBloodFromNeighboursFx(Cell deleteCell) {
