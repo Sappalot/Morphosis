@@ -163,12 +163,12 @@ public abstract class Cell : MonoBehaviour {
 	// bleed particles...
 	private List<ParticlesCellBleed> currentParticlesBleed = new List<ParticlesCellBleed>();
 
-	public void DetatchBleedParticles() {
-		ParticlesCellBleed[] allBleed = GetComponentsInChildren<ParticlesCellBleed>();
-		foreach (ParticlesCellBleed bleed in allBleed) {
-			//bleed.gameObject.SetActive(false); // we don't want blood to linger while host cell is gone
-			bleed.transform.position = Vector2.zero;
-			bleed.transform.parent = Morphosis.instance.transform;
+	// we don't want blood to linger with host while he is going in the recycling
+	public void DetatchParticles() {
+		Particles[] attachedParticles = GetComponentsInChildren<Particles>();
+		foreach (Particles particles in attachedParticles) {
+			particles.transform.position = Vector2.zero;
+			particles.transform.parent = Morphosis.instance.transform;
 		}
 	}
 

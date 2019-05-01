@@ -12,7 +12,7 @@ public class ParticlesCellTeleport : Particles {
 	}
 
 	private IEnumerator RemoveSelf() {
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(2f);
 		ParticlePool.instance.Recycle(this);
 	}
 

@@ -2,9 +2,11 @@
 using UnityEngine;
 
 public class ParticlePool : MonoSingleton<ParticlePool> {
+	public ParticlesCellBirth particlesCellBirthPrefab;
 	public ParticlesCellBleed particlesCellBleedPrefab;
 	public ParticlesCellScatter particlesCellScatterPrefab;
 	public ParticlesCellTeleport particlesCellTeleportPrefab;
+	
 
 	private List<bool> vacantPositions = new List<bool>();
 
@@ -18,6 +20,7 @@ public class ParticlePool : MonoSingleton<ParticlePool> {
 		return loanedCount[type];
 	}
 
+	private Queue<Particles> storedCellBirth = new Queue<Particles>();
 	private Queue<Particles> storedCellBleed = new Queue<Particles>();
 	private Queue<Particles> storedCellScatter = new Queue<Particles>();
 	private Queue<Particles> storedCellTeleport = new Queue<Particles>();
@@ -27,14 +30,17 @@ public class ParticlePool : MonoSingleton<ParticlePool> {
 	private Dictionary<ParticleTypeEnum, int> serialNumber = new Dictionary<ParticleTypeEnum, int>();
 
 	private void Awake() {
+		storedQueues.Add(ParticleTypeEnum.cellBirth, storedCellBirth);
 		storedQueues.Add(ParticleTypeEnum.cellBleed, storedCellBleed);
 		storedQueues.Add(ParticleTypeEnum.cellScatter, storedCellScatter);
 		storedQueues.Add(ParticleTypeEnum.cellTeleport, storedCellTeleport);
 
+		loanedCount.Add(ParticleTypeEnum.cellBirth, 0);
 		loanedCount.Add(ParticleTypeEnum.cellBleed, 0);
 		loanedCount.Add(ParticleTypeEnum.cellScatter, 0);
 		loanedCount.Add(ParticleTypeEnum.cellTeleport, 0);
 
+		serialNumber.Add(ParticleTypeEnum.cellBirth, 0);
 		serialNumber.Add(ParticleTypeEnum.cellBleed, 0);
 		serialNumber.Add(ParticleTypeEnum.cellScatter, 0);
 		serialNumber.Add(ParticleTypeEnum.cellTeleport, 0);
@@ -77,7 +83,9 @@ public class ParticlePool : MonoSingleton<ParticlePool> {
 
 	private Particles Instantiate(ParticleTypeEnum type) {
 		Particles particles = null;
-		if (type == ParticleTypeEnum.cellBleed) {
+		if (type == ParticleTypeEnum.cellBirth) {
+			particles = (Instantiate(particlesCellBirthPrefab, Vector3.zero, Quaternion.identity) as Particles);
+		} else if (type == ParticleTypeEnum.cellBleed) {
 			particles = (Instantiate(particlesCellBleedPrefab, Vector3.zero, Quaternion.identity) as Particles);
 		} else if (type == ParticleTypeEnum.cellScatter) {
 			particles = (Instantiate(particlesCellScatterPrefab, Vector3.zero, Quaternion.identity) as Particles);

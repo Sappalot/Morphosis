@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 public class CameraController : MouseDrag {
 	public float cameraMoveSpeed = 1f; //Screenwidths per second
-	public float cameraZoomStep = 0.1f; //Screenwidths per second
+	public float cameraZoomStep = 0.1f;
 
 	public new Camera camera;
 
@@ -15,7 +15,7 @@ public class CameraController : MouseDrag {
 
 	public override void OnDraggingStart(int mouseButton) {
 		// implement this for start of dragging
-		if (mouseButton == 2 && !EventSystem.current.IsPointerOverGameObject()) {
+		if ((mouseButton == 1 || mouseButton == 2) && !EventSystem.current.IsPointerOverGameObject()) {
 			downPositionMouse = Input.mousePosition;
 			downPositionCamera = camera.transform.position;
 			isDragging = true;
@@ -27,7 +27,7 @@ public class CameraController : MouseDrag {
 
 	public override void OnDragging(int mouseButton) {
 		// implement this for dragging
-		if (mouseButton == 2 && isDragging) {
+		if ((mouseButton == 1 || mouseButton == 2) && isDragging) {
 			float pixels = camera.pixelHeight;
 			float units = camera.orthographicSize * 2f;
 			float unitsPerPixel = units / pixels;
@@ -40,7 +40,7 @@ public class CameraController : MouseDrag {
 
 	public override void OnDraggingEnd(int mouseButton) {
 		// implement this for end of dragging
-		if (mouseButton == 2) {
+		if (mouseButton == 1 || mouseButton == 2) {
 			isDragging = false;
 			//Debug.Log("MouseButton" + mouseButton + " END Drag");
 		}
@@ -88,19 +88,25 @@ public class CameraController : MouseDrag {
 		if (Input.GetAxis("Mouse ScrollWheel") < 0) {
 			if (GraphPlotter.instance.IsMouseInside()) {
 				GraphPlotter.instance.ZoomStepOut();
-			} else {
-				camera.orthographicSize *= 1 + cameraZoomStep;
+			} else if(camera.orthographicSize < 300f) {
+				Vector2 targetPostition = camera.ScreenToWorldPoint(Input.mousePosition);
+				Vector2 cameraToTarget = targetPostition - (Vector2)camera.transform.position;
+				float factor = 1f + cameraZoomStep;
+				camera.orthographicSize *= factor;
+				camera.transform.position += (Vector3)(cameraToTarget * (1f - factor));
 			}
 		}
 		if (Input.GetAxis("Mouse ScrollWheel") > 0) {
 			if (GraphPlotter.instance.IsMouseInside()) {
 				GraphPlotter.instance.ZoomStepIn();
-			} else {
-				camera.orthographicSize *= 1 / (1 + cameraZoomStep);
+			} else if (camera.orthographicSize > 1f) {
+				Vector2 targetPostition = camera.ScreenToWorldPoint(Input.mousePosition);
+				Vector2 cameraToTarget = targetPostition - (Vector2)camera.transform.position;
+				float factor = 1f / (1f + cameraZoomStep);
+				camera.orthographicSize *= factor;
+				camera.transform.position += (Vector3)(cameraToTarget * (1f - factor));
 			}
 		}
-
-		camera.orthographicSize = Mathf.Clamp(camera.orthographicSize, 1f, 300f);
 	}
 
 	private void UpdateSampleTool() {

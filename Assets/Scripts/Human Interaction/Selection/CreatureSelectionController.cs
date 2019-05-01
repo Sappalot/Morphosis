@@ -6,6 +6,12 @@ public class CreatureSelectionController : MouseDrag {
 	public new Camera camera;
 	public Transform rectangle;
 
+	public bool IsIdle {
+		get {
+			return selectingMode == SelectingMode.idle;
+		}
+	}
+
 	private Vector3 dragVector = new Vector3();
 	private Vector3 downPositionMouse; //World space
 
@@ -20,7 +26,7 @@ public class CreatureSelectionController : MouseDrag {
 	private List<Creature> alreadySelected;
 
 	public override void OnDraggingStart(int mouseButton) {
-		if (mouseButton == 0 && !EventSystem.current.IsPointerOverGameObject() && MouseAction.instance.actionState == MouseActionStateEnum.free && !GraphPlotter.instance.IsMouseInside()) {
+		if (mouseButton == 0 && !EventSystem.current.IsPointerOverGameObject() && MouseAction.instance.actionState == MouseActionStateEnum.free && !GraphPlotter.instance.IsMouseInside() && !AlternativeToolModePanel.instance.isOn) {
 			downPositionMouse = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 
 			if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift)) {

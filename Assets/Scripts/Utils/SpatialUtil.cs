@@ -82,7 +82,7 @@ static class SpatialUtil {
 
 	public static bool IsInsideFrustum(Vector2 position) {
 		Vector3 viewportPosition = Morphosis.instance.camera.WorldToViewportPoint(position);
-		return viewportPosition.x > 0f && viewportPosition.x < 1f && viewportPosition.y > 0f && viewportPosition.y < 1f;
+		return viewportPosition.x > 0 && viewportPosition.x < 1f && viewportPosition.y > 0f && viewportPosition.y < 1f;
 	}
 
 	private static bool IsDetailedGraphicsDistance() {

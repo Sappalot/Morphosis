@@ -8,7 +8,7 @@ public class LMBInWorld : MonoBehaviour {
 
 	//Bevare of LMB Mouse Drag in selectionController
 	private void OnMouseDown() {
-		if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject()) {
+		if (Input.GetKey("mouse 0") && !EventSystem.current.IsPointerOverGameObject() && !AlternativeToolModePanel.instance.isOn) {
 			if (MouseAction.instance.actionState == MouseActionStateEnum.free) { 
 				if (Input.GetKey(KeyCode.LeftShift)) {
 					return;

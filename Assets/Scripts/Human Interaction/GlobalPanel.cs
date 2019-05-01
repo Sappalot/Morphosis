@@ -178,26 +178,26 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	public void OnRestartClicked() {
-		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+		if (Morphosis.isInterferredByOtheActions()) { return; }
 
 		Freezer.instance.Save();
 		Morphosis.instance.Restart();
 	}
 
 	public void OnLoadClicked() {
-		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+		if (Morphosis.isInterferredByOtheActions()) { return; }
 
 		Morphosis.instance.LoadWorld("save.txt");
 	}
 
 	public void OnSaveClicked() {
-		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+		if (Morphosis.isInterferredByOtheActions()) { return; }
 
 		World.instance.Save();
 	}
 
 	public void OnPausePhysicsClicked() {
-		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+		if (Morphosis.isInterferredByOtheActions()) { return; }
 
 		SelectPausePhysics();
 	}

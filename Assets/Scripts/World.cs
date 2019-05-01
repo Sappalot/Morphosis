@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class World : MonoSingleton<World> {
 	public Life life;
 	public Terrain terrain;
+	public CreatureSelectionController creatureSelectionController;
 	
 	public History history = new History();
 	[HideInInspector]
@@ -168,7 +169,7 @@ public class World : MonoSingleton<World> {
 		//}
 		
 		CreatureEditModePanel.instance.Restart();
-		RMBToolModePanel.instance.Restart();
+		AlternativeToolModePanel.instance.Restart();
 		TerrainPerimeter.instance.Restart();
 
 		history.Clear();

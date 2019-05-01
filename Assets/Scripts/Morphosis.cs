@@ -69,4 +69,8 @@ public class Morphosis : MonoSingleton<Morphosis> {
 		World.instance.Load(filename);
 		instance.MoveFreezerCreatureIdsToFreeRange();
 	}
+
+	public static bool isInterferredByOtheActions() {
+		return MouseAction.instance.actionState != MouseActionStateEnum.free || AlternativeToolModePanel.instance.isOn || !World.instance.creatureSelectionController.IsIdle;
+	}
 }

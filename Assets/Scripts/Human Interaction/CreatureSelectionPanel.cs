@@ -306,7 +306,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	// Select
 	public void OnSelectMotherClicked() {
-		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+		if (isInterferredBySomeAction) { return; }
 
 		if (hasSoloSelected && soloSelected.HasMotherAlive() && soloSelected.GetMotherAlive() != null) {
 			Select(soloSelected.GetMotherAlive());
@@ -314,12 +314,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void OnSelectFatherClicked() {
-		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+		if (isInterferredBySomeAction) { return; }
 		// TODO
 	}
 
 	public void OnSelectChildrenClicked() {
-		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
+		if (isInterferredBySomeAction) { return; }
 
 		if (hasSoloSelected && soloSelected.HasChildrenAlive()) {
 			List<Creature> select = new List<Creature>();
@@ -333,7 +333,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	// Delete
 	public void OnDeleteClicked() {
-		if (MouseAction.instance.actionState != MouseActionStateEnum.free) {
+		if (isInterferredBySomeAction) {
 			return;
 		}
 
@@ -392,7 +392,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	private Dictionary<Creature, Vector2> moveOffset = new Dictionary<Creature, Vector2>();
 	public void OnMoveClicked() {
-		if (!hasSelection || MouseAction.instance.actionState != MouseActionStateEnum.free) {
+		if (!hasSelection || isInterferredBySomeAction) {
 			return;
 		}
 		DetatchAllUnselectedRelatives();
@@ -409,7 +409,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	// Rotate
 	public void OnRotateClicked() {
-		if (!hasSelection || MouseAction.instance.actionState != MouseActionStateEnum.free) {
+		if (!hasSelection || isInterferredBySomeAction) {
 			return;
 		}
 		
@@ -457,7 +457,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	// Combine
 	public void OnCombineClicked() {
-		if (!hasSelection || selectionCount == 1 || MouseAction.instance.actionState != MouseActionStateEnum.free) {
+		if (!hasSelection || selectionCount == 1 || isInterferredBySomeAction) {
 			return;
 		}
 		Combine();
@@ -486,10 +486,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	// Copy
+	private int creaturesInOriginalSelectionCount;
 	public void OnCopyClicked() {
-		if (!hasSelection || MouseAction.instance.actionState != MouseActionStateEnum.free) {
+		if (!hasSelection || isInterferredBySomeAction) {
 			return;
 		}
+		creaturesInOriginalSelectionCount = selection.Count;
 		TemperatureState temperatureState = GetTemperatureState(selection);
 		if (hasDefrostedSelection) {
 			AddDefrostedCoppiesToMoveCreature(selection);
@@ -626,9 +628,17 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		moveOffset.Clear();
 
 		moveCreatures.Clear();
-		AddDefrostedCoppiesToMoveCreature(continueMoveCopy);
-		StartMoveCreatures();
-		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
+
+		if (creaturesInOriginalSelectionCount == selectionCount) {
+			AddDefrostedCoppiesToMoveCreature(continueMoveCopy);
+			StartMoveCreatures();
+			MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
+		} else {
+			// We have placed a capy and now all our originals are dead (we were at phenotype->play mode)
+			MouseAction.instance.actionState = MouseActionStateEnum.free;
+			Audio.instance.ActionAbort(1f);
+		}
+
 
 		return continueMoveCopy;
 	}
@@ -645,7 +655,13 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		moveCreatures.Clear();
 
-		Combine();
+		if (hasSelection) {
+			Combine();
+		} else {
+			// We have placed a mergeling and now all our originals are dead (we were at phenotype->play mode)
+			MouseAction.instance.actionState = MouseActionStateEnum.free;
+			Audio.instance.ActionAbort(1f);
+		}
 
 		return merglings;
 	}
@@ -779,6 +795,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				GenotypePanel.instance.MakeDirty();
 			}
 
+			// Abort move / rotate
 			if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures) {
 				Audio.instance.ActionAbort(1f);
 
@@ -972,5 +989,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		bool show = hasSelection && MouseAction.instance.actionState == MouseActionStateEnum.free;
 		yield return 0;
 		showHideRoot.SetActive(show);
+	}
+
+	private bool isInterferredBySomeAction {
+		get {
+			return MouseAction.instance.actionState != MouseActionStateEnum.free || !World.instance.creatureSelectionController.IsIdle || AlternativeToolModePanel.instance.isOn;
+		}
 	}
 }

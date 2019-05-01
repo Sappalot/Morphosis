@@ -90,19 +90,32 @@ public class Portal : MonoBehaviour {
 			}
 		}
 
-
 		if (canTeleport.Count > 0) {
 			foreach (Creature traveler in canTeleport) {
-				bool hasAudio; float audioVolume;
-				SpatialUtil.GetFxGrade(traveler.phenotype.originCell.position, false, out hasAudio, out audioVolume);
-				if (hasAudio) {
-					Audio.instance.CreatureTeleport(audioVolume);
-				}
+				PlayTeleportEffect(traveler);
 				traveler.phenotype.Move(departureToArrival);
-				if (hasAudio) {
-					Audio.instance.CreatureTeleport(audioVolume);
-				}
+				PlayTeleportEffect(traveler);
 			}
+		}
+	}
+
+	private void PlayTeleportEffect(Creature traveler) {
+		bool hasAudio; float audioVolume; bool hasParticles;
+		SpatialUtil.GetFxGrade(traveler.phenotype.originCell.position, false, out hasAudio, out audioVolume, out hasParticles);
+		if (hasAudio) {
+			Audio.instance.CreatureTeleport(audioVolume);
+		}
+		if (hasParticles) {
+			PlayTeleportParticles(traveler.phenotype);
+		}
+	}
+
+	private void PlayTeleportParticles(Phenotype phenotype) {
+		foreach (Cell cell in phenotype.cellList) {
+			ParticlesCellTeleport teleport = ParticlePool.instance.Borrow(ParticleTypeEnum.cellTeleport) as ParticlesCellTeleport;
+			teleport.transform.position = cell.position;
+			teleport.Prime(Color.white);
+			teleport.transform.parent = Morphosis.instance.transform;
 		}
 	}
 

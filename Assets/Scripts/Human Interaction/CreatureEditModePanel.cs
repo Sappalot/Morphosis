@@ -25,7 +25,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	}
 
 	public void OnClickedPhenotypeEditMode() {
-		if (MouseAction.instance.actionState != MouseActionStateEnum.free) {
+		if (Morphosis.isInterferredByOtheActions()) {
 			return;
 		}
 
@@ -35,7 +35,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	}
 
 	public void OnClickedGenotypeEditMode() {
-		if (MouseAction.instance.actionState != MouseActionStateEnum.free) {
+		if (Morphosis.isInterferredByOtheActions()) {
 			return;
 		}
 

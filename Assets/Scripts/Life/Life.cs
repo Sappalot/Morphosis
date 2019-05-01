@@ -198,15 +198,15 @@ public class Life : MonoBehaviour {
 	}
 
 	//This is the only way, where the world creature GO is deleted
-	public void KillCreatureSafe(Creature creature, bool playEffects) {
+	public void KillCreatureSafe(Creature creature, bool tryPlayFX) {
 		Vector2 position = creature.GetOriginPosition(PhenoGenoEnum.Phenotype);
 
-		creature.DetatchFromMother(false, playEffects);
+		creature.DetatchFromMother(false, tryPlayFX);
 		foreach (Creature child in creature.GetChildrenAlive()) {
-			child.DetatchFromMother(false, playEffects);
+			child.DetatchFromMother(false, tryPlayFX);
 		}
 
-		creature.KillAllCells(true); // for the fx :)
+		creature.KillAllCells(tryPlayFX); // for the fx :)
 		creatureDeadCount++;
 
 		//TODO: Return root cell to pool
@@ -230,13 +230,15 @@ public class Life : MonoBehaviour {
 
 		creatureDeathsPerSecond.IncreaseCounter();
 
-		bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
-		SpatialUtil.GetFxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
-		if (hasAudio) {
-			Audio.instance.CreatureDeath(audioVolume);
-		}
-		if (hasMarker) {
-			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDeath, position, 0f, SpatialUtil.GetMarkerScale());
+		if (tryPlayFX) {
+			bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
+			SpatialUtil.GetFxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
+			if (hasAudio) {
+				Audio.instance.CreatureDeath(audioVolume);
+			}
+			if (hasMarker) {
+				EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDeath, position, 0f, SpatialUtil.GetMarkerScale());
+			}
 		}
 	}
 
