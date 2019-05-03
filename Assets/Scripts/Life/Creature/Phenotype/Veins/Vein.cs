@@ -58,9 +58,9 @@ public class Vein : MonoBehaviour {
 		return cellType == CellTypeEnum.Vein;
 	}
 
-	public void UpdateGraphics(bool thisCreatureIsSoloSelected) {
+	public void UpdateGraphics(bool show) {
 		//TODO: If draw wings && inside frustum
-		if (thisCreatureIsSoloSelected && PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+		if (show) {
 			if (frontCell != null && backCell != null) {
 				mainArrow.SetActive(true);
 				//draw main
@@ -91,8 +91,6 @@ public class Vein : MonoBehaviour {
 					mainArrow.GetComponent<LineRenderer>().startWidth = width;
 					mainArrow.GetComponent<LineRenderer>().endWidth = Mathf.Max(0f, width - intencity); ;
 				}
-
-
 			}
 		} else {
 			mainArrow.SetActive(false);
@@ -140,5 +138,7 @@ public class Vein : MonoBehaviour {
 		attachmentFront = null;
 		attachmentBack = null;
 		isPlacentaVein = false;
+
+		mainArrow.gameObject.SetActive(false);
 	}
 }

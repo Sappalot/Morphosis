@@ -439,9 +439,9 @@ public class Genotype : MonoBehaviour {
 			}
 		}
 	}
-	public void UpdateGraphics() {
+	public void UpdateGraphics(bool isSelected) {
 		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].UpdateGraphics();
+			geneCellList[index].UpdateGraphics(isSelected);
 			geneCellList[index].UpdateFlipSide();
 		}
 	}

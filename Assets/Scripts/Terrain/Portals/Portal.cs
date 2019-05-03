@@ -105,7 +105,12 @@ public class Portal : MonoBehaviour {
 		if (hasAudio) {
 			Audio.instance.CreatureTeleport(audioVolume);
 		}
-		if (hasParticles) {
+		if (hasParticles ||
+			(GlobalPanel.instance.graphicsEffectsToggle.isOn &&
+			CreatureSelectionPanel.instance.hasSoloSelected && PhenotypePanel.instance.followToggle.isOn && traveler == CreatureSelectionPanel.instance.soloSelected &&
+			SpatialUtil.IsDetailedGraphicsDistance() &&
+			CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.isRunPhysics)) {
+
 			PlayTeleportParticles(traveler.phenotype);
 		}
 	}

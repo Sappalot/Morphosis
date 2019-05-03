@@ -70,11 +70,17 @@ public class AlternativeToolModePanel : MonoSingleton<AlternativeToolModePanel> 
 			if (!isOn) {
 				showHide.SetActive(true);
 				isOn = true;
+				CreatureSelectionPanel.instance.MakeDirty();
+				PhenotypePanel.instance.MakeDirty();
+				GenotypePanel.instance.MakeDirty();
 			}
 		} else {
 			if (isOn) {
 				showHide.SetActive(false);
 				isOn = false;
+				CreatureSelectionPanel.instance.MakeDirty();
+				PhenotypePanel.instance.MakeDirty();
+				GenotypePanel.instance.MakeDirty();
 			}
 		}
 		if (!isFreeToUse()) {

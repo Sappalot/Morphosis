@@ -20,6 +20,12 @@ public class AlternativeToolController : MouseDrag {
 					spring.GetComponent<LineRenderer>().SetPosition(1, downPositionMouse);
 					spring.GetComponent<LineRenderer>().SetPosition(0, spring.connectedBody.transform.position);
 					spring.GetComponent<LineRenderer>().enabled = true;
+
+					// stop following creature if dragging with spring in the creature we follow
+					if (cell.creature == CreatureSelectionPanel.instance.soloSelected && PhenotypePanel.instance.followToggle.isOn) {
+						PhenotypePanel.instance.followToggle.isOn = false;
+					}
+					
 				}
 			} else if (AlternativeToolModePanel.instance.toolMode == AlternativeToolModePanel.RMBToolMode.spawnEmbryo && TerrainPerimeter.instance.IsInside(camera.ScreenToWorldPoint(Input.mousePosition))) {
 				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
@@ -46,10 +52,14 @@ public class AlternativeToolController : MouseDrag {
 				spring.GetComponent<LineRenderer>().SetPosition(0, spring.connectedBody.transform.position);
 			}
 
-			if (!AlternativeToolModePanel.instance.isOn) {
+
+
+			if (!AlternativeToolModePanel.instance.isOn || (spring.connectedBody != null && spring.connectedBody.GetComponent<Cell>().energy <= 0f)) {
 				spring.connectedBody = null;
 				spring.GetComponent<LineRenderer>().enabled = false;
 			}
+
+
 		}
 
 	}

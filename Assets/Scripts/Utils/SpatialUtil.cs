@@ -85,7 +85,7 @@ static class SpatialUtil {
 		return viewportPosition.x > 0 && viewportPosition.x < 1f && viewportPosition.y > 0f && viewportPosition.y < 1f;
 	}
 
-	private static bool IsDetailedGraphicsDistance() {
+	public static bool IsDetailedGraphicsDistance() {
 		return Morphosis.instance.camera.orthographicSize < GlobalSettings.instance.detailedGraphicsOrthoLimit;
 	}
 

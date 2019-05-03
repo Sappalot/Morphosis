@@ -680,9 +680,23 @@ public class Creature : MonoBehaviour {
 	}
 
 	// Update
+	public bool isInsideFrustum { get; private set; }
+
 	public void UpdateGraphics() {
 		if (SpatialUtil.IsInsideFrustum(phenotype.originCell.position)) {
-			phenotype.UpdateGraphics(this);
+			isInsideFrustum = true;
+			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+				phenotype.UpdateGraphics(this);
+			} else {
+				genotype.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(this));
+			}
+		} else if (isInsideFrustum){
+			isInsideFrustum = false;
+			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+				phenotype.UpdateGraphics(this);
+			} else {
+				genotype.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(this));
+			}
 		}
 
 		if (isDirtyGraphics) {
@@ -709,7 +723,6 @@ public class Creature : MonoBehaviour {
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
 					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
 				}
-				genotype.UpdateGraphics();
 			}
 			isDirtyGraphics = false;
 		}

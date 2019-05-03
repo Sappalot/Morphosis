@@ -86,8 +86,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 	private IEnumerator UpdateIsVisible() {
 		yield return 0;
-		genePanel.SetActive((CreatureSelectionPanel.instance.hasSoloSelected && MouseAction.instance.actionState == MouseActionStateEnum.free) || MouseAction.instance.actionState == MouseActionStateEnum.selectGene);
-		lowerPanel.gameObject.SetActive((CreatureSelectionPanel.instance.hasSelection && MouseAction.instance.actionState == MouseActionStateEnum.free) || MouseAction.instance.actionState == MouseActionStateEnum.selectGene);
+		genePanel.SetActive((CreatureSelectionPanel.instance.hasSoloSelected && MouseAction.instance.actionState == MouseActionStateEnum.free && !AlternativeToolModePanel.instance.isOn) || MouseAction.instance.actionState == MouseActionStateEnum.selectGene);
+		lowerPanel.gameObject.SetActive((CreatureSelectionPanel.instance.hasSelection && MouseAction.instance.actionState == MouseActionStateEnum.free && !AlternativeToolModePanel.instance.isOn) || MouseAction.instance.actionState == MouseActionStateEnum.selectGene);
 	}
 
 	private void Update() {

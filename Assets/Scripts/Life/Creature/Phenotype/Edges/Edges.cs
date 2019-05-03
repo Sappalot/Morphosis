@@ -57,8 +57,7 @@ public class Edges : MonoBehaviour {
 	}
 	private Edge tempEdge;
 
-	public void UpdateGraphics(bool thisCreatureIsSoloSelected) {
-
+	public void UpdateGraphics(bool show) {
 		for (int index = 0; index < edgeList.Count; index++) {
 			//edges
 			Edge edge = edgeList[index];
@@ -67,7 +66,7 @@ public class Edges : MonoBehaviour {
 			}
 
 			//Periphery
-			if (GlobalPanel.instance.graphicsPeripheryToggle.isOn && !(PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && thisCreatureIsSoloSelected) && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+			if (show) {
 				peripheryLoop.enabled = true;
 				if (index < peripheryLoop.positionCount) {
 					if (edgeList[index].parentCell != null) {
@@ -78,8 +77,6 @@ public class Edges : MonoBehaviour {
 				peripheryLoop.enabled = false;
 			}
 		}
-
-
 	} 
 
 	public void ShuffleEdgeUpdateOrder() {

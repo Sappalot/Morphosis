@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public abstract class Cell : MonoBehaviour {
 	
 	//------- Inspector
-	public SpriteRenderer cellSelectedSprite; //transparent
+	public SpriteRenderer cellSelected; //transparent
 	public SpriteRenderer triangleSprite;
 	public SpriteRenderer openCircleSprite; //cell type colour
 	public SpriteRenderer filledCircleSprite; //cell type colour
@@ -552,7 +552,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void ShowCellSelected(bool on) {
-		cellSelectedSprite.enabled = on;
+		cellSelected.enabled = on;
 	}
 
 	private bool isOnTop = false;
@@ -1068,7 +1068,11 @@ public abstract class Cell : MonoBehaviour {
 	// Update
 
 	//TODO: update cell graphics from here
-	public void UpdateGraphics() {
+	public void UpdateGraphics(bool mayBeSelected) {
+		if (mayBeSelected) {
+			cellSelected.transform.Rotate(0f, 0f, -Time.unscaledDeltaTime * 90f);
+		}
+
 		openCircleSprite.color = GetColor();
 
 		if (phenoGeno == PhenoGenoEnum.Phenotype) {
@@ -1084,8 +1088,11 @@ public abstract class Cell : MonoBehaviour {
 					if (IsIdle()) {
 						filledCircleSprite.color = Color.black;
 					} else {
-						filledCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
-						openCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
+						if (GetCellType() != CellTypeEnum.Jaw) {
+							filledCircleSprite.color = openCircleSprite.color = Color.Lerp(GetColor(PhenoGenoEnum.Phenotype), Color.black, Mathf.Min(0.5f, predatorCount));
+						} else {
+							filledCircleSprite.color = openCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
+						}
 					}
 				}
 			}

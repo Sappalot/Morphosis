@@ -1017,7 +1017,7 @@ public class Phenotype : MonoBehaviour {
 		return cell;
 	}
 
-	private List<Cell> cellsToReActivate = new List<Cell>();
+	//private List<Cell> cellsToReActivate = new List<Cell>();
 	private Cell InstantiateCell(CellTypeEnum type, Vector2i mapPosition, Creature creature) {
 		Cell cell = null;
 
@@ -1266,32 +1266,23 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	// Update
-
 	public void UpdateGraphics(Creature creature) {
 		//TODO: Update cells flip triangles here
+		//Rotate cells
 
-		edges.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(creature));
-		veins.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(creature));
+		edges.UpdateGraphics(GlobalPanel.instance.graphicsPeripheryToggle.isOn && creature.isInsideFrustum && !(PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureSelectionPanel.instance.IsSelected(creature)) && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype);
+		veins.UpdateGraphics(PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureSelectionPanel.instance.IsSelected(creature) && creature.isInsideFrustum && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype);
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(creature));
+		}
 
+		// Warning:  So we are more restrictive with these updates now, make sure colliders are updated as they should
 		if (isDirty) {
-			if (cellsToReActivate.Count > 0) {
-				foreach (Cell c in cellsToReActivate) {
-					c.gameObject.SetActive(true);
-				}
-				cellsToReActivate.Clear();
-			}
-
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature Phenotype");
 
 			SetCollider(hasCollider);
 			isDirty = false;
-		}
-
-		//TODO Check if dirty
-		//Todo: only if creature inside frustum && should be shown
-		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdateGraphics();
 		}
 	}
 

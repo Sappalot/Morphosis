@@ -171,5 +171,8 @@ public class Edge : MonoBehaviour {
 		velocity = Vector3.zero;
 
 		forceArrow.SetActive(false);
+		mainArrow.SetActive(false);
+		normalArrow.SetActive(false);
+		velocityArrow.SetActive(false);
 	}
 }
