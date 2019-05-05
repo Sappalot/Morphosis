@@ -14,7 +14,7 @@ public abstract class Cell : MonoBehaviour {
 	public SpriteRenderer creatureSelectedSprite;
 	public SpriteRenderer shadowSprite;
 
-	public Transform triangleTransform;
+	public Transform rotatedRoot; // All under this root will be rotated according to heading 0 = east, 90 = north
 
 	public SpringJoint2D northSpring;
 	public SpringJoint2D southEastSpring;
@@ -159,6 +159,31 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// ^ Text ^
+
+	// Buds...
+	public CellBuds buds;
+
+	// Only graphics, update only when cells has been built, removed or detatched
+	public void UpdateBuds() {
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+			for (int worldCardinalIndex = 0; worldCardinalIndex < 6; worldCardinalIndex++) {
+				int localCardinalIndex = AngleUtil.CardinalIndexRawToSafe(bindCardinalIndex + worldCardinalIndex - 1);
+				Cell budCell = creature.genotype.GetCellAtGridPosition(CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
+				bool show = !HasNeighbourCell(localCardinalIndex) && budCell != null;
+				buds.SetEnabled(worldCardinalIndex, show);
+				if (show) {
+					buds.SetColor(worldCardinalIndex, budCell.GetCellType() != GetCellType() ? budCell.GetColor() : Color.Lerp(budCell.GetColor(), Color.black, 0.25f));
+				}
+			}
+		} else {
+			for (int index = 0; index < 6; index++) {
+				buds.SetEnabled(index, false);
+			}
+		}
+	}
+
+	// ^ Buds ^
+
 
 	// bleed particles...
 	private List<ParticlesCellBleed> currentParticlesBleed = new List<ParticlesCellBleed>();
@@ -581,7 +606,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void SetTringleHeadingAngle(float angle) {
-		triangleTransform.rotation = Quaternion.Euler(0, 0, angle);
+		rotatedRoot.rotation = Quaternion.Euler(0, 0, angle);
 	}
 
 	public void SetTringleFlipSide(FlipSideEnum flip) {
@@ -641,6 +666,9 @@ public abstract class Cell : MonoBehaviour {
 		cellNeighbourDictionary.Add(5, southEastNeighbour);
 
 		UpdateOutline(false);
+		if (buds != null) {
+			buds.Init();
+		}
 	}
 
 	public void Setup(PhenoGenoEnum phenoGeno) {
@@ -877,22 +905,33 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	////  Updates world space rotation (heading) derived from neighbour position relative to this
-	public void UpdateRotation() {
-		if (hasNeighbour) { // !(mapPosition == new Vector2i() && neighbourCount == 0)
-			UpdateNeighbourAngles();
+	public void UpdateHeading() {
+		//Need neighbour vectors to be updated
+
+		if (hasNeighbour) {
+			UpdateNeighbourAngles(); // These need to be updated all att once, dont calculate them inline, when calculating angleDiffFromBindpose
 
 			float angleDiffFromBindpose = 0f;
-			for (int index = 0; index < 6; index++) {
-				if (HasNeighbourCell(index)) {
-					angleDiffFromBindpose = AngleUtil.GetAngleDifference(cellNeighbourDictionary[index].bindAngle, cellNeighbourDictionary[index].angle);
-					break;
+
+			//check cell parent first
+			int parentCardinalIndex = AngleUtil.CardinalIndexRawToSafe(bindCardinalIndex + 3);
+			if (HasNeighbourCell(parentCardinalIndex)) {
+				angleDiffFromBindpose = AngleUtil.GetAngleDifference(cellNeighbourDictionary[parentCardinalIndex].bindAngle, cellNeighbourDictionary[parentCardinalIndex].angle);
+			} else {
+				// We have some flickering +180 degrees issue, mabeee only when using an average of several angles
+				for (int index = 0; index < 6; index++) {
+					if (HasNeighbourCell(index)) {
+						angleDiffFromBindpose += AngleUtil.GetAngleDifference(cellNeighbourDictionary[index].bindAngle, cellNeighbourDictionary[index].angle);
+						break;
+					}
 				}
 			}
+
 			heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex) + angleDiffFromBindpose;
 		}
 
 		//Debug.Log("Update arrow");
-		triangleTransform.localRotation = Quaternion.Euler(0f, 0f, heading);
+		rotatedRoot.localRotation = Quaternion.Euler(0f, 0f, heading);
 	}
 
 	public float angleDiffFromBindpose {
@@ -907,8 +946,10 @@ public abstract class Cell : MonoBehaviour {
 
 	private void UpdateNeighbourAngles() {
 		for (int index = 0; index < 6; index++) {
-			if (HasNeighbourCell(index)) {
+			if (HasNeighbourCell(index)/* && GetNeighbour(index).isAngleDirty*/) {
 				GetNeighbour(index).angle = FindAngle(GetNeighbour(index).coreToThis);
+
+				//Update other creatures neighbour (that is me) since we have the angle
 			}
 		}
 	}
@@ -1069,12 +1110,16 @@ public abstract class Cell : MonoBehaviour {
 
 	//TODO: update cell graphics from here
 	public void UpdateGraphics(bool mayBeSelected) {
+		// Selector spin
 		if (mayBeSelected) {
 			cellSelected.transform.Rotate(0f, 0f, -Time.unscaledDeltaTime * 90f);
 		}
 
+
+
 		openCircleSprite.color = GetColor();
 
+		// Main 2 Circles
 		if (phenoGeno == PhenoGenoEnum.Phenotype) {
 			//SetLabelEnabled(false);
 
@@ -1247,22 +1292,29 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public void UpdatePhysics() {
+	public void UpdateTwistAndTurn() {
 		//Optimize further
-		transform.rotation = Quaternion.identity; //dont turn the cells
+		transform.rotation = Quaternion.identity; // Cell should never be rotated. Rotate rotated node in cell instead! We need this one so we reset the cell rotation after being rotated via rotate creature
 
 		UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
 		if (groups > 1) {
 			TurnHingeNeighboursInPlace(); //optimize further
 		}
-		UpdateRotation(); //costy, update only if cell has direction and is in frustum
+		UpdateHeading(); //costy, update only if cell has direction and is in frustum
 		UpdateFlipSide();
 
 		didUpdateFunctionThisFrame--; //  Just for visuals
 		didUpdateEnergyThisFrame--; //  Just for visuals
 	}
-
 	// ^ Update ^
+
+	public void MakeAllNeighbourAnglesDirty() {
+		for (int index = 0; index < 6; index++) {
+			if (HasNeighbourCell(index)) {
+				cellNeighbourDictionary[index].isAngleDirty = true;
+			}
+		}
+	}
 
 	virtual public bool IsIdle() {
 		return false;

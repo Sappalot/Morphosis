@@ -124,7 +124,9 @@ public class Genotype : MonoBehaviour {
 		return null;
 	}
 
-
+	public Cell GetCellAtGridPosition(Vector2i position) {
+		return geneCellMap.GetCell(position);
+	}
 
 	//Hack
 	public Gene[] GetMutatedClone(float strength) {
@@ -443,6 +445,7 @@ public class Genotype : MonoBehaviour {
 		for (int index = 0; index < geneCellList.Count; index++) {
 			geneCellList[index].UpdateGraphics(isSelected);
 			geneCellList[index].UpdateFlipSide();
+			geneCellList[index].UpdateBuds();
 		}
 	}
 

@@ -46,7 +46,6 @@ static class SpatialUtil {
 			return;
 		}
 
-
 		if (GlobalPanel.instance.soundCreatures.isOn && (isLoud ? IsInsideLoudAudioVolume(position) : IsInsideQuietAudioVolume(position))) {
 			hasAudio = true;
 			audioVolume = GetAudioVolume(isLoud);

@@ -296,7 +296,7 @@ public class Phenotype : MonoBehaviour {
 
 			//EvoFixedUpdate(creature, 0f); //Do we really need to do this here?
 			originCell.heading = spawnHeading;
-			originCell.triangleTransform.rotation = Quaternion.Euler(0f, 0f, originCell.heading); // Just updating graphics
+			originCell.rotatedRoot.rotation = Quaternion.Euler(0f, 0f, originCell.heading); // Just updating graphics
 			growCellCount++;
 		}
 		genotype.geneCellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
@@ -392,7 +392,7 @@ public class Phenotype : MonoBehaviour {
 				Cell newCell = SpawnCell(creature, geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, spawnPosition, false, newCellEnergy);
 				UpdateNeighbourReferencesIntraBody(); //We need to know our neighbours in order to update vectors correctly 
 				newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
-				newCell.UpdateRotation(); //Rotation is needed in order to place subsequent cells right
+				newCell.UpdateHeading(); //Rotation is needed in order to place subsequent cells right
 				newCell.UpdateFlipSide(); // Just graphics
 				if (newCell.GetCellType() == CellTypeEnum.Muscle) {
 					((MuscleCell)newCell).UpdateMasterAxon();
@@ -419,9 +419,14 @@ public class Phenotype : MonoBehaviour {
 			}
 
 			PhenotypePanel.instance.MakeDirty();
+			MakeDirty();
 			connectionsDiffersFromCells = true;
 		}
 		return growCellCount;
+	}
+
+	public void MakeDirty() {
+		isDirty = true;
 	}
 
 	private bool IsChildOriginLocation(Creature creature, Vector2i mapPosition) {
@@ -1095,7 +1100,7 @@ public class Phenotype : MonoBehaviour {
 
 		for (int index = 0; index < cellList.Count; index++) {
 			if (cellList[index].isOrigin) {
-				cellList[index].ShowTriangle(true); // Debug
+				cellList[index].ShowTriangle(true);
 				if (!creature.HasMotherDeadOrAlive()) {
 					if (!creature.HasChildrenDeadOrAlive()) {
 						// No mother, No children
@@ -1276,6 +1281,11 @@ public class Phenotype : MonoBehaviour {
 
 		// Warning:  So we are more restrictive with these updates now, make sure colliders are updated as they should
 		if (isDirty) {
+			// Buds
+			for (int index = 0; index < cellList.Count; index++) {
+				cellList[index].UpdateBuds();
+			}
+
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature Phenotype");
 
@@ -1377,9 +1387,7 @@ public class Phenotype : MonoBehaviour {
 			edges.UpdatePhysics(velocity, creature);
 		}
 
-		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdatePhysics(); //rotation
-		}
+		UpdateRotation();
 
 		if (!IsSliding(worldTick)) {
 			originCell.UpdatePulse(); // only origin
@@ -1430,7 +1438,11 @@ public class Phenotype : MonoBehaviour {
 
 	public void UpdateRotation() {
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdatePhysics();
+			cellList[index].MakeAllNeighbourAnglesDirty();
+		}
+
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].UpdateTwistAndTurn();
 		}
 	}
 

@@ -172,7 +172,7 @@ public class CellMap {
 		return record;
 	}
 
-	public Vector2i ToGridPositionTODO(Vector3 position) {
+	public Vector2i ToGridPositionTODO(Vector2 position) {
 		// TODO
 		return new Vector2i();
 	}
