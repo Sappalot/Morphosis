@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using SerializerFree;
 using SerializerFree.Serializers;
+using System;
+
 public class Morphosis : MonoSingleton<Morphosis> {
 	public IdGenerator idGenerator = new IdGenerator();
 	public new Camera camera;
@@ -18,7 +20,11 @@ public class Morphosis : MonoSingleton<Morphosis> {
 		// Creature id's will be set from file
 		World.instance.Init(); // Just 1 world, lots of work keeping several instances at once
 
-		Restart();
+		MouseAction.instance.actionState = MouseActionStateEnum.loadingFreezer;
+		Restart(() => {
+			Debug.Log("Morfosis ready");
+			MouseAction.instance.actionState = MouseActionStateEnum.free;
+		});
 	}
 
 	public Cell GetCellAtPosition(Vector2 pickPosition) {
@@ -57,17 +63,25 @@ public class Morphosis : MonoSingleton<Morphosis> {
 		idGenerator.RenameToUniqueIds(Freezer.instance.creatures);
 	}
 
-	public void Restart() {
+	public void Restart(Action onDone) {
 		idGenerator.Restart();
-		Freezer.instance.Load();
-		World.instance.Restart();
+		Freezer.instance.Load(() => {
+			World.instance.Restart(() => {
+				onDone();
+			});
+		});
 	}
 
-	public void LoadWorld(string filename) {
+	public void LoadWorld(string filename, Action onDone) {
+		GlobalPanel.instance.SelectPausePhysics();
+
 		Freezer.instance.Save();
-		Restart();
-		World.instance.Load(filename);
-		instance.MoveFreezerCreatureIdsToFreeRange();
+		Restart(() => {
+			World.instance.Load(filename, () => {
+				instance.MoveFreezerCreatureIdsToFreeRange();
+				onDone();
+			});
+		});
 	}
 
 	public static bool isInterferredByOtheActions() {

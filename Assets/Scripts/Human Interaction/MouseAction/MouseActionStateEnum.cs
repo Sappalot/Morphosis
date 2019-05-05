@@ -5,4 +5,9 @@
 	rotateCreatures,
 	copyMoveCreatures,
 	combineMoveCreatures,
+
+	savingWorld,
+	loadingWorld,
+	restartingWorld,
+	loadingFreezer,
 }

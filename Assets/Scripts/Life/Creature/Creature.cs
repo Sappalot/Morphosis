@@ -561,8 +561,8 @@ public class Creature : MonoBehaviour {
 		phenotype.KillCell(cell, true, playEffects, worldTicks);
 	}
 
-	public void KillAllCells(bool effects) {
-		phenotype.KillAllCells(effects);
+	public void KillAllCells(bool tryPlayFx) {
+		phenotype.KillAllCells(tryPlayFx);
 	}
 
 	public void ShowCellSelected(Cell cell, bool on) {

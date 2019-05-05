@@ -37,7 +37,7 @@ public class ShellCell : Cell {
 
 	public int transparancyClass {
 		get {
-			return gene.shellCellTransparancyClass;
+			return gene.shellCellTransparancyClass; 
 		}
 	}
 

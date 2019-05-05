@@ -31,14 +31,31 @@ public class MouseAction : MonoSingleton<MouseAction> {
 			mouseText.text = string.Empty;
 		} else if (m_actionState == MouseActionStateEnum.selectGene) {
 			mouseText.text = "Select Gene Reference";
+			mouseText.color = ColorScheme.instance.mouseTextAction;
 		} else if (m_actionState == MouseActionStateEnum.moveCreatures) {
-			mouseText.text = "Move Creatures"; ;
+			mouseText.text = "Move Creatures";
+			mouseText.color = ColorScheme.instance.mouseTextAction;
 		} else if (m_actionState == MouseActionStateEnum.rotateCreatures) {
-			mouseText.text = "Rotate Creatures"; ;
+			mouseText.text = CreatureSelectionPanel.instance.hasSoloSelected ? "Rotate Creature" : "Rotate Creatures";
+			mouseText.color = ColorScheme.instance.mouseTextAction;
 		} else if (m_actionState == MouseActionStateEnum.copyMoveCreatures) {
 			mouseText.text = "Place Copies";
+			mouseText.color = ColorScheme.instance.mouseTextAction;
 		} else if (m_actionState == MouseActionStateEnum.combineMoveCreatures) {
 			mouseText.text = "Place Mergeling";
+			mouseText.color = ColorScheme.instance.mouseTextAction;
+		} else if (m_actionState == MouseActionStateEnum.savingWorld) {
+			mouseText.text = "Saving World";
+			mouseText.color = ColorScheme.instance.mouseTextBussy;
+		} else if (m_actionState == MouseActionStateEnum.loadingWorld) {
+			mouseText.text = "Loading World";
+			mouseText.color = ColorScheme.instance.mouseTextBussy;
+		} else if (m_actionState == MouseActionStateEnum.restartingWorld) {
+			mouseText.text = "Restarting";
+			mouseText.color = ColorScheme.instance.mouseTextBussy;
+		} else if (m_actionState == MouseActionStateEnum.loadingFreezer) {
+			mouseText.text = "Warming Up";
+			mouseText.color = ColorScheme.instance.mouseTextBussy;
 		}
 	}
 }

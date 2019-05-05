@@ -714,11 +714,11 @@ public class Phenotype : MonoBehaviour {
 
 	//This will make origin inaccessible
 	
-	public void KillAllCells(bool effects) {
+	public void KillAllCells(bool tryPlayFx) {
 		List<Cell> allCells = new List<Cell>(cellList);
 
 		for (int i = 0; i < allCells.Count; i++) {
-			KillCell(allCells[i], false, effects, 0);
+			KillCell(allCells[i], false, tryPlayFx, 0);
 		}
 	}
 
@@ -833,14 +833,12 @@ public class Phenotype : MonoBehaviour {
 	public void SpawnParticlesCellScatter(Vector2 position, Color color) {
 		//ParticlesCellScatter scatter = Instantiate(particlesCellScatterPrefab);
 		ParticlesCellScatter scatter = ParticlePool.instance.Borrow(ParticleTypeEnum.cellScatter) as ParticlesCellScatter;
-		if (scatter == null) {
-			Debug.Log("We have a null scatter");
-		} else {
-			scatter.transform.parent = Morphosis.instance.transform;
-			scatter.transform.position = position;
-			scatter.transform.rotation = Quaternion.identity;
-			scatter.Prime(color);
-		}
+
+		scatter.transform.parent = Morphosis.instance.transform;
+		scatter.transform.position = position;
+		scatter.transform.rotation = Quaternion.identity;
+		scatter.Prime(color);
+
 	}
 
 	public void SpawnCellDetatchBloodEffect(Cell detatchCell) {

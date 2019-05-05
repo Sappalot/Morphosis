@@ -3,12 +3,14 @@ using SerializerFree;
 using SerializerFree.Serializers;
 using System.IO;
 using System.Collections.Generic;
+using System.Collections;
+using System;
 
 public class World : MonoSingleton<World> {
 	public Life life;
 	public Terrain terrain;
 	public CreatureSelectionController creatureSelectionController;
-	
+
 	public History history = new History();
 	[HideInInspector]
 	public ulong worldTicks = 0;
@@ -17,9 +19,11 @@ public class World : MonoSingleton<World> {
 	private bool doSave = false;
 	private List<HistoryEvent> historyEvents = new List<HistoryEvent>();
 
-	public void KillAllCreatures() {
-		life.KillAllCreatures();
-		CreatureSelectionPanel.instance.ClearSelection();
+	public void KillAllCreatures(Action onDone) {
+		life.KillAllCreatures(() => {
+			CreatureSelectionPanel.instance.ClearSelection();
+			onDone();
+		});
 	}
 
 	public new void Init() {
@@ -60,7 +64,7 @@ public class World : MonoSingleton<World> {
 
 	public void UpdatePhysics() {
 		life.UpdateStructure();
-		
+
 		life.UpdatePhysics(worldTicks);
 		if (PhenotypePhysicsPanel.instance.teleport.isOn) {
 			Portals.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
@@ -74,29 +78,29 @@ public class World : MonoSingleton<World> {
 			if (worldTicks == 0) {
 				Record record = new Record();
 				record.SetTagText("Big Bang", Color.white, true);
-				record.Set(RecordEnum.fps,             0);
-				record.Set(RecordEnum.pps,             0);
-				record.Set(RecordEnum.cellCountTotal,  0);
-				record.Set(RecordEnum.cellCountEgg,    0);
+				record.Set(RecordEnum.fps, 0);
+				record.Set(RecordEnum.pps, 0);
+				record.Set(RecordEnum.cellCountTotal, 0);
+				record.Set(RecordEnum.cellCountEgg, 0);
 				record.Set(RecordEnum.cellCountFungal, 0);
-				record.Set(RecordEnum.cellCountJaw,    0);
-				record.Set(RecordEnum.cellCountLeaf,   0);
+				record.Set(RecordEnum.cellCountJaw, 0);
+				record.Set(RecordEnum.cellCountLeaf, 0);
 				record.Set(RecordEnum.cellCountMuscle, 0);
-				record.Set(RecordEnum.cellCountRoot,   0);
-				record.Set(RecordEnum.cellCountShell , 0);
-				record.Set(RecordEnum.cellCountShellWood,    0);
-				record.Set(RecordEnum.cellCountShellMetal,   0);
-				record.Set(RecordEnum.cellCountShellGlass,   0);
+				record.Set(RecordEnum.cellCountRoot, 0);
+				record.Set(RecordEnum.cellCountShell, 0);
+				record.Set(RecordEnum.cellCountShellWood, 0);
+				record.Set(RecordEnum.cellCountShellMetal, 0);
+				record.Set(RecordEnum.cellCountShellGlass, 0);
 				record.Set(RecordEnum.cellCountShellDiamond, 0);
-				record.Set(RecordEnum.cellCountVein,   0);
-				record.Set(RecordEnum.creatureCount,   0);
+				record.Set(RecordEnum.cellCountVein, 0);
+				record.Set(RecordEnum.creatureCount, 0);
 				record.Set(RecordEnum.creatureBirthsPerSecond, 0);
 				record.Set(RecordEnum.creatureDeathsPerSecond, 0);
-				record.Set(RecordEnum.health,              0);
+				record.Set(RecordEnum.health, 0);
 				history.AddRecord(record);
 				GraphPlotter.instance.MakeDirty();
 			} else {
-				if(doSave) {
+				if (doSave) {
 					AddHistoryEvent(new HistoryEvent("Saved", true, Color.white));
 					CreateRecord();
 					DoSave("save.txt");
@@ -131,19 +135,19 @@ public class World : MonoSingleton<World> {
 		record.Set(RecordEnum.fps, GlobalPanel.instance.frameRate);
 		record.Set(RecordEnum.pps, GlobalPanel.instance.physicsUpdatesPerSecond);
 
-		record.Set(RecordEnum.cellCountTotal,  life.cellAliveCount);
-		record.Set(RecordEnum.cellCountEgg,    life.GetCellAliveCount(CellTypeEnum.Egg));
+		record.Set(RecordEnum.cellCountTotal, life.cellAliveCount);
+		record.Set(RecordEnum.cellCountEgg, life.GetCellAliveCount(CellTypeEnum.Egg));
 		record.Set(RecordEnum.cellCountFungal, life.GetCellAliveCount(CellTypeEnum.Fungal));
-		record.Set(RecordEnum.cellCountJaw,    life.GetCellAliveCount(CellTypeEnum.Jaw));
-		record.Set(RecordEnum.cellCountLeaf,   life.GetCellAliveCount(CellTypeEnum.Leaf));
+		record.Set(RecordEnum.cellCountJaw, life.GetCellAliveCount(CellTypeEnum.Jaw));
+		record.Set(RecordEnum.cellCountLeaf, life.GetCellAliveCount(CellTypeEnum.Leaf));
 		record.Set(RecordEnum.cellCountMuscle, life.GetCellAliveCount(CellTypeEnum.Muscle));
-		record.Set(RecordEnum.cellCountRoot,   life.GetCellAliveCount(CellTypeEnum.Root));
-		record.Set(RecordEnum.cellCountShell,  life.GetCellAliveCount(CellTypeEnum.Shell));
+		record.Set(RecordEnum.cellCountRoot, life.GetCellAliveCount(CellTypeEnum.Root));
+		record.Set(RecordEnum.cellCountShell, life.GetCellAliveCount(CellTypeEnum.Shell));
 		record.Set(RecordEnum.cellCountShellWood, life.GetShellCellOfMaterialAliveCount(ShellCell.ShellMaterial.Wood));
 		record.Set(RecordEnum.cellCountShellMetal, life.GetShellCellOfMaterialAliveCount(ShellCell.ShellMaterial.Metal));
 		record.Set(RecordEnum.cellCountShellGlass, life.GetShellCellOfMaterialAliveCount(ShellCell.ShellMaterial.Glass));
 		record.Set(RecordEnum.cellCountShellDiamond, life.GetShellCellOfMaterialAliveCount(ShellCell.ShellMaterial.Diamond));
-		record.Set(RecordEnum.cellCountVein,   life.GetCellAliveCount(CellTypeEnum.Vein));
+		record.Set(RecordEnum.cellCountVein, life.GetCellAliveCount(CellTypeEnum.Vein));
 
 		record.Set(RecordEnum.creatureCount, life.creatureAliveCount);
 		record.Set(RecordEnum.creatureBirthsPerSecond, life.GetCreatureBirthsPerSecond());
@@ -156,31 +160,35 @@ public class World : MonoSingleton<World> {
 	}
 
 	//Save load
-	public void Restart() {
+	public void Restart(Action onDone) {
 		Time.timeScale = 0;
-
-		KillAllCreatures();
-		worldTicks = 0;
-		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
-		//for (int y = 1; y <= 1; y++) {
-		//	for (int x = 1; x <= 1; x++) {
-		//		//World.instance.life.SpawnCreatureJellyfish(new Vector3(100f + x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f), worldTicks);
-		//	}
-		//}
 		
-		CreatureEditModePanel.instance.Restart();
-		AlternativeToolModePanel.instance.Restart();
-		TerrainPerimeter.instance.Restart();
 
-		history.Clear();
+		KillAllCreatures(() => {
+			worldTicks = 0;
+			GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
+			//for (int y = 1; y <= 1; y++) {
+			//	for (int x = 1; x <= 1; x++) {
+			//		//World.instance.life.SpawnCreatureJellyfish(new Vector3(100f + x * 15f, 100f + y * 15, 0f), Random.Range(90f, 90f), worldTicks);
+			//	}
+			//}
 
-		terrain.Restart();
+			CreatureEditModePanel.instance.Restart();
+			AlternativeToolModePanel.instance.Restart();
+			TerrainPerimeter.instance.Restart();
 
-		GlobalPanel.instance.SelectPausePhysics();
-		GraphPlotter.instance.MakeDirty();
+			history.Clear();
+
+			terrain.Restart();
+
+			GlobalPanel.instance.SelectPausePhysics();
+			GraphPlotter.instance.MakeDirty();
+
+			onDone();
+		});
 	}
 
-	public void Load(string filename) {
+	public void Load(string filename, Action onDone) {
 		// Open the file to read from.
 		if (filename == "") {
 			filename = "save.txt";
@@ -189,17 +197,26 @@ public class World : MonoSingleton<World> {
 		if (path == "") {
 			path = "F:/Morfosis/";
 		}
+		float timeStamp = Time.realtimeSinceStartup;
 		string serializedString = File.ReadAllText(path + filename);
 
 		WorldData loadedWorld = Serializer.Deserialize<WorldData>(serializedString, new UnityJsonSerializer());
-		ApplyData(loadedWorld);
-		CreatureEditModePanel.instance.UpdateAllAccordingToEditMode();
 
-		CreatureSelectionPanel.instance.ClearSelection();
-		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
+		KillAllCreatures(() => {
+			ApplyData(loadedWorld, () => {
 
-		GlobalPanel.instance.SelectPausePhysics();
-		GraphPlotter.instance.MakeDirty();
+				//When done loading
+				CreatureEditModePanel.instance.UpdateAllAccordingToEditMode();
+
+				CreatureSelectionPanel.instance.ClearSelection();
+				GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
+
+				GlobalPanel.instance.SelectPausePhysics();
+				GraphPlotter.instance.MakeDirty();
+
+				onDone();
+			});
+		});
 	}
 
 	private void DoSave(string filename) {
@@ -243,16 +260,22 @@ public class World : MonoSingleton<World> {
 	}
 
 	// Load
-	private void ApplyData(WorldData worldData) {
+	private void ApplyData(WorldData worldData, Action onDone) {
 		worldName = worldData.worldName;
-		life.ApplyData(worldData.lifeData);
-		worldTicks = worldData.worldTicks;
-		if (worldData.historyData != null) {
-			history.ApplyData(worldData.historyData);
-		} else {
-			history.Clear();
-		}
-		terrain.ApplyData(worldData.terrainData);
-		TerrainPerimeter.instance.runnersKilledCount = worldData.runnersKilledCount;
+
+		
+		life.ApplyData(worldData.lifeData, () => {
+			worldTicks = worldData.worldTicks;
+			if (worldData.historyData != null) {
+				history.ApplyData(worldData.historyData);
+			} else {
+				history.Clear();
+			}
+			terrain.ApplyData(worldData.terrainData);
+			TerrainPerimeter.instance.runnersKilledCount = worldData.runnersKilledCount;
+
+			onDone();
+		});
+
 	}
 }

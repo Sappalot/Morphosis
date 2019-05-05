@@ -179,21 +179,32 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	public void OnRestartClicked() {
 		if (Morphosis.isInterferredByOtheActions()) { return; }
+		MouseAction.instance.actionState = MouseActionStateEnum.restartingWorld;
+
+		SelectPausePhysics();
 
 		Freezer.instance.Save();
-		Morphosis.instance.Restart();
+		Morphosis.instance.Restart(() => {
+			Debug.Log("Morfosis restarted");
+			MouseAction.instance.actionState = MouseActionStateEnum.free;
+		});
 	}
 
 	public void OnLoadClicked() {
 		if (Morphosis.isInterferredByOtheActions()) { return; }
+		MouseAction.instance.actionState = MouseActionStateEnum.loadingWorld;
 
-		Morphosis.instance.LoadWorld("save.txt");
+		Morphosis.instance.LoadWorld("save.txt", () => {
+			Debug.Log("World loaded");
+			MouseAction.instance.actionState = MouseActionStateEnum.free;
+		});
 	}
 
 	public void OnSaveClicked() {
 		if (Morphosis.isInterferredByOtheActions()) { return; }
-
+		MouseAction.instance.actionState = MouseActionStateEnum.savingWorld;
 		World.instance.Save();
+		MouseAction.instance.actionState = MouseActionStateEnum.free;
 	}
 
 	public void OnPausePhysicsClicked() {
@@ -203,13 +214,12 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	}
 
 	public void SelectPausePhysics() {
-		if (MouseAction.instance.actionState != MouseActionStateEnum.free) { return; }
-
 		if (!isRunPhysicsGrayOut) {
 			pausePhysicsImage.color = ColorScheme.instance.selectedButton;
 			runPhysicsImage.color = ColorScheme.instance.notSelectedButton;
-			isRunPhysics = false;
+			
 		}
+		isRunPhysics = false;
 	}
 
 	public void OnRunPhysicsClicked() {

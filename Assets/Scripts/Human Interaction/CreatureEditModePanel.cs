@@ -21,6 +21,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 
 	public void Restart() {
 		m_mode = PhenoGenoEnum.Phenotype;
+		GlobalPanel.instance.isRunPhysicsGrayOut = false;
 		isDirty = true;
 	}
 

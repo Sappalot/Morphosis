@@ -12,7 +12,8 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 
 	public Color selectedButton;
 	public Color notSelectedButton;
-	public Color mouseText;
+	public Color mouseTextAction;
+	public Color mouseTextBussy;
 
 	public Color egg;
 	public Color fungal;

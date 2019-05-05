@@ -1,5 +1,7 @@
 ﻿using SerializerFree;
 using SerializerFree.Serializers;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -7,7 +9,7 @@ using UnityEngine;
 public class Freezer : MonoSingleton<Freezer> {
 
 	public GameObject legalArea;
-	
+
 	//debug
 	[HideInInspector]
 	public int deletedCellCount = 0;
@@ -40,19 +42,28 @@ public class Freezer : MonoSingleton<Freezer> {
 		return null;
 	}
 
-	public void KillAllCreatures() {
+	public void KillAllCreatures(Action onDone) {
+		StartCoroutine(KillAllCreatureCo(() => {
+			onDone();
+		}));
+	}
+
+	public IEnumerator KillAllCreatureCo(Action onDone) {
 		List<Creature> toKill = new List<Creature>(creatureList);
 		foreach (Creature creature in toKill) {
 			KillCreatureSafe(creature, false);
+			yield return 0;
 		}
 		creatureDictionary.Clear();
 		creatureList.Clear();
+
+		onDone();
 	}
 
-	public void KillCreatureSafe(Creature creature, bool playEffects) {
+	public void KillCreatureSafe(Creature creature, bool tryPlayFx) {
 		Vector2 position = creature.GetOriginPosition(PhenoGenoEnum.Phenotype);
 
-		creature.KillAllCells(true); // for the fx :)
+		creature.KillAllCells(tryPlayFx); // for the fx :)
 
 		//creatureDeadCount++;
 
@@ -76,13 +87,15 @@ public class Freezer : MonoSingleton<Freezer> {
 		CellPanel.instance.MakeDirty();
 		GenePanel.instance.MakeDirty();
 
-		bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
-		SpatialUtil.GetFxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
-		if (hasAudio) {
-			Audio.instance.CreatureDeath(audioVolume);
-		}
-		if (hasMarker) {
-			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDeath, position, 0f, SpatialUtil.GetMarkerScale());
+		if (tryPlayFx) {
+			bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
+			SpatialUtil.GetFxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
+			if (hasAudio) {
+				Audio.instance.CreatureDeath(audioVolume);
+			}
+			if (hasMarker) {
+				EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDeath, position, 0f, SpatialUtil.GetMarkerScale());
+			}
 		}
 	}
 
@@ -201,7 +214,7 @@ public class Freezer : MonoSingleton<Freezer> {
 		}
 	}
 
-	public void Load() {
+	public void Load(Action onDone) {
 		string filename = "freezer.txt";
 
 		string path = "F:/Morfosis/";
@@ -211,7 +224,11 @@ public class Freezer : MonoSingleton<Freezer> {
 		string serializedString = File.ReadAllText(path + filename);
 
 		FreezerData loadedFreezer = Serializer.Deserialize<FreezerData>(serializedString, new UnityJsonSerializer());
-		ApplyData(loadedFreezer);
+		KillAllCreatures(() => {
+			ApplyData(loadedFreezer, () => {
+				onDone();
+			});
+		});
 	}
 
 	// Load / Save
@@ -247,17 +264,24 @@ public class Freezer : MonoSingleton<Freezer> {
 		return freezerData;
 	}
 
-	// Load
-	private void ApplyData(FreezerData freezerData) {
-		KillAllCreatures();
+	public void ApplyData(FreezerData freezerData, Action onDone) {
+		StartCoroutine(ApplyDataCo(freezerData, () => {
+			onDone();
+		}));
+	}
+
+	public IEnumerator ApplyDataCo(FreezerData freezerData, Action onDone) {
+		yield return 0;
+
 		for (int index = 0; index < freezerData.creatureList.Count; index++) {
 			CreatureData creatureData = freezerData.creatureList[index];
 			creatureData.id = Morphosis.instance.idGenerator.GetUniqueId(); // Freezer ids will allways start from scratch, then moved to range after load when other creatures are loaded
 			Creature creature = InstantiateCreature(creatureData.id);
 			creature.ApplyData(creatureData);
 			creature.OnFreeze();
+			yield return 0;
 		}
+		onDone();
 	}
-
 	// ^ Load / Save ^
 }

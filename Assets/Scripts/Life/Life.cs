@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Collections;
 
 public class Life : MonoBehaviour {
 
@@ -177,15 +178,23 @@ public class Life : MonoBehaviour {
 		CreatureSelectionPanel.instance.UpdateSelectionCluster();
 	}
 
-	public void KillAllCreatures() {
+	public void KillAllCreatures(Action onDone) {
+		StartCoroutine(KillAllCreatureCo(() => {
+			onDone();
+		}));
+	}
+
+	public IEnumerator KillAllCreatureCo(Action onDone) {
 		List<Creature> toKill = new List<Creature>(creatureList);
 		foreach (Creature creature in toKill) {
 			KillCreatureSafe(creature, false);
+			yield return 0;
 		}
 		creatureDictionary.Clear();
 		creatureList.Clear();
 		creatureBirthsPerSecond.Clear();
 		creatureBirthsPerSecond.Clear();
+		onDone();
 	}
 
 	//When pressing delete, use effects
@@ -504,19 +513,24 @@ public class Life : MonoBehaviour {
 	}
 
 	// Load
-	public void ApplyData(LifeData lifeData) {
+	public void ApplyData(LifeData lifeData, Action onDone) {
+		StartCoroutine(ApplyDataCo(lifeData, onDone));
+	}
+
+	public IEnumerator ApplyDataCo(LifeData lifeData, Action onDone) {
 		Morphosis.instance.idGenerator.serialNumber = lifeData.lastId;
 
 		// Create all creatures
-		KillAllCreatures();
 		for (int index = 0; index < lifeData.creatureList.Count; index++) {
 			CreatureData creatureData = lifeData.creatureList[index];
 			Creature creature = InstantiateCreature(creatureData.id);
 			creature.ApplyData(creatureData);
+			yield return 0;
 		}
 		creatureDeadCount = lifeData.creatureDeadCount;
 		oldKilledCount = lifeData.sterileKilledCount;
 
+		onDone();
 	}
 
 	// ^ Load Save ^
