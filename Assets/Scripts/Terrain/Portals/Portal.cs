@@ -119,7 +119,7 @@ public class Portal : MonoBehaviour {
 		foreach (Cell cell in phenotype.cellList) {
 			ParticlesCellTeleport teleport = ParticlePool.instance.Borrow(ParticleTypeEnum.cellTeleport) as ParticlesCellTeleport;
 			teleport.transform.position = cell.position;
-			teleport.Prime(Color.white);
+			teleport.Play(Color.white);
 			teleport.transform.parent = Morphosis.instance.transform;
 		}
 	}

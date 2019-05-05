@@ -64,7 +64,7 @@ public class ParticlePool : MonoSingleton<ParticlePool> {
 
 	//Note: make sure there are no object out there with references to this returned cell
 	public void Recycle(Particles particles) {
-		particles.OnRecycle(); // should be done even if we are going to delete cell (because jaws need to free their prays)
+		particles.OnRecycle();
 
 		particles.transform.parent = transform;
 		particles.gameObject.SetActive(false);
@@ -75,7 +75,7 @@ public class ParticlePool : MonoSingleton<ParticlePool> {
 	private Particles PopParticles(Queue<Particles> queue) {
 		if (queue.Count > 0) {
 			Particles particles = queue.Dequeue();
-			particles.gameObject.SetActive(true); // Causes: Assertion failed: Invalid SortingGroup index set in Renderer
+			particles.gameObject.SetActive(true);
 			return particles;
 		}
 		return null;

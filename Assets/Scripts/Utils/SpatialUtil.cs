@@ -31,7 +31,7 @@ static class SpatialUtil {
 			audioVolume = GetAudioVolume(isLoud);
 		}
 
-		if (GlobalPanel.instance.graphicsEffectsToggle.isOn && IsDetailedGraphicsDistance() && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.isRunPhysics) {
+		if (GlobalPanel.instance.graphicsEffectsToggle.isOn && IsDetailedGraphicsDistance() && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			hasParticles = true;
 		}
 	}
@@ -53,7 +53,7 @@ static class SpatialUtil {
 		}
 
 		if (GlobalPanel.instance.graphicsEffectsToggle.isOn) {
-			if (IsDetailedGraphicsDistance() && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && GlobalPanel.instance.isRunPhysics) {
+			if (IsDetailedGraphicsDistance() && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 				hasParticles = true;
 			}
 			hasMarker = true;

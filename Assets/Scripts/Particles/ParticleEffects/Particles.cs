@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Particles : MonoBehaviour {
-	public void OnBorrow() {
+	public float lifeTime;
+	public ParticleTypeEnum particlesType;
 
+	public ParticleTypeEnum GetParticlesType() {
+		return particlesType;
 	}
 
-	public void OnRecycle() {
-
+	protected IEnumerator RemoveSelf() {
+		yield return new WaitForSecondsRealtime(lifeTime);
+		ParticlePool.instance.Recycle(this);
 	}
 
-	public virtual ParticleTypeEnum GetParticlesType() {
-		return ParticleTypeEnum.undefined;
-	}
+	public void OnBorrow() {}
+
+	public void OnRecycle() {}
 }

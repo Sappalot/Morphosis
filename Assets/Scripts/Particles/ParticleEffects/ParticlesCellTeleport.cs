@@ -2,21 +2,18 @@
 using UnityEngine;
 
 public class ParticlesCellTeleport : Particles {
+	// 2
+	public ParticleSystem cellTeleport;
 
-	public ParticleSystem particles;
-
-	public void Prime(Color shardColor) {
-		particles.startColor = shardColor;
-		particles.Play();
+	public void Play(Color shardColor) {
+		cellTeleport.startColor = shardColor;
+		cellTeleport.Play();
 		StartCoroutine(RemoveSelf()); 
 	}
 
-	private IEnumerator RemoveSelf() {
-		yield return new WaitForSeconds(2f);
-		ParticlePool.instance.Recycle(this);
-	}
-
-	public override ParticleTypeEnum GetParticlesType() {
-		return ParticleTypeEnum.cellTeleport;
+	private void Update() {
+		if (Time.timeScale < 0.01f) {
+			cellTeleport.Simulate(Time.unscaledDeltaTime, true, false);
+		}
 	}
 }

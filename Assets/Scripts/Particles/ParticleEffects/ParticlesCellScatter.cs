@@ -2,22 +2,18 @@
 using UnityEngine;
 
 public class ParticlesCellScatter : Particles {
+	// 2
+	public ParticleSystem cellScatter;
 
-	public ParticleSystem particles;
-
-	public void Prime(Color shardColor) {
-		particles.startColor = shardColor;
-		particles.Play();
+	public void Play(Color shardColor) {
+		cellScatter.startColor = shardColor;
+		cellScatter.Play();
 		StartCoroutine(RemoveSelf()); 
 	}
 
-	private IEnumerator RemoveSelf() {
-		yield return new WaitForSeconds(2);
-		ParticlePool.instance.Recycle(this);
-		//Destroy(gameObject);
-	}
-
-	public override ParticleTypeEnum GetParticlesType() {
-		return ParticleTypeEnum.cellScatter;
+	private void Update() {
+		if (Time.timeScale < 0.01f) {
+			cellScatter.Simulate(Time.unscaledDeltaTime, true, false);
+		}
 	}
 }

@@ -816,7 +816,7 @@ public class Phenotype : MonoBehaviour {
 	public void SpawnParticlesCellBirth(Cell cell) {
 		ParticlesCellBirth birth = ParticlePool.instance.Borrow(ParticleTypeEnum.cellBirth) as ParticlesCellBirth;
 		birth.transform.position = cell.position;
-		birth.Prime(cell.GetColor());
+		birth.Play(cell.GetColor());
 		birth.transform.parent = cell.transform;
 
 		cell.ShowOutline(false);
@@ -826,7 +826,7 @@ public class Phenotype : MonoBehaviour {
 		ParticlesCellBleed bleed = ParticlePool.instance.Borrow(ParticleTypeEnum.cellBleed) as ParticlesCellBleed;
 		bleed.transform.position = cell.position;
 		bleed.transform.rotation = Quaternion.Euler(0f, 0f, heading);
-		bleed.Prime(Color.red);
+		bleed.Play(Color.red);
 		bleed.transform.parent = cell.transform;
 	}
 
@@ -837,7 +837,7 @@ public class Phenotype : MonoBehaviour {
 		scatter.transform.parent = Morphosis.instance.transform;
 		scatter.transform.position = position;
 		scatter.transform.rotation = Quaternion.identity;
-		scatter.Prime(color);
+		scatter.Play(color);
 
 	}
 
