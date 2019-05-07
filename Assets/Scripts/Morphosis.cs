@@ -21,8 +21,14 @@ public class Morphosis : MonoSingleton<Morphosis> {
 		World.instance.Init(); // Just 1 world, lots of work keeping several instances at once
 
 		MouseAction.instance.actionState = MouseActionStateEnum.loadingFreezer;
-		Restart(() => {
-			Debug.Log("Morfosis ready");
+
+		ProgressBar.instance.gameObject.SetActive(true);
+		ProgressBar.instance.heading.text = "Preparing Morphosis";
+		FreezerData freezerData = Freezer.instance.LoadFreezerData();
+		ProgressBar.instance.ResetForStartup(freezerData.creatureList.Count);
+
+		Restart(freezerData, () => {
+			ProgressBar.instance.gameObject.SetActive(false);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		});
 	}
@@ -72,6 +78,24 @@ public class Morphosis : MonoSingleton<Morphosis> {
 		});
 	}
 
+	public void Restart(FreezerData freezerData, Action onDone) {
+		idGenerator.Restart();
+		Freezer.instance.Load(freezerData, () => {
+			World.instance.Restart(() => {
+				onDone();
+			});
+		});
+	}
+
+	public void Restart(FreezerData freezerData, WorldData worldData, Action onDone) {
+		idGenerator.Restart();
+		Freezer.instance.Load(freezerData, () => {
+			World.instance.Restart(() => {
+				onDone();
+			});
+		});
+	}
+
 	public void LoadWorld(string filename, Action onDone) {
 		GlobalPanel.instance.SelectPausePhysics();
 
@@ -83,6 +107,20 @@ public class Morphosis : MonoSingleton<Morphosis> {
 			});
 		});
 	}
+
+	public void LoadWorld(WorldData worldData, Action onDone) {
+		GlobalPanel.instance.SelectPausePhysics();
+
+		Freezer.instance.Save();
+		Restart(() => {
+			World.instance.Load(worldData, () => {
+				instance.MoveFreezerCreatureIdsToFreeRange();
+				onDone();
+			});
+		});
+	}
+
+
 
 	public static bool isInterferredByOtheActions() {
 		return MouseAction.instance.actionState != MouseActionStateEnum.free || AlternativeToolModePanel.instance.isOn || !World.instance.creatureSelectionController.IsIdle;

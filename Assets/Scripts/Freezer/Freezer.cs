@@ -28,6 +28,12 @@ public class Freezer : MonoSingleton<Freezer> {
 		}
 	}
 
+	public int creatureCount {
+		get {
+			return creatureList.Count;
+		}
+	}
+
 	public bool HasCreature(string id) {
 		if (id == null) {
 			return false;
@@ -52,6 +58,7 @@ public class Freezer : MonoSingleton<Freezer> {
 		List<Creature> toKill = new List<Creature>(creatureList);
 		foreach (Creature creature in toKill) {
 			KillCreatureSafe(creature, false);
+			ProgressBar.instance.KillCreature();
 			yield return 0;
 		}
 		creatureDictionary.Clear();
@@ -215,6 +222,11 @@ public class Freezer : MonoSingleton<Freezer> {
 	}
 
 	public void Load(Action onDone) {
+		Load(LoadFreezerData(), onDone);
+
+	}
+
+	public FreezerData LoadFreezerData() {
 		string filename = "freezer.txt";
 
 		string path = "F:/Morfosis/";
@@ -223,13 +235,18 @@ public class Freezer : MonoSingleton<Freezer> {
 		}
 		string serializedString = File.ReadAllText(path + filename);
 
-		FreezerData loadedFreezer = Serializer.Deserialize<FreezerData>(serializedString, new UnityJsonSerializer());
+		return Serializer.Deserialize<FreezerData>(serializedString, new UnityJsonSerializer());
+	}
+
+	public void Load(FreezerData freezerData, Action onDone) {
 		KillAllCreatures(() => {
-			ApplyData(loadedFreezer, () => {
+			ApplyData(freezerData, () => {
 				onDone();
 			});
 		});
 	}
+
+
 
 	// Load / Save
 	public void Save() {
@@ -279,6 +296,7 @@ public class Freezer : MonoSingleton<Freezer> {
 			Creature creature = InstantiateCreature(creatureData.id);
 			creature.ApplyData(creatureData);
 			creature.OnFreeze();
+			ProgressBar.instance.SpawnCreature();
 			yield return 0;
 		}
 		onDone();

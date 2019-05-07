@@ -181,11 +181,15 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		if (Morphosis.isInterferredByOtheActions()) { return; }
 		MouseAction.instance.actionState = MouseActionStateEnum.restartingWorld;
 
-		SelectPausePhysics();
+		ProgressBar.instance.gameObject.SetActive(true);
+		ProgressBar.instance.heading.text = "Restarting";
+		ProgressBar.instance.ResetForRestart(Freezer.instance.creatureCount, World.instance.life.creatureAliveCount);
 
+		SelectPausePhysics();
 		Freezer.instance.Save();
 		Morphosis.instance.Restart(() => {
 			Debug.Log("Morfosis restarted");
+			ProgressBar.instance.gameObject.SetActive(false);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		});
 	}
@@ -194,7 +198,16 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		if (Morphosis.isInterferredByOtheActions()) { return; }
 		MouseAction.instance.actionState = MouseActionStateEnum.loadingWorld;
 
-		Morphosis.instance.LoadWorld("save.txt", () => {
+		ProgressBar.instance.gameObject.SetActive(true);
+		ProgressBar.instance.heading.text = "Loading World";
+		WorldData worldData = World.instance.LoadWorldData("save.txt");
+		ProgressBar.instance.ResetForLoad(Freezer.instance.creatureCount, World.instance.life.creatureAliveCount, worldData.metaCreatureCount);
+
+		Morphosis.instance.LoadWorld(worldData,
+		//onDone
+		() => {
+
+			ProgressBar.instance.gameObject.SetActive(false);
 			Debug.Log("World loaded");
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		});

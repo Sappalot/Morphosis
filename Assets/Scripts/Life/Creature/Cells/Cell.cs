@@ -172,7 +172,7 @@ public abstract class Cell : MonoBehaviour {
 				bool show = !HasNeighbourCell(localCardinalIndex) && budCell != null;
 				buds.SetEnabled(worldCardinalIndex, show);
 				if (show) {
-					buds.SetColor(worldCardinalIndex, budCell.GetCellType() != GetCellType() ? budCell.GetColor() : Color.Lerp(budCell.GetColor(), Color.black, 0.25f));
+					buds.SetColor(worldCardinalIndex, budCell.GetColor());
 				}
 			}
 		} else {
@@ -1134,7 +1134,7 @@ public abstract class Cell : MonoBehaviour {
 						filledCircleSprite.color = Color.black;
 					} else {
 						if (GetCellType() != CellTypeEnum.Jaw) {
-							filledCircleSprite.color = openCircleSprite.color = Color.Lerp(GetColor(PhenoGenoEnum.Phenotype), Color.black, Mathf.Min(0.5f, predatorCount));
+							filledCircleSprite.color = openCircleSprite.color = Color.Lerp(GetColor(PhenoGenoEnum.Phenotype), Color.red, Mathf.Min(0.5f, predatorCount));
 						} else {
 							filledCircleSprite.color = openCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
 						}

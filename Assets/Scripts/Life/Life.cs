@@ -188,6 +188,7 @@ public class Life : MonoBehaviour {
 		List<Creature> toKill = new List<Creature>(creatureList);
 		foreach (Creature creature in toKill) {
 			KillCreatureSafe(creature, false);
+			ProgressBar.instance.KillCreature();
 			yield return 0;
 		}
 		creatureDictionary.Clear();
@@ -525,6 +526,7 @@ public class Life : MonoBehaviour {
 			CreatureData creatureData = lifeData.creatureList[index];
 			Creature creature = InstantiateCreature(creatureData.id);
 			creature.ApplyData(creatureData);
+			ProgressBar.instance.SpawnCreature();
 			yield return 0;
 		}
 		creatureDeadCount = lifeData.creatureDeadCount;

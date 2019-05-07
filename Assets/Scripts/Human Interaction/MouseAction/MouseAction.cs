@@ -45,16 +45,16 @@ public class MouseAction : MonoSingleton<MouseAction> {
 			mouseText.text = "Place Mergeling";
 			mouseText.color = ColorScheme.instance.mouseTextAction;
 		} else if (m_actionState == MouseActionStateEnum.savingWorld) {
-			mouseText.text = "Saving World";
+			mouseText.text = "Zzzz";
 			mouseText.color = ColorScheme.instance.mouseTextBussy;
 		} else if (m_actionState == MouseActionStateEnum.loadingWorld) {
-			mouseText.text = "Loading World";
+			mouseText.text = "Zzzz";
 			mouseText.color = ColorScheme.instance.mouseTextBussy;
 		} else if (m_actionState == MouseActionStateEnum.restartingWorld) {
-			mouseText.text = "Restarting";
+			mouseText.text = "Zzzz";
 			mouseText.color = ColorScheme.instance.mouseTextBussy;
 		} else if (m_actionState == MouseActionStateEnum.loadingFreezer) {
-			mouseText.text = "Warming Up";
+			mouseText.text = "Zzzz";
 			mouseText.color = ColorScheme.instance.mouseTextBussy;
 		}
 	}

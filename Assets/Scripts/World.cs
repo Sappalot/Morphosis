@@ -16,6 +16,7 @@ public class World : MonoSingleton<World> {
 	public ulong worldTicks = 0;
 
 	private string worldName = "Gaia";
+	private int metaCreatureCount;
 	private bool doSave = false;
 	private List<HistoryEvent> historyEvents = new List<HistoryEvent>();
 
@@ -189,6 +190,10 @@ public class World : MonoSingleton<World> {
 	}
 
 	public void Load(string filename, Action onDone) {
+		Load(LoadWorldData(filename), onDone);
+	}
+
+	public WorldData LoadWorldData(string filename) {
 		// Open the file to read from.
 		if (filename == "") {
 			filename = "save.txt";
@@ -200,10 +205,12 @@ public class World : MonoSingleton<World> {
 		float timeStamp = Time.realtimeSinceStartup;
 		string serializedString = File.ReadAllText(path + filename);
 
-		WorldData loadedWorld = Serializer.Deserialize<WorldData>(serializedString, new UnityJsonSerializer());
+		return Serializer.Deserialize<WorldData>(serializedString, new UnityJsonSerializer());
+	}
 
+	public void Load(WorldData worldData, Action onDone) {
 		KillAllCreatures(() => {
-			ApplyData(loadedWorld, () => {
+			ApplyData(worldData, () => {
 
 				//When done loading
 				CreatureEditModePanel.instance.UpdateAllAccordingToEditMode();
@@ -252,6 +259,7 @@ public class World : MonoSingleton<World> {
 	// Save
 	private void UpdateData() {
 		worldData.worldName = worldName;
+		worldData.metaCreatureCount = life.creatureAliveCount;
 		worldData.lifeData = life.UpdateData();
 		worldData.worldTicks = worldTicks;
 		worldData.historyData = history.UpdateData();
@@ -262,7 +270,7 @@ public class World : MonoSingleton<World> {
 	// Load
 	private void ApplyData(WorldData worldData, Action onDone) {
 		worldName = worldData.worldName;
-
+		metaCreatureCount = worldData.metaCreatureCount;
 		
 		life.ApplyData(worldData.lifeData, () => {
 			worldTicks = worldData.worldTicks;
