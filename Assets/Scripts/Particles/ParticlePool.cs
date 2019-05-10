@@ -16,7 +16,7 @@ public class ParticlePool : MonoSingleton<ParticlePool> {
 	}
 
 	// This one should be 0 when no particles are in use
-	public int GetLoanedCellCount(ParticleTypeEnum type) {
+	public int GetLoanedParticlesCount(ParticleTypeEnum type) {
 		return loanedCount[type];
 	}
 

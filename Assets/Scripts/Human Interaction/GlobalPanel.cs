@@ -16,8 +16,9 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	public Text creatureAliveCount;
 	public Text creatureDeadCount;
-	public Text runnersKilledCount;
-	public Text sterileKilledCount;
+	public Text creatureDeadByAgeCount;
+	public Text creatureDeadByBreakingCount;
+	public Text creatureDeadByEscapingCount;
 
 	private int frameCount;
 	private float timeCount;
@@ -56,6 +57,15 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	//Debug -> Edge Pool Count
 	public Text veinPoolCount;
+
+	//Debug -> event Marker Pool Count
+	public Text eventSymbolPoolCount;
+
+	//Debug -> particle Pool Count
+	public Text particlePoolCellBirthCount;
+	public Text particlePoolCellBleedCount;
+	public Text particlePoolCellScatterCount;
+	public Text particlePoolCellTeleportCount;
 
 	//World
 	public void UpdateWorldNameAndTime(string worldName, ulong worldTicks) {
@@ -132,8 +142,10 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			//creatures
 			creatureAliveCount.text = "Alive: " + World.instance.life.creatureAliveCount + ", Cells: " + World.instance.life.cellAliveCount;
 			creatureDeadCount.text = "Dead: " + World.instance.life.creatureDeadCount;
-			runnersKilledCount.text = "Runners Killed: " + TerrainPerimeter.instance.runnersKilledCount;
-			sterileKilledCount.text = "Sterile Killed: " + World.instance.life.oldKilledCount;
+			creatureDeadByAgeCount.text = "...by age: " + World.instance.life.creatureDeadByAgeCount;
+			creatureDeadByBreakingCount.text = "...by breaking: " + World.instance.life.creatureDeadByBreakingCount;
+			creatureDeadByEscapingCount.text = "...by escaping: " + World.instance.life.creatureDeadByEscapingCount;
+			
 
 			//Creature Pool
 			creaturePoolCount.text = "Creatures: " + CreaturePool.instance.storedCount + " + " + CreaturePool.instance.loanedCount + " = " + (CreaturePool.instance.storedCount + CreaturePool.instance.loanedCount);
@@ -168,6 +180,13 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			edgePoolCount.text = "Edges: " + Morphosis.instance.edgePool.storedCount + " + " + Morphosis.instance.edgePool.loanedCount + " = " + (Morphosis.instance.edgePool.storedCount + Morphosis.instance.edgePool.loanedCount);
 
 			veinPoolCount.text = "Veins: " + Morphosis.instance.veinPool.storedCount + " + " + Morphosis.instance.veinPool.loanedCount + " = " + (Morphosis.instance.veinPool.storedCount + Morphosis.instance.veinPool.loanedCount);
+
+			eventSymbolPoolCount.text = "Event Symbols: " + EventSymbolPool.instance.storedCount + " + " + EventSymbolPool.instance.loanedCount + " = " + (EventSymbolPool.instance.storedCount + EventSymbolPool.instance.loanedCount);
+
+			particlePoolCellBirthCount.text = "Cell Birth: " + ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellBirth) + " + " + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellBirth) + " = " + (ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellBirth) + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellBirth));
+			particlePoolCellBleedCount.text = "Cell Bleed: " + ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellBleed) + " + " + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellBleed) + " = " + (ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellBleed) + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellBleed));
+			particlePoolCellScatterCount.text = "Cell Scatter: " + ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellScatter) + " + " + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellScatter) + " = " + (ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellScatter) + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellScatter));
+			particlePoolCellTeleportCount.text = "Cell Teleport: " + ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellTeleport) + " + " + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellTeleport) + " = " + (ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellTeleport) + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellTeleport));
 
 			PhenotypePhysicsPanel.instance.UpdateFpsSliderText();
 		}

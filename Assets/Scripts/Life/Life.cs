@@ -9,13 +9,14 @@ public class Life : MonoBehaviour {
 	private List<Creature> creatureList = new List<Creature>(); // All enbodied creatures (the once that we can see and play with)
 
 	[HideInInspector]
-	public int oldKilledCount;
-
 	public int creatureDeadCount { get; private set; }
-
+	public int creatureDeadByAgeCount { get; private set; } // part of creatureDeadCount
+	public int creatureDeadByBreakingCount { get; private set; } // part of creatureDeadCount
+	public int creatureDeadByEscapingCount { get; private set; } // part of creatureDeadCount
+	
 	//debug
 	[HideInInspector]
-	public int deletedCellCount = 0;
+	public int deletedCellCount = 0; // should be safe to remove this guy...
 
 	LowPassCounter creatureBirthsPerSecond = new LowPassCounter(20);
 	LowPassCounter creatureDeathsPerSecond = new LowPassCounter(20);
@@ -178,6 +179,32 @@ public class Life : MonoBehaviour {
 		CreatureSelectionPanel.instance.UpdateSelectionCluster();
 	}
 
+	public void KillCreatureByBreaking(Creature creature, bool playFx) {
+		KillCreatureSafe(creature, true);
+		World.instance.AddHistoryEvent(new HistoryEvent("b", false, Color.red));
+		creatureDeadByBreakingCount++;
+	}
+
+	public void KillCreatureByEscaping(Creature creature, bool playFx) {
+		KillCreatureSafe(creature, playFx);
+		creatureDeadByEscapingCount++;
+		World.instance.AddHistoryEvent(new HistoryEvent("Runner Killed", false, Color.red));
+	}
+
+	public void Restart(Action onDone) {
+		KillAllCreatures(() => {
+			creatureDeadCount = 0;
+			creatureDeadByAgeCount = 0;
+			creatureDeadByBreakingCount = 0;
+			creatureDeadByEscapingCount = 0;
+
+			creatureBirthsPerSecond.Clear();
+			creatureBirthsPerSecond.Clear();
+
+			onDone();
+		});
+	}
+
 	public void KillAllCreatures(Action onDone) {
 		StartCoroutine(KillAllCreatureCo(() => {
 			onDone();
@@ -193,8 +220,7 @@ public class Life : MonoBehaviour {
 		}
 		creatureDictionary.Clear();
 		creatureList.Clear();
-		creatureBirthsPerSecond.Clear();
-		creatureBirthsPerSecond.Clear();
+
 		onDone();
 	}
 
@@ -387,6 +413,10 @@ public class Life : MonoBehaviour {
 		return creature;
 	}
 
+	public void Restart() {
+		
+	}
+
 	//----------------
 	public void MakeAllCreaturesDirty() {
 		for (int index = 0; index < creatures.Count; index++) {
@@ -460,17 +490,12 @@ public class Life : MonoBehaviour {
 
 		if (PhenotypePhysicsPanel.instance.killOld.isOn) {
 			if (killOldCreaturesTicks == 0) {
-				int oldKilled = 0;
 				for (int index = 0; index < creatureList.Count; index++) {
 					if (creatureList[index].GetAge(worldTicks) > GlobalSettings.instance.phenotype.maxAge) {
 						killCreatureList.Add(creatureList[index]);
-						oldKilled++;
+						creatureDeadByAgeCount++;
 					}
 				}
-				oldKilledCount += oldKilled;
-				//if (oldKilled > 0) {
-				//	World.instance.AddHistoryEvent(new HistoryEvent("Old: " + oldKilled, false, Color.red));
-				//}
 			}
 		}
 
@@ -500,8 +525,10 @@ public class Life : MonoBehaviour {
 		//Creatures
 		lifeData.creatureList.Clear();
 		lifeData.creatureDictionary.Clear();
-		lifeData.creatureDeadCount = creatureDeadCount;
-		lifeData.sterileKilledCount = oldKilledCount;
+		lifeData.creatureDeadCount =           creatureDeadCount;
+		lifeData.creatureDeadByAgeCount =      creatureDeadByAgeCount;
+		lifeData.creatureDeadByBreakingCount = creatureDeadByBreakingCount;
+		lifeData.creatureDeadByEscapingCount = creatureDeadByEscapingCount;
 
 		for (int index = 0; index < creatureList.Count; index++) {
 			Creature creature = creatureList[index];
@@ -529,9 +556,10 @@ public class Life : MonoBehaviour {
 			ProgressBar.instance.SpawnCreature();
 			yield return 0;
 		}
-		creatureDeadCount = lifeData.creatureDeadCount;
-		oldKilledCount = lifeData.sterileKilledCount;
-
+		creatureDeadCount =           lifeData.creatureDeadCount;
+		creatureDeadByAgeCount =      lifeData.creatureDeadByAgeCount;
+		creatureDeadByBreakingCount = lifeData.creatureDeadByBreakingCount;
+		creatureDeadByEscapingCount = lifeData.creatureDeadByEscapingCount;
 		onDone();
 	}
 

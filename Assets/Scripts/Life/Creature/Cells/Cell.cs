@@ -963,8 +963,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	void OnJointBreak2D(Joint2D brokenJoint) {
-		World.instance.life.KillCreatureSafe(creature, true);
-		World.instance.AddHistoryEvent(new HistoryEvent("BK", false, Color.red));
+		World.instance.life.KillCreatureByBreaking(creature, true);
 	}
 
 	public void RepairBrokenSprings() {
@@ -1134,12 +1133,13 @@ public abstract class Cell : MonoBehaviour {
 						filledCircleSprite.color = Color.black;
 					} else {
 						if (GetCellType() != CellTypeEnum.Jaw) {
-							filledCircleSprite.color = openCircleSprite.color = Color.Lerp(GetColor(PhenoGenoEnum.Phenotype), Color.red, Mathf.Min(0.5f, predatorCount));
+							filledCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
 						} else {
-							filledCircleSprite.color = openCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
+							filledCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
 						}
 					}
 				}
+				openCircleSprite.color = Color.Lerp(GetColor(PhenoGenoEnum.Phenotype), Color.red, Mathf.Min(1f, predatorCount));
 			}
 			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.energy) {
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(energyFullness);

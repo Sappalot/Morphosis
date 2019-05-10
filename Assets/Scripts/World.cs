@@ -20,13 +20,6 @@ public class World : MonoSingleton<World> {
 	private bool doSave = false;
 	private List<HistoryEvent> historyEvents = new List<HistoryEvent>();
 
-	public void KillAllCreatures(Action onDone) {
-		life.KillAllCreatures(() => {
-			CreatureSelectionPanel.instance.ClearSelection();
-			onDone();
-		});
-	}
-
 	public new void Init() {
 		//for (int y = 0; y < 32; y++) {
 		//	for (int x = 0; x < 32; x++) {
@@ -163,9 +156,10 @@ public class World : MonoSingleton<World> {
 	//Save load
 	public void Restart(Action onDone) {
 		Time.timeScale = 0;
-		
 
-		KillAllCreatures(() => {
+
+		life.Restart(() => {
+			CreatureSelectionPanel.instance.ClearSelection();
 			worldTicks = 0;
 			GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 			//for (int y = 1; y <= 1; y++) {
@@ -176,7 +170,6 @@ public class World : MonoSingleton<World> {
 
 			CreatureEditModePanel.instance.Restart();
 			AlternativeToolModePanel.instance.Restart();
-			TerrainPerimeter.instance.Restart();
 
 			history.Clear();
 
@@ -209,7 +202,8 @@ public class World : MonoSingleton<World> {
 	}
 
 	public void Load(WorldData worldData, Action onDone) {
-		KillAllCreatures(() => {
+		life.Restart(() => {
+			CreatureSelectionPanel.instance.ClearSelection();
 			ApplyData(worldData, () => {
 
 				//When done loading
@@ -264,7 +258,7 @@ public class World : MonoSingleton<World> {
 		worldData.worldTicks = worldTicks;
 		worldData.historyData = history.UpdateData();
 		worldData.terrainData = terrain.UpdateData();
-		worldData.runnersKilledCount = TerrainPerimeter.instance.runnersKilledCount;
+		
 	}
 
 	// Load
@@ -280,7 +274,7 @@ public class World : MonoSingleton<World> {
 				history.Clear();
 			}
 			terrain.ApplyData(worldData.terrainData);
-			TerrainPerimeter.instance.runnersKilledCount = worldData.runnersKilledCount;
+			
 
 			onDone();
 		});

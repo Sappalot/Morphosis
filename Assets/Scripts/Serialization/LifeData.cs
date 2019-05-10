@@ -8,6 +8,8 @@ public class LifeData {
 	//Creatures 
 	public Dictionary<string, CreatureData> creatureDictionary = new Dictionary<string, CreatureData>();
 	public List<CreatureData> creatureList = new List<CreatureData>();
-	public int sterileKilledCount;
 	public int creatureDeadCount;
+	public int creatureDeadByAgeCount;
+	public int creatureDeadByBreakingCount;
+	public int creatureDeadByEscapingCount;
 }
