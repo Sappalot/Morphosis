@@ -5,10 +5,6 @@ public class TerrainPerimeter : MonoSingleton<TerrainPerimeter> {
 
 	public GameObject legalArea;
 
-	//TODO: Update uppon load
-
-	public int runnersKilledCount;
-
 	public bool IsInside(Vector2 position) {
 		float top = legalRect.y + legalRect.height / 2f;
 		float bottom = legalRect.y - legalRect.height / 2f;
@@ -30,14 +26,6 @@ public class TerrainPerimeter : MonoSingleton<TerrainPerimeter> {
 		
 	}
 
-	public bool KillIfOutside(Creature creature) {
-		if (!IsCompletelyInside(creature)) {
-			World.instance.life.KillCreatureSafe(creature, false);
-			return true;
-		}
-		return false;
-	}
-
 	private Rect legalRect;
 	public void Start() {
 		legalRect = new Rect(legalArea.transform.position, legalArea.transform.localScale);
@@ -55,18 +43,9 @@ public class TerrainPerimeter : MonoSingleton<TerrainPerimeter> {
 				}
 			}
 			foreach (Creature kill in killList) {
-				World.instance.life.KillCreatureSafe(kill, true);
-				runnersKilledCount++;
+				World.instance.life.KillCreatureByEscaping(kill, true);
 			}
 			escapistCleanupTicks = 0;
-
-			if (killList.Count > 0) {
-				World.instance.AddHistoryEvent(new HistoryEvent("RK: " + killList.Count, false, Color.red));
-			}
 		}
-	}
-
-	public void Restart() {
-		runnersKilledCount = 0;
 	}
 }

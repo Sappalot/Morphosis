@@ -170,14 +170,18 @@ public abstract class Cell : MonoBehaviour {
 				int localCardinalIndex = AngleUtil.CardinalIndexRawToSafe(bindCardinalIndex + worldCardinalIndex - 1);
 				Cell budCell = creature.genotype.GetCellAtGridPosition(CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
 				bool show = !HasNeighbourCell(localCardinalIndex) && budCell != null;
-				buds.SetEnabled(worldCardinalIndex, show);
+				buds.SetEnabledBud(worldCardinalIndex, show);
+				buds.SetEnabledPriority(worldCardinalIndex, false);
 				if (show) {
-					buds.SetColor(worldCardinalIndex, budCell.GetColor());
+					bool isPriorityBud = GetNeighbour(localCardinalIndex).isPriorityBud; //Priority bud status should allready have been updated in phenotype
+					buds.SetEnabledPriority(worldCardinalIndex, isPriorityBud);
+					buds.SetColorOfBud(worldCardinalIndex, budCell.GetColor());
 				}
 			}
 		} else {
 			for (int index = 0; index < 6; index++) {
-				buds.SetEnabled(index, false);
+				buds.SetEnabledBud(index, false);
+				buds.SetEnabledPriority(index, false);
 			}
 		}
 	}
@@ -886,7 +890,7 @@ public abstract class Cell : MonoBehaviour {
 		return cellNeighbourDictionary[cardinalIndex % 6].cell;
 	}
 
-	private CellNeighbour GetNeighbour(int cardinalIndex) {
+	public CellNeighbour GetNeighbour(int cardinalIndex) {
 		return cellNeighbourDictionary[cardinalIndex % 6];
 	}
 

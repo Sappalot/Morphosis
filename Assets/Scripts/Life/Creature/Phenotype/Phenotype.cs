@@ -147,8 +147,9 @@ public class Phenotype : MonoBehaviour {
 	private Vector2 velocity = new Vector2();
 	private Vector2 spawnPosition;
 	private float spawnHeading;
-	public CellMap cellMap = new CellMap();
+	public CellMap cellMap = new CellMap(); //Containing only built cells
 	private bool isDirty = true;
+	private bool areBudsDirty = true;
 
 	public void DisablePhysicsComponents() {
 		foreach (Cell c in cellList) {
@@ -237,7 +238,7 @@ public class Phenotype : MonoBehaviour {
 	public void InitiateEmbryo(Creature creature, Vector2 position, float heading) {
 		Setup(position, heading);
 		NoGrowthReason reason;
-		TryGrow(creature, true, 1, true, false, 0, true, out reason);
+		TryGrow(creature, false, true, 1, true, false, 0, true, out reason);
 
 		cellsDiffersFromGeneCells = false;
 	}
@@ -273,21 +274,27 @@ public class Phenotype : MonoBehaviour {
 		outlineClusterColor = new Color(outline.r + brightnessDiff + redGreenDiff, outline.g + brightnessDiff - redGreenDiff, outline.b + brightnessDiff);
 	}
 
-	public int TryGrowFully(Creature creature, bool forceGrow) {
+	public int TryGrowFully(Creature creature, bool allowOvergrowAttached) {
 		NoGrowthReason reason;
-		return TryGrow(creature, forceGrow, creature.genotype.geneCellCount, true, false, 0, true, out reason);
+		return TryGrow(creature, false, allowOvergrowAttached, creature.genotype.geneCellCount, true, false, 0, true, out reason);
 	}
 
-	public int TryGrow(Creature creature, bool allowOvergrowth, int cellCount, bool free, bool tryPlayEffects, ulong worldTick, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
+
+	private int buildAtPriority = 0;
+	private int failedBuildsAtPriority = 0;
+
+	public int TryGrow(Creature creature, bool growOnlyHighestPriority, bool allowOvergrow, int cellGrowTargetCount, bool buildWithoutCost, bool tryPlayFx, ulong worldTick, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
 		noGrowthReason = new NoGrowthReason();
 		
+		// If full grown => return
 		int growCellCount = 0;
 		Genotype genotype  = creature.genotype;
-		if (cellCount < 1 || this.cellCount >= genotype.geneCellCount) {
+		if (cellGrowTargetCount < 1 || this.cellCount >= genotype.geneCellCount) {
 			noGrowthReason.fullyGrown = true;
 			return 0;
 		}
 
+		// If first cell => grow origin
 		if (cellList.Count == 0) {
 			SpawnCell(creature, genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, spawnPosition, true, 30f);
 			if (originCell.GetCellType() == CellTypeEnum.Muscle) {
@@ -299,71 +306,98 @@ public class Phenotype : MonoBehaviour {
 			originCell.rotatedRoot.rotation = Quaternion.Euler(0f, 0f, originCell.heading); // Just updating graphics
 			growCellCount++;
 		}
+
+		// sort gene cell list: low number (high prio) -> hight number (low number)
 		genotype.geneCellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
 
-		foreach (Cell geneCell in genotype.geneCellList) {
-			if (growCellCount >= cellCount) {
+		int? highestPriority = null;
+
+		foreach (Cell buildGeneCell in genotype.geneCellList) {
+			// If grown enough
+			if (growCellCount >= cellGrowTargetCount) {
 				break;
 			}
 
-			if (!IsCellBuiltForGeneCell(geneCell) && IsCellBuiltAtNeighbourPosition(geneCell.mapPosition)) {
-				// test if the cell map position is free to grow on
-				if (!allowOvergrowth && (IsMotherPlacentaLocation(creature, geneCell.mapPosition) || IsChildOriginLocation(creature, geneCell.mapPosition))) {
-					noGrowthReason.roomBound = true;
-					continue;
+			// Is buildGeneCell an unbuilt cell with built neighbour(s)?
+			if (!IsCellBuiltForGeneCell(buildGeneCell) && IsCellBuiltAtNeighbourPosition(buildGeneCell.mapPosition)) {
+
+				// Bail out on higher priority 'layer' if this (at lest one) cell had a lame excuse not to be build
+				// Use this bail out when growing cells one by one, only
+				if (growOnlyHighestPriority) {
+					if (highestPriority == null) {
+						highestPriority = buildGeneCell.buildOrderIndex;
+					}
+					if (buildGeneCell.buildOrderIndex > highestPriority) {
+						// We are here since NO 'cell to be' in previous priority 'layer' could be built
+						
+						if (noGrowthReason.notEnoughNeighbourEnergy || noGrowthReason.waitingForRespawnCooldown || noGrowthReason.tooFarAwayFromNeighbours) {
+							// if the excuse, for at least one 'cell to be', was a lame one (lame = it should be able to build shortly) than don't try to build lower priority cells
+							break;
+						}
+						// there was a reasonable excuse for all cells is previos build 'layer' (reasonable = there was something in the way), so we coutin building in the next lowe level 'layer'
+						highestPriority = buildGeneCell.buildOrderIndex; //step up highestPriority 'layer' a notch, and give all cells at this priority 'layer' a chance
+					}
 				}
+
+				// NOTE: We dont need to make this check as we chack if position is occupied later (including my roots and placentas)
+				//// Is the cell map position is free to grow on (regarding children and mother)?
+				//if (!allowOvergrow && (IsMotherPlacentaLocation(creature, buildGeneCell.mapPosition) || IsChildOriginLocation(creature, buildGeneCell.mapPosition))) {
+				//	noGrowthReason.spaceIsOccupied = true;
+				//	continue;
+				//}
 
 				Vector3 averagePosition = Vector3.zero;
 				int positionCount = 0;
 
-				//find neighbours around cell to build
+				// Find neighbours around cell to build
 				List<Cell> builderCells = new List<Cell>();
 				for (int neighbourIndex = 0; neighbourIndex < 6; neighbourIndex++) {
-					Cell gridNeighbourBuilder = cellMap.GetGridNeighbourCell(geneCell.mapPosition, neighbourIndex);
+					Cell gridNeighbourBuilder = cellMap.GetGridNeighbourCell(buildGeneCell.mapPosition, neighbourIndex);
 					if (gridNeighbourBuilder != null) {
 						builderCells.Add(gridNeighbourBuilder);
-						int indexToMe = CardinaIndexToNeighbour(gridNeighbourBuilder, geneCell);
+						int indexToMe = CardinaIndexToNeighbour(gridNeighbourBuilder, buildGeneCell);
 						float meFromNeightbourBindPose = AngleUtil.CardinalIndexToAngle(indexToMe);
 						float meFromNeighbour = (gridNeighbourBuilder.angleDiffFromBindpose + meFromNeightbourBindPose) % 360f;
-						float distance = geneCell.radius + gridNeighbourBuilder.radius;
+						float distance = buildGeneCell.radius + gridNeighbourBuilder.radius;
 						averagePosition += gridNeighbourBuilder.transform.position + new Vector3(distance * Mathf.Cos(meFromNeighbour * Mathf.Deg2Rad), distance * Mathf.Sin(meFromNeighbour * Mathf.Deg2Rad), 0f);
 						positionCount++;
 					}
 				}
 
-				// test if long enough time has passed since cell was killed
-				if (!enableInstantRegrowth && cellMap.HasKilledTimeStamp(geneCell.mapPosition)) {
-					if (worldTick < cellMap.KilledTimeStamp(geneCell.mapPosition) + GlobalSettings.instance.phenotype.cellRebuildCooldown / Time.fixedDeltaTime) {
-						noGrowthReason.respawnTimeBound = true;
+				// Has long enough time has passed since this cell was killed?
+				if (!enableInstantRegrowth && cellMap.HasKilledTimeStamp(buildGeneCell.mapPosition)) {
+					if (worldTick < cellMap.KilledTimeStamp(buildGeneCell.mapPosition) + GlobalSettings.instance.phenotype.cellRebuildCooldown / Time.fixedDeltaTime) {
+						noGrowthReason.waitingForRespawnCooldown = true;
 						continue;
 					} else {
-						cellMap.RemoveTimeStamp(geneCell.mapPosition);
+						cellMap.RemoveTimeStamp(buildGeneCell.mapPosition);
 					}
 				}
 
-				// test if the position is free to grow on
+				// Is the cell map position is free to grow on (regarding any cell)?
+				// TODO: Check obstacles in addition to cells! Otherwise cell can be built inside terrain ==> creatures shoots away
 				Vector2 spawnPosition = averagePosition / positionCount;
-				if (!allowOvergrowth && !CanGrowAtPosition(spawnPosition, GlobalSettings.instance.phenotype.cellBuildNeededRadius)) {
-					noGrowthReason.roomBound = true;
+				if (!allowOvergrow && !CanGrowAtPosition(spawnPosition, GlobalSettings.instance.phenotype.cellBuildNeededRadius)) {
+					noGrowthReason.spaceIsOccupied = true;
 					continue;
 				}
 
-				// test if the new cell would be built in a position which is close enough to ALL neighbours growing it
+				// Is the cell desired spawn position close enough to ALL neighbours growing it?
 				foreach (Cell builder in builderCells) {
 					float distance = Vector2.Distance(spawnPosition, builder.position);
 					if (distance > GlobalSettings.instance.phenotype.cellBuildMaxDistance) {
-						noGrowthReason.poseBound = true;
+						noGrowthReason.tooFarAwayFromNeighbours = true;
 						break;
 					}
 				}
-				if (noGrowthReason.poseBound) {
+				if (noGrowthReason.tooFarAwayFromNeighbours) {
 					continue;
 				}
 
-				// test if neighbours can afford to build cell, when pitching in all together
+				// Can neighbours afford to build cell, when pitching in all together?
 				float newCellEnergy = 30f;
 				float buildBaseEnergy = GlobalSettings.instance.phenotype.cellBuildCost;
-				if (!free) {
+				if (!buildWithoutCost) {
 					float sumExtraEnergy = 0f;
 					foreach (Cell builder in builderCells) {
 						if (builder.energy > buildBaseEnergy) {
@@ -379,27 +413,29 @@ public class Phenotype : MonoBehaviour {
 						}
 						newCellEnergy = buildBaseEnergy * GlobalSettings.instance.phenotype.cellNewlyBuiltKeepFactor;
 					} else {
-						noGrowthReason.energyBound = true;
+						noGrowthReason.notEnoughNeighbourEnergy = true;
 						continue;
 					}
 				}
 
-				// test if too far away from root
+				// Is the cell too far away from root? Does this ever happen???
 				if (Vector2.Distance(spawnPosition, originCell.position) > 8f) {
 					Debug.Log("Building too far far away!!!!");
 				}
 
-				Cell newCell = SpawnCell(creature, geneCell.gene, geneCell.mapPosition, geneCell.buildOrderIndex, geneCell.bindCardinalIndex, geneCell.flipSide, spawnPosition, false, newCellEnergy);
+				// Spawn cell according to gene cells instructions!
+				Cell newCell = SpawnCell(creature, buildGeneCell.gene, buildGeneCell.mapPosition, buildGeneCell.buildOrderIndex, buildGeneCell.bindCardinalIndex, buildGeneCell.flipSide, spawnPosition, false, newCellEnergy);
 				UpdateNeighbourReferencesIntraBody(); //We need to know our neighbours in order to update vectors correctly 
 				newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
-				newCell.UpdateHeading(); //Rotation is needed in order to place subsequent cells right
+				newCell.UpdateHeading(); // otation is needed in order to place subsequent cells right
 				newCell.UpdateFlipSide(); // Just graphics
 				if (newCell.GetCellType() == CellTypeEnum.Muscle) {
 					((MuscleCell)newCell).UpdateMasterAxon();
 				}
 				growCellCount++;
 
-				if (tryPlayEffects) {
+				// Play Fx
+				if (tryPlayFx) {
 					bool hasAudio; float audioVolume; bool hasParticles;
 					SpatialUtil.GetFxGrade(newCell.position, false, out hasAudio, out audioVolume, out hasParticles);
 					if (hasAudio) {
@@ -410,7 +446,8 @@ public class Phenotype : MonoBehaviour {
 					}
 				}
 			}
-		}
+		} // ^ for each (geneCell in geneCellList) ^
+
 		if (growCellCount > 0) {
 			if (IsSliding((float)worldTick)) {
 				SetCellDragSlide();
@@ -535,9 +572,11 @@ public class Phenotype : MonoBehaviour {
 			UpdateSpringsFrequenze(); //testing only
 			UpdateSpringsBreakingForce();
 
-
 			//test with no muscel collider
 			EnableCollider(true);
+
+			// Update buds in graphics
+			areBudsDirty = true;
 
 			//Clean
 			connectionsDiffersFromCells = false;
@@ -1268,6 +1307,25 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	private void UpdatePriorityBuds(Creature creature) {
+		creature.genotype.geneCellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
+		int? highestPriority = null;
+		foreach (Cell buildGeneCell in creature.genotype.geneCellList) {
+			if (!IsCellBuiltForGeneCell(buildGeneCell) && IsCellBuiltAtNeighbourPosition(buildGeneCell.mapPosition)) {
+				if (highestPriority == null) {
+					highestPriority = buildGeneCell.buildOrderIndex;
+				}
+				for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+					Cell builtNeighbourToUnbuilt = cellMap.GetCell(CellMap.GetGridNeighbourGridPosition(buildGeneCell.mapPosition, cardinalIndex));
+					if (builtNeighbourToUnbuilt != null) {
+						// for the neighbours of the unbuilt set (neighbour in unbuilts direction (that is +180 degrees)) isPriorityBudSatus
+						builtNeighbourToUnbuilt.GetNeighbour(AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3)).isPriorityBud = (buildGeneCell.buildOrderIndex == highestPriority);
+					}
+				}
+			}
+		}
+	}
+
 	// Update
 	public void UpdateGraphics(Creature creature) {
 		//TODO: Update cells flip triangles here
@@ -1281,16 +1339,21 @@ public class Phenotype : MonoBehaviour {
 
 		// Warning:  So we are more restrictive with these updates now, make sure colliders are updated as they should
 		if (isDirty) {
-			// Buds
-			for (int index = 0; index < cellList.Count; index++) {
-				cellList[index].UpdateBuds();
-			}
-
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature Phenotype");
 
 			SetCollider(hasCollider);
 			isDirty = false;
+		}
+
+		if (areBudsDirty) {
+			// Buds
+			//Debug.Log("uPDATE buds");
+			UpdatePriorityBuds(creature);
+			for (int index = 0; index < cellList.Count; index++) {
+				cellList[index].UpdateBuds();
+			}
+			areBudsDirty = false;
 		}
 	}
 

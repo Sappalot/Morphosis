@@ -542,7 +542,7 @@ public class Creature : MonoBehaviour {
 	// Apply on Phenotype
 	public void TryGrow(bool forceGrow, int cellCount, bool playEffects) {
 		NoGrowthReason reason;
-		phenotype.TryGrow(this, forceGrow, cellCount, true, playEffects, 0, true, out reason);
+		phenotype.TryGrow(this, false, forceGrow, cellCount, true, playEffects, 0, true, out reason);
 		isDirtyGraphics = true;
 	}
 
@@ -774,14 +774,14 @@ public class Creature : MonoBehaviour {
 		if (growTicks == 0) {
 			if (PhenotypePhysicsPanel.instance.grow.isOn) {
 				NoGrowthReason reason;
-				didGrowCount = phenotype.TryGrow(this, false, 1, false, true, worldTicks, false, out reason);
+				didGrowCount = phenotype.TryGrow(this, true, false, 1, false, true, worldTicks, false, out reason);
 				if (didGrowCount > 0) {
 					PhenotypePanel.instance.MakeDirty();
 					CellPanel.instance.MakeDirty();
 					cantGrowMore = 0;
 				} else if (reason.fullyGrown) {
 					cantGrowMore = int.MaxValue;
-				} else if (((reason.roomBound || reason.poseBound) && !reason.energyBound && !reason.respawnTimeBound)) {
+				} else if (((reason.spaceIsOccupied || reason.tooFarAwayFromNeighbours) && !reason.notEnoughNeighbourEnergy && !reason.waitingForRespawnCooldown)) {
 					cantGrowMore++; // wait a while before giving up on finding a spot to grow another cell
 				} else {
 					cantGrowMore = 0;

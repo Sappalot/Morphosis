@@ -8,6 +8,8 @@ public class CellNeighbour {
 	public Vector3 coreToThis;
 	public int cardinalIndex; //cardinal direction index
 
+	public bool isPriorityBud; //Only graphical
+
 	public CellNeighbour(int cardinalIndex) {
 		this.cardinalIndex = cardinalIndex;
 		bindAngle = AngleUtil.CardinalIndexToAngle(cardinalIndex);
