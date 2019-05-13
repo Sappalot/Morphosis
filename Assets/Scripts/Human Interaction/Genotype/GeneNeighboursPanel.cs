@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
+public class GeneNeighboursPanel : MonoBehaviour {
 	public GameObject circles;
 
 	private bool isDirty = true;
@@ -14,7 +14,7 @@ public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 	public ArrangementPanel arrangementPanelTemplate;
 	private ArrangementPanel[] arrangementPanels = new ArrangementPanel[3];
 
-	override public void Init() {
+	public void Init() {
 		RectTransform originalTransform = arrangementPanelTemplate.GetComponent<RectTransform>();
 
 		for (int index = 0; index < arrangementPanels.Length; index++) {
@@ -47,7 +47,7 @@ public class GeneNeighboursPanel : MonoSingleton<GeneNeighboursPanel> {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
-				Debug.Log("Update GenePanel");
+				Debug.Log("Update GeneNeighbourPanel");
 
 			//Nothing to represent
 			if (GenePanel.instance.selectedGene == null) {

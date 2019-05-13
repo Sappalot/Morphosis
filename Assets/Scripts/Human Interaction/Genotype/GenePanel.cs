@@ -24,7 +24,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 	public void MakeDirty() {
 		isDirty = true;
 		GeneCellPanel.instance.MakeDirty();
-		GeneNeighboursPanel.instance.MakeDirty();
+		GeneCellPanel.instance.geneNeighbourPanel.MakeDirty();
 	}
 
 	private void Update() {

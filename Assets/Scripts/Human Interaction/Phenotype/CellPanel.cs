@@ -42,6 +42,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public AxonCellPanel axonCellPanel;
 	public OriginCellPanel originCellPanel;
 
+	public GeneNeighboursPanel geneNeighbourPanel;
+
 	override public void Init() {
 		isDirty = true;
 		metabolismCellPanels[0] = eggCellPanel;
@@ -59,6 +61,9 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 		axonCellPanel.mode = PhenoGenoEnum.Phenotype;
 		originCellPanel.mode = PhenoGenoEnum.Phenotype;
+
+		geneNeighbourPanel.Init();
+
 		MakeDirty();
 	}
 
@@ -77,6 +82,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 		axonCellPanel.MakeDirty();
 		originCellPanel.MakeDirty();
+
+		geneNeighbourPanel.MakeDirty();
 	}
 
 	private Cell m_selectedCell;

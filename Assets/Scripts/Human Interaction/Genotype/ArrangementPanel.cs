@@ -82,7 +82,7 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	public void OnClickedCenterCircle() {
-		if (CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome) {
+		if (CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			arrangement.CycleArrangementType();
 			MakeAllGenomeStuffDirty();
 		}
@@ -175,7 +175,7 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	public void OnClickedSetReference() {
-		GeneNeighboursPanel.instance.SetAskingForGeneReference(this);
+		GeneCellPanel.instance.geneNeighbourPanel.SetAskingForGeneReference(this);
 		MouseAction.instance.actionState = MouseActionStateEnum.selectGene;
 	}
 
@@ -185,7 +185,7 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	private void MakeAllGenomeStuffDirty() {
-		GeneNeighboursPanel.instance.MakeDirty();
+		GeneCellPanel.instance.geneNeighbourPanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
@@ -258,7 +258,7 @@ public class ArrangementPanel : MonoBehaviour {
 				enableToggle.interactable = false;
 			}
 
-			arrangementButtons.SetActive(isEnabled && isMouseHoverng && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome);
+			arrangementButtons.SetActive(isEnabled && isMouseHoverng && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype);
 
 			//grey out
 			UpdateIsUsed();
