@@ -11,7 +11,7 @@ public class SizeBar : MonoBehaviour {
 	public Color colorEmptyEgg;
 	public Color colorOccupiedChild;
 
-	private const int xCount = 40;
+	private const int xCount = 114;
 	private Image[] images = new Image[xCount * 2];
 
 	private void Start() {
