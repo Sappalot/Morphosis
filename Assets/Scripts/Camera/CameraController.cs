@@ -61,7 +61,8 @@ public class CameraController : MouseDrag {
 		camera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 		if (PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) { //&& !Input.GetMouseButton(0)
 			if (CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive) {
-				Vector2 focus = CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position;
+				float aspect = Screen.width / Screen.height;
+				Vector2 focus = CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position + Vector2.right * 0.5f * camera.orthographicSize * aspect + Vector2.down * 0.1f * camera.orthographicSize;
 				camera.transform.position = new Vector3(focus.x, focus.y, camera.transform.position.z);
 				if (PhenotypePanel.instance.yawToggle.isOn) {
 					camera.transform.localRotation = Quaternion.Euler(0f, 0f, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
