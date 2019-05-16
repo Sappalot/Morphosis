@@ -721,7 +721,7 @@ public class Creature : MonoBehaviour {
 				genotype.UpdateOutline(this, CreatureSelectionPanel.instance.IsSelected(this));
 				genotype.ShowGeneCellsSelected(false);
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
-					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
+					genotype.ShowGeneCellsSelectedWithGene(GeneCellPanel.instance.selectedGene, true);
 				}
 			}
 			isDirtyGraphics = false;

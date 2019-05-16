@@ -36,7 +36,7 @@ public abstract class MetabolismCellPanel : MonoBehaviour {
 			if (mode == PhenoGenoEnum.Phenotype) {
 				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
 			} else {
-				return GenePanel.instance.selectedGene;
+				return GeneCellPanel.instance.selectedGene;
 			}
 			
 		}

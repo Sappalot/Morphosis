@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class GenotypePanel : MonoSingleton<GenotypePanel> {
-	public GameObject genePanel;
 	public GameObject lowerPanel;
 
 	public Image blackWhiteImage;
@@ -39,8 +38,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.MakeDirty();
+		GeneCellPanel.instance.selectedGene = null;
+		GeneCellPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -52,8 +51,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.MakeDirty();
+		GeneCellPanel.instance.selectedGene = null;
+		GeneCellPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -65,8 +64,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GenePanel.instance.selectedGene = null;
-		GenePanel.instance.MakeDirty();
+		GeneCellPanel.instance.selectedGene = null;
+		GeneCellPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -86,7 +85,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 	private IEnumerator UpdateIsVisible() {
 		yield return 0;
-		genePanel.SetActive((CreatureSelectionPanel.instance.hasSoloSelected && MouseAction.instance.actionState == MouseActionStateEnum.free && !AlternativeToolModePanel.instance.isOn) || MouseAction.instance.actionState == MouseActionStateEnum.selectGene);
+		GeneCellPanel.instance.gameObject.SetActive((CreatureSelectionPanel.instance.hasSoloSelected && MouseAction.instance.actionState == MouseActionStateEnum.free && !AlternativeToolModePanel.instance.isOn) || MouseAction.instance.actionState == MouseActionStateEnum.selectGene);
 		lowerPanel.gameObject.SetActive((CreatureSelectionPanel.instance.hasSelection && MouseAction.instance.actionState == MouseActionStateEnum.free && !AlternativeToolModePanel.instance.isOn) || MouseAction.instance.actionState == MouseActionStateEnum.selectGene);
 	}
 

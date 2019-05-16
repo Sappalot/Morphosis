@@ -40,7 +40,7 @@ public class ReferenceGraphics : MonoBehaviour {
 	}
 
 	public void OnClicked() {
-		GenePanel.instance.selectedGene = gene;
+		GeneCellPanel.instance.selectedGene = gene;
 		GeneCellPanel.instance.geneNeighbourPanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeScrollDirty();

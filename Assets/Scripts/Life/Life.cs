@@ -262,7 +262,7 @@ public class Life : MonoBehaviour {
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		CreatureSelectionPanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
-		GenePanel.instance.MakeDirty();
+		GeneCellPanel.instance.MakeDirty();
 
 		creatureDeathsPerSecond.IncreaseCounter();
 

@@ -92,7 +92,7 @@ public class Freezer : MonoSingleton<Freezer> {
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 		CreatureSelectionPanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
-		GenePanel.instance.MakeDirty();
+		GeneCellPanel.instance.MakeDirty();
 
 		if (tryPlayFx) {
 			bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;

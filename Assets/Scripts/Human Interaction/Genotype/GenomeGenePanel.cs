@@ -28,7 +28,7 @@ public class GenomeGenePanel : MonoBehaviour {
 	public void OnClicked() {
 		//Debug.Log("Clicked " + index);
 		if (MouseAction.instance.actionState == MouseActionStateEnum.free) {
-			GenePanel.instance.selectedGene = gene;
+			GeneCellPanel.instance.selectedGene = gene;
 			GenomePanel.instance.MakeDirty();
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
 				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
@@ -68,7 +68,7 @@ public class GenomeGenePanel : MonoBehaviour {
 			flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
 			geneReferenceText.text = gene.index.ToString();
 
-			if (gene == GenePanel.instance.selectedGene) {
+			if (gene == GeneCellPanel.instance.selectedGene) {
 				backgroundImage.color = GenotypePanel.instance.selectedGeneColor;
 			} else {
 				backgroundImage.color = GenotypePanel.instance.unSelectedGeneColor;

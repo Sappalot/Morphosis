@@ -45,7 +45,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 		if (ignoreSliderMoved) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axonIsEnabled = enabledToggle.isOn;
+		GeneCellPanel.instance.selectedGene.axonIsEnabled = enabledToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnChanged();
 		}
@@ -56,7 +56,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 		if (ignoreSliderMoved) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axonFromOriginOffset = fromOriginOffsetSlider.value;
+		GeneCellPanel.instance.selectedGene.axonFromOriginOffset = fromOriginOffsetSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnChanged();
 		}
@@ -67,7 +67,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 		if (ignoreSliderMoved) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axonIsFromOriginPlus180 = fromOriginPlus180Toggle.isOn;
+		GeneCellPanel.instance.selectedGene.axonIsFromOriginPlus180 = fromOriginPlus180Toggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnChanged();
 		}
@@ -78,7 +78,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 		if (ignoreSliderMoved) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axonFromMeOffset = fromMeOffsetSlider.value;
+		GeneCellPanel.instance.selectedGene.axonFromMeOffset = fromMeOffsetSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnChanged();
 		}
@@ -89,7 +89,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 		if (ignoreSliderMoved) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axonRelaxContract = relaxContractSlider.value;
+		GeneCellPanel.instance.selectedGene.axonRelaxContract = relaxContractSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnChanged();
 		}
@@ -100,7 +100,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 		if (ignoreSliderMoved) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axonIsReverse = reverseToggle.isOn;
+		GeneCellPanel.instance.selectedGene.axonIsReverse = reverseToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			OnChanged();
 		}
@@ -136,31 +136,31 @@ public class AxonCellPanel : MetabolismCellPanel {
 			reverseToggle.interactable = interractable;
 			reverseText.color = textColor;
 
-			if (GenePanel.instance.selectedGene != null && CreatureSelectionPanel.instance.hasSoloSelected) {
+			if (GeneCellPanel.instance.selectedGene != null && CreatureSelectionPanel.instance.hasSoloSelected) {
 				ignoreSliderMoved = true;
 
-				enabledToggle.isOn = GenePanel.instance.selectedGene.axonIsEnabled;
+				enabledToggle.isOn = GeneCellPanel.instance.selectedGene.axonIsEnabled;
 				if (mode == PhenoGenoEnum.Genotype) {
-					fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", GenePanel.instance.selectedGene.axonFromOriginOffset);
+					fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", GeneCellPanel.instance.selectedGene.axonFromOriginOffset);
 				} else if (mode == PhenoGenoEnum.Phenotype) {
 
-					if (GenePanel.instance.selectedGene.axonIsFromOriginPlus180 && CellPanel.instance.selectedCell.flipSide == FlipSideEnum.WhiteBlack) {
-						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1} + 180°", GenePanel.instance.selectedGene.axonFromOriginOffset);
+					if (GeneCellPanel.instance.selectedGene.axonIsFromOriginPlus180 && CellPanel.instance.selectedCell.flipSide == FlipSideEnum.WhiteBlack) {
+						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1} + 180°", GeneCellPanel.instance.selectedGene.axonFromOriginOffset);
 					} else {
-						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", GenePanel.instance.selectedGene.axonFromOriginOffset);
+						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", GeneCellPanel.instance.selectedGene.axonFromOriginOffset);
 					}
 				}
-				fromOriginOffsetSlider.value = GenePanel.instance.selectedGene.axonFromOriginOffset;
+				fromOriginOffsetSlider.value = GeneCellPanel.instance.selectedGene.axonFromOriginOffset;
 
-				fromOriginPlus180Toggle.isOn = GenePanel.instance.selectedGene.axonIsFromOriginPlus180;
+				fromOriginPlus180Toggle.isOn = GeneCellPanel.instance.selectedGene.axonIsFromOriginPlus180;
 
-				fromMeOffsetSlider.value = GenePanel.instance.selectedGene.axonFromMeOffset;
-				fromMeOffsetText.text = string.Format("Offset me -> muscle: {0:F1}°/cell distance", GenePanel.instance.selectedGene.axonFromMeOffset);
+				fromMeOffsetSlider.value = GeneCellPanel.instance.selectedGene.axonFromMeOffset;
+				fromMeOffsetText.text = string.Format("Offset me -> muscle: {0:F1}°/cell distance", GeneCellPanel.instance.selectedGene.axonFromMeOffset);
 
-				relaxContractSlider.value = GenePanel.instance.selectedGene.axonRelaxContract;
-				relaxContractRelaxContractText.text = string.Format("Relax/Contract offset: {0:F2}", GenePanel.instance.selectedGene.axonRelaxContract);
+				relaxContractSlider.value = GeneCellPanel.instance.selectedGene.axonRelaxContract;
+				relaxContractRelaxContractText.text = string.Format("Relax/Contract offset: {0:F2}", GeneCellPanel.instance.selectedGene.axonRelaxContract);
 
-				reverseToggle.isOn = GenePanel.instance.selectedGene.axonIsReverse;
+				reverseToggle.isOn = GeneCellPanel.instance.selectedGene.axonIsReverse;
 
 				ignoreSliderMoved = false;
 			}

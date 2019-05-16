@@ -3,6 +3,18 @@ using UnityEngine.UI;
 
 public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 	// Metabolism 
+	public Text geneDescriptionLabel;
+
+	private Gene m_selectedGene;
+	public Gene selectedGene {
+		get {
+			return m_selectedGene != null ? m_selectedGene : (CreatureSelectionPanel.instance.hasSoloSelected ? (CreatureSelectionPanel.instance.soloSelected.genotype.hasGenes ? CreatureSelectionPanel.instance.soloSelected.genotype.originCell.gene : null) : null);
+		}
+		set {
+			m_selectedGene = value;
+			MakeDirty();
+		}
+	}
 
 	//-----Shold be same as the top of CellPanel
 	[Header("Metabolism")]
@@ -77,6 +89,8 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 		}
 		axonCellPanel.MakeDirty();
 		originCellPanel.MakeDirty();
+
+		geneNeighbourPanel.MakeDirty();
 	}
 
 	private bool ignoreMenuChange;
@@ -86,21 +100,21 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 		}
 
 		if (metabolismCellTypeDropdown.value == 0) {
-			GenePanel.instance.selectedGene.type = CellTypeEnum.Egg;
+			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Egg;
 		} else if (metabolismCellTypeDropdown.value == 1) {
-			GenePanel.instance.selectedGene.type = CellTypeEnum.Fungal;
+			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Fungal;
 		} else if (metabolismCellTypeDropdown.value == 2) {
-			GenePanel.instance.selectedGene.type = CellTypeEnum.Jaw;
+			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Jaw;
 		} else if (metabolismCellTypeDropdown.value == 3) {
-			GenePanel.instance.selectedGene.type = CellTypeEnum.Leaf;
+			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Leaf;
 		} else if (metabolismCellTypeDropdown.value == 4) {
-			GenePanel.instance.selectedGene.type = CellTypeEnum.Muscle;
+			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Muscle;
 		} else if (metabolismCellTypeDropdown.value == 5) {
-			GenePanel.instance.selectedGene.type = CellTypeEnum.Root;
+			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Root;
 		} else if (metabolismCellTypeDropdown.value == 6) {
-			GenePanel.instance.selectedGene.type = CellTypeEnum.Shell;
+			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Shell;
 		} else if (metabolismCellTypeDropdown.value == 7) {
-			GenePanel.instance.selectedGene.type = CellTypeEnum.Vein;
+			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Vein;
 		}
 
 		geneNeighbourPanel.MakeDirty();
@@ -170,46 +184,48 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 			energyBar.isOn = false;
 
 			//Nothing to represent
-			if (GenePanel.instance.selectedGene == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
+			if (GeneCellPanel.instance.selectedGene == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
 
 				isDirty = false;
 				return;
 			}
+
+			geneDescriptionLabel.text = "Gene: " + selectedGene.type.ToString();
 
 			//allow interactionclo
 
 			metabolismCellTypeDropdown.interactable = CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
 
 			ignoreMenuChange = true;
-			if (GenePanel.instance.selectedGene.type == CellTypeEnum.Egg) {
+			if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Egg) {
 				metabolismCellTypeDropdown.value = 0;
 				eggCellPanel.gameObject.SetActive(true);
 				eggCellPanel.MakeDirty();
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Fungal) {
+			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Fungal) {
 				metabolismCellTypeDropdown.value = 1;
 				fungalCellPanel.gameObject.SetActive(true);
 				fungalCellPanel.MakeDirty();
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Jaw) {
+			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Jaw) {
 				metabolismCellTypeDropdown.value = 2;
 				jawCellPanel.gameObject.SetActive(true);
 				jawCellPanel.MakeDirty();
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Leaf) {
+			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Leaf) {
 				metabolismCellTypeDropdown.value = 3;
 				leafCellPanel.gameObject.SetActive(true);
 				leafCellPanel.MakeDirty();
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Muscle) {
+			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Muscle) {
 				metabolismCellTypeDropdown.value = 4;
 				muscleCellPanel.gameObject.SetActive(true);
 				muscleCellPanel.MakeDirty();
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Root) {
+			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Root) {
 				metabolismCellTypeDropdown.value = 5;
 				rootCellPanel.gameObject.SetActive(true);
 				rootCellPanel.MakeDirty();
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Shell) {
+			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Shell) {
 				metabolismCellTypeDropdown.value = 6;
 				shellCellPanel.gameObject.SetActive(true);
 				shellCellPanel.MakeDirty();
-			} else if (GenePanel.instance.selectedGene.type == CellTypeEnum.Vein) {
+			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Vein) {
 				metabolismCellTypeDropdown.value = 7;
 				veinCellPanel.gameObject.SetActive(true);
 				veinCellPanel.MakeDirty();
