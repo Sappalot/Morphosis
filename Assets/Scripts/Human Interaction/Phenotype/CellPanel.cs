@@ -62,7 +62,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		axonCellPanel.mode = PhenoGenoEnum.Phenotype;
 		originCellPanel.mode = PhenoGenoEnum.Phenotype;
 
-		geneNeighbourPanel.Init();
+		geneNeighbourPanel.gameObject.SetActive(false);
 
 		MakeDirty();
 	}
@@ -82,8 +82,6 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 		axonCellPanel.MakeDirty();
 		originCellPanel.MakeDirty();
-
-		geneNeighbourPanel.MakeDirty();
 	}
 
 	private Cell m_selectedCell;
@@ -246,7 +244,12 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				veinCellPanel.MakeDirty();
 			}
 
-			originCellPanel.MakeDirty();
+			if (selectedCell.isOrigin) {
+				originCellPanel.gameObject.SetActive(true);
+				originCellPanel.MakeDirty();
+			} else {
+				originCellPanel.gameObject.SetActive(false);
+			}
 
 			isDirty = false;
 		}

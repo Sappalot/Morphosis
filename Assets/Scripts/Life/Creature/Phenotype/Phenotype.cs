@@ -41,6 +41,12 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public bool hasOriginCell {
+		get {
+			return cellList.Count > 0;
+		}
+	}
+
 	public float energy {
 		get {
 			float energy = 0;
@@ -150,6 +156,10 @@ public class Phenotype : MonoBehaviour {
 	public CellMap cellMap = new CellMap(); //Containing only built cells
 	private bool isDirty = true;
 	private bool areBudsDirty = true;
+
+	public void MakeBudsDirty() {
+		areBudsDirty = true;
+	}
 
 	public void DisablePhysicsComponents() {
 		foreach (Cell c in cellList) {
@@ -1287,7 +1297,10 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	public bool IsInsideBoundingCircle(Vector2 position) {
-		return Vector2.SqrMagnitude(originCell.position - position) < Mathf.Pow(Creature.maxRadius * 2f, 2f);
+		if (hasOriginCell) {
+			return Vector2.SqrMagnitude(originCell.position - position) < Mathf.Pow(Creature.maxRadius * 2f, 2f);
+		}
+		return false;
 	}
 
 	private void SetCollider(bool on) {
@@ -1348,7 +1361,6 @@ public class Phenotype : MonoBehaviour {
 
 		if (areBudsDirty) {
 			// Buds
-			//Debug.Log("uPDATE buds");
 			UpdatePriorityBuds(creature);
 			for (int index = 0; index < cellList.Count; index++) {
 				cellList[index].UpdateBuds();

@@ -501,7 +501,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		} else {
 			return; // mixed or error
 		}
+
 		
+
 		StartMoveCreatures();
 		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
 
@@ -785,7 +787,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				moveOffset.Clear();
 
 				foreach (Creature c in killList) {
-					World.instance.life.KillCreatureSafe(c, false);
+					if (c.creation ==CreatureCreationEnum.Frozen) {
+						Freezer.instance.KillCreatureSafe(c, false);
+					} else {
+						World.instance.life.KillCreatureSafe(c, false);
+					}
+					
 				}
 				
 				MouseAction.instance.actionState = MouseActionStateEnum.free;

@@ -211,6 +211,7 @@ public class Freezer : MonoSingleton<Freezer> {
 
 	public void UpdateGraphics() {
 		for (int index = 0; index < creatureList.Count; index++) {
+			creatureList[index].UpdateStructure();
 			creatureList[index].UpdateGraphics();
 		}
 	}

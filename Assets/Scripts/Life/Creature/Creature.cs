@@ -610,6 +610,7 @@ public class Creature : MonoBehaviour {
 			}
 		}
 		isDirtyGraphics = true;
+		phenotype.MakeBudsDirty();
 	}
 
 	public void Release(PhenoGenoEnum type) {
@@ -683,18 +684,20 @@ public class Creature : MonoBehaviour {
 	public bool isInsideFrustum { get; private set; }
 
 	public void UpdateGraphics() {
-		if (SpatialUtil.IsInsideFrustum(phenotype.originCell.position)) {
-			isInsideFrustum = true;
-			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+			if (phenotype.isAlive && SpatialUtil.IsInsideFrustum(phenotype.originCell.position)) {
+				isInsideFrustum = true;
 				phenotype.UpdateGraphics(this);
-			} else {
-				genotype.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(this));
+			} else if (isInsideFrustum) {
+				isInsideFrustum = false;
+				phenotype.UpdateGraphics(this);
 			}
-		} else if (isInsideFrustum){
-			isInsideFrustum = false;
-			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
-				phenotype.UpdateGraphics(this);
-			} else {
+		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
+			if (SpatialUtil.IsInsideFrustum(genotype.originCell.position)) {
+				isInsideFrustum = true;
+				genotype.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(this));
+			} else if (isInsideFrustum) {
+				isInsideFrustum = false;
 				genotype.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(this));
 			}
 		}

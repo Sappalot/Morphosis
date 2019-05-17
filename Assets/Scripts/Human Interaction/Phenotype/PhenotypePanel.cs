@@ -61,10 +61,12 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 		isDirty = true;
 	}
 
+	// To work with button presses... dont want it to appear into a click
 	private IEnumerator UpdateIsVisible() {
 		yield return 0;
 		bodyPanel.SetActive(CreatureSelectionPanel.instance.hasSelection && MouseAction.instance.actionState == MouseActionStateEnum.free && !AlternativeToolModePanel.instance.isOn);
-		cellPanel.gameObject.SetActive(CreatureSelectionPanel.instance.hasSoloSelected && MouseAction.instance.actionState == MouseActionStateEnum.free && !AlternativeToolModePanel.instance.isOn);
+		bool cellPanelActive = CreatureSelectionPanel.instance.hasSoloSelected && MouseAction.instance.actionState == MouseActionStateEnum.free && !AlternativeToolModePanel.instance.isOn;
+		cellPanel.gameObject.SetActive(cellPanelActive);
 	}
 
 	private void Update() {

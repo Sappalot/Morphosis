@@ -100,21 +100,21 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 		}
 
 		if (metabolismCellTypeDropdown.value == 0) {
-			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Egg;
+			selectedGene.type = CellTypeEnum.Egg;
 		} else if (metabolismCellTypeDropdown.value == 1) {
-			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Fungal;
+			selectedGene.type = CellTypeEnum.Fungal;
 		} else if (metabolismCellTypeDropdown.value == 2) {
-			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Jaw;
+			selectedGene.type = CellTypeEnum.Jaw;
 		} else if (metabolismCellTypeDropdown.value == 3) {
-			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Leaf;
+			selectedGene.type = CellTypeEnum.Leaf;
 		} else if (metabolismCellTypeDropdown.value == 4) {
-			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Muscle;
+			selectedGene.type = CellTypeEnum.Muscle;
 		} else if (metabolismCellTypeDropdown.value == 5) {
-			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Root;
+			selectedGene.type = CellTypeEnum.Root;
 		} else if (metabolismCellTypeDropdown.value == 6) {
-			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Shell;
+			selectedGene.type = CellTypeEnum.Shell;
 		} else if (metabolismCellTypeDropdown.value == 7) {
-			GeneCellPanel.instance.selectedGene.type = CellTypeEnum.Vein;
+			selectedGene.type = CellTypeEnum.Vein;
 		}
 
 		geneNeighbourPanel.MakeDirty();
@@ -184,7 +184,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 			energyBar.isOn = false;
 
 			//Nothing to represent
-			if (GeneCellPanel.instance.selectedGene == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
+			if (selectedGene == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
 
 				isDirty = false;
 				return;
@@ -197,42 +197,48 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 			metabolismCellTypeDropdown.interactable = CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
 
 			ignoreMenuChange = true;
-			if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Egg) {
+			if (selectedGene.type == CellTypeEnum.Egg) {
 				metabolismCellTypeDropdown.value = 0;
 				eggCellPanel.gameObject.SetActive(true);
 				eggCellPanel.MakeDirty();
-			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Fungal) {
+			} else if (selectedGene.type == CellTypeEnum.Fungal) {
 				metabolismCellTypeDropdown.value = 1;
 				fungalCellPanel.gameObject.SetActive(true);
 				fungalCellPanel.MakeDirty();
-			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Jaw) {
+			} else if (selectedGene.type == CellTypeEnum.Jaw) {
 				metabolismCellTypeDropdown.value = 2;
 				jawCellPanel.gameObject.SetActive(true);
 				jawCellPanel.MakeDirty();
-			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Leaf) {
+			} else if (selectedGene.type == CellTypeEnum.Leaf) {
 				metabolismCellTypeDropdown.value = 3;
 				leafCellPanel.gameObject.SetActive(true);
 				leafCellPanel.MakeDirty();
-			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Muscle) {
+			} else if (selectedGene.type == CellTypeEnum.Muscle) {
 				metabolismCellTypeDropdown.value = 4;
 				muscleCellPanel.gameObject.SetActive(true);
 				muscleCellPanel.MakeDirty();
-			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Root) {
+			} else if (selectedGene.type == CellTypeEnum.Root) {
 				metabolismCellTypeDropdown.value = 5;
 				rootCellPanel.gameObject.SetActive(true);
 				rootCellPanel.MakeDirty();
-			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Shell) {
+			} else if (selectedGene.type == CellTypeEnum.Shell) {
 				metabolismCellTypeDropdown.value = 6;
 				shellCellPanel.gameObject.SetActive(true);
 				shellCellPanel.MakeDirty();
-			} else if (GeneCellPanel.instance.selectedGene.type == CellTypeEnum.Vein) {
+			} else if (selectedGene.type == CellTypeEnum.Vein) {
 				metabolismCellTypeDropdown.value = 7;
 				veinCellPanel.gameObject.SetActive(true);
 				veinCellPanel.MakeDirty();
 			}
 			ignoreMenuChange = false;
 
-			originCellPanel.MakeDirty();
+			if (selectedGene.isOrigin) {
+				originCellPanel.gameObject.SetActive(true);
+				originCellPanel.MakeDirty();
+			} else {
+				originCellPanel.gameObject.SetActive(false);
+			}
+
 
 			isDirty = false;
 		}
