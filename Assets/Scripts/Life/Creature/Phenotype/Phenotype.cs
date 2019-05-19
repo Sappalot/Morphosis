@@ -293,7 +293,7 @@ public class Phenotype : MonoBehaviour {
 	private int buildAtPriority = 0;
 	private int failedBuildsAtPriority = 0;
 
-	public int TryGrow(Creature creature, bool growOnlyHighestPriority, bool allowOvergrow, int cellGrowTargetCount, bool buildWithoutCost, bool tryPlayFx, ulong worldTick, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
+	public int TryGrow(Creature creature, bool highestPriorityFirst, bool allowOvergrow, int cellGrowTargetCount, bool buildWithoutCost, bool tryPlayFx, ulong worldTick, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
 		noGrowthReason = new NoGrowthReason();
 		
 		// If full grown => return
@@ -318,9 +318,15 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		// sort gene cell list: low number (high prio) -> hight number (low number)
-		genotype.geneCellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
+		// allready sorted, trust it!
+		if (highestPriorityFirst) {
+			genotype.geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
+		} else {
+			genotype.geneCellList.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex));
+		}
+		
 
-		int? highestPriority = null;
+		float? highestPriority = null; // highestPriority = lowest number
 
 		foreach (Cell buildGeneCell in genotype.geneCellList) {
 			// If grown enough
@@ -333,19 +339,19 @@ public class Phenotype : MonoBehaviour {
 
 				// Bail out on higher priority 'layer' if this (at lest one) cell had a lame excuse not to be build
 				// Use this bail out when growing cells one by one, only
-				if (growOnlyHighestPriority) {
+				if (highestPriorityFirst) {
 					if (highestPriority == null) {
-						highestPriority = buildGeneCell.buildOrderIndex;
+						highestPriority = buildGeneCell.buildIndex;
 					}
-					if (buildGeneCell.buildOrderIndex > highestPriority) {
+					if (buildGeneCell.buildPriority > highestPriority) { // highestPriority = lowest number
 						// We are here since NO 'cell to be' in previous priority 'layer' could be built
-						
+
 						if (noGrowthReason.notEnoughNeighbourEnergy || noGrowthReason.waitingForRespawnCooldown || noGrowthReason.tooFarAwayFromNeighbours) {
 							// if the excuse, for at least one 'cell to be', was a lame one (lame = it should be able to build shortly) than don't try to build lower priority cells
 							break;
 						}
 						// there was a reasonable excuse for all cells is previos build 'layer' (reasonable = there was something in the way), so we coutin building in the next lowe level 'layer'
-						highestPriority = buildGeneCell.buildOrderIndex; //step up highestPriority 'layer' a notch, and give all cells at this priority 'layer' a chance
+						highestPriority = buildGeneCell.buildPriority; //step up highestPriority 'layer' a notch, and give all cells at this priority 'layer' a chance
 					}
 				}
 
@@ -434,7 +440,7 @@ public class Phenotype : MonoBehaviour {
 				}
 
 				// Spawn cell according to gene cells instructions!
-				Cell newCell = SpawnCell(creature, buildGeneCell.gene, buildGeneCell.mapPosition, buildGeneCell.buildOrderIndex, buildGeneCell.bindCardinalIndex, buildGeneCell.flipSide, spawnPosition, false, newCellEnergy);
+				Cell newCell = SpawnCell(creature, buildGeneCell.gene, buildGeneCell.mapPosition, buildGeneCell.buildIndex, buildGeneCell.bindCardinalIndex, buildGeneCell.flipSide, spawnPosition, false, newCellEnergy);
 				UpdateNeighbourReferencesIntraBody(); //We need to know our neighbours in order to update vectors correctly 
 				newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
 				newCell.UpdateHeading(); // otation is needed in order to place subsequent cells right
@@ -697,7 +703,7 @@ public class Phenotype : MonoBehaviour {
 
 	public void TryShrink(int cellCount) {
 		int shrinkCellCount = 0;
-		cellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
+		cellList.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex)); // lets stick to this... shrink by buildIndex (not buildPriority)
 		for (int count = 0; count < cellCount; count++) {
 			if (this.cellCount == 1) {
 				return;
@@ -1049,7 +1055,7 @@ public class Phenotype : MonoBehaviour {
 		cell.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, 0f);
 
 		cell.mapPosition = mapPosition;
-		cell.buildOrderIndex = buildOrderIndex;
+		cell.buildIndex = buildOrderIndex;
 		cell.gene = gene;
 		cell.bindCardinalIndex = bindCardinalIndex;
 		cell.flipSide = flipSide;
@@ -1321,18 +1327,19 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	private void UpdatePriorityBuds(Creature creature) {
-		creature.genotype.geneCellList.Sort((emp1, emp2) => emp1.buildOrderIndex.CompareTo(emp2.buildOrderIndex));
-		int? highestPriority = null;
+		creature.genotype.geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
+		// Allready sorted, cross your fingers!
+		float? highestPriority = null; // highest priority = lowest number
 		foreach (Cell buildGeneCell in creature.genotype.geneCellList) {
 			if (!IsCellBuiltForGeneCell(buildGeneCell) && IsCellBuiltAtNeighbourPosition(buildGeneCell.mapPosition)) {
 				if (highestPriority == null) {
-					highestPriority = buildGeneCell.buildOrderIndex;
+					highestPriority = buildGeneCell.buildPriority;
 				}
 				for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 					Cell builtNeighbourToUnbuilt = cellMap.GetCell(CellMap.GetGridNeighbourGridPosition(buildGeneCell.mapPosition, cardinalIndex));
 					if (builtNeighbourToUnbuilt != null) {
 						// for the neighbours of the unbuilt set (neighbour in unbuilts direction (that is +180 degrees)) isPriorityBudSatus
-						builtNeighbourToUnbuilt.GetNeighbour(AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3)).isPriorityBud = (buildGeneCell.buildOrderIndex == highestPriority);
+						builtNeighbourToUnbuilt.GetNeighbour(AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3)).isPriorityBud = (buildGeneCell.buildPriority == highestPriority);
 					}
 				}
 			}

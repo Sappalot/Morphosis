@@ -76,6 +76,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float OriginPulseFrequenzyLeave = 1000f;
 		public float OriginPulseFrequenzyRandom = 10f;
 
+		public float buildPriorityBiasLeave = 1000f;
+		public float buildPriorityBiasRandom = 10f;
+
 		public float isEnabledLeave = 100f;
 		public float isEnabledToggle = 1f;
 
@@ -187,6 +190,10 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		//Origin
 		public float originPulseFrequenzyMin = 0.05f;
 		public float originPulseFrequenzyMax = 2f;
+
+		// Build Priority Bias
+		public float buildPriorityBiasMin = -10f;
+		public float buildPriorityBiasMax = 10f;
 
 		//Veins
 		public float veinFluxEffectWeak = 0.05f; //W

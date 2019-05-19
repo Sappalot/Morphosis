@@ -66,6 +66,9 @@ public class Gene {
 	}
 	// ^ Origin ^
 
+	// Build order
+	public float buildPriorityBias;
+	// ^ Build Order ^
 
 	private CellTypeEnum m_type = CellTypeEnum.Leaf;
 	public CellTypeEnum type {
@@ -112,6 +115,7 @@ public class Gene {
 		float mut = Random.Range(0, gs.mutation.cellTypeLeave + gs.mutation.cellTypeRandom * strength);
 		if (mut < gs.mutation.cellTypeRandom * strength) {
 			type = (CellTypeEnum)Random.Range(0, 8);
+			ScrambleMetabolism();
 		}
 
 		// Egg
@@ -195,11 +199,11 @@ public class Gene {
 		// Shell
 		mut = Random.Range(0, gs.mutation.shellCellArmorClassLeave + gs.mutation.shellCellArmorClassChange * strength);
 		if (mut < gs.mutation.shellCellArmorClassChange * strength) {
-			shellCellArmorClass = Mathf.Clamp(shellCellArmorClass - 1 + Mathf.FloorToInt( Random.Range(0, 3)), 0, ShellCell.armourClassCount - 1);
+			shellCellArmorClass = Mathf.Clamp(shellCellArmorClass - 2 + Random.Range(0, 5), 0, ShellCell.armourClassCount - 1);
 		}
 		mut = Random.Range(0, gs.mutation.shellCellTransparancyClassLeave + gs.mutation.shellCellTransparancyClassChange * strength);
 		if (mut < gs.mutation.shellCellTransparancyClassChange * strength) {
-			shellCellTransparancyClass = Mathf.Clamp(shellCellTransparancyClass - 1 + Mathf.FloorToInt(Random.Range(0, 3)), 0, ShellCell.transparencyClassCount - 1);
+			shellCellTransparancyClass = Mathf.Clamp(shellCellTransparancyClass - 2 + Random.Range(0, 5), 0, ShellCell.transparencyClassCount - 1);
 		}
 		// ^ Shell ^
 
@@ -241,12 +245,23 @@ public class Gene {
 
 		// ^ Axon ^ 
 
-		// Origo
+		// Origin..
 		spread = 40;
 		mut = Random.Range(0, gs.mutation.OriginPulseFrequenzyLeave + gs.mutation.OriginPulseFrequenzyRandom * strength);
 		if (mut < gs.mutation.OriginPulseFrequenzyRandom * strength) {
 			originPulsePeriodTicks = (int)Mathf.Clamp(originPulsePeriodTicks - spread + Random.Range(0, spread) + Random.Range(0, spread), 1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMax), 1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMin));
 		}
+		// ^ Origin ^
+
+		// Build priority
+		spread = 5;
+		mut = Random.Range(0, gs.mutation.buildPriorityBiasLeave + gs.mutation.buildPriorityBiasRandom * strength);
+		if (mut < gs.mutation.buildPriorityBiasRandom * strength) {
+			buildPriorityBias = Mathf.Clamp(buildPriorityBias - spread + Random.Range(0, spread) + Random.Range(0, spread), GlobalSettings.instance.phenotype.buildPriorityBiasMin, GlobalSettings.instance.phenotype.buildPriorityBiasMax);
+			buildPriorityBias = Mathf.Round(buildPriorityBias * 10f) / 10f; // Round to closest tenth
+		}
+
+		// ^ Build Priority ^
 
 		//arrangements
 		arrangements[0].Mutate(strength);
@@ -254,11 +269,20 @@ public class Gene {
 		arrangements[2].Mutate(strength);
 	}
 
-	public void Scramble() {
+	public void ScrambleArrangements() {
 		type = (CellTypeEnum)Random.Range(0, 8);
 		arrangements[0].Scramble();
 		arrangements[1].Scramble();
 		arrangements[2].Scramble();
+	}
+
+	private void ScrambleMetabolism() {
+		if (type == CellTypeEnum.Shell) {
+			if (Random.Range(0, 3) == 0) {
+				shellCellArmorClass = Random.Range(0, ShellCell.armourClassCount);
+				shellCellTransparancyClass = Random.Range(0, ShellCell.transparencyClassCount);
+			}
+		}
 	}
 
 	public GeneReference GetFlippableReference(int referenceCardinalIndex, FlipSideEnum flipSide) {
@@ -335,6 +359,9 @@ public class Gene {
 		// Origin
 		geneData.originPulsePeriodTicks =     originPulsePeriodTicks;
 
+		//build order
+		geneData.buildPriorityBias = buildPriorityBias;
+
 		// 3 Arrangements
 		geneData.arrangementData[0] = arrangements[0].UpdateData();
 		geneData.arrangementData[1] = arrangements[1].UpdateData();
@@ -396,6 +423,9 @@ public class Gene {
 
 		// Origin
 		originPulsePeriodTicks = geneData.originPulsePeriodTicks == 0 ? 80 : geneData.originPulsePeriodTicks;
+
+		// Build order
+		buildPriorityBias = geneData.buildPriorityBias;
 
 		// 3 Arrangements
 		arrangements[0].ApplyData(geneData.arrangementData[0]);

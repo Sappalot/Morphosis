@@ -7,7 +7,8 @@ public class GenotypeGraphicsPanel: MonoSingleton<GenotypeGraphicsPanel> {
 	public Dropdown graphicsGeneCellDropdown;
 	public enum CellGraphicsEnum {
 		type,
-		buildOrder, //only selected
+		buildIndex, //only selected
+		buildPriority, // only selected
 	}
 
 	[HideInInspector]

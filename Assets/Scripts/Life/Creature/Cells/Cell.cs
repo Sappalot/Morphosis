@@ -34,7 +34,14 @@ public abstract class Cell : MonoBehaviour {
 	public Vector2i mapPosition = new Vector2i();
 
 	[HideInInspector]
-	public int buildOrderIndex = 0;
+	public int buildIndex = 0; // The order in which geneCells were developed from origin (also read as steps from origin along gene arrows)
+
+	[HideInInspector]
+	public float buildPriority { // the cell with the lowest(number) buildPriority will be grown first
+		get {
+			return buildIndex + gene.buildPriorityBias;
+		}
+	}
 
 	[HideInInspector]
 	public float lastTime = 0; //Last time muscle cell was updated
@@ -679,9 +686,9 @@ public abstract class Cell : MonoBehaviour {
 		this.phenoGeno = phenoGeno;
 
 		SetLabelEnabled(phenoGeno == PhenoGenoEnum.Genotype);
-		if (phenoGeno == PhenoGenoEnum.Phenotype) {
-			Destroy(labelCanvas.gameObject);
-		}
+		//if (phenoGeno == PhenoGenoEnum.Phenotype) {
+		//	Destroy(labelCanvas.gameObject);
+		//}
 	}
 
 	public void RemoveCellNeighbours() {
@@ -1118,13 +1125,11 @@ public abstract class Cell : MonoBehaviour {
 			cellSelected.transform.Rotate(0f, 0f, -Time.unscaledDeltaTime * 90f);
 		}
 
-
-
 		openCircleSprite.color = GetColor();
 
 		// Main 2 Circles
 		if (phenoGeno == PhenoGenoEnum.Phenotype) {
-			//SetLabelEnabled(false);
+			SetLabelEnabled(false);
 
 			if (creature.creation == CreatureCreationEnum.Frozen) {
 				filledCircleSprite.color = GetColor();
@@ -1269,6 +1274,30 @@ public abstract class Cell : MonoBehaviour {
 				}
 				
 			}
+			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.buildPriority) {
+				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
+					SetLabelEnabled(true);
+					if (isOrigin) {
+						SetLabelText("-");
+					} else {
+						SetLabelText(buildPriority.ToString());
+					}
+
+					if (gene.buildPriorityBias < 0) {
+						SetLabelColor(Color.green);
+					} else if (gene.buildPriorityBias > 0) {
+						SetLabelColor(Color.red);
+					} else {
+						SetLabelColor(Color.gray);
+					}
+
+					filledCircleSprite.color = Color.black;
+					SetCorrectLabelOrientation();
+				} else {
+					filledCircleSprite.color = GetColor();
+					SetLabelEnabled(false);
+				}
+			}
 		} else {
 			if (GenotypeGraphicsPanel.instance.graphicsGeneCell == GenotypeGraphicsPanel.CellGraphicsEnum.type) {
 				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
@@ -1281,11 +1310,35 @@ public abstract class Cell : MonoBehaviour {
 					filledCircleSprite.color = GetColor();
 					SetLabelEnabled(false);
 				}
-			} else if (GenotypeGraphicsPanel.instance.graphicsGeneCell == GenotypeGraphicsPanel.CellGraphicsEnum.buildOrder) {
+			} else if (GenotypeGraphicsPanel.instance.graphicsGeneCell == GenotypeGraphicsPanel.CellGraphicsEnum.buildIndex) {
+				//TODO: show geneCells blocked by twin, show horizon of creature, show blocked by lower build order
 				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
 					SetLabelEnabled(true);
-					SetLabelText(buildOrderIndex.ToString());
+					SetLabelText(buildIndex.ToString());
 					SetLabelColor(Color.gray);
+					filledCircleSprite.color = Color.black;
+					SetCorrectLabelOrientation();
+				} else {
+					filledCircleSprite.color = GetColor();
+					SetLabelEnabled(false);
+				}
+			} else if (GenotypeGraphicsPanel.instance.graphicsGeneCell == GenotypeGraphicsPanel.CellGraphicsEnum.buildPriority) {
+				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
+					SetLabelEnabled(true);
+					if (isOrigin) {
+						SetLabelText("-");
+					} else {
+						SetLabelText(buildPriority.ToString());
+					}
+					
+					if (gene.buildPriorityBias < 0) {
+						SetLabelColor(Color.green);
+					} else if (gene.buildPriorityBias > 0) {
+						SetLabelColor(Color.red);
+					} else {
+						SetLabelColor(Color.gray);
+					}
+					
 					filledCircleSprite.color = Color.black;
 					SetCorrectLabelOrientation();
 				} else {
@@ -1295,6 +1348,8 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 	}
+
+
 
 	public void UpdateTwistAndTurn() {
 		//Optimize further
@@ -1365,7 +1420,7 @@ public abstract class Cell : MonoBehaviour {
 
 		lastTime = 0;
 		timeOffset = 0;
-		buildOrderIndex = 0;
+		buildIndex = 0;
 
 		radius = 0.5f;
 		transform.localScale = new Vector3(1f, 1f, 1f);
@@ -1398,7 +1453,7 @@ public abstract class Cell : MonoBehaviour {
 		cellData.bindCardinalIndex = bindCardinalIndex;
 		cellData.geneIndex = gene.index;
 		cellData.mapPosition = mapPosition;
-		cellData.buildOrderIndex = buildOrderIndex;
+		cellData.buildIndex = buildIndex;
 		cellData.flipSide = flipSide;
 		cellData.timeOffset = timeOffset;
 		cellData.lastTime = lastTime;
@@ -1433,7 +1488,7 @@ public abstract class Cell : MonoBehaviour {
 		bindCardinalIndex = cellData.bindCardinalIndex;
 		gene = creature.genotype.genome[cellData.geneIndex];
 		mapPosition = cellData.mapPosition;
-		buildOrderIndex = cellData.buildOrderIndex;
+		buildIndex = cellData.buildIndex;
 		flipSide = cellData.flipSide;
 		timeOffset = cellData.timeOffset;
 		lastTime = cellData.lastTime;

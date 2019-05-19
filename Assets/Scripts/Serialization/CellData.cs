@@ -9,7 +9,7 @@ public class CellData {
 	public int bindCardinalIndex;
 	public int geneIndex = 0;
 	public Vector2i mapPosition;
-	public int buildOrderIndex;
+	public int buildIndex;
 	public FlipSideEnum flipSide;
 	public float radius = 0.5f;
 	public Vector2 velocity;

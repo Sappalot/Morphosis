@@ -20,6 +20,7 @@ public class PhenotypeGraphicsPanel : MonoSingleton<PhenotypeGraphicsPanel> {
 		pulse,
 		age,
 		shell,
+		buildPriority, // selected only
 	}
 	[HideInInspector]
 	public CellGraphicsEnum graphicsCell {

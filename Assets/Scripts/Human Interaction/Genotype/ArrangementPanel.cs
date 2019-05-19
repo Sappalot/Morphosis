@@ -186,6 +186,7 @@ public class ArrangementPanel : MonoBehaviour {
 
 	private void MakeAllGenomeStuffDirty() {
 		GeneCellPanel.instance.geneNeighbourPanel.MakeDirty();
+		GeneCellPanel.instance.cellBuildPriorityPanel.MakeDirty(); // since change of genome might have an effect on wether same gena is expressed on several build index locations
 		GenomePanel.instance.MakeDirty();
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;

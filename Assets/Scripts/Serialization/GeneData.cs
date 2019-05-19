@@ -37,5 +37,6 @@ public class GeneData {
 	public bool axonIsReverse;
 
 	public int originPulsePeriodTicks; // ticks / complete wave
+	public float buildPriorityBias;
 	public ArrangementData[] arrangementData = new ArrangementData[3];
 }

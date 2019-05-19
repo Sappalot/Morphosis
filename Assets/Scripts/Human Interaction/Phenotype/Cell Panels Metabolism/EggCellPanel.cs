@@ -50,7 +50,8 @@ public class EggCellPanel : MetabolismCellPanel {
 
 		selectedGene.eggCellFertilizeThreshold = fertilizeSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}
 		MakeDirty();
 	}
@@ -62,7 +63,8 @@ public class EggCellPanel : MetabolismCellPanel {
 
 		selectedGene.eggCellDetatchMode = detatchSizeToggle.isOn ? ChildDetatchModeEnum.Size : ChildDetatchModeEnum.Energy;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}
 		MakeDirty();
 	}
@@ -74,7 +76,8 @@ public class EggCellPanel : MetabolismCellPanel {
 
 		selectedGene.eggCellDetatchSizeThreshold = detatchSizeSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}
 		MakeDirty();
 	}
@@ -86,7 +89,8 @@ public class EggCellPanel : MetabolismCellPanel {
 
 		selectedGene.eggCellDetatchEnergyThreshold = detatchEnergySlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}
 		MakeDirty();
 	}
@@ -98,7 +102,8 @@ public class EggCellPanel : MetabolismCellPanel {
 
 		selectedGene.eggCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}
 		MakeDirty();
 	}

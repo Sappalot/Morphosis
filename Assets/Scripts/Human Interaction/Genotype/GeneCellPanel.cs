@@ -54,6 +54,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[8];
 
 	public AxonCellPanel axonCellPanel;
+	public CellBuildPriorityPanel cellBuildPriorityPanel;
 	public OriginCellPanel originCellPanel;
 
 	public GeneNeighboursPanel geneNeighbourPanel;
@@ -74,6 +75,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 		}
 
 		axonCellPanel.mode = PhenoGenoEnum.Genotype;
+		cellBuildPriorityPanel.mode = PhenoGenoEnum.Genotype;
 		originCellPanel.mode = PhenoGenoEnum.Genotype;
 
 		geneNeighbourPanel.Init();
@@ -88,6 +90,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 			m.MakeDirty();
 		}
 		axonCellPanel.MakeDirty();
+		cellBuildPriorityPanel.MakeDirty();
 		originCellPanel.MakeDirty();
 
 		geneNeighbourPanel.MakeDirty();
@@ -235,8 +238,14 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 			if (selectedGene.isOrigin) {
 				originCellPanel.gameObject.SetActive(true);
 				originCellPanel.MakeDirty();
+
+				cellBuildPriorityPanel.gameObject.SetActive(false);
+
 			} else {
 				originCellPanel.gameObject.SetActive(false);
+
+				cellBuildPriorityPanel.gameObject.SetActive(true);
+				cellBuildPriorityPanel.MakeDirty();
 			}
 
 

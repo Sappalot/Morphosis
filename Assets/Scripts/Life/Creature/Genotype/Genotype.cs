@@ -149,7 +149,7 @@ public class Genotype : MonoBehaviour {
 	public void GenomeScramble() {
 		for (int chance = 0; chance < 3; chance++) {
 			for (int index = 0; index < genomeLength; index++) {
-				genome[index].Scramble();
+				genome[index].ScrambleArrangements();
 			}
 			if (genome[0].arrangements[0].isEnabled || genome[0].arrangements[1].isEnabled || genome[0].arrangements[2].isEnabled) {
 				break;
@@ -299,8 +299,8 @@ public class Genotype : MonoBehaviour {
 									nextSpawningFromCells.Add(newCell);
 									//geneCellList.Add(spawningFromCell); //Why was this line typed, Removed 2017-08-23??
 								} else {
-									Debug.Assert(residentCell.buildOrderIndex <= buildOrderIndex, "Trying to spawn a cell at a location where a cell of higher build order are allready present.");
-									if (residentCell.buildOrderIndex == buildOrderIndex) {
+									Debug.Assert(residentCell.buildIndex <= buildOrderIndex, "Trying to spawn a cell at a location where a cell of lower build index is allready present.");
+									if (residentCell.buildIndex == buildOrderIndex) {
 										//trying to spawn a cell where there is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
 										Morphosis.instance.geneCellPool.Recycle(residentCell);
 										geneCellList.Remove(residentCell);
@@ -328,6 +328,12 @@ public class Genotype : MonoBehaviour {
 			MoveTo(position);
 			geneCellsDiffersFromGenome = false;
 			creature.MakeDirtyGraphics();
+
+			// This is the only place where we add and remove GeneCells to geneCell List so we can safely sort it by priority here
+			// Sorted by priority ==> high BuildPrio (low number) to low BuildPrio (high number) 
+			// We need to have it sorted in this way and never in any other way
+			geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
+
 			return true;
 		}
 		return false;
@@ -344,7 +350,7 @@ public class Genotype : MonoBehaviour {
 		}
 		
 		cell.mapPosition = mapPosition;
-		cell.buildOrderIndex = buildOrderIndex;
+		cell.buildIndex = buildOrderIndex;
 		cell.gene = gene;
 		cell.bindCardinalIndex = bindHeading;
 		cell.flipSide = flipSide;
@@ -400,6 +406,20 @@ public class Genotype : MonoBehaviour {
 			}
 		}
 		return cells;
+	}
+
+	public bool HasAllOccurancesOfThisGeneSameBuildIndex(Gene gene) {
+		int? buildIndex = null;
+		foreach (Cell c in geneCellList) {
+			if (c.gene == gene) {
+				if (buildIndex == null) {
+					buildIndex = c.buildIndex;
+				} else if (c.buildIndex != buildIndex) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	public void ShowGeneCellsSelectedWithGene(Gene gene, bool on) {

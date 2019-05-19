@@ -542,7 +542,7 @@ public class Creature : MonoBehaviour {
 	// Apply on Phenotype
 	public void TryGrow(bool forceGrow, int cellCount, bool playEffects) {
 		NoGrowthReason reason;
-		phenotype.TryGrow(this, false, forceGrow, cellCount, true, playEffects, 0, true, out reason);
+		phenotype.TryGrow(this, true, forceGrow, cellCount, true, playEffects, 0, true, out reason);
 		isDirtyGraphics = true;
 	}
 

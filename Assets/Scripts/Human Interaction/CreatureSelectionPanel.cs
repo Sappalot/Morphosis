@@ -50,6 +50,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		Error,
 	}
 
+	public bool hasSoloSelectedThatCanChangeGenome {
+		get {
+			return hasSoloSelected && soloSelected.allowedToChangeGenome;
+		}
+	}
+
 	public TemperatureState GetSelectionTemperatureState() {
 		return GetTemperatureState(selection);
 	}
