@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 
 public class ShellCellPanel : MetabolismCellPanel {
-
 	public ShellCellPanelButton templateButton;
 	public Text productionEffectText;
 	public Text armorText;
@@ -58,7 +57,7 @@ public class ShellCellPanel : MetabolismCellPanel {
 				buttonMatrix[a, t].hasSelectedFrame = false;
 			}
 		}
-		buttonMatrix[CellPanel.instance.selectedCell.gene.shellCellArmorClass, CellPanel.instance.selectedCell.gene.shellCellTransparancyClass].hasSelectedFrame = true;
+		buttonMatrix[GeneCellPanel.instance.selectedGene.shellCellArmorClass, GeneCellPanel.instance.selectedGene.shellCellTransparancyClass].hasSelectedFrame = true;
 	}
 
 	public void SelectButton(ShellCellPanelButton button) {
