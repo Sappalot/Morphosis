@@ -1,4 +1,5 @@
-﻿using SerializerFree;
+﻿using Boo.Lang.Runtime;
+using SerializerFree;
 using SerializerFree.Serializers;
 using System;
 using System.Collections;
@@ -230,7 +231,7 @@ public class Freezer : MonoSingleton<Freezer> {
 	public FreezerData LoadFreezerData() {
 		string filename = "freezer.txt";
 
-		string path = "F:/Morfosis/";
+		string path = "F:/Morphosis/";
 		if (!File.Exists(path + filename)) {
 			Save();
 		}
@@ -253,7 +254,7 @@ public class Freezer : MonoSingleton<Freezer> {
 	public void Save() {
 		UpdateData();
 
-		string path = path = "F:/Morfosis/";
+		string path = path = "F:/Morphosis/";
 		string freezerToSave = Serializer.Serialize(freezerData, new UnityJsonSerializer());
 		if (!Directory.Exists(path)) {
 			Directory.CreateDirectory(path);

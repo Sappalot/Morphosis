@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Boo.Lang.Runtime;
 
 // The physical creature defined by all its cells
 public class Phenotype : MonoBehaviour {
@@ -28,11 +29,11 @@ public class Phenotype : MonoBehaviour {
 	[HideInInspector]
 	public Color outlineClusterColor = Color.black;
 
-	//private void DisableCellLabels() {
-	//	foreach (Cell cell in cellList) {
-	//		cell.SetLabelEnabled(false);
-	//	}
-	//}
+	public void SetCellLablesEnabled(bool enabled) {
+		foreach (Cell cell in cellList) {
+			cell.SetLabelEnabled(enabled);
+		}
+	}
 
 	[HideInInspector]
 	public Cell originCell {
@@ -133,7 +134,9 @@ public class Phenotype : MonoBehaviour {
 
 	public float speed { get; private set; }
 
-	public bool isAlive = true; // Are we going to use this approach?
+	public bool isAlive = true;
+	public bool hasError = false; // just to be able to print error in history as an event
+
 	[HideInInspector]
 	public bool cellsDiffersFromGeneCells = true;
 	[HideInInspector]
@@ -273,6 +276,7 @@ public class Phenotype : MonoBehaviour {
 		Clear();
 
 		isAlive = true;
+		hasError = false;
 		this.spawnPosition = spawnPosition;
 		this.spawnHeading = spawnHeading;
 
@@ -579,7 +583,13 @@ public class Phenotype : MonoBehaviour {
 			UpdateGroupsInterBody(motherId);
 
 			//Wings
-			edges.GenerateWings(creature, cellMap); // Wings are only generated from here
+			try {
+				edges.GenerateWings(creature, cellMap); // Wings are ONLY generated from here
+			} catch (RuntimeException e) {
+				hasError = true;
+				isAlive = false;
+				return false;
+			}
 
 			//Veins
 			veins.GenerateVeins(creature, cellMap);
@@ -592,7 +602,7 @@ public class Phenotype : MonoBehaviour {
 			EnableCollider(true);
 
 			// Update buds in graphics
-			areBudsDirty = true;
+			MakeBudsDirty();
 
 			//Clean
 			connectionsDiffersFromCells = false;
@@ -637,7 +647,6 @@ public class Phenotype : MonoBehaviour {
 					}
 				}
 			}
-
 		}
 
 		//My(placenta) <====> Child(origin)
@@ -1328,7 +1337,7 @@ public class Phenotype : MonoBehaviour {
 
 	private void UpdatePriorityBuds(Creature creature) {
 		creature.genotype.geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
-		// Allready sorted, cross your fingers!
+
 		float? highestPriority = null; // highest priority = lowest number
 		foreach (Cell buildGeneCell in creature.genotype.geneCellList) {
 			if (!IsCellBuiltForGeneCell(buildGeneCell) && IsCellBuiltAtNeighbourPosition(buildGeneCell.mapPosition)) {
@@ -1339,12 +1348,23 @@ public class Phenotype : MonoBehaviour {
 					Cell builtNeighbourToUnbuilt = cellMap.GetCell(CellMap.GetGridNeighbourGridPosition(buildGeneCell.mapPosition, cardinalIndex));
 					if (builtNeighbourToUnbuilt != null) {
 						// for the neighbours of the unbuilt set (neighbour in unbuilts direction (that is +180 degrees)) isPriorityBudSatus
-						builtNeighbourToUnbuilt.GetNeighbour(AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3)).isPriorityBud = (buildGeneCell.buildPriority == highestPriority);
+						CellNeighbour n = builtNeighbourToUnbuilt.GetNeighbour(AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3));
+						if (n != null) {
+							n.isPriorityBud = (buildGeneCell.buildPriority == highestPriority);
+						}
 					}
 				}
 			}
 		}
 	}
+
+	//public void SetEnabledAllGraphics(bool enabled) {
+	//	for (int index = 0; index < cellList.Count; index++) {
+	//		cellList[index].SetEnabledAllGraphics(enabled);
+	//	}
+	//}
+
+	
 
 	// Update
 	public void UpdateGraphics(Creature creature) {

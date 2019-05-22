@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Boo.Lang.Runtime;
 
 // The container of genotype(genes) and phenotype(body)
 // Holds information that does not fit into genes or body 
@@ -686,19 +687,27 @@ public class Creature : MonoBehaviour {
 	public void UpdateGraphics() {
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			if (phenotype.isAlive && SpatialUtil.IsInsideFrustum(phenotype.originCell.position)) {
+				// Entering frustum
 				isInsideFrustum = true;
 				phenotype.UpdateGraphics(this);
 			} else if (isInsideFrustum) {
+				// Leaving frustum
 				isInsideFrustum = false;
 				phenotype.UpdateGraphics(this);
 			}
+
+			//phenotype.SetCellLablesEnabled(isInsideFrustum && CreatureSelectionPanel.instance.IsSelected(this));
+
 		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			if (SpatialUtil.IsInsideFrustum(genotype.originCell.position)) {
 				isInsideFrustum = true;
 				genotype.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(this));
+				phenotype.edges.UpdateGraphics(false); // must be removed
 			} else if (isInsideFrustum) {
 				isInsideFrustum = false;
 				genotype.UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(this));
+				phenotype.UpdateGraphics(this);
+				phenotype.edges.UpdateGraphics(false); // must be removed
 			}
 		}
 
@@ -741,7 +750,6 @@ public class Creature : MonoBehaviour {
 			phenotype.connectionsDiffersFromCells = true;
 			isDirtyGraphics = true;
 		}
-
 		if (genotype.hasOriginCell && phenotype.UpdateConnectionsFromCellsBody(this, HasMotherAlive() ? GetMotherAlive().id : "no mother")) {
 			isDirtyGraphics = true;
 		}

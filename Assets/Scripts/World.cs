@@ -193,7 +193,7 @@ public class World : MonoSingleton<World> {
 		}
 		string path = GlobalPanel.instance.worldSaveDirerectory.text;
 		if (path == "") {
-			path = "F:/Morfosis/";
+			path = "F:/Morphosis/";
 		}
 		float timeStamp = Time.realtimeSinceStartup;
 		string serializedString = File.ReadAllText(path + filename);
@@ -227,7 +227,7 @@ public class World : MonoSingleton<World> {
 
 		string path = GlobalPanel.instance.worldSaveDirerectory.text;
 		if (path == "") {
-			path = "F:/Morfosis/";
+			path = "F:/Morphosis/";
 		}
 		string worldToSave = Serializer.Serialize(worldData, new UnityJsonSerializer());
 

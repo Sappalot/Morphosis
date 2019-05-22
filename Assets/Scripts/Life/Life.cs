@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.Collections;
+using Boo.Lang.Runtime;
 
 public class Life : MonoBehaviour {
 
@@ -170,7 +171,7 @@ public class Life : MonoBehaviour {
 		PhenotypePanel.instance.MakeDirty();
 		CreatureSelectionPanel.instance.MakeDirty();
 
-		//Sometimes child origin is placed with spring too far from mother's placent this update might fix this problem
+		//Sometimes child origin is placed with spring too far from mother's placenta this update might fix this problem
 		UpdateStructure();
 
 		if (wasForced) {
@@ -402,6 +403,8 @@ public class Life : MonoBehaviour {
 		Creature creature = Morphosis.instance.creaturePool.Borrow();
 		creature.gameObject.SetActive(true);
 
+
+
 		creatureDictionary.Add(id, creature);
 		creatureList.Add(creature);
 		creature.id = id;
@@ -477,6 +480,8 @@ public class Life : MonoBehaviour {
 
 		killCreatureList.Clear();
 
+
+
 		//TODO: dont do it every tick
 		for (int index = 0; index < creatureList.Count; index++) {
 			if (creatureList[index].phenotype.isAlive) {
@@ -484,6 +489,9 @@ public class Life : MonoBehaviour {
 					killCreatureList.Add(creatureList[index]);
 				}
 			} else {
+				if (creatureList[index].phenotype.hasError) {
+					World.instance.AddHistoryEvent(new HistoryEvent("e", false, Color.red));
+				}
 				killCreatureList.Add(creatureList[index]);
 			}
 		}

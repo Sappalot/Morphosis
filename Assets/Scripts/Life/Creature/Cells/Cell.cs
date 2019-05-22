@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using System.Linq;
 using UnityEngine.UI;
+using Boo.Lang.Runtime;
 
 public abstract class Cell : MonoBehaviour {
 	
@@ -13,6 +14,8 @@ public abstract class Cell : MonoBehaviour {
 	public SpriteRenderer filledCircleSprite; //cell type colour
 	public SpriteRenderer creatureSelectedSprite;
 	public SpriteRenderer shadowSprite;
+	public Text label;
+	public Canvas labelCanvas;
 
 	public Transform rotatedRoot; // All under this root will be rotated according to heading 0 = east, 90 = north
 
@@ -146,12 +149,16 @@ public abstract class Cell : MonoBehaviour {
 	// ^ Axon ^
 
 	// Text ...
-	public Text label;
-	public Canvas labelCanvas;
+
 	public void SetLabelEnabled(bool enabled) {
 		labelCanvas.gameObject.SetActive(enabled);
 		label.gameObject.SetActive(enabled);
 	}
+
+	public void RemoveLabelCanvas() {
+		Destroy(labelCanvas);
+	}
+
 
 	public void SetLabelText(string text) {
 		label.text = text;
@@ -180,9 +187,12 @@ public abstract class Cell : MonoBehaviour {
 				buds.SetEnabledBud(worldCardinalIndex, show);
 				buds.SetEnabledPriority(worldCardinalIndex, false);
 				if (show) {
-					bool isPriorityBud = GetNeighbour(localCardinalIndex).isPriorityBud; //Priority bud status should allready have been updated in phenotype
-					buds.SetEnabledPriority(worldCardinalIndex, isPriorityBud);
-					buds.SetColorOfBud(worldCardinalIndex, budCell.GetColor());
+					CellNeighbour n = GetNeighbour(localCardinalIndex);
+					if (n != null) {
+						bool isPriorityBud = n.isPriorityBud; //Priority bud status should allready have been updated in phenotype
+						buds.SetEnabledPriority(worldCardinalIndex, isPriorityBud);
+						buds.SetColorOfBud(worldCardinalIndex, budCell.GetColor());
+					}
 				}
 			}
 		} else {
@@ -568,7 +578,8 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void ShowOutline(bool show) {
-		creatureSelectedSprite.gameObject.SetActive(show);
+		//creatureSelectedSprite.gameObject.SetActive(show);
+		creatureSelectedSprite.enabled = show;
 	}
 
 	public void UpdateOutline(bool isHighlited) {
@@ -684,7 +695,6 @@ public abstract class Cell : MonoBehaviour {
 
 	public void Setup(PhenoGenoEnum phenoGeno) {
 		this.phenoGeno = phenoGeno;
-
 		SetLabelEnabled(phenoGeno == PhenoGenoEnum.Genotype);
 		//if (phenoGeno == PhenoGenoEnum.Phenotype) {
 		//	Destroy(labelCanvas.gameObject);
@@ -741,15 +751,15 @@ public abstract class Cell : MonoBehaviour {
 
 	public int GetDirectionOfOwnNeighbourCell(Creature me, Cell cell) {
 		if (cell.creature != me) {
-			Debug.LogError("Asking for neighbours on a cell outside of body");
+			throw new RuntimeException("Asking for neighbours on a cell outside of body");
 		}
 		for (int index = 0; index < 6; index++) {
 			if (HasOwnNeighbourCell(index) && GetNeighbour(index).cell == cell) {
 				return index;
 			}
 		}
-		Debug.LogError("Could not find own of previous cell");
-		return -1;
+		// Once in a blue moon we end up here without finding 
+		throw new RuntimeException("Could not find own of previous cell");
 	}
 
 	public void TurnHingeNeighboursInPlace() {
@@ -894,7 +904,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public Cell GetNeighbourCell(int cardinalIndex) {
-		return cellNeighbourDictionary[cardinalIndex % 6].cell;
+		return cellNeighbourDictionary[AngleUtil.CardinalIndexRawToSafe(cardinalIndex)].cell;
 	}
 
 	public CellNeighbour GetNeighbour(int cardinalIndex) {
@@ -1116,10 +1126,32 @@ public abstract class Cell : MonoBehaviour {
 
 	}
 
+	//public void SetEnabledAllGraphics(bool enabled) {
+	//	cellSelected.gameObject.SetActive(enabled); //transparent
+	//	triangleSprite.gameObject.SetActive(enabled);
+	//	openCircleSprite.gameObject.SetActive(enabled); //cell type colour
+	//	filledCircleSprite.gameObject.SetActive(enabled); //cell type colour
+	//	creatureSelectedSprite.gameObject.SetActive(enabled);
+	//	shadowSprite.gameObject.SetActive(enabled);
+
+	//	buds.gameObject.SetActive(enabled);
+
+	//	labelCanvas.gameObject.SetActive(enabled);
+	//}
+
 	// Update
+	private bool graphicsWasDisabled;
+
 
 	//TODO: update cell graphics from here
 	public void UpdateGraphics(bool mayBeSelected) {
+		//if (!graphicsWasDisabled) {
+		//	DisableGraphics();
+		//	buds.DisableGraphics();
+		//	graphicsWasDisabled = true;
+		//}
+		//return;
+
 		// Selector spin
 		if (mayBeSelected) {
 			cellSelected.transform.Rotate(0f, 0f, -Time.unscaledDeltaTime * 90f);
@@ -1298,7 +1330,7 @@ public abstract class Cell : MonoBehaviour {
 					SetLabelEnabled(false);
 				}
 			}
-		} else {
+		} else { // Genotype...
 			if (GenotypeGraphicsPanel.instance.graphicsGeneCell == GenotypeGraphicsPanel.CellGraphicsEnum.type) {
 				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
 					SetLabelEnabled(true);
@@ -1348,8 +1380,6 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 	}
-
-
 
 	public void UpdateTwistAndTurn() {
 		//Optimize further

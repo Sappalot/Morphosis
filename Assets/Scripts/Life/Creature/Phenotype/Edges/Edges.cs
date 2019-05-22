@@ -89,7 +89,8 @@ public class Edges : MonoBehaviour {
 		if (cellMap.cellCount == 1)
 			return;
 
-		Cell firstCell = cellMap.GetRightmostCellInModelSpace();
+		//Cell firstCell = cellMap.GetRightmostCellInModelSpace();
+		Cell firstCell = GetRightmostCellInModelSpace(creature); // We try to use cell list instead of map
 
 		Cell currentCell = firstCell;
 		Cell previousCell = null;
@@ -121,8 +122,18 @@ public class Edges : MonoBehaviour {
 		peripheryLoop.positionCount = edgeList.Count;
 	}
 
-	private Cell GetNextOwnPeripheryCell(Creature creature, Cell currentCell, Cell previousCell) {
-		int previousDirection = 0; // We need to have a previous direction which is pointing east in world space
+	private Cell GetRightmostCellInModelSpace(Creature creature) {
+		Cell record = creature.phenotype.cellList[0]; //sure to have oirgin, at least
+		foreach (Cell cell in creature.phenotype.cellList) {
+			if (cell.modelSpacePosition.x > record.modelSpacePosition.x) {
+				record = cell;
+			}
+		}
+		return record;
+	}
+
+	private Cell GetNextOwnPeripheryCell(Creature creature, Cell currentCell, Cell previousCell) { 
+		int previousDirection = -1; // -1 and 0 should both work, right? // We need to have a previous direction which is pointing east in model space
 		if (currentCell == null) {
 			Debug.LogError("currentCell = NULL");
 		}
@@ -133,7 +144,7 @@ public class Edges : MonoBehaviour {
 
 		for (int index = previousDirection + 1; index < previousDirection + 7; index++) {
 			Cell tryCell = currentCell.GetNeighbourCell(index);
-			if (tryCell != null && tryCell.creature == creature) { // We dont want to trace around connected creatures
+			if (tryCell != null && tryCell.creature == creature) { // We don't want to trace around connected creatures
 				return tryCell;
 			}
 		}
