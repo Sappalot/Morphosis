@@ -78,7 +78,10 @@ public class Genotype : MonoBehaviour {
 
 	public Cell originCell {
 		get {
-			return geneCellList[0];
+			//TODO: keep 2 lists, differently sorted
+			List<Cell> temp = new List<Cell>(geneCellList);
+			temp.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex));
+			return temp[0];
 		}
 	}
 
@@ -275,6 +278,8 @@ public class Genotype : MonoBehaviour {
 			const int maxSize = 6;
 			Clear();
 
+			geneCellList.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex));
+
 			List<Cell> spawningFromCells = new List<Cell>();
 			Cell origin = SpawnGeneCell(creature, GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite);
 			origin.heading = 90f;
@@ -332,7 +337,7 @@ public class Genotype : MonoBehaviour {
 			// This is the only place where we add and remove GeneCells to geneCell List so we can safely sort it by priority here
 			// Sorted by priority ==> high BuildPrio (low number) to low BuildPrio (high number) 
 			// We need to have it sorted in this way and never in any other way
-			geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
+			//geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
 
 			return true;
 		}

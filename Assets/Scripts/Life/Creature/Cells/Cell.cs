@@ -904,7 +904,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public Cell GetNeighbourCell(int cardinalIndex) {
-		return cellNeighbourDictionary[AngleUtil.CardinalIndexRawToSafe(cardinalIndex)].cell;
+		return cellNeighbourDictionary[cardinalIndex % 6].cell;
 	}
 
 	public CellNeighbour GetNeighbour(int cardinalIndex) {

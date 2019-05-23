@@ -11,7 +11,7 @@ public class SizeBar : MonoBehaviour {
 	public Color colorEmptyEgg;
 	public Color colorOccupiedChild;
 
-	private const int xCount = 114;
+	private const int xCount = 100;
 	private Image[] images = new Image[xCount * 2];
 
 	private void Start() {
@@ -19,7 +19,7 @@ public class SizeBar : MonoBehaviour {
 		for (int y = 0; y < 2; y++) {
 			for (int x = 0; x < xCount; x++) {
 				images[y * xCount + x] = Instantiate(squareTemplate, panel);
-				images[y * xCount + x].rectTransform.anchoredPosition = new Vector2(x * 7f, -y * 9f);
+				images[y * xCount + x].rectTransform.anchoredPosition = new Vector2(x * 5f, -y * 9f);
 			}
 		}
 		squareTemplate.gameObject.SetActive(false);
