@@ -15,24 +15,53 @@ public class Genotype : MonoBehaviour {
 	public static int genomeLength = 21;
 	[HideInInspector]
 	public Gene[] genome = new Gene[genomeLength]; //One gene can give rise to many geneCells
+
+	// GeneCellLists...
 	[HideInInspector]
-	public List<Cell> geneCellList = new List<Cell>();
+	public List<Cell> geneCellListIndexSorted = new List<Cell>();
+	[HideInInspector]
+	public List<Cell> m_geneCellListPrioritySorted = new List<Cell>();
+	public List<Cell> geneCellListPrioritySorted {
+		get {
+			if (isGeneCellListPrioritySortedDirty) {
+				m_geneCellListPrioritySorted.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
+				isGeneCellListPrioritySortedDirty = false;
+			}
+			return m_geneCellListPrioritySorted;
+		}
+	}
+
+	private bool isGeneCellListPrioritySortedDirty;
+	public void MakeGeneCellListPrioritySortedDirty() {
+		isGeneCellListPrioritySortedDirty = true;
+	}
+
+	public void AddCellToGeneCellLists(Cell cell) {
+		geneCellListIndexSorted.Add(cell);
+		m_geneCellListPrioritySorted.Add(cell);
+	}
+
+	public void ClearGeneCellLists() {
+		geneCellListIndexSorted.Clear();
+		m_geneCellListPrioritySorted.Clear();
+	}
+	// ^ geneCellLists ^
+
 	[HideInInspector]
 	public bool geneCellsDiffersFromGenome = true; // Cell List and Cell Map needs to be updates
 	public bool isGrabbed { get; private set; }
 
 	private CellMap geneCellMap = new CellMap();
-	private bool isDirty = true;
 
 	public bool hasGenes {
 		get {
-			return geneCellList != null && geneCellList.Count > 0;
+			return geneCellListIndexSorted != null && geneCellListIndexSorted.Count > 0;
 		}
 	}
 
 	public Cell GetCellAtPosition(Vector2 position) {
 		if (IsInsideBoundingCircle(position)) {
-			foreach (Cell geneCell in geneCellList) {
+			foreach (Cell geneCell in geneCellListIndexSorted) {
 				if (GeometryUtil.IsPointInsideCircle(position, geneCell.position, geneCell.radius)) {
 					return geneCell;
 				}
@@ -51,7 +80,7 @@ public class Genotype : MonoBehaviour {
 		float bottom = area.y - area.height / 2f + cellRadius;
 		float left = area.x - area.width / 2f + cellRadius;
 		float right = area.x + area.width / 2f - cellRadius;
-		foreach (Cell cell in geneCellList) {
+		foreach (Cell cell in geneCellListIndexSorted) {
 			if (cell.position.x > right || cell.position.x < left || cell.position.y > top || cell.position.y < bottom) {
 				return false;
 			}
@@ -62,13 +91,13 @@ public class Genotype : MonoBehaviour {
 	//Full size of creature
 	public int geneCellCount {
 		get {
-			return geneCellList.Count;
+			return geneCellListIndexSorted.Count;
 		}
 	}
 
 	public int GetGeneCellOfTypeCount(CellTypeEnum type) {
 		int count = 0;
-		foreach (Cell c in geneCellList) {
+		foreach (Cell c in geneCellListIndexSorted) {
 			if (c.GetCellType() == type) {
 				count++;
 			}
@@ -78,16 +107,13 @@ public class Genotype : MonoBehaviour {
 
 	public Cell originCell {
 		get {
-			//TODO: keep 2 lists, differently sorted
-			List<Cell> temp = new List<Cell>(geneCellList);
-			temp.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex));
-			return temp[0];
+			return geneCellListIndexSorted[0];
 		}
 	}
 
 	public bool hasOriginCell {
 		get {
-			return geneCellList.Count > 0;
+			return geneCellListIndexSorted.Count > 0;
 		}
 	}
 
@@ -192,7 +218,7 @@ public class Genotype : MonoBehaviour {
 		float bottom = area.y - cellRadius - area.height / 2f;
 		float left = area.x - cellRadius - area.width / 2f;
 		float right = area.x + cellRadius + area.width / 2f;
-		foreach (Cell cell in geneCellList) {
+		foreach (Cell cell in geneCellListIndexSorted) {
 			if (cell.position.x < right && cell.position.x > left && cell.position.y < top && cell.position.y > bottom) {
 				return true;
 			}
@@ -201,7 +227,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public bool IsGeneReferencedTo(Gene gene) {
-		foreach (Cell geneCell in geneCellList) {
+		foreach (Cell geneCell in geneCellListIndexSorted) {
 			if (geneCell.gene == gene)
 				return true;
 		}
@@ -278,8 +304,6 @@ public class Genotype : MonoBehaviour {
 			const int maxSize = 6;
 			Clear();
 
-			geneCellList.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex));
-
 			List<Cell> spawningFromCells = new List<Cell>();
 			Cell origin = SpawnGeneCell(creature, GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite);
 			origin.heading = 90f;
@@ -308,7 +332,7 @@ public class Genotype : MonoBehaviour {
 									if (residentCell.buildIndex == buildOrderIndex) {
 										//trying to spawn a cell where there is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
 										Morphosis.instance.geneCellPool.Recycle(residentCell);
-										geneCellList.Remove(residentCell);
+										geneCellListIndexSorted.Remove(residentCell);
 										geneCellMap.RemoveCellAtGridPosition(residentCell.mapPosition);
 										nextSpawningFromCells.Remove(residentCell);
 										geneCellMap.MarkAsIllegal(residentCell.mapPosition);
@@ -338,7 +362,8 @@ public class Genotype : MonoBehaviour {
 			// Sorted by priority ==> high BuildPrio (low number) to low BuildPrio (high number) 
 			// We need to have it sorted in this way and never in any other way
 			//geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
-
+			geneCellListIndexSorted.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex)); // only sorted here
+			MakeGeneCellListPrioritySortedDirty();
 			return true;
 		}
 		return false;
@@ -362,7 +387,8 @@ public class Genotype : MonoBehaviour {
 		cell.creature = creature;
 
 		geneCellMap.SetCell(mapPosition, cell);
-		geneCellList.Add(cell);
+		AddCellToGeneCellLists(cell);
+		
 
 		return cell;
 	}
@@ -379,7 +405,7 @@ public class Genotype : MonoBehaviour {
 	//Angle = 90 ==> origin cell pointing north
 	private void TurnTo(float targetAngle) {
 		float deltaAngle = targetAngle - originCell.heading;
-		foreach (Cell cell in geneCellList) {
+		foreach (Cell cell in geneCellListIndexSorted) {
 			Vector3 originToCell = cell.transform.position - (Vector3)originCell.position;
 			Vector3 turnedVector = Quaternion.Euler(0, 0, deltaAngle) * originToCell;
 			cell.transform.position = (Vector2)originCell.position + (Vector2)turnedVector;
@@ -390,7 +416,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void Move(Vector2 vector) {
-		foreach (Cell cell in geneCellList) {
+		foreach (Cell cell in geneCellListIndexSorted) {
 			cell.transform.position += (Vector3)vector;
 		}
 	}
@@ -405,7 +431,7 @@ public class Genotype : MonoBehaviour {
 
 	public List<Cell> GetGeneCellsWithGene(Gene gene) {
 		List<Cell> cells = new List<Cell>();
-		foreach (Cell cell in geneCellList) {
+		foreach (Cell cell in geneCellListIndexSorted) {
 			if (cell.gene == gene) {
 				cells.Add(cell);
 			}
@@ -415,7 +441,7 @@ public class Genotype : MonoBehaviour {
 
 	public bool HasAllOccurancesOfThisGeneSameBuildIndex(Gene gene) {
 		int? buildIndex = null;
-		foreach (Cell c in geneCellList) {
+		foreach (Cell c in geneCellListIndexSorted) {
 			if (c.gene == gene) {
 				if (buildIndex == null) {
 					buildIndex = c.buildIndex;
@@ -435,63 +461,63 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public void UpdateOutline(Creature creature, bool isSelected) {
-		for (int index = 0; index < geneCellList.Count; index++) {
+		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
 			if (isSelected) {
-				geneCellList[index].ShowOutline(true);
-				geneCellList[index].SetOutlineColor(ColorScheme.instance.outlineSelected);
-				geneCellList[index].ShowOnTop(true);
+				geneCellListIndexSorted[index].ShowOutline(true);
+				geneCellListIndexSorted[index].SetOutlineColor(ColorScheme.instance.outlineSelected);
+				geneCellListIndexSorted[index].ShowOnTop(true);
 			} else {
-				geneCellList[index].ShowOutline(false);
-				geneCellList[index].ShowOnTop(false);
+				geneCellListIndexSorted[index].ShowOutline(false);
+				geneCellListIndexSorted[index].ShowOnTop(false);
 			}
 		}
 
-		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].ShowTriangle(true);
-			if (geneCellList[index].isOrigin) {
-				geneCellList[index].ShowTriangle(true);
+		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
+			geneCellListIndexSorted[index].ShowTriangle(true);
+			if (geneCellListIndexSorted[index].isOrigin) {
+				geneCellListIndexSorted[index].ShowTriangle(true);
 				if (!creature.HasMotherDeadOrAlive()) {
 					if (!creature.HasChildrenDeadOrAlive()) {
-						geneCellList[index].SetTriangleColor(ColorScheme.instance.noRelativesArrow);
+						geneCellListIndexSorted[index].SetTriangleColor(ColorScheme.instance.noRelativesArrow);
 					} else {
-						geneCellList[index].SetTriangleColor(ColorScheme.instance.noMotherArrow);
+						geneCellListIndexSorted[index].SetTriangleColor(ColorScheme.instance.noMotherArrow);
 					}
 				} else if (creature.IsAttachedToMotherAlive()) {
-					geneCellList[index].SetTriangleColor(ColorScheme.instance.motherAttachedArrow);
+					geneCellListIndexSorted[index].SetTriangleColor(ColorScheme.instance.motherAttachedArrow);
 				} else {
-					geneCellList[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
+					geneCellListIndexSorted[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
 				}
 			} else {
-				geneCellList[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
+				geneCellListIndexSorted[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
 			}
 		}
 	}
 	public void UpdateGraphics(bool isSelected) {
-		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].UpdateGraphics(isSelected);
-			geneCellList[index].UpdateFlipSide();
-			geneCellList[index].UpdateBuds();
+		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
+			geneCellListIndexSorted[index].UpdateGraphics(isSelected);
+			geneCellListIndexSorted[index].UpdateFlipSide();
+			geneCellListIndexSorted[index].UpdateBuds();
 		}
 	}
 
 
 	public void ShowGeneCellsSelected(bool on) {
-		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].ShowCellSelected(on);
+		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
+			geneCellListIndexSorted[index].ShowCellSelected(on);
 		}
 	}
 
 	public void ShowTriangles(bool on) {
-		for (int index = 0; index < geneCellList.Count; index++) {
-			geneCellList[index].ShowTriangle(on);
+		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
+			geneCellListIndexSorted[index].ShowTriangle(on);
 		}
 	}
 
 	private void Clear() {
-		for (int index = 0; index < geneCellList.Count; index++) {
-			Morphosis.instance.geneCellPool.Recycle(geneCellList[index]);
+		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
+			Morphosis.instance.geneCellPool.Recycle(geneCellListIndexSorted[index]);
 		}
-		geneCellList.Clear();
+		ClearGeneCellLists();
 		geneCellMap.Clear();
 
 		geneCellsTransform.localPosition = Vector3.zero;
@@ -503,7 +529,7 @@ public class Genotype : MonoBehaviour {
 
 	public void MoveOriginToOrigo() {
 		Vector3 originCellPosition = originCell.position;
-		foreach (Cell cell in geneCellList) {
+		foreach (Cell cell in geneCellListIndexSorted) {
 			cell.transform.position -= originCellPosition;
 		}
 	}
@@ -515,7 +541,7 @@ public class Genotype : MonoBehaviour {
 
 	public void Release(Creature creature) {
 		isGrabbed = false;
-		foreach (Cell cell in geneCellList) {
+		foreach (Cell cell in geneCellListIndexSorted) {
 			cell.transform.parent = null;
 		}
 		creature.transform.position = Vector3.zero;
@@ -523,7 +549,7 @@ public class Genotype : MonoBehaviour {
 		transform.position = Vector3.zero;
 		transform.rotation = Quaternion.identity;
 
-		foreach (Cell cell in geneCellList) {
+		foreach (Cell cell in geneCellListIndexSorted) {
 			cell.transform.parent = geneCellsTransform.transform;
 		}
 
@@ -537,7 +563,6 @@ public class Genotype : MonoBehaviour {
 		}
 		set {
 			m_hasCollider = value;
-			isDirty = true;
 		}
 	}
 

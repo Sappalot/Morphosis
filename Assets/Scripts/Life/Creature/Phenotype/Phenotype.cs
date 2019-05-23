@@ -323,16 +323,17 @@ public class Phenotype : MonoBehaviour {
 
 		// sort gene cell list: low number (high prio) -> hight number (low number)
 		// allready sorted, trust it!
+
+		List<Cell> buildList = null;
 		if (highestPriorityFirst) {
-			genotype.geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
+			buildList = genotype.geneCellListPrioritySorted;
 		} else {
-			genotype.geneCellList.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex));
-		}
-		
+			buildList = genotype.geneCellListIndexSorted;
+		}		
 
 		float? highestPriority = null; // highestPriority = lowest number
 
-		foreach (Cell buildGeneCell in genotype.geneCellList) {
+		foreach (Cell buildGeneCell in buildList) {
 			// If grown enough
 			if (growCellCount >= cellGrowTargetCount) {
 				break;
@@ -503,8 +504,8 @@ public class Phenotype : MonoBehaviour {
 			foreach (Creature child in creatureMother.GetChildrenAlive()) {
 				if (child.IsAttachedToMotherAlive() && child.id == creature.id) {
 					//We are talking about mothers view of me
-					for (int index = 0; index < creatureMother.genotype.geneCellList.Count; index++) {
-						Cell placentaCell = creatureMother.genotype.geneCellList[index];
+					for (int index = 0; index < creatureMother.genotype.geneCellListIndexSorted.Count; index++) {
+						Cell placentaCell = creatureMother.genotype.geneCellListIndexSorted[index];
 
 						for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
 							Vector2i neighbourMapPosition = CellMap.GetGridNeighbourGridPosition(placentaCell.mapPosition, cardinalIndex);
@@ -1336,10 +1337,8 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	private void UpdatePriorityBuds(Creature creature) {
-		creature.genotype.geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
-
 		float? highestPriority = null; // highest priority = lowest number
-		foreach (Cell buildGeneCell in creature.genotype.geneCellList) {
+		foreach (Cell buildGeneCell in creature.genotype.geneCellListPrioritySorted) {
 			if (!IsCellBuiltForGeneCell(buildGeneCell) && IsCellBuiltAtNeighbourPosition(buildGeneCell.mapPosition)) {
 				if (highestPriority == null) {
 					highestPriority = buildGeneCell.buildPriority;

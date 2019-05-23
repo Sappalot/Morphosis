@@ -32,9 +32,11 @@ public class CellBuildPriorityPanel : MonoBehaviour {
 
 		GeneCellPanel.instance.selectedGene.buildPriorityBias = ToClosestTenth(biasSlider.value);
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			//CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
+			//CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true; //costy
 			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
 			CreatureSelectionPanel.instance.soloSelected.generation = 1;
+
+			CreatureSelectionPanel.instance.soloSelected.genotype.MakeGeneCellListPrioritySortedDirty();
 		}
 		MakeDirty();
 	}

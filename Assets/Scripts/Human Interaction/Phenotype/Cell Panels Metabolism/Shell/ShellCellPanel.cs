@@ -38,9 +38,7 @@ public class ShellCellPanel : MetabolismCellPanel {
 				transparancyText.color = Color.black;
 			}
 
-
-			Gene selectedGene = CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
-			if (selectedGene != null) { // GeneCellPanel.instance.selectedGene
+			if (selectedGene != null) {
 				productionEffectText.text = string.Format("Production Effect: -{0:F2} W", ShellCell.GetEffectCost(selectedGene.shellCellArmorClass, GeneCellPanel.instance.selectedGene.shellCellTransparancyClass));
 				armorText.text = string.Format("Strength: {0:F2} (x Normal)", ShellCell.GetStrength(selectedGene.shellCellArmorClass));
 				transparancyText.text = string.Format("Transparancy: {0:F0} %", ShellCell.GetTransparancy(selectedGene.shellCellTransparancyClass) * 100f);
