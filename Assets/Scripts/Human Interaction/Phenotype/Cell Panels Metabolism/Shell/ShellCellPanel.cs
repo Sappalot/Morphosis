@@ -2,8 +2,9 @@
 using UnityEngine.UI;
 
 public class ShellCellPanel : MetabolismCellPanel {
-	public ShellCellPanelButton templateButton;
 	public Text productionEffectText;
+
+	public ShellCellPanelButton templateButton;
 	public Text armorText;
 	public Text transparancyText;
 
@@ -29,18 +30,16 @@ public class ShellCellPanel : MetabolismCellPanel {
 				Debug.Log("Update ShellCellPanel");
 			}
 			if (mode == PhenoGenoEnum.Phenotype) {
-				productionEffectText.color = ColorScheme.instance.grayedOutGenotype;
 				armorText.color = ColorScheme.instance.grayedOutGenotype;
 				transparancyText.color = ColorScheme.instance.grayedOutGenotype;
 			} else if (mode == PhenoGenoEnum.Genotype) {
-				productionEffectText.color = Color.black;
 				armorText.color = Color.black;
 				transparancyText.color = Color.black;
 			}
 
 			if (selectedGene != null) {
-				productionEffectText.text = string.Format("Production Effect: -{0:F2} W", ShellCell.GetEffectCost(selectedGene.shellCellArmorClass, GeneCellPanel.instance.selectedGene.shellCellTransparancyClass));
-				armorText.text = string.Format("Strength: {0:F2} (x Normal)", ShellCell.GetStrength(selectedGene.shellCellArmorClass));
+				productionEffectText.text = string.Format("Production Effect: 0.00 - {0:F2} W", ShellCell.GetEffectCost(selectedGene.shellCellArmorClass, GeneCellPanel.instance.selectedGene.shellCellTransparancyClass));
+				armorText.text = string.Format("Armour: {0:F2} (* normal)", ShellCell.GetStrength(selectedGene.shellCellArmorClass));
 				transparancyText.text = string.Format("Transparancy: {0:F0} %", ShellCell.GetTransparancy(selectedGene.shellCellTransparancyClass) * 100f);
 				UpdateButtonMatrix();
 			}
@@ -64,10 +63,11 @@ public class ShellCellPanel : MetabolismCellPanel {
 			GeneCellPanel.instance.selectedGene.shellCellTransparancyClass = button.transparencyClass;
 			MakeDirty();
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
+				GeneCellPanel.instance.MakeDirty();
 				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 			}
 
-			OnChanged();
+			MakeCreatureChanged();
 		}
 	}
 }

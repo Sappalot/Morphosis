@@ -32,6 +32,17 @@ public class Gene {
 	public int shellCellTransparancyClass = 2;
 	// ^ Shell ^
 
+	public float armour {
+		get {
+			if (type == CellTypeEnum.Shell) {
+				return ShellCell.GetStrength(shellCellArmorClass);
+			} else {
+				return 1f;
+			}
+		}
+		
+	}
+
 	// Axon
 	private bool m_axonIsEnabled;
 	public bool axonIsEnabled {

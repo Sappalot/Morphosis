@@ -65,12 +65,6 @@ public class ShellCell : Cell {
 		return GlobalSettings.instance.phenotype.shellCellStrengthAtArmor.Evaluate(GlobalSettings.instance.phenotype.shellCellArmorAtNormalizedArmorClass.Evaluate(GetNormalizedArmor(armourClass)));
 	}
 
-	public override float strength { // from 0.25 to 20
-		get {
-			return GetStrength(armorClass);
-		}
-	}
-
 	public static float GetEffectCost(float normalizedArmor, float transparency) {
 		return GlobalSettings.instance.phenotype.shellCellEffectCostAtArmor.Evaluate(GlobalSettings.instance.phenotype.shellCellArmorAtNormalizedArmorClass.Evaluate(normalizedArmor)) * GlobalSettings.instance.phenotype.shellCellEffectCostMultiplierAtTransparancy.Evaluate(transparency);
 	}

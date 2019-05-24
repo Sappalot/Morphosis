@@ -18,7 +18,7 @@ public class AgeBar : MonoBehaviour {
 		float backgroundWidth = background.rectTransform.rect.width;
 		bar.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, backgroundWidth * Mathf.Min(1f, (float)this.age / (float)maxAge));
 		bar.color = ColorScheme.instance.creatureAgeGradient.Evaluate((float)this.age / (float)maxAge);
-		text.text = TimeUtil.GetTimeString(age);
+		text.text = "Age: " + TimeUtil.GetTimeString(age);
 		text.color = ColorScheme.instance.creatureAgeTextGradient.Evaluate((float)this.age / (float)maxAge);
 		background.color = Color.black;
 	}

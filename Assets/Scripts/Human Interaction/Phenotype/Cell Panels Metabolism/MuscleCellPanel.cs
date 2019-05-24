@@ -2,8 +2,9 @@
 using UnityEngine.UI;
 
 public class MuscleCellPanel : MetabolismCellPanel {
+	public Text productionEffectText;
 
-	//public Text exposure;
+	public Text frequenzy;
 
 	public Text idleWhenAttachedText;
 	public Toggle idleWhenAttachedToggle;
@@ -15,7 +16,7 @@ public class MuscleCellPanel : MetabolismCellPanel {
 
 		selectedGene.muscleCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			MakeCreatureChanged();
 		}
 		MakeDirty();
 	}
@@ -28,10 +29,20 @@ public class MuscleCellPanel : MetabolismCellPanel {
 
 			if (mode == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
+					productionEffectText.text = productionEffectPhenotypeString;
+					frequenzy.text = string.Format("Frequenzy: {0:F2} Hz", selectedCell.creature.phenotype.originCell.originPulseFequenzy);
+
 					idleWhenAttachedText.color = ColorScheme.instance.grayedOutGenotype;
 					idleWhenAttachedToggle.interactable = false;
 				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
+				float fMin = GlobalSettings.instance.phenotype.originPulseFrequenzyMin;
+				float fMax = GlobalSettings.instance.phenotype.originPulseFrequenzyMax;
+				productionEffectText.text = string.Format("Production Effect: 0.00 - [muscle frequenzy ({0:F2}...{1:F2})] * {2:F2} W", fMin, fMax, GlobalSettings.instance.phenotype.muscleCellEffectCostPerHz);
+
+				frequenzy.text = string.Format("Frequenzy: -");
+				frequenzy.color = ColorScheme.instance.grayedOutPhenotype;
+
 				idleWhenAttachedText.color = Color.black;
 				idleWhenAttachedToggle.interactable = isUnlocked();
 			}

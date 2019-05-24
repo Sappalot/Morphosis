@@ -18,9 +18,9 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 
 	//-----Shold be same as the top of CellPanel
 	[Header("Metabolism")]
-	public Text energy; // just an E 
 	public EnergyBar energyBar;
 	public Text effect;
+	public Text armour;
 
 	public Text effectFromNeighbours; //kill me
 	public Text effectToNeighbours; //kill me
@@ -144,11 +144,13 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 
 			metabolismCellTypeDropdown.interactable = false;
 
-			energy.color = ColorScheme.instance.grayedOut;
-
 			//All metabolism stuff off
 			effect.text = "Effect: -";
 			effect.color = ColorScheme.instance.grayedOutPhenotype;
+
+			if (selectedGene != null) {
+				armour.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedGene.armour, GlobalSettings.instance.phenotype.jawCellEatEffect / selectedGene.armour);
+			}
 
 			effectFromNeighbours.text = "P me <= neighbours: -";
 			effectFromNeighbours.color = ColorScheme.instance.grayedOutPhenotype;

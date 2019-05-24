@@ -14,6 +14,10 @@ public class EnergyBar : MonoBehaviour {
 	public Image effectArrowProdNeg;
 	public Text prodText;
 
+	public Image effectArrowStressPos;
+	public Image effectArrowStressNeg;
+	public Text stressText;
+
 	public Image effectArrowFluxPos;
 	public Image effectArrowFluxNeg;
 	public Text fluxText;
@@ -44,7 +48,7 @@ public class EnergyBar : MonoBehaviour {
 			float backgroundWidth = background.rectTransform.rect.width;
 			bar.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, backgroundWidth * m_fullness);
 			bar.color = ColorScheme.instance.cellGradientEnergy.Evaluate(m_fullness);
-			text.text = string.Format("{0:F0}%", m_fullness * 100f);
+			text.text = string.Format("Energy: {0:F0}%", m_fullness * 100f);
 			text.color = new Color(1f - bar.color.r, 1f - bar.color.g, 1f - bar.color.b);
 			background.color = Color.black;
 		}
@@ -107,6 +111,33 @@ public class EnergyBar : MonoBehaviour {
 		}
 	}
 
+	private float m_effectStress = 0f;
+	public float effectStress {
+		get {
+			return m_effectStress;
+		}
+		set {
+			m_effectStress = value;
+			if (!isOn) {
+				return;
+			}
+			//arrow
+			float backgroundWidth = background.rectTransform.rect.width;
+			Color color = ColorScheme.instance.cellGradientEffect.Evaluate(0.5f + m_effectStress * 0.1f);
+			if (m_effectStress >= 0f) {
+				effectArrowStressPos.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowStressPos.rectTransform.anchoredPosition.y);
+				effectArrowStressPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (m_effectStress / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
+				effectArrowStressPos.color = new Color(color.r, color.g, color.b, alphaArrow);
+				effectArrowStressNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+			} else {
+				effectArrowStressNeg.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowStressPos.rectTransform.anchoredPosition.y);
+				effectArrowStressNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, -(m_effectStress / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
+				effectArrowStressNeg.color = new Color(color.r, color.g, color.b, alphaArrow);
+				effectArrowStressPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+			}
+		}
+	}
+
 	private float m_effectFlux = 0f;
 	public float effectFlux {
 		get {
@@ -158,6 +189,11 @@ public class EnergyBar : MonoBehaviour {
 				effectArrowProdNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
 				effectArrowProdPos.color = ColorScheme.instance.grayedOut;
 				effectArrowProdNeg.color = ColorScheme.instance.grayedOut;
+
+				effectArrowStressPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowStressNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowStressPos.color = ColorScheme.instance.grayedOut;
+				effectArrowStressNeg.color = ColorScheme.instance.grayedOut;
 
 				effectArrowFluxPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
 				effectArrowFluxNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);

@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 
 public class JawCellPanel : MetabolismCellPanel {
+	public Text productionEffectText;
 
 	public Text prayCellCount;
 
@@ -72,7 +73,7 @@ public class JawCellPanel : MetabolismCellPanel {
 
 		selectedGene.jawCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			MakeCreatureChanged();
 		}
 		MakeDirty();
 	}
@@ -85,7 +86,9 @@ public class JawCellPanel : MetabolismCellPanel {
 
 			if (mode == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					prayCellCount.text = "Eating on cells: " + (CellPanel.instance.selectedCell as JawCell).prayCount;
+					productionEffectText.text = productionEffectPhenotypeString;
+
+					prayCellCount.text = "Pray count: " + (CellPanel.instance.selectedCell as JawCell).prayCount;
 					prayCellCount.color = Color.black;
 
 					cannibalizeText.color = ColorScheme.instance.grayedOutGenotype;
@@ -109,7 +112,9 @@ public class JawCellPanel : MetabolismCellPanel {
 					idleWhenAttachedToggle.interactable = false;
 				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
-				prayCellCount.text = "Eating on cells: -";
+				productionEffectText.text = string.Format("Production Effect: [pray count (0...6)] * {0:F2} - {1:F2} W <color=#808080ff>(@ normal pray armor)</color>", GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellEatEarnFactor, GlobalSettings.instance.phenotype.jawCellEffectCost);
+
+				prayCellCount.text = "Pray Count: -";
 				prayCellCount.color = ColorScheme.instance.grayedOutPhenotype;
 
 				cannibalizeText.color = isUnlockedColor();

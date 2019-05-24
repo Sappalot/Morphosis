@@ -12,7 +12,7 @@ public abstract class MetabolismCellPanel : MonoBehaviour {
 
 	public void ApplyChange() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			MakeCreatureChanged();
 		}
 		MakeDirty();
 	}
@@ -25,10 +25,16 @@ public abstract class MetabolismCellPanel : MonoBehaviour {
 		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome ? Color.black : ColorScheme.instance.grayedOut;
 	}
 
-	public void OnChanged() {
+	public void MakeCreatureChanged() {
 		CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
 		CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
 		CreatureSelectionPanel.instance.soloSelected.generation = 1;
+	}
+
+	public string productionEffectPhenotypeString {
+		get {
+			return string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2} W", selectedCell.effectProductionInternalUp, selectedCell.effectProductionInternalDown, selectedCell.effectProductionInternalUp - selectedCell.effectProductionInternalDown);
+		}
 	}
 
 	public Gene selectedGene {
@@ -38,7 +44,17 @@ public abstract class MetabolismCellPanel : MonoBehaviour {
 			} else {
 				return GeneCellPanel.instance.selectedGene;
 			}
-			
 		}
 	}
+
+	public Cell selectedCell {
+		get {
+			if (mode == PhenoGenoEnum.Phenotype) {
+				return CellPanel.instance.selectedCell;
+			} else {
+				return null; // there could be many cells selected for the same gene
+			}
+		}
+	}
+	
 }

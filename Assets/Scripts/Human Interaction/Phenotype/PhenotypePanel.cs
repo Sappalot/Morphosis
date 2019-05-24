@@ -115,18 +115,19 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 			energyBar.isOn = true;
 			energyBar.fullness = solo.phenotype.energyFullness;
-			energyBar.effectTotal = solo.phenotype.GetEffectPerCell(true, true);
-			energyBar.effectProd = solo.phenotype.GetEffectPerCell(true, false);
-			energyBar.effectFlux = solo.phenotype.GetEffectPerCell(false, true);
+			energyBar.effectTotal = solo.phenotype.GetEffectPerCell(true, true, true);
+			energyBar.effectProd = solo.phenotype.GetEffectPerCell(true, false, false);
+			energyBar.effectStress = solo.phenotype.GetEffectPerCell(false, true, false);
+			energyBar.effectFlux = solo.phenotype.GetEffectPerCell(false, false, true);
 
 			//creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energyFullness * 100f);
 
 			if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
-				creatureEffect.text = string.Format("Total Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUpPerCell(true, true), solo.phenotype.GetEffectDownPerCell(true, true), solo.phenotype.GetEffectPerCell(true, true));
+				creatureEffect.text = string.Format("Total Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUpPerCell(true, true), solo.phenotype.GetEffectDownPerCell(true, true, true), solo.phenotype.GetEffectPerCell(true, true, true));
 			} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
-				creatureEffect.text = string.Format("Production Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUpPerCell(true, false), solo.phenotype.GetEffectDownPerCell(true, false), solo.phenotype.GetEffectPerCell(true, false));
+				creatureEffect.text = string.Format("Production Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUpPerCell(true, false), solo.phenotype.GetEffectDownPerCell(true, false, false), solo.phenotype.GetEffectPerCell(true, false, false));
 			} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
-				creatureEffect.text = string.Format("Flux Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUpPerCell(false, true), solo.phenotype.GetEffectDownPerCell(false, true), solo.phenotype.GetEffectPerCell(false, true));
+				creatureEffect.text = string.Format("Flux Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.GetEffectUpPerCell(false, true), solo.phenotype.GetEffectDownPerCell(false, false, true), solo.phenotype.GetEffectPerCell(false, false, true));
 			}
 
 			if (solo.creation != CreatureCreationEnum.Frozen) {

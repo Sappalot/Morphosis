@@ -2,6 +2,8 @@
 using UnityEngine.UI;
 
 public class EggCellPanel : MetabolismCellPanel {
+	public Text productionEffectText;
+
 	public Text fertilizeHeadingText;
 	public Text fertilizeSliderText;
 	public Slider fertilizeSlider;
@@ -115,29 +117,34 @@ public class EggCellPanel : MetabolismCellPanel {
 			}
 
 			if (mode == PhenoGenoEnum.Phenotype) {
-				fertilizeHeadingText.color = ColorScheme.instance.grayedOutGenotype;
+				if (CellPanel.instance.selectedCell != null) {
+					productionEffectText.text = productionEffectPhenotypeString;
 
-				fertilizeSliderText.color = ColorScheme.instance.grayedOutGenotype;
-				fertilizeSlider.interactable = false;
+					fertilizeHeadingText.color = ColorScheme.instance.grayedOutGenotype;
 
-				fertilizeButtonText.color = Color.black;
+					fertilizeSliderText.color = ColorScheme.instance.grayedOutGenotype;
+					fertilizeSlider.interactable = false;
 
-				detatchHeadingText.color = ColorScheme.instance.grayedOutGenotype;
+					fertilizeButtonText.color = Color.black;
 
-				detatchSizeToggle.interactable =   false;
-				detatchEnergyToggle.interactable = false;
+					detatchHeadingText.color = ColorScheme.instance.grayedOutGenotype;
 
-				detatchSizeSliderTextPercentage.color = ColorScheme.instance.grayedOutGenotype;
-				detatchSizeSliderTextCellCount.color = ColorScheme.instance.grayedOutGenotype;
-				detatchSizeSlider.interactable = false;
+					detatchSizeToggle.interactable = false;
+					detatchEnergyToggle.interactable = false;
 
-				detatchEnergySliderText.color = ColorScheme.instance.grayedOutGenotype;
-				detatchEnergySlider.interactable = false;
+					detatchSizeSliderTextPercentage.color = ColorScheme.instance.grayedOutGenotype;
+					detatchSizeSliderTextCellCount.color = ColorScheme.instance.grayedOutGenotype;
+					detatchSizeSlider.interactable = false;
 
-				idleWhenAttachedText.color = ColorScheme.instance.grayedOutGenotype;
-				idleWhenAttachedToggle.interactable = false;
+					detatchEnergySliderText.color = ColorScheme.instance.grayedOutGenotype;
+					detatchEnergySlider.interactable = false;
 
+					idleWhenAttachedText.color = ColorScheme.instance.grayedOutGenotype;
+					idleWhenAttachedToggle.interactable = false;
+				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
+				productionEffectText.text = string.Format("Production Effect: 0.00 - {0:F2} W", GlobalSettings.instance.phenotype.eggCellEffectCost);
+
 				fertilizeHeadingText.color = Color.black;
 
 				fertilizeSliderText.color = Color.black;

@@ -47,7 +47,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 		}
 		GeneCellPanel.instance.selectedGene.axonIsEnabled = enabledToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			MakeCreatureChanged();
 		}
 		MakeDirty();
 	}
@@ -58,7 +58,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 		}
 		GeneCellPanel.instance.selectedGene.axonFromOriginOffset = fromOriginOffsetSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			MakeCreatureChanged();
 		}
 		MakeDirty();
 	}
@@ -69,7 +69,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 		}
 		GeneCellPanel.instance.selectedGene.axonIsFromOriginPlus180 = fromOriginPlus180Toggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			MakeCreatureChanged();
 		}
 		MakeDirty();
 	}
@@ -80,7 +80,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 		}
 		GeneCellPanel.instance.selectedGene.axonFromMeOffset = fromMeOffsetSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			MakeCreatureChanged();
 		}
 		MakeDirty();
 	}
@@ -91,7 +91,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 		}
 		GeneCellPanel.instance.selectedGene.axonRelaxContract = relaxContractSlider.value;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			MakeCreatureChanged();
 		}
 		MakeDirty();
 	}
@@ -102,7 +102,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 		}
 		GeneCellPanel.instance.selectedGene.axonIsReverse = reverseToggle.isOn;
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			OnChanged();
+			MakeCreatureChanged();
 		}
 		MakeDirty();
 	}

@@ -10,6 +10,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	[Header("Metabolism")]
 	public EnergyBar energyBar;
 	public Text effect;
+	public Text armour;
 
 	public Text effectFromNeighbours; //kill me
 	public Text effectToNeighbours; //kill me
@@ -171,6 +172,10 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
 					effect.text = "Flux Effect: ";
 				}
+
+
+				armour.text = "Armour: ";
+
 				effectFromNeighbours.text = "P me <= neighbours:";
 				effectToNeighbours.text = "P me => neighbours:";
 				effectFromMother.text = "P me <= mother:";
@@ -189,16 +194,21 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 			energyBar.isOn = true;
 			energyBar.fullness = selectedCell.energyFullness;
-			energyBar.effectTotal = selectedCell.GetEffect(true, true, true);
-			energyBar.effectProd = selectedCell.GetEffect(true, false, false);
-			energyBar.effectFlux = selectedCell.GetEffect(false, true, true);
+			energyBar.effectTotal = selectedCell.GetEffect(true, true, true, true);
+			energyBar.effectProd = selectedCell.GetEffect(true, false, false, false);
+			energyBar.effectStress = selectedCell.GetEffect(false, true, false, false);
+			energyBar.effectFlux = selectedCell.GetEffect(false, false, true, true);
 
 			if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
-				effect.text = string.Format("Total Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, true, true), selectedCell.GetEffectDown(true, true, true), selectedCell.GetEffect(true, true, true));
+				effect.text = string.Format("Total Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, true, true), selectedCell.GetEffectDown(true, true, true, true), selectedCell.GetEffect(true, true, true, true));
 			} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
-				effect.text = string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, false, false), selectedCell.GetEffectDown(true, false, false), selectedCell.GetEffect(true, false, false));
+				effect.text = string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, false, false), selectedCell.GetEffectDown(true, false, false, false), selectedCell.GetEffect(true, false, false, false));
 			} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
-				effect.text = string.Format("Flux Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(false, true, true), selectedCell.GetEffectDown(false, true, true), selectedCell.GetEffect(false, true, true));
+				effect.text = string.Format("Flux Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(false, true, true), selectedCell.GetEffectDown(false, false, true, true), selectedCell.GetEffect(false, false, true, true));
+			}
+
+			if (selectedCell != null) {
+				armour.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedCell.gene.armour, GlobalSettings.instance.phenotype.jawCellEatEffect / selectedCell.armour);
 			}
 
 			effectFromNeighbours.text = string.Format("P me <= neighbours: {0:F2}W", selectedCell.effectFluxFromSelf); //kill me

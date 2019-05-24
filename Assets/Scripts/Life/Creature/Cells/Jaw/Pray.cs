@@ -17,17 +17,19 @@ public class Pray {
 			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect;
 			predatorEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellMutualEatKindness;
 		}
-		else if (cell.GetCellType() == CellTypeEnum.Shell && PhenotypePhysicsPanel.instance.functionShell) {
-			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect / cell.strength;
-			predatorEatEffect = (GlobalSettings.instance.phenotype.jawCellEatEffect / cell.strength) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
-		}
+		//else if (cell.GetCellType() == CellTypeEnum.Shell && PhenotypePhysicsPanel.instance.functionShell) {
+		//	prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect / cell.strength;
+		//	predatorEatEffect = (GlobalSettings.instance.phenotype.jawCellEatEffect / cell.strength) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
+		//}
 		else if (cell.GetCellType() == CellTypeEnum.Fungal) {
 			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect / GlobalSettings.instance.phenotype.fungalCellStrengthFactor;
 			predatorEatEffect = (GlobalSettings.instance.phenotype.jawCellEatEffect / GlobalSettings.instance.phenotype.fungalCellStrengthFactor) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
 		}
 		else {
-			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect;
-			predatorEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
+			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect / cell.armour;
+			predatorEatEffect = (GlobalSettings.instance.phenotype.jawCellEatEffect / cell.armour) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
+			//prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect;
+			//predatorEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
 		}
 	}
 

@@ -76,18 +76,18 @@ public class Phenotype : MonoBehaviour {
 
 	// ---------------- EFFECT -----------------------------
 
-	public float GetEffect(bool production, bool fluxSelf, bool fluxAttached) {
+	public float GetEffect(bool production, bool stress, bool fluxSelf, bool fluxAttached) {
 		float effect = 0;
 		foreach (Cell cell in cellList) {
-			effect += cell.GetEffect(production, fluxSelf, fluxAttached);
+			effect += cell.GetEffect(production, stress, fluxSelf, fluxAttached);
 		}
 		return effect;
 	}
 
-	public float GetEffectDown(bool production, bool fluxSelf, bool fluxAttached) {
+	public float GetEffectDown(bool production, bool stress, bool fluxSelf, bool fluxAttached) {
 		float effect = 0;
 		foreach (Cell cell in cellList) {
-			effect += cell.GetEffectDown(production, fluxSelf, fluxAttached);
+			effect += cell.GetEffectDown(production, stress, fluxSelf, fluxAttached);
 		}
 		return effect;
 	}
@@ -100,12 +100,12 @@ public class Phenotype : MonoBehaviour {
 		return effect;
 	}
 
-	public float GetEffectPerCell(bool production, bool fluxAttached) {
-		return GetEffect(production, false, fluxAttached) / cellCount;
+	public float GetEffectPerCell(bool production, bool stress, bool fluxAttached) {
+		return GetEffect(production, stress, false, fluxAttached) / cellCount;
 	}
 
-	public float GetEffectDownPerCell(bool production, bool fluxAttached) {
-		return GetEffectDown(production, false, fluxAttached) / cellCount;
+	public float GetEffectDownPerCell(bool production, bool stress, bool fluxAttached) {
+		return GetEffectDown(production, stress, false, fluxAttached) / cellCount;
 	}
 
 	public float GetEffectUpPerCell(bool production, bool fluxAttached) {
