@@ -36,7 +36,6 @@ public class CellBuildPriorityPanel : MonoBehaviour {
 			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
 			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 
-			CreatureSelectionPanel.instance.soloSelected.genotype.MakeGeneCellListPrioritySortedDirty();
 		}
 		MakeDirty();
 	}

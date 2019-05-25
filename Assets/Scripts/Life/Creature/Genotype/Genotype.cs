@@ -19,31 +19,29 @@ public class Genotype : MonoBehaviour {
 	// GeneCellLists...
 	[HideInInspector]
 	public List<Cell> geneCellListIndexSorted = new List<Cell>();
-	[HideInInspector]
-	public List<Cell> m_geneCellListPrioritySorted = new List<Cell>();
+	//[HideInInspector]
+	//public List<Cell> m_geneCellListPrioritySorted = new List<Cell>();
 	public List<Cell> geneCellListPrioritySorted {
 		get {
-			if (isGeneCellListPrioritySortedDirty) {
-				m_geneCellListPrioritySorted.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
-				isGeneCellListPrioritySortedDirty = false;
-			}
-			return m_geneCellListPrioritySorted;
+			List<Cell> prioritySorted = new List<Cell>(geneCellListIndexSorted);
+			prioritySorted.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
+			return prioritySorted;
 		}
 	}
 
-	private bool isGeneCellListPrioritySortedDirty;
-	public void MakeGeneCellListPrioritySortedDirty() {
-		isGeneCellListPrioritySortedDirty = true;
-	}
+	//private bool isGeneCellListPrioritySortedDirty;
+	//public void MakeGeneCellListPrioritySortedDirty() {
+	//	isGeneCellListPrioritySortedDirty = true;
+	//}
 
 	public void AddCellToGeneCellLists(Cell cell) {
 		geneCellListIndexSorted.Add(cell);
-		m_geneCellListPrioritySorted.Add(cell);
+		//m_geneCellListPrioritySorted.Add(cell);
 	}
 
 	public void ClearGeneCellLists() {
 		geneCellListIndexSorted.Clear();
-		m_geneCellListPrioritySorted.Clear();
+		//m_geneCellListPrioritySorted.Clear();
 	}
 	// ^ geneCellLists ^
 
@@ -363,7 +361,7 @@ public class Genotype : MonoBehaviour {
 			// We need to have it sorted in this way and never in any other way
 			//geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
 			geneCellListIndexSorted.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex)); // only sorted here
-			MakeGeneCellListPrioritySortedDirty();
+			//MakeGeneCellListPrioritySortedDirty();
 			return true;
 		}
 		return false;
