@@ -4,6 +4,8 @@ using UnityEngine.UI;
 public class JawCellPanel : MetabolismCellPanel {
 	public Text productionEffectText;
 
+	public HibernatePanel hibernatePanel;
+
 	public Text prayCellCount;
 
 	public Text cannibalizeText;
@@ -23,8 +25,10 @@ public class JawCellPanel : MetabolismCellPanel {
 	public Toggle cannibalizeChildrenToggle;
 	public Text cannibalizeChildrenText;
 
-	public Text idleWhenAttachedText;
-	public Toggle idleWhenAttachedToggle;
+	public override void SetMode(PhenoGenoEnum mode) {
+		hibernatePanel.SetMode(mode);
+		base.SetMode(mode);
+	}
 
 	public void OnChangedCannibalizeKin() {
 		if (ignoreSliderMoved) {
@@ -66,25 +70,13 @@ public class JawCellPanel : MetabolismCellPanel {
 		ApplyChange();
 	}
 
-	public void OnIdleWhenAttachedToggleChanged() {
-		if (ignoreSliderMoved) {
-			return;
-		}
-
-		selectedGene.jawCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			MakeCreatureChanged();
-		}
-		MakeDirty();
-	}
-
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update CellPanel");
 			}
 
-			if (mode == PhenoGenoEnum.Phenotype) {
+			if (GetMode() == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
 					productionEffectText.text = productionEffectPhenotypeString;
 
@@ -107,35 +99,29 @@ public class JawCellPanel : MetabolismCellPanel {
 
 					cannibalizeChildrenToggle.interactable = false;
 					cannibalizeChildrenText.color = ColorScheme.instance.grayedOutGenotype;
-
-					idleWhenAttachedText.color = ColorScheme.instance.grayedOutGenotype;
-					idleWhenAttachedToggle.interactable = false;
 				}
-			} else if (mode == PhenoGenoEnum.Genotype) {
+			} else if (GetMode() == PhenoGenoEnum.Genotype) {
 				productionEffectText.text = string.Format("Production Effect: [pray count (0...6)] * {0:F2} - {1:F2} W <color=#808080ff>(@ normal pray armor)</color>", GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellEatEarnFactor, GlobalSettings.instance.phenotype.jawCellEffectCost);
 
 				prayCellCount.text = "Pray Count: -";
 				prayCellCount.color = ColorScheme.instance.grayedOutPhenotype;
 
-				cannibalizeText.color = isUnlockedColor();
+				cannibalizeText.color = IsUnlockedColor();
 
-				cannibalizeKinToggle.interactable = isUnlocked();
-				cannibalizeKinText.color = isUnlockedColor();
+				cannibalizeKinToggle.interactable = IsUnlocked();
+				cannibalizeKinText.color = IsUnlockedColor();
 
-				cannibalizeMotherToggle.interactable = isUnlocked();
-				cannibalizeMotherText.color = isUnlockedColor();
+				cannibalizeMotherToggle.interactable = IsUnlocked();
+				cannibalizeMotherText.color = IsUnlockedColor();
 
-				cannibalizeFatherToggle.interactable = isUnlocked();
-				cannibalizeFatherText.color = isUnlockedColor();
+				cannibalizeFatherToggle.interactable = IsUnlocked();
+				cannibalizeFatherText.color = IsUnlockedColor();
 
-				cannibalizeSiblingsToggle.interactable = isUnlocked();
-				cannibalizeSiblingsText.color = isUnlockedColor();
+				cannibalizeSiblingsToggle.interactable = IsUnlocked();
+				cannibalizeSiblingsText.color = IsUnlockedColor();
 
-				cannibalizeChildrenToggle.interactable = isUnlocked();
-				cannibalizeChildrenText.color = isUnlockedColor();
-
-				idleWhenAttachedText.color = Color.black;
-				idleWhenAttachedToggle.interactable = isUnlocked();
+				cannibalizeChildrenToggle.interactable = IsUnlocked();
+				cannibalizeChildrenText.color = IsUnlockedColor();
 			}
 
 			if (selectedGene != null) {
@@ -147,10 +133,11 @@ public class JawCellPanel : MetabolismCellPanel {
 				cannibalizeSiblingsToggle.isOn = selectedGene.jawCellCannibalizeSiblings;
 				cannibalizeChildrenToggle.isOn = selectedGene.jawCellCannibalizeChildren;
 
-				idleWhenAttachedToggle.isOn = selectedGene.jawCellIdleWhenAttached;
-
 				ignoreSliderMoved = false;
 			}
+
+			// Subpanels
+			hibernatePanel.MakeDirty();
 
 			isDirty = false;
 		}

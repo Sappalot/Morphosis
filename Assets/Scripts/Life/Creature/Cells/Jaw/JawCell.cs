@@ -13,7 +13,7 @@ public class JawCell : Cell {
 			return;
 		}
 		if (PhenotypePhysicsPanel.instance.functionJaw.isOn) {
-			if (IsIdle()) {
+			if (IsHibernating()) {
 				mouth.gameObject.SetActive(false);
 				effectProductionPredPrayUp = 0f;
 				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
@@ -36,8 +36,8 @@ public class JawCell : Cell {
 		}
 	}
 
-	override public bool IsIdle() {
-		return gene.jawCellIdleWhenAttached && creature.IsAttachedToMotherAlive();
+	override public bool IsHibernating() {
+		return (gene.jawCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.jawCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
 	}
 
 	private float eatEffect {
@@ -69,6 +69,9 @@ public class JawCell : Cell {
 			return;
 		}
 		if (creature.phenotype.isGrabbed) { //dont eat others if i'm being dragged around of user (copy / move)
+			return;
+		}
+		if (IsHibernating()) {
 			return;
 		}
 

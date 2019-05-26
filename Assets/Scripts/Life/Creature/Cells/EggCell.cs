@@ -4,7 +4,7 @@ public class EggCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
-			if (IsIdle()) {
+			if (IsHibernating()) {
 				effectProductionInternalUp = 0f;
 				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
 			} else {
@@ -22,8 +22,8 @@ public class EggCell : Cell {
 		}
 	}
 
-	override public bool IsIdle() {
-		return gene.eggCellIdleWhenAttached && creature.IsAttachedToMotherAlive();
+	override public bool IsHibernating() {
+		return (gene.eggCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.eggCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
 	}
 
 	[HideInInspector]

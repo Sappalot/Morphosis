@@ -12,6 +12,7 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 
 	public Color selectedButton;
 	public Color notSelectedButton;
+
 	public Color mouseTextAction;
 	public Color mouseTextBussy;
 
@@ -41,6 +42,9 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 
 	public Color motherColor;
 	public Color fatherColor;
+
+	public Color signalOn;
+	public Color signalOff;
 
 	public Color grayedOutGenotype;
 	public Color grayedOutPhenotype;

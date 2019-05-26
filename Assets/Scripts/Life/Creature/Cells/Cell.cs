@@ -1172,7 +1172,7 @@ public abstract class Cell : MonoBehaviour {
 				if (creature.phenotype.visualTelepoke > 0) {
 					filledCircleSprite.color = Color.white;
 				} else {
-					if (IsIdle()) {
+					if (IsHibernating()) {
 						filledCircleSprite.color = Color.black;
 					} else {
 						if (GetCellType() != CellTypeEnum.Jaw) {
@@ -1407,7 +1407,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	virtual public bool IsIdle() {
+	virtual public bool IsHibernating() {
 		return false;
 	}
 

@@ -110,8 +110,8 @@ public class AxonCellPanel : MetabolismCellPanel {
 	private void Update() {
 		if (isDirty) {
 
-			Color textColor = mode == PhenoGenoEnum.Phenotype ? ColorScheme.instance.grayedOutGenotype : Color.black;
-			bool interractable = mode == PhenoGenoEnum.Genotype && isUnlocked();
+			Color textColor = GetMode() == PhenoGenoEnum.Phenotype ? ColorScheme.instance.grayedOutGenotype : Color.black;
+			bool interractable = GetMode() == PhenoGenoEnum.Genotype && IsUnlocked();
 
 			enabledToggle.interactable = interractable;
 			enabledText.color = textColor;
@@ -140,9 +140,9 @@ public class AxonCellPanel : MetabolismCellPanel {
 				ignoreSliderMoved = true;
 
 				enabledToggle.isOn = GeneCellPanel.instance.selectedGene.axonIsEnabled;
-				if (mode == PhenoGenoEnum.Genotype) {
+				if (GetMode() == PhenoGenoEnum.Genotype) {
 					fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", GeneCellPanel.instance.selectedGene.axonFromOriginOffset);
-				} else if (mode == PhenoGenoEnum.Phenotype) {
+				} else if (GetMode() == PhenoGenoEnum.Phenotype) {
 
 					if (GeneCellPanel.instance.selectedGene.axonIsFromOriginPlus180 && CellPanel.instance.selectedCell.flipSide == FlipSideEnum.WhiteBlack) {
 						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1} + 180°", GeneCellPanel.instance.selectedGene.axonFromOriginOffset);

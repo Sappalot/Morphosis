@@ -29,10 +29,10 @@ public class ShellCellPanel : MetabolismCellPanel {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update ShellCellPanel");
 			}
-			if (mode == PhenoGenoEnum.Phenotype) {
+			if (GetMode() == PhenoGenoEnum.Phenotype) {
 				armorText.color = ColorScheme.instance.grayedOutGenotype;
 				transparancyText.color = ColorScheme.instance.grayedOutGenotype;
-			} else if (mode == PhenoGenoEnum.Genotype) {
+			} else if (GetMode() == PhenoGenoEnum.Genotype) {
 				armorText.color = Color.black;
 				transparancyText.color = Color.black;
 			}
@@ -58,7 +58,7 @@ public class ShellCellPanel : MetabolismCellPanel {
 	}
 
 	public void SelectButton(ShellCellPanelButton button) {
-		if (mode == PhenoGenoEnum.Genotype && isUnlocked()) {
+		if (GetMode() == PhenoGenoEnum.Genotype && IsUnlocked()) {
 			GeneCellPanel.instance.selectedGene.shellCellArmorClass = button.armorClass;
 			GeneCellPanel.instance.selectedGene.shellCellTransparancyClass = button.transparencyClass;
 			MakeDirty();

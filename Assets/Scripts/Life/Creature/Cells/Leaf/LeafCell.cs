@@ -30,8 +30,8 @@ public class LeafCell : Cell {
 		base.Init();
 	}
 
-	override public bool IsIdle() {
-		return gene.leafCellIdleWhenAttached && creature.IsAttachedToMotherAlive();
+	override public bool IsHibernating() {
+		return (gene.leafCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.leafCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
 	}
 
 	public override void OnBorrowToWorld() {
@@ -49,7 +49,7 @@ public class LeafCell : Cell {
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
 		if (PhenotypePhysicsPanel.instance.functionLeaf.isOn) {
-			if (IsIdle()) {
+			if (IsHibernating()) {
 				effectProductionInternalUp = 0f;
 				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
 			} else {

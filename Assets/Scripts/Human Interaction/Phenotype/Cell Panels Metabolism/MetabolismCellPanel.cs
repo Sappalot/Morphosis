@@ -2,8 +2,16 @@
 
 public abstract class MetabolismCellPanel : MonoBehaviour {
 	[HideInInspector]
-	public PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
+	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 	protected bool ignoreSliderMoved = false;
+
+	protected PhenoGenoEnum GetMode() {
+		return mode;
+	}
+
+	public virtual void SetMode(PhenoGenoEnum mode) {
+		this.mode = mode;
+	}
 
 	protected bool isDirty = false;
 	public void MakeDirty() {
@@ -17,11 +25,11 @@ public abstract class MetabolismCellPanel : MonoBehaviour {
 		MakeDirty();
 	}
 
-	public bool isUnlocked() {
+	public bool IsUnlocked() {
 		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
 	}
 
-	public Color isUnlockedColor() {
+	public Color IsUnlockedColor() {
 		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome ? Color.black : ColorScheme.instance.grayedOut;
 	}
 
@@ -33,7 +41,8 @@ public abstract class MetabolismCellPanel : MonoBehaviour {
 
 	public string productionEffectPhenotypeString {
 		get {
-			return string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2} W", selectedCell.effectProductionInternalUp, selectedCell.effectProductionInternalDown, selectedCell.effectProductionInternalUp - selectedCell.effectProductionInternalDown);
+			return string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2} W", selectedCell.effectProductionInternalUp, selectedCell.effectProductionInternalDown, selectedCell.effectProductionInternalUp - selectedCell.effectProductionInternalDown)
+			 + (selectedCell.IsHibernating() ? " (hibernating)" : "");
 		}
 	}
 

@@ -15,8 +15,8 @@ public class MuscleCell : Cell {
 		masterAxoneDistance = creature.genotype.GetDistanceToClosestAxonGeneCellUpBranch(mapPosition);
 	}
 
-	override public bool IsIdle() {
-		return gene.muscleCellIdleWhenAttached && creature.IsAttachedToMotherAlive();
+	override public bool IsHibernating() {
+		return (gene.muscleCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.muscleCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
 	}
 
 	override public float springFrequenzy {
@@ -33,11 +33,13 @@ public class MuscleCell : Cell {
 		}
 		effectProductionInternalUp = 0f;
 		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
-			if (IsIdle()) {
+			if (IsHibernating()) {
 				effectProductionInternalUp = 0f;
 				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
 
+				// You have leelax!
 				scale.localScale = new Vector3(1f, 1f, 1f); //costy, only if in frustum and close
+				radius = 0.5f; 
 				scaleIsDirty = true;
 			} else {
 				UpdateRadius(worldTicks);

@@ -7,7 +7,8 @@ public class Gene {
 	public ChildDetatchModeEnum eggCellDetatchMode = ChildDetatchModeEnum.Size;
 	public float eggCellDetatchSizeThreshold = 0.5f; // completeness count / max count 
 	public float eggCellDetatchEnergyThreshold = 0.4f; //part of max energy(* 100 to get  %)
-	public bool eggCellIdleWhenAttached = false;
+	public bool eggCellHibernateWhenAttachedToMother = false;
+	public bool eggCellHibernateWhenAttachedToChild = false;
 	// ^ Egg cell ^
 
 	// Jaw Cell
@@ -16,15 +17,18 @@ public class Gene {
 	public bool jawCellCannibalizeFather;
 	public bool jawCellCannibalizeSiblings;
 	public bool jawCellCannibalizeChildren;
-	public bool jawCellIdleWhenAttached = false;
+	public bool jawCellHibernateWhenAttachedToMother = false;
+	public bool jawCellHibernateWhenAttachedToChild = false;
 	// ^ Jaw Cell ^
 
 	// Leaf Cell
-	public bool leafCellIdleWhenAttached = false;
+	public bool leafCellHibernateWhenAttachedToMother = false;
+	public bool leafCellHibernateWhenAttachedToChild = false;
 	// ^ Leaf Cell ^
 
 	// Muscle Cell
-	public bool muscleCellIdleWhenAttached = false;
+	public bool muscleCellHibernateWhenAttachedToMother = false;
+	public bool muscleCellHibernateWhenAttachedToChild = false;
 	// ^ Muscle Cell ^
 
 	// Shell
@@ -150,7 +154,11 @@ public class Gene {
 
 		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
 		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			eggCellIdleWhenAttached = !eggCellIdleWhenAttached; //toggle
+			eggCellHibernateWhenAttachedToMother = !eggCellHibernateWhenAttachedToMother; //toggle
+		}
+		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
+		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
+			eggCellHibernateWhenAttachedToChild = !eggCellHibernateWhenAttachedToChild; //toggle
 		}
 		// ^ Egg ^
 
@@ -182,28 +190,33 @@ public class Gene {
 
 		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
 		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			jawCellIdleWhenAttached = !jawCellIdleWhenAttached; //toggle
+			jawCellHibernateWhenAttachedToMother = !jawCellHibernateWhenAttachedToMother; //toggle
+		}
+		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
+		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
+			jawCellHibernateWhenAttachedToChild = !jawCellHibernateWhenAttachedToChild; //toggle
 		}
 		// ^ Jaw ^
 
 		// Leaf
 		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
 		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			leafCellIdleWhenAttached = !leafCellIdleWhenAttached; //toggle
+			leafCellHibernateWhenAttachedToMother = !leafCellHibernateWhenAttachedToMother; //toggle
+		}
+		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
+		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
+			leafCellHibernateWhenAttachedToChild = !leafCellHibernateWhenAttachedToChild; //toggle
 		}
 		// ^ Leaf ^ 
 
 		// Muscle
 		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
 		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			muscleCellIdleWhenAttached = !muscleCellIdleWhenAttached; //toggle
+			muscleCellHibernateWhenAttachedToMother = !muscleCellHibernateWhenAttachedToMother; //toggle
 		}
-		// ^ Muscle ^
-
-		// Muscle
 		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
 		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			muscleCellIdleWhenAttached = !muscleCellIdleWhenAttached; //toggle
+			muscleCellHibernateWhenAttachedToChild = !muscleCellHibernateWhenAttachedToChild; //toggle
 		}
 		// ^ Muscle ^
 
@@ -335,7 +348,8 @@ public class Gene {
 		geneData.eggCellDetatchMode = eggCellDetatchMode;
 		geneData.eggCellDetatchSizeThreshold = eggCellDetatchSizeThreshold;
 		geneData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
-		geneData.eggCellIdleWhenAttached = eggCellIdleWhenAttached;
+		geneData.eggCellHibernateWhenAttachedToMother = eggCellHibernateWhenAttachedToMother;
+		geneData.eggCellHibernateWhenAttachedToChild = eggCellHibernateWhenAttachedToChild;
 
 		// Jaw
 		geneData.jawCellCannibalizeKin =      jawCellCannibalizeKin;
@@ -343,13 +357,16 @@ public class Gene {
 		geneData.jawCellCannibalizeFather =   jawCellCannibalizeFather;
 		geneData.jawCellCannibalizeSiblings = jawCellCannibalizeSiblings;
 		geneData.jawCellCannibalizeChildren = jawCellCannibalizeChildren;
-		geneData.jawCellIdleWhenAttached =    jawCellIdleWhenAttached;
+		geneData.jawCellHibernateWhenAttachedToMother = jawCellHibernateWhenAttachedToMother;
+		geneData.jawCellHibernateWhenAttachedToChild = jawCellHibernateWhenAttachedToChild;
 
 		// Leaf
-		geneData.leafCellIdleWhenAttached = leafCellIdleWhenAttached;
+		geneData.leafCellHibernateWhenAttachedToMother = leafCellHibernateWhenAttachedToMother;
+		geneData.leafCellHibernateWhenAttachedToChild = leafCellHibernateWhenAttachedToChild;
 
 		// Muscle
-		geneData.muscleCellIdleWhenAttached = muscleCellIdleWhenAttached;
+		geneData.muscleCellHibernateWhenAttachedToMother = muscleCellHibernateWhenAttachedToMother;
+		geneData.muscleCellHibernateWhenAttachedToChild = muscleCellHibernateWhenAttachedToChild;
 
 		// Shell
 		geneData.shellCellArmourClass = shellCellArmorClass;
@@ -404,7 +421,8 @@ public class Gene {
 		} else {
 			eggCellDetatchEnergyThreshold = geneData.eggCellDetatchEnergyThreshold;
 		}
-		eggCellIdleWhenAttached = geneData.eggCellIdleWhenAttached;
+		eggCellHibernateWhenAttachedToMother = geneData.eggCellHibernateWhenAttachedToMother;
+		eggCellHibernateWhenAttachedToChild = geneData.eggCellHibernateWhenAttachedToChild;
 
 		// Jaw
 		jawCellCannibalizeKin =      geneData.jawCellCannibalizeKin;
@@ -412,13 +430,16 @@ public class Gene {
 		jawCellCannibalizeFather =   geneData.jawCellCannibalizeFather;
 		jawCellCannibalizeSiblings = geneData.jawCellCannibalizeSiblings;
 		jawCellCannibalizeChildren = geneData.jawCellCannibalizeChildren;
-		jawCellIdleWhenAttached =    geneData.jawCellIdleWhenAttached;
+		jawCellHibernateWhenAttachedToMother = geneData.jawCellHibernateWhenAttachedToMother;
+		jawCellHibernateWhenAttachedToChild = geneData.jawCellHibernateWhenAttachedToChild;
 
 		// Leaf
-		leafCellIdleWhenAttached = geneData.leafCellIdleWhenAttached;
+		leafCellHibernateWhenAttachedToMother = geneData.leafCellHibernateWhenAttachedToMother;
+		leafCellHibernateWhenAttachedToChild = geneData.leafCellHibernateWhenAttachedToChild;
 
 		// Muscle
-		muscleCellIdleWhenAttached = geneData.muscleCellIdleWhenAttached;
+		muscleCellHibernateWhenAttachedToMother = geneData.muscleCellHibernateWhenAttachedToMother;
+		muscleCellHibernateWhenAttachedToChild = geneData.muscleCellHibernateWhenAttachedToChild;
 
 		// Shell
 		shellCellArmorClass = geneData.shellCellArmourClass;

@@ -203,6 +203,10 @@ public class Creature : MonoBehaviour {
 		return children[id].isConnectedToMother;
 	}
 
+	public bool IsAttachedToChildAlive() {
+		return GetAttachedChildrenAliveCount() > 0;
+	}
+
 	// Thll mother to see me as connected
 	public void SetAttachedToMotherAlive(bool attached) {
 		Creature m = GetMotherAlive();

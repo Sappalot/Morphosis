@@ -58,10 +58,10 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		metabolismCellPanels[7] = veinCellPanel;
 
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
-			m.mode = PhenoGenoEnum.Phenotype;
+			m.SetMode(PhenoGenoEnum.Phenotype);
 		}
 
-		axonCellPanel.mode = PhenoGenoEnum.Phenotype;
+		axonCellPanel.SetMode(PhenoGenoEnum.Phenotype);
 		cellBuildPriorityPanel.mode = PhenoGenoEnum.Phenotype;
 		originCellPanel.mode = PhenoGenoEnum.Phenotype;
 

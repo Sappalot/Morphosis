@@ -4,6 +4,8 @@ using UnityEngine.UI;
 public class EggCellPanel : MetabolismCellPanel {
 	public Text productionEffectText;
 
+	public HibernatePanel hibernatePanel;
+
 	public Text fertilizeHeadingText;
 	public Text fertilizeSliderText;
 	public Slider fertilizeSlider;
@@ -22,8 +24,10 @@ public class EggCellPanel : MetabolismCellPanel {
 	public Text detatchEnergySliderText;
 	public Slider detatchEnergySlider;
 
-	public Text idleWhenAttachedText;
-	public Toggle idleWhenAttachedToggle;
+	public override void SetMode(PhenoGenoEnum mode) {
+		hibernatePanel.SetMode(mode);
+		base.SetMode(mode);
+	}
 
 	private void Awake() {
 		ignoreSliderMoved = true;
@@ -40,7 +44,7 @@ public class EggCellPanel : MetabolismCellPanel {
 	}
 
 	public void OnClickFertilize() {
-		if (CreatureSelectionPanel.instance.hasSoloSelected && mode == PhenoGenoEnum.Phenotype) {
+		if (CreatureSelectionPanel.instance.hasSoloSelected && GetMode() == PhenoGenoEnum.Phenotype) {
 			World.instance.life.FertilizeCreature(CellPanel.instance.selectedCell, true, World.instance.worldTicks, true);
 		}
 	}
@@ -97,26 +101,13 @@ public class EggCellPanel : MetabolismCellPanel {
 		MakeDirty();
 	}
 
-	public void OnIdleWhenAttachedToggleChanged() {
-		if (ignoreSliderMoved) {
-			return;
-		}
-
-		selectedGene.eggCellIdleWhenAttached = idleWhenAttachedToggle.isOn;
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
-			CreatureSelectionPanel.instance.soloSelected.generation = 1;
-		}
-		MakeDirty();
-	}
-
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update CellPanel");
 			}
 
-			if (mode == PhenoGenoEnum.Phenotype) {
+			if (GetMode() == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
 					productionEffectText.text = productionEffectPhenotypeString;
 
@@ -138,34 +129,28 @@ public class EggCellPanel : MetabolismCellPanel {
 
 					detatchEnergySliderText.color = ColorScheme.instance.grayedOutGenotype;
 					detatchEnergySlider.interactable = false;
-
-					idleWhenAttachedText.color = ColorScheme.instance.grayedOutGenotype;
-					idleWhenAttachedToggle.interactable = false;
 				}
-			} else if (mode == PhenoGenoEnum.Genotype) {
+			} else if (GetMode() == PhenoGenoEnum.Genotype) {
 				productionEffectText.text = string.Format("Production Effect: 0.00 - {0:F2} W", GlobalSettings.instance.phenotype.eggCellEffectCost);
 
 				fertilizeHeadingText.color = Color.black;
 
 				fertilizeSliderText.color = Color.black;
-				fertilizeSlider.interactable = isUnlocked();
+				fertilizeSlider.interactable = IsUnlocked();
 
 				fertilizeButtonText.color = ColorScheme.instance.grayedOutPhenotype;
 
 				detatchHeadingText.color = Color.black;
 
-				detatchSizeToggle.interactable = isUnlocked();
-				detatchEnergyToggle.interactable = isUnlocked();
+				detatchSizeToggle.interactable = IsUnlocked();
+				detatchEnergyToggle.interactable = IsUnlocked();
 
 				detatchSizeSliderTextPercentage.color = Color.black;
 				detatchSizeSliderTextCellCount.color = Color.black;
-				detatchSizeSlider.interactable = isUnlocked();
+				detatchSizeSlider.interactable = IsUnlocked();
 
 				detatchEnergySliderText.color = Color.black;
-				detatchEnergySlider.interactable = isUnlocked();
-
-				idleWhenAttachedText.color = Color.black;
-				idleWhenAttachedToggle.interactable = isUnlocked();
+				detatchEnergySlider.interactable = IsUnlocked();
 			}
 
 			if (selectedGene != null) {
@@ -185,10 +170,11 @@ public class EggCellPanel : MetabolismCellPanel {
 				detatchEnergySlider.value = selectedGene.eggCellDetatchEnergyThreshold;
 				detatchEnergySliderText.text = string.Format("Can't grow more and cell energy ≥ {0:F1}%", selectedGene.eggCellDetatchEnergyThreshold * 100f);
 
-				idleWhenAttachedToggle.isOn = selectedGene.eggCellIdleWhenAttached;
-
 				ignoreSliderMoved = false;
 			}
+
+			// Subpanels
+			hibernatePanel.MakeDirty();
 
 			isDirty = false;
 		}

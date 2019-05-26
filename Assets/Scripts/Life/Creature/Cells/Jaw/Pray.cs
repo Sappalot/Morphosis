@@ -10,10 +10,13 @@ public class Pray {
 	}
 
 	public void UpdateMetabolism(Cell predatorCell) {
-		float ramSpeed = GetRamSpeed(predatorCell, cell);
+		//float ramSpeed = GetRamSpeed(predatorCell, cell);
 		//float jawEatEffect = 50f; // GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(Mathf.Max(0f, ramSpeed));
 
-		if (cell.GetCellType() == CellTypeEnum.Jaw) {
+		if (predatorCell.IsHibernating()) {
+			prayEatenEffect = 0f;
+			predatorEatEffect = 0f;
+		} else if (cell.GetCellType() == CellTypeEnum.Jaw) {
 			prayEatenEffect = GlobalSettings.instance.phenotype.jawCellEatEffect;
 			predatorEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellMutualEatKindness;
 		}
