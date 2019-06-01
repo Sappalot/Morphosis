@@ -6,7 +6,9 @@ using Boo.Lang.Runtime;
 // The container of genotype(genes) and phenotype(body)
 // Holds information that does not fit into genes or body 
 public class Creature : MonoBehaviour {
-	public const float maxRadius = 5.5f;
+
+	public const int maxRadiusHexagon = 7; // used to limit blueprint. R = 7 ==> we can have can have 7 cells north of origin at most (cell 1 to cell 7) 
+	public const float maxRadiusCircle = maxRadiusHexagon + 0.5f; // used for culling
 	
 	//wing force
 	[Range(0f, 1f)]

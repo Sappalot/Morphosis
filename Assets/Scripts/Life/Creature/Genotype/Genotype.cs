@@ -69,7 +69,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public bool IsInsideBoundingCircle(Vector2 position) {
-		return Vector2.SqrMagnitude(originCell.position - position) < Mathf.Pow(Creature.maxRadius * 2f, 2f);
+		return Vector2.SqrMagnitude(originCell.position - position) < Mathf.Pow(Creature.maxRadiusCircle * 2f, 2f);
 	}
 
 	public bool IsCompletelyInside(Rect area) {
@@ -115,9 +115,12 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
+	private const int stepsToRootAtMost = 100;
+
 	public Cell GetClosestAxonGeneCellUpBranch(Vector2i position) {
 		Vector2i currentPosition = position;
-		for (int rep = 0; rep < 10; rep++) {
+		
+		for (int rep = 0; rep < stepsToRootAtMost; rep++) {
 			Cell cellAtPosition = geneCellMap.GetCell(currentPosition);
 			if (cellAtPosition.isAxonEnabled) { 
 				return cellAtPosition;
@@ -128,14 +131,14 @@ public class Genotype : MonoBehaviour {
 			}
 			currentPosition = geneCellMap.GetCellGridPositionUpBranch(currentPosition);
 		}
-		Debug.LogError("We should have been climbing all the way to the root by now!");
+		Debug.LogError("We should have been climbing all the way up the branc to the origin, by now!");
 		return null;
 	}
 
 	public int? GetDistanceToClosestAxonGeneCellUpBranch(Vector2i position) {
 		int distance = 0;
 		Vector2i currentPosition = position;
-		for (int rep = 0; rep < 10; rep++) {
+		for (int rep = 0; rep < stepsToRootAtMost; rep++) {
 			Cell cellAtPosition = geneCellMap.GetCell(currentPosition);
 			if (cellAtPosition.isAxonEnabled) {
 				return distance;
@@ -294,12 +297,13 @@ public class Genotype : MonoBehaviour {
 		genome[2].type = CellTypeEnum.Muscle;
 	}
 
+
+
 	public bool UpdateGeneCellsFromGenome(Creature creature, Vector2 position, float heading) { // heading 90 ==> origin is pointing north
 		if (geneCellsDiffersFromGenome) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature UpdateGeneCellsFromGenome");
 
-			const int maxSize = 6;
 			Clear();
 
 			List<Cell> spawningFromCells = new List<Cell>();
@@ -308,7 +312,11 @@ public class Genotype : MonoBehaviour {
 			spawningFromCells.Add(origin);
 
 			List<Cell> nextSpawningFromCells = new List<Cell>();
-			for (int buildOrderIndex = 1; spawningFromCells.Count != 0 && buildOrderIndex < maxSize; buildOrderIndex++) {
+			for (int buildOrderIndex = 1; spawningFromCells.Count != 0 && buildOrderIndex < 50; buildOrderIndex++) {
+				//if (buildOrderIndex >= maxSize) {
+				//	break;
+				//}
+
 				for (int index = 0; index < spawningFromCells.Count; index++) {
 					Cell spawningFromCell = spawningFromCells[index];
 					for (int referenceCardinalIndex = 0; referenceCardinalIndex < 6; referenceCardinalIndex++) {
@@ -317,6 +325,15 @@ public class Genotype : MonoBehaviour {
 							int referenceBindHeading = (spawningFromCell.bindCardinalIndex + referenceCardinalIndex + 5) % 6; //!!
 							Gene referenceGene = geneReference.gene;
 							Vector2i referenceCellMapPosition = CellMap.GetGridNeighbourGridPosition(spawningFromCell.mapPosition, referenceBindHeading);
+
+							//Check if reference position is still inside of creature size max area mask
+							//if (referenceCellMapPosition.x > Creature.maxRadiusHexagon || referenceCellMapPosition.x < -Creature.maxRadiusHexagon || referenceCellMapPosition.y > Creature.maxRadiusHexagon || referenceCellMapPosition.y < -Creature.maxRadiusHexagon) {
+							//	continue;
+							//}
+
+							if (!CellMap.IsInsideHexagon(referenceCellMapPosition, Creature.maxRadiusHexagon)) {
+								continue;
+							}
 
 							if (geneCellMap.IsLegalPosition(referenceCellMapPosition)) {
 								Cell residentCell = geneCellMap.GetCell(referenceCellMapPosition);
@@ -328,7 +345,7 @@ public class Genotype : MonoBehaviour {
 								} else {
 									Debug.Assert(residentCell.buildIndex <= buildOrderIndex, "Trying to spawn a cell at a location where a cell of lower build index is allready present.");
 									if (residentCell.buildIndex == buildOrderIndex) {
-										//trying to spawn a cell where there is one allready with the same buildOrderIndex, in fight over this place bothe cwlls will loose, so the resident will be removed
+										//trying to spawn a cell where there is one allready with the same buildOrderIndex, in fight over this place bothe cells will loose, so the resident will be removed
 										Morphosis.instance.geneCellPool.Recycle(residentCell);
 										geneCellListIndexSorted.Remove(residentCell);
 										geneCellMap.RemoveCellAtGridPosition(residentCell.mapPosition);

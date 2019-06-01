@@ -115,29 +115,62 @@ public class CellMap {
 		return GetGridNeighbourGridPosition(gridPosition, AngleUtil.CardinalEnumToCardinalIndex(cardinalenum));
 	}
 
+	//                v              v           v 
+
+	//-------       -------  0: 2 -------       -------       
+	//       ------- -1: 1 -------  1: 1 -------       -------
+	//------- -2: 1 -------  0: 1 -------       -------       
+	//       ------- -1: 0 -------  1: 0 -------       -------
+	//------- -2: 0 -------  0: 0 -------       -------       
+	//       ------- -1:-1 -------  1:-1 -------       -------
+	//------- -2:-1 -------  0:-1 -------       -------       
+	//       ------- -1:-2 -------  1:-2 -------       -------
+	
+	//         ^              ^            ^
+
+
 	public static Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, int cardinalIndex) {
 		Vector2i neighbour = null;
 		int even = (gridPosition.x % 2 == 0) ? 1 : 0;
 		int odd = (gridPosition.x % 2 == 0) ? 0 : 1;
 		if (cardinalIndex == 0) {
-			neighbour = new Vector2i(gridPosition.x + 1, gridPosition.y + odd);
+			neighbour = new Vector2i(gridPosition.x + 1, gridPosition.y + odd); // north east
 		}
 		if (cardinalIndex == 1) {
-			neighbour = new Vector2i(gridPosition.x, gridPosition.y + 1);
+			neighbour = new Vector2i(gridPosition.x, gridPosition.y + 1); // north
 		}
 		if (cardinalIndex == 2) {
-			neighbour = new Vector2i(gridPosition.x - 1, gridPosition.y + odd);
+			neighbour = new Vector2i(gridPosition.x - 1, gridPosition.y + odd); // north west
 		}
 		if (cardinalIndex == 3) {
-			neighbour = new Vector2i(gridPosition.x - 1, gridPosition.y - even);
+			neighbour = new Vector2i(gridPosition.x - 1, gridPosition.y - even); // south west
 		}
 		if (cardinalIndex == 4) {
-			neighbour = new Vector2i(gridPosition.x, gridPosition.y - 1);
+			neighbour = new Vector2i(gridPosition.x, gridPosition.y - 1); // south
 		}
 		if (cardinalIndex == 5) {
-			neighbour = new Vector2i(gridPosition.x + 1, gridPosition.y - even);
+			neighbour = new Vector2i(gridPosition.x + 1, gridPosition.y - even); // south east
 		}
 		return neighbour;
+	}
+
+	public static bool IsInsideHexagon(Vector2i gridPosition, int hexaradius) {
+		int xStep = Mathf.Abs(gridPosition.x);
+		if (xStep > hexaradius || Mathf.Abs(gridPosition.y) > hexaradius) {
+			return false;
+		}
+		if (gridPosition.y > 0 && gridPosition.y > hexaradius - Mathf.CeilToInt(xStep * 0.5f - 0.01f)) {
+			return false;
+		} else if (gridPosition.y < -hexaradius + Mathf.FloorToInt(xStep * 0.5f + 0.01f)) {
+			return false;
+		}
+		return true;
+	}
+
+	// Sweet name if i may say so myself :)
+	private int GetManhexanDistanceToOrigo(Vector2i gridPosition) {
+		// TODO
+		return 0;
 	}
 
 	//returned position is in creature space

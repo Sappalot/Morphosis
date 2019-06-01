@@ -320,16 +320,13 @@ public class Phenotype : MonoBehaviour {
 			originCell.rotatedRoot.rotation = Quaternion.Euler(0f, 0f, originCell.heading); // Just updating graphics
 			growCellCount++;
 		}
-
-		// sort gene cell list: low number (high prio) -> hight number (low number)
-		// allready sorted, trust it!
-
+		
 		List<Cell> buildList = null;
 		if (highestPriorityFirst) {
-			buildList = genotype.geneCellListPrioritySorted;
+			buildList = genotype.geneCellListPrioritySorted; // sort gene cell list: low number (high prio) -> hight number (low number)
 		} else {
 			buildList = genotype.geneCellListIndexSorted;
-		}		
+		}
 
 		float? highestPriority = null; // highestPriority = lowest number
 
@@ -440,7 +437,7 @@ public class Phenotype : MonoBehaviour {
 				}
 
 				// Is the cell too far away from root? Does this ever happen???
-				if (Vector2.Distance(spawnPosition, originCell.position) > 8f) {
+				if (Vector2.Distance(spawnPosition, originCell.position) > Creature.maxRadiusCircle) {
 					Debug.Log("Building too far far away!!!!");
 				}
 
@@ -536,7 +533,7 @@ public class Phenotype : MonoBehaviour {
 
 		List<Cell> cells = new List<Cell>();
 		foreach (Creature creature in World.instance.life.creatures) {
-			if (Vector2.SqrMagnitude(creature.GetOriginPosition(PhenoGenoEnum.Phenotype) - originCell.position ) < Mathf.Pow(Creature.maxRadius * 2f, 2f)) {
+			if (Vector2.SqrMagnitude(creature.GetOriginPosition(PhenoGenoEnum.Phenotype) - originCell.position ) < Mathf.Pow(Creature.maxRadiusCircle * 2f, 2f)) {
 				cells.AddRange(creature.phenotype.cellList);
 			}
 		}
@@ -1314,7 +1311,7 @@ public class Phenotype : MonoBehaviour {
 
 	public bool IsInsideBoundingCircle(Vector2 position) {
 		if (hasOriginCell) {
-			return Vector2.SqrMagnitude(originCell.position - position) < Mathf.Pow(Creature.maxRadius * 2f, 2f);
+			return Vector2.SqrMagnitude(originCell.position - position) < Mathf.Pow(Creature.maxRadiusCircle * 2f, 2f);
 		}
 		return false;
 	}

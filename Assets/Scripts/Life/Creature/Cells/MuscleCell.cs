@@ -38,12 +38,13 @@ public class MuscleCell : Cell {
 				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
 
 				// You have leelax!
-				scale.localScale = new Vector3(1f, 1f, 1f); //costy, only if in frustum and close
-				radius = 0.5f; 
-				scaleIsDirty = true;
-			} else {
-				UpdateRadius(worldTicks);
+				//scale.localScale = new Vector3(1f, 1f, 1f); //costy, only if in frustum and close
+				//radius = 0.5f; 
+				//scaleIsDirty = true;
 			}
+
+			UpdateRadius(worldTicks);
+
 			UpdateSpringLengths();
 			base.UpdateCellFunction(deltaTicks, worldTicks);
 		}
@@ -74,13 +75,15 @@ public class MuscleCell : Cell {
 
 		//--
 		bool contracting = false;
-		if (masterAxonGridPosition != null) {
-			Cell masterAxon = creature.phenotype.cellMap.GetCell(masterAxonGridPosition);
-			if (masterAxon != null) {
-				if (masterAxoneDistance != null) {
-					contracting = masterAxon.IsAxonePulseContracting((int)masterAxoneDistance);
-				} else {
-					Debug.LogError("We have found a master axone, but failed to calculate the distance there from me!");
+		if (!IsHibernating()) {
+			if (masterAxonGridPosition != null) {
+				Cell masterAxon = creature.phenotype.cellMap.GetCell(masterAxonGridPosition);
+				if (masterAxon != null) {
+					if (masterAxoneDistance != null) {
+						contracting = masterAxon.IsAxonePulseContracting((int)masterAxoneDistance);
+					} else {
+						Debug.LogError("We have found a master axone, but failed to calculate the distance there from me!");
+					}
 				}
 			}
 		}
