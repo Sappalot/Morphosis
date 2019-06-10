@@ -19,6 +19,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Text creatureDeadByAgeCount;
 	public Text creatureDeadByBreakingCount;
 	public Text creatureDeadByEscapingCount;
+	public Text creatureDeadByEdgeErrorCount;
 
 	private int frameCount;
 	private float timeCount;
@@ -145,7 +146,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 			creatureDeadByAgeCount.text = "...by age: " + World.instance.life.creatureDeadByAgeCount;
 			creatureDeadByBreakingCount.text = "...by breaking: " + World.instance.life.creatureDeadByBreakingCount;
 			creatureDeadByEscapingCount.text = "...by escaping: " + World.instance.life.creatureDeadByEscapingCount;
-			
+			creatureDeadByEdgeErrorCount.text = "...by edge error: " + World.instance.life.creatureDeadByEdgeErrorCount;
 
 			//Creature Pool
 			creaturePoolCount.text = "Creatures: " + CreaturePool.instance.storedCount + " + " + CreaturePool.instance.loanedCount + " = " + (CreaturePool.instance.storedCount + CreaturePool.instance.loanedCount);

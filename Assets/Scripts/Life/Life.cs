@@ -14,7 +14,8 @@ public class Life : MonoBehaviour {
 	public int creatureDeadByAgeCount { get; private set; } // part of creatureDeadCount
 	public int creatureDeadByBreakingCount { get; private set; } // part of creatureDeadCount
 	public int creatureDeadByEscapingCount { get; private set; } // part of creatureDeadCount
-	
+	public int creatureDeadByEdgeErrorCount { get; private set; } // part of creatureDeadCount
+
 	//debug
 	[HideInInspector]
 	public int deletedCellCount = 0; // should be safe to remove this guy...
@@ -189,7 +190,7 @@ public class Life : MonoBehaviour {
 	public void KillCreatureByEscaping(Creature creature, bool playFx) {
 		KillCreatureSafe(creature, playFx);
 		creatureDeadByEscapingCount++;
-		World.instance.AddHistoryEvent(new HistoryEvent("Runner Killed", false, Color.red));
+		World.instance.AddHistoryEvent(new HistoryEvent("r", false, Color.red));
 	}
 
 	public void Restart(Action onDone) {
@@ -198,6 +199,7 @@ public class Life : MonoBehaviour {
 			creatureDeadByAgeCount = 0;
 			creatureDeadByBreakingCount = 0;
 			creatureDeadByEscapingCount = 0;
+			creatureDeadByEdgeErrorCount = 0;
 
 			creatureBirthsPerSecond.Clear();
 			creatureBirthsPerSecond.Clear();
@@ -491,6 +493,7 @@ public class Life : MonoBehaviour {
 			} else {
 				if (creatureList[index].phenotype.hasError) {
 					World.instance.AddHistoryEvent(new HistoryEvent("e", false, Color.red));
+					creatureDeadByEdgeErrorCount++;
 				}
 				killCreatureList.Add(creatureList[index]);
 			}
@@ -537,6 +540,7 @@ public class Life : MonoBehaviour {
 		lifeData.creatureDeadByAgeCount =      creatureDeadByAgeCount;
 		lifeData.creatureDeadByBreakingCount = creatureDeadByBreakingCount;
 		lifeData.creatureDeadByEscapingCount = creatureDeadByEscapingCount;
+		lifeData.creatureDeadByEdgeErrorCount = creatureDeadByEdgeErrorCount;
 
 		for (int index = 0; index < creatureList.Count; index++) {
 			Creature creature = creatureList[index];
@@ -568,6 +572,7 @@ public class Life : MonoBehaviour {
 		creatureDeadByAgeCount =      lifeData.creatureDeadByAgeCount;
 		creatureDeadByBreakingCount = lifeData.creatureDeadByBreakingCount;
 		creatureDeadByEscapingCount = lifeData.creatureDeadByEscapingCount;
+		creatureDeadByEdgeErrorCount = lifeData.creatureDeadByEdgeErrorCount;
 		onDone();
 	}
 

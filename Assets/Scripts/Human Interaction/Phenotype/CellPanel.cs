@@ -41,6 +41,10 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[8];
 
 	public AxonCellPanel axonCellPanel;
+	private SensorPanel[] sensorPanels = new SensorPanel[1];
+	public SensorPanel effectSensorPanel;
+	// TODO: more sensor panels
+
 	public CellBuildPriorityPanel cellBuildPriorityPanel;
 	public OriginCellPanel originCellPanel;
 
@@ -56,12 +60,17 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		metabolismCellPanels[5] = shellCellPanel;
 		metabolismCellPanels[6] = rootCellPanel;
 		metabolismCellPanels[7] = veinCellPanel;
-
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
 			m.SetMode(PhenoGenoEnum.Phenotype);
 		}
 
 		axonCellPanel.SetMode(PhenoGenoEnum.Phenotype);
+
+		sensorPanels[0] = effectSensorPanel;
+		foreach (SensorPanel s in sensorPanels) {
+			s.SetMode(PhenoGenoEnum.Phenotype);
+		}
+		
 		cellBuildPriorityPanel.mode = PhenoGenoEnum.Phenotype;
 		originCellPanel.mode = PhenoGenoEnum.Phenotype;
 
@@ -74,16 +83,16 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public void MakeDirty() {
 		isDirty = true;
 
-		eggCellPanel.MakeDirty();
-		fungalCellPanel.MakeDirty();
-		jawCellPanel.MakeDirty();
-		leafCellPanel.MakeDirty();
-		muscleCellPanel.MakeDirty();
-		shellCellPanel.MakeDirty();
-		rootCellPanel.MakeDirty();
-		veinCellPanel.MakeDirty();
+		foreach (MetabolismCellPanel m in metabolismCellPanels) {
+			m.MakeDirty();
+		}
 
 		axonCellPanel.MakeDirty();
+
+		foreach (SensorPanel s in sensorPanels) {
+			s.MakeDirty();
+		}
+		
 		cellBuildPriorityPanel.MakeDirty();
 		originCellPanel.MakeDirty();
 	}
@@ -145,6 +154,10 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			//All off, we may turn on 1 of them later 
 			foreach (MetabolismCellPanel m in metabolismCellPanels) {
 				m.gameObject.SetActive(false);
+			}
+
+			foreach (SensorPanel s in sensorPanels) {
+				s.gameObject.SetActive(false);
 			}
 
 			metabolismCellTypeDropdown.interactable = false; //can't change cell type
@@ -256,6 +269,13 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				veinCellPanel.gameObject.SetActive(true);
 				veinCellPanel.MakeDirty();
 			}
+
+			// Sensor ...
+			if (selectedCell.sensorType == SensorTypeEnum.Effect) {
+				effectSensorPanel.gameObject.SetActive(true);
+				effectSensorPanel.MakeDirty();
+			}
+			// ^ Sensor ^
 
 			if (selectedCell.isOrigin) {
 				originCellPanel.gameObject.SetActive(true);

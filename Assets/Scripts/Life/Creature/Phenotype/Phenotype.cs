@@ -1404,7 +1404,8 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	//time
+	//time...
+	//     metabolism...
 	private int eggCellTick;
 	private int fungalCellTick;
 	private int jawCellTick;
@@ -1415,9 +1416,39 @@ public class Phenotype : MonoBehaviour {
 	private int veinCellTick;
 
 	private int veinTick;
+	//   ^ metabolism ^
+
+	//     signal
+	private int effectSensorTick;
+	//   ^ signal ^
 
 	//time ^
+
 	public void UpdatePhysics(Creature creature, ulong worldTick) {
+		UpdateMetabolism(creature, worldTick);
+		UpdateSignal(creature, worldTick);
+	}
+
+	private void UpdateSignal(Creature creature, ulong worldTick) {
+		if (isGrabbed) {
+			return;
+		}
+
+		effectSensorTick++;
+		if (effectSensorTick >= GlobalSettings.instance.quality.effectSensorTickPeriod) {
+			effectSensorTick = 0;
+		}
+
+		for (int index = 0; index < cellList.Count; index++) {
+			Sensor sensor = cellList[index].sensor;
+
+			if (effectSensorTick == 0 && sensor.GetSensorType() == SensorTypeEnum.Effect) {
+				sensor.UpdateCellFunction(GlobalSettings.instance.quality.effectSensorTickPeriod, worldTick);
+			}
+		}
+	}
+
+	private void UpdateMetabolism(Creature creature, ulong worldTick) {
 		if (isGrabbed) {
 			return;
 		}
@@ -1528,11 +1559,12 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 
-		//Viual
+		//Visual
 		if (visualTelepoke > 0) {
 			visualTelepoke--;
 		}
 	}
+
 
 	public void UpdateRotation() {
 		for (int index = 0; index < cellList.Count; index++) {

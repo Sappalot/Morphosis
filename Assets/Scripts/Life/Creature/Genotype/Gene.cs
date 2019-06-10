@@ -65,6 +65,11 @@ public class Gene {
 	public bool axonIsReverse;
 	// ^ Axon ^
 
+	// Sensor...
+	public SensorTypeEnum sensorType = SensorTypeEnum.Effect;
+
+	// ^ Sensor ^
+
 	// Origin
 	public int originPulsePeriodTicks = 80;
 

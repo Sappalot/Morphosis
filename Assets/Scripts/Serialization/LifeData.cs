@@ -12,4 +12,5 @@ public class LifeData {
 	public int creatureDeadByAgeCount;
 	public int creatureDeadByBreakingCount;
 	public int creatureDeadByEscapingCount;
+	public int creatureDeadByEdgeErrorCount;
 }

@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.EventSystems;
-using System.Linq;
 using UnityEngine.UI;
 using Boo.Lang.Runtime;
 
 public abstract class Cell : MonoBehaviour {
-	
+
 	//------- Inspector
+	public Signal signal;
+
 	public SpriteRenderer cellSelected; //transparent
 	public SpriteRenderer triangleSprite;
 	public SpriteRenderer openCircleSprite; //cell type colour
@@ -38,6 +38,25 @@ public abstract class Cell : MonoBehaviour {
 
 	[HideInInspector]
 	public int buildIndex = 0; // The order in which geneCells were developed from origin (also read as steps from origin along gene arrows)
+
+	// Signal ...
+
+	[HideInInspector]
+	public Sensor sensor {
+		get {
+			return signal.sensor;
+		}
+	}
+
+	[HideInInspector]
+	public SensorTypeEnum sensorType {
+		get {
+			return signal.sensorType;
+		}
+	}
+
+	// ^ Signal ^
+
 
 	[HideInInspector]
 	public float buildPriority { // the cell with the lowest(number) buildPriority will be grown first
@@ -80,7 +99,7 @@ public abstract class Cell : MonoBehaviour {
 
 	// Egg
 	[HideInInspector]
-	public ChildDetatchModeEnum eggCellDetatchMode; 
+	public ChildDetatchModeEnum eggCellDetatchMode;
 
 	[HideInInspector]
 	public float eggCellDetatchSizeThreshold; //part of creature (* 100 to get  %)
@@ -280,7 +299,7 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public float effectProductionInternalDown = 0; // conumption, exclding jaw
 
-	public float effectProductionPredPray { 
+	public float effectProductionPredPray {
 		get {
 			return effectProductionPredPrayUp - effectProductionPredPrayDown;
 		}
@@ -645,7 +664,7 @@ public abstract class Cell : MonoBehaviour {
 			} else {
 				return Vector2.zero;
 			}
-			
+
 		}
 	}
 
@@ -693,6 +712,11 @@ public abstract class Cell : MonoBehaviour {
 		if (buds != null) {
 			buds.Init();
 		}
+
+		// Sensors...
+		signal.Init(this);
+
+		// ^ Sensors ^
 	}
 
 	public void Setup(PhenoGenoEnum phenoGeno) {
@@ -1167,8 +1191,7 @@ public abstract class Cell : MonoBehaviour {
 
 			if (creature.creation == CreatureCreationEnum.Frozen) {
 				filledCircleSprite.color = GetColor();
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.type) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.type) {
 				if (creature.phenotype.visualTelepoke > 0) {
 					filledCircleSprite.color = Color.white;
 				} else {
@@ -1183,52 +1206,41 @@ public abstract class Cell : MonoBehaviour {
 					}
 				}
 				openCircleSprite.color = Color.Lerp(GetColor(PhenoGenoEnum.Phenotype), Color.red, Mathf.Min(1f, predatorCount));
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.energy) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.energy) {
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(energyFullness);
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.flux) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.flux) {
 				float intensity = 0.2f;
 				float red = Mathf.Min(GetEffectDown(false, false, true, true) * intensity, 1f);
 				float green = Mathf.Min(GetEffectUp(false, true, true) * intensity, 1f);
 				filledCircleSprite.color = new Color(red, green, 0f);
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.effect) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.effect) {
 				float effectValue = 0f;
 
-				if (     PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal) {
+				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal) {
 					effectValue = 0.5f + GetEffect(true, true, true, true) * 0.1f;
-				}
-				else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction) {
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction) {
 					effectValue = 0.5f + GetEffect(true, false, false, false) * 0.1f;
-				}
-				else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux) {
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux) {
 					effectValue = 0.5f + GetEffect(false, false, true, true) * 0.1f;
-				}
-				else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
 					effectValue = 0.5f + creature.phenotype.GetEffectPerCell(true, true, true) * 0.1f;
-				}
-				else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
 					effectValue = 0.5f + creature.phenotype.GetEffectPerCell(true, false, false) * 0.1f;
-				}
-				else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
 					effectValue = 0.5f + creature.phenotype.GetEffectPerCell(false, false, true) * 0.1f;
 				}
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure) {
 				Color color = Color.black;
 				if (GetCellType() == CellTypeEnum.Leaf) {
 					color = ColorScheme.instance.cellGradientLeafExposure.Evaluate((this as LeafCell).lowPassExposure);
 				}
 				filledCircleSprite.color = color;
 				openCircleSprite.color = color;
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.childCountCreature) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.childCountCreature) {
 				float value = 0.05f + creature.ChildrenCountDeadOrAlive() * 0.1f;
 				filledCircleSprite.color = ColorScheme.instance.cellCreatureChildCount.Evaluate(value);
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.predatorPray) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.predatorPray) {
 				filledCircleSprite.color = Color.blue;
 				if (GetCellType() == CellTypeEnum.Jaw) {
 					if ((this as JawCell).prayCount > 0) {
@@ -1238,8 +1250,7 @@ public abstract class Cell : MonoBehaviour {
 				if (predatorCount > 0) {
 					filledCircleSprite.color = Color.red;
 				}
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.typeAndPredatorPray) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.typeAndPredatorPray) {
 				float effectValue = 0.5f + effectProductionPredPray * 0.02f;
 				if (effectProductionPredPray == 0f) {
 					filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
@@ -1248,12 +1259,10 @@ public abstract class Cell : MonoBehaviour {
 				} else {
 					filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 				}
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.update) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.update) {
 				filledCircleSprite.color = didUpdateFunctionThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
 				//openCircleSprite.color = didUpdateEnergyThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.creation) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.creation) {
 				if (creature.creation == CreatureCreationEnum.Born) {
 					filledCircleSprite.color = Color.magenta;
 				} else if (creature.creation == CreatureCreationEnum.Cloned) {
@@ -1262,11 +1271,9 @@ public abstract class Cell : MonoBehaviour {
 					//forged
 					filledCircleSprite.color = Color.cyan;
 				}
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.individual) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.individual) {
 				filledCircleSprite.color = creature.phenotype.individualColor;
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.pulse) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.pulse) {
 				//filledCircleSprite.color = isOrigin && originPulseTick == 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
 				if (isAxonEnabled) {
 					float red = 0f;
@@ -1294,11 +1301,9 @@ public abstract class Cell : MonoBehaviour {
 				} else {
 					filledCircleSprite.color = Color.blue;
 				}
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.age) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.age) {
 				filledCircleSprite.color = ColorScheme.instance.creatureAgeGradient.Evaluate(creature.GetAgeNormalized(World.instance.worldTicks));
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.shell) {
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.shell) {
 				if (GetCellType() == CellTypeEnum.Shell) {
 					filledCircleSprite.color = (this as ShellCell).GetStrongerColor();
 					openCircleSprite.color = (this as ShellCell).GetStrongerColor();
@@ -1306,9 +1311,8 @@ public abstract class Cell : MonoBehaviour {
 					filledCircleSprite.color = Color.black;
 					openCircleSprite.color = Color.black;
 				}
-				
-			}
-			else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.buildPriority) {
+
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.buildPriority) {
 				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
 					SetLabelEnabled(true);
 					if (isOrigin) {
@@ -1364,7 +1368,7 @@ public abstract class Cell : MonoBehaviour {
 					} else {
 						SetLabelText(buildPriority.ToString());
 					}
-					
+
 					if (gene.buildPriorityBias < 0) {
 						SetLabelColor(Color.green);
 					} else if (gene.buildPriorityBias > 0) {
@@ -1372,7 +1376,7 @@ public abstract class Cell : MonoBehaviour {
 					} else {
 						SetLabelColor(Color.gray);
 					}
-					
+
 					filledCircleSprite.color = Color.black;
 					SetCorrectLabelOrientation();
 				} else {
@@ -1471,11 +1475,11 @@ public abstract class Cell : MonoBehaviour {
 
 		effectFluxFromMotherAttached = 0f;
 		effectFluxToChildrenAttached = 0f;
-		effectFluxToSelf =   0f;
+		effectFluxToSelf = 0f;
 		effectFluxFromSelf = 0f;
 	}
 
-	virtual public void OnBorrowToWorld() {}
+	virtual public void OnBorrowToWorld() { }
 
 	// Save
 	private CellData cellData = new CellData();
@@ -1494,8 +1498,8 @@ public abstract class Cell : MonoBehaviour {
 		cellData.energy = energy;
 
 		//Egg
-		cellData.eggCellDetatchMode =            eggCellDetatchMode;
-		cellData.eggCellDetatchSizeThreshold =   eggCellDetatchSizeThreshold;
+		cellData.eggCellDetatchMode = eggCellDetatchMode;
+		cellData.eggCellDetatchSizeThreshold = eggCellDetatchSizeThreshold;
 		cellData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
 
 		// Leaf ... might be time to move this save / load stuff to respective cell
@@ -1505,8 +1509,8 @@ public abstract class Cell : MonoBehaviour {
 		// Leaf ^
 
 		// Origin
-		cellData.originDetatchMode =            originDetatchMode;
-		cellData.originDetatchSizeThreshold =   originDetatchSizeThreshold;
+		cellData.originDetatchMode = originDetatchMode;
+		cellData.originDetatchSizeThreshold = originDetatchSizeThreshold;
 		cellData.originDetatchEnergyThreshold = originDetatchEnergyThreshold;
 		cellData.originPulseTick = originPulseTick;
 
@@ -1575,4 +1579,8 @@ public abstract class Cell : MonoBehaviour {
 
 		this.creature = creature;
 	}
+
+	//----------Signal--------------------------------
+
+
 }

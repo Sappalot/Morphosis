@@ -54,6 +54,10 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[8];
 
 	public AxonCellPanel axonCellPanel;
+	private SensorPanel[] sensorPanels = new SensorPanel[1];
+	public SensorPanel effectSensorPanel;
+	// TODO: more sensor panels
+
 	public CellBuildPriorityPanel cellBuildPriorityPanel;
 	public OriginCellPanel originCellPanel;
 
@@ -75,6 +79,12 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 		}
 
 		axonCellPanel.SetMode(PhenoGenoEnum.Genotype);
+
+		sensorPanels[0] = effectSensorPanel;
+		foreach (SensorPanel s in sensorPanels) {
+			s.SetMode(PhenoGenoEnum.Genotype);
+		}
+
 		cellBuildPriorityPanel.mode = PhenoGenoEnum.Genotype;
 		originCellPanel.mode = PhenoGenoEnum.Genotype;
 
@@ -86,10 +96,17 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 	private bool isDirty = true;
 	public void MakeDirty() {
 		isDirty = true;
+
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
 			m.MakeDirty();
 		}
+
 		axonCellPanel.MakeDirty();
+
+		foreach (SensorPanel s in sensorPanels) {
+			s.MakeDirty();
+		}
+
 		cellBuildPriorityPanel.MakeDirty();
 		originCellPanel.MakeDirty();
 
@@ -138,8 +155,13 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 				Debug.Log("Update GeneCellPanel");
 			}
 
+			//All off, we may turn on 1 of them later
 			foreach (MetabolismCellPanel m in metabolismCellPanels) {
 				m.gameObject.SetActive(false);
+			}
+
+			foreach (SensorPanel s in sensorPanels) {
+				s.gameObject.SetActive(false);
 			}
 
 			metabolismCellTypeDropdown.interactable = false;
@@ -236,6 +258,13 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 				veinCellPanel.MakeDirty();
 			}
 			ignoreMenuChange = false;
+
+			// Sensor ...
+			if (selectedGene.sensorType == SensorTypeEnum.Effect) {
+				effectSensorPanel.gameObject.SetActive(true);
+				effectSensorPanel.MakeDirty();
+			}
+			// ^ Sensor ^
 
 			if (selectedGene.isOrigin) {
 				originCellPanel.gameObject.SetActive(true);
