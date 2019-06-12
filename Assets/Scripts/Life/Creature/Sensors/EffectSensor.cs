@@ -10,6 +10,20 @@ public class EffectSensor : Sensor {
 	}
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		isOutputOn = cell.GetEffect(true, true, true, true) > 0f;
+		isOutputOn = cell.GetEffect(true, true, true, true) > cell.gene.effectSensorThresholdEffect;
+	}
+
+	public bool IsUnlocked() {
+		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
+	}
+
+	public Color IsUnlockedColor() {
+		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome ? Color.black : ColorScheme.instance.grayedOut;
+	}
+
+	public void MakeCreatureChanged() {
+		CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
+		CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+		CreatureSelectionPanel.instance.soloSelected.generation = 1;
 	}
 }

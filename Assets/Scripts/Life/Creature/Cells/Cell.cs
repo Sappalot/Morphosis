@@ -163,6 +163,14 @@ public abstract class Cell : MonoBehaviour {
 
 	public bool IsAxonePulseContracting(int distance) {
 		return isAxonEnabled && GetAxonPulseValue(distance) > 0;
+
+		// haxor test with sensor
+		if (signal.effectSensor.isOutputOn) {
+			return false; // Leelax if have enough effect
+		} else {
+			return isAxonEnabled && GetAxonPulseValue(distance) > 0;
+		}
+
 	}
 
 	// ^ Axon ^
@@ -497,14 +505,15 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	//production effect is updated by each cell type in their own way
-	public void UpdateEnergy(int deltaTicks) {
-		energy = Mathf.Clamp(energy + GetEffect(true, true, true, true) * deltaTicks * Time.fixedDeltaTime, -13f, GlobalSettings.instance.phenotype.cellMaxEnergy);
+	public void UpdateEnergy(int deltaTicks, bool enableFlux) {
+
+		energy = Mathf.Clamp(energy + GetEffect(true, true, enableFlux, enableFlux) * deltaTicks * Time.fixedDeltaTime, -13f, GlobalSettings.instance.phenotype.cellMaxEnergy);
 		didUpdateEnergyThisFrame = 2;
 	}
 
 	//Note function only called if extended cell type is enabled
 	virtual public void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		didUpdateFunctionThisFrame = 5; // Just for update visuals
+		didUpdateFunctionThisFrame = 2; // Just for update visuals
 	}
 
 	//Origin only
@@ -515,7 +524,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	virtual public void UpdateRadius(ulong fixedTime) { }
+	//virtual public void UpdateRadius(ulong fixedTime) { }
 
 	virtual public void UpdateSpringLengths() { }
 
@@ -694,7 +703,7 @@ public abstract class Cell : MonoBehaviour {
 		return cells;
 	}
 
-	private void Awake() {
+	public void Awake() {
 		Init();
 	}
 

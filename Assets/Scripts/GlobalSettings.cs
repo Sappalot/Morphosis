@@ -165,7 +165,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float leafCellDefaultExposure = 0.33f; 
 
 		//Muscle Cell
-		public float muscleCellEffectCostPerHz = 0.4f; //W
+		public float muscleCellEnergyCostPerContraction = 2f; //J
 												  //           muscleCellEffect                     0.0 W
 
 		//Root cell
@@ -245,12 +245,11 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public int jawCellTickPeriod =     50;
 		public AnimationCurve leafCellTickPeriodAtSpeed; // Period length in ticks (0.1s) at certain speeds
 		public int leafCellTickPeriod =    50;
-		public int muscleCellTickPeriod =   5;
+		public int muscleCellTickPeriod =   5; // also used for veins
 		public int rootCellTickPeriod =    50;
 		public int shellCellTickPeriod =   50;
 		public int veinCellTickPeriod =    50;
 
-		public int veinTickPeriod = 5;
 		public int growTickPeriod = 30; // Detatch attempt has same period as grow
 
 		public int effectSensorTickPeriod = 100;

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Gradient cellGradientEnergy;
@@ -10,8 +11,11 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Gradient creatureAgeGradient;
 	public Gradient creatureAgeTextGradient;
 
-	public Color selectedButton;
-	public Color notSelectedButton;
+	public Color selectedButtonSymbol;
+	public Color notSelectedButtonSymbol;
+
+	public Color selectedButtonBackground;
+	public Color notSelectedButtonBackground;
 
 	public Color mouseTextAction;
 	public Color mouseTextBussy;

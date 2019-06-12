@@ -32,10 +32,9 @@ public class CellBuildPriorityPanel : MonoBehaviour {
 
 		GeneCellPanel.instance.selectedGene.buildPriorityBias = ToClosestTenth(biasSlider.value);
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			//CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true; //costy
 			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
 			CreatureSelectionPanel.instance.soloSelected.generation = 1;
-
+			CreatureSelectionPanel.instance.MakeDirty();
 		}
 		MakeDirty();
 	}
@@ -72,16 +71,16 @@ public class CellBuildPriorityPanel : MonoBehaviour {
 				if (agreedBuildOrder) {
 					buildIndexText.text = string.Format("Build index: " + CellPanel.instance.selectedCell.buildIndex);
 					buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", GeneCellPanel.instance.selectedGene.buildPriorityBias);
-					buildPriorityText.text = string.Format("Build priority: {0:F1}", CellPanel.instance.selectedCell.buildPriority);
+					buildPriorityText.text = string.Format("Build priority: {0:F1}", CellPanel.instance.selectedCell.buildIndex + GeneCellPanel.instance.selectedGene.buildPriorityBias);
 				} else {
 					buildIndexText.text = string.Format("Build order: X");
-					buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", CellPanel.instance.selectedCell.gene.buildPriorityBias);
-					buildPriorityText.text = string.Format("Build priority: X + {0:F1}", CellPanel.instance.selectedCell.gene.buildPriorityBias);
+					buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", GeneCellPanel.instance.selectedGene.buildPriorityBias);
+					buildPriorityText.text = CellPanel.instance.selectedCell.gene.buildPriorityBias >= 0 ? string.Format("Build priority: X + {0:F1}", CellPanel.instance.selectedCell.gene.buildPriorityBias) : string.Format("Build priority: X {0:F1}", CellPanel.instance.selectedCell.gene.buildPriorityBias);
 				}
 				buildPriorityBiasText.color = isUnlockedColor();
 				biasSlider.interactable = CreatureSelectionPanel.instance.hasSoloSelectedThatCanChangeGenome;
 
-				biasSlider.value = CellPanel.instance.selectedCell.gene.buildPriorityBias;
+				biasSlider.value = GeneCellPanel.instance.selectedGene.buildPriorityBias;
 			}
 
 			ignoreSliderMoved = false;

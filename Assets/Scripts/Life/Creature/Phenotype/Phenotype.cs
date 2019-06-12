@@ -1414,8 +1414,6 @@ public class Phenotype : MonoBehaviour {
 	private int rootCellTick;
 	private int shellCellTick;
 	private int veinCellTick;
-
-	private int veinTick;
 	//   ^ metabolism ^
 
 	//     signal
@@ -1494,10 +1492,6 @@ public class Phenotype : MonoBehaviour {
 			veinCellTick = 0;
 		}
 
-		veinTick++;
-		if (veinTick >= GlobalSettings.instance.quality.veinTickPeriod) {
-			veinTick = 0;
-		}
 		//time ^
 		TryInitiateDetatchemntSlide(creature, worldTick);
 		TryFinalizeDetatchmentSlide(creature, worldTick);
@@ -1547,15 +1541,15 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 
-		if (veinTick == 0) {
+		if (muscleCellTick == 0) {
 			if (PhenotypePhysicsPanel.instance.flux.isOn) {
-				veins.UpdateEffect(GlobalSettings.instance.quality.veinTickPeriod);
+				veins.UpdateEffect(GlobalSettings.instance.quality.muscleCellTickPeriod);
 				veins.UpdateCellsPlacentaEffects();
 			}
 
 			for (int index = 0; index < cellList.Count; index++) {
 				Cell cell = cellList[index];
-				cell.UpdateEnergy(GlobalSettings.instance.quality.veinTickPeriod);
+				cell.UpdateEnergy(GlobalSettings.instance.quality.muscleCellTickPeriod, true);
 			}
 		}
 
@@ -1626,7 +1620,6 @@ public class Phenotype : MonoBehaviour {
 		phenotypeData.shellCellTick = shellCellTick;
 		phenotypeData.veinCellTick = veinCellTick;
 
-		phenotypeData.veinTick = veinTick;
 		return phenotypeData;
 	}
 
@@ -1651,8 +1644,6 @@ public class Phenotype : MonoBehaviour {
 		rootCellTick = phenotypeData.rootCellTick;
 		shellCellTick = phenotypeData.shellCellTick;
 		veinCellTick = phenotypeData.veinCellTick;
-
-		phenotypeData.veinTick = veinTick;
 
 		//Turn arrrows right
 		UpdateRotation();

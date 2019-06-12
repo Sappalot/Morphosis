@@ -33,8 +33,8 @@ public class ShellCellPanelButton : MonoBehaviour {
 
 	public bool hasSelectedFrame {
 		set {
-			buttonImage.color = value ? (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype ? ColorScheme.instance.selectedButton : ColorScheme.instance.grayedOutGenotype) : //selected
-										(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype ? ColorScheme.instance.notSelectedButton : Color.clear); // not selected
+			buttonImage.color = value ? (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.grayedOutGenotype) : //selected
+										(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype ? ColorScheme.instance.notSelectedButtonBackground : Color.clear); // not selected
 		}
 	}
 

@@ -68,6 +68,10 @@ public class Gene {
 	// Sensor...
 	public SensorTypeEnum sensorType = SensorTypeEnum.Effect;
 
+	// Effect sensor
+	public float effectSensorThresholdEffect; // on if this cells total effect > value
+	public int effectSensorRadius; // 0 ==> only self, 1 ==> self & 6 neighbours ....
+
 	// ^ Sensor ^
 
 	// Origin
@@ -385,6 +389,12 @@ public class Gene {
 		geneData.axonRelaxContract = axonRelaxContract;
 		geneData.axonIsReverse = axonIsReverse;
 
+		// Sensors
+		geneData.sensorType = sensorType;
+		// Effect sensor
+		geneData.effectSensorThresholdEffect = effectSensorThresholdEffect;
+		geneData.effectSensorRadius = effectSensorRadius;
+
 		geneData.arrangementData[0] = arrangements[0].UpdateData();
 		geneData.arrangementData[1] = arrangements[1].UpdateData();
 		geneData.arrangementData[2] = arrangements[2].UpdateData();
@@ -457,6 +467,12 @@ public class Gene {
 		axonFromMeOffset =          geneData.axonFromMeOffset;
 		axonRelaxContract =         geneData.axonRelaxContract;
 		axonIsReverse =             geneData.axonIsReverse;
+
+		// Sensors
+		sensorType = geneData.sensorType;
+		// Effect sensor
+		effectSensorThresholdEffect = geneData.effectSensorThresholdEffect;
+		effectSensorRadius = geneData.effectSensorRadius;
 
 		// Origin
 		originPulsePeriodTicks = geneData.originPulsePeriodTicks == 0 ? 80 : geneData.originPulsePeriodTicks;

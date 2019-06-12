@@ -66,8 +66,8 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update CreatureEditModePanel");
-			phenotypeImage.color = (mode == PhenoGenoEnum.Phenotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-			genotypeImage.color = (mode == PhenoGenoEnum.Genotype) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+			phenotypeImage.color = (mode == PhenoGenoEnum.Phenotype) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+			genotypeImage.color = (mode == PhenoGenoEnum.Genotype) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 
 			PhenotypePanel.instance.gameObject.SetActive(mode == PhenoGenoEnum.Phenotype);
 			GenotypePanel.instance.gameObject.SetActive(mode == PhenoGenoEnum.Genotype);

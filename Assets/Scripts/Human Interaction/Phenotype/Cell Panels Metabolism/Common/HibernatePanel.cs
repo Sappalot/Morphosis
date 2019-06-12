@@ -1,21 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class HibernatePanel : MonoBehaviour {
 	public CellTypeEnum cellType;
 
 	public Image hibernatePanelBackground;
-
-	public Toggle motherToggle;
-	public Image motherToggleBackground;
 	public Image motherPanelBackground;
-
-	public Toggle childToggle;
-	public Image childToggleBackground;
 	public Image childPanelBackground;
 
+	public Image motherBlockBackground;
+	public Image motherPassBackground;
+	public Image motherBlockSymbol;
+	public Image motherPassSymbol;
+
+	public Image childBlockBackground;
+	public Image childPassBackground;
+	public Image childBlockSymbol;
+	public Image childPassSymbol;
+
+	public Image[] genotypeFrames;
 
 	[HideInInspector]
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
@@ -35,42 +38,60 @@ public class HibernatePanel : MonoBehaviour {
 		isDirty = true;
 	}
 
-	public void OnMotherToggleChanged() {
-		if (ignoreSliderMoved) {
+	public void OnMotherPassClicked() {
+		if (mode == PhenoGenoEnum.Phenotype) {
 			return;
 		}
-
-		if (cellType == CellTypeEnum.Egg) {
-			selectedGene.eggCellHibernateWhenAttachedToMother = motherToggle.isOn;
-		} else if (cellType == CellTypeEnum.Jaw) {
-			selectedGene.jawCellHibernateWhenAttachedToMother = motherToggle.isOn;
-		} else if (cellType == CellTypeEnum.Leaf) {
-			selectedGene.leafCellHibernateWhenAttachedToMother = motherToggle.isOn;
-		} else if (cellType == CellTypeEnum.Muscle) {
-			selectedGene.muscleCellHibernateWhenAttachedToMother = motherToggle.isOn;
-		}
-
-		MakeCreatureForged();
+		SetHibernateWhenAttachedToMother(true);
+		MakeDirty();
 	}
 
-
-
-	public void OnChildToggleChanged() {
-		if (ignoreSliderMoved) {
+	public void OnMotherBlockClicked() {
+		if (mode == PhenoGenoEnum.Phenotype) {
 			return;
 		}
+		SetHibernateWhenAttachedToMother(false);
+		MakeDirty();
+	}
 
-		if (cellType == CellTypeEnum.Egg) {
-			selectedGene.eggCellHibernateWhenAttachedToChild = childToggle.isOn;
-		} else if (cellType == CellTypeEnum.Jaw) {
-			selectedGene.jawCellHibernateWhenAttachedToChild = childToggle.isOn;
-		} else if (cellType == CellTypeEnum.Leaf) {
-			selectedGene.leafCellHibernateWhenAttachedToChild = childToggle.isOn;
-		} else if (cellType == CellTypeEnum.Muscle) {
-			selectedGene.muscleCellHibernateWhenAttachedToChild = childToggle.isOn;
+	public void OnChildPassClicked() {
+		if (mode == PhenoGenoEnum.Phenotype) {
+			return;
 		}
+		SetHibernateWhenAttachedToChild(true);
+		MakeDirty();
+	}
 
-		MakeCreatureForged();
+	public void OnChildBlockClicked() {
+		if (mode == PhenoGenoEnum.Phenotype) {
+			return;
+		}
+		SetHibernateWhenAttachedToChild(false);
+		MakeDirty();
+	}
+
+	private void SetHibernateWhenAttachedToMother(bool on) {
+		if (cellType == CellTypeEnum.Egg) {
+			selectedGene.eggCellHibernateWhenAttachedToMother = on;
+		} else if (cellType == CellTypeEnum.Jaw) {
+			selectedGene.jawCellHibernateWhenAttachedToMother = on;
+		} else if (cellType == CellTypeEnum.Leaf) {
+			selectedGene.leafCellHibernateWhenAttachedToMother = on;
+		} else if (cellType == CellTypeEnum.Muscle) {
+			selectedGene.muscleCellHibernateWhenAttachedToMother = on;
+		}
+	}
+
+	private void SetHibernateWhenAttachedToChild(bool on) {
+		if (cellType == CellTypeEnum.Egg) {
+			selectedGene.eggCellHibernateWhenAttachedToChild = on;
+		} else if (cellType == CellTypeEnum.Jaw) {
+			selectedGene.jawCellHibernateWhenAttachedToChild = on;
+		} else if (cellType == CellTypeEnum.Leaf) {
+			selectedGene.leafCellHibernateWhenAttachedToChild = on;
+		} else if (cellType == CellTypeEnum.Muscle) {
+			selectedGene.muscleCellHibernateWhenAttachedToChild = on;
+		}
 	}
 
 	private void Update() {
@@ -82,22 +103,16 @@ public class HibernatePanel : MonoBehaviour {
 
 			if (GetMode() == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					motherToggle.interactable = false;
-					childToggle.interactable = false;
-
-					motherToggleBackground.color = ColorScheme.instance.grayedOutGenotype;
-					childToggleBackground.color = ColorScheme.instance.grayedOutGenotype;
+					genotypeFrames[0].color = ColorScheme.instance.grayedOutGenotype;
+					genotypeFrames[1].color = ColorScheme.instance.grayedOutGenotype;
 
 					hibernatePanelBackground.color = selectedCell.IsHibernating() ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 					motherPanelBackground.color = selectedCell.creature.IsAttachedToMotherAlive() ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 					childPanelBackground.color = selectedCell.creature.IsAttachedToChildAlive() ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
-				motherToggle.interactable = IsUnlocked();
-				childToggle.interactable = IsUnlocked();
-
-				motherToggleBackground.color = Color.white;
-				childToggleBackground.color = Color.white;
+				genotypeFrames[0].color = Color.black;
+				genotypeFrames[1].color = Color.black;
 
 				hibernatePanelBackground.color = ColorScheme.instance.grayedOutPhenotype;
 				motherPanelBackground.color = ColorScheme.instance.grayedOutPhenotype;
@@ -106,17 +121,45 @@ public class HibernatePanel : MonoBehaviour {
 
 			if (selectedGene != null) { 
 				if (cellType == CellTypeEnum.Egg) {
-					motherToggle.isOn = selectedGene.eggCellHibernateWhenAttachedToMother;
-					childToggle.isOn = selectedGene.eggCellHibernateWhenAttachedToChild;
+					motherBlockBackground.color = !selectedGene.eggCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					motherPassBackground.color =   selectedGene.eggCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					motherBlockSymbol.color = !selectedGene.eggCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
+					motherPassSymbol.color = selectedGene.eggCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
+
+					childBlockBackground.color =  !selectedGene.eggCellHibernateWhenAttachedToChild   ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					childPassBackground.color =    selectedGene.eggCellHibernateWhenAttachedToChild   ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					childBlockSymbol.color = !selectedGene.eggCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
+					childPassSymbol.color = selectedGene.eggCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
 				} else if (cellType == CellTypeEnum.Jaw) {
-					motherToggle.isOn = selectedGene.jawCellHibernateWhenAttachedToMother;
-					childToggle.isOn = selectedGene.jawCellHibernateWhenAttachedToChild;
+					motherBlockBackground.color = !selectedGene.jawCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					motherPassBackground.color =   selectedGene.jawCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					motherBlockSymbol.color = !selectedGene.jawCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
+					motherPassSymbol.color = selectedGene.jawCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
+
+					childBlockBackground.color =  !selectedGene.jawCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					childPassBackground.color =    selectedGene.jawCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					childBlockSymbol.color = !selectedGene.jawCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
+					childPassSymbol.color = selectedGene.jawCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
 				} else if (cellType == CellTypeEnum.Leaf) {
-					motherToggle.isOn = selectedGene.leafCellHibernateWhenAttachedToMother;
-					childToggle.isOn = selectedGene.leafCellHibernateWhenAttachedToChild;
+					motherBlockBackground.color = !selectedGene.leafCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					motherPassBackground.color =   selectedGene.leafCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					motherBlockSymbol.color = !selectedGene.leafCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
+					motherPassSymbol.color = selectedGene.leafCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
+
+					childBlockBackground.color =  !selectedGene.leafCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					childPassBackground.color =    selectedGene.leafCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					childBlockSymbol.color = !selectedGene.leafCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
+					childPassSymbol.color = selectedGene.leafCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
 				} else if (cellType == CellTypeEnum.Muscle) {
-					motherToggle.isOn = selectedGene.muscleCellHibernateWhenAttachedToMother;
-					childToggle.isOn = selectedGene.muscleCellHibernateWhenAttachedToChild;
+					motherBlockBackground.color = !selectedGene.muscleCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					motherPassBackground.color =   selectedGene.muscleCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					motherBlockSymbol.color = !selectedGene.muscleCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
+					motherPassSymbol.color = selectedGene.muscleCellHibernateWhenAttachedToMother ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
+
+					childBlockBackground.color =  !selectedGene.muscleCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					childPassBackground.color =    selectedGene.muscleCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+					childBlockSymbol.color = !selectedGene.muscleCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
+					childPassSymbol.color = selectedGene.muscleCellHibernateWhenAttachedToChild ? ColorScheme.instance.selectedButtonSymbol : ColorScheme.instance.notSelectedButtonSymbol;
 				}
 			}
 

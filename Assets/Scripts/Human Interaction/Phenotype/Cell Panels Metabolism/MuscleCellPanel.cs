@@ -25,14 +25,11 @@ public class MuscleCellPanel : MetabolismCellPanel {
 					frequenzy.text = string.Format("Frequenzy: {0:F2} Hz", selectedCell.creature.phenotype.originCell.originPulseFequenzy);
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
-				float fMin = GlobalSettings.instance.phenotype.originPulseFrequenzyMin;
-				float fMax = GlobalSettings.instance.phenotype.originPulseFrequenzyMax;
-				productionEffectText.text = string.Format("Production Effect: 0.00 - [muscle frequenzy ({0:F2}...{1:F2})] * {2:F2} W", fMin, fMax, GlobalSettings.instance.phenotype.muscleCellEffectCostPerHz);
+				productionEffectText.text = string.Format("Production Effect: 0.00 - {0:F2} W - {1:F2} J per contraction", GlobalSettings.instance.phenotype.cellIdleEffectCost, GlobalSettings.instance.phenotype.muscleCellEnergyCostPerContraction);
 
 				frequenzy.text = string.Format("Frequenzy: -");
 				frequenzy.color = ColorScheme.instance.grayedOutPhenotype;
 			}
-
 
 			if (selectedGene != null) {
 				ignoreSliderMoved = true;

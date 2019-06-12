@@ -10,6 +10,22 @@ public class MuscleCell : Cell {
 	public Vector2i masterAxonGridPosition;
 	public int? masterAxoneDistance;
 
+	private const float minRadius = 0.3f; // meters
+	private const float medRadius = 0.5f; // meters
+	private const float contractSpeed = 0.4f; // meters / second
+	private const float relaxSpeed = 0.4f; // meters / second
+
+	private static float shrinkageRadiusDiffConstant;
+	private static float relaxRadiusDiffConstant;
+	public static float contractionCostEffect { get; private set; }
+
+	private new void Awake() {
+		shrinkageRadiusDiffConstant = Time.fixedDeltaTime * GlobalSettings.instance.quality.muscleCellTickPeriod * contractSpeed;
+		relaxRadiusDiffConstant = Time.fixedDeltaTime * GlobalSettings.instance.quality.muscleCellTickPeriod * contractSpeed;
+		contractionCostEffect = GlobalSettings.instance.phenotype.muscleCellEnergyCostPerContraction / ((medRadius - minRadius) / contractSpeed);
+		base.Awake();
+	}
+
 	public void UpdateMasterAxon() {
 		masterAxonGridPosition = creature.genotype.GetClosestAxonGeneCellUpBranch(mapPosition).mapPosition;
 		masterAxoneDistance = creature.genotype.GetDistanceToClosestAxonGeneCellUpBranch(mapPosition);
@@ -26,85 +42,67 @@ public class MuscleCell : Cell {
 	}
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		if (PhenotypePhysicsPanel.instance.effectMuscle.isOn && PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
-			effectProductionInternalDown = GlobalSettings.instance.phenotype.muscleCellEffectCostPerHz * creature.phenotype.originCell.originPulseFequenzy;
-		} else {
-			effectProductionInternalDown = 0f;
-		}
 		effectProductionInternalUp = 0f;
-		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
-			if (IsHibernating()) {
-				effectProductionInternalUp = 0f;
-				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
 
-				// You have leelax!
-				//scale.localScale = new Vector3(1f, 1f, 1f); //costy, only if in frustum and close
-				//radius = 0.5f; 
-				//scaleIsDirty = true;
+		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
+
+			bool contracting = false;
+
+			if (!IsHibernating()) {
+				if (masterAxonGridPosition != null) {
+					Cell masterAxon = creature.phenotype.cellMap.GetCell(masterAxonGridPosition);
+					if (masterAxon != null) {
+						if (masterAxoneDistance != null) {
+							contracting = masterAxon.IsAxonePulseContracting((int)masterAxoneDistance);
+						} else {
+							Debug.LogError("We have found a master axone, but failed to calculate the distance there from me!");
+						}
+					}
+				}
 			}
 
-			UpdateRadius(worldTicks);
+			bool isRadiusDirty = false;
 
-			UpdateSpringLengths();
+			if (contracting && !creature.phenotype.IsSliding(worldTicks)) {
+				// Contracting
+				if (radius > minRadius) {
+					effectProductionInternalDown = contractionCostEffect + GlobalSettings.instance.phenotype.cellIdleEffectCost;
+					isRadiusDirty = true;
+				}
+				isContracting = true;
+				radius = Mathf.Max(radius - shrinkageRadiusDiffConstant, minRadius);
+			} else {
+				// You have Leelax
+				if (radius < medRadius) {
+					isRadiusDirty = true;
+				}
+				isContracting = false;
+				radius = Mathf.Min(radius + relaxRadiusDiffConstant, medRadius);
+			}
+
+			if (isRadiusDirty) {
+				if (SpatialUtil.IsInsideDetailedGraphicsVolume(position)) {
+					scale.localScale = new Vector3(radius * 2f, radius * 2f, 1f); //costy, only if in frustum and close
+					scaleIsDirty = true;
+				} else if (scaleIsDirty) {
+					scale.localScale = new Vector3(1f, 1f, 1f);
+					scaleIsDirty = false;
+				}
+				UpdateSpringLengths();
+			}
+
 			base.UpdateCellFunction(deltaTicks, worldTicks);
+		} else {
+			effectProductionInternalDown = 0f;
+			isContracting = false;
+			radius = 0.5f;
+			scale.localScale = new Vector3(1f, 1f, 1f);
 		}
 	}
 
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Muscle;
-	}
-
-	
-
-	public override void UpdateRadius(ulong worldTicks) {
-		float muscleSpeed = creature.muscleSpeed;
-		float radiusDiff = creature.muscleRadiusDiff;
-		float curveOffset = creature.muscleContractRetract;
-
-		//modularTime = worldTicks * Time.fixedDeltaTime * muscleSpeed;
-
-		//float deltaTime = worldTicks * Time.fixedDeltaTime - lastTime;
-		//lastTime = worldTicks * Time.fixedDeltaTime;
-
-		//Debug.Log("offset" + timeOffset);
-		///float expandContract = Mathf.Sign(curveOffset + Mathf.Cos(creature.phenotype.originCell.originPulseCompleteness * (2f * Mathf.PI)));
-		//float radiusGoal = 0.5f - 0.5f * radiusDiff + 0.5f * radiusDiff * expandContract;
-
-		//float goingSmallSpeed = 0.5f * 4f * 0f; //units per second
-		//float goingBigSpeed = 0.02f * 4f * 0f;
-
-		//--
-		bool contracting = false;
-		if (!IsHibernating()) {
-			if (masterAxonGridPosition != null) {
-				Cell masterAxon = creature.phenotype.cellMap.GetCell(masterAxonGridPosition);
-				if (masterAxon != null) {
-					if (masterAxoneDistance != null) {
-						contracting = masterAxon.IsAxonePulseContracting((int)masterAxoneDistance);
-					} else {
-						Debug.LogError("We have found a master axone, but failed to calculate the distance there from me!");
-					}
-				}
-			}
-		}
-
-		if (contracting && !creature.phenotype.IsSliding(worldTicks)) {
-			isContracting = true;
-			radius -= Time.fixedDeltaTime * 2f;
-		} else {
-			isContracting = false;
-			radius += Time.fixedDeltaTime * 2f;
-		}
-		radius = Mathf.Clamp(radius, 0.3f, 0.5f);
-		//radius = radiusGoal;
-
-		if (SpatialUtil.IsInsideDetailedGraphicsVolume(position)) {
-			scale.localScale = new Vector3(radius * 2f, radius * 2f, 1f); //costy, only if in frustum and close
-			scaleIsDirty = true;
-		} else if (scaleIsDirty) {
-			scale.localScale = new Vector3(1f, 1f, 1f);
-			scaleIsDirty = false;
-		}
 	}
 
 	public override bool IsContracting() {

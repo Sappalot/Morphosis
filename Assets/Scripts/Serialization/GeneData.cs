@@ -40,6 +40,11 @@ public class GeneData {
 	public float axonRelaxContract;
 	public bool axonIsReverse;
 
+	//Sensors
+	public SensorTypeEnum sensorType;
+	public float effectSensorThresholdEffect;
+	public int effectSensorRadius;
+
 	public int originPulsePeriodTicks; // ticks / complete wave
 	public float buildPriorityBias;
 	public ArrangementData[] arrangementData = new ArrangementData[3];

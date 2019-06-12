@@ -197,11 +197,11 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	private void UpdateFlipButtonColors() {
-		flipSameButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-		flipOppositeButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Opposite) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+		flipSameButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Same) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+		flipOppositeButtonImage.color = (arrangement.flipTypeSameOpposite == ArrangementFlipSmOpTypeEnum.Opposite) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 
-		flipBlackToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-		flipWhiteToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.WhiteToArrow) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+		flipBlackToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.BlackToArrow) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+		flipWhiteToArrowButtonImage.color = (arrangement.flipTypeBlackWhiteToArrow == ArrangementFlipBtaWtaTypeEnum.WhiteToArrow) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 	}
 
 	private void UpdatePairCheckmark() {
@@ -209,8 +209,8 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	private void UpdateReferenceSideButtonColors() {
-		referenceSideBlack.color = (arrangement.referenceSide == ArrangementReferenceSideEnum.Black) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
-		referenceSideWhite.color = (arrangement.referenceSide == ArrangementReferenceSideEnum.White) ? ColorScheme.instance.selectedButton : ColorScheme.instance.notSelectedButton;
+		referenceSideBlack.color = (arrangement.referenceSide == ArrangementReferenceSideEnum.Black) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+		referenceSideWhite.color = (arrangement.referenceSide == ArrangementReferenceSideEnum.White) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 	}
 
 	private void UpdateIsUsed() {

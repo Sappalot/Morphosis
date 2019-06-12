@@ -16,6 +16,4 @@ public class PhenotypeData {
 	public int rootCellTick;
 	public int shellCellTick;
 	public int veinCellTick;
-
-	public int veinTick;
 }
