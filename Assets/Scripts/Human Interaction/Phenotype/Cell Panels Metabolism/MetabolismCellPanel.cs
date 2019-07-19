@@ -29,10 +29,6 @@ public abstract class MetabolismCellPanel : MonoBehaviour {
 		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
 	}
 
-	public Color IsUnlockedColor() {
-		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome ? Color.black : ColorScheme.instance.grayedOut;
-	}
-
 	public void MakeCreatureChanged() {
 		CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
 		CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;

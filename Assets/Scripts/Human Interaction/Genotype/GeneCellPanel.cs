@@ -34,9 +34,9 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 	public Text connectionGroupCount;
 	public Text eatingOnMeCount; //number of Jaw cells eating on me
 
-	public Text healButtonText;
-	public Text hurtButtonText;
-	public Text deleteButtonText;
+	public Button healButton;
+	public Button hurtButton;
+	public Button deleteButton;
 
 	public Dropdown metabolismCellTypeDropdown;
 
@@ -168,47 +168,27 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 
 			//All metabolism stuff off
 			effect.text = "Effect: -";
-			effect.color = ColorScheme.instance.grayedOutPhenotype;
 
 			if (selectedGene != null) {
 				armour.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedGene.armour, GlobalSettings.instance.phenotype.jawCellEatEffect / selectedGene.armour);
 			}
 
 			effectFromNeighbours.text = "P me <= neighbours: -";
-			effectFromNeighbours.color = ColorScheme.instance.grayedOutPhenotype;
-
 			effectToNeighbours.text = "P me => neighbours: -";
-			effectToNeighbours.color = ColorScheme.instance.grayedOutPhenotype;
-
 			effectFromMother.text = "P me <= mother: -";
-			effectFromMother.color = ColorScheme.instance.grayedOutPhenotype;
-
 			effectToChildren.text = "P me => children: -";
-			effectToChildren.color = ColorScheme.instance.grayedOutPhenotype;
-
 			isOrigin.text = "-";
-			isOrigin.color = ColorScheme.instance.grayedOutPhenotype;
-
 			isPlacenta.text = "-";
-			isPlacenta.color = ColorScheme.instance.grayedOutPhenotype;
-
 			neighboursCount.text = "Neighbours: -";
-			neighboursCount.color = ColorScheme.instance.grayedOutPhenotype;
-
 			connectedVeinsCount.text = "Veins: - ";
-			connectedVeinsCount.color = ColorScheme.instance.grayedOutPhenotype;
-
 			connectionGroupCount.text = "Connection Groups: -";
-			connectionGroupCount.color = ColorScheme.instance.grayedOutPhenotype;
-
 			eatingOnMeCount.text = "Eating on me: -";
-			eatingOnMeCount.color = ColorScheme.instance.grayedOutPhenotype;
-
-			deleteButtonText.color = ColorScheme.instance.grayedOutPhenotype;
-			healButtonText.color = ColorScheme.instance.grayedOutPhenotype;
-			hurtButtonText.color = ColorScheme.instance.grayedOutPhenotype;
 
 			energyBar.isOn = false;
+
+			healButton.gameObject.SetActive(false);
+			hurtButton.gameObject.SetActive(false);
+			deleteButton.gameObject.SetActive(false);
 
 			//Nothing to represent
 			if (selectedGene == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
@@ -279,9 +259,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 				cellBuildPriorityPanel.MakeDirty();
 			}
 
-
 			isDirty = false;
 		}
 	}
-
 }

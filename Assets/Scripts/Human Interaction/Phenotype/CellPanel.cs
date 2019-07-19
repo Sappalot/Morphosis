@@ -25,6 +25,10 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public Text eatingOnMeCount; //number of Jaw cells eating on me
 
+	public Button healButton;
+	public Button hurtButton;
+	public Button deleteButton;
+
 	public Dropdown metabolismCellTypeDropdown;
 
 	//----- ^ Shold be same as the top of GeneCellPanel ^
@@ -235,6 +239,10 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			connectionGroupCount.text = "Connection Groups: " + selectedCell.groups;
 			connectedVeinsCount.text = "Veins: " + selectedCell.creature.phenotype.NonPlacentaVeinsConnectedToCellCount(selectedCell) + (selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) > 0 ? (" + " + selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) + " children") : "") ; 
 			eatingOnMeCount.text = "Eating on me: " + selectedCell.predatorCount;
+
+			healButton.gameObject.SetActive(true);
+			hurtButton.gameObject.SetActive(true);
+			deleteButton.gameObject.SetActive(true);
 
 			if (selectedCell.GetCellType() == CellTypeEnum.Egg) {
 				metabolismCellTypeDropdown.value = 0;

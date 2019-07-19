@@ -165,11 +165,11 @@ public abstract class Cell : MonoBehaviour {
 		return isAxonEnabled && GetAxonPulseValue(distance) > 0;
 
 		// haxor test with sensor
-		if (signal.effectSensor.isOutputOn) {
-			return false; // Leelax if have enough effect
-		} else {
-			return isAxonEnabled && GetAxonPulseValue(distance) > 0;
-		}
+		//if (signal.effectSensor.isOutputOn) {
+		//	return false; // Leelax if have enough effect
+		//} else {
+		//	return isAxonEnabled && GetAxonPulseValue(distance) > 0;
+		//}
 
 	}
 

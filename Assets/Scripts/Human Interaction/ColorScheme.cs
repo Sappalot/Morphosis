@@ -50,8 +50,6 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color signalOn;
 	public Color signalOff;
 
-	public Color grayedOutGenotype;
-	public Color grayedOutPhenotype;
 	public Color grayedOut;
 
 	public Color ToColor(CellTypeEnum cellType) {

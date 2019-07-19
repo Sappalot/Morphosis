@@ -28,7 +28,6 @@ public class MuscleCellPanel : MetabolismCellPanel {
 				productionEffectText.text = string.Format("Production Effect: 0.00 - {0:F2} W - {1:F2} J per contraction", GlobalSettings.instance.phenotype.cellIdleEffectCost, GlobalSettings.instance.phenotype.muscleCellEnergyCostPerContraction);
 
 				frequenzy.text = string.Format("Frequenzy: -");
-				frequenzy.color = ColorScheme.instance.grayedOutPhenotype;
 			}
 
 			if (selectedGene != null) {

@@ -10,7 +10,7 @@ public class EggCellPanel : MetabolismCellPanel {
 	public Text fertilizeSliderText;
 	public Slider fertilizeSlider;
 
-	public Text fertilizeButtonText;
+	public Button fertilizeButton;
 
 	public Text detatchHeadingText;
 
@@ -111,46 +111,25 @@ public class EggCellPanel : MetabolismCellPanel {
 				if (CellPanel.instance.selectedCell != null) {
 					productionEffectText.text = productionEffectPhenotypeString;
 
-					fertilizeHeadingText.color = ColorScheme.instance.grayedOutGenotype;
-
-					fertilizeSliderText.color = ColorScheme.instance.grayedOutGenotype;
 					fertilizeSlider.interactable = false;
-
-					fertilizeButtonText.color = Color.black;
-
-					detatchHeadingText.color = ColorScheme.instance.grayedOutGenotype;
-
 					detatchSizeToggle.interactable = false;
 					detatchEnergyToggle.interactable = false;
-
-					detatchSizeSliderTextPercentage.color = ColorScheme.instance.grayedOutGenotype;
-					detatchSizeSliderTextCellCount.color = ColorScheme.instance.grayedOutGenotype;
 					detatchSizeSlider.interactable = false;
 
-					detatchEnergySliderText.color = ColorScheme.instance.grayedOutGenotype;
 					detatchEnergySlider.interactable = false;
+
+					fertilizeButton.gameObject.SetActive(true);
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
 				productionEffectText.text = string.Format("Production Effect: 0.00 - {0:F2} W", GlobalSettings.instance.phenotype.eggCellEffectCost);
 
-				fertilizeHeadingText.color = Color.black;
-
-				fertilizeSliderText.color = Color.black;
 				fertilizeSlider.interactable = IsUnlocked();
-
-				fertilizeButtonText.color = ColorScheme.instance.grayedOutPhenotype;
-
-				detatchHeadingText.color = Color.black;
-
 				detatchSizeToggle.interactable = IsUnlocked();
 				detatchEnergyToggle.interactable = IsUnlocked();
-
-				detatchSizeSliderTextPercentage.color = Color.black;
-				detatchSizeSliderTextCellCount.color = Color.black;
 				detatchSizeSlider.interactable = IsUnlocked();
-
-				detatchEnergySliderText.color = Color.black;
 				detatchEnergySlider.interactable = IsUnlocked();
+
+				fertilizeButton.gameObject.SetActive(false);
 			}
 
 			if (selectedGene != null) {

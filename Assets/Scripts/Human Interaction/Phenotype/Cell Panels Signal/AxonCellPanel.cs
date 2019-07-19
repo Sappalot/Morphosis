@@ -110,31 +110,18 @@ public class AxonCellPanel : MetabolismCellPanel {
 	private void Update() {
 		if (isDirty) {
 
-			Color textColor = GetMode() == PhenoGenoEnum.Phenotype ? ColorScheme.instance.grayedOutGenotype : Color.black;
 			bool interractable = GetMode() == PhenoGenoEnum.Genotype && IsUnlocked();
 
 			enabledToggle.interactable = interractable;
-			enabledText.color = textColor;
 
-			fromOriginOffsetText.color = textColor;
-			fromOriginDeg0Text.color = textColor;
-			fromOriginDeg360Text.color = textColor;
 			fromOriginOffsetSlider.interactable = interractable;
 			fromOriginPlus180Toggle.interactable = interractable;
-			fromOriginPlus180Text.color = textColor;
 
-			fromMeOffsetText.color = textColor;
-			fromMeDeg0Text.color = textColor;
-			fromMeDeg360Text.color = textColor;
 			fromMeOffsetSlider.interactable = interractable;
 
-			relaxContractRelaxContractText.color = textColor;
-			relaxContractRelaxText.color = textColor;
-			relaxContractContractText.color = textColor;
 			relaxContractSlider.interactable = interractable;
 
 			reverseToggle.interactable = interractable;
-			reverseText.color = textColor;
 
 			if (GeneCellPanel.instance.selectedGene != null && CreatureSelectionPanel.instance.hasSoloSelected) {
 				ignoreSliderMoved = true;

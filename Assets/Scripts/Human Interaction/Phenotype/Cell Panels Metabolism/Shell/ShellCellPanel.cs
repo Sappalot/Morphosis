@@ -29,13 +29,6 @@ public class ShellCellPanel : MetabolismCellPanel {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update ShellCellPanel");
 			}
-			if (GetMode() == PhenoGenoEnum.Phenotype) {
-				armorText.color = ColorScheme.instance.grayedOutGenotype;
-				transparancyText.color = ColorScheme.instance.grayedOutGenotype;
-			} else if (GetMode() == PhenoGenoEnum.Genotype) {
-				armorText.color = Color.black;
-				transparancyText.color = Color.black;
-			}
 
 			if (selectedGene != null) {
 				productionEffectText.text = string.Format("Production Effect: 0.00 - {0:F2} W", ShellCell.GetEffectCost(selectedGene.shellCellArmorClass, GeneCellPanel.instance.selectedGene.shellCellTransparancyClass));

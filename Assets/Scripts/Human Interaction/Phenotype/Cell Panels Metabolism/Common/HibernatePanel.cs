@@ -18,8 +18,6 @@ public class HibernatePanel : MonoBehaviour {
 	public Image childBlockSymbol;
 	public Image childPassSymbol;
 
-	public Image[] genotypeFrames;
-
 	[HideInInspector]
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 
@@ -103,20 +101,14 @@ public class HibernatePanel : MonoBehaviour {
 
 			if (GetMode() == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					genotypeFrames[0].color = ColorScheme.instance.grayedOutGenotype;
-					genotypeFrames[1].color = ColorScheme.instance.grayedOutGenotype;
-
 					hibernatePanelBackground.color = selectedCell.IsHibernating() ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 					motherPanelBackground.color = selectedCell.creature.IsAttachedToMotherAlive() ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 					childPanelBackground.color = selectedCell.creature.IsAttachedToChildAlive() ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
-				genotypeFrames[0].color = Color.black;
-				genotypeFrames[1].color = Color.black;
-
-				hibernatePanelBackground.color = ColorScheme.instance.grayedOutPhenotype;
-				motherPanelBackground.color = ColorScheme.instance.grayedOutPhenotype;
-				childPanelBackground.color = ColorScheme.instance.grayedOutPhenotype;
+				hibernatePanelBackground.color = ColorScheme.instance.signalOff;
+				motherPanelBackground.color = ColorScheme.instance.signalOff;
+				childPanelBackground.color = ColorScheme.instance.signalOff;
 			}
 
 			if (selectedGene != null) { 
@@ -199,9 +191,5 @@ public class HibernatePanel : MonoBehaviour {
 
 	public bool IsUnlocked() {
 		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
-	}
-
-	public Color IsUnlockedColor() {
-		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome ? Color.black : ColorScheme.instance.grayedOut;
 	}
 }

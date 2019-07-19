@@ -81,47 +81,22 @@ public class JawCellPanel : MetabolismCellPanel {
 					productionEffectText.text = productionEffectPhenotypeString;
 
 					prayCellCount.text = "Pray count: " + (CellPanel.instance.selectedCell as JawCell).prayCount;
-					prayCellCount.color = Color.black;
-
-					cannibalizeText.color = ColorScheme.instance.grayedOutGenotype;
-
 					cannibalizeKinToggle.interactable = false;
-					cannibalizeKinText.color = ColorScheme.instance.grayedOutGenotype;
-
 					cannibalizeMotherToggle.interactable = false;
-					cannibalizeMotherText.color = ColorScheme.instance.grayedOutGenotype;
-
 					cannibalizeFatherToggle.interactable = false;
-					cannibalizeFatherText.color = ColorScheme.instance.grayedOutGenotype;
-
 					cannibalizeSiblingsToggle.interactable = false;
-					cannibalizeSiblingsText.color = ColorScheme.instance.grayedOutGenotype;
-
 					cannibalizeChildrenToggle.interactable = false;
-					cannibalizeChildrenText.color = ColorScheme.instance.grayedOutGenotype;
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
 				productionEffectText.text = string.Format("Production Effect: [pray count (0...6)] * {0:F2} - {1:F2} W <color=#808080ff>(@ normal pray armor)</color>", GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellEatEarnFactor, GlobalSettings.instance.phenotype.jawCellEffectCost);
 
 				prayCellCount.text = "Pray Count: -";
-				prayCellCount.color = ColorScheme.instance.grayedOutPhenotype;
-
-				cannibalizeText.color = IsUnlockedColor();
 
 				cannibalizeKinToggle.interactable = IsUnlocked();
-				cannibalizeKinText.color = IsUnlockedColor();
-
 				cannibalizeMotherToggle.interactable = IsUnlocked();
-				cannibalizeMotherText.color = IsUnlockedColor();
-
 				cannibalizeFatherToggle.interactable = IsUnlocked();
-				cannibalizeFatherText.color = IsUnlockedColor();
-
 				cannibalizeSiblingsToggle.interactable = IsUnlocked();
-				cannibalizeSiblingsText.color = IsUnlockedColor();
-
 				cannibalizeChildrenToggle.interactable = IsUnlocked();
-				cannibalizeChildrenText.color = IsUnlockedColor();
 			}
 
 			if (selectedGene != null) {

@@ -54,7 +54,6 @@ public class OriginCellPanel : MonoBehaviour {
 			if (mode == PhenoGenoEnum.Phenotype) {
 				Cell originCell = CellPanel.instance.selectedCell;
 
-				detatchConditionsText.color = Color.black;
 				if (!isOriginPhenotypeSelected) {
 					detatchConditionsText.text = "Detatch when: -";
 				} else if (originCell.creature.creation != CreatureCreationEnum.Born) {
@@ -65,7 +64,6 @@ public class OriginCellPanel : MonoBehaviour {
 					detatchConditionsText.text = string.Format("Detatch when: Can't grow more and cell energy ≥ {0:F1}%", originCell.originDetatchEnergyThreshold * 100f);
 				}
 				// pulse
-				pulseFrequenzySliderText.color = ColorScheme.instance.grayedOutGenotype;
 				pulseFrequenzySlider.interactable = false;
 
 				if (isOriginPhenotypeSelected) {
@@ -73,16 +71,12 @@ public class OriginCellPanel : MonoBehaviour {
 				} else {
 					pulseWaveCompletenessText.text = string.Format("Wave complete: -");
 				}
-				pulseWaveCompletenessText.color = Color.black;
 			} else {
 				detatchConditionsText.text = "Detatch when: -";
-				detatchConditionsText.color = ColorScheme.instance.grayedOutPhenotype;
 				//pulse
-				pulseFrequenzySliderText.color = Color.black;
 				pulseFrequenzySlider.interactable = isOriginGenotypeSelected && isUnlocked();
 
 				pulseWaveCompletenessText.text = string.Format("Wave complete: -");
-				pulseWaveCompletenessText.color = ColorScheme.instance.grayedOutPhenotype;
 			}
 			if (isOriginPhenotypeSelected || isOriginGenotypeSelected) {
 				pulseFrequenzySlider.value = 1f / (GeneCellPanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime);
@@ -99,9 +93,5 @@ public class OriginCellPanel : MonoBehaviour {
 
 	private bool isUnlocked() {
 		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
-	}
-
-	private Color isUnlockedColor() {
-		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome ? Color.black : ColorScheme.instance.grayedOut;
 	}
 }

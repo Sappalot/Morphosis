@@ -34,20 +34,14 @@ public class EffectSensorPanel : SensorPanel {
 					output.color = selectedCell.signal.effectSensor.isOutputOn ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 
-				effectThresholdSliderLabel.color = ColorScheme.instance.grayedOutGenotype;
 				effectThresholdSlider.interactable = false;
 
-				radiusSliderLabel.color = ColorScheme.instance.grayedOutGenotype;
 				radiusSlider.interactable = false;
 				
 
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
-				output.color = ColorScheme.instance.grayedOutPhenotype;
-
-				effectThresholdSliderLabel.color = Color.black;
 				effectThresholdSlider.interactable = IsUnlocked();
 
-				radiusSliderLabel.color = Color.black;
 				radiusSlider.interactable = IsUnlocked();
 			}
 

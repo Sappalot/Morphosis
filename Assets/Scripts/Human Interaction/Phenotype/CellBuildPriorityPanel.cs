@@ -61,7 +61,6 @@ public class CellBuildPriorityPanel : MonoBehaviour {
 				buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", CellPanel.instance.selectedCell.gene.buildPriorityBias);
 				buildPriorityText.text = string.Format("Build priority: {0:F1}", CellPanel.instance.selectedCell.buildPriority);
 
-				buildPriorityBiasText.color = ColorScheme.instance.grayedOutGenotype;
 				biasSlider.interactable = false;
 
 				biasSlider.value = CellPanel.instance.selectedCell.gene.buildPriorityBias;
@@ -73,11 +72,10 @@ public class CellBuildPriorityPanel : MonoBehaviour {
 					buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", GeneCellPanel.instance.selectedGene.buildPriorityBias);
 					buildPriorityText.text = string.Format("Build priority: {0:F1}", CellPanel.instance.selectedCell.buildIndex + GeneCellPanel.instance.selectedGene.buildPriorityBias);
 				} else {
-					buildIndexText.text = string.Format("Build order: X");
+					buildIndexText.text = string.Format("Build index: X");
 					buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", GeneCellPanel.instance.selectedGene.buildPriorityBias);
 					buildPriorityText.text = CellPanel.instance.selectedCell.gene.buildPriorityBias >= 0 ? string.Format("Build priority: X + {0:F1}", CellPanel.instance.selectedCell.gene.buildPriorityBias) : string.Format("Build priority: X {0:F1}", CellPanel.instance.selectedCell.gene.buildPriorityBias);
 				}
-				buildPriorityBiasText.color = isUnlockedColor();
 				biasSlider.interactable = CreatureSelectionPanel.instance.hasSoloSelectedThatCanChangeGenome;
 
 				biasSlider.value = GeneCellPanel.instance.selectedGene.buildPriorityBias;
@@ -86,10 +84,5 @@ public class CellBuildPriorityPanel : MonoBehaviour {
 			ignoreSliderMoved = false;
 			isDirty = false;
 		}
-	}
-
-
-	private Color isUnlockedColor() {
-		return CreatureSelectionPanel.instance.hasSoloSelectedThatCanChangeGenome ? Color.black : ColorScheme.instance.grayedOut;
 	}
 }

@@ -11,9 +11,9 @@ public class MuscleCell : Cell {
 	public int? masterAxoneDistance;
 
 	private const float minRadius = 0.3f; // meters
-	private const float medRadius = 0.5f; // meters
-	private const float contractSpeed = 0.4f; // meters / second
-	private const float relaxSpeed = 0.4f; // meters / second
+	private const float medRadius = 8f; // meters
+	private const float contractSpeed = 0.2f; // meters / second
+	private const float relaxSpeed = 0.2f; // meters / second
 
 	private static float shrinkageRadiusDiffConstant;
 	private static float relaxRadiusDiffConstant;
