@@ -64,8 +64,10 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	
 	private void Update() {
 		if (isDirty) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update CreatureEditModePanel");
+			}
+				
 			phenotypeImage.color = (mode == PhenoGenoEnum.Phenotype) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 			genotypeImage.color = (mode == PhenoGenoEnum.Genotype) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 
