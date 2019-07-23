@@ -26,13 +26,16 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.TryGrow(false, 1, true);
 		}
+		CellPanel.instance.MakeDirty(); // leaf cell size factor must be updated as size change (maybee other stuff too)
 	}
 
 	public void OnShrinkClicked() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.TryShrink();
-			MakeDirty();
+			
 		}
+		MakeDirty();
+		CellPanel.instance.MakeDirty(); // same as above
 	}
 
 	public void OnClickDetatchFromMother() {

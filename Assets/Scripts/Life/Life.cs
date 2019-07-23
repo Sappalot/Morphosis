@@ -358,7 +358,6 @@ public class Life : MonoBehaviour {
 		creature.generation = 1;
 
 		creature.hasPhenotypeCollider = false;
-		creature.hasGenotypeCollider = false;
 		return creature;
 	}
 
@@ -370,7 +369,6 @@ public class Life : MonoBehaviour {
 		clone.id = id;
 		clone.nickname += " (Copy)";
 		clone.hasPhenotypeCollider = false;
-		clone.hasGenotypeCollider = false;
 		clone.creation = CreatureCreationEnum.Cloned;
 		//Let generation be same as mothers
 
@@ -404,8 +402,6 @@ public class Life : MonoBehaviour {
 	private Creature InstantiateCreature(string id) {
 		Creature creature = Morphosis.instance.creaturePool.Borrow();
 		creature.gameObject.SetActive(true);
-
-
 
 		creatureDictionary.Add(id, creature);
 		creatureList.Add(creature);

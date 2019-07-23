@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Boo.Lang.Runtime;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -98,6 +99,7 @@ public class Edges : MonoBehaviour {
 			Cell nextCell = GetNextOwnPeripheryCell(creature, currentCell, previousCell);
 			if (nextCell == null) {
 				Debug.Log("We don't have a next periphery cell");
+				throw new RuntimeException("Could not find a next periphery cell");
 			}
 
 

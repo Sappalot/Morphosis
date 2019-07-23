@@ -571,16 +571,6 @@ public class Genotype : MonoBehaviour {
 		creature.phenotype.MoveToGenotype(creature);
 	}
 
-	private bool m_hasCollider = false;
-	public bool hasCollider {
-		get {
-			return m_hasCollider;
-		}
-		set {
-			m_hasCollider = value;
-		}
-	}
-
 	// Load / Save
 
 	private GenotypeData genotypeData = new GenotypeData();

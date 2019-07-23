@@ -11,7 +11,7 @@ public class MuscleCell : Cell {
 	public int? masterAxoneDistance;
 
 	private const float minRadius = 0.3f; // meters
-	private const float medRadius = 8f; // meters
+	private const float medRadius = 0.5f; // meters
 	private const float contractSpeed = 0.2f; // meters / second
 	private const float relaxSpeed = 0.2f; // meters / second
 
@@ -114,36 +114,70 @@ public class MuscleCell : Cell {
 
 		//Intra creature
 		if (HasOwnNeighbourCell(CardinalEnum.northEast)) {
-			northEastNeighbour.cell.GetSpring(this).distance = this.radius + northEastNeighbour.cell.radius;
+			SpringJoint2D spring = northEastNeighbour.cell.GetSpring(this);
+			if (spring != null) {
+				spring.distance = this.radius + northEastNeighbour.cell.radius;
+			} else {
+				Debug.LogError("Spring missing north east");
+			}
 		}
 
 		if (HasOwnNeighbourCell(CardinalEnum.north)) {
-			northSpring.distance = this.radius + northNeighbour.cell.radius;
+			if (northSpring != null) {
+				northSpring.distance = this.radius + northNeighbour.cell.radius;
+			} else {
+				Debug.LogError("Spring missing north");
+			}
+			
 		}
 
 		if (HasOwnNeighbourCell(CardinalEnum.northWest)) {
-			northWestNeighbour.cell.GetSpring(this).distance = this.radius + northWestNeighbour.cell.radius;
+			SpringJoint2D spring = northWestNeighbour.cell.GetSpring(this);
+			if (spring != null) {
+				spring.distance = this.radius + northWestNeighbour.cell.radius;
+			} else {
+				Debug.LogError("Spring missing north west"); // This has occured :/ TODO: figgure out and fix!
+			}
+			
 		}
 
 		if (HasOwnNeighbourCell(CardinalEnum.southWest)) {
-			southWestSpring.distance = this.radius + southWestNeighbour.cell.radius;
+			if (southWestSpring != null) {
+				southWestSpring.distance = this.radius + southWestNeighbour.cell.radius;
+			} else {
+				Debug.LogError("Spring missing south west");
+			}
 		}
 
 		if (HasOwnNeighbourCell(CardinalEnum.south)) {
-			southNeighbour.cell.GetSpring(this).distance = this.radius + southNeighbour.cell.radius;
+			SpringJoint2D spring = southNeighbour.cell.GetSpring(this);
+			if (spring != null) {
+				spring.distance = this.radius + southNeighbour.cell.radius;
+			} else {
+				Debug.LogError("Spring missing south");
+			}
 		}
 
 		if (HasOwnNeighbourCell(CardinalEnum.southEast)) {
-			southEastSpring.distance = this.radius + southEastNeighbour.cell.radius;
+			if (southEastSpring != null) {
+				southEastSpring.distance = this.radius + southEastNeighbour.cell.radius;
+			} else {
+				Debug.LogError("Spring missing south east");
+			}
 		}
 
 		// Update placenta spring lengths from me to mother placenta, if i happen to be origin
-		if (placentaSprings.Length > 0) {
-			//i am origin and is connected to mother via placenta
-			UpdatePlacentaSpringLengths();
+		if (placentaSprings != null) {
+			if (placentaSprings.Length > 0) {
+				//i am origin and is connected to mother via her placenta
+				UpdatePlacentaSpringLengths();
+			}
+		} else {
+			Debug.LogError("Placenta springs array is missing (the container)");
 		}
 
-		// Update placenta spring lengths from me to child root, if i happen to be placenta
+
+		// Update placenta spring lengths from me to child origin, if i happen to be placenta
 		// If i have a neighbouring cell which does not belong to my body and is origin: ask this cell to update its spring lengths (to placenta)
 		if (isPlacenta) {
 			for (int index = 0; index < 6; index++) {

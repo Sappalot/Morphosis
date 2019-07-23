@@ -114,7 +114,6 @@ public class Freezer : MonoSingleton<Freezer> {
 		clone.id = id;
 		clone.nickname += " (F-Copy)";
 		clone.hasPhenotypeCollider = false;
-		clone.hasGenotypeCollider = false;
 		clone.creation = CreatureCreationEnum.Frozen;
 		//Let generation be same as mothers
 

@@ -144,8 +144,9 @@ public class Edge : MonoBehaviour {
 	public void UpdateForce(Vector3 creatureVelocity, Creature creature) {
 		//Don't give up on Pow!
 		float contract = (frontCell.IsContracting() || backCell.IsContracting()) ? 3f : 0f;
+		//contract = 3f;
 
-		//Should we include creatureVelocity in this calculation, really?
+		//Should we include creatureVelocity in this calculation, really? ... nope fucks up snakes
 		float velocityInNormalDirection = Math.Max(0f, Vector3.Dot(normal, velocity - creatureVelocity * (1f - creature.wingDrag)));
 		force = contract * -normal * Math.Min(creature.wingMax, (creature.f1 * velocityInNormalDirection + creature.wingF2 * Mathf.Pow(velocityInNormalDirection, creature.wingPow)));
 	}

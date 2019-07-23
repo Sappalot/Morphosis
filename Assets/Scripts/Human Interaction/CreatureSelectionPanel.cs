@@ -483,6 +483,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			moveCreatures.Add(mergeling);
 		}
 
+		foreach (Creature c in moveCreatures) {
+			c.UpdateStructure();
+		}
+
 		StartMoveCreatures();
 		MouseAction.instance.actionState = MouseActionStateEnum.combineMoveCreatures;
 
@@ -508,7 +512,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			return; // mixed or error
 		}
 
-		
+		//in order to grab cells (make them not have any colliders we need them spawned at this point. lets force it)
+		foreach (Creature c in moveCreatures) {
+			c.UpdateStructure();
+		}
 
 		StartMoveCreatures();
 		MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
@@ -565,11 +572,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 					childData.originMapPosition =       creatureOriginal.ChildOriginMapPosition(creatureOriginalsChildId); //As seen from mothers frame of reference
 					childData.originBindCardinalIndex = creatureOriginal.ChildOriginBindCardinalIndex(creatureOriginalsChildId);
 					creatureCopy.AddChildReference(childData);
-
-
 				}
 			}
-
 			creatureCopy.phenotype.connectionsDiffersFromCells = true;
 		}
 	}
@@ -639,6 +643,11 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		if (creaturesInOriginalSelectionCount == selectionCount) {
 			AddDefrostedCoppiesToMoveCreature(continueMoveCopy);
+
+			foreach (Creature c in moveCreatures) {
+				c.UpdateStructure();
+			}
+
 			StartMoveCreatures();
 			MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
 		} else {

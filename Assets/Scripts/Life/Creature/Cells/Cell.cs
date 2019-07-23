@@ -785,6 +785,18 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public int GetDirectionOfOwnNeighbourCell(Creature me, Cell cell) {
+		if (me == null) {
+			Debug.LogError("GetDirectionOfOwnNeighbourCell: I am null");
+			throw new RuntimeException("I am null");
+		}
+		if (cell == null) {
+			Debug.LogError("GetDirectionOfOwnNeighbourCell: neighbour is null");
+			throw new RuntimeException("neighbour is null");
+		}
+		if (cell.creature == null) {
+			Debug.LogError("GetDirectionOfOwnNeighbourCell: neighbour.creature is null");
+			throw new RuntimeException("neighbour.creature is null");
+		}
 		if (cell.creature != me) {
 			throw new RuntimeException("Asking for neighbours on a cell outside of body");
 		}

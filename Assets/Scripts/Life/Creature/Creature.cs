@@ -604,7 +604,6 @@ public class Creature : MonoBehaviour {
 			Vector2 originCellPosition = genotype.originCell.position;
 
 			genotype.Grab();
-			hasGenotypeCollider = false;
 
 			phenotype.Halt();
 
@@ -628,7 +627,6 @@ public class Creature : MonoBehaviour {
 			phenotype.UpdateRotation();
 		} else if (type == PhenoGenoEnum.Genotype) {
 			genotype.Release(this);
-			hasGenotypeCollider = true;
 		}
 		isDirtyGraphics = true;
 	}
@@ -647,15 +645,6 @@ public class Creature : MonoBehaviour {
 		}
 		set {
 			phenotype.hasCollider = value;
-		}
-	}
-
-	public bool hasGenotypeCollider {
-		get {
-			return genotype.hasCollider;
-		}
-		set {
-			genotype.hasCollider = value; // Used for picking only
 		}
 	}
 
@@ -679,12 +668,6 @@ public class Creature : MonoBehaviour {
 	private void ShowCurrentGenoPhenoAndHideOther() {
 		phenotype.Show(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype); //Don't use SetActive() since it clears rigigdBody velocity
 		genotype.gameObject.SetActive(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype);
-	}
-
-	//Don't enable collider if grabbed, thou
-	private void EnableCurrentGenoPhenoColliderAndDisableOther() {
-		phenotype.hasCollider = CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !phenotype.isGrabbed;
-		genotype.hasCollider = CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && !genotype.isGrabbed;
 	}
 
 	// Update
@@ -722,7 +705,7 @@ public class Creature : MonoBehaviour {
 				Debug.Log("Update Creature (due to user input)");
 
 			ShowCurrentGenoPhenoAndHideOther();
-			EnableCurrentGenoPhenoColliderAndDisableOther();
+			phenotype.hasCollider = CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !phenotype.isGrabbed;
 
 			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 				//phenotype.ShowShadow(false);
