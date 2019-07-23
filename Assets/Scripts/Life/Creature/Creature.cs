@@ -10,32 +10,6 @@ public class Creature : MonoBehaviour {
 	public const int maxRadiusHexagon = 7; // used to limit blueprint. R = 7 ==> we can have can have 7 cells north of origin at most (cell 1 to cell 7) 
 	public const float maxRadiusCircle = maxRadiusHexagon + 0.5f; // used for culling
 	
-	//wing force
-	[Range(0f, 1f)]
-	public float wingDrag = 0.1f;
-
-	[Range(0f, 1f)]
-	public float f1 = 0.1f;
-
-	[Range(0f, 5f)]
-	public float wingF2 = 0.15f;
-
-	[Range(0f, 40f)]
-	public float wingPow = 2f;
-
-	[Range(0f, 100f)]
-	public float wingMax = 5f;
-
-	//muscle
-	[Range(0f, 0.5f)]
-	public float muscleRadiusDiff = 0.1f;
-
-	[Range(-1f, 1f)]
-	public float muscleContractRetract = -0.14f;
-
-	[Range(0f, 20f)]
-	public float muscleSpeed = 6.55f;
-
 	public Genotype genotype;
 	public Phenotype phenotype;
 

@@ -39,14 +39,14 @@ public class Edges : MonoBehaviour {
 		}
 	}
 
-	public void UpdatePhysics(Vector3 creatureVelocity, Creature creature) {
+	public void UpdatePhysics(Creature creature) {
 		//Todo do this more seldom
 		for (int index = 0; index < edgeList.Count; index++) {
 			tempEdge = edgeList[index];
 			if (tempEdge.IsWing) {
 				tempEdge.UpdateNormal();
 				tempEdge.UpdateVelocity();
-				tempEdge.UpdateForce(creatureVelocity, creature);
+				tempEdge.UpdateForce(creature);
 			}
 		}
 		for (int index = 0; index < edgeList.Count; index++) {

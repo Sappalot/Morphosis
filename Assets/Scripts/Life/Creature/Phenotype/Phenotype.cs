@@ -1507,7 +1507,7 @@ public class Phenotype : MonoBehaviour {
 		// We are applying force only if mussceles are set to contract
 		// Edges, let edge-wings apply proper forces to neighbouring cells, caused by muscle edges swiming through ether
 		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
-			edges.UpdatePhysics(velocity, creature);
+			edges.UpdatePhysics(creature);
 		}
 
 		UpdateRotation();

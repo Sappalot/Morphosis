@@ -141,14 +141,9 @@ public class Edge : MonoBehaviour {
 	}
 
 	// use normal and velocity to calculate force
-	public void UpdateForce(Vector3 creatureVelocity, Creature creature) {
-		//Don't give up on Pow!
-		float contract = (frontCell.IsContracting() || backCell.IsContracting()) ? 3f : 0f;
-		//contract = 3f;
-
-		//Should we include creatureVelocity in this calculation, really? ... nope fucks up snakes
-		float velocityInNormalDirection = Math.Max(0f, Vector3.Dot(normal, velocity - creatureVelocity * (1f - creature.wingDrag)));
-		force = contract * -normal * Math.Min(creature.wingMax, (creature.f1 * velocityInNormalDirection + creature.wingF2 * Mathf.Pow(velocityInNormalDirection, creature.wingPow)));
+	public void UpdateForce(Creature creature) {
+		float speedInNormalDirection = Math.Max(0f, Vector3.Dot(normal, velocity));
+		force = -normal * Math.Min(GlobalSettings.instance.phenotype.finForceMax, (GlobalSettings.instance.phenotype.finForceLinearFactor * speedInNormalDirection + GlobalSettings.instance.phenotype.finForceSquareFactor * Mathf.Pow(speedInNormalDirection, 2f)));
 	}
 
 	//Apply current force as an impulse on cells

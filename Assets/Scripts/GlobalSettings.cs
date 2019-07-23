@@ -187,6 +187,16 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float veinCellEffectCost = 0.1f; //W
 												//           veinCellEffect                       0.0 W
 
+		// Fin
+		[Range(0f, 1f)]
+		public float finForceLinearFactor = 0.3f;
+
+		[Range(0f, 5f)]
+		public float finForceSquareFactor = 0.45f;
+
+		[Range(0f, 100f)]
+		public float finForceMax = 1f;
+
 		//Origin
 		public float originPulseFrequenzyMin = 0.05f;
 		public float originPulseFrequenzyMax = 2f;
