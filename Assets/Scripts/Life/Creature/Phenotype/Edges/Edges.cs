@@ -43,17 +43,17 @@ public class Edges : MonoBehaviour {
 		//Todo do this more seldom
 		for (int index = 0; index < edgeList.Count; index++) {
 			tempEdge = edgeList[index];
-			if (tempEdge.IsWing) {
-				tempEdge.UpdateNormal();
-				tempEdge.UpdateVelocity();
-				tempEdge.UpdateForce(creature);
-			}
+			//if (tempEdge.IsWing) {
+			tempEdge.UpdateNormal();
+			tempEdge.UpdateVelocity();
+			tempEdge.UpdateForce(creature, tempEdge.isFin);
+			//}
 		}
 		for (int index = 0; index < edgeList.Count; index++) {
 			tempEdge = edgeList[index];
-			if (tempEdge.IsWing) { // So, we can see forces even if they are not applied
-				tempEdge.ApplyForce();
-			}
+			//if (tempEdge.IsWing) { // So, we can see forces even if they are not applied
+			tempEdge.ApplyForce();
+			//}
 		}
 	}
 	private Edge tempEdge;
@@ -62,9 +62,9 @@ public class Edges : MonoBehaviour {
 		for (int index = 0; index < edgeList.Count; index++) {
 			//edges
 			Edge edge = edgeList[index];
-			if (edge.IsWing) {
-				edge.UpdateGraphics(); // force arrow only
-			}
+			//if (edge.isFin) {
+			edge.UpdateGraphics(); // force arrow only
+			//}
 
 			//Periphery
 			if (show) {

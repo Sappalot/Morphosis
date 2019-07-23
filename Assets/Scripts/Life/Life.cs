@@ -564,6 +564,12 @@ public class Life : MonoBehaviour {
 			ProgressBar.instance.SpawnCreature();
 			yield return 0;
 		}
+
+		//update spring lengths for all creatures, we need to have them all in order to be updaint spring lengths even between mother and child
+		for (int index = 0; index < lifeData.creatureList.Count; index++) {
+			creatureList[index].phenotype.UpdateSpringLengths();
+		}
+
 		creatureDeadCount =           lifeData.creatureDeadCount;
 		creatureDeadByAgeCount =      lifeData.creatureDeadByAgeCount;
 		creatureDeadByBreakingCount = lifeData.creatureDeadByBreakingCount;

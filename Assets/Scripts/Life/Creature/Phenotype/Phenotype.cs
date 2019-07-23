@@ -1559,6 +1559,11 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public void UpdateSpringLengths() {
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].UpdateSpringLengths();
+		}
+	}
 
 	public void UpdateRotation() {
 		for (int index = 0; index < cellList.Count; index++) {

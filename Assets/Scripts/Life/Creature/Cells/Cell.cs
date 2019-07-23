@@ -1579,6 +1579,12 @@ public abstract class Cell : MonoBehaviour {
 		}
 		// Leaf ^
 
+		// Muscle
+		if (GetCellType() == CellTypeEnum.Muscle) {
+			(this as MuscleCell).scale.localScale = new Vector3(radius * 2f, radius * 2f, 1f);
+		}
+		// ^ Muscle ^
+
 		// Origin
 		originDetatchMode = cellData.originDetatchMode;
 

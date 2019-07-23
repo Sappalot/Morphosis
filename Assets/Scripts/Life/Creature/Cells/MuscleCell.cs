@@ -173,7 +173,7 @@ public class MuscleCell : Cell {
 				UpdatePlacentaSpringLengths();
 			}
 		} else {
-			Debug.LogError("Placenta springs array is missing (the container)");
+			//Debug.LogError("Placenta springs array is missing (the container)");
 		}
 
 

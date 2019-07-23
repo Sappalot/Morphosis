@@ -55,7 +55,7 @@ public class Edge : MonoBehaviour {
 		attachmentChild = new EdgeAttachment(childCell, directionChildToParentCell);
 	}
 
-	public bool IsWing { 
+	public bool isFin { 
 		get { return mIsWing; }
 		private set { }
 	}
@@ -141,9 +141,9 @@ public class Edge : MonoBehaviour {
 	}
 
 	// use normal and velocity to calculate force
-	public void UpdateForce(Creature creature) {
+	public void UpdateForce(Creature creature, bool isFin) {
 		float speedInNormalDirection = Math.Max(0f, Vector3.Dot(normal, velocity));
-		force = -normal * Math.Min(GlobalSettings.instance.phenotype.finForceMax, (GlobalSettings.instance.phenotype.finForceLinearFactor * speedInNormalDirection + GlobalSettings.instance.phenotype.finForceSquareFactor * Mathf.Pow(speedInNormalDirection, 2f)));
+		force = (isFin ? 1f : 1f) * -normal * Math.Min(GlobalSettings.instance.phenotype.finForceMax, (GlobalSettings.instance.phenotype.finForceLinearFactor * speedInNormalDirection + GlobalSettings.instance.phenotype.finForceSquareFactor * Mathf.Pow(speedInNormalDirection, 2f)));
 	}
 
 	//Apply current force as an impulse on cells
