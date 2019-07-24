@@ -39,19 +39,19 @@ public class Edges : MonoBehaviour {
 		}
 	}
 
-	public void UpdatePhysics(Creature creature) {
+	public void UpdatePhysics(Creature creature, ulong worldTick) {
 		//Todo do this more seldom
 		for (int index = 0; index < edgeList.Count; index++) {
 			tempEdge = edgeList[index];
-			//if (tempEdge.IsWing) {
+			//if (tempEdge.isFin) {
 			tempEdge.UpdateNormal();
 			tempEdge.UpdateVelocity();
-			tempEdge.UpdateForce(creature, tempEdge.isFin);
+			tempEdge.UpdateForce(creature, tempEdge.isFin && !(tempEdge.childCell.IsHibernating() && tempEdge.parentCell.IsHibernating()), worldTick);
 			//}
 		}
 		for (int index = 0; index < edgeList.Count; index++) {
 			tempEdge = edgeList[index];
-			//if (tempEdge.IsWing) { // So, we can see forces even if they are not applied
+			//if (tempEdge.isFin) { // So, we can see forces even if they are not applied
 			tempEdge.ApplyForce();
 			//}
 		}

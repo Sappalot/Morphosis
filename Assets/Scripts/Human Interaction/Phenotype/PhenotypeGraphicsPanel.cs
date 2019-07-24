@@ -21,6 +21,7 @@ public class PhenotypeGraphicsPanel : MonoSingleton<PhenotypeGraphicsPanel> {
 		age,
 		shell,
 		buildPriority, // selected only
+		isSleeping,
 	}
 	[HideInInspector]
 	public CellGraphicsEnum graphicsCell {

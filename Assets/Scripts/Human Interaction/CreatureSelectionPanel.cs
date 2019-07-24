@@ -486,6 +486,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		foreach (Creature c in moveCreatures) {
 			c.UpdateStructure();
 		}
+		foreach (Creature c in moveCreatures) {
+			c.phenotype.UpdateSpringLengths();
+		}
 
 		StartMoveCreatures();
 		MouseAction.instance.actionState = MouseActionStateEnum.combineMoveCreatures;
@@ -515,6 +518,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		//in order to grab cells (make them not have any colliders we need them spawned at this point. lets force it)
 		foreach (Creature c in moveCreatures) {
 			c.UpdateStructure();
+		}
+		foreach (Creature c in moveCreatures) {
+			c.phenotype.UpdateSpringLengths();
 		}
 
 		StartMoveCreatures();
@@ -647,6 +653,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			foreach (Creature c in moveCreatures) {
 				c.UpdateStructure();
 			}
+			foreach (Creature c in moveCreatures) {
+				c.phenotype.UpdateSpringLengths();
+			}
 
 			StartMoveCreatures();
 			MouseAction.instance.actionState = MouseActionStateEnum.copyMoveCreatures;
@@ -655,7 +664,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 			Audio.instance.ActionAbort(1f);
 		}
-
 
 		return continueMoveCopy;
 	}

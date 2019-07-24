@@ -197,6 +197,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		[Range(0f, 100f)]
 		public float finForceMax = 1f;
 
+		[Range(0f, 1f)]
+		public float nonFinForceFactor = 0.5f;
+
 		//Origin
 		public float originPulseFrequenzyMin = 0.05f;
 		public float originPulseFrequenzyMax = 2f;

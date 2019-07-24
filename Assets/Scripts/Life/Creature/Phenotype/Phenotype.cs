@@ -1223,12 +1223,6 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public void SetKinematic(bool kinematic) {
-		foreach (Cell cell in cellList) {
-			cell.theRigidBody.isKinematic = kinematic;
-		}
-	}
-
 	public void EnableCollider(bool collider) {
 		foreach (Cell cell in cellList) {
 			cell.GetComponent<Collider2D>().enabled = collider;
@@ -1447,6 +1441,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	private void UpdateMetabolism(Creature creature, ulong worldTick) {
+		
 		if (isGrabbed) {
 			return;
 		}
@@ -1497,20 +1492,27 @@ public class Phenotype : MonoBehaviour {
 		TryFinalizeDetatchmentSlide(creature, worldTick);
 
 		// Whole body
-		Vector2 velocitySum = new Vector3();
-		for (int index = 0; index < cellList.Count; index++) {
-			velocitySum += cellList[index].velocity;
-		}
-		velocity = (cellList.Count > 0f) ? velocity = velocitySum / cellList.Count : new Vector2();
-		speed = velocity.magnitude;
+
 
 		// We are applying force only if mussceles are set to contract
 		// Edges, let edge-wings apply proper forces to neighbouring cells, caused by muscle edges swiming through ether
-		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
-			edges.UpdatePhysics(creature);
+
+		if (originCell.theRigidBody.IsAwake()) {
+			if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
+				edges.UpdatePhysics(creature, worldTick);
+			}
+			UpdateRotation();
+
+			Vector2 velocitySum = new Vector3();
+			for (int index = 0; index < cellList.Count; index++) {
+				velocitySum += cellList[index].velocity;
+			}
+			velocity = (cellList.Count > 0f) ? velocity = velocitySum / cellList.Count : new Vector2();
+			speed = velocity.magnitude;
+		} else {
+			speed = 0f;
 		}
 
-		UpdateRotation();
 
 		if (!IsSliding(worldTick)) {
 			originCell.UpdatePulse(); // only origin

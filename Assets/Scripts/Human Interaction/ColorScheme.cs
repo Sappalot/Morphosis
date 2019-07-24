@@ -33,6 +33,8 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Gradient shellArmourTransparentClear;
 	public Color vein;
 
+	public Gradient creatureFinWake;
+
 	public Color outlineCluster;
 	public Color outlineSelected;
 

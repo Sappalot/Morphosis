@@ -13,6 +13,9 @@ public class Edge : MonoBehaviour {
 	private EdgeAttachment attachmentParent;
 	private EdgeAttachment attachmentChild;
 
+	private float[] forceMagnitudeArray = new float[10];
+	private int forceMagnitudeArrayPointer = 0;
+
 	private Cell frontCell; //used with wings
 	private Cell backCell; //used with wings
 	private Rigidbody2D frontCellRB; //used with wings
@@ -93,14 +96,32 @@ public class Edge : MonoBehaviour {
 		if (GlobalPanel.instance.graphicsMuscleForcesToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			if (frontCell != null && backCell != null) {
 
+				float forceMagnitude = force.magnitude;
+				forceMagnitudeArray[forceMagnitudeArrayPointer] = forceMagnitude;
+				forceMagnitudeArrayPointer++;
+				if (forceMagnitudeArrayPointer >= forceMagnitudeArray.Length) {
+					forceMagnitudeArrayPointer = 0;
+				}
+
+				float sum = 0f;
+				for (int pos = 0; pos < forceMagnitudeArray.Length; pos++) {
+					sum += forceMagnitudeArray[pos];
+				}
+				float forceAverage = sum / forceMagnitudeArray.Length;
+
+
 				//mainArrow.SetActive(true);
 				//normalArrow.SetActive(true);
 				//velocityArrow.SetActive(true);
 				forceArrow.SetActive(true);
 
 				////draw main
-				//mainArrow.GetComponent<LineRenderer>().SetPosition(1, frontCell.transform.position);
-				//mainArrow.GetComponent<LineRenderer>().SetPosition(0, backCell.transform.position);
+				bool sleeping = frontCell.theRigidBody.IsSleeping();
+				mainArrow.GetComponent<LineRenderer>().startColor = sleeping ? Color.black : Color.white;
+				mainArrow.GetComponent<LineRenderer>().endColor = sleeping ? Color.black : Color.white;
+
+				mainArrow.GetComponent<LineRenderer>().SetPosition(1, frontCell.transform.position);
+				mainArrow.GetComponent<LineRenderer>().SetPosition(0, backCell.transform.position);
 
 				////draw normal
 				Vector3 wingSegmentHalf = (frontCell.transform.position - backCell.transform.position) * 0.5f;
@@ -114,8 +135,9 @@ public class Edge : MonoBehaviour {
 				//velocityArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
 
 				//draw force
-				forceArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + force * 10f);
-				forceArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
+				forceArrow.GetComponent<LineRenderer>().startColor = forceArrow.GetComponent<LineRenderer>().endColor = ColorScheme.instance.creatureFinWake.Evaluate(forceAverage * 2f);
+				forceArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + normal * (0.6f + Mathf.Min(0.1f, forceAverage)));
+				forceArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment + normal * 0.6f);
 			}
 		} else {
 			//mainArrow.SetActive(false);
@@ -141,13 +163,20 @@ public class Edge : MonoBehaviour {
 	}
 
 	// use normal and velocity to calculate force
-	public void UpdateForce(Creature creature, bool isFin) {
-		float speedInNormalDirection = Math.Max(0f, Vector3.Dot(normal, velocity));
-		force = (isFin ? 1f : 1f) * -normal * Math.Min(GlobalSettings.instance.phenotype.finForceMax, (GlobalSettings.instance.phenotype.finForceLinearFactor * speedInNormalDirection + GlobalSettings.instance.phenotype.finForceSquareFactor * Mathf.Pow(speedInNormalDirection, 2f)));
+	public void UpdateForce(Creature creature, bool isFin, ulong worldTick) {
+		if (!creature.phenotype.IsSliding(worldTick)) {
+			float speedInNormalDirection = Math.Max(0f, Vector3.Dot(normal, velocity));
+			force = (isFin ? 1f : GlobalSettings.instance.phenotype.nonFinForceFactor) * -normal * Math.Min(GlobalSettings.instance.phenotype.finForceMax, (GlobalSettings.instance.phenotype.finForceLinearFactor * speedInNormalDirection + GlobalSettings.instance.phenotype.finForceSquareFactor * Mathf.Pow(speedInNormalDirection, 2f)));
+		} else {
+			force = Vector3.zero;
+		}
 	}
 
 	//Apply current force as an impulse on cells
 	public void ApplyForce() {
+		if (force.sqrMagnitude < 0.000001f) {
+			return; // Sssssh, don't desturb bigid body sleep!!
+		}
 		// There is still a possibility ForceMode2D.Force will work better
 		frontCellRB.AddForce(force * 0.5f, ForceMode2D.Impulse);
 		backCellRB.AddForce(force * 0.5f, ForceMode2D.Impulse);

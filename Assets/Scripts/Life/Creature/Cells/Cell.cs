@@ -810,8 +810,6 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void TurnHingeNeighboursInPlace() {
-		//TODO Update turn springs only when nessesary 
-
 		//CellNeighbour firstNeighbour = null;
 		int springs = 0;
 		Vector3 responceForce = new Vector3();
@@ -1356,6 +1354,13 @@ public abstract class Cell : MonoBehaviour {
 					filledCircleSprite.color = GetColor();
 					SetLabelEnabled(false);
 				}
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.isSleeping) {
+
+				if (theRigidBody.IsSleeping()) {
+					filledCircleSprite.color = Color.gray;
+				} else {
+					filledCircleSprite.color = Color.white;
+				}
 			}
 		} else { // Genotype...
 			if (GenotypeGraphicsPanel.instance.graphicsGeneCell == GenotypeGraphicsPanel.CellGraphicsEnum.type) {
@@ -1409,6 +1414,8 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void UpdateTwistAndTurn() {
+		// Some of these operations will wake sleeping rigid body, be quiet!!
+		
 		//Optimize further
 		transform.rotation = Quaternion.identity; // Cell should never be rotated. Rotate rotated node in cell instead! We need this one so we reset the cell rotation after being rotated via rotate creature
 

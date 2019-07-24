@@ -55,6 +55,7 @@ public class Creature : MonoBehaviour {
 		generation = 0;
 		phenotype.DetatchFromMother(this, false, false);
 		phenotype.SetAllCellStatesToDefault();
+		
 		ClearMotherAndChildrenReferences();
 		//--
 		phenotype.cellsDiffersFromGeneCells = true;

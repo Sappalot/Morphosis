@@ -50,6 +50,7 @@ public class MuscleCell : Cell {
 			bool contracting = false;
 
 			if (!IsHibernating()) {
+				theRigidBody.WakeUp();
 				if (masterAxonGridPosition != null) {
 					Cell masterAxon = creature.phenotype.cellMap.GetCell(masterAxonGridPosition);
 					if (masterAxon != null) {
@@ -191,8 +192,15 @@ public class MuscleCell : Cell {
 		}
 	}
 
+	public override void SetDefaultState() {
+		base.SetDefaultState();
+		radius = 0.5f;
+		scale.localScale = new Vector3(1f, 1f, 1f);
+	}
+
 	public override void OnRecycleCell() {
 		base.OnRecycleCell();
+		SetDefaultState();
 		isContracting = false;
 		scaleIsDirty = true;
 		masterAxonGridPosition = null;
