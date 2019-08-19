@@ -9,7 +9,7 @@ public abstract class MetabolismCellPanel : MonoBehaviour {
 		return mode;
 	}
 
-	public virtual void SetMode(PhenoGenoEnum mode) {
+	public virtual void Initialize(PhenoGenoEnum mode) {
 		this.mode = mode;
 	}
 
