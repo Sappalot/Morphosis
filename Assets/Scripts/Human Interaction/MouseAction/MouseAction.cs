@@ -33,13 +33,13 @@ public class MouseAction : MonoSingleton<MouseAction> {
 			mouseText.text = "Select Gene Reference";
 			mouseText.color = ColorScheme.instance.mouseTextAction;
 		} else if (m_actionState == MouseActionStateEnum.moveCreatures) {
-			mouseText.text = "Move Creatures";
+			mouseText.text = "Move";
 			mouseText.color = ColorScheme.instance.mouseTextAction;
 		} else if (m_actionState == MouseActionStateEnum.rotateCreatures) {
-			mouseText.text = CreatureSelectionPanel.instance.hasSoloSelected ? "Rotate Creature" : "Rotate Creatures";
+			mouseText.text = "Rotate";
 			mouseText.color = ColorScheme.instance.mouseTextAction;
 		} else if (m_actionState == MouseActionStateEnum.copyMoveCreatures) {
-			mouseText.text = "Place Copies";
+			mouseText.text = CreatureSelectionPanel.instance.hasSoloSelected ? "Place Copy" : "Place Copies";
 			mouseText.color = ColorScheme.instance.mouseTextAction;
 		} else if (m_actionState == MouseActionStateEnum.combineMoveCreatures) {
 			mouseText.text = "Place Mergeling";

@@ -60,6 +60,20 @@ public class JawCell : Cell {
 		}
 	}
 
+	public float ramSpeed {
+		get {
+			if (prays.Count == 1) {
+				foreach (Pray p in prays.Values) {
+
+					return p.ramSpeed;
+				}
+
+				return 0f;
+			}
+			return 0f;
+		}
+	}
+
 	//Called from cell mouth
 	public void TriggerEnter(Collider2D other) {
 		if (other.gameObject.layer == 2) { //dont trigger other's mouth colliders, only on cells
@@ -99,15 +113,11 @@ public class JawCell : Cell {
 				}
 			}
 
-			//TODO: spare Kin and father s well
+			//TODO: spare Kin and fathers well
 
 			//Add this one to list of prays to add at update
 			PairPredatorPray(this, prayCell);
 		}
-
-		//PhenotypePanel.instance.MakeDirty();
-		//CellPanel.instance.MakeDirty();
-		//JawCellPanel.instance.MakeDirty();
 	}
 
 	//Called from cell mouth
@@ -123,10 +133,6 @@ public class JawCell : Cell {
 		} else {
 			RemoveNullPrays();
 		}
-
-		//PhenotypePanel.instance.MakeDirty();
-		//CellPanel.instance.MakeDirty();
-		//JawCellPanel.instance.MakeDirty();
 	}
 
 	public void RemoveNullPrays() {
@@ -192,7 +198,7 @@ public class JawCell : Cell {
 		if (phenoGeno == PhenoGenoEnum.Genotype) {
 			return ColorScheme.instance.ToColor(GetCellType());
 		} else {
-			return Color.Lerp(ColorScheme.instance.jaw, Color.white, Mathf.Min(0.5f, prayCount));
+			return Color.Lerp(ColorScheme.instance.jaw, Color.white, Mathf.Min(0.5f, effectProductionPredPrayUp));
 ;		}
 	}
 }

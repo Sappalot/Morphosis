@@ -1513,7 +1513,6 @@ public class Phenotype : MonoBehaviour {
 			speed = 0f;
 		}
 
-
 		if (!IsSliding(worldTick)) {
 			originCell.UpdatePulse(); // only origin
 		}
@@ -1559,6 +1558,10 @@ public class Phenotype : MonoBehaviour {
 		if (visualTelepoke > 0) {
 			visualTelepoke--;
 		}
+
+		if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.update) {
+			UpdateDidUpdateThisFrame();
+		}
 	}
 
 	public void UpdateSpringLengths() {
@@ -1574,6 +1577,12 @@ public class Phenotype : MonoBehaviour {
 
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].UpdateTwistAndTurn();
+		}
+	}
+
+	public void UpdateDidUpdateThisFrame() {
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].UpdateDidUpdateThisFrame();
 		}
 	}
 
