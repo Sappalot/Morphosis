@@ -147,11 +147,11 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		//Jaw Cell
 		public float jawCellEffectCost = 0.2f; //W
-		public AnimationCurve jawCellEatEffectAtSpeed; //W stolen from pray depending on ram speed
-		public float jawCellEatEffect = 50f; //W raw eat effect, damaging pray. Only jawCellEatEffect * jawCellEatEffect will gain predator
+		//public float jawCellEatEffect = 20f; //W raw eat effect, damaging pray. Only jawCellEatEffect * jawCellEatEffect will gain predator
+		public AnimationCurve jawCellEatEffectAtSpeed; // What is my eating effect depending on my speed towards pray cell
 		public float jawCellEatEarnFactor = 0.5f; // how big part of the total jawCellEatEffect that is gaining jaw cell J/J
 		
-		public float jawCellMutualEatKindness = 0.2f; // How much we gain from eating others creature jaw (compared to normal cells, which are 1)
+		//public float jawCellMutualEatKindness = 0.2f; // How much we gain from eating others creature jaw (compared to normal cells, which are 1)
 													 // The other creature are loosing more than i gain, and vice versa ==> Both are losing, energy is being lost (when fighting) 
 													 // A factor of 1 means 2 jaw cells are not affecting each other, zero sum
 
@@ -173,7 +173,6 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float rootCellEarthMaxEffect = 2.0f; //W
 
 		//Shell Cell
-		public float shellCellEffectCostDeprecated = 0.1f; //W 
 		public AnimationCurve shellCellEffectCostAtArmor;
 		public AnimationCurve shellCellEffectCostMultiplierAtTransparancy; //cheeper the more transparent (when armor class constant) beacuse blocking leaf more
 		public AnimationCurve shellCellStrengthAtArmor;

@@ -24,12 +24,13 @@ public class EggCellPanel : MetabolismCellPanel {
 	public Text detatchEnergySliderText;
 	public Slider detatchEnergySlider;
 
-	public override void SetMode(PhenoGenoEnum mode) {
-		hibernatePanel.SetMode(mode);
-		base.SetMode(mode);
-	}
+	public SignalLogicBoxPanel fertilizeLogicBoxPanel;
 
-	private void Awake() {
+	public override void Initialize(PhenoGenoEnum mode) {
+		hibernatePanel.SetMode(mode);
+		
+		fertilizeLogicBoxPanel.Initialize(mode);
+
 		ignoreSliderMoved = true;
 		fertilizeSlider.minValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMin;
 		fertilizeSlider.maxValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMax;
@@ -41,6 +42,10 @@ public class EggCellPanel : MetabolismCellPanel {
 		detatchEnergySlider.maxValue = GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax;
 
 		ignoreSliderMoved = false;
+
+		MakeDirty();
+
+		base.Initialize(mode);
 	}
 
 	public void OnClickFertilize() {
@@ -149,11 +154,17 @@ public class EggCellPanel : MetabolismCellPanel {
 				detatchEnergySlider.value = selectedGene.eggCellDetatchEnergyThreshold;
 				detatchEnergySliderText.text = string.Format("Can't grow more and cell energy ≥ {0:F1}%", selectedGene.eggCellDetatchEnergyThreshold * 100f);
 
+				fertilizeLogicBoxPanel.geneLogicBox = selectedGene.eggCellFertilizeLogic;
+
 				ignoreSliderMoved = false;
 			}
 
 			// Subpanels
-			hibernatePanel.MakeDirty();
+			hibernatePanel.MakeDirty(); // to be replaced with a logic panel (also make it so that we have an wakeup from hibernation time)
+
+			
+			fertilizeLogicBoxPanel.outputText = "Fertilize";
+			fertilizeLogicBoxPanel.MakeDirty();
 
 			isDirty = false;
 		}

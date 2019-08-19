@@ -22,6 +22,7 @@ public class PhenotypeGraphicsPanel : MonoSingleton<PhenotypeGraphicsPanel> {
 		shell,
 		buildPriority, // selected only
 		isSleeping,
+		ramSpeed, // jaw cell
 	}
 	[HideInInspector]
 	public CellGraphicsEnum graphicsCell {

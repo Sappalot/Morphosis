@@ -110,8 +110,4 @@ public class ShellCell : Cell {
 	override public Color GetColor(PhenoGenoEnum phenoGeno) {
 		return GetColor(armorClass, transparancyClass);
 	}
-
-	public Color GetStrongerColor() {
-		return GetStrongerColor(armorClass, transparancyClass);
-	}
 }

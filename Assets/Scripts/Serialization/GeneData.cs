@@ -11,6 +11,7 @@ public class GeneData {
 	public float eggCellDetatchEnergyThreshold; //J
 	public bool eggCellHibernateWhenAttachedToMother;
 	public bool eggCellHibernateWhenAttachedToChild;
+	public GeneLogicBoxData eggFertilizeLogicBoxData;
 
 	// Jaw
 	public bool jawCellCannibalizeKin;

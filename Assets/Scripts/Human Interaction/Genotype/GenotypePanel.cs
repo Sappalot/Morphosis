@@ -35,10 +35,10 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			if (creature.allowedToChangeGenome) {
 				creature.Clear();
 				creature.creation = CreatureCreationEnum.Forged;
+				GeneCellPanel.instance.selectedGene = null;
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GeneCellPanel.instance.selectedGene = null;
 		GeneCellPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
@@ -48,10 +48,10 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			if (creature.allowedToChangeGenome) {
 				creature.MutateCummulative(GlobalSettings.instance.mutation.masterMutationStrength * 10f);
 				creature.creation = CreatureCreationEnum.Forged;
+				GeneCellPanel.instance.selectedGene = null;
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GeneCellPanel.instance.selectedGene = null;
 		GeneCellPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
@@ -61,10 +61,10 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			if (creature.allowedToChangeGenome) {
 				creature.Scramble();
 				creature.creation = CreatureCreationEnum.Forged;
+				GeneCellPanel.instance.selectedGene = null;
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GeneCellPanel.instance.selectedGene = null;
 		GeneCellPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}

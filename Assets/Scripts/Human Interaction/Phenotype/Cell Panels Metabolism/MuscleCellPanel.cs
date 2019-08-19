@@ -8,9 +8,9 @@ public class MuscleCellPanel : MetabolismCellPanel {
 
 	public Text frequenzy;
 
-	public override void SetMode(PhenoGenoEnum mode) {
+	public override void Initialize(PhenoGenoEnum mode) {
 		hibernatePanel.SetMode(mode);
-		base.SetMode(mode);
+		base.Initialize(mode);
 	}
 
 	private void Update() {

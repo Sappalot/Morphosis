@@ -13,8 +13,11 @@ public class Edge : MonoBehaviour {
 	private EdgeAttachment attachmentParent;
 	private EdgeAttachment attachmentChild;
 
-	private float[] forceMagnitudeArray = new float[10];
-	private int forceMagnitudeArrayPointer = 0;
+	//private float[] forceMagnitudeArray = new float[10];
+	//private int forceMagnitudeArrayPointer = 0;
+
+	//private Vector3[] forceArray = new Vector3[1];
+	//private int forceArrayPointer = 0;
 
 	private Cell frontCell; //used with wings
 	private Cell backCell; //used with wings
@@ -24,6 +27,8 @@ public class Edge : MonoBehaviour {
 	private Vector3 normal; //used with wings
 	private Vector3 velocity; //used with wings
 	private Vector3 force; //used with wings
+
+	private Vector2 forceAverage;
 
 	private float strength;
 
@@ -51,6 +56,10 @@ public class Edge : MonoBehaviour {
 		normalArrow.SetActive(false);
 		velocityArrow.SetActive(false);
 		forceArrow.SetActive(false);
+
+		//for (int i = 0; i < forceArray.Length; i++) {
+		//	forceArray[i] = Vector3.zero;
+		//}
 	}
 
 	public void Setup(Cell parentCell, Cell childCell, int directionChildToParentCell) {
@@ -96,19 +105,18 @@ public class Edge : MonoBehaviour {
 		if (GlobalPanel.instance.graphicsMuscleForcesToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			if (frontCell != null && backCell != null) {
 
-				float forceMagnitude = force.magnitude;
-				forceMagnitudeArray[forceMagnitudeArrayPointer] = forceMagnitude;
-				forceMagnitudeArrayPointer++;
-				if (forceMagnitudeArrayPointer >= forceMagnitudeArray.Length) {
-					forceMagnitudeArrayPointer = 0;
-				}
+				//float forceMagnitude = force.magnitude;
+				//forceMagnitudeArray[forceMagnitudeArrayPointer] = forceMagnitude;
+				//forceMagnitudeArrayPointer++;
+				//if (forceMagnitudeArrayPointer >= forceMagnitudeArray.Length) {
+				//	forceMagnitudeArrayPointer = 0;
+				//}
 
-				float sum = 0f;
-				for (int pos = 0; pos < forceMagnitudeArray.Length; pos++) {
-					sum += forceMagnitudeArray[pos];
-				}
-				float forceAverage = sum / forceMagnitudeArray.Length;
-
+				//float sum = 0f;
+				//for (int pos = 0; pos < forceMagnitudeArray.Length; pos++) {
+				//	sum += forceMagnitudeArray[pos];
+				//}
+				//float forceAverage = sum / forceMagnitudeArray.Length;
 
 				//mainArrow.SetActive(true);
 				//normalArrow.SetActive(true);
@@ -135,8 +143,8 @@ public class Edge : MonoBehaviour {
 				//velocityArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment);
 
 				//draw force
-				forceArrow.GetComponent<LineRenderer>().startColor = forceArrow.GetComponent<LineRenderer>().endColor = ColorScheme.instance.creatureFinWake.Evaluate(forceAverage * 2f);
-				forceArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + normal * (0.6f + Mathf.Min(0.1f, forceAverage)));
+				forceArrow.GetComponent<LineRenderer>().startColor = forceArrow.GetComponent<LineRenderer>().endColor = ColorScheme.instance.creatureFinWake.Evaluate(force.magnitude * 2f);
+				forceArrow.GetComponent<LineRenderer>().SetPosition(1, midSegment + normal * (0.6f + Mathf.Min(0.1f, force.magnitude)));
 				forceArrow.GetComponent<LineRenderer>().SetPosition(0, midSegment + normal * 0.6f);
 			}
 		} else {
@@ -170,13 +178,27 @@ public class Edge : MonoBehaviour {
 		} else {
 			force = Vector3.zero;
 		}
+
+		////average
+		//forceArray[forceArrayPointer] = force;
+		//forceArrayPointer++;
+		//if (forceArrayPointer >= forceArray.Length) {
+		//	forceArrayPointer = 0;
+		//}
+
+		//Vector3 sum = Vector3.zero;
+		//for (int pos = 0; pos < forceArray.Length; pos++) {
+		//	sum += forceArray[pos];
+		//}
+		//forceAverage = sum / forceArray.Length;
+
 	}
 
 	//Apply current force as an impulse on cells
 	public void ApplyForce() {
-		if (force.sqrMagnitude < 0.000001f) {
-			return; // Sssssh, don't desturb bigid body sleep!!
-		}
+		//if (force.sqrMagnitude < 0.000001f) {
+		//	return; // Sssssh, don't desturb bigid body sleep!!
+		//}
 		// There is still a possibility ForceMode2D.Force will work better
 		frontCellRB.AddForce(force * 0.5f, ForceMode2D.Impulse);
 		backCellRB.AddForce(force * 0.5f, ForceMode2D.Impulse);

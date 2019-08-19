@@ -31,6 +31,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public Dropdown metabolismCellTypeDropdown;
 
+	
+
 	//----- ^ Shold be same as the top of GeneCellPanel ^
 
 	// Metabolism -> specific
@@ -65,10 +67,10 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		metabolismCellPanels[6] = rootCellPanel;
 		metabolismCellPanels[7] = veinCellPanel;
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
-			m.SetMode(PhenoGenoEnum.Phenotype);
+			m.Initialize(PhenoGenoEnum.Phenotype);
 		}
 
-		axonCellPanel.SetMode(PhenoGenoEnum.Phenotype);
+		axonCellPanel.Initialize(PhenoGenoEnum.Phenotype);
 
 		sensorPanels[0] = effectSensorPanel;
 		foreach (SensorPanel s in sensorPanels) {
@@ -225,7 +227,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			}
 
 			if (selectedCell != null) {
-				armour.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedCell.gene.armour, GlobalSettings.instance.phenotype.jawCellEatEffect / selectedCell.armour);
+				armour.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedCell.gene.armour, GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(20f) / selectedCell.armour);
 			}
 
 			effectFromNeighbours.text = string.Format("P me <= neighbours: {0:F2}W", selectedCell.effectFluxFromSelf); //kill me

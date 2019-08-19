@@ -313,7 +313,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	//How much are my jaws stealing from other creatures, counts as production
+	//How much are my jaws stealing from other creatures
 	[HideInInspector]
 	public float effectProductionPredPrayUp;
 
@@ -513,7 +513,7 @@ public abstract class Cell : MonoBehaviour {
 
 	//Note function only called if extended cell type is enabled
 	virtual public void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		didUpdateFunctionThisFrame = 2; // Just for update visuals
+		didUpdateFunctionThisFrame = 4; // Just for update visuals
 	}
 
 	//Origin only
@@ -1217,14 +1217,10 @@ public abstract class Cell : MonoBehaviour {
 					if (IsHibernating()) {
 						filledCircleSprite.color = Color.black;
 					} else {
-						if (GetCellType() != CellTypeEnum.Jaw) {
-							filledCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
-						} else {
-							filledCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
-						}
+						filledCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
 					}
 				}
-				openCircleSprite.color = Color.Lerp(GetColor(PhenoGenoEnum.Phenotype), Color.red, Mathf.Min(1f, predatorCount));
+				openCircleSprite.color = Color.Lerp(GetColor(PhenoGenoEnum.Phenotype), Color.red, Mathf.Min(1f, effectProductionPredPrayDown));
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.energy) {
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(energyFullness);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.flux) {
@@ -1261,12 +1257,41 @@ public abstract class Cell : MonoBehaviour {
 				filledCircleSprite.color = ColorScheme.instance.cellCreatureChildCount.Evaluate(value);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.predatorPray) {
 				filledCircleSprite.color = Color.blue;
+				bool hasPray = false, hasPredator = false, isEatingOnPray = false, isPredatorEatinOnMe = false;
+
 				if (GetCellType() == CellTypeEnum.Jaw) {
-					if ((this as JawCell).prayCount > 0) {
-						filledCircleSprite.color = Color.green;
+					if ((this as JawCell).prayCount > 0f) {
+						hasPray = true;
+						if (effectProductionPredPrayUp > 0f) {
+							isEatingOnPray = true;
+						}
 					}
 				}
 				if (predatorCount > 0) {
+					hasPredator = true;
+					if (effectProductionPredPrayDown > 0f) {
+						isPredatorEatinOnMe = true;
+					}
+				}
+
+				openCircleSprite.color = Color.blue;
+				filledCircleSprite.color = Color.blue;
+
+				//outer
+				if (hasPray && hasPredator) {
+					openCircleSprite.color = Color.yellow;
+				} else if (hasPray) {
+					openCircleSprite.color = Color.green;
+				} else if (hasPredator) {
+					openCircleSprite.color = Color.red;
+				}
+
+				//inner
+				if (isEatingOnPray && isPredatorEatinOnMe) {
+					filledCircleSprite.color = Color.yellow;
+				} else if (isEatingOnPray) {
+					filledCircleSprite.color = Color.green;
+				} else if (isPredatorEatinOnMe) {
 					filledCircleSprite.color = Color.red;
 				}
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.typeAndPredatorPray) {
@@ -1324,8 +1349,8 @@ public abstract class Cell : MonoBehaviour {
 				filledCircleSprite.color = ColorScheme.instance.creatureAgeGradient.Evaluate(creature.GetAgeNormalized(World.instance.worldTicks));
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.shell) {
 				if (GetCellType() == CellTypeEnum.Shell) {
-					filledCircleSprite.color = (this as ShellCell).GetStrongerColor();
-					openCircleSprite.color = (this as ShellCell).GetStrongerColor();
+					filledCircleSprite.color = (this as ShellCell).GetColor(PhenoGenoEnum.Phenotype);
+					openCircleSprite.color = (this as ShellCell).GetColor(PhenoGenoEnum.Phenotype);
 				} else {
 					filledCircleSprite.color = Color.black;
 					openCircleSprite.color = Color.black;
@@ -1361,7 +1386,18 @@ public abstract class Cell : MonoBehaviour {
 				} else {
 					filledCircleSprite.color = Color.white;
 				}
+			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.ramSpeed) {
+				filledCircleSprite.color = Color.blue;
+				if (GetCellType() == CellTypeEnum.Jaw) {
+					if ((this as JawCell).prayCount == 1) {
+						if ((this as JawCell).ramSpeed > 0.1f) {
+							filledCircleSprite.color = Color.green;
+						}
+					}
+				}
+
 			}
+
 		} else { // Genotype...
 			if (GenotypeGraphicsPanel.instance.graphicsGeneCell == GenotypeGraphicsPanel.CellGraphicsEnum.type) {
 				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
@@ -1425,7 +1461,9 @@ public abstract class Cell : MonoBehaviour {
 		}
 		UpdateHeading(); //costy, update only if cell has direction and is in frustum
 		UpdateFlipSide();
+	}
 
+	public void UpdateDidUpdateThisFrame() {
 		didUpdateFunctionThisFrame--; //  Just for visuals
 		didUpdateEnergyThisFrame--; //  Just for visuals
 	}

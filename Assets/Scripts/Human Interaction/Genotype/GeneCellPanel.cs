@@ -75,10 +75,10 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 		metabolismCellPanels[7] = veinCellPanel;
 
 		foreach (MetabolismCellPanel m in metabolismCellPanels) {
-			m.SetMode(PhenoGenoEnum.Genotype);
+			m.Initialize(PhenoGenoEnum.Genotype);
 		}
 
-		axonCellPanel.SetMode(PhenoGenoEnum.Genotype);
+		axonCellPanel.Initialize(PhenoGenoEnum.Genotype);
 
 		sensorPanels[0] = effectSensorPanel;
 		foreach (SensorPanel s in sensorPanels) {
@@ -170,7 +170,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 			effect.text = "Effect: -";
 
 			if (selectedGene != null) {
-				armour.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedGene.armour, GlobalSettings.instance.phenotype.jawCellEatEffect / selectedGene.armour);
+				armour.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedGene.armour, GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(20f) / selectedGene.armour);
 			}
 
 			effectFromNeighbours.text = "P me <= neighbours: -";

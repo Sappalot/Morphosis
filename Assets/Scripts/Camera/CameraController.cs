@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CameraController : MouseDrag {
+public class CameraController : MouseDrag  {
 	public float cameraMoveSpeed = 1f; //Screenwidths per second
 	public float cameraZoomStep = 0.1f;
 
@@ -56,7 +56,7 @@ public class CameraController : MouseDrag {
 		UpdatePositionViaKeys();
 		UpdateSize();
 
-		UpdateSampleTool();
+		UpdateMouseCursor();
 
 		camera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 		if (PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) { //&& !Input.GetMouseButton(0)
@@ -110,8 +110,16 @@ public class CameraController : MouseDrag {
 		}
 	}
 
-	private void UpdateSampleTool() {
-		//Debug.Log("Measure: " + GraphPlotter.instance.IsMouseInside());
+	public Texture2D cursorTextureCameraPan;
+
+	private Vector2 offsetPan = new Vector2(18f, 20f);
+
+	private void UpdateMouseCursor() {
+		if (Input.GetKey(KeyCode.Mouse1) || Input.GetKey(KeyCode.Mouse2)) {
+			Cursor.SetCursor(cursorTextureCameraPan, offsetPan, CursorMode.ForceSoftware);
+		} else {
+			Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+		}
 	}
 
 	private void UpdatePositionViaKeys() {

@@ -25,9 +25,9 @@ public class JawCellPanel : MetabolismCellPanel {
 	public Toggle cannibalizeChildrenToggle;
 	public Text cannibalizeChildrenText;
 
-	public override void SetMode(PhenoGenoEnum mode) {
+	public override void Initialize(PhenoGenoEnum mode) {
 		hibernatePanel.SetMode(mode);
-		base.SetMode(mode);
+		base.Initialize(mode);
 	}
 
 	public void OnChangedCannibalizeKin() {
@@ -88,7 +88,7 @@ public class JawCellPanel : MetabolismCellPanel {
 					cannibalizeChildrenToggle.interactable = false;
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
-				productionEffectText.text = string.Format("Production Effect: [pray count (0...6)] * {0:F2} - {1:F2} W <color=#808080ff>(@ normal pray armor)</color>", GlobalSettings.instance.phenotype.jawCellEatEffect * GlobalSettings.instance.phenotype.jawCellEatEarnFactor, GlobalSettings.instance.phenotype.jawCellEffectCost);
+				productionEffectText.text = string.Format("Production Effect: [pray count (0...6)] * {0:F2} - {1:F2} W <color=#808080ff>(@ normal pray armor)</color>", GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(20f) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor, GlobalSettings.instance.phenotype.jawCellEffectCost);
 
 				prayCellCount.text = "Pray Count: -";
 

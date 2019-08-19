@@ -9,6 +9,7 @@ public class Gene {
 	public float eggCellDetatchEnergyThreshold = 0.4f; //part of max energy(* 100 to get  %)
 	public bool eggCellHibernateWhenAttachedToMother = false;
 	public bool eggCellHibernateWhenAttachedToChild = false;
+	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox();
 	// ^ Egg cell ^
 
 	// Jaw Cell
@@ -359,6 +360,7 @@ public class Gene {
 		geneData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
 		geneData.eggCellHibernateWhenAttachedToMother = eggCellHibernateWhenAttachedToMother;
 		geneData.eggCellHibernateWhenAttachedToChild = eggCellHibernateWhenAttachedToChild;
+		geneData.eggFertilizeLogicBoxData = eggCellFertilizeLogic.UpdateData();
 
 		// Jaw
 		geneData.jawCellCannibalizeKin =      jawCellCannibalizeKin;
@@ -438,6 +440,7 @@ public class Gene {
 		}
 		eggCellHibernateWhenAttachedToMother = geneData.eggCellHibernateWhenAttachedToMother;
 		eggCellHibernateWhenAttachedToChild = geneData.eggCellHibernateWhenAttachedToChild;
+		eggCellFertilizeLogic = new GeneLogicBox(geneData.eggFertilizeLogicBoxData);
 
 		// Jaw
 		jawCellCannibalizeKin =      geneData.jawCellCannibalizeKin;
