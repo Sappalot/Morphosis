@@ -20,7 +20,18 @@ public class World : MonoSingleton<World> {
 	private bool doSave = false;
 	private List<HistoryEvent> historyEvents = new List<HistoryEvent>();
 
+	public Ball ballPrefab;
 	public new void Init() {
+
+		//Instantiate test balls
+		//for (int y = 0; y < 45; y++) {
+		//	for (int x = 0; x < 90; x++) {
+		//		Instantiate(ballPrefab, new Vector3(100f + x * 1.1f, 120f + y * 1.1f, 0f), Quaternion.identity, this.transform);
+		//	}
+		//}
+
+		//Time.timeScale = 1f;
+
 		//for (int y = 0; y < 32; y++) {
 		//	for (int x = 0; x < 32; x++) {
 		//		GameObject.Instantiate(cellPrefab, new Vector3(10f + x * 2f, 10f + y * 2f, 0f), Quaternion.identity, this.transform);
@@ -32,11 +43,14 @@ public class World : MonoSingleton<World> {
 		//excluding: turn cell graphics to correct angle, scale mussle cells
 		//World.instance.life.EvoFixedUpdate(fixedTime);
 
+		// test
 		history.Init();
-		terrain.Init();
+		//terrain.Init();
 		GraphPlotter.instance.history = history;
 	}
 
+	private float gravityAngle;
+	private int gravityAngleUpdateTick;
 	public void UpdateGraphics() {
 		//Handle time from here to not get locked out
 		if ((!GlobalPanel.instance.isRunPhysics || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) && !doSave) {
@@ -57,8 +71,19 @@ public class World : MonoSingleton<World> {
 	}
 
 	public void UpdatePhysics() {
-		life.UpdateStructure();
+		gravityAngleUpdateTick++;
+		if (gravityAngleUpdateTick == 10) {
+			gravityAngleUpdateTick = 0;
 
+			gravityAngle += Time.fixedDeltaTime * 50f;
+			if (gravityAngle > 360f) {
+				gravityAngle -= 360f;
+			}
+			Physics2D.gravity = new Vector2(Mathf.Cos(gravityAngle * Mathf.Deg2Rad), Mathf.Sin(gravityAngle * Mathf.Deg2Rad));
+		}
+
+		// test
+		life.UpdateStructure();
 		life.UpdatePhysics(worldTicks);
 		if (PhenotypePhysicsPanel.instance.teleport.isOn) {
 			Portals.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
@@ -66,31 +91,33 @@ public class World : MonoSingleton<World> {
 		if (PhenotypePhysicsPanel.instance.killFugitive.isOn) {
 			TerrainPerimeter.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
 		}
-		GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
+		
 		if (worldTicks % 20 == 0) {
+
+			GlobalPanel.instance.UpdateWorldNameAndTime(worldName, worldTicks);
 
 			if (worldTicks == 0) {
 				Record record = new Record();
 				record.SetTagText("Big Bang", Color.white, true);
 				record.Set(RecordEnum.fps, 0);
 				record.Set(RecordEnum.pps, 0);
-				record.Set(RecordEnum.cellCountTotal, 0);
-				record.Set(RecordEnum.cellCountEgg, 0);
-				record.Set(RecordEnum.cellCountFungal, 0);
-				record.Set(RecordEnum.cellCountJaw, 0);
-				record.Set(RecordEnum.cellCountLeaf, 0);
-				record.Set(RecordEnum.cellCountMuscle, 0);
-				record.Set(RecordEnum.cellCountRoot, 0);
-				record.Set(RecordEnum.cellCountShell, 0);
-				record.Set(RecordEnum.cellCountShellWood, 0);
-				record.Set(RecordEnum.cellCountShellMetal, 0);
-				record.Set(RecordEnum.cellCountShellGlass, 0);
-				record.Set(RecordEnum.cellCountShellDiamond, 0);
-				record.Set(RecordEnum.cellCountVein, 0);
-				record.Set(RecordEnum.creatureCount, 0);
-				record.Set(RecordEnum.creatureBirthsPerSecond, 0);
-				record.Set(RecordEnum.creatureDeathsPerSecond, 0);
-				record.Set(RecordEnum.health, 0);
+				//record.Set(RecordEnum.cellCountTotal, 0);
+				//record.Set(RecordEnum.cellCountEgg, 0);
+				//record.Set(RecordEnum.cellCountFungal, 0);
+				//record.Set(RecordEnum.cellCountJaw, 0);
+				//record.Set(RecordEnum.cellCountLeaf, 0);
+				//record.Set(RecordEnum.cellCountMuscle, 0);
+				//record.Set(RecordEnum.cellCountRoot, 0);
+				//record.Set(RecordEnum.cellCountShell, 0);
+				//record.Set(RecordEnum.cellCountShellWood, 0);
+				//record.Set(RecordEnum.cellCountShellMetal, 0);
+				//record.Set(RecordEnum.cellCountShellGlass, 0);
+				//record.Set(RecordEnum.cellCountShellDiamond, 0);
+				//record.Set(RecordEnum.cellCountVein, 0);
+				//record.Set(RecordEnum.creatureCount, 0);
+				//record.Set(RecordEnum.creatureBirthsPerSecond, 0);
+				//record.Set(RecordEnum.creatureDeathsPerSecond, 0);
+				//record.Set(RecordEnum.health, 0);
 				history.AddRecord(record);
 				GraphPlotter.instance.MakeDirty();
 			} else {
@@ -106,7 +133,6 @@ public class World : MonoSingleton<World> {
 		}
 
 		terrain.UpdatePhysics();
-
 		worldTicks++; //The only place where time is increased
 	}
 
@@ -258,7 +284,6 @@ public class World : MonoSingleton<World> {
 		worldData.worldTicks = worldTicks;
 		worldData.historyData = history.UpdateData();
 		worldData.terrainData = terrain.UpdateData();
-		
 	}
 
 	// Load

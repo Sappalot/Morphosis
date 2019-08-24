@@ -66,7 +66,7 @@ public class CameraController : MouseDrag  {
 				camera.transform.position = new Vector3(focus.x, focus.y, camera.transform.position.z);
 				if (PhenotypePanel.instance.yawToggle.isOn) {
 					camera.transform.localRotation = Quaternion.Euler(0f, 0f, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
-				} 
+				}
 			} else if (CreatureSelectionPanel.instance.selectionCount > 1) {
 				List<Creature> selection = CreatureSelectionPanel.instance.selection;
 				int count = 0;
@@ -77,11 +77,11 @@ public class CameraController : MouseDrag  {
 						count++;
 					}
 				}
-				if (count >  0) {
+				if (count > 0) {
 					sum /= count;
 					camera.transform.position = new Vector3(sum.x, sum.y, camera.transform.position.z);
 				}
-			} 
+			}
 		}
 	}
 
@@ -89,7 +89,7 @@ public class CameraController : MouseDrag  {
 		if (Input.GetAxis("Mouse ScrollWheel") < 0) {
 			if (GraphPlotter.instance.IsMouseInside()) {
 				GraphPlotter.instance.ZoomStepOut();
-			} else if(camera.orthographicSize < 300f) {
+			} else if (camera.orthographicSize < 300f) {
 				Vector2 targetPostition = camera.ScreenToWorldPoint(Input.mousePosition);
 				Vector2 cameraToTarget = targetPostition - (Vector2)camera.transform.position;
 				float factor = 1f + cameraZoomStep;
@@ -109,6 +109,7 @@ public class CameraController : MouseDrag  {
 			}
 		}
 	}
+	
 
 	public Texture2D cursorTextureCameraPan;
 

@@ -288,15 +288,18 @@ public abstract class Cell : MonoBehaviour {
 	// -------------------------------EFFECT -----------------------------------------
 
 	public float GetEffect(bool production, bool stress, bool fluxSelf, bool fluxAttached) {
+		//return 0f;
 		return GetEffectUp(production, fluxSelf, fluxAttached) - GetEffectDown(production, stress, fluxSelf, fluxAttached);
 	}
 
 	public float GetEffectDown(bool production, bool stress, bool fluxSelf, bool fluxAttached) {
+		//return 0f;
 		// The effect lost by any cell when eate by jaw is counted under stress (effectProductionPredPrayDown)
 		return (production ? effectProductionInternalDown : 0f) + (stress ? effectProductionPredPrayDown : 0f) + (fluxSelf ? effectFluxSelfDown : 0f) + (fluxAttached ? effectFluxAttachedDown : 0f);
 	}
 
 	public float GetEffectUp(bool production, bool fluxSelf, bool fluxAttached) {
+		//return 0f;
 		// The effect gained by jaw eating other is counted under production (effectProductionPredPrayUp)
 		return (production ? effectProductionInternalUp + effectProductionPredPrayUp : 0f) + (fluxSelf ? effectFluxSelfUp : 0f) + (fluxAttached ? effectFluxAttachedUp : 0f);
 	}
@@ -309,6 +312,7 @@ public abstract class Cell : MonoBehaviour {
 
 	public float effectProductionPredPray {
 		get {
+			//return 0f;
 			return effectProductionPredPrayUp - effectProductionPredPrayDown;
 		}
 	}
@@ -321,6 +325,8 @@ public abstract class Cell : MonoBehaviour {
 	//Check with all Jaw cells eating on me. They know and keep up to date
 	public float effectProductionPredPrayDown {
 		get {
+			//return 0f;
+
 			float loss = 0f;
 			foreach (JawCell predator in predators) {
 				loss += predator.GetPrayEatenEffect(this);
@@ -332,6 +338,7 @@ public abstract class Cell : MonoBehaviour {
 	//net effect
 	public float effectFluxSelf {
 		get {
+			//return 0f;
 			return effectFluxFromSelf - effectFluxToSelf;
 		}
 	}
@@ -344,12 +351,14 @@ public abstract class Cell : MonoBehaviour {
 
 	public float effectFluxSelfDown {
 		get {
+			//return 0f;
 			return (effectFluxToSelf > 0f ? effectFluxToSelf : 0f) + (effectFluxFromSelf < 0f ? -effectFluxFromSelf : 0f); // Don't forget the brackets!!
 		}
 	}
 
 	public float effectFluxSelfUp {
 		get {
+			//return 0f;
 			return (effectFluxFromSelf > 0f ? effectFluxFromSelf : 0f) + (effectFluxToSelf < 0f ? -effectFluxToSelf : 0f);
 		}
 	}
@@ -358,6 +367,7 @@ public abstract class Cell : MonoBehaviour {
 
 	public float effectFluxAttached {
 		get {
+			//return 0f;
 			return effectFluxFromMotherAttached - effectFluxToChildrenAttached;
 		}
 	}
@@ -371,6 +381,7 @@ public abstract class Cell : MonoBehaviour {
 	// Will not be negative a negative value will appear in effectAttachedUp instead
 	public float effectFluxAttachedDown {
 		get {
+			//return 0f;
 			return (effectFluxToChildrenAttached > 0f ? effectFluxToChildrenAttached : 0f) + (effectFluxFromMotherAttached < 0f ? -effectFluxFromMotherAttached : 0f);
 		}
 	}
@@ -378,6 +389,7 @@ public abstract class Cell : MonoBehaviour {
 	// Will not be negative a negative value will appear in effectAttachedDown instead
 	public float effectFluxAttachedUp {
 		get {
+			//return 0f;
 			return (effectFluxToChildrenAttached < 0f ? -effectFluxToChildrenAttached : 0f) + (effectFluxFromMotherAttached > 0f ? effectFluxFromMotherAttached : 0f);
 		}
 	}
