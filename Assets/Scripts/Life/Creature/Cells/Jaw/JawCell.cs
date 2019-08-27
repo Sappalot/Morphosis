@@ -26,6 +26,11 @@ public class JawCell : Cell {
 				CellPanel.instance.jawCellPanel.MakeDirty();
 
 				effectProductionPredPrayUp = eatEffect;
+
+				// We need to update per frame, not just when we enter trigger, as ram speed might change during stay in the "trigger zone"
+				foreach (Pray pray in prays.Values) {
+					pray.UpdateMetabolism(this);
+				}
 			}
 
 			base.UpdateCellFunction(deltaTicks, worldTicks);
@@ -57,20 +62,6 @@ public class JawCell : Cell {
 	public int prayCount {
 		get {
 			return prays.Count;
-		}
-	}
-
-	public float ramSpeed {
-		get {
-			if (prays.Count == 1) {
-				foreach (Pray p in prays.Values) {
-
-					return p.ramSpeed;
-				}
-
-				return 0f;
-			}
-			return 0f;
 		}
 	}
 
@@ -154,10 +145,10 @@ public class JawCell : Cell {
 	}
 
 	private void PairPredatorPray(JawCell predatorCell, Cell prayCell) {
-		Pray p = new Pray(prayCell);
-		AddPray(p); //TODO update effect
+		Pray newPray = new Pray(prayCell);
+		AddPray(newPray); //TODO update effect
 		prayCell.AddPredator(predatorCell);
-		p.UpdateMetabolism(this);
+		newPray.UpdateMetabolism(this);
 	}
 
 	private void UnpairPredatorPray(JawCell predatorCell, Cell prayCell) {
@@ -175,7 +166,7 @@ public class JawCell : Cell {
 		base.OnRecycleCell();
 		deleteFlagged = true;
 
-		//Free all prays from me since i excint no more
+		//Free all prays from me since i excist no more
 		foreach (Cell prayCell in prays.Keys) {
 			prayCell.RemovePredator(this);
 		}

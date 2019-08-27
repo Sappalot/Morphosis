@@ -1400,13 +1400,7 @@ public abstract class Cell : MonoBehaviour {
 				}
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.ramSpeed) {
 				filledCircleSprite.color = Color.blue;
-				if (GetCellType() == CellTypeEnum.Jaw) {
-					if ((this as JawCell).prayCount == 1) {
-						if ((this as JawCell).ramSpeed > 0.1f) {
-							filledCircleSprite.color = Color.green;
-						}
-					}
-				}
+
 
 			}
 
