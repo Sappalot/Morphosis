@@ -96,28 +96,68 @@ public class Edges : MonoBehaviour {
 		Cell currentCell = firstCell;
 		Cell previousCell = null;
 		for (int safe = 0; safe < 1000; safe++) {
-			Cell nextCell = GetNextOwnPeripheryCell(creature, currentCell, previousCell);
+			Cell.ApexAngle apexAngle;
+			Cell nextCell = GetNextOwnPeripheryCell(creature, currentCell, previousCell, out apexAngle);
 			if (nextCell == null) {
 				Debug.Log("We don't have a next periphery cell");
 				throw new RuntimeException("Could not find a next periphery cell");
 			}
+			
+			// Apex edge
+			currentCell.apexAngle = apexAngle;
+			if (safe > 0 && (apexAngle == Cell.ApexAngle.apex0 || ((apexAngle == Cell.ApexAngle.apex60 || apexAngle == Cell.ApexAngle.apex120) && currentCell.GetCellType() == CellTypeEnum.Muscle))) {
+				Edge apexEdge = Morphosis.instance.edgePool.Borrow();
+				apexEdge.transform.parent = transform;
+				apexEdge.transform.position = transform.position;
+				edgeList.Add(apexEdge);
+				apexEdge.Setup(currentCell, nextCell, currentCell.GetDirectionOfOwnNeighbourCell(creature, nextCell), apexAngle);
+				apexEdge.MakeWing(nextCell, previousCell);
+			}
 
-
+			// bail out!
 			//We are around, since we are trying to create an edge which would be the same as the first one
-			if (edgeList.Exists(e => e.parentCell == currentCell && e.childCell == nextCell)) {
+			if (edgeList.Exists(e => e.parentCell == currentCell && e.childCell == nextCell && !e.isApex)) {
 				break;
 			}
 
-			//Edge edge = (GameObject.Instantiate(edgePrefab, transform.position, Quaternion.identity) as Edge);
+			// Normal edge
 			Edge edge = Morphosis.instance.edgePool.Borrow();
 			edge.transform.parent = transform;
 			edge.transform.position = transform.position;
 			edgeList.Add(edge);
-			edge.Setup(currentCell, nextCell, currentCell.GetDirectionOfOwnNeighbourCell(creature, nextCell));
-			edge.MakeWing(nextCell);
+			edge.Setup(currentCell, nextCell, currentCell.GetDirectionOfOwnNeighbourCell(creature, nextCell), Cell.ApexAngle.blunt);
+			edge.MakeWing(nextCell, previousCell);
 
 			previousCell = currentCell;
 			currentCell = nextCell;
+		}
+
+		// remove double edges
+		List<Edge> douplets = new List<Edge>();
+		foreach (Edge alpha in edgeList) {
+			if (alpha.isApex) {
+				continue;
+			}
+			foreach (Edge beta in edgeList) {
+				if (beta.isApex) {
+					continue;
+				}
+				if (alpha.parentCell == beta.childCell && alpha.childCell == beta.parentCell && !(alpha.wasDoupletChecked || beta.wasDoupletChecked)) {
+					//string id = alpha.parentCell.name + beta.childCell.name;
+					//if (!douplets.ContainsKey(id)) {
+					alpha.wasDoupletChecked = true;
+					beta.wasDoupletChecked = true;
+					alpha.isDoubleSided = true;
+					douplets.Add(beta); // the other guy
+					//}
+				}
+			}
+		}
+
+		// TODO don't create them in the firs place
+		foreach (Edge trash in douplets) {
+			Morphosis.instance.edgePool.Recycle(trash);
+			edgeList.Remove(trash);
 		}
 
 		//periphery
@@ -134,7 +174,8 @@ public class Edges : MonoBehaviour {
 		return record;
 	}
 
-	private Cell GetNextOwnPeripheryCell(Creature creature, Cell currentCell, Cell previousCell) { 
+	private Cell GetNextOwnPeripheryCell(Creature creature, Cell currentCell, Cell previousCell, out Cell.ApexAngle apexAngle) {
+		apexAngle = Cell.ApexAngle.blunt;
 		int previousDirection = -1; // -1 and 0 should both work, right? // We need to have a previous direction which is pointing east in model space
 		if (currentCell == null) {
 			Debug.LogError("currentCell = NULL");
@@ -144,9 +185,18 @@ public class Edges : MonoBehaviour {
 			previousDirection = currentCell.GetDirectionOfOwnNeighbourCell(creature, previousCell);
 		}
 
+		int gap = 0;
 		for (int index = previousDirection + 1; index < previousDirection + 7; index++) {
+			gap++;
 			Cell tryCell = currentCell.GetNeighbourCell(index);
 			if (tryCell != null && tryCell.creature == creature) { // We don't want to trace around connected creatures
+				if (gap == 4) {
+					apexAngle = Cell.ApexAngle.apex120;
+				} else if (gap == 5) {
+					apexAngle = Cell.ApexAngle.apex60;
+				} else if (gap == 6) {
+					apexAngle = Cell.ApexAngle.apex0;
+				}
 				return tryCell;
 			}
 		}

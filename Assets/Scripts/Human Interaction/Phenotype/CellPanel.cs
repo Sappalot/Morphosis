@@ -22,7 +22,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public Text neighboursCount; //own cells + attached cells (mother + children)
 	public Text connectedVeinsCount; //number of veins connected to me, non placenta + children
 	public Text connectionGroupCount;
-
+	public Text apexAngle;
 	public Text eatingOnMeCount; //number of Jaw cells eating on me
 
 	public Button healButton;
@@ -203,6 +203,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				isPlacenta.text = "-";
 				neighboursCount.text = "Neighbours:";
 				connectionGroupCount.text = "Connection Groups:";
+				apexAngle.text = "Apex angle:";
 				connectedVeinsCount.text = "Veins:";
 				eatingOnMeCount.text = "Eating on me:";
 
@@ -239,6 +240,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			isPlacenta.text = selectedCell.isPlacenta ? "Placenta" : "...";
 			neighboursCount.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnectedRelatives) + ((selectedCell.neighbourCountConnectedRelatives > 0) ? (" + "  + selectedCell.neighbourCountConnectedRelatives + " rel.") : "");
 			connectionGroupCount.text = "Connection Groups: " + selectedCell.groups;
+			apexAngle.text = "Apex angle: " + selectedCell.apexAngle.ToString();
 			connectedVeinsCount.text = "Veins: " + selectedCell.creature.phenotype.NonPlacentaVeinsConnectedToCellCount(selectedCell) + (selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) > 0 ? (" + " + selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) + " children") : "") ; 
 			eatingOnMeCount.text = "Eating on me: " + selectedCell.predatorCount;
 

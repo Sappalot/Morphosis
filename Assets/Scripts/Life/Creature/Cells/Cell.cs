@@ -88,6 +88,18 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public int groups = 0;
 
+	[HideInInspector]
+	public ApexAngle apexAngle = ApexAngle.notSet;
+	public enum ApexAngle {
+		notSet,
+		inside,
+		blunt, //180, 240, 300
+		apex0,
+		apex60,
+		apex120,
+	}
+
+
 	private PhenoGenoEnum phenoGeno = PhenoGenoEnum.Void;
 
 	protected SpringJoint2D[] placentaSprings; //only if i am an origo cell, the springs go to placenta cells on my mother

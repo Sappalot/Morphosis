@@ -32,6 +32,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 	public Text neighboursCount;
 	public Text connectedVeinsCount; //number of veins connected to me, non placenta + children
 	public Text connectionGroupCount;
+	public Text apexAngle;
 	public Text eatingOnMeCount; //number of Jaw cells eating on me
 
 	public Button healButton;
@@ -182,6 +183,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 			neighboursCount.text = "Neighbours: -";
 			connectedVeinsCount.text = "Veins: - ";
 			connectionGroupCount.text = "Connection Groups: -";
+			apexAngle.text = "Apex angle: -";
 			eatingOnMeCount.text = "Eating on me: -";
 
 			energyBar.isOn = false;

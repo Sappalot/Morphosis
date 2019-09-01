@@ -49,8 +49,6 @@ public class World : MonoSingleton<World> {
 		GraphPlotter.instance.history = history;
 	}
 
-	private float gravityAngle;
-	private int gravityAngleUpdateTick;
 	public void UpdateGraphics() {
 		//Handle time from here to not get locked out
 		if ((!GlobalPanel.instance.isRunPhysics || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) && !doSave) {
@@ -71,17 +69,6 @@ public class World : MonoSingleton<World> {
 	}
 
 	public void UpdatePhysics() {
-		gravityAngleUpdateTick++;
-		if (gravityAngleUpdateTick == 10) {
-			gravityAngleUpdateTick = 0;
-
-			gravityAngle += Time.fixedDeltaTime * 50f;
-			if (gravityAngle > 360f) {
-				gravityAngle -= 360f;
-			}
-			Physics2D.gravity = new Vector2(Mathf.Cos(gravityAngle * Mathf.Deg2Rad), Mathf.Sin(gravityAngle * Mathf.Deg2Rad));
-		}
-
 		// test
 		life.UpdateStructure();
 		life.UpdatePhysics(worldTicks);
@@ -101,23 +88,23 @@ public class World : MonoSingleton<World> {
 				record.SetTagText("Big Bang", Color.white, true);
 				record.Set(RecordEnum.fps, 0);
 				record.Set(RecordEnum.pps, 0);
-				//record.Set(RecordEnum.cellCountTotal, 0);
-				//record.Set(RecordEnum.cellCountEgg, 0);
-				//record.Set(RecordEnum.cellCountFungal, 0);
-				//record.Set(RecordEnum.cellCountJaw, 0);
-				//record.Set(RecordEnum.cellCountLeaf, 0);
-				//record.Set(RecordEnum.cellCountMuscle, 0);
-				//record.Set(RecordEnum.cellCountRoot, 0);
-				//record.Set(RecordEnum.cellCountShell, 0);
-				//record.Set(RecordEnum.cellCountShellWood, 0);
-				//record.Set(RecordEnum.cellCountShellMetal, 0);
-				//record.Set(RecordEnum.cellCountShellGlass, 0);
-				//record.Set(RecordEnum.cellCountShellDiamond, 0);
-				//record.Set(RecordEnum.cellCountVein, 0);
-				//record.Set(RecordEnum.creatureCount, 0);
-				//record.Set(RecordEnum.creatureBirthsPerSecond, 0);
-				//record.Set(RecordEnum.creatureDeathsPerSecond, 0);
-				//record.Set(RecordEnum.health, 0);
+				record.Set(RecordEnum.cellCountTotal, 0);
+				record.Set(RecordEnum.cellCountEgg, 0);
+				record.Set(RecordEnum.cellCountFungal, 0);
+				record.Set(RecordEnum.cellCountJaw, 0);
+				record.Set(RecordEnum.cellCountLeaf, 0);
+				record.Set(RecordEnum.cellCountMuscle, 0);
+				record.Set(RecordEnum.cellCountRoot, 0);
+				record.Set(RecordEnum.cellCountShell, 0);
+				record.Set(RecordEnum.cellCountShellWood, 0);
+				record.Set(RecordEnum.cellCountShellMetal, 0);
+				record.Set(RecordEnum.cellCountShellGlass, 0);
+				record.Set(RecordEnum.cellCountShellDiamond, 0);
+				record.Set(RecordEnum.cellCountVein, 0);
+				record.Set(RecordEnum.creatureCount, 0);
+				record.Set(RecordEnum.creatureBirthsPerSecond, 0);
+				record.Set(RecordEnum.creatureDeathsPerSecond, 0);
+				record.Set(RecordEnum.health, 0);
 				history.AddRecord(record);
 				GraphPlotter.instance.MakeDirty();
 			} else {

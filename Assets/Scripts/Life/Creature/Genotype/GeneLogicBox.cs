@@ -14,7 +14,7 @@
 	// Save
 	private GeneLogicBoxData geneLogicBoxData = new GeneLogicBoxData();
 	public GeneLogicBoxData UpdateData() {
-		geneLogicBoxData.layer0LogicBoxGateData = gateLayer0.UpdateData();
+		//geneLogicBoxData.layer0LogicBoxGateData = gateLayer0.UpdateData();
 
 
 		return geneLogicBoxData;
