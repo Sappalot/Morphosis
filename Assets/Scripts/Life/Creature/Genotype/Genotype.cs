@@ -297,8 +297,6 @@ public class Genotype : MonoBehaviour {
 		genome[2].type = CellTypeEnum.Muscle;
 	}
 
-
-
 	public bool UpdateGeneCellsFromGenome(Creature creature, Vector2 position, float heading) { // heading 90 ==> origin is pointing north
 		if (geneCellsDiffersFromGenome) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)

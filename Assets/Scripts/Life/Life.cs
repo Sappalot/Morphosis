@@ -172,8 +172,15 @@ public class Life : MonoBehaviour {
 		PhenotypePanel.instance.MakeDirty();
 		CreatureSelectionPanel.instance.MakeDirty();
 
-		//Sometimes child origin is placed with spring too far from mother's placenta this update might fix this problem
+		// Not doing so will cause child to hang loke on a joint whit its mother
+		// It is mothers responsability to keep it "rigid ish"
+		mother.phenotype.connectionsDiffersFromCells = true;
+		child.phenotype.connectionsDiffersFromCells = true;
 		UpdateStructure();
+
+		//Sometimes child origin is placed with spring too far from mother's placenta this update might fix this problem
+
+
 
 		if (wasForced) {
 			CreatureSelectionPanel.instance.Select(mother, mother.phenotype.originCell);

@@ -16,7 +16,7 @@ public class JawCell : Cell {
 			if (IsHibernating()) {
 				mouth.gameObject.SetActive(false);
 				effectProductionPredPrayUp = 0f;
-				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
+				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellHibernateEffectCost;
 			} else {
 				mouth.gameObject.SetActive(true);
 				effectProductionInternalDown = GlobalSettings.instance.phenotype.jawCellEffectCost;

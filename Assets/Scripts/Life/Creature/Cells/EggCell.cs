@@ -6,7 +6,7 @@ public class EggCell : Cell {
 		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
 			if (IsHibernating()) {
 				effectProductionInternalUp = 0f;
-				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
+				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellHibernateEffectCost;
 			} else {
 				effectProductionInternalUp = 0f;
 				effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCellEffectCost;

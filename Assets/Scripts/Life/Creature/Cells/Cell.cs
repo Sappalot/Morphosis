@@ -817,7 +817,9 @@ public abstract class Cell : MonoBehaviour {
 				return index;
 			}
 		}
-		// Once in a blue moon we end up here without finding 
+		// Once in a blue moon we end up here without finding previous cell (when calling this one from edges.GetNextOwnPeripheryCell)
+		// This was due to a problem described and fixed in phenotype.TryGrow
+		// Todo keep all exception shit until we are confident that no more edge errors occur
 		throw new RuntimeException("Could not find own of previous cell");
 	}
 

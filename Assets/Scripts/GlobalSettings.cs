@@ -213,7 +213,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float veinFluxEffectStrong = 0.5f; //W
 
 		//General
-		public float cellIdleEffectCost = 0.05f;
+		public float cellHibernateEffectCost = 0.05f;
 		public float cellMaxEnergy = 100f; // J
 		public float cellDefaultEnergy = 0.33f;
 		public bool reclaimCutBranchEnergy = true; //when a branch is detatched, its energy will be reclaimed and distributed among cells in creature

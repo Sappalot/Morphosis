@@ -300,7 +300,7 @@ public class Phenotype : MonoBehaviour {
 	public int TryGrow(Creature creature, bool highestPriorityFirst, bool allowOvergrow, int cellGrowTargetCount, bool buildWithoutCost, bool tryPlayFx, ulong worldTick, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
 		noGrowthReason = new NoGrowthReason();
 		
-		// If full grown => return
+		// If fully grown => return
 		int growCellCount = 0;
 		Genotype genotype  = creature.genotype;
 		if (cellGrowTargetCount < 1 || this.cellCount >= genotype.geneCellCount) {
@@ -357,12 +357,24 @@ public class Phenotype : MonoBehaviour {
 					}
 				}
 
-				// NOTE: We dont need to make this check as we chack if position is occupied later (including my roots and placentas)
-				//// Is the cell map position is free to grow on (regarding children and mother)?
-				//if (!allowOvergrow && (IsMotherPlacentaLocation(creature, buildGeneCell.mapPosition) || IsChildOriginLocation(creature, buildGeneCell.mapPosition))) {
-				//	noGrowthReason.spaceIsOccupied = true;
-				//	continue;
-				//}
+				//NOTE block below: We dont do need to make this check even if we check if position is occupied later
+				// Once in a blue moon the creature is bent so that a neighbour spot is free in worldspace, though it is allready built ==> building it would make cell have 2 neighbours in the same direction ==> world of shit
+				// This check is there to make sure that a neighbour is not built where (a mother placenta cell) OR (a child origin cell) is allready built, even if that place is unoccupied in world (due to creature bending severely leaving it free)
+
+				// This one was written then removed (thinking that the world space check below was enough) then reintroduced 2019-08-30
+				// When removed: 2 cells may be built in the same direction. This will cause trouble when generating edges (...maybee causing other problems too down the road)
+				// In Cell.GetDirectionOfOwnNeighbourCell we would run into trouble as we try to find direction of a previous cell "P" from current cell "C" (checking neighbours around "C" for "P"). C is in my body and so is P.
+				// Problem is that from "C" an old cell "O" has allready been build in the position in which "P" was built later. "O" wasnt found as occupied as it was the origin of creatures child ==> not presant in cellMap. 
+				// "P" is not built on top but allowed to be be built on the side, though in the same neighbour direction, as "O". Building on the side was allowed due to severe bending of creature during telepoke.
+				// So... in Cell.GetDirectionOfOwnNeighbourCell "C" would not find "P" as expected when looking for previous cell, but only "O" in its direction. We cant continue building our periphery loop :(
+				// The solution then was to simply crash the creature, du to this error, worked but not pretty
+				// This fix was tested on a case where a creature would go into edge error during telepoke. The fix would in this case cause the "C" to avoid building "P" in the neighbour spot of "O"
+
+				// Is the cell map position is free to grow on (regarding children and mother)?
+				if (!allowOvergrow && (IsMotherPlacentaLocation(creature, buildGeneCell.mapPosition) || IsChildOriginLocation(creature, buildGeneCell.mapPosition))) {
+					noGrowthReason.spaceIsOccupied = true;
+					continue;
+				}
 
 				Vector3 averagePosition = Vector3.zero;
 				int positionCount = 0;
@@ -584,6 +596,7 @@ public class Phenotype : MonoBehaviour {
 			try {
 				edges.GenerateWings(creature, cellMap); // Wings are ONLY generated from here
 			} catch (RuntimeException e) {
+				Debug.Log("Error: " + e);
 				hasError = true;
 				isAlive = false;
 				return false;

@@ -51,7 +51,7 @@ public class LeafCell : Cell {
 		if (PhenotypePhysicsPanel.instance.functionLeaf.isOn) {
 			if (IsHibernating()) {
 				effectProductionInternalUp = 0f;
-				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellIdleEffectCost;
+				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellHibernateEffectCost;
 			} else {
 				effectProductionInternalDown = GlobalSettings.instance.phenotype.leafCellEffectCost;
 				bool debugRender = PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure && CreatureSelectionPanel.instance.selectedCell == this;
