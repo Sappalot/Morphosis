@@ -3,8 +3,9 @@
 	public LogicOperatorEnum operatorType = LogicOperatorEnum.And;
 	public int leftFlank = 1;
 	public int rightFlank = 3;
-	public bool isLocked = false;
 	public bool isUsed = false;
+
+	public bool isLocked = false; // No need to save/load this one as it is hardcoded, set by gene (would be the same every time)
 
 	private int row;
 	private GeneLogicBox geneLogicBox;
@@ -28,7 +29,10 @@
 	}
 
 	public bool TryMoveLeftFlankRight() {
-		if (leftFlank < GeneLogicBox.rightmostFlank - 2 && width > 2) {
+		if (leftFlank < GeneLogicBox.rightmostFlank - 2) {
+			if (width == 2) {
+				rightFlank++;
+			}
 			leftFlank++;
 			return true;
 		}
@@ -44,7 +48,10 @@
 	}
 
 	public bool TryMoveRightFlankLeft() {
-		if (rightFlank > 2 && width > 2) {
+		if (rightFlank > 2) {
+			if (width == 2) {
+				leftFlank--;
+			}
 			rightFlank--;
 			return true;
 		}
@@ -69,7 +76,9 @@
 	private GeneLogicBoxGateData geneLogicBoxGateData = new GeneLogicBoxGateData();
 	public GeneLogicBoxGateData UpdateData() {
 		geneLogicBoxGateData.operatorType = operatorType;
-
+		geneLogicBoxGateData.leftFlank = leftFlank;
+		geneLogicBoxGateData.rightFlank = rightFlank;
+		geneLogicBoxGateData.isUsed = isUsed;
 		return geneLogicBoxGateData;
 	}
 
@@ -77,6 +86,9 @@
 	public void ApplyData(GeneLogicBoxGateData geneLogicBoxGateData) {
 		if (!isLocked) {
 			operatorType = geneLogicBoxGateData.operatorType;
+			leftFlank = geneLogicBoxGateData.leftFlank;
+			rightFlank = geneLogicBoxGateData.rightFlank;
+			isUsed = geneLogicBoxGateData.isUsed;
 		}
 	}
 }

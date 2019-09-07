@@ -44,6 +44,8 @@ public class GeneLogicBox {
 		return false;
 	}
 
+	// When bringing back a gate from the dead all data will be lost, so there is no chance to get back some old good stuff, in a mutation, that was disabled
+	// Guess it doesn't mather, since we cant store so much 'good stuff' in a gate anyway
 	public bool TryCreateGate(int row, LogicOperatorEnum operatorType, int leftFlank, int rightFlank, bool isLocked) {
 		if (AreAllCellsFree(row, leftFlank, rightFlank)) {
 			GeneLogicBoxGate newGate = GetAnUnusedGate(row);
@@ -108,16 +110,25 @@ public class GeneLogicBox {
 	private GeneLogicBoxData geneLogicBoxData = new GeneLogicBoxData();
 	public GeneLogicBoxData UpdateData() {
 		geneLogicBoxData.layer0LogicBoxGateData = gateRow0.UpdateData();
-		
-		// TODO: layer 1 & 2
-
+		for (int i = 0; i < geneLogicBoxData.layer1LogicBoxGateData.Length; i++) {
+			geneLogicBoxData.layer1LogicBoxGateData[i] = gateRow1[i].UpdateData();
+		}
+		for (int i = 0; i < geneLogicBoxData.layer2LogicBoxGateData.Length; i++) {
+			geneLogicBoxData.layer2LogicBoxGateData[i] = gateRow2[i].UpdateData();
+		}
 		return geneLogicBoxData;
 	}
 
 	// Load
 	public void ApplyData(GeneLogicBoxData geneLogicBoxData) {
 		gateRow0.ApplyData(geneLogicBoxData.layer0LogicBoxGateData);
-
-		// TODO: layer 1 & 2
+		for (int i = 0; i < gateRow1.Length; i++) {
+			//if (geneLogicBoxData.layer1LogicBoxGateData.Length > 0) // temporary backwards compatibility
+				gateRow1[i].ApplyData(geneLogicBoxData.layer1LogicBoxGateData[i]);
+		}
+		for (int i = 0; i < gateRow2.Length; i++) {
+			//if (geneLogicBoxData.layer2LogicBoxGateData.Length > 0) // temporary backwards compatibility
+				gateRow2[i].ApplyData(geneLogicBoxData.layer2LogicBoxGateData[i]);
+		}
 	}
 }
