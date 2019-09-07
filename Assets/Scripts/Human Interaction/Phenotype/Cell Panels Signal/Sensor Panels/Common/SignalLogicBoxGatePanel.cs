@@ -47,7 +47,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 	public void OnClickedAndOperator() {
 		if (geneLogicBoxGate != null && geneLogicBoxGate.operatorType != LogicOperatorEnum.And) {
 			geneLogicBoxGate.operatorType = LogicOperatorEnum.And;
-			MarkAsNewForge();
+			motherPanel.MarkAsNewForge();
 			MakeDirty();
 		}
 	}
@@ -55,7 +55,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 	public void OnClickedOrOperator() {
 		if (geneLogicBoxGate != null && geneLogicBoxGate.operatorType != LogicOperatorEnum.Or) {
 			geneLogicBoxGate.operatorType = LogicOperatorEnum.Or;
-			MarkAsNewForge();
+			motherPanel.MarkAsNewForge();
 			MakeDirty();
 		}
 	}
@@ -64,7 +64,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 		if (geneLogicBoxGate != null) {
 			geneLogicBoxGate.isUsed = false;
 			motherPanel.UpdateConnections();
-			MarkAsNewForge();
+			motherPanel.MarkAsNewForge();
 			motherPanel.MakeDirty();
 		}
 	}
@@ -72,7 +72,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 	public void OnClickedLeftFlankLeft() {
 		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveLeftFlankLeft()) {
 			motherPanel.UpdateConnections();
-			MarkAsNewForge();
+			motherPanel.MarkAsNewForge();
 			motherPanel.MakeDirty();
 		}
 	}
@@ -80,7 +80,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 	public void OnClickedLeftFlankRight() {
 		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveLeftFlankRight()) {
 			motherPanel.UpdateConnections();
-			MarkAsNewForge();
+			motherPanel.MarkAsNewForge();
 			motherPanel.MakeDirty();
 		}
 	}
@@ -88,7 +88,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 	public void OnClickedRightFlankRight() {
 		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveRightFlankRight()) {
 			motherPanel.UpdateConnections();
-			MarkAsNewForge();
+			motherPanel.MarkAsNewForge();
 			motherPanel.MakeDirty();
 		}
 	}
@@ -96,18 +96,8 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 	public void OnClickedRightFlankLeft() {
 		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveRightFlankLeft()) {
 			motherPanel.UpdateConnections();
-			MarkAsNewForge();
+			motherPanel.MarkAsNewForge();
 			motherPanel.MakeDirty();
-		}
-	}
-
-
-	private void MarkAsNewForge() {
-		CreatureSelectionPanel.instance.MakeDirty();
-		GenomePanel.instance.MakeDirty();
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
-			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}
 	}
 
@@ -183,8 +173,6 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 			return geneLogicBoxGate.row;
 		}
 	}
-
-
 
 	public Gene selectedGene {
 		get {

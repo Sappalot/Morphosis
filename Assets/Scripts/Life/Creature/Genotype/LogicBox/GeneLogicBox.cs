@@ -16,7 +16,7 @@ public class GeneLogicBox {
 
 	public GeneLogicBox() {
 		gateRow0 = new GeneLogicBoxGate(this, 0);
-		for (int g = 0; g < 2; g++) {
+		for (int g = 0; g < maxGatesPerLayer; g++) {
 			gateRow1[g] = new GeneLogicBoxGate(this, 1);
 			gateRow2[g] = new GeneLogicBoxGate(this, 2);
 		}
@@ -26,24 +26,17 @@ public class GeneLogicBox {
 	}
 
 	public void UpdateConnections() {
-		// Row 0
-		gateRow0.inputComponents.Clear();
-		// look for gates in row 1: connect to all ot them
-		foreach (GeneLogicBoxGate sender in gateRow1) {
-			if (sender.isUsed) {
-				gateRow0.inputComponents.Add(sender);
-			}
+		// Row 2
+		// Clear
+		foreach (GeneLogicBoxGate gate in gateRow2) {
+			gate.inputComponents.Clear();
 		}
-		// look for gates in row 2: connnect to all that are not (even partly) blocked by gates in row 1
-		foreach(GeneLogicBoxGate sender in gateRow2) {
-			if (sender.isUsed && !HasGateAbove(sender)) {
-				gateRow0.inputComponents.Add(sender);
-			}
-		}
-		//look for input in row 3: connect to all that are not blocked by gates in row 1 and 2
-		for (int column = 0; column < columnCount; column++) {
-			if (!IsCellOccupiedByGate(1, column) && !IsCellOccupiedByGate(2, column)) {
-				gateRow0.inputComponents.Add(inputRow3[column]);
+		// look for input in row 3: connect to all 
+		foreach (GeneLogicBoxGate gate in gateRow2) {
+			if (gate.isUsed) {
+				for (int column = gate.GetColumnRightOfFlank(gate.leftFlank); column <= gate.GetColumnLeftOfFlank(gate.rightFlank); column++) {
+					gate.inputComponents.Add(inputRow3[column]);
+				}
 			}
 		}
 
@@ -73,20 +66,26 @@ public class GeneLogicBox {
 			}
 		}
 
-		// Row 2
-		// Clear
-		foreach (GeneLogicBoxGate gate in gateRow2) {
-			gate.inputComponents.Clear();
-		}
-		// look for input in row 3: connect to all 
-		foreach (GeneLogicBoxGate gate in gateRow2) {
-			if (gate.isUsed) {
-				for (int column = gate.GetColumnRightOfFlank(gate.leftFlank); column <= gate.GetColumnLeftOfFlank(gate.rightFlank); column++) {
-					gate.inputComponents.Add(inputRow3[column]);
-				}
+		// Row 0
+		gateRow0.inputComponents.Clear();
+		// look for gates in row 1: connect to all ot them
+		foreach (GeneLogicBoxGate sender in gateRow1) {
+			if (sender.isUsed) {
+				gateRow0.inputComponents.Add(sender);
 			}
 		}
-
+		// look for gates in row 2: connnect to all that are not (even partly) blocked by gates in row 1
+		foreach(GeneLogicBoxGate sender in gateRow2) {
+			if (sender.isUsed && !HasGateAbove(sender)) {
+				gateRow0.inputComponents.Add(sender);
+			}
+		}
+		//look for input in row 3: connect to all that are not blocked by gates in row 1 and 2
+		for (int column = 0; column < columnCount; column++) {
+			if (!IsCellOccupiedByGate(1, column) && !IsCellOccupiedByGate(2, column)) {
+				gateRow0.inputComponents.Add(inputRow3[column]);
+			}
+		}
 	}
 
 	public bool HasGateAbove(GeneLogicBoxGate gate) {
@@ -185,26 +184,48 @@ public class GeneLogicBox {
 	// Save
 	private GeneLogicBoxData geneLogicBoxData = new GeneLogicBoxData();
 	public GeneLogicBoxData UpdateData() {
+		// Row 0
 		geneLogicBoxData.layer0LogicBoxGateData = gateRow0.UpdateData();
+		
+		// Row 1
 		for (int i = 0; i < geneLogicBoxData.layer1LogicBoxGateData.Length; i++) {
 			geneLogicBoxData.layer1LogicBoxGateData[i] = gateRow1[i].UpdateData();
 		}
+
+		// Row 2 
 		for (int i = 0; i < geneLogicBoxData.layer2LogicBoxGateData.Length; i++) {
 			geneLogicBoxData.layer2LogicBoxGateData[i] = gateRow2[i].UpdateData();
 		}
+
+		// Row 3 input
+		for (int i = 0; i < geneLogicBoxData.layer3LogicBoxInputData.Length; i++) {
+			geneLogicBoxData.layer3LogicBoxInputData[i] = inputRow3[i].UpdateData();
+		}
+
 		return geneLogicBoxData;
 	}
 
 	// Load
 	public void ApplyData(GeneLogicBoxData geneLogicBoxData) {
+		// Row 0
 		gateRow0.ApplyData(geneLogicBoxData.layer0LogicBoxGateData);
+		
+		// Row 1
 		for (int i = 0; i < gateRow1.Length; i++) {
-			//if (geneLogicBoxData.layer1LogicBoxGateData.Length > 0) // temporary backwards compatibility
+			if (geneLogicBoxData.layer1LogicBoxGateData.Length > 0) // temporary backwards compatibility
 				gateRow1[i].ApplyData(geneLogicBoxData.layer1LogicBoxGateData[i]);
 		}
+		
+		// Row 2
 		for (int i = 0; i < gateRow2.Length; i++) {
-			//if (geneLogicBoxData.layer2LogicBoxGateData.Length > 0) // temporary backwards compatibility
+			if (geneLogicBoxData.layer2LogicBoxGateData.Length > 0) // temporary backwards compatibility
 				gateRow2[i].ApplyData(geneLogicBoxData.layer2LogicBoxGateData[i]);
+		}
+
+		// Row 3 Input
+		for (int i = 0; i < inputRow3.Length; i++) {
+			if (geneLogicBoxData.layer3LogicBoxInputData.Length > 0) // temporary backwards compatibility
+				inputRow3[i].ApplyData(geneLogicBoxData.layer3LogicBoxInputData[i]);
 		}
 
 		UpdateConnections();

@@ -15,6 +15,7 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 	private SignalLogicBoxGatePanel gateLayer0;
 	private SignalLogicBoxGatePanel[] gatesLayer1 = new SignalLogicBoxGatePanel[GeneLogicBox.maxGatesPerLayer];
 	private SignalLogicBoxGatePanel[] gatesLayer2 = new SignalLogicBoxGatePanel[GeneLogicBox.maxGatesPerLayer];
+	public SignalLogicBoxInputPanel[] inputLayer3 = new SignalLogicBoxInputPanel[GeneLogicBox.maxGatesPerLayer];
 
 	private GeneLogicBox geneLogicBox;
 
@@ -58,14 +59,16 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 				} else {
 					gatesLayer2[column] = gate;
 				}
-
 			}
 		}
-
 		gateTemplate.gameObject.SetActive(false);
 
+		// Initialize input boxes
+		foreach (SignalLogicBoxInputPanel s in inputLayer3) {
+			s.Initialize(mode, this);
+		}
+
 		MakeDirty();
-		// TODO: istantiate enough of the gates to the other layers as well
 	}
 
 	public void ConnectToGeneLogic(GeneLogicBox geneLogicBox) {
@@ -78,6 +81,18 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 			for (int i = 0; i < geneLogicBox.gateRow2.Length; i++) {
 				gatesLayer2[i].geneLogicBoxGate = geneLogicBox.gateRow2[i];
 			}
+			for (int i = 0; i < geneLogicBox.inputRow3.Length; i++) {
+				inputLayer3[i].geneLogicBoxInput = geneLogicBox.inputRow3[i];
+			}
+		}
+	}
+
+	public void MarkAsNewForge() {
+		CreatureSelectionPanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
+		if (CreatureSelectionPanel.instance.hasSoloSelected) {
+			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}
 	}
 
@@ -97,15 +112,6 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 		}
 	}
 
-	private void MarkAsNewForge() {
-		CreatureSelectionPanel.instance.MakeDirty();
-		GenomePanel.instance.MakeDirty();
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
-			CreatureSelectionPanel.instance.soloSelected.generation = 1;
-		}
-	}
-
 	private bool isDirty = false;
 	public void MakeDirty() {
 		isDirty = true;
@@ -118,9 +124,14 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 			}
 
 			gateLayer0.MakeDirty();
-			for (int i = 0; i < GeneLogicBox.maxGatesPerLayer; i++) {
+			for (int i = 0; i < gatesLayer1.Length; i++) {
 				gatesLayer1[i].MakeDirty();
+			}
+			for (int i = 0; i < gatesLayer2.Length; i++) {
 				gatesLayer2[i].MakeDirty();
+			}
+			for (int i = 0; i < inputLayer3.Length; i++) {
+				inputLayer3[i].MakeDirty();
 			}
 
 			outputLabel.text = outputText;
