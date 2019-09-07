@@ -134,7 +134,7 @@ public class Gene {
 		eggCellFertilizeLogic.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, true);
 		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.Or, 1, 3, false);
 		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.And);
-
+		eggCellFertilizeLogic.UpdateConnections();
 	}
 
 	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {

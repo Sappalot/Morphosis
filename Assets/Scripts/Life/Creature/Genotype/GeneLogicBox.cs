@@ -21,6 +21,16 @@ public class GeneLogicBox {
 		}
 	}
 
+	public void UpdateConnections() {
+		//row 0
+		gateRow0.inputGates.Clear();
+		foreach (GeneLogicBoxGate sender in gateRow1) {
+			if (sender.isUsed) {
+				gateRow0.inputGates.Add(sender);
+			}
+		}
+	}
+
 	public void RemoveAllGates() {
 		gateRow0.isUsed = false;
 		foreach (GeneLogicBoxGate g in gateRow1) {
@@ -130,5 +140,7 @@ public class GeneLogicBox {
 			//if (geneLogicBoxData.layer2LogicBoxGateData.Length > 0) // temporary backwards compatibility
 				gateRow2[i].ApplyData(geneLogicBoxData.layer2LogicBoxGateData[i]);
 		}
+
+		UpdateConnections();
 	}
 }

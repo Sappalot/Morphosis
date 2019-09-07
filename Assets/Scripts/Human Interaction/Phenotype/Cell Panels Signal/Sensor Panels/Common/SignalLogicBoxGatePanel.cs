@@ -8,6 +8,8 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 	public Image andButtonImage;
 	public Image orButtonImage;
 
+	public Image[] inputArrows = new Image[5];
+
 	private bool isMouseHoverng;
 
 	public GeneLogicBoxGate geneLogicBoxGate;
@@ -61,6 +63,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 	public void OnClickedDelete() {
 		if (geneLogicBoxGate != null) {
 			geneLogicBoxGate.isUsed = false;
+			motherPanel.UpdateConnections();
 			MarkAsNewForge();
 			motherPanel.MakeDirty();
 		}
@@ -68,6 +71,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 
 	public void OnClickedLeftFlankLeft() {
 		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveLeftFlankLeft()) {
+			motherPanel.UpdateConnections();
 			MarkAsNewForge();
 			motherPanel.MakeDirty();
 		}
@@ -75,6 +79,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 
 	public void OnClickedLeftFlankRight() {
 		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveLeftFlankRight()) {
+			motherPanel.UpdateConnections();
 			MarkAsNewForge();
 			motherPanel.MakeDirty();
 		}
@@ -82,6 +87,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 
 	public void OnClickedRightFlankRight() {
 		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveRightFlankRight()) {
+			motherPanel.UpdateConnections();
 			MarkAsNewForge();
 			motherPanel.MakeDirty();
 		}
@@ -89,6 +95,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 
 	public void OnClickedRightFlankLeft() {
 		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveRightFlankLeft()) {
+			motherPanel.UpdateConnections();
 			MarkAsNewForge();
 			motherPanel.MakeDirty();
 		}
@@ -116,11 +123,33 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 				operatorTypeLabel.text = "???";
 			}
 
+			if (geneLogicBoxGate.isUsed) {
+				//Scale and position
+				GetComponent<RectTransform>().sizeDelta = new Vector2(SignalLogicBoxPanel.cellWidth * (geneLogicBoxGate.rightFlank - geneLogicBoxGate.leftFlank), SignalLogicBoxPanel.cellHeight);
+				transform.position = motherPanel.gateGridOrigo + Vector3.right * geneLogicBoxGate.leftFlank * SignalLogicBoxPanel.cellWidth + Vector3.down * geneLogicBoxGate.row * SignalLogicBoxPanel.cellHeight;
+			} else {
+				transform.position = motherPanel.gateGridOrigo + Vector3.right * 500f;
+			}
+
 			buttonOverlay.SetActive(isMouseHoverng);
 			if (buttonOverlay && geneLogicBoxGate != null) {
 				
 				andButtonImage.color = geneLogicBoxGate.operatorType == LogicOperatorEnum.And ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 				orButtonImage.color = geneLogicBoxGate.operatorType == LogicOperatorEnum.Or ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+			}
+
+			// input arrows
+			foreach (Image i in inputArrows) {
+				i.gameObject.SetActive(false);
+			}
+
+			int arrowIndex = 0;
+			foreach (GeneLogicBoxGate g in geneLogicBoxGate.inputGates) {
+				inputArrows[arrowIndex].gameObject.SetActive(true);
+
+				inputArrows[arrowIndex].transform.position = motherPanel.gateGridOrigo + Vector3.right * (g.leftFlank + g.rightFlank) * 0.5f * SignalLogicBoxPanel.cellWidth + Vector3.down * (geneLogicBoxGate.row + 1) * SignalLogicBoxPanel.cellHeight;
+
+				arrowIndex++;
 			}
 
 			isDirty = false;

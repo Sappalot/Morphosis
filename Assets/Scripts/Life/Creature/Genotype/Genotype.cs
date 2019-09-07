@@ -191,7 +191,7 @@ public class Genotype : MonoBehaviour {
 
 	public void GenomeEmpty() {
 		for (int index = 0; index < genomeLength; index++) {
-			genome[index] = new Gene(index);
+			genome[index] = new Gene(index); // TODO: recycle genome instead of creating new one
 		}
 		for (int index = 0; index < genomeLength; index++) {
 			genome[index].SetDefault(genome);

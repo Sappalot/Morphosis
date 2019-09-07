@@ -18,17 +18,14 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 
 	private GeneLogicBox geneLogicBox;
 
-	public void ConnectToGeneLogic(GeneLogicBox geneLogicBox) {
-		this.geneLogicBox = geneLogicBox;
-		if (gateLayer0 != null) {
-			gateLayer0.geneLogicBoxGate = geneLogicBox.gateRow0;
-			for (int i = 0; i < geneLogicBox.gateRow1.Length; i++) {
-				gatesLayer1[i].geneLogicBoxGate = geneLogicBox.gateRow1[i]; // just map strait off, doesn't really matter
-			}
-			for (int i = 0; i < geneLogicBox.gateRow2.Length; i++) {
-				gatesLayer2[i].geneLogicBoxGate = geneLogicBox.gateRow2[i];
-			}
+	public Vector3 gateGridOrigo {
+		get {
+			return gateTemplate.transform.position;
 		}
+	}
+
+	public void UpdateConnections() {
+		geneLogicBox.UpdateConnections();
 	}
 
 	[HideInInspector]
@@ -61,10 +58,9 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 				} else {
 					gatesLayer2[column] = gate;
 				}
-				
+
 			}
 		}
-
 
 		gateTemplate.gameObject.SetActive(false);
 
@@ -72,15 +68,30 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 		// TODO: istantiate enough of the gates to the other layers as well
 	}
 
+	public void ConnectToGeneLogic(GeneLogicBox geneLogicBox) {
+		this.geneLogicBox = geneLogicBox;
+		if (gateLayer0 != null) {
+			gateLayer0.geneLogicBoxGate = geneLogicBox.gateRow0;
+			for (int i = 0; i < geneLogicBox.gateRow1.Length; i++) {
+				gatesLayer1[i].geneLogicBoxGate = geneLogicBox.gateRow1[i]; // just map strait off, doesn't really matter
+			}
+			for (int i = 0; i < geneLogicBox.gateRow2.Length; i++) {
+				gatesLayer2[i].geneLogicBoxGate = geneLogicBox.gateRow2[i];
+			}
+		}
+	}
+
 	public void OnClickedAddGateRow1() {
-		if (geneLogicBox.TryCreateGate(1, LogicOperatorEnum.And)) {
+		if (geneLogicBox.TryCreateGate(1, LogicOperatorEnum.And) && mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome) {
+			UpdateConnections();
 			MarkAsNewForge();
 			MakeDirty();
 		}
 	}
 
 	public void OnClickedAddGateRow2() {
-		if (geneLogicBox.TryCreateGate(2, LogicOperatorEnum.And)) {
+		if (geneLogicBox.TryCreateGate(2, LogicOperatorEnum.And) && mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome) {
+			UpdateConnections();
 			MarkAsNewForge();
 			MakeDirty();
 		}
@@ -106,31 +117,12 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 				Debug.Log("Update Signal logic box");
 			}
 
-			// update all gates (depending on respective input)
 			gateLayer0.MakeDirty();
-
 			for (int i = 0; i < GeneLogicBox.maxGatesPerLayer; i++) {
 				gatesLayer1[i].MakeDirty();
-				if (gatesLayer1[i].geneLogicBoxGate != null) {
-					if (gatesLayer1[i].geneLogicBoxGate.isUsed) {
-						gatesLayer1[i].transform.position = gateTemplate.transform.position + Vector3.right * gatesLayer1[i].geneLogicBoxGate.leftFlank * cellWidth + Vector3.down * 1f * cellHeight;
-						gatesLayer1[i].GetComponent<RectTransform>().sizeDelta = new Vector2(cellWidth * (gatesLayer1[i].geneLogicBoxGate.rightFlank - gatesLayer1[i].geneLogicBoxGate.leftFlank), cellHeight);
-					} else {
-						gatesLayer1[i].transform.position = gateTemplate.transform.position + Vector3.right * 500f;
-					}
-				}
-			}
-			for (int i = 0; i < GeneLogicBox.maxGatesPerLayer; i++) {
 				gatesLayer2[i].MakeDirty();
-				if (gatesLayer2[i].geneLogicBoxGate != null) {
-					if (gatesLayer2[i].geneLogicBoxGate.isUsed) {
-						gatesLayer2[i].transform.position = gateTemplate.transform.position + Vector3.right * gatesLayer2[i].geneLogicBoxGate.leftFlank * cellWidth + Vector3.down * 2f * cellHeight;
-						gatesLayer2[i].GetComponent<RectTransform>().sizeDelta = new Vector2(cellWidth * (gatesLayer2[i].geneLogicBoxGate.rightFlank - gatesLayer2[i].geneLogicBoxGate.leftFlank), cellHeight);
-					} else {
-						gatesLayer2[i].transform.position = gateTemplate.transform.position + Vector3.right * 500f;
-					}
-				}
 			}
+
 			outputLabel.text = outputText;
 			isDirty = false;
 		}

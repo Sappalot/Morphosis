@@ -1,4 +1,6 @@
-﻿public class GeneLogicBoxGate {
+﻿using System.Collections.Generic;
+
+public class GeneLogicBoxGate {
 
 	public LogicOperatorEnum operatorType = LogicOperatorEnum.And;
 	public int leftFlank = 1;
@@ -7,7 +9,10 @@
 
 	public bool isLocked = false; // No need to save/load this one as it is hardcoded, set by gene (would be the same every time)
 
-	private int row;
+
+	public List<GeneLogicBoxGate> inputGates = new List<GeneLogicBoxGate>();
+
+	public int row;
 	private GeneLogicBox geneLogicBox;
 	public GeneLogicBoxGate(GeneLogicBox geneLogicBox, int row) {
 		this.geneLogicBox = geneLogicBox;
