@@ -2,8 +2,8 @@
 using UnityEngine.UI;
 
 public class SignalLogicBoxPanel : MonoBehaviour {
-	private static Vector2 layerSize = new Vector2(270f, 40f);
-	public static float cellWidth = layerSize.x * (1f / 5f);
+	private static Vector2 rowSize = new Vector2(270f, 40f);
+	public static float cellWidth = rowSize.x * (1f / 5f);
 	public static float cellHeight = 40;
 
 	[HideInInspector]
@@ -12,10 +12,10 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 	public Text outputLabel;
 	public SignalLogicBoxGatePanel gateTemplate;
 
-	private SignalLogicBoxGatePanel gateLayer0;
-	private SignalLogicBoxGatePanel[] gatesLayer1 = new SignalLogicBoxGatePanel[GeneLogicBox.maxGatesPerLayer];
-	private SignalLogicBoxGatePanel[] gatesLayer2 = new SignalLogicBoxGatePanel[GeneLogicBox.maxGatesPerLayer];
-	public SignalLogicBoxInputPanel[] inputLayer3 = new SignalLogicBoxInputPanel[GeneLogicBox.maxGatesPerLayer];
+	private SignalLogicBoxGatePanel gateRow0;
+	private SignalLogicBoxGatePanel[] gatesRow1 = new SignalLogicBoxGatePanel[GeneLogicBox.maxGatesPerRow];
+	private SignalLogicBoxGatePanel[] gatesRow2 = new SignalLogicBoxGatePanel[GeneLogicBox.maxGatesPerRow];
+	public SignalLogicBoxInputPanel[] inputRow3 = new SignalLogicBoxInputPanel[GeneLogicBox.maxGatesPerRow];
 
 	private GeneLogicBox geneLogicBox;
 
@@ -39,14 +39,14 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 	public void Initialize(PhenoGenoEnum mode) {
 		this.mode = mode;
 
-		gateLayer0 = GameObject.Instantiate(gateTemplate, transform);
-		gateLayer0.transform.position = gateTemplate.transform.position + Vector3.right * 0f * cellWidth + Vector3.down * 0f * cellHeight;
-		gateLayer0.transform.SetAsFirstSibling();
-		gateLayer0.Initialize(mode, this);
+		gateRow0 = GameObject.Instantiate(gateTemplate, transform);
+		gateRow0.transform.position = gateTemplate.transform.position + Vector3.right * 0f * cellWidth + Vector3.down * 0f * cellHeight;
+		gateRow0.transform.SetAsFirstSibling();
+		gateRow0.Initialize(mode, this);
 
 		// create small gate pool
 		for (int row = 1; row < GeneLogicBox.rowCount; row++) {
-			for (int column = 0; column < GeneLogicBox.maxGatesPerLayer; column++) {
+			for (int column = 0; column < GeneLogicBox.maxGatesPerRow; column++) {
 				SignalLogicBoxGatePanel gate = GameObject.Instantiate(gateTemplate, transform);
 				gate.GetComponent<RectTransform>().sizeDelta = new Vector2(cellWidth, cellHeight);
 				gate.transform.position = gateTemplate.transform.position + Vector3.right * column * cellWidth + Vector3.down * row * cellHeight;
@@ -55,16 +55,16 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 				gate.gameObject.SetActive(true);
 
 				if (row == 1) {
-					gatesLayer1[column] = gate;
+					gatesRow1[column] = gate;
 				} else {
-					gatesLayer2[column] = gate;
+					gatesRow2[column] = gate;
 				}
 			}
 		}
 		gateTemplate.gameObject.SetActive(false);
 
 		// Initialize input boxes
-		foreach (SignalLogicBoxInputPanel s in inputLayer3) {
+		foreach (SignalLogicBoxInputPanel s in inputRow3) {
 			s.Initialize(mode, this);
 		}
 
@@ -73,16 +73,16 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 
 	public void ConnectToGeneLogic(GeneLogicBox geneLogicBox) {
 		this.geneLogicBox = geneLogicBox;
-		if (gateLayer0 != null) {
-			gateLayer0.geneLogicBoxGate = geneLogicBox.gateRow0;
+		if (gateRow0 != null) {
+			gateRow0.geneLogicBoxGate = geneLogicBox.gateRow0;
 			for (int i = 0; i < geneLogicBox.gateRow1.Length; i++) {
-				gatesLayer1[i].geneLogicBoxGate = geneLogicBox.gateRow1[i]; // just map strait off, doesn't really matter
+				gatesRow1[i].geneLogicBoxGate = geneLogicBox.gateRow1[i]; // just map strait off, doesn't really matter
 			}
 			for (int i = 0; i < geneLogicBox.gateRow2.Length; i++) {
-				gatesLayer2[i].geneLogicBoxGate = geneLogicBox.gateRow2[i];
+				gatesRow2[i].geneLogicBoxGate = geneLogicBox.gateRow2[i];
 			}
 			for (int i = 0; i < geneLogicBox.inputRow3.Length; i++) {
-				inputLayer3[i].geneLogicBoxInput = geneLogicBox.inputRow3[i];
+				inputRow3[i].geneLogicBoxInput = geneLogicBox.inputRow3[i];
 			}
 		}
 	}
@@ -97,7 +97,7 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 	}
 
 	public void OnClickedAddGateRow1() {
-		if (geneLogicBox.TryCreateGate(1, LogicOperatorEnum.And) && mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome) {
+		if (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && geneLogicBox.TryCreateGate(1, LogicOperatorEnum.And)) {
 			UpdateConnections();
 			MarkAsNewForge();
 			MakeDirty();
@@ -105,7 +105,7 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 	}
 
 	public void OnClickedAddGateRow2() {
-		if (geneLogicBox.TryCreateGate(2, LogicOperatorEnum.And) && mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome) {
+		if (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && geneLogicBox.TryCreateGate(2, LogicOperatorEnum.And)) {
 			UpdateConnections();
 			MarkAsNewForge();
 			MakeDirty();
@@ -123,15 +123,15 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 				Debug.Log("Update Signal logic box");
 			}
 
-			gateLayer0.MakeDirty();
-			for (int i = 0; i < gatesLayer1.Length; i++) {
-				gatesLayer1[i].MakeDirty();
+			gateRow0.MakeDirty();
+			for (int i = 0; i < gatesRow1.Length; i++) {
+				gatesRow1[i].MakeDirty();
 			}
-			for (int i = 0; i < gatesLayer2.Length; i++) {
-				gatesLayer2[i].MakeDirty();
+			for (int i = 0; i < gatesRow2.Length; i++) {
+				gatesRow2[i].MakeDirty();
 			}
-			for (int i = 0; i < inputLayer3.Length; i++) {
-				inputLayer3[i].MakeDirty();
+			for (int i = 0; i < inputRow3.Length; i++) {
+				inputRow3[i].MakeDirty();
 			}
 
 			outputLabel.text = outputText;

@@ -27,21 +27,23 @@ public class SignalLogicBoxInputPanel : MonoBehaviour {
 	}
 
 	public void OnMotherBlockClicked() {
-		if (mode == PhenoGenoEnum.Phenotype) {
+		if (mode == PhenoGenoEnum.Phenotype || ignoreSliderMoved) {
 			return;
 		}
 		geneLogicBoxInput.valveMode = SignalFlowValveEnum.Block;
 		motherPanel.MarkAsNewForge();
+		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
 		MakeDirty();
 	}
 
 	public void OnMotherPassClicked() {
-		if (mode == PhenoGenoEnum.Phenotype) {
+		if (mode == PhenoGenoEnum.Phenotype || ignoreSliderMoved) {
 			return;
 		}
 		geneLogicBoxInput.valveMode = SignalFlowValveEnum.Pass;
 		motherPanel.MarkAsNewForge();
+		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
 		MakeDirty();
 	}

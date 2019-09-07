@@ -2,12 +2,24 @@
 
 public class GeneLogicBoxGate : GeneLogicBoxComponent {
 	public LogicOperatorEnum operatorType = LogicOperatorEnum.And;
-	public bool isUsed = false;
-
+	public List<GeneLogicBoxComponent> inputsConnected = new List<GeneLogicBoxComponent>(); // store conections even if they are not used
+	
+	public bool isUsed = false; // is taking place inside logic box (might be blocked, might not)
+	
 	private GeneLogicBox geneLogicBox;
 	public GeneLogicBoxGate(GeneLogicBox geneLogicBox, int row) {
 		this.geneLogicBox = geneLogicBox;
 		this.row = row;
+	}
+
+	public override int GetTransmittingInputCount() {
+		int count = 0;
+		foreach (GeneLogicBoxComponent i in inputsConnected) {
+			if (i.isTransmittingSignal) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public bool TryMoveLeftFlankLeft() {

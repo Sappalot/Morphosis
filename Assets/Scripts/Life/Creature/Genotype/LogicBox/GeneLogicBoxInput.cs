@@ -13,6 +13,9 @@ public class GeneLogicBoxInput : GeneLogicBoxComponent {
 		rightFlank = GetFlankRightOfColumn(column);
 	}
 
+	public override int GetTransmittingInputCount() {
+		return isTransmittingSignal ? 1 : 0;
+	}
 
 	// Save
 	private GeneLogicBoxInputData geneLogicBoxInputData = new GeneLogicBoxInputData();

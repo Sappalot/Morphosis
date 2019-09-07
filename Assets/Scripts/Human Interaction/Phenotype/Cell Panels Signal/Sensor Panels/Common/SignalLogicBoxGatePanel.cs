@@ -108,7 +108,13 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 			}
 
 			if (geneLogicBoxGate != null) {
-				operatorTypeLabel.text = geneLogicBoxGate.operatorType.ToString() + (geneLogicBoxGate.isLocked ? " (L)" : "");
+				if (geneLogicBoxGate.GetTransmittingInputCount() <= 1) {
+					operatorTypeLabel.text = "'" + geneLogicBoxGate.operatorType.ToString().ToLower() + "'" + (geneLogicBoxGate.isLocked ? " (L)" : "");
+				} else {
+					operatorTypeLabel.text = geneLogicBoxGate.operatorType.ToString().ToUpper() + (geneLogicBoxGate.isLocked ? " (L)" : "");
+				}
+				
+				operatorTypeLabel.color = geneLogicBoxGate.isTransmittingSignal ? ColorScheme.instance.signalOff : Color.gray;
 			} else {
 				operatorTypeLabel.text = "???";
 			}
@@ -118,12 +124,11 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 				GetComponent<RectTransform>().sizeDelta = new Vector2(SignalLogicBoxPanel.cellWidth * (geneLogicBoxGate.rightFlank - geneLogicBoxGate.leftFlank), SignalLogicBoxPanel.cellHeight);
 				transform.position = motherPanel.gateGridOrigo + Vector3.right * geneLogicBoxGate.leftFlank * SignalLogicBoxPanel.cellWidth + Vector3.down * geneLogicBoxGate.row * SignalLogicBoxPanel.cellHeight;
 			} else {
-				transform.position = motherPanel.gateGridOrigo + Vector3.right * 500f;
+				transform.position = motherPanel.gateGridOrigo + Vector3.right * 1500f;
 			}
 
 			buttonOverlay.SetActive(isMouseHoverng);
 			if (buttonOverlay && geneLogicBoxGate != null) {
-				
 				andButtonImage.color = geneLogicBoxGate.operatorType == LogicOperatorEnum.And ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 				orButtonImage.color = geneLogicBoxGate.operatorType == LogicOperatorEnum.Or ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 			}
@@ -134,7 +139,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 			}
 
 			int arrowIndex = 0;
-			foreach (GeneLogicBoxComponent inputComponent in geneLogicBoxGate.inputComponents) {
+			foreach (GeneLogicBoxComponent inputComponent in geneLogicBoxGate.inputsConnected) {
 				inputArrows[arrowIndex].gameObject.SetActive(true);
 				int targetLeftFlank = 0;
 				int targetRightFlank = 0;
@@ -145,10 +150,9 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 					targetLeftFlank = inputComponent.leftFlank;
 					targetRightFlank = inputComponent.rightFlank;
 				}
-
 				inputArrows[arrowIndex].transform.position = motherPanel.gateGridOrigo + Vector3.right * (targetLeftFlank + targetRightFlank) * 0.5f * SignalLogicBoxPanel.cellWidth + Vector3.down * ((row + 1) * SignalLogicBoxPanel.cellHeight - 10f);
-
 				inputArrows[arrowIndex].GetComponent<RectTransform>().sizeDelta = new Vector3(20f, Mathf.Max(20f, 20f + SignalLogicBoxPanel.cellHeight * (inputComponent.row - row - 1)), 1f);
+				inputArrows[arrowIndex].GetComponent<Image>().color = inputComponent.isTransmittingSignal ? ColorScheme.instance.signalOff : Color.gray;
 				arrowIndex++;
 			}
 

@@ -6,9 +6,8 @@ public abstract class GeneLogicBoxComponent {
 	public int rightFlank;
 
 	public bool isLocked = false; // No need to save/load this one as it is hardcoded, set by gene (would be the same every time)
-
-	public List<GeneLogicBoxComponent> inputComponents = new List<GeneLogicBoxComponent>();
-
+	public bool isTransmittingSignal = false;
+	
 	public int width {
 		get {
 			return rightFlank - leftFlank;
@@ -34,4 +33,6 @@ public abstract class GeneLogicBoxComponent {
 	public virtual bool IsOccupyingColumn(int column) {
 		return leftFlank <= column && rightFlank > column;
 	}
+
+	public abstract int GetTransmittingInputCount();
 }
