@@ -650,7 +650,7 @@ public class Creature : MonoBehaviour {
 
 	public void UpdateGraphics() {
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
-			if (phenotype.isAlive && SpatialUtil.IsInsideFrustum(phenotype.originCell.position)) {
+			if (phenotype.isAlive && (!phenotype.hasOriginCell || SpatialUtil.IsInsideFrustum(phenotype.originCell.position))) {
 				// Entering frustum
 				isInsideFrustum = true;
 				phenotype.UpdateGraphics(this);

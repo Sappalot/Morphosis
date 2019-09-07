@@ -154,7 +154,7 @@ public class EggCellPanel : MetabolismCellPanel {
 				detatchEnergySlider.value = selectedGene.eggCellDetatchEnergyThreshold;
 				detatchEnergySliderText.text = string.Format("Can't grow more and cell energy ≥ {0:F1}%", selectedGene.eggCellDetatchEnergyThreshold * 100f);
 
-				fertilizeLogicBoxPanel.geneLogicBox = selectedGene.eggCellFertilizeLogic;
+				fertilizeLogicBoxPanel.ConnectToGeneLogic(selectedGene.eggCellFertilizeLogic); // We need the connection human interface ==> gene logic (in order to update gene from interface (input) and interface from gene (output))
 
 				ignoreSliderMoved = false;
 			}

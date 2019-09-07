@@ -8,12 +8,11 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 	public Image andButtonImage;
 	public Image orButtonImage;
 
-	private GeneLogicBoxGate gate;
 	private bool isMouseHoverng;
 
-
-
 	public GeneLogicBoxGate geneLogicBoxGate;
+
+	private SignalLogicBoxPanel motherPanel;
 
 	[HideInInspector]
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
@@ -22,8 +21,9 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 		return mode;
 	}
 
-	public void Initialize(PhenoGenoEnum mode) {
+	public void Initialize(PhenoGenoEnum mode, SignalLogicBoxPanel motherPanel) {
 		this.mode = mode;
+		this.motherPanel = motherPanel;
 	}
 
 	private bool isDirty = false;
@@ -33,8 +33,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 	}
 
 	public void OnPointerEnterArea() {
-		isMouseHoverng = (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome);
-		
+		isMouseHoverng = (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && !geneLogicBoxGate.isLocked);
 		MakeDirty();
 	}
 
@@ -59,6 +58,43 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 		}
 	}
 
+	public void OnClickedDelete() {
+		if (geneLogicBoxGate != null) {
+			geneLogicBoxGate.isUsed = false;
+			MarkAsNewForge();
+			motherPanel.MakeDirty();
+		}
+	}
+
+	public void OnClickedLeftFlankLeft() {
+		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveLeftFlankLeft()) {
+			MarkAsNewForge();
+			motherPanel.MakeDirty();
+		}
+	}
+
+	public void OnClickedLeftFlankRight() {
+		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveLeftFlankRight()) {
+			MarkAsNewForge();
+			motherPanel.MakeDirty();
+		}
+	}
+
+	public void OnClickedRightFlankRight() {
+		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveRightFlankRight()) {
+			MarkAsNewForge();
+			motherPanel.MakeDirty();
+		}
+	}
+
+	public void OnClickedRightFlankLeft() {
+		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveRightFlankLeft()) {
+			MarkAsNewForge();
+			motherPanel.MakeDirty();
+		}
+	}
+
+
 	private void MarkAsNewForge() {
 		CreatureSelectionPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -75,7 +111,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 			}
 
 			if (geneLogicBoxGate != null) {
-				operatorTypeLabel.text = geneLogicBoxGate.operatorType.ToString();
+				operatorTypeLabel.text = geneLogicBoxGate.operatorType.ToString() + (geneLogicBoxGate.isLocked ? " (L)" : "");
 			} else {
 				operatorTypeLabel.text = "???";
 			}

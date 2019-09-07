@@ -127,6 +127,14 @@ public class Gene {
 		arrangements[0] = new Arrangement();
 		arrangements[1] = new Arrangement();
 		arrangements[2] = new Arrangement();
+
+		// egg
+		// Force gateLayer0 to And, lock it so that it cant be changed by apply (= load)
+
+		eggCellFertilizeLogic.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, true);
+		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.Or, 1, 3, false);
+		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.And);
+
 	}
 
 	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
@@ -440,7 +448,7 @@ public class Gene {
 		}
 		eggCellHibernateWhenAttachedToMother = geneData.eggCellHibernateWhenAttachedToMother;
 		eggCellHibernateWhenAttachedToChild = geneData.eggCellHibernateWhenAttachedToChild;
-		eggCellFertilizeLogic = new GeneLogicBox(geneData.eggFertilizeLogicBoxData);
+		eggCellFertilizeLogic.ApplyData(geneData.eggFertilizeLogicBoxData); // An operator for gate atl level 0 might be set here, though it is overridden in constructor
 
 		// Jaw
 		jawCellCannibalizeKin =      geneData.jawCellCannibalizeKin;

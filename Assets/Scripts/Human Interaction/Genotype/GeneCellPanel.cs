@@ -83,7 +83,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 
 		sensorPanels[0] = effectSensorPanel;
 		foreach (SensorPanel s in sensorPanels) {
-			s.SetMode(PhenoGenoEnum.Genotype);
+			//s.SetMode(PhenoGenoEnum.Genotype);
 		}
 
 		cellBuildPriorityPanel.mode = PhenoGenoEnum.Genotype;
@@ -105,7 +105,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 		axonCellPanel.MakeDirty();
 
 		foreach (SensorPanel s in sensorPanels) {
-			s.MakeDirty();
+			//s.MakeDirty();
 		}
 
 		cellBuildPriorityPanel.MakeDirty();
@@ -162,7 +162,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 			}
 
 			foreach (SensorPanel s in sensorPanels) {
-				s.gameObject.SetActive(false);
+				//s.gameObject.SetActive(false);
 			}
 
 			metabolismCellTypeDropdown.interactable = false;
