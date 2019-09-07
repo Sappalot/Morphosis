@@ -1,32 +1,17 @@
 ﻿using System.Collections.Generic;
 
-public class GeneLogicBoxGate {
-
+public class GeneLogicBoxGate : GeneLogicBoxComponent {
 	public LogicOperatorEnum operatorType = LogicOperatorEnum.And;
-	public int leftFlank = 1;
-	public int rightFlank = 3;
 	public bool isUsed = false;
 
-	public bool isLocked = false; // No need to save/load this one as it is hardcoded, set by gene (would be the same every time)
-
-
-	public List<GeneLogicBoxGate> inputGates = new List<GeneLogicBoxGate>();
-
-	public int row;
 	private GeneLogicBox geneLogicBox;
 	public GeneLogicBoxGate(GeneLogicBox geneLogicBox, int row) {
 		this.geneLogicBox = geneLogicBox;
 		this.row = row;
 	}
 
-	public int width {
-		get {
-			return rightFlank - leftFlank;
-		}
-	}
-
 	public bool TryMoveLeftFlankLeft() {
-		if (leftFlank > 0 && !geneLogicBox.IsCellOccupied(row, GetColumnLeftOfFlank(leftFlank))) {
+		if (leftFlank > 0 && !geneLogicBox.IsCellOccupiedByGate(row, GetColumnLeftOfFlank(leftFlank))) {
 			leftFlank--;
 			return true;
 		}
@@ -45,7 +30,7 @@ public class GeneLogicBoxGate {
 	}
 
 	public bool TryMoveRightFlankRight() {
-		if (rightFlank < GeneLogicBox.rightmostFlank && !geneLogicBox.IsCellOccupied(row, GetColumnRightOfFlank(rightFlank))) {
+		if (rightFlank < GeneLogicBox.rightmostFlank && !geneLogicBox.IsCellOccupiedByGate(row, GetColumnRightOfFlank(rightFlank))) {
 			rightFlank++;
 			return true;
 		}
@@ -63,19 +48,9 @@ public class GeneLogicBoxGate {
 		return false;
 	}
 
-	private int GetColumnLeftOfFlank(int flank) {
-		return flank - 1;
+	public override bool IsOccupyingColumn(int column) {
+		return (isUsed && base.IsOccupyingColumn(column));
 	}
-
-	private int GetColumnRightOfFlank(int flank) {
-		return flank;
-	}
-
-	public bool IsOccupyingColumn(int column) {
-		return (isUsed && leftFlank <= column && rightFlank > column);
-	}
-
-
 
 	// Save
 	private GeneLogicBoxGateData geneLogicBoxGateData = new GeneLogicBoxGateData();

@@ -144,17 +144,47 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 			}
 
 			int arrowIndex = 0;
-			foreach (GeneLogicBoxGate g in geneLogicBoxGate.inputGates) {
+			foreach (GeneLogicBoxComponent inputComponent in geneLogicBoxGate.inputComponents) {
 				inputArrows[arrowIndex].gameObject.SetActive(true);
+				int targetLeftFlank = 0;
+				int targetRightFlank = 0;
+				if (row == 1 && inputComponent.row == 2) {
+					targetLeftFlank = Mathf.Max(inputComponent.leftFlank, leftFlank);
+					targetRightFlank = Mathf.Min(inputComponent.rightFlank, rightFlank);
+				} else {
+					targetLeftFlank = inputComponent.leftFlank;
+					targetRightFlank = inputComponent.rightFlank;
+				}
 
-				inputArrows[arrowIndex].transform.position = motherPanel.gateGridOrigo + Vector3.right * (g.leftFlank + g.rightFlank) * 0.5f * SignalLogicBoxPanel.cellWidth + Vector3.down * (geneLogicBoxGate.row + 1) * SignalLogicBoxPanel.cellHeight;
+				inputArrows[arrowIndex].transform.position = motherPanel.gateGridOrigo + Vector3.right * (targetLeftFlank + targetRightFlank) * 0.5f * SignalLogicBoxPanel.cellWidth + Vector3.down * ((row + 1) * SignalLogicBoxPanel.cellHeight - 10f);
 
+				inputArrows[arrowIndex].GetComponent<RectTransform>().sizeDelta = new Vector3(20f, Mathf.Max(20f, 20f + SignalLogicBoxPanel.cellHeight * (inputComponent.row - row - 1)), 1f);
 				arrowIndex++;
 			}
 
 			isDirty = false;
 		}
 	}
+
+	private int leftFlank {
+		get {
+			return geneLogicBoxGate.leftFlank;
+		}
+	}
+
+	private int rightFlank {
+		get {
+			return geneLogicBoxGate.rightFlank;
+		}
+	}
+
+	private int row {
+		get {
+			return geneLogicBoxGate.row;
+		}
+	}
+
+
 
 	public Gene selectedGene {
 		get {
