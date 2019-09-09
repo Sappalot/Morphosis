@@ -152,7 +152,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 				}
 				inputArrows[arrowIndex].transform.position = motherPanel.gateGridOrigo + Vector3.right * (targetLeftFlank + targetRightFlank) * 0.5f * SignalLogicBoxPanel.cellWidth + Vector3.down * ((row + 1) * SignalLogicBoxPanel.cellHeight - 10f);
 				inputArrows[arrowIndex].GetComponent<RectTransform>().sizeDelta = new Vector3(20f, Mathf.Max(20f, 20f + SignalLogicBoxPanel.cellHeight * (inputComponent.row - row - 1)), 1f);
-				inputArrows[arrowIndex].GetComponent<Image>().color = inputComponent.isTransmittingSignal ? ColorScheme.instance.signalOff : Color.gray;
+				inputArrows[arrowIndex].GetComponent<Image>().color = inputComponent.isTransmittingSignal ? ColorScheme.instance.signalOff : ColorScheme.instance.signalGrayedOut;
 				arrowIndex++;
 			}
 

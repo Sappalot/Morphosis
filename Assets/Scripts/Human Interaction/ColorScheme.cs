@@ -51,6 +51,7 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 
 	public Color signalOn;
 	public Color signalOff;
+	public Color signalGrayedOut;
 
 	public Color grayedOut;
 
