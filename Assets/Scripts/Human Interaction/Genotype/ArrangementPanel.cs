@@ -5,7 +5,7 @@ public class ArrangementPanel : MonoBehaviour {
 	public Toggle enableToggle;
 	public GameObject circles;
 	[HideInInspector]
-	public GeneNeighboursPanel genePanel;
+	public GeneNeighboursComponentPanel genePanel;
 
 	public Image grayOut;
 	public GameObject arrangementButtons;

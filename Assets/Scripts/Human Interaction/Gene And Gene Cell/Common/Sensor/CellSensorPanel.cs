@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class SensorPanel : MonoBehaviour {
+public abstract class CellSensorPanel : MonoBehaviour {
 	[HideInInspector]
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 	protected bool ignoreSliderMoved = false;

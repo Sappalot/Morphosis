@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class GeneNeighboursPanel : MonoBehaviour {
+public class GeneNeighboursComponentPanel : MonoBehaviour {
 	public GameObject circles;
 
 	private bool isDirty = true;
@@ -24,7 +24,7 @@ public class GeneNeighboursPanel : MonoBehaviour {
 			RectTransform spawnTransform = arrangementPanels[index].GetComponent<RectTransform>();
 			spawnTransform.position = originalTransform.position + Vector3.right * index * (originalTransform.rect.width + 2);
 
-			arrangementPanels[index].genePanel = this; 
+			arrangementPanels[index].genePanel = this;  
 		}
 
 		arrangementPanelTemplate.gameObject.SetActive(false);

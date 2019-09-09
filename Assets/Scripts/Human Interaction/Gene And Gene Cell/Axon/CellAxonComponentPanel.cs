@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class AxonCellPanel : MetabolismCellPanel {
+public class CellAxonComponentPanel : CellWorkPanel {
 	public Toggle enabledToggle;
 	public Text enabledText;
 
 	public Text fromOriginOffsetText;
 	public Text fromOriginDeg0Text;
-	public Text fromOriginDeg360Text;
+	public Text fromOriginDeg360Text; 
 	public Slider fromOriginOffsetSlider;
 	public Toggle fromOriginPlus180Toggle;
 	public Text fromOriginPlus180Text;
@@ -23,7 +23,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 	public Slider relaxContractSlider;
 
 	public Toggle reverseToggle;
-	public Text reverseText;
+	public Text reverseText; 
 
 	// TODO: Graph
 
@@ -147,7 +147,7 @@ public class AxonCellPanel : MetabolismCellPanel {
 				relaxContractSlider.value = GeneCellPanel.instance.selectedGene.axonRelaxContract;
 				relaxContractRelaxContractText.text = string.Format("Relax/Contract offset: {0:F2}", GeneCellPanel.instance.selectedGene.axonRelaxContract);
 
-				reverseToggle.isOn = GeneCellPanel.instance.selectedGene.axonIsReverse;
+				reverseToggle.isOn = GeneCellPanel.instance.selectedGene.axonIsReverse; 
 
 				ignoreSliderMoved = false;
 			}

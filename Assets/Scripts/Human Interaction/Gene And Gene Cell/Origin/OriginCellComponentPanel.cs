@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class OriginCellPanel : MonoBehaviour {
+public class OriginCellComponentPanel : MonoBehaviour {
 	public Text detatchConditionsText;
 
 	[HideInInspector]
@@ -20,7 +20,7 @@ public class OriginCellPanel : MonoBehaviour {
 		ignoreSliderMoved = false;
 	}
 
-	public void OnPulseFrequenzySliderMoved() {
+	public void OnPulseFrequenzySliderMoved() { 
 		if (ignoreSliderMoved) {
 			return;
 		}

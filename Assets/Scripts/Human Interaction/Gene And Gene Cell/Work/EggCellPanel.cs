@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class EggCellPanel : MetabolismCellPanel {
+public class EggCellPanel : CellWorkPanel {
 	public Text productionEffectText;
 
 	public HibernatePanel hibernatePanel;
@@ -24,7 +24,7 @@ public class EggCellPanel : MetabolismCellPanel {
 	public Text detatchEnergySliderText;
 	public Slider detatchEnergySlider;
 
-	public SignalLogicBoxPanel fertilizeLogicBoxPanel;
+	public SignalLogicBoxPanel fertilizeLogicBoxPanel; 
 
 	public override void Initialize(PhenoGenoEnum mode) {
 		hibernatePanel.SetMode(mode);

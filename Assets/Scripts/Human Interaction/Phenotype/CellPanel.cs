@@ -2,8 +2,7 @@
 using UnityEngine.UI;
 
 public class CellPanel : MonoSingleton<CellPanel> {
-	// Metabolism
-
+	// Overview
 	public Text typeHeading;
 
 	//----- Shold be same as the top of GeneCellPanel 
@@ -29,32 +28,32 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public Button hurtButton;
 	public Button deleteButton;
 
-	public Dropdown metabolismCellTypeDropdown;
+	public Dropdown cellWorkTypeDropdown;
 
 	
 
 	//----- ^ Shold be same as the top of GeneCellPanel ^
 
 	// Metabolism -> specific
-	public MetabolismCellPanel eggCellPanel;
-	public MetabolismCellPanel fungalCellPanel;
-	public MetabolismCellPanel jawCellPanel;
-	public MetabolismCellPanel leafCellPanel;
-	public MetabolismCellPanel muscleCellPanel;
-	public MetabolismCellPanel rootCellPanel;
-	public MetabolismCellPanel shellCellPanel;
-	public MetabolismCellPanel veinCellPanel;
-	private MetabolismCellPanel[] metabolismCellPanels = new MetabolismCellPanel[8];
+	public CellWorkPanel eggCellPanel;
+	public CellWorkPanel fungalCellPanel;
+	public CellWorkPanel jawCellPanel;
+	public CellWorkPanel leafCellPanel;
+	public CellWorkPanel muscleCellPanel;
+	public CellWorkPanel rootCellPanel;
+	public CellWorkPanel shellCellPanel;
+	public CellWorkPanel veinCellPanel;
+	private CellWorkPanel[] metabolismCellPanels = new CellWorkPanel[8];
 
-	public AxonCellPanel axonCellPanel;
-	private SensorPanel[] sensorPanels = new SensorPanel[1];
-	public SensorPanel effectSensorPanel;
+	public CellAxonComponentPanel axonCellPanel;
+	private CellSensorPanel[] sensorPanels = new CellSensorPanel[1];
+	public CellSensorPanel effectSensorPanel;
 	// TODO: more sensor panels
 
-	public CellBuildPriorityPanel cellBuildPriorityPanel;
-	public OriginCellPanel originCellPanel;
+	public CellBuildPriorityComponentPanel cellBuildPriorityPanel;
+	public OriginCellComponentPanel originCellPanel;
 
-	public GeneNeighboursPanel geneNeighbourPanel;
+	public GeneNeighboursComponentPanel geneNeighbourPanel;
 
 	override public void Init() {
 		isDirty = true;
@@ -66,14 +65,14 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		metabolismCellPanels[5] = shellCellPanel;
 		metabolismCellPanels[6] = rootCellPanel;
 		metabolismCellPanels[7] = veinCellPanel;
-		foreach (MetabolismCellPanel m in metabolismCellPanels) {
+		foreach (CellWorkPanel m in metabolismCellPanels) {
 			m.Initialize(PhenoGenoEnum.Phenotype);
 		}
 
 		axonCellPanel.Initialize(PhenoGenoEnum.Phenotype);
 
 		sensorPanels[0] = effectSensorPanel;
-		foreach (SensorPanel s in sensorPanels) {
+		foreach (CellSensorPanel s in sensorPanels) {
 			s.SetMode(PhenoGenoEnum.Phenotype);
 		}
 		
@@ -89,13 +88,13 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public void MakeDirty() {
 		isDirty = true;
 
-		foreach (MetabolismCellPanel m in metabolismCellPanels) {
+		foreach (CellWorkPanel m in metabolismCellPanels) {
 			m.MakeDirty();
 		}
 
 		axonCellPanel.MakeDirty();
 
-		foreach (SensorPanel s in sensorPanels) {
+		foreach (CellSensorPanel s in sensorPanels) {
 			s.MakeDirty();
 		}
 		
@@ -158,15 +157,15 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			}
 
 			//All off, we may turn on 1 of them later 
-			foreach (MetabolismCellPanel m in metabolismCellPanels) {
+			foreach (CellWorkPanel m in metabolismCellPanels) {
 				m.gameObject.SetActive(false);
 			}
 
-			foreach (SensorPanel s in sensorPanels) {
+			foreach (CellSensorPanel s in sensorPanels) {
 				s.gameObject.SetActive(false);
 			}
 
-			metabolismCellTypeDropdown.interactable = false; //can't change cell type
+			cellWorkTypeDropdown.interactable = false; //can't change cell type
 
 			energyBar.effectMeasure = EffectTempEnum.None;
 			if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.effect) {
@@ -249,35 +248,35 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			deleteButton.gameObject.SetActive(true);
 
 			if (selectedCell.GetCellType() == CellTypeEnum.Egg) {
-				metabolismCellTypeDropdown.value = 0;
+				cellWorkTypeDropdown.value = 0;
 				eggCellPanel.gameObject.SetActive(true);
 				eggCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Fungal) {
-				metabolismCellTypeDropdown.value = 1;
+				cellWorkTypeDropdown.value = 1;
 				fungalCellPanel.gameObject.SetActive(true);
 				fungalCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Jaw) {
-				metabolismCellTypeDropdown.value = 2;
+				cellWorkTypeDropdown.value = 2;
 				jawCellPanel.gameObject.SetActive(true);
 				jawCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Leaf) {
-				metabolismCellTypeDropdown.value = 3;
+				cellWorkTypeDropdown.value = 3;
 				leafCellPanel.gameObject.SetActive(true);
 				leafCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Muscle) {
-				metabolismCellTypeDropdown.value = 4;
+				cellWorkTypeDropdown.value = 4;
 				muscleCellPanel.gameObject.SetActive(true);
 				muscleCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Root) {
-				metabolismCellTypeDropdown.value = 5;
+				cellWorkTypeDropdown.value = 5;
 				rootCellPanel.gameObject.SetActive(true);
 				rootCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Shell) {
-				metabolismCellTypeDropdown.value = 6;
+				cellWorkTypeDropdown.value = 6;
 				shellCellPanel.gameObject.SetActive(true);
 				shellCellPanel.MakeDirty();
 			} else if (selectedCell.GetCellType() == CellTypeEnum.Vein) {
-				metabolismCellTypeDropdown.value = 7;
+				cellWorkTypeDropdown.value = 7;
 				veinCellPanel.gameObject.SetActive(true);
 				veinCellPanel.MakeDirty();
 			}

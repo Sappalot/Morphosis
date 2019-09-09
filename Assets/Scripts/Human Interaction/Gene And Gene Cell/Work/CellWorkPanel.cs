@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class MetabolismCellPanel : MonoBehaviour {
+public abstract class CellWorkPanel : MonoBehaviour {
 	[HideInInspector]
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 	protected bool ignoreSliderMoved = false;

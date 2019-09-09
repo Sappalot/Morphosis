@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class CellBuildPriorityPanel : MonoBehaviour {
+public class CellBuildPriorityComponentPanel : MonoBehaviour {
 	public Text buildIndexText;
 	public Text buildPriorityBiasText;
 

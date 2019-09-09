@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class EffectSensorPanel : SensorPanel {
+public class EffectSensorPanel : CellSensorPanel {
 	public Image output;
 
 	public Text effectThresholdSliderLabel;
