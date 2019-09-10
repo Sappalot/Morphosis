@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class SignalLogicBoxInputPanel : MonoBehaviour {
+public class LogicBoxInputPanel : MonoBehaviour {
 	public Image motherBlockBackground;
 	public Image motherPassBackground;
 
@@ -10,10 +10,10 @@ public class SignalLogicBoxInputPanel : MonoBehaviour {
 
 	private bool isDirty = false;
 	private bool ignoreSliderMoved = false;
-	private SignalLogicBoxPanel motherPanel;
+	private LogicBoxPanel motherPanel;
 	public GeneLogicBoxInput geneLogicBoxInput;
 
-	public void Initialize(PhenoGenoEnum mode, SignalLogicBoxPanel motherPanel) {
+	public void Initialize(PhenoGenoEnum mode, LogicBoxPanel motherPanel) {
 		this.mode = mode;
 		this.motherPanel = motherPanel;
 	}

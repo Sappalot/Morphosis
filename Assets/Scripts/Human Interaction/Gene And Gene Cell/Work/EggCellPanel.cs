@@ -24,7 +24,7 @@ public class EggCellPanel : CellWorkPanel {
 	public Text detatchEnergySliderText;
 	public Slider detatchEnergySlider;
 
-	public SignalLogicBoxPanel fertilizeLogicBoxPanel; 
+	public LogicBoxPanel fertilizeLogicBoxPanel; 
 
 	public override void Initialize(PhenoGenoEnum mode) {
 		hibernatePanel.SetMode(mode);

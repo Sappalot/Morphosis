@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class SignalLogicBoxGatePanel : MonoBehaviour {
+public class LogicBoxGatePanel : MonoBehaviour {
 	public Text operatorTypeLabel;
 
 	public GameObject buttonOverlay;
@@ -14,7 +14,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 
 	public GeneLogicBoxGate geneLogicBoxGate;
 
-	private SignalLogicBoxPanel motherPanel;
+	private LogicBoxPanel motherPanel;
 
 	[HideInInspector]
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
@@ -23,7 +23,7 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 		return mode;
 	}
 
-	public void Initialize(PhenoGenoEnum mode, SignalLogicBoxPanel motherPanel) {
+	public void Initialize(PhenoGenoEnum mode, LogicBoxPanel motherPanel) {
 		this.mode = mode;
 		this.motherPanel = motherPanel;
 	}
@@ -121,8 +121,8 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 
 			if (geneLogicBoxGate.isUsed) {
 				//Scale and position
-				GetComponent<RectTransform>().sizeDelta = new Vector2(SignalLogicBoxPanel.cellWidth * (geneLogicBoxGate.rightFlank - geneLogicBoxGate.leftFlank), SignalLogicBoxPanel.cellHeight);
-				transform.position = motherPanel.gateGridOrigo + Vector3.right * geneLogicBoxGate.leftFlank * SignalLogicBoxPanel.cellWidth + Vector3.down * geneLogicBoxGate.row * SignalLogicBoxPanel.cellHeight;
+				GetComponent<RectTransform>().sizeDelta = new Vector2(LogicBoxPanel.cellWidth * (geneLogicBoxGate.rightFlank - geneLogicBoxGate.leftFlank), LogicBoxPanel.cellHeight);
+				transform.position = motherPanel.gateGridOrigo + Vector3.right * geneLogicBoxGate.leftFlank * LogicBoxPanel.cellWidth + Vector3.down * geneLogicBoxGate.row * LogicBoxPanel.cellHeight;
 			} else {
 				transform.position = motherPanel.gateGridOrigo + Vector3.right * 1500f;
 			}
@@ -150,8 +150,8 @@ public class SignalLogicBoxGatePanel : MonoBehaviour {
 					targetLeftFlank = inputComponent.leftFlank;
 					targetRightFlank = inputComponent.rightFlank;
 				}
-				inputArrows[arrowIndex].transform.position = motherPanel.gateGridOrigo + Vector3.right * (targetLeftFlank + targetRightFlank) * 0.5f * SignalLogicBoxPanel.cellWidth + Vector3.down * ((row + 1) * SignalLogicBoxPanel.cellHeight - 10f);
-				inputArrows[arrowIndex].GetComponent<RectTransform>().sizeDelta = new Vector3(20f, Mathf.Max(20f, 20f + SignalLogicBoxPanel.cellHeight * (inputComponent.row - row - 1)), 1f);
+				inputArrows[arrowIndex].transform.position = motherPanel.gateGridOrigo + Vector3.right * (targetLeftFlank + targetRightFlank) * 0.5f * LogicBoxPanel.cellWidth + Vector3.down * ((row + 1) * LogicBoxPanel.cellHeight - 10f);
+				inputArrows[arrowIndex].GetComponent<RectTransform>().sizeDelta = new Vector3(20f, Mathf.Max(20f, 20f + LogicBoxPanel.cellHeight * (inputComponent.row - row - 1)), 1f);
 				inputArrows[arrowIndex].GetComponent<Image>().color = inputComponent.isTransmittingSignal ? ColorScheme.instance.signalOff : ColorScheme.instance.signalGrayedOut;
 				arrowIndex++;
 			}

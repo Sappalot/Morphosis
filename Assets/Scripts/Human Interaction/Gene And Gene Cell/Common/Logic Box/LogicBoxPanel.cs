@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class SignalLogicBoxPanel : MonoBehaviour {
+public class LogicBoxPanel : MonoBehaviour {
 	private static Vector2 rowSize = new Vector2(270f, 40f);
 	public static float cellWidth = rowSize.x * (1f / 5f);
 	public static float cellHeight = 40;
@@ -10,12 +10,12 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 	public string outputText;
 
 	public Text outputLabel;
-	public SignalLogicBoxGatePanel gateTemplate;
+	public LogicBoxGatePanel gateTemplate;
 
-	private SignalLogicBoxGatePanel gateRow0;
-	private SignalLogicBoxGatePanel[] gatesRow1 = new SignalLogicBoxGatePanel[GeneLogicBox.maxGatesPerRow];
-	private SignalLogicBoxGatePanel[] gatesRow2 = new SignalLogicBoxGatePanel[GeneLogicBox.maxGatesPerRow];
-	public SignalLogicBoxInputPanel[] inputRow3 = new SignalLogicBoxInputPanel[GeneLogicBox.maxGatesPerRow];
+	private LogicBoxGatePanel gateRow0;
+	private LogicBoxGatePanel[] gatesRow1 = new LogicBoxGatePanel[GeneLogicBox.maxGatesPerRow];
+	private LogicBoxGatePanel[] gatesRow2 = new LogicBoxGatePanel[GeneLogicBox.maxGatesPerRow];
+	public LogicBoxInputPanel[] inputRow3 = new LogicBoxInputPanel[GeneLogicBox.maxGatesPerRow];
 
 	private GeneLogicBox geneLogicBox;
 
@@ -47,7 +47,7 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 		// create small gate pool
 		for (int row = 1; row < GeneLogicBox.rowCount; row++) {
 			for (int column = 0; column < GeneLogicBox.maxGatesPerRow; column++) {
-				SignalLogicBoxGatePanel gate = GameObject.Instantiate(gateTemplate, transform);
+				LogicBoxGatePanel gate = GameObject.Instantiate(gateTemplate, transform);
 				gate.GetComponent<RectTransform>().sizeDelta = new Vector2(cellWidth, cellHeight);
 				gate.transform.position = gateTemplate.transform.position + Vector3.right * column * cellWidth + Vector3.down * row * cellHeight;
 				gate.transform.SetAsFirstSibling();
@@ -64,7 +64,7 @@ public class SignalLogicBoxPanel : MonoBehaviour {
 		gateTemplate.gameObject.SetActive(false);
 
 		// Initialize input boxes
-		foreach (SignalLogicBoxInputPanel s in inputRow3) {
+		foreach (LogicBoxInputPanel s in inputRow3) {
 			s.Initialize(mode, this);
 		}
 
