@@ -20,6 +20,7 @@ public enum SignalUnitEnum {
 	
 	LogicBox, //Dendrites
 	
+	EffectSensor,
 	SensorA,
 	SensorB,
 	SensorC,

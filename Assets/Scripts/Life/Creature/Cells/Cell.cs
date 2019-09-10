@@ -1680,6 +1680,8 @@ public abstract class Cell : MonoBehaviour {
 			return GetWorkEggCellEnergySensorOutput();
 		} else if (outputUnit == SignalUnitEnum.WorkEggFertilizeLogicBox) {
 			return GetWorkEggCellFertilizeLogicBoxOutput();
+		} else if (outputUnit == SignalUnitEnum.EffectSensor) {
+			return GetEffectSensorOutput();
 		}
 		return false;
 	}
@@ -1689,6 +1691,10 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	protected virtual bool GetWorkEggCellFertilizeLogicBoxOutput() {
+		return false; // only egg responds
+	}
+
+	protected virtual bool GetEffectSensorOutput() {
 		return false; // only egg responds
 	}
 

@@ -25,7 +25,7 @@ public class EnergySensorPanel : CellSensorPanel {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update Effect Sensor Panel");
+				Debug.Log("Update Energy Sensor Panel");
 			}
 
 			if (mode == PhenoGenoEnum.Phenotype) {

@@ -11,6 +11,8 @@ public class Gene {
 	public bool eggCellHibernateWhenAttachedToChild = false;
 	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkEggFertilizeLogicBox, true);
 	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkEggEnergySensor, true);
+
+	public GeneEffectSensor effectSensor = new GeneEffectSensor(SignalUnitEnum.EffectSensor, true);
 	// ^ Egg cell ^
 
 	// Jaw Cell

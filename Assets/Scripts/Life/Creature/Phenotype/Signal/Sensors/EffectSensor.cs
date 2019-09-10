@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnergySensor : Sensor {
+public class EffectSensor : Sensor {
 	
 	public float threshold;
 
-	public EnergySensor(SignalUnitEnum outputUnit) {
+	public EffectSensor(SignalUnitEnum outputUnit) {
 		this.signalUnit = outputUnit;
 	}
 
@@ -15,8 +15,8 @@ public class EnergySensor : Sensor {
 	}
 
 	public override void UpdateOutputs(Cell hostCell, int deltaTicks, ulong worldTicks) {
-		if (signalUnit == SignalUnitEnum.WorkEggEnergySensor) {
-			output = hostCell.energy >= hostCell.gene.eggCellFertilizeEnergySensor.threshold;
+		if (signalUnit == SignalUnitEnum.EffectSensor) {
+			output = hostCell.GetEffect(true, true, true, true) >= hostCell.gene.effectSensor.threshold;
 		} 
 		// Other energy sensor
 		
