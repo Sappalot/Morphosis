@@ -35,15 +35,15 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	//----- ^ Shold be same as the top of GeneCellPanel ^
 
 	// Metabolism -> specific
-	public CellWorkPanel eggCellPanel;
-	public CellWorkPanel fungalCellPanel;
-	public CellWorkPanel jawCellPanel;
-	public CellWorkPanel leafCellPanel;
-	public CellWorkPanel muscleCellPanel;
-	public CellWorkPanel rootCellPanel;
-	public CellWorkPanel shellCellPanel;
-	public CellWorkPanel veinCellPanel;
-	private CellWorkPanel[] metabolismCellPanels = new CellWorkPanel[8];
+	public CellComponentPanel eggCellPanel;
+	public CellComponentPanel fungalCellPanel;
+	public CellComponentPanel jawCellPanel;
+	public CellComponentPanel leafCellPanel;
+	public CellComponentPanel muscleCellPanel;
+	public CellComponentPanel rootCellPanel;
+	public CellComponentPanel shellCellPanel;
+	public CellComponentPanel veinCellPanel;
+	private CellComponentPanel[] metabolismCellPanels = new CellComponentPanel[8];
 
 	public CellAxonComponentPanel axonCellPanel;
 	private CellSensorPanel[] sensorPanels = new CellSensorPanel[1];
@@ -65,7 +65,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		metabolismCellPanels[5] = shellCellPanel;
 		metabolismCellPanels[6] = rootCellPanel;
 		metabolismCellPanels[7] = veinCellPanel;
-		foreach (CellWorkPanel m in metabolismCellPanels) {
+		foreach (CellComponentPanel m in metabolismCellPanels) {
 			m.Initialize(PhenoGenoEnum.Phenotype);
 		}
 
@@ -88,7 +88,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	public void MakeDirty() {
 		isDirty = true;
 
-		foreach (CellWorkPanel m in metabolismCellPanels) {
+		foreach (CellComponentPanel m in metabolismCellPanels) {
 			m.MakeDirty();
 		}
 
@@ -157,7 +157,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			}
 
 			//All off, we may turn on 1 of them later 
-			foreach (CellWorkPanel m in metabolismCellPanels) {
+			foreach (CellComponentPanel m in metabolismCellPanels) {
 				m.gameObject.SetActive(false);
 			}
 

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class JawCellPanel : CellWorkPanel {
+public class JawCellPanel : CellComponentPanel {
 	public Text productionEffectText;
 
 	public HibernatePanel hibernatePanel;

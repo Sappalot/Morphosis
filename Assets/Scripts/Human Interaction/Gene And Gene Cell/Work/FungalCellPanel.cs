@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class FungalCellPanel : CellWorkPanel {
+public class FungalCellPanel : CellComponentPanel {
 
 	private void Update() {
 		if (isDirty) {

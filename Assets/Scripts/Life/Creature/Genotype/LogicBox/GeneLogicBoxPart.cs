@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public abstract class GeneLogicBoxComponent {
+public abstract class GeneLogicBoxPart {
 	public int row;
 	public int leftFlank;
 	public int rightFlank;

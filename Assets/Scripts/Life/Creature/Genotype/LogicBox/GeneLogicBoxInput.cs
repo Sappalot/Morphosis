@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public class GeneLogicBoxInput : GeneLogicBoxComponent {
+public class GeneLogicBoxInput : GeneLogicBoxPart {
 
 	public SignalFlowValveEnum valveMode = SignalFlowValveEnum.Pass;
 

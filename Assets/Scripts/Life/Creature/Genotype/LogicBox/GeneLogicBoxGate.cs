@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-public class GeneLogicBoxGate : GeneLogicBoxComponent {
+public class GeneLogicBoxGate : GeneLogicBoxPart {
 	public LogicOperatorEnum operatorType = LogicOperatorEnum.And;
-	public List<GeneLogicBoxComponent> inputsConnected = new List<GeneLogicBoxComponent>(); // store conections even if they are not used
+	public List<GeneLogicBoxPart> inputsConnected = new List<GeneLogicBoxPart>(); // store conections even if they are not used
 	
 	public bool isUsed = false; // is taking place inside logic box (might be blocked, might not)
 	
@@ -14,7 +14,7 @@ public class GeneLogicBoxGate : GeneLogicBoxComponent {
 
 	public override int GetTransmittingInputCount() {
 		int count = 0;
-		foreach (GeneLogicBoxComponent i in inputsConnected) {
+		foreach (GeneLogicBoxPart i in inputsConnected) {
 			if (i.isTransmittingSignal) {
 				count++;
 			}

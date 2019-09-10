@@ -139,7 +139,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 			}
 
 			int arrowIndex = 0;
-			foreach (GeneLogicBoxComponent inputComponent in geneLogicBoxGate.inputsConnected) {
+			foreach (GeneLogicBoxPart inputComponent in geneLogicBoxGate.inputsConnected) {
 				inputArrows[arrowIndex].gameObject.SetActive(true);
 				int targetLeftFlank = 0;
 				int targetRightFlank = 0;

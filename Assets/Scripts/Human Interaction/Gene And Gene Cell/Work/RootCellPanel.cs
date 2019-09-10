@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class RootCellPanel : CellWorkPanel {
+public class RootCellPanel : CellComponentPanel {
 
 	private void Update() {
 		if (isDirty) {

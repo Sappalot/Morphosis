@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class CellAxonComponentPanel : CellWorkPanel {
+public class CellAxonComponentPanel : CellComponentPanel {
 	public Toggle enabledToggle;
 	public Text enabledText;
 

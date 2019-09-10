@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class VeinCellPanel : CellWorkPanel {
+public class VeinCellPanel : CellComponentPanel {
 	public Text productionEffectText;
 
 	private void Update() {
