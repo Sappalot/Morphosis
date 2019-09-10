@@ -73,7 +73,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 		sensorPanels[0] = effectSensorPanel;
 		foreach (CellSensorPanel s in sensorPanels) {
-			s.SetMode(PhenoGenoEnum.Phenotype);
+			s.mode = PhenoGenoEnum.Phenotype;
 		}
 		
 		cellBuildPriorityPanel.mode = PhenoGenoEnum.Phenotype;
@@ -94,9 +94,9 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 		axonCellPanel.MakeDirty();
 
-		foreach (CellSensorPanel s in sensorPanels) {
-			s.MakeDirty();
-		}
+		//foreach (CellSensorPanel s in sensorPanels) {
+		//	s.MakeDirty();
+		//}
 		
 		cellBuildPriorityPanel.MakeDirty();
 		originCellPanel.MakeDirty();

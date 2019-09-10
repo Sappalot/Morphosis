@@ -1,17 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public abstract class CellSensorPanel : MonoBehaviour {
 	[HideInInspector]
-	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 	protected bool ignoreSliderMoved = false;
 
-	protected PhenoGenoEnum GetMode() {
-		return mode;
-	}
+	[HideInInspector]
+	public PhenoGenoEnum mode { get; set; }
 
-	public virtual void SetMode(PhenoGenoEnum mode) {
+	public void Initialize(PhenoGenoEnum mode) {
 		this.mode = mode;
 	}
 

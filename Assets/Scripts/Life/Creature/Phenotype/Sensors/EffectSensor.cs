@@ -10,7 +10,7 @@ public class EffectSensor : Sensor {
 	}
 
 	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
-		isOutputOn = cell.GetEffect(true, true, true, true) > cell.gene.effectSensorThresholdEffect;
+		//isOutputOn = cell.GetEffect(true, true, true, true) > cell.gene.effectSensorThresholdEffect;
 	}
 
 	public bool IsUnlocked() {

@@ -17,7 +17,7 @@ public class LogicBoxPanel : MonoBehaviour {
 	private LogicBoxGatePanel[] gatesRow2 = new LogicBoxGatePanel[GeneLogicBox.maxGatesPerRow];
 	public LogicBoxInputPanel[] inputRow3 = new LogicBoxInputPanel[GeneLogicBox.maxGatesPerRow];
 
-	private GeneLogicBox geneLogicBox;
+	private GeneLogicBox affectedGeneLogicBox;
 
 	public Vector3 gateGridOrigo {
 		get {
@@ -26,7 +26,7 @@ public class LogicBoxPanel : MonoBehaviour {
 	}
 
 	public void UpdateConnections() {
-		geneLogicBox.UpdateConnections();
+		affectedGeneLogicBox.UpdateConnections();
 	}
 
 	[HideInInspector]
@@ -72,7 +72,7 @@ public class LogicBoxPanel : MonoBehaviour {
 	}
 
 	public void ConnectToGeneLogic(GeneLogicBox geneLogicBox) {
-		this.geneLogicBox = geneLogicBox;
+		affectedGeneLogicBox = geneLogicBox;
 		if (gateRow0 != null) {
 			gateRow0.geneLogicBoxGate = geneLogicBox.gateRow0;
 			for (int i = 0; i < geneLogicBox.gateRow1.Length; i++) {
@@ -97,7 +97,7 @@ public class LogicBoxPanel : MonoBehaviour {
 	}
 
 	public void OnClickedAddGateRow1() {
-		if (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && geneLogicBox.TryCreateGate(1, LogicOperatorEnum.And)) {
+		if (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && affectedGeneLogicBox.TryCreateGate(1, LogicOperatorEnum.And)) {
 			UpdateConnections();
 			MarkAsNewForge();
 			MakeDirty();
@@ -105,7 +105,7 @@ public class LogicBoxPanel : MonoBehaviour {
 	}
 
 	public void OnClickedAddGateRow2() {
-		if (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && geneLogicBox.TryCreateGate(2, LogicOperatorEnum.And)) {
+		if (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && affectedGeneLogicBox.TryCreateGate(2, LogicOperatorEnum.And)) {
 			UpdateConnections();
 			MarkAsNewForge();
 			MakeDirty();

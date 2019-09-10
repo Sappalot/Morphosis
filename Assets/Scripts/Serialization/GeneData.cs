@@ -42,9 +42,9 @@ public class GeneData {
 	public bool axonIsReverse;
 
 	//Sensors
-	public SensorTypeEnum sensorType;
-	public float effectSensorThresholdEffect;
-	public int effectSensorRadius;
+	//public SensorTypeEnum sensorType;
+	//public float effectSensorThresholdEffect;
+	//public int effectSensorRadius;
 
 	public int originPulsePeriodTicks; // ticks / complete wave
 	public float buildPriorityBias;

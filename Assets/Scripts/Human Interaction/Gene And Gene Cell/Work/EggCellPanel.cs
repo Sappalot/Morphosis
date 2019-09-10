@@ -24,12 +24,14 @@ public class EggCellPanel : CellComponentPanel {
 	public Text detatchEnergySliderText;
 	public Slider detatchEnergySlider;
 
-	public LogicBoxPanel fertilizeLogicBoxPanel; 
+	public LogicBoxPanel fertilizeLogicBoxPanel;
+	public EnergySensorPanel fertilizeEnergySensorPanel;
 
 	public override void Initialize(PhenoGenoEnum mode) {
 		hibernatePanel.SetMode(mode);
 		
 		fertilizeLogicBoxPanel.Initialize(mode);
+		fertilizeEnergySensorPanel.Initialize(mode);
 
 		ignoreSliderMoved = true;
 		fertilizeSlider.minValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMin;
@@ -155,6 +157,7 @@ public class EggCellPanel : CellComponentPanel {
 				detatchEnergySliderText.text = string.Format("Can't grow more and cell energy ≥ {0:F1}%", selectedGene.eggCellDetatchEnergyThreshold * 100f);
 
 				fertilizeLogicBoxPanel.ConnectToGeneLogic(selectedGene.eggCellFertilizeLogic); // We need the connection human interface ==> gene logic (in order to update gene from interface (input) and interface from gene (output))
+				fertilizeEnergySensorPanel.ConnectToGeneLogic(selectedGene.eggCellFertilizeEnergySensor);
 
 				ignoreSliderMoved = false;
 			}
@@ -165,6 +168,7 @@ public class EggCellPanel : CellComponentPanel {
 			
 			fertilizeLogicBoxPanel.outputText = "Fertilize";
 			fertilizeLogicBoxPanel.MakeDirty();
+			fertilizeEnergySensorPanel.MakeDirty();
 
 			isDirty = false;
 		}

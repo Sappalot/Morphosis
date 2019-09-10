@@ -56,7 +56,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 
 	public CellAxonComponentPanel axonCellPanel;
 	private CellSensorPanel[] sensorPanels = new CellSensorPanel[1];
-	public CellSensorPanel effectSensorPanel;
+	//public CellSensorPanel effectSensorPanel;
 	// TODO: more sensor panels
 
 	public CellBuildPriorityComponentPanel cellBuildPriorityPanel;
@@ -81,10 +81,10 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 
 		axonCellPanel.Initialize(PhenoGenoEnum.Genotype);
 
-		sensorPanels[0] = effectSensorPanel;
-		foreach (CellSensorPanel s in sensorPanels) {
+		//sensorPanels[0] = effectSensorPanel;
+		//foreach (CellSensorPanel s in sensorPanels) {
 			//s.SetMode(PhenoGenoEnum.Genotype);
-		}
+		//}
 
 		cellBuildPriorityPanel.mode = PhenoGenoEnum.Genotype;
 		originCellPanel.mode = PhenoGenoEnum.Genotype;
@@ -241,12 +241,12 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 			}
 			ignoreMenuChange = false;
 
-			// Sensor ...
-			if (selectedGene.sensorType == SensorTypeEnum.Effect) {
-				effectSensorPanel.gameObject.SetActive(true);
-				effectSensorPanel.MakeDirty();
-			}
-			// ^ Sensor ^
+			//// Sensor ...
+			//if (selectedGene.sensorType == SensorTypeEnum.Effect) {
+			//	effectSensorPanel.gameObject.SetActive(true);
+			//	effectSensorPanel.MakeDirty();
+			//}
+			//// ^ Sensor ^
 
 			if (selectedGene.isOrigin) {
 				originCellPanel.gameObject.SetActive(true);

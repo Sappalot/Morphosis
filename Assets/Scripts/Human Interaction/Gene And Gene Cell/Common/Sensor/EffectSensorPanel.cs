@@ -2,59 +2,59 @@
 using UnityEngine.UI;
 
 public class EffectSensorPanel : CellSensorPanel {
-	public Image output;
+	//public Image output;
 
-	public Text effectThresholdSliderLabel;
-	public Slider effectThresholdSlider;
+	//public Text effectThresholdSliderLabel;
+	//public Slider effectThresholdSlider;
 
-	public Text radiusSliderLabel;
-	public Slider radiusSlider;
+	//public Text radiusSliderLabel;
+	//public Slider radiusSlider;
 
-	public void OnEffectThresholdSliderMoved() {
-		if (ignoreSliderMoved) {
-			return;
-		}
+	//public void OnEffectThresholdSliderMoved() {
+	//	if (ignoreSliderMoved) {
+	//		return;
+	//	}
 
-		selectedGene.effectSensorThresholdEffect = effectThresholdSlider.value;
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
-			CreatureSelectionPanel.instance.soloSelected.generation = 1;
-		}
-		MakeDirty();
-	}
+	//	selectedGene.effectSensorThresholdEffect = effectThresholdSlider.value;
+	//	if (CreatureSelectionPanel.instance.hasSoloSelected) {
+	//		CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+	//		CreatureSelectionPanel.instance.soloSelected.generation = 1;
+	//	}
+	//	MakeDirty();
+	//}
 
-	private void Update() {
-		if (isDirty) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update Effect Sensor Panel");
-			}
+	//private void Update() {
+	//	if (isDirty) {
+	//		if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+	//			Debug.Log("Update Effect Sensor Panel");
+	//		}
 
-			if (GetMode() == PhenoGenoEnum.Phenotype) {
-				if (CellPanel.instance.selectedCell != null) {
-					output.color = selectedCell.signal.effectSensor.isOutputOn ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-				}
+	//		if (GetMode() == PhenoGenoEnum.Phenotype) {
+	//			if (CellPanel.instance.selectedCell != null) {
+	//				output.color = selectedCell.signal.effectSensor.isOutputOn ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+	//			}
 
-				effectThresholdSlider.interactable = false;
+	//			effectThresholdSlider.interactable = false;
 
-				radiusSlider.interactable = false;
+	//			radiusSlider.interactable = false;
 				
 
-			} else if (GetMode() == PhenoGenoEnum.Genotype) {
-				effectThresholdSlider.interactable = IsUnlocked();
+	//		} else if (GetMode() == PhenoGenoEnum.Genotype) {
+	//			effectThresholdSlider.interactable = IsUnlocked();
 
-				radiusSlider.interactable = IsUnlocked();
-			}
+	//			radiusSlider.interactable = IsUnlocked();
+	//		}
 
-			if (selectedGene != null) {
-				ignoreSliderMoved = true;
+	//		if (selectedGene != null) {
+	//			ignoreSliderMoved = true;
 
-				effectThresholdSliderLabel.text = string.Format("On if effect > {0:F1} W", selectedGene.effectSensorThresholdEffect);
-				effectThresholdSlider.value = selectedGene.effectSensorThresholdEffect;
+	//			effectThresholdSliderLabel.text = string.Format("On if effect > {0:F1} W", selectedGene.effectSensorThresholdEffect);
+	//			effectThresholdSlider.value = selectedGene.effectSensorThresholdEffect;
 
-				ignoreSliderMoved = false;
-			}
+	//			ignoreSliderMoved = false;
+	//		}
 
-			isDirty = false;
-		}
-	}
+	//		isDirty = false;
+	//	}
+	//}
 }
