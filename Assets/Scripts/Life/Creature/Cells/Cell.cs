@@ -49,25 +49,6 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public int buildIndex = 0; // The order in which geneCells were developed from origin (also read as steps from origin along gene arrows)
 
-	// Signal ...
-
-	//[HideInInspector]
-	//public Sensor sensor {
-	//	get {
-	//		return signal.sensor;
-	//	}
-	//}
-
-	//[HideInInspector]
-	//public SensorTypeEnum sensorType {
-	//	get {
-	//		return signal.sensorType;
-	//	}
-	//}
-
-	// ^ Signal ^
-
-
 	[HideInInspector]
 	public float buildPriority { // the cell with the lowest(number) buildPriority will be grown first
 		get {
