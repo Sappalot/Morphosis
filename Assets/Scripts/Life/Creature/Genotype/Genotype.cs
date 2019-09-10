@@ -305,7 +305,7 @@ public class Genotype : MonoBehaviour {
 			Clear();
 
 			List<Cell> spawningFromCells = new List<Cell>();
-			Cell origin = SpawnGeneCell(creature, GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite);
+			Cell origin = SpawnGeneCell(creature, GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite);
 			origin.heading = 90f;
 			spawningFromCells.Add(origin);
 
@@ -394,7 +394,7 @@ public class Genotype : MonoBehaviour {
 		
 		cell.mapPosition = mapPosition;
 		cell.buildIndex = buildOrderIndex;
-		cell.gene = gene;
+		cell.SetGene(gene);
 		cell.bindCardinalIndex = bindHeading;
 		cell.flipSide = flipSide;
 		cell.creature = creature;

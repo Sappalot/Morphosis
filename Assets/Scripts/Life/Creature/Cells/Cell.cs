@@ -28,7 +28,17 @@ public abstract class Cell : MonoBehaviour {
 	public Rigidbody2D theRigidBody;
 
 	[HideInInspector]
-	public Gene gene;
+	private Gene m_gene;
+
+	public Gene gene {
+		get {
+			return m_gene;
+		}
+	}
+
+	public virtual void SetGene(Gene gene) {
+		m_gene = gene;
+	}
 
 	[HideInInspector]
 	public FlipSideEnum flipSide;
@@ -41,19 +51,19 @@ public abstract class Cell : MonoBehaviour {
 
 	// Signal ...
 
-	[HideInInspector]
-	public Sensor sensor {
-		get {
-			return signal.sensor;
-		}
-	}
+	//[HideInInspector]
+	//public Sensor sensor {
+	//	get {
+	//		return signal.sensor;
+	//	}
+	//}
 
-	[HideInInspector]
-	public SensorTypeEnum sensorType {
-		get {
-			return signal.sensorType;
-		}
-	}
+	//[HideInInspector]
+	//public SensorTypeEnum sensorType {
+	//	get {
+	//		return signal.sensorType;
+	//	}
+	//}
 
 	// ^ Signal ^
 
@@ -536,7 +546,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	//Note function only called if extended cell type is enabled
-	virtual public void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
+	virtual public void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		didUpdateFunctionThisFrame = 4; // Just for update visuals
 	}
 
@@ -554,17 +564,17 @@ public abstract class Cell : MonoBehaviour {
 
 
 	public void UpdateSpringFrequenzy() {
-		if (HasOwnNeighbourCell(CardinalEnum.north)) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
 			northSpring.frequency = (this.springFrequenzy + northNeighbour.cell.springFrequenzy) / 2f;
 			northSpring.dampingRatio = (this.springDamping + northNeighbour.cell.springDamping) / 2f;
 		}
 
-		if (HasOwnNeighbourCell(CardinalEnum.southWest)) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest)) {
 			southWestSpring.frequency = (this.springFrequenzy + southWestNeighbour.cell.springFrequenzy) / 2f;
 			southWestSpring.dampingRatio = (this.springDamping + southWestNeighbour.cell.springDamping) / 2f;
 		}
 
-		if (HasOwnNeighbourCell(CardinalEnum.southEast)) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast)) {
 			southEastSpring.frequency = (this.springFrequenzy + southEastNeighbour.cell.springFrequenzy) / 2f;
 			southEastSpring.dampingRatio = (this.springDamping + southEastNeighbour.cell.springDamping) / 2f;
 		}
@@ -572,7 +582,7 @@ public abstract class Cell : MonoBehaviour {
 
 	public void UpdateSpringsBreakingForce() {
 		if (northSpring != null) {
-			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north));
+			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.north));
 			if (GetCellType() == CellTypeEnum.Muscle || (neighbourCell != null && neighbourCell.GetCellType() == CellTypeEnum.Muscle)) {
 				northSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForceMuscle;
 			} else {
@@ -580,7 +590,7 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 		if (southWestSpring != null) {
-			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.southWest));
+			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.southWest));
 			if (GetCellType() == CellTypeEnum.Muscle || (neighbourCell != null && neighbourCell.GetCellType() == CellTypeEnum.Muscle)) {
 				southWestSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForceMuscle;
 			} else {
@@ -588,7 +598,7 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 		if (southEastSpring != null) {
-			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.southEast));
+			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.southEast));
 			if (GetCellType() == CellTypeEnum.Muscle || (neighbourCell != null && neighbourCell.GetCellType() == CellTypeEnum.Muscle)) {
 				southEastSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForceMuscle;
 			} else {
@@ -747,7 +757,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 
 		// Sensors...
-		signal.Init(this);
+		//signal.Init(this);
 
 		// ^ Sensors ^
 	}
@@ -759,6 +769,8 @@ public abstract class Cell : MonoBehaviour {
 		//	Destroy(labelCanvas.gameObject);
 		//}
 	}
+
+	
 
 	public void RemoveCellNeighbours() {
 		foreach (CellNeighbour neighbour in cellNeighbourDictionary.Values) {
@@ -935,11 +947,11 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public SpringJoint2D GetSpring(Cell askingCell) {
-		if (HasOwnNeighbourCell(CardinalEnum.north) && askingCell == northNeighbour.cell) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.north) && askingCell == northNeighbour.cell) {
 			return northSpring;
-		} else if (HasOwnNeighbourCell(CardinalEnum.southEast) && askingCell == southEastNeighbour.cell) {
+		} else if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast) && askingCell == southEastNeighbour.cell) {
 			return southEastSpring;
-		} else if (HasOwnNeighbourCell(CardinalEnum.southWest) && askingCell == southWestNeighbour.cell) {
+		} else if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest) && askingCell == southWestNeighbour.cell) {
 			return southWestSpring;
 		}
 		return null;
@@ -952,17 +964,17 @@ public abstract class Cell : MonoBehaviour {
 	public void RemoveNeighbourCell(Cell cell) {
 		for (int i = 0; i < 6; i++) {
 			if (cellNeighbourDictionary[i].cell == cell) {
-				if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalEnum.north) {
+				if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.north) {
 					if (northSpring != null) {
 						northSpring.connectedBody = null;
 						northSpring.enabled = false;
 					}
-				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalEnum.southWest) {
+				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.southWest) {
 					if (southWestSpring != null) {
 						southWestSpring.connectedBody = null;
 						southWestSpring.enabled = false;
 					}
-				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalEnum.southEast) {
+				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.southEast) {
 					if (southEastSpring != null) {
 						southEastSpring.connectedBody = null;
 						southEastSpring.enabled = false;
@@ -982,7 +994,7 @@ public abstract class Cell : MonoBehaviour {
 		return cellNeighbourDictionary[cardinalIndex % 6];
 	}
 
-	protected bool HasOwnNeighbourCell(CardinalEnum cardinalEnum) {
+	protected bool HasOwnNeighbourCell(CardinalDirectionEnum cardinalEnum) {
 		return HasOwnNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum));
 	}
 
@@ -1081,7 +1093,7 @@ public abstract class Cell : MonoBehaviour {
 
 	public void UpdateSpringConnectionsIntra() {
 		// Intra creatures
-		if (HasOwnNeighbourCell(CardinalEnum.north)) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
 			northSpring.connectedBody = northNeighbour.cell.theRigidBody;
 			northSpring.enabled = true;
 		} else {
@@ -1089,7 +1101,7 @@ public abstract class Cell : MonoBehaviour {
 			northSpring.enabled = false;
 		}
 
-		if (HasOwnNeighbourCell(CardinalEnum.southWest)) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest)) {
 			southWestSpring.connectedBody = southWestNeighbour.cell.theRigidBody;
 			southWestSpring.enabled = true;
 		} else {
@@ -1097,7 +1109,7 @@ public abstract class Cell : MonoBehaviour {
 			southWestSpring.enabled = false;
 		}
 
-		if (HasOwnNeighbourCell(CardinalEnum.southEast)) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast)) {
 			southEastSpring.connectedBody = southEastNeighbour.cell.theRigidBody;
 			southEastSpring.enabled = true;
 		} else {
@@ -1534,7 +1546,7 @@ public abstract class Cell : MonoBehaviour {
 
 		ShowOnTop(false);
 
-		gene = null;
+		SetGene(null);
 		id = "trash";
 		predators.Clear();
 		isPlacenta = false;
@@ -1608,7 +1620,7 @@ public abstract class Cell : MonoBehaviour {
 		transform.position = cellData.position;
 		heading = cellData.heading;
 		bindCardinalIndex = cellData.bindCardinalIndex;
-		gene = creature.genotype.genome[cellData.geneIndex];
+		SetGene(creature.genotype.genome[cellData.geneIndex]);
 		mapPosition = cellData.mapPosition;
 		buildIndex = cellData.buildIndex;
 		flipSide = cellData.flipSide;

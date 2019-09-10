@@ -89,7 +89,7 @@ public class CellMap {
 		illegalPositions.Add(gridPosition);
 	}
 
-	public Cell GetGridNeighbourCell(Vector2i gridPosition, CardinalEnum cardinalEnum) {
+	public Cell GetGridNeighbourCell(Vector2i gridPosition, CardinalDirectionEnum cardinalEnum) {
 		return GetGridNeighbourCell(gridPosition, AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum));
 	}
 
@@ -111,7 +111,7 @@ public class CellMap {
 		return retreivedCells;
 	}
 
-	public static Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, CardinalEnum cardinalenum) {
+	public static Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, CardinalDirectionEnum cardinalenum) {
 		return GetGridNeighbourGridPosition(gridPosition, AngleUtil.CardinalEnumToCardinalIndex(cardinalenum));
 	}
 

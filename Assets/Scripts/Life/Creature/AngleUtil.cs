@@ -3,27 +3,27 @@ using UnityEngine;
 
 public static class AngleUtil {
 
-	private static Dictionary<int, CardinalEnum> cardinalIndexToCardinalEnum = new Dictionary<int, CardinalEnum>();
-	private static Dictionary<CardinalEnum, int> cardinalEnumToCardinalIndex = new Dictionary<CardinalEnum, int>();
+	private static Dictionary<int, CardinalDirectionEnum> cardinalIndexToCardinalEnum = new Dictionary<int, CardinalDirectionEnum>();
+	private static Dictionary<CardinalDirectionEnum, int> cardinalEnumToCardinalIndex = new Dictionary<CardinalDirectionEnum, int>();
 	private static Dictionary<int, float> cardinalIndexToAngle = new Dictionary<int, float>();
 	private static Dictionary<int, int> cardinalIndexToArrowIndex = new Dictionary<int, int>();
 	private static Dictionary<int, int> cardinalIndexToFlipCardinalIndex = new Dictionary<int, int>();
 
 
 	static AngleUtil() {
-		cardinalIndexToCardinalEnum.Add(0, CardinalEnum.northEast);
-		cardinalIndexToCardinalEnum.Add(1, CardinalEnum.north);
-		cardinalIndexToCardinalEnum.Add(2, CardinalEnum.northWest);
-		cardinalIndexToCardinalEnum.Add(3, CardinalEnum.southWest);
-		cardinalIndexToCardinalEnum.Add(4, CardinalEnum.south);
-		cardinalIndexToCardinalEnum.Add(5, CardinalEnum.southEast);
+		cardinalIndexToCardinalEnum.Add(0, CardinalDirectionEnum.northEast);
+		cardinalIndexToCardinalEnum.Add(1, CardinalDirectionEnum.north);
+		cardinalIndexToCardinalEnum.Add(2, CardinalDirectionEnum.northWest);
+		cardinalIndexToCardinalEnum.Add(3, CardinalDirectionEnum.southWest);
+		cardinalIndexToCardinalEnum.Add(4, CardinalDirectionEnum.south);
+		cardinalIndexToCardinalEnum.Add(5, CardinalDirectionEnum.southEast);
 
-		cardinalEnumToCardinalIndex.Add(CardinalEnum.northEast, 0);
-		cardinalEnumToCardinalIndex.Add(CardinalEnum.north, 1);
-		cardinalEnumToCardinalIndex.Add(CardinalEnum.northWest, 2);
-		cardinalEnumToCardinalIndex.Add(CardinalEnum.southWest, 3);
-		cardinalEnumToCardinalIndex.Add(CardinalEnum.south, 4);
-		cardinalEnumToCardinalIndex.Add(CardinalEnum.southEast, 5);
+		cardinalEnumToCardinalIndex.Add(CardinalDirectionEnum.northEast, 0);
+		cardinalEnumToCardinalIndex.Add(CardinalDirectionEnum.north, 1);
+		cardinalEnumToCardinalIndex.Add(CardinalDirectionEnum.northWest, 2);
+		cardinalEnumToCardinalIndex.Add(CardinalDirectionEnum.southWest, 3);
+		cardinalEnumToCardinalIndex.Add(CardinalDirectionEnum.south, 4);
+		cardinalEnumToCardinalIndex.Add(CardinalDirectionEnum.southEast, 5);
 
 		cardinalIndexToAngle.Add(0, 30f);
 		cardinalIndexToAngle.Add(1, 90f);
@@ -60,11 +60,11 @@ public static class AngleUtil {
 		cardinalIndexToFlipCardinalIndex.Add(5, 3);
 	}
 
-	public static int CardinalEnumToCardinalIndex(CardinalEnum cardinalDirection) {
+	public static int CardinalEnumToCardinalIndex(CardinalDirectionEnum cardinalDirection) {
 		return cardinalEnumToCardinalIndex[cardinalDirection];
 	}
 
-	public static CardinalEnum CardinalIndexToCardinalEnum(int cardinalIndex) {
+	public static CardinalDirectionEnum CardinalIndexToCardinalEnum(int cardinalIndex) {
 		return cardinalIndexToCardinalEnum[cardinalIndex];
 	}
 
@@ -72,7 +72,7 @@ public static class AngleUtil {
 		return cardinalIndexToAngle[cardinalIndex];
 	}
 
-	public static float CardinalEnumToAngle(CardinalEnum cardinalDirection) {
+	public static float CardinalEnumToAngle(CardinalDirectionEnum cardinalDirection) {
 		return CardinalIndexToAngle(CardinalEnumToCardinalIndex(cardinalDirection));
 	}
 

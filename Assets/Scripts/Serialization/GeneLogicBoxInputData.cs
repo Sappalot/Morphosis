@@ -1,5 +1,5 @@
 ﻿using System;
 [Serializable]
 public class GeneLogicBoxInputData {
-	public SignalFlowValveEnum valveMode;
+	public SignalValveModeEnum valveMode;
 }

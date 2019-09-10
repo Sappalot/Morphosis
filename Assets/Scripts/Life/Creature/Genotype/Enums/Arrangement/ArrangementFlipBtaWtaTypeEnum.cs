@@ -1,6 +1,6 @@
 ﻿using System;
 [Serializable]
 public enum ArrangementFlipBtaWtaTypeEnum {
-    BlackToArrow, //MIRROR
-    WhiteToArrow, //MIRROR
+	BlackToArrow, //MIRROR
+	WhiteToArrow, //MIRROR
 }

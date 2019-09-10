@@ -281,11 +281,11 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				veinCellPanel.MakeDirty();
 			}
 
-			// Sensor ...
-			if (selectedCell.sensorType == SensorTypeEnum.Effect) {
-				effectSensorPanel.gameObject.SetActive(true);
-				effectSensorPanel.MakeDirty();
-			}
+			//// Sensor ...
+			//if (selectedCell.sensorType == SensorTypeEnum.Effect) {
+			//	effectSensorPanel.gameObject.SetActive(true);
+			//	effectSensorPanel.MakeDirty();
+			//}
 			// ^ Sensor ^
 
 			if (selectedCell.isOrigin) {

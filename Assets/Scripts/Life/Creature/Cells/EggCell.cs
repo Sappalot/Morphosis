@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 
 public class EggCell : Cell {
+	public Sensor fertilizeEnergySensor = new EnergySensor(); // locked one
 
-	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
+	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
 			if (IsHibernating()) {
 				effectProductionInternalUp = 0f;
@@ -15,7 +16,7 @@ public class EggCell : Cell {
 				}
 			}
 
-			base.UpdateCellFunction(deltaTicks, worldTicks);
+			base.UpdateCellWork(deltaTicks, worldTicks);
 		} else {
 			effectProductionInternalUp = 0f;
 			effectProductionInternalDown = 0f;

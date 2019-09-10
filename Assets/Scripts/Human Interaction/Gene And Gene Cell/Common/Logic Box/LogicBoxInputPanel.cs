@@ -30,7 +30,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		if (mode == PhenoGenoEnum.Phenotype || ignoreSliderMoved) {
 			return;
 		}
-		geneLogicBoxInput.valveMode = SignalFlowValveEnum.Block;
+		geneLogicBoxInput.valveMode = SignalValveModeEnum.Block;
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
@@ -41,7 +41,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		if (mode == PhenoGenoEnum.Phenotype || ignoreSliderMoved) {
 			return;
 		}
-		geneLogicBoxInput.valveMode = SignalFlowValveEnum.Pass;
+		geneLogicBoxInput.valveMode = SignalValveModeEnum.Pass;
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
@@ -56,8 +56,8 @@ public class LogicBoxInputPanel : MonoBehaviour {
 			ignoreSliderMoved = true;
 
 			if (selectedGene != null) {
-				motherBlockBackground.color = geneLogicBoxInput.valveMode == SignalFlowValveEnum.Block ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
-				motherPassBackground.color = geneLogicBoxInput.valveMode == SignalFlowValveEnum.Pass ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+				motherBlockBackground.color = geneLogicBoxInput.valveMode == SignalValveModeEnum.Block ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+				motherPassBackground.color = geneLogicBoxInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 			}
 
 			ignoreSliderMoved = false;

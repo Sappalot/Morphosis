@@ -2,7 +2,7 @@
 
 public class GeneLogicBoxInput : GeneLogicBoxPart {
 
-	public SignalFlowValveEnum valveMode = SignalFlowValveEnum.Pass;
+	public SignalValveModeEnum valveMode = SignalValveModeEnum.Pass;
 
 	//Todo: have univeral reference to input which is possible to save
 	// from this universal input, we should be able to retreive reference to input

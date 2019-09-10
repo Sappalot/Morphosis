@@ -1,6 +1,6 @@
 ﻿using System;
 [Serializable]
-public enum SignalFlowValveEnum {
+public enum SignalValveModeEnum {
 	Block,
 	Pass,
 }

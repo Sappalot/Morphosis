@@ -310,7 +310,7 @@ public class Phenotype : MonoBehaviour {
 
 		// If first cell => grow origin
 		if (cellList.Count == 0) {
-			SpawnCell(creature, genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalEnum.north), FlipSideEnum.BlackWhite, spawnPosition, true, 30f);
+			SpawnCell(creature, genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, spawnPosition, true, 30f);
 			if (originCell.GetCellType() == CellTypeEnum.Muscle) {
 				((MuscleCell)originCell).UpdateMasterAxon(); // master axon will be me in this case
 			}
@@ -1069,19 +1069,19 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	private Cell SpawnCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindCardinalIndex, FlipSideEnum flipSide, Vector2 position, bool modelSpace, float spawnEnergy) {
-		Cell cell = InstantiateCell(gene.type, mapPosition, creature);
+		Cell cell = InstantiateCell(gene.type, mapPosition);
 
 		Vector2 spawnPosition = (modelSpace ? CellMap.ToModelSpacePosition(mapPosition) : Vector2.zero) + position;
 		cell.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, 0f);
 
 		cell.mapPosition = mapPosition;
 		cell.buildIndex = buildOrderIndex;
-		cell.gene = gene;
+		cell.SetGene(gene);
 		cell.bindCardinalIndex = bindCardinalIndex;
 		cell.flipSide = flipSide;
 		cell.timeOffset = timeOffset;
 		cell.creature = creature;
-		cell.energy = spawnEnergy;
+		cell.energy = spawnEnergy; 
 
 		// Gene settings
 		// Egg
@@ -1096,7 +1096,7 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	//private List<Cell> cellsToReActivate = new List<Cell>();
-	private Cell InstantiateCell(CellTypeEnum type, Vector2i mapPosition, Creature creature) {
+	private Cell InstantiateCell(CellTypeEnum type, Vector2i mapPosition) {
 		Cell cell = null;
 
 		cell = Morphosis.instance.cellPool.Borrow(type);
@@ -1444,13 +1444,13 @@ public class Phenotype : MonoBehaviour {
 			effectSensorTick = 0;
 		}
 
-		for (int index = 0; index < cellList.Count; index++) {
-			Sensor sensor = cellList[index].sensor;
+		//for (int index = 0; index < cellList.Count; index++) {
+		//	Sensor sensor = cellList[index].sensor;
 
-			if (effectSensorTick == 0 && sensor.GetSensorType() == SensorTypeEnum.Effect) {
-				sensor.UpdateCellFunction(GlobalSettings.instance.quality.effectSensorTickPeriod, worldTick);
-			}
-		}
+		//	if (effectSensorTick == 0 && sensor.GetSensorType() == SensorTypeEnum.Effect) {
+		//		sensor.UpdateOutputs(GlobalSettings.instance.quality.effectSensorTickPeriod, worldTick);
+		//	}
+		//}
 	}
 
 	private void UpdateMetabolism(Creature creature, ulong worldTick) {
@@ -1536,22 +1536,22 @@ public class Phenotype : MonoBehaviour {
 
 			if (cell.GetCellType() == CellTypeEnum.Egg) {
 				if (originCell.originPulseTick == 0) {
-					cell.UpdateCellFunction(GlobalSettings.instance.quality.eggCellTickPeriod, worldTick);
+					cell.UpdateCellWork(GlobalSettings.instance.quality.eggCellTickPeriod, worldTick);
 				}
 			} else if (fungalCellTick == 0 && cell.GetCellType() == CellTypeEnum.Fungal) {
-				cell.UpdateCellFunction(GlobalSettings.instance.quality.fungalCellTickPeriod, worldTick);
+				cell.UpdateCellWork(GlobalSettings.instance.quality.fungalCellTickPeriod, worldTick);
 			} else if (jawCellTick == 0 && cell.GetCellType() == CellTypeEnum.Jaw) {
-				cell.UpdateCellFunction(GlobalSettings.instance.quality.jawCellTickPeriod, worldTick);
+				cell.UpdateCellWork(GlobalSettings.instance.quality.jawCellTickPeriod, worldTick);
 			} else if (leafCellTick == 0 && cell.GetCellType() == CellTypeEnum.Leaf) {
-				cell.UpdateCellFunction((int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed), worldTick);
+				cell.UpdateCellWork((int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed), worldTick);
 			} else if (muscleCellTick == 0 && cell.GetCellType() == CellTypeEnum.Muscle) {
-				cell.UpdateCellFunction(GlobalSettings.instance.quality.muscleCellTickPeriod, worldTick);
+				cell.UpdateCellWork(GlobalSettings.instance.quality.muscleCellTickPeriod, worldTick);
 			} else if (rootCellTick == 0 && cell.GetCellType() == CellTypeEnum.Root) {
-				cell.UpdateCellFunction(GlobalSettings.instance.quality.rootCellTickPeriod, worldTick);
+				cell.UpdateCellWork(GlobalSettings.instance.quality.rootCellTickPeriod, worldTick);
 			} else if (shellCellTick == 0 && cell.GetCellType() == CellTypeEnum.Shell) {
-				cell.UpdateCellFunction(GlobalSettings.instance.quality.shellCellTickPeriod, worldTick);
+				cell.UpdateCellWork(GlobalSettings.instance.quality.shellCellTickPeriod, worldTick);
 			} else if (veinCellTick == 0 && cell.GetCellType() == CellTypeEnum.Vein) {
-				cell.UpdateCellFunction(GlobalSettings.instance.quality.veinCellTickPeriod, worldTick);
+				cell.UpdateCellWork(GlobalSettings.instance.quality.veinCellTickPeriod, worldTick);
 			}
 		}
 
@@ -1659,7 +1659,7 @@ public class Phenotype : MonoBehaviour {
 		Setup(phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
 		for (int index = 0; index < phenotypeData.cellDataList.Count; index++) {
 			CellData cellData = phenotypeData.cellDataList[index];
-			Cell cell = InstantiateCell(creature.genotype.genome[cellData.geneIndex].type, cellData.mapPosition, creature);
+			Cell cell = InstantiateCell(creature.genotype.genome[cellData.geneIndex].type, cellData.mapPosition);
 			cell.ApplyData(cellData, creature);
 		}
 		cellsDiffersFromGeneCells = false; //This work is done

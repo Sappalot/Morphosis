@@ -28,7 +28,7 @@ public class GeneLogicBox {
 	public void UpdateConnections() {
 		// Row 3, input
 		foreach (GeneLogicBoxInput input3 in inputRow3) {
-			input3.isTransmittingSignal = input3.valveMode == SignalFlowValveEnum.Pass;
+			input3.isTransmittingSignal = input3.valveMode == SignalValveModeEnum.Pass;
 		}
 
 		// Row 2

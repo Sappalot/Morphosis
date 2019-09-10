@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Sensor : MonoBehaviour {
+public abstract class Sensor {
 	[HideInInspector]
 	protected Cell cell;
 
@@ -12,5 +12,5 @@ public abstract class Sensor : MonoBehaviour {
 		this.cell = cell;
 	}
 
-	public virtual void UpdateCellFunction(int deltaTicks, ulong worldTicks) { }
+	public virtual void UpdateOutputs(int deltaTicks, ulong worldTicks) { }
 }

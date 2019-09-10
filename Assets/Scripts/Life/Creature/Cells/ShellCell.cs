@@ -87,12 +87,12 @@ public class ShellCell : Cell {
 		return Color.Lerp(ColorScheme.instance.shellArmourOpaqueClear.Evaluate(GetNormalizedArmor(armorClass)), ColorScheme.instance.shellArmourTransparentClear.Evaluate(GetNormalizedArmor(armorClass)), GetTransparancy(transparencyClass));
 	}
 
-	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
+	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		if (PhenotypePhysicsPanel.instance.functionShell.isOn) {
 			effectProductionInternalDown = effectCost;//GlobalSettings.instance.phenotype.shellCellEffectCost;
 			effectProductionInternalUp = 0f;
 
-			base.UpdateCellFunction(deltaTicks, worldTicks);
+			base.UpdateCellWork(deltaTicks, worldTicks);
 		} else {
 			effectProductionInternalDown = 0f;
 			effectProductionInternalUp = 0f;

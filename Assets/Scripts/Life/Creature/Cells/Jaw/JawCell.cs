@@ -8,7 +8,7 @@ public class JawCell : Cell {
 	public Dictionary<Cell, Pray> prays = new Dictionary<Cell, Pray>(); //Who am i eating on? Me gain? other lose?
 	private bool deleteFlagged;
 
-	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
+	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		if (deleteFlagged) {
 			return;
 		}
@@ -33,7 +33,7 @@ public class JawCell : Cell {
 				}
 			}
 
-			base.UpdateCellFunction(deltaTicks, worldTicks);
+			base.UpdateCellWork(deltaTicks, worldTicks);
 		} else {
 			mouth.gameObject.SetActive(false);
 			effectProductionPredPrayUp = 0f;

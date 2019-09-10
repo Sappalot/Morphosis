@@ -41,7 +41,7 @@ public class MuscleCell : Cell {
 		}
 	}
 
-	public override void UpdateCellFunction(int deltaTicks, ulong worldTicks) {
+	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		effectProductionInternalUp = 0f;
 
 		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
@@ -93,7 +93,7 @@ public class MuscleCell : Cell {
 				UpdateSpringLengths();
 			}
 
-			base.UpdateCellFunction(deltaTicks, worldTicks);
+			base.UpdateCellWork(deltaTicks, worldTicks);
 		} else {
 			effectProductionInternalDown = 0f;
 			isContracting = false;
@@ -114,7 +114,7 @@ public class MuscleCell : Cell {
 	public override void UpdateSpringLengths() {
 
 		//Intra creature
-		if (HasOwnNeighbourCell(CardinalEnum.northEast)) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.northEast)) {
 			SpringJoint2D spring = northEastNeighbour.cell.GetSpring(this);
 			if (spring != null) {
 				spring.distance = this.radius + northEastNeighbour.cell.radius;
@@ -123,7 +123,7 @@ public class MuscleCell : Cell {
 			}
 		}
 
-		if (HasOwnNeighbourCell(CardinalEnum.north)) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
 			if (northSpring != null) {
 				northSpring.distance = this.radius + northNeighbour.cell.radius;
 			} else {
@@ -132,7 +132,7 @@ public class MuscleCell : Cell {
 			
 		}
 
-		if (HasOwnNeighbourCell(CardinalEnum.northWest)) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.northWest)) {
 			SpringJoint2D spring = northWestNeighbour.cell.GetSpring(this);
 			if (spring != null) {
 				spring.distance = this.radius + northWestNeighbour.cell.radius;
@@ -142,7 +142,7 @@ public class MuscleCell : Cell {
 			
 		}
 
-		if (HasOwnNeighbourCell(CardinalEnum.southWest)) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest)) {
 			if (southWestSpring != null) {
 				southWestSpring.distance = this.radius + southWestNeighbour.cell.radius;
 			} else {
@@ -150,7 +150,7 @@ public class MuscleCell : Cell {
 			}
 		}
 
-		if (HasOwnNeighbourCell(CardinalEnum.south)) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.south)) {
 			SpringJoint2D spring = southNeighbour.cell.GetSpring(this);
 			if (spring != null) {
 				spring.distance = this.radius + southNeighbour.cell.radius;
@@ -159,7 +159,7 @@ public class MuscleCell : Cell {
 			}
 		}
 
-		if (HasOwnNeighbourCell(CardinalEnum.southEast)) {
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast)) {
 			if (southEastSpring != null) {
 				southEastSpring.distance = this.radius + southEastNeighbour.cell.radius;
 			} else {
