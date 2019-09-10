@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 
 public class EnergySensorPanel : CellSensorPanel {
-	public Image output;
+	public Image outputImage;
 
 	public Text energyThresholdSliderLabel;
 	public Slider energyThresholdSlider;
@@ -30,7 +30,7 @@ public class EnergySensorPanel : CellSensorPanel {
 
 			if (mode == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					output.color = selectedCell.GetOutputFromUnit(outputUnit) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					outputImage.color = selectedCell.GetOutputFromUnit(outputUnit) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 				energyThresholdSlider.interactable = false;
 			} else if (mode == PhenoGenoEnum.Genotype) {

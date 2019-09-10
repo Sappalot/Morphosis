@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public class GeneLogicBox {
+public class GeneLogicBox : GeneSensor {
 	public static int rowCount = 3; // excluding, bottom input row
 	public static int columnCount = 5;
 	public static int rightmostFlank = columnCount;
@@ -14,7 +14,10 @@ public class GeneLogicBox {
 	public GeneLogicBoxGate[] gateRow2 = new GeneLogicBoxGate[maxGatesPerRow];
 	public GeneLogicBoxInput[] inputRow3 = new GeneLogicBoxInput[columnCount];
 
-	public GeneLogicBox() {
+	public GeneLogicBox(SignalUnitEnum signalUnit, bool isLocked) {
+		this.signalUnit = signalUnit;
+		this.isLocked = isLocked;
+
 		gateRow0 = new GeneLogicBoxGate(this, 0);
 		for (int g = 0; g < maxGatesPerRow; g++) {
 			gateRow1[g] = new GeneLogicBoxGate(this, 1);

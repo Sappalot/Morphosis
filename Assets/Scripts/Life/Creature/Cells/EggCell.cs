@@ -36,13 +36,20 @@ public class EggCell : Cell {
 	// Signal
 
 	public Sensor fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkEggEnergySensor); // locked one
+	public LogicBox fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkEggFertilizeLogicBox);
 
 	public override void UpdateCellSignal(int deltaTicks, ulong worldTicks) {
 		//TODO: Check with gene if anybody is listening to this output
 		fertilizeEnergySensor.UpdateOutputs(this, deltaTicks, worldTicks);
+		fertilizeLogicBox.UpdateOutputs(this, deltaTicks, worldTicks);
 	}
 
-	protected override bool GetWorkEggCellOutput() {
+	protected override bool GetWorkEggCellEnergySensorOutput() {
 		return fertilizeEnergySensor.GetOutput();
 	}
+
+	protected override bool GetWorkEggCellFertilizeLogicBoxOutput() {
+		return fertilizeLogicBox.GetOutput();
+	}
+
 }

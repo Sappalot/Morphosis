@@ -7,7 +7,7 @@ public enum SignalUnitEnum {
 	WorkHibernate, //4 cell types' is hibernating
 	
 	// Egg
-	WorkEggFertilize, // Locked, Egg will fertilize when true, Will we be able to read this one before egg is gone?
+	WorkEggFertilizeLogicBox, // Locked, Egg will fertilize when true, Will we be able to read this one before egg is gone?
 	WorkEggEnergySensor, // Locked to WorkEggFertilize
 
 	AxoneProgramA,

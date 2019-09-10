@@ -9,7 +9,7 @@ public class Gene {
 	public float eggCellDetatchEnergyThreshold = 0.4f; //part of max energy(* 100 to get  %)
 	public bool eggCellHibernateWhenAttachedToMother = false;
 	public bool eggCellHibernateWhenAttachedToChild = false;
-	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox();
+	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkEggFertilizeLogicBox, true);
 	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkEggEnergySensor, true);
 	// ^ Egg cell ^
 

@@ -2,6 +2,8 @@
 using UnityEngine.UI;
 
 public class LogicBoxPanel : MonoBehaviour {
+	public Image outputImage;
+
 	private static Vector2 rowSize = new Vector2(270f, 40f);
 	public static float cellWidth = rowSize.x * (1f / 5f);
 	public static float cellHeight = 40;
@@ -132,6 +134,12 @@ public class LogicBoxPanel : MonoBehaviour {
 			}
 			for (int i = 0; i < inputRow3.Length; i++) {
 				inputRow3[i].MakeDirty();
+			}
+
+			if (mode == PhenoGenoEnum.Phenotype) {
+				if (CellPanel.instance.selectedCell != null) {
+					outputImage.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+				}
 			}
 
 			outputLabel.text = outputText;

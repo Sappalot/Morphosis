@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnergySensor : Sensor {
-	private bool output;
+	
 	public float threshold;
 
 	public EnergySensor(SignalUnitEnum outputUnit) {
@@ -17,7 +17,7 @@ public class EnergySensor : Sensor {
 	public override void UpdateOutputs(Cell hostCell, int deltaTicks, ulong worldTicks) {
 		if (signalUnit == SignalUnitEnum.WorkEggEnergySensor) {
 			output = hostCell.energy >= hostCell.gene.eggCellFertilizeEnergySensor.threshold;
-		} else if (signalUnit == SignalUnitEnum.WorkEggFertilize) {
+		} else if (signalUnit == SignalUnitEnum.WorkEggFertilizeLogicBox) {
 			// TODO: implement
 		}
 		

@@ -1677,14 +1677,18 @@ public abstract class Cell : MonoBehaviour {
 
 	public bool GetOutputFromUnit(SignalUnitEnum outputUnit) {
 		if (outputUnit == SignalUnitEnum.WorkEggEnergySensor) { // We know that this is an egg cell allready
-			return GetWorkEggCellOutput();
-		} else if (outputUnit == SignalUnitEnum.WorkEggFertilize) {
-			// TODO: implement
+			return GetWorkEggCellEnergySensorOutput();
+		} else if (outputUnit == SignalUnitEnum.WorkEggFertilizeLogicBox) {
+			return GetWorkEggCellFertilizeLogicBoxOutput();
 		}
 		return false;
 	}
 
-	protected virtual bool GetWorkEggCellOutput() {
+	protected virtual bool GetWorkEggCellEnergySensorOutput() {
+		return false; // only egg responds
+	}
+
+	protected virtual bool GetWorkEggCellFertilizeLogicBoxOutput() {
 		return false; // only egg responds
 	}
 

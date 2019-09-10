@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Sensor {
-
+	protected bool output;
 	protected SignalUnitEnum signalUnit;
 
 	public virtual bool GetOutput() {

@@ -13,6 +13,9 @@ public class GeneLogicBoxInput : GeneLogicBoxPart {
 		rightFlank = GetFlankRightOfColumn(column);
 	}
 
+	// internal input
+	public SignalUnitEnum internalInput = SignalUnitEnum.WorkEggEnergySensor;
+
 	public override int GetTransmittingInputCount() {
 		return isTransmittingSignal ? 1 : 0;
 	}

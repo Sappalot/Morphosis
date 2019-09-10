@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+// TODO Generalize to just be an input panel for all units
 public class LogicBoxInputPanel : MonoBehaviour {
 	public Image motherBlockBackground;
 	public Image motherPassBackground;
@@ -89,4 +90,6 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	public bool IsUnlocked() {
 		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
 	}
+
+
 }
