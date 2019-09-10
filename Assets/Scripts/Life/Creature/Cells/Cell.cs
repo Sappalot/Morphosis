@@ -6,7 +6,7 @@ using Boo.Lang.Runtime;
 public abstract class Cell : MonoBehaviour {
 
 	//------- Inspector
-	public Signal signal;
+	//public Signal signal;
 
 	public SpriteRenderer cellSelected; //transparent
 	public SpriteRenderer triangleSprite;
@@ -757,10 +757,14 @@ public abstract class Cell : MonoBehaviour {
 		}
 
 		// Sensors...
+		
+
 		//signal.Init(this);
 
 		// ^ Sensors ^
 	}
+
+	
 
 	public void Setup(PhenoGenoEnum phenoGeno) {
 		this.phenoGeno = phenoGeno;
@@ -1686,5 +1690,21 @@ public abstract class Cell : MonoBehaviour {
 
 	//----------Signal--------------------------------
 
+	virtual public void UpdateCellSignal(int deltaTicks, ulong worldTicks) {
+		// tick all common cell signals
+	}
+
+	public bool GetOutputFromUnit(SignalUnitEnum outputUnit) {
+		if (outputUnit == SignalUnitEnum.WorkEggEnergySensor) { // We know that this is an egg cell allready
+			return GetWorkEggCellOutput();
+		} else if (outputUnit == SignalUnitEnum.WorkEggFertilize) {
+			// TODO: implement
+		}
+		return false;
+	}
+
+	protected virtual bool GetWorkEggCellOutput() {
+		return false; // only egg responds
+	}
 
 }

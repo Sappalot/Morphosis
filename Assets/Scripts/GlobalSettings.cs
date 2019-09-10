@@ -264,7 +264,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		public int growTickPeriod = 30; // Detatch attempt has same period as grow
 
-		public int effectSensorTickPeriod = 100;
+		public int signalTickPeriod = 20;
 
 		public int killOldCreaturesTickPeriod = 6000;
 

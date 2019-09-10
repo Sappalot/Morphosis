@@ -6,9 +6,11 @@ public abstract class CellSensorPanel : MonoBehaviour {
 
 	[HideInInspector]
 	public PhenoGenoEnum mode { get; set; }
+	protected SignalUnitEnum outputUnit;
 
-	public void Initialize(PhenoGenoEnum mode) {
+	public void Initialize(PhenoGenoEnum mode, SignalUnitEnum outputUnit) {
 		this.mode = mode;
+		this.outputUnit = outputUnit;
 	}
 
 	protected bool isDirty = false;

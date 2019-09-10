@@ -31,7 +31,7 @@ public class EggCellPanel : CellComponentPanel {
 		hibernatePanel.SetMode(mode);
 		
 		fertilizeLogicBoxPanel.Initialize(mode);
-		fertilizeEnergySensorPanel.Initialize(mode);
+		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkEggEnergySensor);
 
 		ignoreSliderMoved = true;
 		fertilizeSlider.minValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMin;

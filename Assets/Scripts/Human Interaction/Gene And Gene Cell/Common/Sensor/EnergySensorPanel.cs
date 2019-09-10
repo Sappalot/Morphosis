@@ -30,7 +30,7 @@ public class EnergySensorPanel : CellSensorPanel {
 
 			if (mode == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					//output.color = selectedCell.signal.effectSensor.isOutputOn ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					output.color = selectedCell.GetOutputFromUnit(outputUnit) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 				energyThresholdSlider.interactable = false;
 			} else if (mode == PhenoGenoEnum.Genotype) {

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
 public class EggCell : Cell {
-	public Sensor fertilizeEnergySensor = new EnergySensor(); // locked one
 
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
@@ -32,5 +31,18 @@ public class EggCell : Cell {
 
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Egg;
+	}
+
+	// Signal
+
+	public Sensor fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkEggEnergySensor); // locked one
+
+	public override void UpdateCellSignal(int deltaTicks, ulong worldTicks) {
+		//TODO: Check with gene if anybody is listening to this output
+		fertilizeEnergySensor.UpdateOutputs(this, deltaTicks, worldTicks);
+	}
+
+	protected override bool GetWorkEggCellOutput() {
+		return fertilizeEnergySensor.GetOutput();
 	}
 }

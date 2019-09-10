@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Sensor {
-	[HideInInspector]
-	protected Cell cell;
 
-	abstract public SensorTypeEnum GetSensorType();
+	protected SignalUnitEnum signalUnit;
 
-	public virtual void Init(Cell cell) {
-		this.cell = cell;
+	public virtual bool GetOutput() {
+		return false;
 	}
 
-	public virtual void UpdateOutputs(int deltaTicks, ulong worldTicks) { }
+	public virtual void UpdateOutputs(Cell hostCell, int deltaTicks, ulong worldTicks) { }
 }

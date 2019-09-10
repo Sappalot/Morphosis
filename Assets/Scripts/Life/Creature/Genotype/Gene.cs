@@ -10,7 +10,7 @@ public class Gene {
 	public bool eggCellHibernateWhenAttachedToMother = false;
 	public bool eggCellHibernateWhenAttachedToChild = false;
 	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox();
-	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor();
+	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkEggEnergySensor, true);
 	// ^ Egg cell ^
 
 	// Jaw Cell
@@ -66,15 +66,6 @@ public class Gene {
 	public float axonRelaxContract;
 	public bool axonIsReverse;
 	// ^ Axon ^
-
-	// Sensor...
-	public SensorTypeEnum sensorType = SensorTypeEnum.Effect;
-
-	// Effect sensor
-	//public float effectSensorThresholdEffect; // on if this cells total effect > value
-	//public int effectSensorRadius; // 0 ==> only self, 1 ==> self & 6 neighbours ....
-
-	// ^ Sensor ^
 
 	// Origin
 	public int originPulsePeriodTicks = 80;

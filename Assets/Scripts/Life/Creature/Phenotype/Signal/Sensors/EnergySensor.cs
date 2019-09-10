@@ -3,14 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnergySensor : Sensor {
-	public bool isOutputOn { get; private set; }
+	private bool output;
 	public float threshold;
 
-	public override SensorTypeEnum GetSensorType() {
-		return SensorTypeEnum.Energy;
+	public EnergySensor(SignalUnitEnum outputUnit) {
+		this.signalUnit = outputUnit;
 	}
 
-	public override void UpdateOutputs(int deltaTicks, ulong worldTicks) {
-		isOutputOn = cell.GetEffect(true, true, true, true) >= threshold;
+	public override bool GetOutput() {
+		return output;
+	}
+
+	public override void UpdateOutputs(Cell hostCell, int deltaTicks, ulong worldTicks) {
+		if (signalUnit == SignalUnitEnum.WorkEggEnergySensor) {
+			output = hostCell.energy >= hostCell.gene.eggCellFertilizeEnergySensor.threshold;
+		} else if (signalUnit == SignalUnitEnum.WorkEggFertilize) {
+			// TODO: implement
+		}
+		
 	}
 }

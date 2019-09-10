@@ -1424,40 +1424,33 @@ public class Phenotype : MonoBehaviour {
 	//   ^ metabolism ^
 
 	//     signal
-	private int effectSensorTick;
+	private int signalTick;
 	//   ^ signal ^
 
 	//time ^
 
 	public void UpdatePhysics(Creature creature, ulong worldTick) {
-		UpdateMetabolism(creature, worldTick);
+		if (isGrabbed) {
+			return;
+		}
+		UpdateWorkAndMetabolism(creature, worldTick);
 		UpdateSignal(creature, worldTick);
 	}
 
 	private void UpdateSignal(Creature creature, ulong worldTick) {
-		if (isGrabbed) {
-			return;
+		signalTick++;
+		if (signalTick >= GlobalSettings.instance.quality.signalTickPeriod) {
+			signalTick = 0;
 		}
 
-		effectSensorTick++;
-		if (effectSensorTick >= GlobalSettings.instance.quality.effectSensorTickPeriod) {
-			effectSensorTick = 0;
+		for (int index = 0; index < cellList.Count; index++) {
+			if (signalTick == 0) {
+				cellList[index].UpdateCellSignal(GlobalSettings.instance.quality.signalTickPeriod, worldTick);
+			}
 		}
-
-		//for (int index = 0; index < cellList.Count; index++) {
-		//	Sensor sensor = cellList[index].sensor;
-
-		//	if (effectSensorTick == 0 && sensor.GetSensorType() == SensorTypeEnum.Effect) {
-		//		sensor.UpdateOutputs(GlobalSettings.instance.quality.effectSensorTickPeriod, worldTick);
-		//	}
-		//}
 	}
 
-	private void UpdateMetabolism(Creature creature, ulong worldTick) {
-		
-		if (isGrabbed) {
-			return;
-		}
+	private void UpdateWorkAndMetabolism(Creature creature, ulong worldTick) {
 
 		//time
 		eggCellTick++;
