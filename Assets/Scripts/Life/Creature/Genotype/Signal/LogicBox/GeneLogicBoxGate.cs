@@ -2,8 +2,32 @@
 
 public class GeneLogicBoxGate : GeneLogicBoxPart {
 	public LogicOperatorEnum operatorType = LogicOperatorEnum.And;
-	public List<GeneLogicBoxPart> inputsConnected = new List<GeneLogicBoxPart>(); // store conections even if they are not used
+	public List<GeneLogicBoxPart> partsConnected = new List<GeneLogicBoxPart>(); // store conections even if they are not used
 	
+	//public List<GeneLogicBoxGate> gatesConnected {
+	//	get {
+	//		List<GeneLogicBoxGate> newList = new List<GeneLogicBoxGate>();
+	//		foreach(GeneLogicBoxPart p in partsConnected) {
+	//			if (p is GeneLogicBoxGate) {
+	//				newList.Add(p as GeneLogicBoxGate);
+	//			}
+	//		}
+	//		return newList;
+	//	}
+	//}
+
+	//public List<GeneLogicBoxInput> inputsConnected {
+	//	get {
+	//		List<GeneLogicBoxInput> newList = new List<GeneLogicBoxInput>();
+	//		foreach (GeneLogicBoxInput p in partsConnected) {
+	//			if (p is GeneLogicBoxInput) {
+	//				newList.Add(p as GeneLogicBoxInput);
+	//			}
+	//		}
+	//		return newList;
+	//	}
+	//}
+
 	public bool isUsed = false; // is taking place inside logic box (might be blocked, might not)
 	
 	private GeneLogicBox geneLogicBox;
@@ -14,7 +38,7 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 
 	public override int GetTransmittingInputCount() {
 		int count = 0;
-		foreach (GeneLogicBoxPart i in inputsConnected) {
+		foreach (GeneLogicBoxPart i in partsConnected) {
 			if (i.isTransmittingSignal) {
 				count++;
 			}

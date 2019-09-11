@@ -19,7 +19,7 @@ public class LogicBoxPanel : MonoBehaviour {
 	private LogicBoxGatePanel[] gatesRow2 = new LogicBoxGatePanel[GeneLogicBox.maxGatesPerRow];
 	public LogicBoxInputPanel[] inputRow3 = new LogicBoxInputPanel[GeneLogicBox.maxGatesPerRow];
 
-	private GeneLogicBox affectedGeneLogicBox;
+	public GeneLogicBox affectedGeneLogicBox { get; private set; }
 
 	public Vector3 gateGridOrigo {
 		get {
@@ -76,15 +76,15 @@ public class LogicBoxPanel : MonoBehaviour {
 	public void ConnectToGeneLogic(GeneLogicBox geneLogicBox) {
 		affectedGeneLogicBox = geneLogicBox;
 		if (gateRow0 != null) {
-			gateRow0.geneLogicBoxGate = geneLogicBox.gateRow0;
-			for (int i = 0; i < geneLogicBox.gateRow1.Length; i++) {
-				gatesRow1[i].geneLogicBoxGate = geneLogicBox.gateRow1[i]; // just map strait off, doesn't really matter
+			gateRow0.affectedGeneLogicBoxGate = geneLogicBox.GetGate(0, 0);
+			for (int i = 0; i < geneLogicBox.GatesAtRowCount(1); i++) {
+				gatesRow1[i].affectedGeneLogicBoxGate = geneLogicBox.GetGate(1, i); // just map strait off, doesn't really matter
 			}
-			for (int i = 0; i < geneLogicBox.gateRow2.Length; i++) {
-				gatesRow2[i].geneLogicBoxGate = geneLogicBox.gateRow2[i];
+			for (int i = 0; i < geneLogicBox.GatesAtRowCount(2); i++) {
+				gatesRow2[i].affectedGeneLogicBoxGate = geneLogicBox.GetGate(2, i);
 			}
-			for (int i = 0; i < geneLogicBox.inputRow3.Length; i++) {
-				inputRow3[i].geneLogicBoxInput = geneLogicBox.inputRow3[i];
+			for (int i = 0; i < geneLogicBox.InputCount(); i++) {
+				inputRow3[i].affectedGeneLogicBoxInput = geneLogicBox.GetInput(i);
 			}
 		}
 	}
@@ -137,14 +137,36 @@ public class LogicBoxPanel : MonoBehaviour {
 			}
 
 			if (mode == PhenoGenoEnum.Phenotype) {
-				if (CellPanel.instance.selectedCell != null) {
-					outputImage.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-				}
+				// Update informlation parts in logic box panel
+				UpdateInformationPropagationThroughLogicBox(affectedGeneLogicBox);
 			}
 
 			outputLabel.text = outputText;
 			isDirty = false;
 		}
+	}
+
+	private void UpdateInformationPropagationThroughLogicBox(GeneLogicBox affectedGeneLogicBox) {
+		for (int i = 0; i < gatesRow2.Length; i++) {
+
+		}
+
+		if (CellPanel.instance.selectedCell != null) {
+			outputImage.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+		}
+	}
+
+	private OutputFromInputEnum RuntimeInputOutput(int inputColumn) {
+		if (inputRow3[inputColumn].affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
+			return OutputFromInputEnum.BlockedByValve;
+		} else if (inputRow3[inputColumn].affectedGeneLogicBoxInput.internalInput == SignalUnitEnum.Void) {
+			return OutputFromInputEnum.VoidInput;
+		} else {
+			if (selectedCell != null) {
+				return selectedCell.GetOutputFromUnit(inputRow3[inputColumn].affectedGeneLogicBoxInput.internalInput) ? OutputFromInputEnum.On : OutputFromInputEnum.Off;
+			}
+		}
+		return OutputFromInputEnum.Error;
 	}
 
 	public Gene selectedGene {

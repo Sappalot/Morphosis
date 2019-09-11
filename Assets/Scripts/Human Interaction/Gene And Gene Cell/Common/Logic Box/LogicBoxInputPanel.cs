@@ -6,13 +6,14 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	public Image motherBlockBackground;
 	public Image motherPassBackground;
 
+	public Image inputButtonImage;
 	[HideInInspector]
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 
 	private bool isDirty = false;
 	private bool ignoreSliderMoved = false;
 	private LogicBoxPanel motherPanel;
-	public GeneLogicBoxInput geneLogicBoxInput;
+	public GeneLogicBoxInput affectedGeneLogicBoxInput;
 
 	public void Initialize(PhenoGenoEnum mode, LogicBoxPanel motherPanel) {
 		this.mode = mode;
@@ -31,7 +32,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		if (mode == PhenoGenoEnum.Phenotype || ignoreSliderMoved) {
 			return;
 		}
-		geneLogicBoxInput.valveMode = SignalValveModeEnum.Block;
+		affectedGeneLogicBoxInput.valveMode = SignalValveModeEnum.Block;
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
@@ -42,7 +43,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		if (mode == PhenoGenoEnum.Phenotype || ignoreSliderMoved) {
 			return;
 		}
-		geneLogicBoxInput.valveMode = SignalValveModeEnum.Pass;
+		affectedGeneLogicBoxInput.valveMode = SignalValveModeEnum.Pass;
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
@@ -57,13 +58,48 @@ public class LogicBoxInputPanel : MonoBehaviour {
 			ignoreSliderMoved = true;
 
 			if (selectedGene != null) {
-				motherBlockBackground.color = geneLogicBoxInput.valveMode == SignalValveModeEnum.Block ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
-				motherPassBackground.color = geneLogicBoxInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+				motherBlockBackground.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+				motherPassBackground.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+			}
+
+			if (mode == PhenoGenoEnum.Genotype) {
+				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
+					inputButtonImage.color = ColorScheme.instance.grayedOut;
+				} else {
+					inputButtonImage.color = ColorScheme.instance.signalOff;
+				}
+			} else {
+				if (runtimeOutput == OutputFromInputEnum.BlockedByValve) {
+					inputButtonImage.color = ColorScheme.instance.grayedOut;
+				} else if (runtimeOutput == OutputFromInputEnum.VoidInput) {
+					inputButtonImage.color = ColorScheme.instance.signalOff;
+				} else if (runtimeOutput == OutputFromInputEnum.On) {
+					inputButtonImage.color = ColorScheme.instance.signalOn;
+				} else if (runtimeOutput == OutputFromInputEnum.Off) {
+					inputButtonImage.color = ColorScheme.instance.signalOff;
+				} else if (runtimeOutput == OutputFromInputEnum.Error) {
+					inputButtonImage.color = Color.red;
+				}
 			}
 
 			ignoreSliderMoved = false;
 
 			isDirty = false;
+		}
+	}
+
+	private OutputFromInputEnum runtimeOutput {
+		get {
+			if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
+				return OutputFromInputEnum.BlockedByValve;
+			} else if (affectedGeneLogicBoxInput.internalInput == SignalUnitEnum.Void) {
+				return OutputFromInputEnum.VoidInput;
+			} else {
+				if (selectedCell != null) {
+					return selectedCell.GetOutputFromUnit(affectedGeneLogicBoxInput.internalInput) ? OutputFromInputEnum.On : OutputFromInputEnum.Off;
+				}
+			}
+			return OutputFromInputEnum.Error;
 		}
 	}
 

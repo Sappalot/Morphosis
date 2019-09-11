@@ -9,10 +9,40 @@ public class GeneLogicBox : GeneSensor {
 	// All possible Gates are spawned when this logicBox is created
 	// They are setup either in hard code (that is the locked gates) OR as they are loaded (loaded ones will not change locked gates)
 	// They might be set as used/unused along the way but never removed
-	public GeneLogicBoxGate gateRow0; 
-	public GeneLogicBoxGate[] gateRow1 = new GeneLogicBoxGate[maxGatesPerRow];
-	public GeneLogicBoxGate[] gateRow2 = new GeneLogicBoxGate[maxGatesPerRow];
-	public GeneLogicBoxInput[] inputRow3 = new GeneLogicBoxInput[columnCount];
+	private GeneLogicBoxGate gateRow0;
+	private GeneLogicBoxGate[] gateRow1 = new GeneLogicBoxGate[maxGatesPerRow];
+	private GeneLogicBoxGate[] gateRow2 = new GeneLogicBoxGate[maxGatesPerRow];
+	private GeneLogicBoxInput[] inputRow3 = new GeneLogicBoxInput[columnCount];
+
+	public GeneLogicBoxGate GetGate(int row, int index) {
+		if (row == 0) {
+			return gateRow0;
+		} else if (row == 1) {
+			return gateRow1[index];
+		} else if (row == 2) {
+			return gateRow2[index];
+		}
+		return null;
+	}
+
+	public GeneLogicBoxInput GetInput(int column) {
+		return inputRow3[column];
+	}
+
+	public int GatesAtRowCount(int row) {
+		if (row == 0) {
+			return 1;
+		} else if (row == 1) {
+			return gateRow1.Length;
+		} else if (row == 2) {
+			return gateRow2.Length;
+		}
+		return -1;
+	}
+
+	public int InputCount() {
+		return columnCount;
+	}
 
 	public GeneLogicBox(SignalUnitEnum signalUnit, bool isLocked) {
 		this.signalUnit = signalUnit;
@@ -37,14 +67,14 @@ public class GeneLogicBox : GeneSensor {
 		// Row 2
 		// Clear
 		foreach (GeneLogicBoxGate gate in gateRow2) {
-			gate.inputsConnected.Clear();
+			gate.partsConnected.Clear();
 		}
 		// look for input in row 3: connect to all 
 		foreach (GeneLogicBoxGate gate2 in gateRow2) {
 			if (gate2.isUsed) {
 				gate2.isTransmittingSignal = false;
 				for (int column = gate2.GetColumnRightOfFlank(gate2.leftFlank); column <= gate2.GetColumnLeftOfFlank(gate2.rightFlank); column++) {
-					gate2.inputsConnected.Add(inputRow3[column]);
+					gate2.partsConnected.Add(inputRow3[column]);
 					if (inputRow3[column].isTransmittingSignal) {
 						gate2.isTransmittingSignal = true;
 					}
@@ -55,7 +85,7 @@ public class GeneLogicBox : GeneSensor {
 		// Row 1
 		// Clear
 		foreach (GeneLogicBoxGate gate1 in gateRow1) {
-			gate1.inputsConnected.Clear();
+			gate1.partsConnected.Clear();
 		}
 		// look for gates in row 2: connnect to all that is under me (overlapping with at leas 1 cell)
 		foreach (GeneLogicBoxGate gate1 in gateRow1) {
@@ -67,7 +97,7 @@ public class GeneLogicBox : GeneSensor {
 			if (gate1.isUsed) {
 				foreach (GeneLogicBoxGate gate2 in gateRow2) {
 					if (gate2.isUsed && gate2.leftFlank < gate1.rightFlank && gate2.rightFlank > gate1.leftFlank) {
-						gate1.inputsConnected.Add(gate2);
+						gate1.partsConnected.Add(gate2);
 						if (gate2.isTransmittingSignal) {
 							gate1.isTransmittingSignal = true;
 						}
@@ -80,7 +110,7 @@ public class GeneLogicBox : GeneSensor {
 			if (gate1.isUsed) {
 				for (int column = gate1.GetColumnRightOfFlank(gate1.leftFlank); column <= gate1.GetColumnLeftOfFlank(gate1.rightFlank); column++) {
 					if (!IsCellOccupiedByGate(2, column)) {
-						gate1.inputsConnected.Add(inputRow3[column]);
+						gate1.partsConnected.Add(inputRow3[column]);
 						if (inputRow3[column].isTransmittingSignal) {
 							gate1.isTransmittingSignal = true;
 						}
@@ -90,13 +120,13 @@ public class GeneLogicBox : GeneSensor {
 		}
 
 		// Row 0
-		gateRow0.inputsConnected.Clear();
+		gateRow0.partsConnected.Clear();
 		gateRow0.isTransmittingSignal = false;
 
 		// look for gates in row 1: connect to all ot them
 		foreach (GeneLogicBoxGate gate1 in gateRow1) {
 			if (gate1.isUsed) {
-				gateRow0.inputsConnected.Add(gate1);
+				gateRow0.partsConnected.Add(gate1);
 				if (gate1.isTransmittingSignal) {
 					gateRow0.isTransmittingSignal = true;
 				}
@@ -105,7 +135,7 @@ public class GeneLogicBox : GeneSensor {
 		// look for gates in row 2: connnect to all that are not (even partly) blocked by gates in row 1
 		foreach(GeneLogicBoxGate gate2 in gateRow2) {
 			if (gate2.isUsed && !HasGateAbove(gate2)) {
-				gateRow0.inputsConnected.Add(gate2);
+				gateRow0.partsConnected.Add(gate2);
 				if (gate2.isTransmittingSignal) {
 					gateRow0.isTransmittingSignal = true;
 				}
@@ -114,7 +144,7 @@ public class GeneLogicBox : GeneSensor {
 		//look for input in row 3: connect to all that are not blocked by gates in row 1 and 2
 		for (int column = 0; column < columnCount; column++) {
 			if (!IsCellOccupiedByGate(1, column) && !IsCellOccupiedByGate(2, column)) {
-				gateRow0.inputsConnected.Add(inputRow3[column]);
+				gateRow0.partsConnected.Add(inputRow3[column]);
 				if (inputRow3[column].isTransmittingSignal) {
 					gateRow0.isTransmittingSignal = true;
 				}

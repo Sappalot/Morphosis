@@ -13,8 +13,14 @@ public class GeneLogicBoxInput : GeneLogicBoxPart {
 		rightFlank = GetFlankRightOfColumn(column);
 	}
 
+	public int column {
+		get {
+			return GetColumnRightOfFlank(leftFlank);
+		}
+	}
+
 	// internal input
-	public SignalUnitEnum internalInput = SignalUnitEnum.WorkEggEnergySensor;
+	public SignalUnitEnum internalInput = SignalUnitEnum.Void;
 
 	public override int GetTransmittingInputCount() {
 		return isTransmittingSignal ? 1 : 0;

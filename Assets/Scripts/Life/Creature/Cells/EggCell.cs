@@ -35,9 +35,9 @@ public class EggCell : Cell {
 
 	// Signal
 
-	public Sensor fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkEggEnergySensor); // locked one
-	public Sensor fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkEggFertilizeLogicBox);
-	public Sensor effectSensor = new EffectSensor(SignalUnitEnum.EffectSensor);
+	public SignalUnit fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkEggEnergySensor); // locked one
+	public SignalUnit fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkEggFertilizeLogicBox);
+	public SignalUnit effectSensor = new EffectSensor(SignalUnitEnum.EffectSensor);
 
 	public override void UpdateCellSignal(int deltaTicks, ulong worldTicks) {
 		//TODO: Check with gene if anybody is listening to this output

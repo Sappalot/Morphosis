@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EffectSensor : Sensor {
+public class EffectSensor : SignalUnit {
 	
 	public float threshold;
 

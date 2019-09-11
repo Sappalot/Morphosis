@@ -12,7 +12,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 
 	private bool isMouseHoverng;
 
-	public GeneLogicBoxGate geneLogicBoxGate;
+	public GeneLogicBoxGate affectedGeneLogicBoxGate;
 
 	private LogicBoxPanel motherPanel;
 
@@ -35,7 +35,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	}
 
 	public void OnPointerEnterArea() {
-		isMouseHoverng = (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && !geneLogicBoxGate.isLocked);
+		isMouseHoverng = (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && !affectedGeneLogicBoxGate.isLocked);
 		MakeDirty();
 	}
 
@@ -45,24 +45,24 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	}
 
 	public void OnClickedAndOperator() {
-		if (geneLogicBoxGate != null && geneLogicBoxGate.operatorType != LogicOperatorEnum.And) {
-			geneLogicBoxGate.operatorType = LogicOperatorEnum.And;
+		if (affectedGeneLogicBoxGate != null && affectedGeneLogicBoxGate.operatorType != LogicOperatorEnum.And) {
+			affectedGeneLogicBoxGate.operatorType = LogicOperatorEnum.And;
 			motherPanel.MarkAsNewForge();
 			MakeDirty();
 		}
 	}
 
 	public void OnClickedOrOperator() {
-		if (geneLogicBoxGate != null && geneLogicBoxGate.operatorType != LogicOperatorEnum.Or) {
-			geneLogicBoxGate.operatorType = LogicOperatorEnum.Or;
+		if (affectedGeneLogicBoxGate != null && affectedGeneLogicBoxGate.operatorType != LogicOperatorEnum.Or) {
+			affectedGeneLogicBoxGate.operatorType = LogicOperatorEnum.Or;
 			motherPanel.MarkAsNewForge();
 			MakeDirty();
 		}
 	}
 
 	public void OnClickedDelete() {
-		if (geneLogicBoxGate != null) {
-			geneLogicBoxGate.isUsed = false;
+		if (affectedGeneLogicBoxGate != null) {
+			affectedGeneLogicBoxGate.isUsed = false;
 			motherPanel.UpdateConnections();
 			motherPanel.MarkAsNewForge();
 			motherPanel.MakeDirty();
@@ -70,7 +70,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	}
 
 	public void OnClickedLeftFlankLeft() {
-		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveLeftFlankLeft()) {
+		if (affectedGeneLogicBoxGate != null && affectedGeneLogicBoxGate.TryMoveLeftFlankLeft()) {
 			motherPanel.UpdateConnections();
 			motherPanel.MarkAsNewForge();
 			motherPanel.MakeDirty();
@@ -78,7 +78,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	}
 
 	public void OnClickedLeftFlankRight() {
-		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveLeftFlankRight()) {
+		if (affectedGeneLogicBoxGate != null && affectedGeneLogicBoxGate.TryMoveLeftFlankRight()) {
 			motherPanel.UpdateConnections();
 			motherPanel.MarkAsNewForge();
 			motherPanel.MakeDirty();
@@ -86,7 +86,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	}
 
 	public void OnClickedRightFlankRight() {
-		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveRightFlankRight()) {
+		if (affectedGeneLogicBoxGate != null && affectedGeneLogicBoxGate.TryMoveRightFlankRight()) {
 			motherPanel.UpdateConnections();
 			motherPanel.MarkAsNewForge();
 			motherPanel.MakeDirty();
@@ -94,7 +94,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	}
 
 	public void OnClickedRightFlankLeft() {
-		if (geneLogicBoxGate != null && geneLogicBoxGate.TryMoveRightFlankLeft()) {
+		if (affectedGeneLogicBoxGate != null && affectedGeneLogicBoxGate.TryMoveRightFlankLeft()) {
 			motherPanel.UpdateConnections();
 			motherPanel.MarkAsNewForge();
 			motherPanel.MakeDirty();
@@ -107,30 +107,30 @@ public class LogicBoxGatePanel : MonoBehaviour {
 				Debug.Log("Update Signal logic box");
 			}
 
-			if (geneLogicBoxGate != null) {
-				if (geneLogicBoxGate.GetTransmittingInputCount() <= 1) {
-					operatorTypeLabel.text = "'" + geneLogicBoxGate.operatorType.ToString().ToLower() + "'" + (geneLogicBoxGate.isLocked ? " (L)" : "");
+			if (affectedGeneLogicBoxGate != null) {
+				if (affectedGeneLogicBoxGate.GetTransmittingInputCount() <= 1) {
+					operatorTypeLabel.text = "'" + affectedGeneLogicBoxGate.operatorType.ToString().ToLower() + "'" + (affectedGeneLogicBoxGate.isLocked ? " (L)" : "");
 				} else {
-					operatorTypeLabel.text = geneLogicBoxGate.operatorType.ToString().ToUpper() + (geneLogicBoxGate.isLocked ? " (L)" : "");
+					operatorTypeLabel.text = affectedGeneLogicBoxGate.operatorType.ToString().ToUpper() + (affectedGeneLogicBoxGate.isLocked ? " (L)" : "");
 				}
 				
-				operatorTypeLabel.color = geneLogicBoxGate.isTransmittingSignal ? ColorScheme.instance.signalOff : Color.gray;
+				operatorTypeLabel.color = affectedGeneLogicBoxGate.isTransmittingSignal ? ColorScheme.instance.signalOff : Color.gray;
 			} else {
 				operatorTypeLabel.text = "???";
 			}
 
-			if (geneLogicBoxGate.isUsed) {
+			if (affectedGeneLogicBoxGate.isUsed) {
 				//Scale and position
-				GetComponent<RectTransform>().sizeDelta = new Vector2(LogicBoxPanel.cellWidth * (geneLogicBoxGate.rightFlank - geneLogicBoxGate.leftFlank), LogicBoxPanel.cellHeight);
-				transform.position = motherPanel.gateGridOrigo + Vector3.right * geneLogicBoxGate.leftFlank * LogicBoxPanel.cellWidth + Vector3.down * geneLogicBoxGate.row * LogicBoxPanel.cellHeight;
+				GetComponent<RectTransform>().sizeDelta = new Vector2(LogicBoxPanel.cellWidth * (affectedGeneLogicBoxGate.rightFlank - affectedGeneLogicBoxGate.leftFlank), LogicBoxPanel.cellHeight);
+				transform.position = motherPanel.gateGridOrigo + Vector3.right * affectedGeneLogicBoxGate.leftFlank * LogicBoxPanel.cellWidth + Vector3.down * affectedGeneLogicBoxGate.row * LogicBoxPanel.cellHeight;
 			} else {
 				transform.position = motherPanel.gateGridOrigo + Vector3.right * 1500f;
 			}
 
 			buttonOverlay.SetActive(isMouseHoverng);
-			if (buttonOverlay && geneLogicBoxGate != null) {
-				andButtonImage.color = geneLogicBoxGate.operatorType == LogicOperatorEnum.And ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
-				orButtonImage.color = geneLogicBoxGate.operatorType == LogicOperatorEnum.Or ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+			if (buttonOverlay && affectedGeneLogicBoxGate != null) {
+				andButtonImage.color = affectedGeneLogicBoxGate.operatorType == LogicOperatorEnum.And ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+				orButtonImage.color = affectedGeneLogicBoxGate.operatorType == LogicOperatorEnum.Or ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 			}
 
 			// input arrows
@@ -139,20 +139,36 @@ public class LogicBoxGatePanel : MonoBehaviour {
 			}
 
 			int arrowIndex = 0;
-			foreach (GeneLogicBoxPart inputComponent in geneLogicBoxGate.inputsConnected) {
+			foreach (GeneLogicBoxPart connectedPart in affectedGeneLogicBoxGate.partsConnected) {
 				inputArrows[arrowIndex].gameObject.SetActive(true);
 				int targetLeftFlank = 0;
 				int targetRightFlank = 0;
-				if (row == 1 && inputComponent.row == 2) {
-					targetLeftFlank = Mathf.Max(inputComponent.leftFlank, leftFlank);
-					targetRightFlank = Mathf.Min(inputComponent.rightFlank, rightFlank);
+				if (row == 1 && connectedPart.row == 2) {
+					targetLeftFlank = Mathf.Max(connectedPart.leftFlank, leftFlank);
+					targetRightFlank = Mathf.Min(connectedPart.rightFlank, rightFlank);
 				} else {
-					targetLeftFlank = inputComponent.leftFlank;
-					targetRightFlank = inputComponent.rightFlank;
+					targetLeftFlank = connectedPart.leftFlank;
+					targetRightFlank = connectedPart.rightFlank;
 				}
 				inputArrows[arrowIndex].transform.position = motherPanel.gateGridOrigo + Vector3.right * (targetLeftFlank + targetRightFlank) * 0.5f * LogicBoxPanel.cellWidth + Vector3.down * ((row + 1) * LogicBoxPanel.cellHeight - 10f);
-				inputArrows[arrowIndex].GetComponent<RectTransform>().sizeDelta = new Vector3(20f, Mathf.Max(20f, 20f + LogicBoxPanel.cellHeight * (inputComponent.row - row - 1)), 1f);
-				inputArrows[arrowIndex].GetComponent<Image>().color = inputComponent.isTransmittingSignal ? ColorScheme.instance.signalOff : ColorScheme.instance.signalGrayedOut;
+				inputArrows[arrowIndex].GetComponent<RectTransform>().sizeDelta = new Vector3(20f, Mathf.Max(20f, 20f + LogicBoxPanel.cellHeight * (connectedPart.row - row - 1)), 1f);
+
+				Color arrowColor = Color.black;
+				if (mode == PhenoGenoEnum.Genotype) {
+					arrowColor = connectedPart.isTransmittingSignal ? ColorScheme.instance.signalOff : ColorScheme.instance.signalGrayedOut;
+				} else {
+					if (connectedPart.isTransmittingSignal) {
+						if (connectedPart is GeneLogicBoxGate) {
+							arrowColor = LogicBox.GetGateResult((connectedPart as GeneLogicBoxGate), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+						} else if (connectedPart is GeneLogicBoxInput) {
+							arrowColor = LogicBox.GetInputResult((connectedPart as GeneLogicBoxInput), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+						}
+					} else {
+						arrowColor = ColorScheme.instance.signalGrayedOut;
+					}
+				}
+				inputArrows[arrowIndex].GetComponent<Image>().color = arrowColor;
+
 				arrowIndex++;
 			}
 
@@ -162,19 +178,19 @@ public class LogicBoxGatePanel : MonoBehaviour {
 
 	private int leftFlank {
 		get {
-			return geneLogicBoxGate.leftFlank;
+			return affectedGeneLogicBoxGate.leftFlank;
 		}
 	}
 
 	private int rightFlank {
 		get {
-			return geneLogicBoxGate.rightFlank;
+			return affectedGeneLogicBoxGate.rightFlank;
 		}
 	}
 
 	private int row {
 		get {
-			return geneLogicBoxGate.row;
+			return affectedGeneLogicBoxGate.row;
 		}
 	}
 

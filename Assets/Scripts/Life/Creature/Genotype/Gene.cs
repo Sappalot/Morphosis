@@ -128,6 +128,14 @@ public class Gene {
 		eggCellFertilizeLogic.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, true);
 		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.Or, 1, 3, false);
 		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.And);
+
+		eggCellFertilizeLogic.GetInput(0).internalInput = SignalUnitEnum.WorkEggEnergySensor;
+		eggCellFertilizeLogic.GetInput(1).internalInput = SignalUnitEnum.EffectSensor;
+		eggCellFertilizeLogic.GetInput(2).internalInput = SignalUnitEnum.Void;
+		eggCellFertilizeLogic.GetInput(3).internalInput = SignalUnitEnum.Void;
+		eggCellFertilizeLogic.GetInput(4).internalInput = SignalUnitEnum.Void;
+
+
 		eggCellFertilizeLogic.UpdateConnections();
 	}
 

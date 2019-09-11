@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public abstract class Sensor {
+﻿public abstract class SignalUnit {
 	protected bool output;
 	protected SignalUnitEnum signalUnit;
 
