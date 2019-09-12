@@ -152,21 +152,28 @@ public class LogicBoxPanel : MonoBehaviour {
 		}
 
 		if (CellPanel.instance.selectedCell != null) {
-			outputImage.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+			outputImage.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.Whatever) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 		}
 	}
 
-	private OutputFromInputEnum RuntimeInputOutput(int inputColumn) {
+	private LogicBoxInputEnum RuntimeLogicBoxInputAfterValve(int inputColumn) {
 		if (inputRow3[inputColumn].affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
-			return OutputFromInputEnum.BlockedByValve;
-		} else if (inputRow3[inputColumn].affectedGeneLogicBoxInput.internalInput == SignalUnitEnum.Void) {
-			return OutputFromInputEnum.VoidInput;
+			return LogicBoxInputEnum.BlockedByValve;
+		} else if (inputRow3[inputColumn].affectedGeneLogicBoxInput.input == SignalUnitEnum.Void) {
+			return LogicBoxInputEnum.VoidInput;
 		} else {
 			if (selectedCell != null) {
-				return selectedCell.GetOutputFromUnit(inputRow3[inputColumn].affectedGeneLogicBoxInput.internalInput) ? OutputFromInputEnum.On : OutputFromInputEnum.Off;
+				return selectedCell.GetOutputFromUnit(inputRow3[inputColumn].affectedGeneLogicBoxInput.input, SignalUnitSlotEnum.Whatever) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
 			}
 		}
-		return OutputFromInputEnum.Error;
+		return LogicBoxInputEnum.Error;
+	}
+
+	public void OnClickedOutputButton() {
+		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
+			LogicBoxInputPanel.AnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.Whatever); // Whatever... there is just one output slot
+			MouseAction.instance.actionState = MouseActionStateEnum.free;
+		}
 	}
 
 	public Gene selectedGene {

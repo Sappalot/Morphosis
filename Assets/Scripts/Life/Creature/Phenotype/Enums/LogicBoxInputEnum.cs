@@ -1,7 +1,9 @@
 ﻿using System;
 
+// The input after valve
+
 [Serializable]
-public enum OutputFromInputEnum{
+public enum LogicBoxInputEnum {
 	BlockedByValve,
 	VoidInput,
 	On,

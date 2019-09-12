@@ -9,8 +9,8 @@ public class Gene {
 	public float eggCellDetatchEnergyThreshold = 0.4f; //part of max energy(* 100 to get  %)
 	public bool eggCellHibernateWhenAttachedToMother = false;
 	public bool eggCellHibernateWhenAttachedToChild = false;
-	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkEggFertilizeLogicBox, true);
-	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkEggEnergySensor, true);
+	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkLogicBoxA, true);
+	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkSensorA, true);
 
 	public GeneEffectSensor effectSensor = new GeneEffectSensor(SignalUnitEnum.EffectSensor, true);
 	// ^ Egg cell ^
@@ -129,11 +129,11 @@ public class Gene {
 		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.Or, 1, 3, false);
 		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.And);
 
-		eggCellFertilizeLogic.GetInput(0).internalInput = SignalUnitEnum.WorkEggEnergySensor;
-		eggCellFertilizeLogic.GetInput(1).internalInput = SignalUnitEnum.EffectSensor;
-		eggCellFertilizeLogic.GetInput(2).internalInput = SignalUnitEnum.Void;
-		eggCellFertilizeLogic.GetInput(3).internalInput = SignalUnitEnum.Void;
-		eggCellFertilizeLogic.GetInput(4).internalInput = SignalUnitEnum.Void;
+		eggCellFertilizeLogic.GetInput(0).input = SignalUnitEnum.WorkSensorA;
+		eggCellFertilizeLogic.GetInput(1).input = SignalUnitEnum.Void;
+		eggCellFertilizeLogic.GetInput(2).input = SignalUnitEnum.Void;
+		eggCellFertilizeLogic.GetInput(3).input = SignalUnitEnum.Void;
+		eggCellFertilizeLogic.GetInput(4).input = SignalUnitEnum.Void;
 
 
 		eggCellFertilizeLogic.UpdateConnections();

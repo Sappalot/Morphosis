@@ -35,8 +35,8 @@ public class EggCell : Cell {
 
 	// Signal
 
-	public SignalUnit fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkEggEnergySensor); // locked one
-	public SignalUnit fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkEggFertilizeLogicBox);
+	public SignalUnit fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkSensorA); // locked one
+	public SignalUnit fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkLogicBoxA);
 	public SignalUnit effectSensor = new EffectSensor(SignalUnitEnum.EffectSensor);
 
 	public override void UpdateCellSignal(int deltaTicks, ulong worldTicks) {
@@ -47,16 +47,15 @@ public class EggCell : Cell {
 		effectSensor.UpdateOutputs(this, deltaTicks, worldTicks);
 	}
 
-	protected override bool GetWorkEggCellEnergySensorOutput() {
-		return fertilizeEnergySensor.GetOutput();
-	}
 
-	protected override bool GetWorkEggCellFertilizeLogicBoxOutput() {
-		return fertilizeLogicBox.GetOutput();
+	public override bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
+		if (outputUnit == SignalUnitEnum.WorkLogicBoxA) {
+			return fertilizeLogicBox.GetOutput();
+		} else if (outputUnit == SignalUnitEnum.WorkSensorA) {
+			return fertilizeEnergySensor.GetOutput();
+		} else if (outputUnit == SignalUnitEnum.EffectSensor) {
+			return effectSensor.GetOutput();
+		}
+		return base.GetOutputFromUnit(outputUnit, outputUnitSlot); //Couldnt find output unith here in egg work, 
 	}
-
-	protected override bool GetEffectSensorOutput() {
-		return effectSensor.GetOutput();
-	}
-
 }

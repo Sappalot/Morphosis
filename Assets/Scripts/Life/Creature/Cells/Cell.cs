@@ -1675,27 +1675,10 @@ public abstract class Cell : MonoBehaviour {
 		// tick all common cell signals
 	}
 
-	public bool GetOutputFromUnit(SignalUnitEnum outputUnit) {
-		if (outputUnit == SignalUnitEnum.WorkEggEnergySensor) { // We know that this is an egg cell allready
-			return GetWorkEggCellEnergySensorOutput();
-		} else if (outputUnit == SignalUnitEnum.WorkEggFertilizeLogicBox) {
-			return GetWorkEggCellFertilizeLogicBoxOutput();
-		} else if (outputUnit == SignalUnitEnum.EffectSensor) {
-			return GetEffectSensorOutput();
-		}
+	public virtual bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
+		
+		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for
+
 		return false;
 	}
-
-	protected virtual bool GetWorkEggCellEnergySensorOutput() {
-		return false; // only egg responds
-	}
-
-	protected virtual bool GetWorkEggCellFertilizeLogicBoxOutput() {
-		return false; // only egg responds
-	}
-
-	protected virtual bool GetEffectSensorOutput() {
-		return false; // only egg responds
-	}
-
 }

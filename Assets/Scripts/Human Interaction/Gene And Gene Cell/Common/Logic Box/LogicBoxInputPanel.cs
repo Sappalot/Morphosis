@@ -50,7 +50,29 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		MakeDirty();
 	}
 
+	public void OnSetReferenceClicked() {
+		if (MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
+			MouseAction.instance.actionState = MouseActionStateEnum.selectSignalOutput;
+			staticAffectedGeneLogicBoxInput = affectedGeneLogicBoxInput;
+		}
+	}
+
+	public static GeneLogicBoxInput staticAffectedGeneLogicBoxInput;
+	public static void AnswerSetReference(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
+		staticAffectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
+		staticAffectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
+		staticAffectedGeneLogicBoxInput = null;
+	}
+
 	private void Update() {
+		if (Input.GetKey(KeyCode.Escape)) {
+			if (MouseAction.instance.actionState == MouseActionStateEnum.selectGene) {
+				Audio.instance.ActionAbort(1f);
+
+				MouseAction.instance.actionState = MouseActionStateEnum.free;
+			}
+		}
+
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Hibernate Panel");
@@ -65,19 +87,25 @@ public class LogicBoxInputPanel : MonoBehaviour {
 			if (mode == PhenoGenoEnum.Genotype) {
 				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
 					inputButtonImage.color = ColorScheme.instance.grayedOut;
+				} else if (affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
+					inputButtonImage.color = Color.black; // signal will allways be OFF (since we are conected to the void)
 				} else {
-					inputButtonImage.color = ColorScheme.instance.signalOff;
+					inputButtonImage.color = ColorScheme.instance.signalOff; // we have a chance of an ON signal
 				}
+				if (staticAffectedGeneLogicBoxInput != null) {
+					inputButtonImage.color = new Color(0f, 1f, 0f);
+				}
+
 			} else {
-				if (runtimeOutput == OutputFromInputEnum.BlockedByValve) {
+				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve) {
 					inputButtonImage.color = ColorScheme.instance.grayedOut;
-				} else if (runtimeOutput == OutputFromInputEnum.VoidInput) {
-					inputButtonImage.color = ColorScheme.instance.signalOff;
-				} else if (runtimeOutput == OutputFromInputEnum.On) {
+				} else if (runtimeOutput == LogicBoxInputEnum.VoidInput) {
+					inputButtonImage.color = Color.black;
+				} else if (runtimeOutput == LogicBoxInputEnum.On) {
 					inputButtonImage.color = ColorScheme.instance.signalOn;
-				} else if (runtimeOutput == OutputFromInputEnum.Off) {
+				} else if (runtimeOutput == LogicBoxInputEnum.Off) {
 					inputButtonImage.color = ColorScheme.instance.signalOff;
-				} else if (runtimeOutput == OutputFromInputEnum.Error) {
+				} else if (runtimeOutput == LogicBoxInputEnum.Error) {
 					inputButtonImage.color = Color.red;
 				}
 			}
@@ -88,18 +116,18 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		}
 	}
 
-	private OutputFromInputEnum runtimeOutput {
+	private LogicBoxInputEnum runtimeOutput {
 		get {
 			if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
-				return OutputFromInputEnum.BlockedByValve;
-			} else if (affectedGeneLogicBoxInput.internalInput == SignalUnitEnum.Void) {
-				return OutputFromInputEnum.VoidInput;
+				return LogicBoxInputEnum.BlockedByValve;
+			} else if (affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
+				return LogicBoxInputEnum.VoidInput;
 			} else {
 				if (selectedCell != null) {
-					return selectedCell.GetOutputFromUnit(affectedGeneLogicBoxInput.internalInput) ? OutputFromInputEnum.On : OutputFromInputEnum.Off;
+					return selectedCell.GetOutputFromUnit(affectedGeneLogicBoxInput.nerve.inputUnit, SignalUnitSlotEnum.Whatever) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
 				}
 			}
-			return OutputFromInputEnum.Error;
+			return LogicBoxInputEnum.Error;
 		}
 	}
 
@@ -126,6 +154,4 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	public bool IsUnlocked() {
 		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
 	}
-
-
 }

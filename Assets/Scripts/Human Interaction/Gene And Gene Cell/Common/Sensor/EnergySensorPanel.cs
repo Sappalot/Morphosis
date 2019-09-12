@@ -22,6 +22,14 @@ public class EnergySensorPanel : CellSensorPanel {
 		ApplyChange();
 	}
 
+	public void OnClickedOutputButtonA() {
+		Debug.Log("A");
+		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
+			LogicBoxInputPanel.AnswerSetReference(affectedGeneEnergySensor.signalUnit, SignalUnitSlotEnum.A);
+			MouseAction.instance.actionState = MouseActionStateEnum.free;
+		}
+	}
+
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
@@ -30,7 +38,7 @@ public class EnergySensorPanel : CellSensorPanel {
 
 			if (mode == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					outputImage.color = selectedCell.GetOutputFromUnit(outputUnit) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					outputImage.color = selectedCell.GetOutputFromUnit(outputUnit, SignalUnitSlotEnum.Whatever) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 				energyThresholdSlider.interactable = false;
 			} else if (mode == PhenoGenoEnum.Genotype) {

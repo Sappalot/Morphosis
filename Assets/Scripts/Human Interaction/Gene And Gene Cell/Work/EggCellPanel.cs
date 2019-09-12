@@ -32,7 +32,7 @@ public class EggCellPanel : CellComponentPanel {
 		hibernatePanel.SetMode(mode);
 		
 		fertilizeLogicBoxPanel.Initialize(mode);
-		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkEggEnergySensor);
+		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA);
 		effectSensorPanel.Initialize(mode, SignalUnitEnum.EffectSensor);
 
 		ignoreSliderMoved = true;

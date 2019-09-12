@@ -9,20 +9,20 @@ public enum SignalUnitEnum {
 	WorkHibernate, //4 cell types' is hibernating
 	
 	// Egg
-	WorkEggFertilizeLogicBox, // Locked, Egg will fertilize when true, Will we be able to read this one before egg is gone?
-	WorkEggEnergySensor, // Locked to WorkEggFertilize
+	WorkLogicBoxA, // Egg Fertilize
+	WorkSensorA, // Egg Energy
 
 	AxoneProgramA,
 	AxoneProgramB,
 	AxoneProgramC,
 	AxoneProgramD,
 
-	ChangeFilter,
-	TrendFilter,
+	FilterChange,
+	FilterTrend,
 	
-	LogicBox, //Dendrites
+	DendritesLogicBox, //Dendrites
 	
-	EffectSensor,
+	EffectSensor, //test
 	SensorA,
 	SensorB,
 	SensorC,

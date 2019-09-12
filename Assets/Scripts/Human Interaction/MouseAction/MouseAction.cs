@@ -32,6 +32,9 @@ public class MouseAction : MonoSingleton<MouseAction> {
 		} else if (m_actionState == MouseActionStateEnum.selectGene) {
 			mouseText.text = "Select Gene Reference";
 			mouseText.color = ColorScheme.instance.mouseTextAction;
+		} else if (m_actionState == MouseActionStateEnum.selectSignalOutput) {
+			mouseText.text = "Attach to a signal output";
+			mouseText.color = ColorScheme.instance.mouseTextAction;
 		} else if (m_actionState == MouseActionStateEnum.moveCreatures) {
 			mouseText.text = "Move";
 			mouseText.color = ColorScheme.instance.mouseTextAction;

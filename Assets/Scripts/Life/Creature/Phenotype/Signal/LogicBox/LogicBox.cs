@@ -13,7 +13,7 @@ public class LogicBox : SignalUnit {
 	}
 
 	public override void UpdateOutputs(Cell hostCell, int deltaTicks, ulong worldTicks) {
-		if (signalUnit == SignalUnitEnum.WorkEggFertilizeLogicBox) {
+		if (signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 			// TODO: let input go through gates to form an answer output
 			//output = hostCell.GetOutputFromUnit(hostCell.gene.eggCellFertilizeLogic.GetInput(0).internalInput); // hack connection
 			output = ThroughGates(hostCell.gene.eggCellFertilizeLogic, hostCell);
@@ -34,7 +34,7 @@ public class LogicBox : SignalUnit {
 			foreach (GeneLogicBoxPart nextPart in gate.partsConnected) {
 				if (nextPart.isTransmittingSignal) {
 					if (nextPart is GeneLogicBoxInput) {
-						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && ((nextPart as GeneLogicBoxInput).internalInput == SignalUnitEnum.Void || !hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).internalInput))) {
+						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && ((nextPart as GeneLogicBoxInput).input == SignalUnitEnum.Void || !hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).nerve.inputUnit, (nextPart as GeneLogicBoxInput).nerve.inputUnitSlot))) {
 							// next part turned out to be an open input valve with its input off
 							return false; // one off ==> AND is off :(
 						}
@@ -51,7 +51,7 @@ public class LogicBox : SignalUnit {
 			foreach (GeneLogicBoxPart nextPart in gate.partsConnected) {
 				if (nextPart.isTransmittingSignal) {
 					if (nextPart is GeneLogicBoxInput) {
-						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && (nextPart as GeneLogicBoxInput).internalInput != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).internalInput)) {
+						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && (nextPart as GeneLogicBoxInput).input != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).input, (nextPart as GeneLogicBoxInput).nerve.inputUnitSlot)) {
 							// next part turned out to be an open input valve with its input on
 							return true; // one on ==> OR is on :)
 						}
@@ -68,7 +68,7 @@ public class LogicBox : SignalUnit {
 	}
 
 	public static bool GetInputResult(GeneLogicBoxInput input, Cell hostCell) {
-		return (input as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && (input as GeneLogicBoxInput).internalInput != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as GeneLogicBoxInput).internalInput);
+		return (input as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && (input as GeneLogicBoxInput).input != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as GeneLogicBoxInput).input, (input as GeneLogicBoxInput).nerve.inputUnitSlot);
 	}
 
 	private bool TestInput(int leftFlank) {

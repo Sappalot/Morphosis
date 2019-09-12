@@ -1,13 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class GeneEnergySensor : GeneSensor {
-	public enum mode {
-		IsMoreThan,
-		IsLessThan,
-	}
-	
+﻿public class GeneEnergySensor : GeneSensor {
 	public GeneEnergySensor(SignalUnitEnum signalUnit, bool isLocked) {
 		this.signalUnit = signalUnit;
 		this.isLocked = isLocked;

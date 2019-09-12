@@ -3,9 +3,16 @@
 public class GeneLogicBoxInput : GeneLogicBoxPart {
 
 	public SignalValveModeEnum valveMode = SignalValveModeEnum.Pass;
+	public GeneNerve nerve = new GeneNerve();
 
-	//Todo: have univeral reference to input which is possible to save
-	// from this universal input, we should be able to retreive reference to input
+	public SignalUnitEnum input {
+		get {
+			return nerve.inputUnit;
+		}
+		set {
+			nerve.inputUnit = value;
+		}
+	}
 
 	public GeneLogicBoxInput(int row, int column) {
 		this.row = row;
@@ -18,9 +25,6 @@ public class GeneLogicBoxInput : GeneLogicBoxPart {
 			return GetColumnRightOfFlank(leftFlank);
 		}
 	}
-
-	// internal input
-	public SignalUnitEnum internalInput = SignalUnitEnum.Void;
 
 	public override int GetTransmittingInputCount() {
 		return isTransmittingSignal ? 1 : 0;
