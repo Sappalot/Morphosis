@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-public class GeneLogicBox : GeneSignalUnit {
+﻿public class GeneLogicBox : GeneSignalUnit {
 	public static int rowCount = 3; // excluding, bottom input row
 	public static int columnCount = 5;
 	public static int rightmostFlank = columnCount;

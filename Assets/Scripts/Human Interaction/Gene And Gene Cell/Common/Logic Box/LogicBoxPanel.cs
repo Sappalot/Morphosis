@@ -119,43 +119,6 @@ public class LogicBoxPanel : MonoBehaviour {
 		isDirty = true;
 	}
 
-	private void Update() {
-		if (isDirty) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update Signal logic box");
-			}
-
-			gateRow0.MakeDirty();
-			for (int i = 0; i < gatesRow1.Length; i++) {
-				gatesRow1[i].MakeDirty();
-			}
-			for (int i = 0; i < gatesRow2.Length; i++) {
-				gatesRow2[i].MakeDirty();
-			}
-			for (int i = 0; i < inputRow3.Length; i++) {
-				inputRow3[i].MakeDirty();
-			}
-
-			if (mode == PhenoGenoEnum.Phenotype) {
-				// Update informlation parts in logic box panel
-				UpdateInformationPropagationThroughLogicBox(affectedGeneLogicBox);
-			}
-
-			outputLabel.text = outputText;
-			isDirty = false;
-		}
-	}
-
-	private void UpdateInformationPropagationThroughLogicBox(GeneLogicBox affectedGeneLogicBox) {
-		for (int i = 0; i < gatesRow2.Length; i++) {
-
-		}
-
-		if (CellPanel.instance.selectedCell != null) {
-			outputImage.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.Whatever) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-		}
-	}
-
 	private LogicBoxInputEnum RuntimeLogicBoxInputAfterValve(int inputColumn) {
 		if (inputRow3[inputColumn].affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
 			return LogicBoxInputEnum.BlockedByValve;
@@ -193,6 +156,32 @@ public class LogicBoxPanel : MonoBehaviour {
 			} else {
 				return null; // there could be many cells selected for the same gene
 			}
+		}
+	}
+
+	private void Update() {
+		if (isDirty) {
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+				Debug.Log("Update Signal logic box");
+			}
+
+			gateRow0.MakeDirty();
+			for (int i = 0; i < gatesRow1.Length; i++) {
+				gatesRow1[i].MakeDirty();
+			}
+			for (int i = 0; i < gatesRow2.Length; i++) {
+				gatesRow2[i].MakeDirty();
+			}
+			for (int i = 0; i < inputRow3.Length; i++) {
+				inputRow3[i].MakeDirty();
+			}
+
+			if (mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null) {
+				outputImage.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.Whatever) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+			}
+
+			outputLabel.text = outputText;
+			isDirty = false;
 		}
 	}
 }

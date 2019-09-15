@@ -14,6 +14,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	private bool ignoreSliderMoved = false;
 	private LogicBoxPanel motherPanel;
 	public GeneLogicBoxInput affectedGeneLogicBoxInput;
+	public GeneAndGeneCellPanel geneAndGeneCellPanel;
 
 	public void Initialize(PhenoGenoEnum mode, LogicBoxPanel motherPanel) {
 		this.mode = mode;
@@ -117,6 +118,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 
 			ignoreSliderMoved = false;
 
+			//geneAndGeneCellPanel.MakeDirty();
 			isDirty = false;
 		}
 	}
