@@ -22,6 +22,13 @@ public class EffectSensorPanel : CellSensorPanel {
 		ApplyChange();
 	}
 
+	public void OnClickedOutputButtonA() {
+		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
+			LogicBoxInputPanel.AnswerSetReference(affectedGeneEffectSensor.signalUnit, SignalUnitSlotEnum.A);
+			MouseAction.instance.actionState = MouseActionStateEnum.free;
+		}
+	}
+
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {

@@ -23,7 +23,6 @@ public class EnergySensorPanel : CellSensorPanel {
 	}
 
 	public void OnClickedOutputButtonA() {
-		Debug.Log("A");
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			LogicBoxInputPanel.AnswerSetReference(affectedGeneEnergySensor.signalUnit, SignalUnitSlotEnum.A);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;

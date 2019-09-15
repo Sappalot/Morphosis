@@ -159,11 +159,11 @@ public class LogicBoxPanel : MonoBehaviour {
 	private LogicBoxInputEnum RuntimeLogicBoxInputAfterValve(int inputColumn) {
 		if (inputRow3[inputColumn].affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
 			return LogicBoxInputEnum.BlockedByValve;
-		} else if (inputRow3[inputColumn].affectedGeneLogicBoxInput.input == SignalUnitEnum.Void) {
+		} else if (inputRow3[inputColumn].affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
 			return LogicBoxInputEnum.VoidInput;
 		} else {
 			if (selectedCell != null) {
-				return selectedCell.GetOutputFromUnit(inputRow3[inputColumn].affectedGeneLogicBoxInput.input, SignalUnitSlotEnum.Whatever) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
+				return selectedCell.GetOutputFromUnit(inputRow3[inputColumn].affectedGeneLogicBoxInput.nerve.inputUnit, SignalUnitSlotEnum.Whatever) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
 			}
 		}
 		return LogicBoxInputEnum.Error;

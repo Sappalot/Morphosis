@@ -5,19 +5,11 @@ public class GeneLogicBoxInput : GeneLogicBoxPart {
 	public SignalValveModeEnum valveMode = SignalValveModeEnum.Pass;
 	public GeneNerve nerve = new GeneNerve();
 
-	public SignalUnitEnum input {
-		get {
-			return nerve.inputUnit;
-		}
-		set {
-			nerve.inputUnit = value;
-		}
-	}
-
-	public GeneLogicBoxInput(int row, int column) {
+	public GeneLogicBoxInput(int row, int column, SignalUnitEnum signalUnit) {
 		this.row = row;
 		leftFlank = GetFlankLeftOfColumn(column);
 		rightFlank = GetFlankRightOfColumn(column);
+		nerve.outputUnit = signalUnit;
 	}
 
 	public int column {

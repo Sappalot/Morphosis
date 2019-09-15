@@ -53,6 +53,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	public void OnSetReferenceClicked() {
 		if (MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
 			MouseAction.instance.actionState = MouseActionStateEnum.selectSignalOutput;
+			Debug.Assert(staticAffectedGeneLogicBoxInputPanel == null);
 			staticAffectedGeneLogicBoxInputPanel = this;
 			motherPanel.MakeDirty();
 		}

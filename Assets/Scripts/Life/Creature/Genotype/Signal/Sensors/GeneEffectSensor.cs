@@ -1,4 +1,4 @@
-﻿public class GeneEffectSensor : GeneSensor {
+﻿public class GeneEffectSensor : GeneSignalUnit {
 	public GeneEffectSensor(SignalUnitEnum signalUnit, bool isLocked) {
 		this.signalUnit = signalUnit;
 		this.isLocked = isLocked;

@@ -31,6 +31,10 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 	}
 
 	public void OnClickedClear() {
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) {
+			return;
+		}
+
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			if (creature.allowedToChangeGenome) {
 				creature.Clear();
@@ -44,6 +48,10 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 	}
 
 	public void OnClickedMutate() {
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) {
+			return;
+		}
+
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			if (creature.allowedToChangeGenome) {
 				creature.MutateCummulative(GlobalSettings.instance.mutation.masterMutationStrength * 10f);
@@ -57,6 +65,10 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 	}
 
 	public void OnClickedScramble() {
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) {
+			return;
+		}
+
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			if (creature.allowedToChangeGenome) {
 				creature.Scramble();

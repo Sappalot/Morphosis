@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public class GeneLogicBox : GeneSensor {
+public class GeneLogicBox : GeneSignalUnit {
 	public static int rowCount = 3; // excluding, bottom input row
 	public static int columnCount = 5;
 	public static int rightmostFlank = columnCount;
@@ -13,6 +13,20 @@ public class GeneLogicBox : GeneSensor {
 	private GeneLogicBoxGate[] gateRow1 = new GeneLogicBoxGate[maxGatesPerRow];
 	private GeneLogicBoxGate[] gateRow2 = new GeneLogicBoxGate[maxGatesPerRow];
 	private GeneLogicBoxInput[] inputRow3 = new GeneLogicBoxInput[columnCount];
+
+	public GeneLogicBox(SignalUnitEnum signalUnit, bool isLocked) {
+		this.signalUnit = signalUnit;
+		this.isLocked = isLocked;
+
+		gateRow0 = new GeneLogicBoxGate(this, 0);
+		for (int g = 0; g < maxGatesPerRow; g++) {
+			gateRow1[g] = new GeneLogicBoxGate(this, 1);
+			gateRow2[g] = new GeneLogicBoxGate(this, 2);
+		}
+		for (int i = 0; i < columnCount; i++) {
+			inputRow3[i] = new GeneLogicBoxInput(3, i, signalUnit);
+		}
+	}
 
 	public GeneLogicBoxGate GetGate(int row, int index) {
 		if (row == 0) {
@@ -42,20 +56,6 @@ public class GeneLogicBox : GeneSensor {
 
 	public int InputCount() {
 		return columnCount;
-	}
-
-	public GeneLogicBox(SignalUnitEnum signalUnit, bool isLocked) {
-		this.signalUnit = signalUnit;
-		this.isLocked = isLocked;
-
-		gateRow0 = new GeneLogicBoxGate(this, 0);
-		for (int g = 0; g < maxGatesPerRow; g++) {
-			gateRow1[g] = new GeneLogicBoxGate(this, 1);
-			gateRow2[g] = new GeneLogicBoxGate(this, 2);
-		}
-		for (int i = 0; i < columnCount; i++) {
-			inputRow3[i] = new GeneLogicBoxInput(3, i);
-		}
 	}
 
 	public void UpdateConnections() {

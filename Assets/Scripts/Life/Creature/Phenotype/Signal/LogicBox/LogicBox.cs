@@ -34,7 +34,7 @@ public class LogicBox : SignalUnit {
 			foreach (GeneLogicBoxPart nextPart in gate.partsConnected) {
 				if (nextPart.isTransmittingSignal) {
 					if (nextPart is GeneLogicBoxInput) {
-						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && ((nextPart as GeneLogicBoxInput).input == SignalUnitEnum.Void || !hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).nerve.inputUnit, (nextPart as GeneLogicBoxInput).nerve.inputUnitSlot))) {
+						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && ((nextPart as GeneLogicBoxInput).nerve.inputUnit == SignalUnitEnum.Void || !hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).nerve.inputUnit, (nextPart as GeneLogicBoxInput).nerve.inputUnitSlot))) {
 							// next part turned out to be an open input valve with its input off
 							return false; // one off ==> AND is off :(
 						}
@@ -51,7 +51,7 @@ public class LogicBox : SignalUnit {
 			foreach (GeneLogicBoxPart nextPart in gate.partsConnected) {
 				if (nextPart.isTransmittingSignal) {
 					if (nextPart is GeneLogicBoxInput) {
-						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && (nextPart as GeneLogicBoxInput).input != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).input, (nextPart as GeneLogicBoxInput).nerve.inputUnitSlot)) {
+						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && (nextPart as GeneLogicBoxInput).nerve.inputUnit != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).nerve.inputUnit, (nextPart as GeneLogicBoxInput).nerve.inputUnitSlot)) {
 							// next part turned out to be an open input valve with its input on
 							return true; // one on ==> OR is on :)
 						}
@@ -68,10 +68,10 @@ public class LogicBox : SignalUnit {
 	}
 
 	public static bool GetInputResult(GeneLogicBoxInput input, Cell hostCell) {
-		return (input as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && (input as GeneLogicBoxInput).input != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as GeneLogicBoxInput).input, (input as GeneLogicBoxInput).nerve.inputUnitSlot);
+		return (input as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && (input as GeneLogicBoxInput).nerve.inputUnit != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as GeneLogicBoxInput).nerve.inputUnit, (input as GeneLogicBoxInput).nerve.inputUnitSlot);
 	}
 
 	private bool TestInput(int leftFlank) {
-		return leftFlank == 0 || leftFlank == 2 || leftFlank == 4;
+		return leftFlank == 0 || leftFlank == 2 || leftFlank == 4; 
 	}
 }
