@@ -51,25 +51,28 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	}
 
 	public void OnSetReferenceClicked() {
-		if (MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
+		if (MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
 			MouseAction.instance.actionState = MouseActionStateEnum.selectSignalOutput;
-			staticAffectedGeneLogicBoxInput = affectedGeneLogicBoxInput;
+			staticAffectedGeneLogicBoxInputPanel = this;
+			motherPanel.MakeDirty();
 		}
 	}
 
-	public static GeneLogicBoxInput staticAffectedGeneLogicBoxInput;
+	public static LogicBoxInputPanel staticAffectedGeneLogicBoxInputPanel;
 	public static void AnswerSetReference(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
-		staticAffectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
-		staticAffectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
-		staticAffectedGeneLogicBoxInput = null;
+		staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
+		staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
+		staticAffectedGeneLogicBoxInputPanel.motherPanel.MakeDirty();
+		staticAffectedGeneLogicBoxInputPanel = null;
 	}
 
 	private void Update() {
 		if (Input.GetKey(KeyCode.Escape)) {
-			if (MouseAction.instance.actionState == MouseActionStateEnum.selectGene) {
+			if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput) {
 				Audio.instance.ActionAbort(1f);
-
 				MouseAction.instance.actionState = MouseActionStateEnum.free;
+				staticAffectedGeneLogicBoxInputPanel = null;
+				motherPanel.MakeDirty();
 			}
 		}
 
@@ -92,7 +95,8 @@ public class LogicBoxInputPanel : MonoBehaviour {
 				} else {
 					inputButtonImage.color = ColorScheme.instance.signalOff; // we have a chance of an ON signal
 				}
-				if (staticAffectedGeneLogicBoxInput != null) {
+				// Color while choosing output
+				if (staticAffectedGeneLogicBoxInputPanel != null && staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput == affectedGeneLogicBoxInput) {
 					inputButtonImage.color = new Color(0f, 1f, 0f);
 				}
 
