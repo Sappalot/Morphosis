@@ -55,6 +55,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 	public GeneNeighboursComponentPanel geneNeighbourPanel;
 
+	public SignalArrowHandler signalArrowHandler;
+
 	override public void Init() {
 		isDirty = true;
 		metabolismCellPanels[0] = eggCellPanel;
@@ -80,6 +82,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 		originCellPanel.mode = PhenoGenoEnum.Phenotype;
 
 		geneNeighbourPanel.gameObject.SetActive(false);
+
+		signalArrowHandler.Initialize(PhenoGenoEnum.Phenotype);
 
 		MakeDirty();
 	}
@@ -281,13 +285,6 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				veinCellPanel.MakeDirty();
 			}
 
-			//// Sensor ...
-			//if (selectedCell.sensorType == SensorTypeEnum.Effect) {
-			//	effectSensorPanel.gameObject.SetActive(true);
-			//	effectSensorPanel.MakeDirty();
-			//}
-			// ^ Sensor ^
-
 			if (selectedCell.isOrigin) {
 				originCellPanel.gameObject.SetActive(true);
 				originCellPanel.MakeDirty();
@@ -300,6 +297,8 @@ public class CellPanel : MonoSingleton<CellPanel> {
 				cellBuildPriorityPanel.gameObject.SetActive(true);
 				cellBuildPriorityPanel.MakeDirty();
 			}
+
+			signalArrowHandler.MakeDirty();
 
 			isDirty = false;
 		}

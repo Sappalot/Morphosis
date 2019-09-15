@@ -64,6 +64,8 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 
 	public GeneNeighboursComponentPanel geneNeighbourPanel;
 
+	public SignalArrowHandler signalArrowHandler;
+
 	override public void Init() {
 		isDirty = true;
 		metabolismCellPanels[0] = eggCellPanel;
@@ -90,6 +92,8 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 		originCellPanel.mode = PhenoGenoEnum.Genotype;
 
 		geneNeighbourPanel.Init();
+
+		signalArrowHandler.Initialize(PhenoGenoEnum.Genotype);
 
 		MakeDirty();
 	}
@@ -260,6 +264,8 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 				cellBuildPriorityPanel.gameObject.SetActive(true);
 				cellBuildPriorityPanel.MakeDirty();
 			}
+
+			signalArrowHandler.MakeDirty();
 
 			isDirty = false;
 		}

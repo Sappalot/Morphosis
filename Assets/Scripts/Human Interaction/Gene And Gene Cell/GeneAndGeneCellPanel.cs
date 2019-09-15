@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+// Will this one ever be nessesary??
 public class GeneAndGeneCellPanel : MonoBehaviour {
 
 	private bool isDirty;

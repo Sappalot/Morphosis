@@ -119,7 +119,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 				operatorTypeLabel.text = "???";
 			}
 
-			if (affectedGeneLogicBoxGate.isUsed) {
+			if (affectedGeneLogicBoxGate != null && affectedGeneLogicBoxGate.isUsed) {
 				//Scale and position
 				GetComponent<RectTransform>().sizeDelta = new Vector2(LogicBoxPanel.cellWidth * (affectedGeneLogicBoxGate.rightFlank - affectedGeneLogicBoxGate.leftFlank), LogicBoxPanel.cellHeight);
 				transform.position = motherPanel.gateGridOrigo + Vector3.right * affectedGeneLogicBoxGate.leftFlank * LogicBoxPanel.cellWidth + Vector3.down * affectedGeneLogicBoxGate.row * LogicBoxPanel.cellHeight;
