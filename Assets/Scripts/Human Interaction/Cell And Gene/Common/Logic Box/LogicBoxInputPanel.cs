@@ -10,15 +10,25 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	[HideInInspector]
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 
+	private int column;
 	private bool isDirty = false;
 	private bool ignoreSliderMoved = false;
 	private LogicBoxPanel motherPanel;
-	public GeneLogicBoxInput affectedGeneLogicBoxInput;
-	public GeneAndGeneCellPanel geneAndGeneCellPanel;
+	public GeneLogicBoxInput affectedGeneLogicBoxInput { 
+		get {
+			return selectedGene.eggCellFertilizeLogic.GetInput(column);
+		}
+	}
+	public CellAndGenePanel geneAndGeneCellPanel;
 
-	public void Initialize(PhenoGenoEnum mode, LogicBoxPanel motherPanel) {
+	public GeneNerve GetGeneNerve() {
+		return affectedGeneLogicBoxInput.nerve;
+	}
+
+	public void Initialize(PhenoGenoEnum mode, int column, LogicBoxPanel motherPanel) {
 		this.mode = mode;
 		this.motherPanel = motherPanel;
+		this.column = column;
 	}
 
 	private PhenoGenoEnum GetMode() {
@@ -37,6 +47,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
+		HudSignalArrowHandler.MakeDirtyConnections();
 		MakeDirty();
 	}
 
@@ -48,6 +59,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
+		HudSignalArrowHandler.MakeDirtyConnections();
 		MakeDirty();
 	}
 
@@ -65,6 +77,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
 		staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
 		staticAffectedGeneLogicBoxInputPanel.motherPanel.MakeDirty();
+		HudSignalArrowHandler.MakeDirtyConnections();
 		staticAffectedGeneLogicBoxInputPanel = null;
 	}
 

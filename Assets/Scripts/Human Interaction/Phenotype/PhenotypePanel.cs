@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
-
 	//public Text creatureSize;
 	public CellPanel cellPanel;
 	public GameObject bodyPanel;

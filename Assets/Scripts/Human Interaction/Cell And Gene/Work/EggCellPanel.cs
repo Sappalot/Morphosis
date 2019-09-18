@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class EggCellPanel : CellComponentPanel {
@@ -50,6 +51,10 @@ public class EggCellPanel : CellComponentPanel {
 		MakeDirty();
 
 		base.Initialize(mode);
+	}
+
+	public override List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
+		return fertilizeLogicBoxPanel.GetAllGeneGeneLogicBoxInputs();
 	}
 
 	public void OnClickFertilize() {
@@ -158,7 +163,6 @@ public class EggCellPanel : CellComponentPanel {
 				detatchEnergySlider.value = selectedGene.eggCellDetatchEnergyThreshold;
 				detatchEnergySliderText.text = string.Format("Can't grow more and cell energy ≥ {0:F1}%", selectedGene.eggCellDetatchEnergyThreshold * 100f);
 
-				fertilizeLogicBoxPanel.ConnectToGeneLogic(selectedGene.eggCellFertilizeLogic); // We need the connection human interface ==> gene logic (in order to update gene from interface (input) and interface from gene (output))
 				fertilizeEnergySensorPanel.ConnectToGeneLogic(selectedGene.eggCellFertilizeEnergySensor);
 				effectSensorPanel.ConnectToGeneLogic(selectedGene.effectSensor);
 

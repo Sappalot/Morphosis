@@ -13,6 +13,15 @@ public class EnergySensorPanel : CellSensorPanel {
 		affectedGeneEnergySensor = geneEnergySensor;
 	}
 
+	public bool isAffectedGeneSetupComplete {
+		get {
+			if (affectedGeneEnergySensor == null) {
+				return false;
+			}
+			return true;
+		}
+	}
+
 	public void OnEnergyThresholdSliderMoved() {
 		if (ignoreSliderMoved) {
 			return;
@@ -24,7 +33,7 @@ public class EnergySensorPanel : CellSensorPanel {
 
 	public void OnClickedOutputButtonA() {
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-			LogicBoxInputPanel.AnswerSetReference(affectedGeneEnergySensor.signalUnit, SignalUnitSlotEnum.A);
+			LogicBoxInputPanel.AnswerSetReference(affectedGeneEnergySensor.signalUnit, 0);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		}
 	}

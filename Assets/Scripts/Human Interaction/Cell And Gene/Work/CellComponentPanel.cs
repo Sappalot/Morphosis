@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class CellComponentPanel : MonoBehaviour {
 	[HideInInspector]
@@ -11,6 +12,10 @@ public abstract class CellComponentPanel : MonoBehaviour {
 
 	public virtual void Initialize(PhenoGenoEnum mode) {
 		this.mode = mode;
+	}
+
+	public virtual List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
+		return null;
 	}
 
 	protected bool isDirty = false;

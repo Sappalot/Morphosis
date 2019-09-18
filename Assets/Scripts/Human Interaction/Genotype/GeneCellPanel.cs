@@ -64,7 +64,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 
 	public GeneNeighboursComponentPanel geneNeighbourPanel;
 
-	public SignalArrowHandler signalArrowHandler;
+	public CellAndGenePanel cellAndGenePanel;
 
 	override public void Init() {
 		isDirty = true;
@@ -93,7 +93,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 
 		geneNeighbourPanel.Init();
 
-		signalArrowHandler.Initialize(PhenoGenoEnum.Genotype);
+		cellAndGenePanel.Initialize(PhenoGenoEnum.Genotype);
 
 		MakeDirty();
 	}
@@ -265,7 +265,7 @@ public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
 				cellBuildPriorityPanel.MakeDirty();
 			}
 
-			signalArrowHandler.MakeDirty();
+			HudSignalArrowHandler.MakeDirtyConnections();
 
 			isDirty = false;
 		}

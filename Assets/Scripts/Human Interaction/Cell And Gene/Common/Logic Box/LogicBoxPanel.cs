@@ -1,7 +1,37 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class LogicBoxPanel : MonoBehaviour {
+	[Serializable]
+	public struct LogicBoxLocations {
+		public RectTransform output;
+		public RectTransform inputA;
+		public RectTransform inputB;
+		public RectTransform inputC;
+		public RectTransform inputD;
+		public RectTransform inputE;
+	}
+	public LogicBoxLocations locations = new LogicBoxLocations();
+
+	public RectTransform GetLocation(SignalUnitSlotEnum slot) {
+		if (slot == SignalUnitSlotEnum.A) {
+			return locations.inputA;
+		} else if (slot == SignalUnitSlotEnum.B) {
+			return locations.inputB;
+		} else if (slot == SignalUnitSlotEnum.C) {
+			return locations.inputC;
+		} else if (slot == SignalUnitSlotEnum.D) {
+			return locations.inputD;
+		} else if (slot == SignalUnitSlotEnum.E) {
+			return locations.inputE;
+		} else if (slot == SignalUnitSlotEnum.Output) {
+			return locations.output;
+		}
+		return null;
+	}
+
 	public Image outputImage;
 
 	private static Vector2 rowSize = new Vector2(270f, 40f);
@@ -19,7 +49,11 @@ public class LogicBoxPanel : MonoBehaviour {
 	private LogicBoxGatePanel[] gatesRow2 = new LogicBoxGatePanel[GeneLogicBox.maxGatesPerRow];
 	public LogicBoxInputPanel[] inputRow3 = new LogicBoxInputPanel[GeneLogicBox.maxGatesPerRow];
 
-	public GeneLogicBox affectedGeneLogicBox { get; private set; }
+	public GeneLogicBox affectedGeneLogicBox {
+		get {
+			return selectedGene.eggCellFertilizeLogic;
+		}
+	}
 
 	public Vector3 gateGridOrigo {
 		get {
@@ -44,49 +78,33 @@ public class LogicBoxPanel : MonoBehaviour {
 		gateRow0 = GameObject.Instantiate(gateTemplate, transform);
 		gateRow0.transform.position = gateTemplate.transform.position + Vector3.right * 0f * cellWidth + Vector3.down * 0f * cellHeight;
 		gateRow0.transform.SetAsFirstSibling();
-		gateRow0.Initialize(mode, this);
+		gateRow0.Initialize(mode, 0, 0, this);
 
 		// create small gate pool
 		for (int row = 1; row < GeneLogicBox.rowCount; row++) {
-			for (int column = 0; column < GeneLogicBox.maxGatesPerRow; column++) {
+			for (int index = 0; index < GeneLogicBox.maxGatesPerRow; index++) {
 				LogicBoxGatePanel gate = GameObject.Instantiate(gateTemplate, transform);
 				gate.GetComponent<RectTransform>().sizeDelta = new Vector2(cellWidth, cellHeight);
-				gate.transform.position = gateTemplate.transform.position + Vector3.right * column * cellWidth + Vector3.down * row * cellHeight;
+				gate.transform.position = gateTemplate.transform.position + Vector3.right * index * cellWidth + Vector3.down * row * cellHeight;
 				gate.transform.SetAsFirstSibling();
-				gate.Initialize(mode, this);
+				gate.Initialize(mode, row, index, this);
 				gate.gameObject.SetActive(true);
 
 				if (row == 1) {
-					gatesRow1[column] = gate;
+					gatesRow1[index] = gate;
 				} else {
-					gatesRow2[column] = gate;
+					gatesRow2[index] = gate;
 				}
 			}
 		}
 		gateTemplate.gameObject.SetActive(false);
 
 		// Initialize input boxes
-		foreach (LogicBoxInputPanel s in inputRow3) {
-			s.Initialize(mode, this);
+		for (int column = 0; column < GeneLogicBox.columnCount; column++) {
+			inputRow3[column].Initialize(mode, column, this);
 		}
 
 		MakeDirty();
-	}
-
-	public void ConnectToGeneLogic(GeneLogicBox geneLogicBox) {
-		affectedGeneLogicBox = geneLogicBox;
-		if (gateRow0 != null) {
-			gateRow0.affectedGeneLogicBoxGate = geneLogicBox.GetGate(0, 0);
-			for (int i = 0; i < geneLogicBox.GatesAtRowCount(1); i++) {
-				gatesRow1[i].affectedGeneLogicBoxGate = geneLogicBox.GetGate(1, i); // just map strait off, doesn't really matter
-			}
-			for (int i = 0; i < geneLogicBox.GatesAtRowCount(2); i++) {
-				gatesRow2[i].affectedGeneLogicBoxGate = geneLogicBox.GetGate(2, i);
-			}
-			for (int i = 0; i < geneLogicBox.InputCount(); i++) {
-				inputRow3[i].affectedGeneLogicBoxInput = geneLogicBox.GetInput(i);
-			}
-		}
 	}
 
 	public void MarkAsNewForge() {
@@ -112,6 +130,14 @@ public class LogicBoxPanel : MonoBehaviour {
 			MarkAsNewForge();
 			MakeDirty();
 		}
+	}
+
+	public List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
+		List<GeneLogicBoxInput> arrows = new List<GeneLogicBoxInput>();
+		for (int i = 0; i < inputRow3.Length; i++) {
+			arrows.Add(inputRow3[i].affectedGeneLogicBoxInput);
+		}
+		return arrows;
 	}
 
 	private bool isDirty = false;

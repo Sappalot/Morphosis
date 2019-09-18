@@ -12,7 +12,14 @@ public class LogicBoxGatePanel : MonoBehaviour {
 
 	private bool isMouseHoverng;
 
-	public GeneLogicBoxGate affectedGeneLogicBoxGate;
+	private int row;
+	private int index;
+
+	public GeneLogicBoxGate affectedGeneLogicBoxGate { 
+		get {
+			return selectedGene.eggCellFertilizeLogic.GetGate(row, index);
+		}
+	}
 
 	private LogicBoxPanel motherPanel;
 
@@ -23,9 +30,11 @@ public class LogicBoxGatePanel : MonoBehaviour {
 		return mode;
 	}
 
-	public void Initialize(PhenoGenoEnum mode, LogicBoxPanel motherPanel) {
+	public void Initialize(PhenoGenoEnum mode, int row, int index, LogicBoxPanel motherPanel) {
 		this.mode = mode;
 		this.motherPanel = motherPanel;
+		this.row = row;
+		this.index = index;
 	}
 
 	private bool isDirty = false;
@@ -185,12 +194,6 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	private int rightFlank {
 		get {
 			return affectedGeneLogicBoxGate.rightFlank;
-		}
-	}
-
-	private int row {
-		get {
-			return affectedGeneLogicBoxGate.row;
 		}
 	}
 

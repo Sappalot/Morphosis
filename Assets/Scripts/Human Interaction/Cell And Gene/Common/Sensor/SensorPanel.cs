@@ -1,6 +1,32 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public abstract class CellSensorPanel : MonoBehaviour {
+	[Serializable]
+	public struct LogicBoxLocations {
+		public RectTransform outputA;
+		public RectTransform outputB;
+		public RectTransform outputC;
+		public RectTransform outputD;
+		public RectTransform outputE;
+	}
+	public LogicBoxLocations locations = new LogicBoxLocations();
+
+	public RectTransform GetLocation(SignalUnitSlotEnum slot) {
+		if (slot == SignalUnitSlotEnum.A) {
+			return locations.outputA;
+		} else if (slot == SignalUnitSlotEnum.B) {
+			return locations.outputB;
+		} else if (slot == SignalUnitSlotEnum.C) {
+			return locations.outputC;
+		} else if (slot == SignalUnitSlotEnum.D) {
+			return locations.outputD;
+		} else if (slot == SignalUnitSlotEnum.E) {
+			return locations.outputE;
+		}
+		return null;
+	}
+
 	[HideInInspector]
 	protected bool ignoreSliderMoved = false;
 

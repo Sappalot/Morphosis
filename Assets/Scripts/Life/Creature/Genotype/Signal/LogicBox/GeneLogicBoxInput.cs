@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-public class GeneLogicBoxInput : GeneLogicBoxPart {
+﻿public class GeneLogicBoxInput : GeneLogicBoxPart {
 
 	public SignalValveModeEnum valveMode = SignalValveModeEnum.Pass;
 	public GeneNerve nerve = new GeneNerve();
@@ -10,6 +8,7 @@ public class GeneLogicBoxInput : GeneLogicBoxPart {
 		leftFlank = GetFlankLeftOfColumn(column);
 		rightFlank = GetFlankRightOfColumn(column);
 		nerve.outputUnit = signalUnit;
+		nerve.outputUnitSlot = (SignalUnitSlotEnum)column;
 	}
 
 	public int column {
