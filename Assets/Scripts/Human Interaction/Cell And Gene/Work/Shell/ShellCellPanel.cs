@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class ShellCellPanel : CellComponentPanel {
+public class ShellCellPanel : CellAndGeneComponentPanel {
 	public Text productionEffectText;
 
 	public ShellCellPanelButton templateButton;

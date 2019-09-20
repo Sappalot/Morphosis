@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EggCellPanel : CellComponentPanel {
+public class EggCellPanel : CellAndGeneComponentPanel {
 	public Text productionEffectText;
 
 	public Text fertilizeHeadingText;
@@ -28,7 +28,7 @@ public class EggCellPanel : CellComponentPanel {
 	public EffectSensorPanel effectSensorPanel;
 
 	public override void Initialize(PhenoGenoEnum mode) {
-		fertilizeLogicBoxPanel.Initialize(mode);
+		fertilizeLogicBoxPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxA);
 		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA);
 		effectSensorPanel.Initialize(mode, SignalUnitEnum.EffectSensor);
 

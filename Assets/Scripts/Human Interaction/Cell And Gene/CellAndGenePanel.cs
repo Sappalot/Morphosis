@@ -7,9 +7,9 @@ public class CellAndGenePanel : MonoBehaviour {
 	public RectTransform cellAndGenePanelRectTransform;
 
 	public LogicBoxPanel eggFertilizeLogicBoxPanel;
-	public CellSensorPanel eggEnergySensorPanel;
+	public EnergySensorPanel eggEnergySensorPanel;
 
-	public CellWorkComponentPanel cellWorkComponentPanel;
+	public CellAndGeneWorkComponentPanel cellWorkComponentPanel;
 	public EggCellPanel eggCellPanel;
 	// TODO implement the rest of the panels all of them cellComponentPanels
 

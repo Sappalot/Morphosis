@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class EnergySensorPanel : CellSensorPanel {
+public class EnergySensorPanel : CellAndGeneSignalUnitPanel {
 	public Image outputImage;
 
 	public Text energyThresholdSliderLabel;
@@ -39,14 +39,14 @@ public class EnergySensorPanel : CellSensorPanel {
 	}
 
 	private void Update() {
-		if (isDirty) {
+		if (dirt) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Energy Sensor Panel");
 			}
 
 			if (mode == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					outputImage.color = selectedCell.GetOutputFromUnit(outputUnit, SignalUnitSlotEnum.Whatever) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					outputImage.color = selectedCell.GetOutputFromUnit(signalUnit, SignalUnitSlotEnum.Whatever) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 				energyThresholdSlider.interactable = false;
 			} else if (mode == PhenoGenoEnum.Genotype) {
@@ -60,7 +60,7 @@ public class EnergySensorPanel : CellSensorPanel {
 				ignoreSliderMoved = false;
 			}
 
-			isDirty = false;
+			dirt = false;
 		}
 	}
 }

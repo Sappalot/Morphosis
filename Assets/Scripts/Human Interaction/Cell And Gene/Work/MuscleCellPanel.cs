@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class MuscleCellPanel : CellComponentPanel {
+public class MuscleCellPanel : CellAndGeneComponentPanel {
 	public Text productionEffectText;
 
 	public Text frequenzy;

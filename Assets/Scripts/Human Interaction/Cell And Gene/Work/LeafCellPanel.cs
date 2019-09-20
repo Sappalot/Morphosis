@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class LeafCellPanel : CellComponentPanel {
+public class LeafCellPanel : CellAndGeneComponentPanel {
 	public Text productionEffectText;
 
 	public Text exposure;

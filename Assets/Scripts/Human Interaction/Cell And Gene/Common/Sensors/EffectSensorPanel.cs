@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class EffectSensorPanel : CellSensorPanel {
+public class EffectSensorPanel : CellAndGeneSignalUnitPanel {
 	public Image outputImage;
 
 	public Text effectThresholdSliderLabel;
@@ -30,14 +30,14 @@ public class EffectSensorPanel : CellSensorPanel {
 	}
 
 	private void Update() {
-		if (isDirty) {
+		if (dirt) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Effect Sensor Panel");
 			}
 
 			if (mode == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					outputImage.color = selectedCell.GetOutputFromUnit(outputUnit, SignalUnitSlotEnum.Whatever) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					outputImage.color = selectedCell.GetOutputFromUnit(signalUnit, SignalUnitSlotEnum.Whatever) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 				effectThresholdSlider.interactable = false;
 			} else if (mode == PhenoGenoEnum.Genotype) {
@@ -50,7 +50,7 @@ public class EffectSensorPanel : CellSensorPanel {
 				effectThresholdSlider.value = affectedGeneEffectSensor.threshold;
 				ignoreSliderMoved = false;
 			}
-			isDirty = false;
+			dirt = false;
 		}
 	}
 }

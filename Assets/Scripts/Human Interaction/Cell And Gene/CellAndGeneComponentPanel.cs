@@ -1,42 +1,21 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class CellSensorPanel : MonoBehaviour {
-	[Serializable]
-	public struct LogicBoxLocations {
-		public RectTransform outputA;
-		public RectTransform outputB;
-		public RectTransform outputC;
-		public RectTransform outputD;
-		public RectTransform outputE;
-	}
-	public LogicBoxLocations locations = new LogicBoxLocations();
-
-	public RectTransform GetLocation(SignalUnitSlotEnum slot) {
-		if (slot == SignalUnitSlotEnum.A) {
-			return locations.outputA;
-		} else if (slot == SignalUnitSlotEnum.B) {
-			return locations.outputB;
-		} else if (slot == SignalUnitSlotEnum.C) {
-			return locations.outputC;
-		} else if (slot == SignalUnitSlotEnum.D) {
-			return locations.outputD;
-		} else if (slot == SignalUnitSlotEnum.E) {
-			return locations.outputE;
-		}
-		return null;
-	}
-
+public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 	[HideInInspector]
+	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 	protected bool ignoreSliderMoved = false;
 
-	[HideInInspector]
-	public PhenoGenoEnum mode { get; set; }
-	protected SignalUnitEnum outputUnit;
+	protected PhenoGenoEnum GetMode() {
+		return mode;
+	}
 
-	public void Initialize(PhenoGenoEnum mode, SignalUnitEnum outputUnit) {
+	public virtual void Initialize(PhenoGenoEnum mode) {
 		this.mode = mode;
-		this.outputUnit = outputUnit;
+	}
+
+	public virtual List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
+		return null;
 	}
 
 	protected bool isDirty = false;
@@ -59,6 +38,13 @@ public abstract class CellSensorPanel : MonoBehaviour {
 		CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
 		CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
 		CreatureSelectionPanel.instance.soloSelected.generation = 1;
+	}
+
+	public string productionEffectPhenotypeString {
+		get {
+			return string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2} W", selectedCell.effectProductionInternalUp, selectedCell.effectProductionInternalDown, selectedCell.effectProductionInternalUp - selectedCell.effectProductionInternalDown)
+			 + (selectedCell.IsHibernating() ? " (hibernating)" : "");
+		}
 	}
 
 	public Gene selectedGene {

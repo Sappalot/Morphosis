@@ -19,7 +19,6 @@ public class LogicBoxInputPanel : MonoBehaviour {
 			return selectedGene.eggCellFertilizeLogic.GetInput(column);
 		}
 	}
-	public CellAndGenePanel geneAndGeneCellPanel;
 
 	public GeneNerve GetGeneNerve() {
 		return affectedGeneLogicBoxInput.nerve;
@@ -89,6 +88,10 @@ public class LogicBoxInputPanel : MonoBehaviour {
 				staticAffectedGeneLogicBoxInputPanel = null;
 				motherPanel.MakeDirty();
 			}
+		}
+
+		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
+			return;
 		}
 
 		if (isDirty) {

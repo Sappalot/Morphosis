@@ -3,35 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LogicBoxPanel : MonoBehaviour {
-	[Serializable]
-	public struct LogicBoxLocations {
-		public RectTransform output;
-		public RectTransform inputA;
-		public RectTransform inputB;
-		public RectTransform inputC;
-		public RectTransform inputD;
-		public RectTransform inputE;
-	}
-	public LogicBoxLocations locations = new LogicBoxLocations();
-
-	public RectTransform GetLocation(SignalUnitSlotEnum slot) {
-		if (slot == SignalUnitSlotEnum.A) {
-			return locations.inputA;
-		} else if (slot == SignalUnitSlotEnum.B) {
-			return locations.inputB;
-		} else if (slot == SignalUnitSlotEnum.C) {
-			return locations.inputC;
-		} else if (slot == SignalUnitSlotEnum.D) {
-			return locations.inputD;
-		} else if (slot == SignalUnitSlotEnum.E) {
-			return locations.inputE;
-		} else if (slot == SignalUnitSlotEnum.Output) {
-			return locations.output;
-		}
-		return null;
-	}
-
+public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 	public Image outputImage;
 
 	private static Vector2 rowSize = new Vector2(270f, 40f);
@@ -39,7 +11,7 @@ public class LogicBoxPanel : MonoBehaviour {
 	public static float cellHeight = 40;
 
 	[HideInInspector]
-	public string outputText;
+	public string outputText; 
 
 	public Text outputLabel;
 	public LogicBoxGatePanel gateTemplate;
@@ -65,15 +37,8 @@ public class LogicBoxPanel : MonoBehaviour {
 		affectedGeneLogicBox.UpdateConnections();
 	}
 
-	[HideInInspector]
-	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
-
-	private PhenoGenoEnum GetMode() {
-		return mode;
-	}
-
-	public void Initialize(PhenoGenoEnum mode) {
-		this.mode = mode;
+	override public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit ) {
+		base.Initialize(mode, signalUnit);
 
 		gateRow0 = GameObject.Instantiate(gateTemplate, transform);
 		gateRow0.transform.position = gateTemplate.transform.position + Vector3.right * 0f * cellWidth + Vector3.down * 0f * cellHeight;
@@ -105,6 +70,8 @@ public class LogicBoxPanel : MonoBehaviour {
 		}
 
 		MakeDirty();
+
+		
 	}
 
 	public void MarkAsNewForge() {
@@ -138,11 +105,6 @@ public class LogicBoxPanel : MonoBehaviour {
 			arrows.Add(inputRow3[i].affectedGeneLogicBoxInput);
 		}
 		return arrows;
-	}
-
-	private bool isDirty = false;
-	public void MakeDirty() {
-		isDirty = true;
 	}
 
 	private LogicBoxInputEnum RuntimeLogicBoxInputAfterValve(int inputColumn) {
@@ -186,7 +148,7 @@ public class LogicBoxPanel : MonoBehaviour {
 	}
 
 	private void Update() {
-		if (isDirty) {
+		if (dirt) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Signal logic box");
 			}
@@ -207,7 +169,7 @@ public class LogicBoxPanel : MonoBehaviour {
 			}
 
 			outputLabel.text = outputText;
-			isDirty = false;
+			dirt = false;
 		}
 	}
 }

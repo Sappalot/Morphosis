@@ -44,23 +44,23 @@ public class GenePanel : MonoSingleton<GenePanel> {
 	//----- ^ Shold be same as the top of CellPanel ^
 
 	// Work -> specific
-	public CellComponentPanel eggCellPanel;
-	public CellComponentPanel fungalCellPanel;
-	public CellComponentPanel jawCellPanel;
-	public CellComponentPanel leafCellPanel;
-	public CellComponentPanel muscleCellPanel;
-	public CellComponentPanel rootCellPanel;
-	public CellComponentPanel shellCellPanel;
-	public CellComponentPanel veinCellPanel;
-	private CellComponentPanel[] metabolismCellPanels = new CellComponentPanel[8];
+	public CellAndGeneComponentPanel eggCellPanel;
+	public CellAndGeneComponentPanel fungalCellPanel;
+	public CellAndGeneComponentPanel jawCellPanel;
+	public CellAndGeneComponentPanel leafCellPanel;
+	public CellAndGeneComponentPanel muscleCellPanel;
+	public CellAndGeneComponentPanel rootCellPanel;
+	public CellAndGeneComponentPanel shellCellPanel;
+	public CellAndGeneComponentPanel veinCellPanel;
+	private CellAndGeneComponentPanel[] metabolismCellPanels = new CellAndGeneComponentPanel[8];
 
-	public CellAxonComponentPanel axonCellPanel;
-	private CellSensorPanel[] sensorPanels = new CellSensorPanel[1];
+	public CellAndGeneAxonComponentPanel axonCellPanel;
+	private CellAndGeneSignalUnitPanel[] sensorPanels = new CellAndGeneSignalUnitPanel[1];
 	//public CellSensorPanel effectSensorPanel;
 	// TODO: more sensor panels
 
-	public CellBuildPriorityComponentPanel cellBuildPriorityPanel;
-	public OriginCellComponentPanel originCellPanel;
+	public CellAndGeneBuildPriorityComponentPanel cellBuildPriorityPanel;
+	public CellAndGeneOriginComponentPanel originCellPanel;
 
 	public GeneNeighboursComponentPanel geneNeighbourPanel;
 
@@ -77,7 +77,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		metabolismCellPanels[6] = rootCellPanel;
 		metabolismCellPanels[7] = veinCellPanel;
 
-		foreach (CellComponentPanel m in metabolismCellPanels) {
+		foreach (CellAndGeneComponentPanel m in metabolismCellPanels) {
 			m.Initialize(PhenoGenoEnum.Genotype);
 		}
 
@@ -102,13 +102,13 @@ public class GenePanel : MonoSingleton<GenePanel> {
 	public void MakeDirty() {
 		isDirty = true;
 
-		foreach (CellComponentPanel m in metabolismCellPanels) {
+		foreach (CellAndGeneComponentPanel m in metabolismCellPanels) {
 			m.MakeDirty();
 		}
 
 		axonCellPanel.MakeDirty();
 
-		foreach (CellSensorPanel s in sensorPanels) {
+		foreach (CellAndGeneSignalUnitPanel s in sensorPanels) {
 			//s.MakeDirty();
 		}
 
@@ -161,11 +161,11 @@ public class GenePanel : MonoSingleton<GenePanel> {
 			}
 
 			//All off, we may turn on 1 of them later
-			foreach (CellComponentPanel m in metabolismCellPanels) {
+			foreach (CellAndGeneComponentPanel m in metabolismCellPanels) {
 				m.gameObject.SetActive(false);
 			}
 
-			foreach (CellSensorPanel s in sensorPanels) {
+			foreach (CellAndGeneSignalUnitPanel s in sensorPanels) {
 				//s.gameObject.SetActive(false);
 			}
 

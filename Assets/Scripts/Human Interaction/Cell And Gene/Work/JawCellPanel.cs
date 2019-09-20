@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class JawCellPanel : CellComponentPanel {
+public class JawCellPanel : CellAndGeneComponentPanel {
 	public Text productionEffectText;
 
 	public Text prayCellCount;

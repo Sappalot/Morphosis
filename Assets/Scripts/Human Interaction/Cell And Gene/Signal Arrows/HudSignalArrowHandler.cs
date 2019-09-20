@@ -26,7 +26,6 @@ public class HudSignalArrowHandler : MonoBehaviour {
 	}
 
 	private void Update() {
-
 		// Update connections
 		if (isDirtyConnections) {
 			List<GeneLogicBoxInput> geneLogicBoxInputList = cellAndGenePanel.GetAllGeneLogicBoxInputs();
@@ -37,6 +36,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			arrowList.Clear();
 
 			foreach (GeneLogicBoxInput geneLogicBoxInput in geneLogicBoxInputList) {
+				Debug.Log("Input: unit: " + geneLogicBoxInput.nerve.inputUnit + ", slot: " + geneLogicBoxInput.nerve.inputUnitSlot);
 				if (geneLogicBoxInput.nerve.inputUnit != SignalUnitEnum.Void && geneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
 					HudSignalArrow arrow = hudSignalArrowPool.Borrow();
 					arrow.gameObject.SetActive(true);
