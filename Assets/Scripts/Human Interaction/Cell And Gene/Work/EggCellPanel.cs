@@ -24,13 +24,11 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 	public Slider detatchEnergySlider;
 
 	public LogicBoxPanel fertilizeLogicBoxPanel;
-	public EnergySensorPanel fertilizeEnergySensorPanel;
-	public EffectSensorPanel effectSensorPanel;
+	public SensorPanel fertilizeEnergySensorPanel;
 
 	public override void Initialize(PhenoGenoEnum mode) {
 		fertilizeLogicBoxPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxA);
 		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA);
-		effectSensorPanel.Initialize(mode, SignalUnitEnum.EffectSensor);
 
 		ignoreSliderMoved = true;
 		fertilizeSlider.minValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMin;
@@ -159,16 +157,12 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 				detatchEnergySlider.value = selectedGene.eggCellDetatchEnergyThreshold;
 				detatchEnergySliderText.text = string.Format("Can't grow more and cell energy ≥ {0:F1}%", selectedGene.eggCellDetatchEnergyThreshold * 100f);
 
-				fertilizeEnergySensorPanel.ConnectToGeneLogic(selectedGene.eggCellFertilizeEnergySensor);
-				effectSensorPanel.ConnectToGeneLogic(selectedGene.effectSensor);
-
 				ignoreSliderMoved = false;
 			}
 
 			fertilizeLogicBoxPanel.outputText = "Fertilize";
 			fertilizeLogicBoxPanel.MakeDirty();
 			fertilizeEnergySensorPanel.MakeDirty();
-			effectSensorPanel.MakeDirty();
 
 			isDirty = false;
 		}

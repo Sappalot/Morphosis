@@ -17,7 +17,10 @@ public class LogicBoxGatePanel : MonoBehaviour {
 
 	public GeneLogicBoxGate affectedGeneLogicBoxGate { 
 		get {
-			return selectedGene.eggCellFertilizeLogic.GetGate(row, index);
+			if (selectedGene.type == CellTypeEnum.Egg && motherPanel.signalUnit == SignalUnitEnum.WorkLogicBoxA) {
+				return selectedGene.eggCellFertilizeLogic.GetGate(row, index);
+			}
+			return null;
 		}
 	}
 

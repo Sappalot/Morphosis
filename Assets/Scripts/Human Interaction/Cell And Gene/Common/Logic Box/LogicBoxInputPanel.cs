@@ -16,7 +16,10 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	private LogicBoxPanel motherPanel;
 	public GeneLogicBoxInput affectedGeneLogicBoxInput { 
 		get {
-			return selectedGene.eggCellFertilizeLogic.GetInput(column);
+			if (selectedGene.type == CellTypeEnum.Egg && motherPanel.signalUnit == SignalUnitEnum.WorkLogicBoxA) {
+				return selectedGene.eggCellFertilizeLogic.GetInput(column);
+			}
+			return null;
 		}
 	}
 

@@ -10,7 +10,7 @@ public class Gene {
 	public bool eggCellHibernateWhenAttachedToMother = false;
 	public bool eggCellHibernateWhenAttachedToChild = false;
 	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkLogicBoxA, true);
-	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkSensorA, true);
+	public GeneSignalUnit eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkSensorA, true);
 
 	public GeneEffectSensor effectSensor = new GeneEffectSensor(SignalUnitEnum.EffectSensor, true);
 	// ^ Egg cell ^

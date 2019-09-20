@@ -16,7 +16,7 @@ public class EnergySensor : SignalUnit {
 
 	public override void UpdateOutputs(Cell hostCell, int deltaTicks, ulong worldTicks) {
 		if (signalUnit == SignalUnitEnum.WorkSensorA) {
-			output = hostCell.energy >= hostCell.gene.eggCellFertilizeEnergySensor.threshold;
+			output = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 		} 
 		// Other energy sensor
 		

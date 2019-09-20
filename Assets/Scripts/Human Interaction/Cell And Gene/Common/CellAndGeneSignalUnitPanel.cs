@@ -34,9 +34,9 @@ public abstract class CellAndGeneSignalUnitPanel : MonoBehaviour {
 	}
 
 	[HideInInspector]
-	public bool dirt = false;
+	public bool isDirty = false;
 	public void MakeDirty() {
-		dirt = true;
+		isDirty = true;
 	}
 
 	[HideInInspector]
@@ -44,7 +44,7 @@ public abstract class CellAndGeneSignalUnitPanel : MonoBehaviour {
 
 	[HideInInspector]
 	public PhenoGenoEnum mode { get; set; }
-	protected SignalUnitEnum signalUnit;
+	public SignalUnitEnum signalUnit;
 
 	virtual public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
 		this.mode = mode;

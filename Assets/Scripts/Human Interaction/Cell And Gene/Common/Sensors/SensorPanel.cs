@@ -1,24 +1,18 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class EnergySensorPanel : CellAndGeneSignalUnitPanel {
+public class SensorPanel : CellAndGeneSignalUnitPanel {
 	public Image outputImage;
 
 	public Text energyThresholdSliderLabel;
 	public Slider energyThresholdSlider;
 
-	private GeneEnergySensor affectedGeneEnergySensor;
-
-	public void ConnectToGeneLogic(GeneEnergySensor geneEnergySensor) {
-		affectedGeneEnergySensor = geneEnergySensor;
-	}
-
-	public bool isAffectedGeneSetupComplete {
+	public GeneSignalUnit affectedGeneSensor {
 		get {
-			if (affectedGeneEnergySensor == null) {
-				return false;
+			if (selectedGene.type == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkSensorA) {
+				return selectedGene.eggCellFertilizeEnergySensor;
 			}
-			return true;
+			return null;
 		}
 	}
 
@@ -27,19 +21,19 @@ public class EnergySensorPanel : CellAndGeneSignalUnitPanel {
 			return;
 		}
 
-		affectedGeneEnergySensor.threshold = energyThresholdSlider.value;
+		(affectedGeneSensor as GeneEnergySensor).threshold = energyThresholdSlider.value;
 		ApplyChange();
 	}
 
 	public void OnClickedOutputButtonA() {
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-			LogicBoxInputPanel.AnswerSetReference(affectedGeneEnergySensor.signalUnit, 0);
+			LogicBoxInputPanel.AnswerSetReference(affectedGeneSensor.signalUnit, 0);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		}
 	}
 
 	private void Update() {
-		if (dirt) {
+		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Energy Sensor Panel");
 			}
@@ -55,12 +49,12 @@ public class EnergySensorPanel : CellAndGeneSignalUnitPanel {
 
 			if (selectedGene != null) { 
 				ignoreSliderMoved = true;
-				energyThresholdSliderLabel.text = string.Format("On if energy > {0:F1} J", affectedGeneEnergySensor.threshold);
-				energyThresholdSlider.value = affectedGeneEnergySensor.threshold;
+				energyThresholdSliderLabel.text = string.Format("On if energy > {0:F1} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+				energyThresholdSlider.value = (affectedGeneSensor as GeneEnergySensor).threshold;
 				ignoreSliderMoved = false;
 			}
 
-			dirt = false;
+			isDirty = false;
 		}
 	}
 }

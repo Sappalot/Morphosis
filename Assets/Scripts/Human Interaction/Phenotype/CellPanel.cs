@@ -46,7 +46,6 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	private CellAndGeneComponentPanel[] metabolismCellPanels = new CellAndGeneComponentPanel[8];
 
 	public CellAndGeneAxonComponentPanel axonCellPanel;
-	private CellAndGeneSignalUnitPanel[] sensorPanels = new CellAndGeneSignalUnitPanel[1];
 	public CellAndGeneSignalUnitPanel effectSensorPanel;
 	// TODO: more sensor panels
 
@@ -73,11 +72,6 @@ public class CellPanel : MonoSingleton<CellPanel> {
 
 		axonCellPanel.Initialize(PhenoGenoEnum.Phenotype);
 
-		sensorPanels[0] = effectSensorPanel;
-		foreach (CellAndGeneSignalUnitPanel s in sensorPanels) {
-			s.mode = PhenoGenoEnum.Phenotype;
-		}
-		
 		cellBuildPriorityPanel.mode = PhenoGenoEnum.Phenotype;
 		originCellPanel.mode = PhenoGenoEnum.Phenotype;
 
@@ -163,10 +157,6 @@ public class CellPanel : MonoSingleton<CellPanel> {
 			//All off, we may turn on 1 of them later 
 			foreach (CellAndGeneComponentPanel m in metabolismCellPanels) {
 				m.gameObject.SetActive(false);
-			}
-
-			foreach (CellAndGeneSignalUnitPanel s in sensorPanels) {
-				s.gameObject.SetActive(false);
 			}
 
 			cellWorkTypeDropdown.interactable = false; //can't change cell type

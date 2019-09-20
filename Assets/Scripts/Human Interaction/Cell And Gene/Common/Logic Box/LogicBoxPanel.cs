@@ -23,7 +23,11 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 
 	public GeneLogicBox affectedGeneLogicBox {
 		get {
-			return selectedGene.eggCellFertilizeLogic;
+			if (selectedGene.type == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
+				return selectedGene.eggCellFertilizeLogic;
+			}
+			return null;
+			
 		}
 	}
 
@@ -128,7 +132,7 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 	}
 
 	private void Update() {
-		if (dirt) {
+		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Signal logic box");
 			}
@@ -149,7 +153,7 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 			}
 
 			outputLabel.text = outputText;
-			dirt = false;
+			isDirty = false;
 		}
 	}
 }
