@@ -36,7 +36,6 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			arrowList.Clear();
 
 			foreach (GeneLogicBoxInput geneLogicBoxInput in geneLogicBoxInputList) {
-				Debug.Log("Input: unit: " + geneLogicBoxInput.nerve.inputUnit + ", slot: " + geneLogicBoxInput.nerve.inputUnitSlot);
 				if (geneLogicBoxInput.nerve.inputUnit != SignalUnitEnum.Void && geneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
 					HudSignalArrow arrow = hudSignalArrowPool.Borrow();
 					arrow.gameObject.SetActive(true);
@@ -58,7 +57,6 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		}
 
 		// Update signal
-
 		foreach (HudSignalArrow arrow in arrowList) {
 			Color color = Color.black;
 			if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
@@ -68,7 +66,6 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			}
 			arrow.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0.5f);
 		}
-
 	}
 
 	public Cell selectedCell {

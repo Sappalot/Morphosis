@@ -127,26 +127,6 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 		}
 	}
 
-	public Gene selectedGene {
-		get {
-			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
-			} else {
-				return GenePanel.instance.selectedGene;
-			}
-		}
-	}
-
-	public Cell selectedCell {
-		get {
-			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell;
-			} else {
-				return null; // there could be many cells selected for the same gene
-			}
-		}
-	}
-
 	private void Update() {
 		if (dirt) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
