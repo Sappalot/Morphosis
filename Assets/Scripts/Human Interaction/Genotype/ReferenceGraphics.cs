@@ -40,8 +40,8 @@ public class ReferenceGraphics : MonoBehaviour {
 	}
 
 	public void OnClicked() {
-		GeneCellPanel.instance.selectedGene = gene;
-		GeneCellPanel.instance.geneNeighbourPanel.MakeDirty();
+		GenePanel.instance.selectedGene = gene;
+		GenePanel.instance.geneNeighbourPanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeScrollDirty();
 		CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();

@@ -202,7 +202,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 			if (mode == PhenoGenoEnum.Phenotype) {
 				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
 			} else {
-				return GeneCellPanel.instance.selectedGene;
+				return GenePanel.instance.selectedGene;
 			}
 		}
 	}

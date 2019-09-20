@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class GeneCellPanel : MonoSingleton<GeneCellPanel> {
+public class GenePanel : MonoSingleton<GenePanel> {
 	// Metabolism 
 	public Text geneDescriptionLabel;
 

@@ -25,7 +25,7 @@ public class OriginCellComponentPanel : MonoBehaviour {
 			return;
 		}
 
-		GeneCellPanel.instance.selectedGene.originPulsePeriodTicks = Mathf.CeilToInt(1f / (Time.fixedDeltaTime * pulseFrequenzySlider.value));
+		GenePanel.instance.selectedGene.originPulsePeriodTicks = Mathf.CeilToInt(1f / (Time.fixedDeltaTime * pulseFrequenzySlider.value));
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
 			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
@@ -48,7 +48,7 @@ public class OriginCellComponentPanel : MonoBehaviour {
 			}
 
 			bool isOriginPhenotypeSelected = mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null && CellPanel.instance.selectedCell.isOrigin;
-			bool isOriginGenotypeSelected = mode == PhenoGenoEnum.Genotype && GeneCellPanel.instance.selectedGene != null && GeneCellPanel.instance.selectedGene.isOrigin;
+			bool isOriginGenotypeSelected = mode == PhenoGenoEnum.Genotype && GenePanel.instance.selectedGene != null && GenePanel.instance.selectedGene.isOrigin;
 			
 
 			if (mode == PhenoGenoEnum.Phenotype) {
@@ -79,8 +79,8 @@ public class OriginCellComponentPanel : MonoBehaviour {
 				pulseWaveCompletenessText.text = string.Format("Wave complete: -");
 			}
 			if (isOriginPhenotypeSelected || isOriginGenotypeSelected) {
-				pulseFrequenzySlider.value = 1f / (GeneCellPanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime);
-				pulseFrequenzySliderText.text = string.Format("Ferquenzy: {0:F2} Hz ==> Period: {1:F2} s = {2:F0} ticks", 1f / (GeneCellPanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime), GeneCellPanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime, GeneCellPanel.instance.selectedGene.originPulsePeriodTicks);
+				pulseFrequenzySlider.value = 1f / (GenePanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime);
+				pulseFrequenzySliderText.text = string.Format("Ferquenzy: {0:F2} Hz ==> Period: {1:F2} s = {2:F0} ticks", 1f / (GenePanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime), GenePanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime, GenePanel.instance.selectedGene.originPulsePeriodTicks);
 			} else {
 				pulseFrequenzySlider.value = 1f;
 				pulseFrequenzySliderText.text = "Ferquenzy: -";

@@ -31,7 +31,7 @@ public class ShellCellPanel : CellComponentPanel {
 			}
 
 			if (selectedGene != null) {
-				productionEffectText.text = string.Format("Production Effect: 0.00 - {0:F2} W", ShellCell.GetEffectCost(selectedGene.shellCellArmorClass, GeneCellPanel.instance.selectedGene.shellCellTransparancyClass));
+				productionEffectText.text = string.Format("Production Effect: 0.00 - {0:F2} W", ShellCell.GetEffectCost(selectedGene.shellCellArmorClass, GenePanel.instance.selectedGene.shellCellTransparancyClass));
 				armorText.text = string.Format("Armour: {0:F2} (* normal)", ShellCell.GetStrength(selectedGene.shellCellArmorClass));
 				transparancyText.text = string.Format("Transparancy: {0:F0} %", ShellCell.GetTransparancy(selectedGene.shellCellTransparancyClass) * 100f);
 				UpdateButtonMatrix();
@@ -47,16 +47,16 @@ public class ShellCellPanel : CellComponentPanel {
 				buttonMatrix[a, t].hasSelectedFrame = false;
 			}
 		}
-		buttonMatrix[GeneCellPanel.instance.selectedGene.shellCellArmorClass, GeneCellPanel.instance.selectedGene.shellCellTransparancyClass].hasSelectedFrame = true;
+		buttonMatrix[GenePanel.instance.selectedGene.shellCellArmorClass, GenePanel.instance.selectedGene.shellCellTransparancyClass].hasSelectedFrame = true;
 	}
 
 	public void SelectButton(ShellCellPanelButton button) {
 		if (GetMode() == PhenoGenoEnum.Genotype && IsUnlocked()) {
-			GeneCellPanel.instance.selectedGene.shellCellArmorClass = button.armorClass;
-			GeneCellPanel.instance.selectedGene.shellCellTransparancyClass = button.transparencyClass;
+			GenePanel.instance.selectedGene.shellCellArmorClass = button.armorClass;
+			GenePanel.instance.selectedGene.shellCellTransparancyClass = button.transparencyClass;
 			MakeDirty();
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
-				GeneCellPanel.instance.MakeDirty();
+				GenePanel.instance.MakeDirty();
 				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 			}
 

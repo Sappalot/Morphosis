@@ -28,13 +28,13 @@ public class GenomeGenePanel : MonoBehaviour {
 	public void OnClicked() {
 		//Debug.Log("Clicked " + index);
 		if (MouseAction.instance.actionState == MouseActionStateEnum.free) {
-			GeneCellPanel.instance.selectedGene = gene;
+			GenePanel.instance.selectedGene = gene;
 			GenomePanel.instance.MakeDirty();
 			if (CreatureSelectionPanel.instance.hasSoloSelected) {
 				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 			}
 		} else if (MouseAction.instance.actionState == MouseActionStateEnum.selectGene) {
-			GeneCellPanel.instance.geneNeighbourPanel.GiveAnswerGeneReference(gene);
+			GenePanel.instance.geneNeighbourPanel.GiveAnswerGeneReference(gene);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		}
 	}
@@ -68,7 +68,7 @@ public class GenomeGenePanel : MonoBehaviour {
 			flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
 			geneReferenceText.text = gene.index.ToString();
 
-			if (gene == GeneCellPanel.instance.selectedGene) {
+			if (gene == GenePanel.instance.selectedGene) {
 				backgroundImage.color = GenotypePanel.instance.selectedGeneColor;
 			} else {
 				backgroundImage.color = GenotypePanel.instance.unSelectedGeneColor;

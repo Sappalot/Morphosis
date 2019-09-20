@@ -50,7 +50,7 @@ public class GeneNeighboursComponentPanel : MonoBehaviour {
 				Debug.Log("Update GeneNeighbourPanel");
 
 			//Nothing to represent
-			if (GeneCellPanel.instance.selectedGene == null) {
+			if (GenePanel.instance.selectedGene == null) {
 				for (int index = 0; index < arrangementPanels.Length; index++) {
 					if (arrangementPanels[index] != null) {
 						arrangementPanels[index].arrangement = null;
@@ -67,15 +67,15 @@ public class GeneNeighboursComponentPanel : MonoBehaviour {
 
 			for (int index = 0; index < arrangementPanels.Length; index++) {
 				if (arrangementPanels[index] != null) {
-					arrangementPanels[index].arrangement = GeneCellPanel.instance.selectedGene.arrangements[index];
+					arrangementPanels[index].arrangement = GenePanel.instance.selectedGene.arrangements[index];
 				}
 			}
 
 			//perifier
 			for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
-				referenceGraphics[cardinalIndex].reference = GeneCellPanel.instance.selectedGene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
+				referenceGraphics[cardinalIndex].reference = GenePanel.instance.selectedGene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
 			}
-			centerReferenceGraphics.reference = new GeneReference(GeneCellPanel.instance.selectedGene, GenotypePanel.instance.viewedFlipSide);
+			centerReferenceGraphics.reference = new GeneReference(GenePanel.instance.selectedGene, GenotypePanel.instance.viewedFlipSide);
 
 			isDirty = false;
 		}

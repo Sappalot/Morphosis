@@ -43,8 +43,8 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 		m_mode = PhenoGenoEnum.Genotype;
 		GlobalPanel.instance.isRunPhysicsGrayOut = true;
 		UpdateAllAccordingToEditMode();
-		GeneCellPanel.instance.geneNeighbourPanel.MakeDirty();
-		GeneCellPanel.instance.MakeDirty();
+		GenePanel.instance.geneNeighbourPanel.MakeDirty();
+		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeScrollDirty();
 	}

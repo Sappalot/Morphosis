@@ -39,11 +39,11 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			if (creature.allowedToChangeGenome) {
 				creature.Clear();
 				creature.creation = CreatureCreationEnum.Forged;
-				GeneCellPanel.instance.selectedGene = null;
+				GenePanel.instance.selectedGene = null;
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GeneCellPanel.instance.MakeDirty();
+		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -56,11 +56,11 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			if (creature.allowedToChangeGenome) {
 				creature.MutateCummulative(GlobalSettings.instance.mutation.masterMutationStrength * 10f);
 				creature.creation = CreatureCreationEnum.Forged;
-				GeneCellPanel.instance.selectedGene = null;
+				GenePanel.instance.selectedGene = null;
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GeneCellPanel.instance.MakeDirty();
+		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
@@ -73,31 +73,31 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 			if (creature.allowedToChangeGenome) {
 				creature.Scramble();
 				creature.creation = CreatureCreationEnum.Forged;
-				GeneCellPanel.instance.selectedGene = null;
+				GenePanel.instance.selectedGene = null;
 			}
 		}
 		CreatureSelectionPanel.instance.MakeDirty();
-		GeneCellPanel.instance.MakeDirty();
+		GenePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
 	public void OnClickedBlackWhite() {
 		viewedFlipSide = FlipSideEnum.BlackWhite;
 		isDirty = true;
-		GeneCellPanel.instance.geneNeighbourPanel.MakeDirty();
+		GenePanel.instance.geneNeighbourPanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
 	public void OnClickedWhiteBlack() {
 		viewedFlipSide = FlipSideEnum.WhiteBlack;
 		isDirty = true;
-		GeneCellPanel.instance.geneNeighbourPanel.MakeDirty();
+		GenePanel.instance.geneNeighbourPanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
 	private IEnumerator UpdateIsVisible() {
 		yield return 0;
-		GeneCellPanel.instance.gameObject.SetActive((CreatureSelectionPanel.instance.hasSoloSelected && MouseAction.instance.actionState == MouseActionStateEnum.free && !AlternativeToolModePanel.instance.isOn) || MouseAction.instance.actionState == MouseActionStateEnum.selectGene);
+		GenePanel.instance.gameObject.SetActive((CreatureSelectionPanel.instance.hasSoloSelected && MouseAction.instance.actionState == MouseActionStateEnum.free && !AlternativeToolModePanel.instance.isOn) || MouseAction.instance.actionState == MouseActionStateEnum.selectGene);
 		lowerPanel.gameObject.SetActive((CreatureSelectionPanel.instance.hasSelection && MouseAction.instance.actionState == MouseActionStateEnum.free && !AlternativeToolModePanel.instance.isOn) || MouseAction.instance.actionState == MouseActionStateEnum.selectGene);
 	}
 
