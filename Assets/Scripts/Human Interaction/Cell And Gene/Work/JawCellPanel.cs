@@ -4,8 +4,6 @@ using UnityEngine.UI;
 public class JawCellPanel : CellComponentPanel {
 	public Text productionEffectText;
 
-	public HibernatePanel hibernatePanel;
-
 	public Text prayCellCount;
 
 	public Text cannibalizeText;
@@ -24,11 +22,6 @@ public class JawCellPanel : CellComponentPanel {
 
 	public Toggle cannibalizeChildrenToggle;
 	public Text cannibalizeChildrenText;
-
-	public override void Initialize(PhenoGenoEnum mode) {
-		hibernatePanel.SetMode(mode);
-		base.Initialize(mode);
-	}
 
 	public void OnChangedCannibalizeKin() {
 		if (ignoreSliderMoved) {
@@ -110,9 +103,6 @@ public class JawCellPanel : CellComponentPanel {
 
 				ignoreSliderMoved = false;
 			}
-
-			// Subpanels
-			hibernatePanel.MakeDirty();
 
 			isDirty = false;
 		}

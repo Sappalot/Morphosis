@@ -4,15 +4,8 @@ using UnityEngine.UI;
 public class LeafCellPanel : CellComponentPanel {
 	public Text productionEffectText;
 
-	public HibernatePanel hibernatePanel;
-
 	public Text exposure;
 	public Text creatureSizeFactor;
-
-	public override void Initialize(PhenoGenoEnum mode) {
-		hibernatePanel.SetMode(mode);
-		base.Initialize(mode);
-	}
 
 	private void Update() {
 		if (isDirty) {
@@ -42,9 +35,6 @@ public class LeafCellPanel : CellComponentPanel {
 
 				ignoreSliderMoved = false;
 			}
-
-			// Subpanels
-			hibernatePanel.MakeDirty();
 
 			isDirty = false;
 		}

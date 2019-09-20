@@ -4,14 +4,7 @@ using UnityEngine.UI;
 public class MuscleCellPanel : CellComponentPanel {
 	public Text productionEffectText;
 
-	public HibernatePanel hibernatePanel;
-
 	public Text frequenzy;
-
-	public override void Initialize(PhenoGenoEnum mode) {
-		hibernatePanel.SetMode(mode);
-		base.Initialize(mode);
-	}
 
 	private void Update() {
 		if (isDirty) {
@@ -35,9 +28,6 @@ public class MuscleCellPanel : CellComponentPanel {
 
 				ignoreSliderMoved = false;
 			}
-
-			// Subpanels
-			hibernatePanel.MakeDirty();
 
 			isDirty = false; 
 		}

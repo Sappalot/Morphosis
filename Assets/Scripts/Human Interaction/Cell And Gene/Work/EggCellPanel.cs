@@ -5,8 +5,6 @@ using UnityEngine.UI;
 public class EggCellPanel : CellComponentPanel {
 	public Text productionEffectText;
 
-	public HibernatePanel hibernatePanel;
-
 	public Text fertilizeHeadingText;
 	public Text fertilizeSliderText;
 	public Slider fertilizeSlider;
@@ -30,8 +28,6 @@ public class EggCellPanel : CellComponentPanel {
 	public EffectSensorPanel effectSensorPanel;
 
 	public override void Initialize(PhenoGenoEnum mode) {
-		hibernatePanel.SetMode(mode);
-		
 		fertilizeLogicBoxPanel.Initialize(mode);
 		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA);
 		effectSensorPanel.Initialize(mode, SignalUnitEnum.EffectSensor);
@@ -169,10 +165,6 @@ public class EggCellPanel : CellComponentPanel {
 				ignoreSliderMoved = false;
 			}
 
-			// Subpanels
-			hibernatePanel.MakeDirty(); // to be replaced with a logic panel (also make it so that we have an wakeup from hibernation time)
-
-			
 			fertilizeLogicBoxPanel.outputText = "Fertilize";
 			fertilizeLogicBoxPanel.MakeDirty();
 			fertilizeEnergySensorPanel.MakeDirty();
