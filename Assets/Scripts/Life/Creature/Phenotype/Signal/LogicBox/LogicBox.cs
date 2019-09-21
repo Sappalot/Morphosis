@@ -1,22 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿public class LogicBox : SignalUnit {
+	private bool outputEarly;
+	private bool outputLate;
 
-public class LogicBox : SignalUnit {
-	
-	public LogicBox(SignalUnitEnum outputUnit) {
-		this.signalUnit = outputUnit;
+	public LogicBox(SignalUnitEnum signalUnit) {
+		base.signalUnit = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
-		return output[0];
+		return outputEarly;
 	}
 
 	public override void UpdateOutputs(Cell hostCell, int deltaTicks, ulong worldTicks) {
 		if (signalUnit == SignalUnitEnum.WorkLogicBoxA) {
-			// TODO: let input go through gates to form an answer output
-			//output = hostCell.GetOutputFromUnit(hostCell.gene.eggCellFertilizeLogic.GetInput(0).internalInput); // hack connection
-			output[0] = ThroughGates(hostCell.gene.eggCellFertilizeLogic, hostCell);
+			outputEarly = outputLate = ThroughGates(hostCell.gene.eggCellFertilizeLogic, hostCell);
 		}
 	}
 

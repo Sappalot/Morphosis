@@ -50,7 +50,7 @@ public class EggCell : Cell {
 
 	public override bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
 		if (outputUnit == SignalUnitEnum.WorkLogicBoxA) {
-			return fertilizeLogicBox.GetOutput(SignalUnitSlotEnum.Whatever);
+			return fertilizeLogicBox.GetOutput(outputUnitSlot);
 		} else if (outputUnit == SignalUnitEnum.WorkSensorA) {
 			return fertilizeEnergySensor.GetOutput(outputUnitSlot);
 		} else if (outputUnit == SignalUnitEnum.EffectSensor) {

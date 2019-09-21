@@ -1,5 +1,5 @@
 ﻿public abstract class SignalUnit {
-	protected bool[] output = new bool[6];
+	
 	protected SignalUnitEnum signalUnit;
 
 	public virtual bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {

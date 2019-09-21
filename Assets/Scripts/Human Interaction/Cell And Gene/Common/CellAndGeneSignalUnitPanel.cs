@@ -37,7 +37,7 @@ public abstract class CellAndGeneSignalUnitPanel : MonoBehaviour {
 			return locations.E;
 		} else if (slot == SignalUnitSlotEnum.F) {
 			return locations.F;
-		} else if (slot == SignalUnitSlotEnum.processed) {
+		} else if (slot == SignalUnitSlotEnum.processedEarly) {
 			return locations.processed;
 		}
 		return null;

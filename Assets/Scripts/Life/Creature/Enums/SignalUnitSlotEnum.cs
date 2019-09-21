@@ -10,6 +10,6 @@ public enum SignalUnitSlotEnum {
 	D,
 	E,
 	F,
-	processed,
-	Whatever,
+	processedEarly,
+	processedLate,
 }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnergySensor : SignalUnit {
-	
+	private bool[] output = new bool[6]; // outputs 
+
 	public float threshold;
 
 	public EnergySensor(SignalUnitEnum outputUnit) {

@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
-	public Image outputImage;
+	public Image outputImageLate;
+	public Image outputImageEarly;
 
 	private static Vector2 rowSize = new Vector2(270f, 40f);
 	public static float cellWidth = rowSize.x * (1f / 5f);
@@ -126,7 +127,7 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 
 	public void OnClickedOutputButton() {
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-			LogicBoxInputPanel.AnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.Whatever); // Whatever... there is just one output slot
+			LogicBoxInputPanel.AnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedLate);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		}
 	}
@@ -149,7 +150,8 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 			}
 
 			if (mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null) {
-				outputImage.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.A) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+				outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedLate) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+				outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedEarly) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 			}
 
 			outputLabel.text = outputText;
