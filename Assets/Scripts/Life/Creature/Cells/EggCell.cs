@@ -50,11 +50,11 @@ public class EggCell : Cell {
 
 	public override bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
 		if (outputUnit == SignalUnitEnum.WorkLogicBoxA) {
-			return fertilizeLogicBox.GetOutput();
+			return fertilizeLogicBox.GetOutput(SignalUnitSlotEnum.Whatever);
 		} else if (outputUnit == SignalUnitEnum.WorkSensorA) {
-			return fertilizeEnergySensor.GetOutput();
+			return fertilizeEnergySensor.GetOutput(outputUnitSlot);
 		} else if (outputUnit == SignalUnitEnum.EffectSensor) {
-			return effectSensor.GetOutput();
+			return effectSensor.GetOutput(outputUnitSlot);
 		}
 		return base.GetOutputFromUnit(outputUnit, outputUnitSlot); //Couldnt find output unith here in egg work, 
 	}

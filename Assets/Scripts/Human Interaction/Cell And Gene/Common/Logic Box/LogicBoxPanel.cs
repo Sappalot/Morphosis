@@ -118,7 +118,7 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 			return LogicBoxInputEnum.VoidInput;
 		} else {
 			if (selectedCell != null) {
-				return selectedCell.GetOutputFromUnit(inputRow3[inputColumn].affectedGeneLogicBoxInput.nerve.inputUnit, SignalUnitSlotEnum.Whatever) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
+				return selectedCell.GetOutputFromUnit(inputRow3[inputColumn].affectedGeneLogicBoxInput.nerve.inputUnit, inputRow3[inputColumn].affectedGeneLogicBoxInput.nerve.inputUnitSlot) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
 			}
 		}
 		return LogicBoxInputEnum.Error;
@@ -149,7 +149,7 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 			}
 
 			if (mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null) {
-				outputImage.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.Whatever) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+				outputImage.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.A) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 			}
 
 			outputLabel.text = outputText;

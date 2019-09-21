@@ -103,7 +103,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 			}
 			ignoreSliderMoved = true;
 
-			if (selectedGene != null) {
+			if (selectedGene != null && affectedGeneLogicBoxInput != null) {
 				motherBlockBackground.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 				motherPassBackground.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 			}
@@ -144,13 +144,15 @@ public class LogicBoxInputPanel : MonoBehaviour {
 
 	private LogicBoxInputEnum runtimeOutput {
 		get {
-			if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
-				return LogicBoxInputEnum.BlockedByValve;
-			} else if (affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
-				return LogicBoxInputEnum.VoidInput;
-			} else {
-				if (selectedCell != null) {
-					return selectedCell.GetOutputFromUnit(affectedGeneLogicBoxInput.nerve.inputUnit, SignalUnitSlotEnum.Whatever) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
+			if (affectedGeneLogicBoxInput != null) {
+				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
+					return LogicBoxInputEnum.BlockedByValve;
+				} else if (affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
+					return LogicBoxInputEnum.VoidInput;
+				} else {
+					if (selectedCell != null) {
+						return selectedCell.GetOutputFromUnit(affectedGeneLogicBoxInput.nerve.inputUnit, affectedGeneLogicBoxInput.nerve.inputUnitSlot) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
+					}
 				}
 			}
 			return LogicBoxInputEnum.Error;

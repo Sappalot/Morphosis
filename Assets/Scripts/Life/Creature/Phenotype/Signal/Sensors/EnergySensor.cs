@@ -10,13 +10,20 @@ public class EnergySensor : SignalUnit {
 		this.signalUnit = outputUnit;
 	}
 
-	public override bool GetOutput() {
-		return output;
+	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
+		return output[(int)signalUnitSlot];
 	}
 
 	public override void UpdateOutputs(Cell hostCell, int deltaTicks, ulong worldTicks) {
-		if (signalUnit == SignalUnitEnum.WorkSensorA) {
-			output = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
+		if (signalUnit == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) {
+			for (int i = 0; i < output.Length; i++) {
+				output[i] = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
+
+				if (i == 3) {
+					output[i] = false;
+				}
+			}
+			
 		} 
 		// Other energy sensor
 		

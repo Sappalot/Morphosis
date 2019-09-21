@@ -1,8 +1,8 @@
 ﻿public abstract class SignalUnit {
-	protected bool output;
+	protected bool[] output = new bool[6];
 	protected SignalUnitEnum signalUnit;
 
-	public virtual bool GetOutput() {
+	public virtual bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
 		return false;
 	}
 

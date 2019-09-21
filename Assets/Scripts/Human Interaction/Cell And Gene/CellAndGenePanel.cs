@@ -6,9 +6,6 @@ using UnityEngine;
 public class CellAndGenePanel : MonoBehaviour {
 	public RectTransform cellAndGenePanelRectTransform;
 
-	public LogicBoxPanel eggFertilizeLogicBoxPanel;
-	public SensorPanel eggEnergySensorPanel;
-
 	public CellAndGeneWorkComponentPanel cellWorkComponentPanel;
 	public EggCellPanel eggCellPanel;
 	// TODO implement the rest of the panels all of them cellComponentPanels
@@ -34,14 +31,17 @@ public class CellAndGenePanel : MonoBehaviour {
 
 	public Vector3 TotalPanelOffset(SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
 		RectTransform outTransform = null;
+
+		//TODO: let egg cell define where all output locations are
+
 		if (signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 			if (cellWorkComponentPanel.cellType == CellTypeEnum.Egg) {
-				outTransform = eggFertilizeLogicBoxPanel.GetLocation(signalUnitSlot);
+				outTransform = eggCellPanel.fertilizeLogicBoxPanel.GetLocation(signalUnitSlot);
 			}
 		} else if (signalUnit == SignalUnitEnum.WorkSensorA) {
-			//signalUnitSlot doesn't matter
+			// signalUnitSlot doesn't matter
 			if (cellWorkComponentPanel.cellType == CellTypeEnum.Egg) {
-				outTransform = eggEnergySensorPanel.GetLocation(signalUnitSlot);
+				outTransform = eggCellPanel.fertilizeEnergySensorPanel.GetLocation(signalUnitSlot);
 			}
 		}
 		if (outTransform != null) {

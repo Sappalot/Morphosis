@@ -2,6 +2,17 @@
 using UnityEngine;
 
 public abstract class CellAndGeneSignalUnitPanel : MonoBehaviour {
+	public SignalLocations locations = new SignalLocations();
+
+	[HideInInspector]
+	public bool isDirty = false;
+	[HideInInspector]
+	public PhenoGenoEnum mode { get; set; }
+	[HideInInspector]
+	public SignalUnitEnum signalUnit;
+	[HideInInspector]
+	protected bool ignoreSliderMoved = false;
+
 	[Serializable]
 	public struct SignalLocations {
 		public RectTransform A;
@@ -12,7 +23,6 @@ public abstract class CellAndGeneSignalUnitPanel : MonoBehaviour {
 		public RectTransform F;
 		public RectTransform processed; // output for component which has also at leas 1 input
 	}
-	public SignalLocations locations = new SignalLocations();
 
 	public RectTransform GetLocation(SignalUnitSlotEnum slot) {
 		if (slot == SignalUnitSlotEnum.A) {
@@ -33,18 +43,9 @@ public abstract class CellAndGeneSignalUnitPanel : MonoBehaviour {
 		return null;
 	}
 
-	[HideInInspector]
-	public bool isDirty = false;
 	public void MakeDirty() {
 		isDirty = true;
 	}
-
-	[HideInInspector]
-	protected bool ignoreSliderMoved = false;
-
-	[HideInInspector]
-	public PhenoGenoEnum mode { get; set; }
-	public SignalUnitEnum signalUnit;
 
 	virtual public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
 		this.mode = mode;

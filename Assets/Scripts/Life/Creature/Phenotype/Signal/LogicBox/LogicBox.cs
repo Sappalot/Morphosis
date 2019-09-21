@@ -8,15 +8,15 @@ public class LogicBox : SignalUnit {
 		this.signalUnit = outputUnit;
 	}
 
-	public override bool GetOutput() {
-		return output;
+	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
+		return output[0];
 	}
 
 	public override void UpdateOutputs(Cell hostCell, int deltaTicks, ulong worldTicks) {
 		if (signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 			// TODO: let input go through gates to form an answer output
 			//output = hostCell.GetOutputFromUnit(hostCell.gene.eggCellFertilizeLogic.GetInput(0).internalInput); // hack connection
-			output = ThroughGates(hostCell.gene.eggCellFertilizeLogic, hostCell);
+			output[0] = ThroughGates(hostCell.gene.eggCellFertilizeLogic, hostCell);
 		}
 	}
 

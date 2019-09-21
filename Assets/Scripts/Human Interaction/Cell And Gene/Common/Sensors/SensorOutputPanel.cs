@@ -1,12 +1,52 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class SensorOutputPanel : MonoBehaviour {
 
-	public void Initialize() {
-		
+	public Image image;
+
+	[HideInInspector]
+	public PhenoGenoEnum mode { get; set; }
+	private SignalUnitEnum signalUnit;
+	private SignalUnitSlotEnum signalUnitSlot;
+
+	public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
+		this.mode = mode;
+		this.signalUnit = signalUnit;
+		this.signalUnitSlot = signalUnitSlot;
 	}
 
+	[HideInInspector]
+	public bool isDirty = false;
+	public void MakeDirty() {
+		isDirty = true;
+	}
 
+	private void Update() {
+		if (isDirty) {
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+				Debug.Log("Update Energy Sensor Panel");
+			}
+
+			if (mode == PhenoGenoEnum.Phenotype) {
+				if (CellPanel.instance.selectedCell != null) {
+					image.color = selectedCell.GetOutputFromUnit(signalUnit, signalUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+				}
+			} else if (mode == PhenoGenoEnum.Genotype) {
+				image.color = ColorScheme.instance.signalOff;
+			}
+
+			isDirty = false;
+		}
+	}
+
+	public Cell selectedCell {
+		get {
+			if (mode == PhenoGenoEnum.Phenotype) {
+				return CellPanel.instance.selectedCell;
+			} else {
+				return null; // there could be many cells selected for the same gene
+			}
+		}
+	}
 }

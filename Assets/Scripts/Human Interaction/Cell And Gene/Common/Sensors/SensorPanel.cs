@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 
 public class SensorPanel : CellAndGeneSignalUnitPanel {
-	public Image outputImage;
+	public SensorOutputPanel[] outputPanels;
 
 	public Text energyThresholdSliderLabel;
 	public Slider energyThresholdSlider;
@@ -14,6 +14,14 @@ public class SensorPanel : CellAndGeneSignalUnitPanel {
 			}
 			return null;
 		}
+	}
+
+	override public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
+		base.Initialize(mode, signalUnit);
+		for (int i = 0; i < outputPanels.Length; i++) {
+			outputPanels[i].Initialize(mode, signalUnit, (SignalUnitSlotEnum)i);
+		}
+		
 	}
 
 	public void OnEnergyThresholdSliderMoved() {
@@ -38,20 +46,24 @@ public class SensorPanel : CellAndGeneSignalUnitPanel {
 				Debug.Log("Update Energy Sensor Panel");
 			}
 
-			if (mode == PhenoGenoEnum.Phenotype) {
-				if (CellPanel.instance.selectedCell != null) {
-					outputImage.color = selectedCell.GetOutputFromUnit(signalUnit, SignalUnitSlotEnum.Whatever) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-				}
-				energyThresholdSlider.interactable = false;
-			} else if (mode == PhenoGenoEnum.Genotype) {
-				energyThresholdSlider.interactable = IsUnlocked();
-			}
+			//if (mode == PhenoGenoEnum.Phenotype) {
+			//	if (CellPanel.instance.selectedCell != null) {
+			//		outputImage.color = selectedCell.GetOutputFromUnit(signalUnit, SignalUnitSlotEnum.Whatever) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+			//	}
+			//	energyThresholdSlider.interactable = false;
+			//} else if (mode == PhenoGenoEnum.Genotype) {
+			//	energyThresholdSlider.interactable = IsUnlocked();
+			//}
 
 			if (selectedGene != null) { 
 				ignoreSliderMoved = true;
 				energyThresholdSliderLabel.text = string.Format("On if energy > {0:F1} J", (affectedGeneSensor as GeneEnergySensor).threshold);
 				energyThresholdSlider.value = (affectedGeneSensor as GeneEnergySensor).threshold;
 				ignoreSliderMoved = false;
+			}
+
+			foreach (SensorOutputPanel output in outputPanels) {
+				output.MakeDirty();
 			}
 
 			isDirty = false;
