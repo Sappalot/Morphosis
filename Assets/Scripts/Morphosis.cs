@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using SerializerFree;
-using SerializerFree.Serializers;
 using System;
 
 public class Morphosis : MonoSingleton<Morphosis> {
@@ -119,8 +117,6 @@ public class Morphosis : MonoSingleton<Morphosis> {
 			});
 		});
 	}
-
-
 
 	public static bool isInterferredByOtheActions() {
 		return MouseAction.instance.actionState != MouseActionStateEnum.free || AlternativeToolModePanel.instance.isOn || !World.instance.creatureSelectionController.IsIdle;

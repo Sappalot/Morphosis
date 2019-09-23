@@ -27,8 +27,8 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 	public SensorPanel fertilizeEnergySensorPanel;
 
 	public override void Initialize(PhenoGenoEnum mode) {
-		fertilizeLogicBoxPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxA);
-		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA);
+		fertilizeLogicBoxPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxA, true);
+		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA, true);
 
 		ignoreSliderMoved = true;
 		fertilizeSlider.minValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMin;

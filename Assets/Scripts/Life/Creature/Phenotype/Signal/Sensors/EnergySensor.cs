@@ -19,10 +19,6 @@ public class EnergySensor : SignalUnit {
 		if (signalUnit == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) {
 			for (int i = 0; i < output.Length; i++) {
 				output[i] = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
-
-				if (i == 3) {
-					output[i] = false;
-				}
 			}
 			
 		} 

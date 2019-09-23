@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+
+// a panel that can change genotype
+// Me <== (CellAndGeneComponentPanel), EggCellPanel, JawCellPanel
 public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 	[HideInInspector]
-	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
+	protected PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 	protected bool ignoreSliderMoved = false;
+	protected bool isDirty = false;
 
 	protected PhenoGenoEnum GetMode() {
 		return mode;
@@ -18,7 +22,7 @@ public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 		return null;
 	}
 
-	protected bool isDirty = false;
+	
 	public void MakeDirty() {
 		isDirty = true;
 	}

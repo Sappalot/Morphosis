@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 	public Image outputImageLate;
 	public Image outputImageEarly;
+	//public Transform bodyPanel;
 
 	private static Vector2 rowSize = new Vector2(270f, 40f);
 	public static float cellWidth = rowSize.x * (1f / 5f);
@@ -42,8 +43,8 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 		affectedGeneLogicBox.UpdateConnections();
 	}
 
-	override public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit ) {
-		base.Initialize(mode, signalUnit);
+	override public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, bool isInsideOtherComponent ) {
+		base.Initialize(mode, signalUnit, isInsideOtherComponent);
 
 		gateRow0 = GameObject.Instantiate(gateTemplate, transform);
 		gateRow0.transform.position = gateTemplate.transform.position + Vector3.right * 0f * cellWidth + Vector3.down * 0f * cellHeight;

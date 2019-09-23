@@ -2,18 +2,19 @@
 using UnityEngine.UI;
 
 public class SensorOutputPanel : MonoBehaviour {
-
 	public Image image;
 
 	[HideInInspector]
 	public PhenoGenoEnum mode { get; set; }
 	private SignalUnitEnum signalUnit;
 	private SignalUnitSlotEnum signalUnitSlot;
+	private SensorPanel motherPanel;
 
-	public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
+	public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot, SensorPanel motherPanel) {
 		this.mode = mode;
 		this.signalUnit = signalUnit;
 		this.signalUnitSlot = signalUnitSlot;
+		this.motherPanel = motherPanel;
 	}
 
 	[HideInInspector]
@@ -22,7 +23,16 @@ public class SensorOutputPanel : MonoBehaviour {
 		isDirty = true;
 	}
 
-	private void Update() {
+	public void OnClicked() {
+		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
+			LogicBoxInputPanel.AnswerSetReference(motherPanel.affectedGeneSensor.signalUnit, signalUnitSlot);
+			// TODO: We are sure the conection from something to this one was a LogicBoxInputPanel, so ask every possible Class!
+
+			MouseAction.instance.actionState = MouseActionStateEnum.free;
+		}
+	}
+
+	public void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Energy Sensor Panel");

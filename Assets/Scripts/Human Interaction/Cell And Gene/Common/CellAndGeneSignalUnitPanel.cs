@@ -1,17 +1,16 @@
 ﻿using System;
 using UnityEngine;
 
-public abstract class CellAndGeneSignalUnitPanel : MonoBehaviour {
+// a panel that can change genotype and handles signals
+// Me <== (SensorPanel), LogicBox
+public abstract class CellAndGeneSignalUnitPanel : CellAndGeneComponentPanel {
 	public SignalLocations locations = new SignalLocations();
+	public GameObject headingPanel;
+
+	protected bool isInsideOtherComponent; // inside other component
 
 	[HideInInspector]
-	public bool isDirty = false;
-	[HideInInspector]
-	public PhenoGenoEnum mode { get; set; }
-	[HideInInspector]
 	public SignalUnitEnum signalUnit;
-	[HideInInspector]
-	protected bool ignoreSliderMoved = false;
 
 	[Serializable]
 	public struct SignalLocations {
@@ -43,49 +42,10 @@ public abstract class CellAndGeneSignalUnitPanel : MonoBehaviour {
 		return null;
 	}
 
-	public void MakeDirty() {
-		isDirty = true;
-	}
-
-	virtual public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
-		this.mode = mode;
+	public virtual void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, bool isInsideOtherComponent) {
+		base.Initialize(mode);
 		this.signalUnit = signalUnit;
-	}
-
-	public void ApplyChange() {
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			MakeCreatureChanged();
-		}
-		MakeDirty();
-	}
-
-	public bool IsUnlocked() {
-		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
-	}
-
-	public void MakeCreatureChanged() {
-		CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
-		CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
-		CreatureSelectionPanel.instance.soloSelected.generation = 1;
-	}
-
-	public Gene selectedGene {
-		get {
-			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
-			} else {
-				return GenePanel.instance.selectedGene;
-			}
-		}
-	}
-
-	public Cell selectedCell {
-		get {
-			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell;
-			} else {
-				return null; // there could be many cells selected for the same gene
-			}
-		}
+		this.isInsideOtherComponent = isInsideOtherComponent;
+		//headingPanel.SetActive(!isInsideOtherComponent);
 	}
 }
