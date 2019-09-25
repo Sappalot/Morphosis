@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 // a panel that can change genotype
-// Me <== (CellAndGeneComponentPanel), EggCellPanel, JawCellPanel
+// Me <== (CellAndGeneSignalUnitPanel), EggCellPanel, JawCellPanel
 public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 	[HideInInspector]
 	protected PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
