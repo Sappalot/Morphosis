@@ -23,7 +23,7 @@ public class JawCell : Cell {
 
 				//Hack release pray
 				RemoveNullPrays(); //We need this one not to run into null refs once in a blue moon
-				CellPanel.instance.jawCellPanel.MakeDirty();
+				CellPanel.instance.MakeDirty();
 
 				effectProductionPredPrayUp = eatEffect;
 

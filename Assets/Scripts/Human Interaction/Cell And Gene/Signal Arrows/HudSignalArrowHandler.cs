@@ -28,6 +28,12 @@ public class HudSignalArrowHandler : MonoBehaviour {
 	private void Update() {
 		// Update connections
 		if (isDirtyConnections) {
+			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null)) {
+				// no menu
+				isDirtyConnections = false;
+				return;
+			}
+
 			List<GeneLogicBoxInput> geneLogicBoxInputList = cellAndGenePanel.GetAllGeneLogicBoxInputs();
 
 			foreach (HudSignalArrow arrow in arrowList) {
@@ -56,7 +62,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			isDirtyConnections = false;
 		}
 
-		// Update signal
+		// Update signal TODO: update only when dirty, that is post signal update in creature
 		foreach (HudSignalArrow arrow in arrowList) {
 			Color color = Color.black;
 			if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
@@ -74,6 +80,16 @@ public class HudSignalArrowHandler : MonoBehaviour {
 				return CellPanel.instance.selectedCell;
 			} else {
 				return null; // there could be many cells selected for the same gene
+			}
+		}
+	}
+
+	public Gene selectedGene {
+		get {
+			if (mode == PhenoGenoEnum.Phenotype) {
+				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
+			} else {
+				return GenePanel.instance.selectedGene;
 			}
 		}
 	}

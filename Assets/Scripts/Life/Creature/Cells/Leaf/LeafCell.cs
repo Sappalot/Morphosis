@@ -224,7 +224,7 @@ public class LeafCell : Cell {
 				effectProductionInternalUp = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.cellCount); //costy!! creature.clusterCellCount
 
 				if (CellPanel.instance.selectedCell == this) {
-					CellPanel.instance.leafCellPanel.MakeDirty();
+					CellPanel.instance.cellAndGenePanel.workComponentPanel.leafPanel.MakeDirty();
 				}
 			}
 			base.UpdateCellWork(deltaTicks, worldTicks);

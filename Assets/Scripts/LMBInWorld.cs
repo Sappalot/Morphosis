@@ -40,7 +40,7 @@ public class LMBInWorld : MonoBehaviour {
 						}
 					} else {
 						CreatureSelectionPanel.instance.Select(creature, cell);
-						GenePanel.instance.geneNeighbourPanel.MakeDirty();
+						GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.MakeDirty();
 						GenomePanel.instance.MakeDirty();
 						GenomePanel.instance.MakeScrollDirty();
 						CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();

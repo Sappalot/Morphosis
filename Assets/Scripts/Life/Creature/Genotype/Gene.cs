@@ -11,8 +11,6 @@ public class Gene {
 	public bool eggCellHibernateWhenAttachedToChild = false;
 	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkLogicBoxA, true);
 	public GeneSignalUnit eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkSensorA, true);
-
-	public GeneEffectSensor effectSensor = new GeneEffectSensor(SignalUnitEnum.EffectSensor, true);
 	// ^ Egg cell ^
 
 	// Jaw Cell
@@ -69,7 +67,15 @@ public class Gene {
 	public bool axonIsReverse;
 	// ^ Axon ^
 
-	// Origin
+	// Dendrites....
+	public GeneLogicBox dendrites = new GeneLogicBox(SignalUnitEnum.Dendrites, false);
+	// ^ Dendrites ^
+
+	// Energy Sensor...
+	public GeneEnergySensor energySensor = new GeneEnergySensor(SignalUnitEnum.EnergySensor, false);
+	// Energy Sensor
+
+	// Origin...
 	public int originPulsePeriodTicks = 80;
 
 	public float originPulsePeriod {

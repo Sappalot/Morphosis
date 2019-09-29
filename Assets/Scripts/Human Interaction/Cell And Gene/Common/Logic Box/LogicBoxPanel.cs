@@ -27,6 +27,8 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 		get {
 			if (selectedGene.type == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 				return selectedGene.eggCellFertilizeLogic;
+			} else if (signalUnit == SignalUnitEnum.Dendrites) {
+				return selectedGene.dendrites;
 			}
 			return null;
 			
@@ -105,7 +107,7 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 		}
 	}
 
-	public List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
+	public override List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
 		List<GeneLogicBoxInput> arrows = new List<GeneLogicBoxInput>();
 		for (int i = 0; i < inputRow3.Length; i++) {
 			arrows.Add(inputRow3[i].affectedGeneLogicBoxInput);

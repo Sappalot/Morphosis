@@ -8,9 +8,18 @@ public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
 
 	public GeneSignalUnit affectedGeneSensor {
 		get {
-			if (selectedGene != null && selectedGene.type == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkSensorA) {
-				return selectedGene.eggCellFertilizeEnergySensor;
+			if (selectedGene != null) {
+				if (selectedGene.type == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkSensorA) {
+					return selectedGene.eggCellFertilizeEnergySensor;
+				}
+
+				// not a work sensor of any kind
+				if (signalUnit == SignalUnitEnum.EnergySensor) {
+					return selectedGene.energySensor;
+				}
+
 			}
+
 			return null;
 		}
 	}

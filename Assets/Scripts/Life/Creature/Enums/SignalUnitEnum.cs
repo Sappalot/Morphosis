@@ -12,20 +12,14 @@ public enum SignalUnitEnum {
 	WorkLogicBoxA, // Egg Fertilize
 	WorkSensorA, // Egg Energy
 
-	AxoneProgramA,
-	AxoneProgramB,
-	AxoneProgramC,
-	AxoneProgramD,
+	Axon,
 
 	FilterChange,
 	FilterTrend,
 	
-	DendritesLogicBox, //Dendrites
+	Dendrites, //Dendrites
 	
-	EffectSensor, //test
-	SensorA,
-	SensorB,
-	SensorC,
+	EnergySensor,
 
 	OriginDetatch,
 }

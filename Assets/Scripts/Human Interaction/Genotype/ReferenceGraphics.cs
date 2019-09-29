@@ -41,7 +41,7 @@ public class ReferenceGraphics : MonoBehaviour {
 
 	public void OnClicked() {
 		GenePanel.instance.selectedGene = gene;
-		GenePanel.instance.geneNeighbourPanel.MakeDirty();
+		GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeScrollDirty();
 		CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();

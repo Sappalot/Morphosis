@@ -17,9 +17,18 @@ public class LogicBoxGatePanel : MonoBehaviour {
 
 	public GeneLogicBoxGate affectedGeneLogicBoxGate { 
 		get {
+			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null)) {
+				// no menu
+				return null;
+			}
+
 			if (selectedGene.type == CellTypeEnum.Egg && motherPanel.signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 				return selectedGene.eggCellFertilizeLogic.GetGate(row, index);
+			} else if (motherPanel.signalUnit == SignalUnitEnum.Dendrites) {
+				return selectedGene.dendrites.GetGate(row, index);
 			}
+
+
 			return null;
 		}
 	}
@@ -117,6 +126,12 @@ public class LogicBoxGatePanel : MonoBehaviour {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Signal logic box");
+			}
+
+			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null)) {
+				// no menu
+				isDirty = false;
+				return;
 			}
 
 			if (affectedGeneLogicBoxGate != null) {

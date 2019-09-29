@@ -14,7 +14,7 @@ public class GeneNeighboursComponentPanel : MonoBehaviour {
 	public ArrangementPanel arrangementPanelTemplate;
 	private ArrangementPanel[] arrangementPanels = new ArrangementPanel[3];
 
-	public void Init() {
+	public void Initialize() {
 		RectTransform originalTransform = arrangementPanelTemplate.GetComponent<RectTransform>();
 
 		for (int index = 0; index < arrangementPanels.Length; index++) {

@@ -34,17 +34,14 @@ public class EggCell : Cell {
 	}
 
 	// Signal
-
-	public SignalUnit fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkSensorA); // locked one
 	public SignalUnit fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkLogicBoxA);
-	public SignalUnit effectSensor = new EffectSensor(SignalUnitEnum.EffectSensor);
+	public SignalUnit fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkSensorA); // locked one
+	
 
 	public override void UpdateCellSignal(int deltaTicks, ulong worldTicks) {
 		//TODO: Check with gene if anybody is listening to this output
 		fertilizeEnergySensor.UpdateOutputs(this, deltaTicks, worldTicks);
 		fertilizeLogicBox.UpdateOutputs(this, deltaTicks, worldTicks);
-
-		effectSensor.UpdateOutputs(this, deltaTicks, worldTicks);
 	}
 
 
@@ -53,8 +50,6 @@ public class EggCell : Cell {
 			return fertilizeLogicBox.GetOutput(outputUnitSlot);
 		} else if (outputUnit == SignalUnitEnum.WorkSensorA) {
 			return fertilizeEnergySensor.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.EffectSensor) {
-			return effectSensor.GetOutput(outputUnitSlot);
 		}
 		return base.GetOutputFromUnit(outputUnit, outputUnitSlot); //Couldnt find output unith here in egg work, 
 	}

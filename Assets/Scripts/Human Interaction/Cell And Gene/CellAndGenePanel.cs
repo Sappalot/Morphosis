@@ -2,31 +2,88 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Will this one ever be nessesary??
 public class CellAndGenePanel : MonoBehaviour {
 	public RectTransform cellAndGenePanelRectTransform;
 
-	public CellAndGeneWorkComponentPanel cellWorkComponentPanel;
-	public EggCellPanel eggCellPanel;
-	// TODO implement the rest of the panels all of them cellComponentPanels
-
+	public CellAndGeneOverviewPanel overvirewPanel;
+	public CellAndGeneWorkComponentPanel workComponentPanel;
+	public CellAndGeneAxonComponentPanel axonComponentPanel;
+	public LogicBoxPanel dendritesComponentPanel;
+	public SensorPanel energySensorComponentPanel;
+	public CellAndGeneBuildPriorityComponentPanel buildPriorityComponentPanel;
+	public CellAndGeneOriginComponentPanel originComponentPanel;
+	public GeneNeighboursComponentPanel geneNeighbourComponentPanel;
+	
 	public HudSignalArrowHandler arrowHandler;
 
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
-	protected PhenoGenoEnum GetMode() {
-		return mode;
-	}
+	private bool isDirty = true;
 
-	public virtual void Initialize(PhenoGenoEnum mode) {
+	public void Initialize(PhenoGenoEnum mode) {
 		this.mode = mode;
+
+		overvirewPanel.Initialize(mode);
+		workComponentPanel.Initialize(mode);
+		axonComponentPanel.Initialize(mode);
+		dendritesComponentPanel.Initialize(mode, SignalUnitEnum.Dendrites, false);
+		energySensorComponentPanel.Initialize(mode, SignalUnitEnum.EnergySensor, false);
+
+		buildPriorityComponentPanel.mode = mode;
+		originComponentPanel.mode = mode;
+
+		if (mode == PhenoGenoEnum.Genotype) {
+			geneNeighbourComponentPanel.gameObject.SetActive(true);
+			geneNeighbourComponentPanel.Initialize();
+		} else {
+			geneNeighbourComponentPanel.gameObject.SetActive(false);
+		}
+		
+
 		arrowHandler.Initialize(mode);
 	}
 
-	public List<GeneLogicBoxInput> GetAllGeneLogicBoxInputs() {
-		if (cellWorkComponentPanel.cellType == CellTypeEnum.Egg) {
-			return eggCellPanel.GetAllGeneGeneLogicBoxInputs();
+	public PhenoGenoEnum GetMode() {
+		return mode;
+	}
+
+	public void MakeDirty() {
+		isDirty = true;
+
+		if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null)) {
+			// no menu
+			isDirty = false;
+			return;
 		}
-		return new List<GeneLogicBoxInput>();
+
+		overvirewPanel.MakeDirty();
+
+		workComponentPanel.MakeDirty();
+
+		axonComponentPanel.MakeDirty();
+
+		dendritesComponentPanel.MakeDirty();
+		energySensorComponentPanel.MakeDirty();
+
+		if (selectedGene.isOrigin) {
+			originComponentPanel.MakeDirty();
+		} else {
+			buildPriorityComponentPanel.MakeDirty();
+		}
+
+		if (mode == PhenoGenoEnum.Genotype) {
+			geneNeighbourComponentPanel.MakeDirty();
+		}
+
+		HudSignalArrowHandler.MakeDirtyConnections();
+	}
+
+	public List<GeneLogicBoxInput> GetAllGeneLogicBoxInputs() {
+		List<GeneLogicBoxInput> inputList = new List<GeneLogicBoxInput>();
+		if (workComponentPanel.cellType == CellTypeEnum.Egg) {
+			inputList.AddRange(workComponentPanel.eggPanel.GetAllGeneGeneLogicBoxInputs());
+		}
+		inputList.AddRange(dendritesComponentPanel.GetAllGeneGeneLogicBoxInputs());
+		return inputList;
 	}
 
 	public Vector3 TotalPanelOffset(SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
@@ -35,13 +92,13 @@ public class CellAndGenePanel : MonoBehaviour {
 		//TODO: let egg cell define where all output locations are
 
 		if (signalUnit == SignalUnitEnum.WorkLogicBoxA) {
-			if (cellWorkComponentPanel.cellType == CellTypeEnum.Egg) {
-				outTransform = eggCellPanel.fertilizeLogicBoxPanel.GetLocation(signalUnitSlot);
+			if (workComponentPanel.cellType == CellTypeEnum.Egg) {
+				outTransform = workComponentPanel.eggPanel.fertilizeLogicBoxPanel.GetLocation(signalUnitSlot);
 			}
 		} else if (signalUnit == SignalUnitEnum.WorkSensorA) {
 			// signalUnitSlot doesn't matter
-			if (cellWorkComponentPanel.cellType == CellTypeEnum.Egg) {
-				outTransform = eggCellPanel.fertilizeEnergySensorPanel.GetLocation(signalUnitSlot);
+			if (workComponentPanel.cellType == CellTypeEnum.Egg) {
+				outTransform = workComponentPanel.eggPanel.fertilizeEnergySensorPanel.GetLocation(signalUnitSlot);
 			}
 		}
 		if (outTransform != null) {
@@ -62,5 +119,44 @@ public class CellAndGenePanel : MonoBehaviour {
 			currentRectTransform = currentRectTransform.transform.parent.GetComponent<RectTransform>();
 		}
 		return offset;
+	}
+
+	private void Update() {
+		if (isDirty) {
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+				Debug.Log("Update GeneAndCellPanel");
+			}
+
+			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null)) {
+				// no menu
+				isDirty = false;
+				return;
+			}
+
+			originComponentPanel.gameObject.SetActive(selectedGene.isOrigin);
+			buildPriorityComponentPanel.gameObject.SetActive(!selectedGene.isOrigin);
+
+			isDirty = false;
+		}
+	}
+
+	public Gene selectedGene {
+		get {
+			if (mode == PhenoGenoEnum.Phenotype) {
+				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
+			} else {
+				return GenePanel.instance.selectedGene;
+			}
+		}
+	}
+
+	public Cell selectedCell {
+		get {
+			if (mode == PhenoGenoEnum.Phenotype) {
+				return CellPanel.instance.selectedCell;
+			} else {
+				return null; // there could be many cells selected for the same gene
+			}
+		}
 	}
 }

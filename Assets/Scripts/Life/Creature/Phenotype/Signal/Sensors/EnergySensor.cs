@@ -21,7 +21,11 @@ public class EnergySensor : SignalUnit {
 				output[i] = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 			}
 			
-		} 
+		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
+			for (int i = 0; i < output.Length; i++) {
+				output[i] = hostCell.energy >= (hostCell.gene.energySensor as GeneEnergySensor).threshold;
+			}
+		}
 		// Other energy sensor
 		
 	}
