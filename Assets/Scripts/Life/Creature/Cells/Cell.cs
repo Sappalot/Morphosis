@@ -6,8 +6,6 @@ using Boo.Lang.Runtime;
 public abstract class Cell : MonoBehaviour {
 
 	//------- Inspector
-	//public Signal signal;
-
 	public SpriteRenderer cellSelected; //transparent
 	public SpriteRenderer triangleSprite;
 	public SpriteRenderer openCircleSprite; //cell type colour
@@ -1674,12 +1672,23 @@ public abstract class Cell : MonoBehaviour {
 	public SignalUnit dendrites = new LogicBox(SignalUnitEnum.Dendrites); //component
 	public SignalUnit energySensor = new EnergySensor(SignalUnitEnum.EnergySensor); // component
 
-	virtual public void UpdateCellSignal(int deltaTicks, ulong worldTicks) {
+	// if processor: output early ==> output late
+	virtual public void FeedSignal() {
+		// Update cells common units here
+		// TODO: Check if anybodey is listening to output, feed only in that case
+		dendrites.FeedSignal();
+	}
+
+	// if sensor: Update to late directly from condition (check environment or body, even globally? moon, sun)
+	// if processor (logic box or filter): Update early from input (which is taken from sensors or other processors late)
+	virtual public void ComputeSignalOutputs(int deltaTicks, ulong worldTicks) {
 		// Update cells common units here
 		// TODO: Check if anybodey is listening to output, update only in that case
-		dendrites.UpdateOutputs(this, deltaTicks, worldTicks);
-		energySensor.UpdateOutputs(this, deltaTicks, worldTicks);
+		dendrites.ComputeSignalOutput(this, deltaTicks, worldTicks);
+		energySensor.ComputeSignalOutput(this, deltaTicks, worldTicks);
 	}
+
+
 
 	public virtual bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
 		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for

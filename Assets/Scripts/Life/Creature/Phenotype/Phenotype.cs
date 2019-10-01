@@ -1445,7 +1445,13 @@ public class Phenotype : MonoBehaviour {
 
 		for (int index = 0; index < cellList.Count; index++) {
 			if (signalTick == 0) {
-				cellList[index].UpdateCellSignal(GlobalSettings.instance.quality.signalTickPeriod, worldTick);
+				cellList[index].FeedSignal();
+			}
+		}
+
+		for (int index = 0; index < cellList.Count; index++) {
+			if (signalTick == 0) {
+				cellList[index].ComputeSignalOutputs(GlobalSettings.instance.quality.signalTickPeriod, worldTick);
 			}
 		}
 	}
@@ -1620,7 +1626,7 @@ public class Phenotype : MonoBehaviour {
 	}
 	// ^ pooling ^
 
-	// Load / Save
+	//... Load / Save...
 
 	// Save
 	private PhenotypeData phenotypeData = new PhenotypeData();

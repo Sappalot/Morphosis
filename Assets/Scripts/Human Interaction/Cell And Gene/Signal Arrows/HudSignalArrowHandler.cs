@@ -20,9 +20,15 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		this.mode = mode;
 	}
 
-	private static bool isDirtyConnections = false;
-	public static void MakeDirtyConnections() {
+	private bool isDirtyConnections = false;
+	public void MakeDirtyConnections() {
 		isDirtyConnections = true;
+		MakeDirtySignal();
+	}
+
+	private bool isDirtySignal = false;
+	public void MakeDirtySignal() {
+		isDirtySignal = true;
 	}
 
 	private void Update() {
@@ -63,14 +69,17 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		}
 
 		// Update signal TODO: update only when dirty, that is post signal update in creature
-		foreach (HudSignalArrow arrow in arrowList) {
-			Color color = Color.black;
-			if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
-				color = selectedCell.GetOutputFromUnit(arrow.inputUnit, arrow.inputUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-			} else {
-				color = ColorScheme.instance.signalOff;
+		if (isDirtySignal) {
+			foreach (HudSignalArrow arrow in arrowList) {
+				Color color = Color.black;
+				if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
+					color = selectedCell.GetOutputFromUnit(arrow.inputUnit, arrow.inputUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+				} else {
+					color = ColorScheme.instance.signalOff;
+				}
+				arrow.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0.5f);
 			}
-			arrow.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0.5f);
+			isDirtySignal = false;
 		}
 	}
 
@@ -93,5 +102,4 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			}
 		}
 	}
-
 }

@@ -128,7 +128,7 @@ public class Gene {
 		arrangements[1] = new Arrangement();
 		arrangements[2] = new Arrangement();
 
-		// egg
+		// ...egg...
 		// Force gateLayer0 to And, lock it so that it cant be changed by apply (= load)
 		eggCellFertilizeLogic.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, true);
 		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.Or, 1, 3, false);
@@ -141,8 +141,8 @@ public class Gene {
 		eggCellFertilizeLogic.UpdateConnections();
 		// ^ egg ^
 
-		// dendrites
-		dendrites.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, true);
+		// ...dendrites...
+		dendrites.TryCreateGate(0, LogicOperatorEnum.Or, 0, GeneLogicBox.rightmostFlank, false);
 		dendrites.GetInput(0).nerve.inputUnit = SignalUnitEnum.Void;
 		dendrites.GetInput(1).nerve.inputUnit = SignalUnitEnum.Void;
 		dendrites.GetInput(2).nerve.inputUnit = SignalUnitEnum.Void;

@@ -127,7 +127,7 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 		return LogicBoxInputEnum.Error;
 	}
 
-	public void OnClickedOutputButton() {
+	public void OnClickedOutputButton() { // The arrow, processed late
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			LogicBoxInputPanel.AnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedLate);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;

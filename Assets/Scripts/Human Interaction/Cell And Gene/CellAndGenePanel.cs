@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class CellAndGenePanel : MonoBehaviour {
@@ -74,7 +73,8 @@ public class CellAndGenePanel : MonoBehaviour {
 			geneNeighbourComponentPanel.MakeDirty();
 		}
 
-		HudSignalArrowHandler.MakeDirtyConnections();
+		arrowHandler.MakeDirtyConnections();
+		arrowHandler.MakeDirtySignal();
 	}
 
 	public List<GeneLogicBoxInput> GetAllGeneLogicBoxInputs() {

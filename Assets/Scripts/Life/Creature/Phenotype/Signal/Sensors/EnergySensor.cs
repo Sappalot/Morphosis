@@ -15,7 +15,7 @@ public class EnergySensor : SignalUnit {
 		return output[(int)signalUnitSlot];
 	}
 
-	public override void UpdateOutputs(Cell hostCell, int deltaTicks, ulong worldTicks) {
+	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks, ulong worldTicks) {
 		if (signalUnit == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) {
 			for (int i = 0; i < output.Length; i++) {
 				output[i] = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;

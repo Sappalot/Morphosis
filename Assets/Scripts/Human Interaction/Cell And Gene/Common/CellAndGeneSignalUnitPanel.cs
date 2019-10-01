@@ -20,7 +20,8 @@ public abstract class CellAndGeneSignalUnitPanel : CellAndGeneComponentPanel {
 		public RectTransform D;
 		public RectTransform E;
 		public RectTransform F;
-		public RectTransform processed; // output for component which has also at leas 1 input
+		public RectTransform processedEarly; // output for component which has also at leas 1 input
+		public RectTransform processedLate;
 	}
 
 	public RectTransform GetLocation(SignalUnitSlotEnum slot) {
@@ -36,8 +37,10 @@ public abstract class CellAndGeneSignalUnitPanel : CellAndGeneComponentPanel {
 			return locations.E;
 		} else if (slot == SignalUnitSlotEnum.F) {
 			return locations.F;
-		} else if (slot == SignalUnitSlotEnum.processedEarly) {
-			return locations.processed;
+		} else if (slot == SignalUnitSlotEnum.processedEarly) { // Will we ever need to reach this one?
+			return locations.processedEarly;
+		} else if (slot == SignalUnitSlotEnum.processedLate) {
+			return locations.processedLate;
 		}
 		return null;
 	}

@@ -1,20 +1,29 @@
 ﻿public class LogicBox : SignalUnit {
 	private bool outputEarly;
-	private bool outputLate;
+	private bool outputLate; // TODO: save/load state
 
 	public LogicBox(SignalUnitEnum signalUnit) {
 		base.signalUnit = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
-		return outputEarly;
+		if (signalUnitSlot == SignalUnitSlotEnum.processedEarly) {
+			return outputEarly;
+		} else if (signalUnitSlot == SignalUnitSlotEnum.processedLate) {
+			return outputLate;
+		}
+		return false;
 	}
 
-	public override void UpdateOutputs(Cell hostCell, int deltaTicks, ulong worldTicks) {
+	public override void FeedSignal() {
+		outputLate = outputEarly;
+	}
+
+	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks, ulong worldTicks) {
 		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
-			outputEarly = outputLate = ThroughGates(hostCell.gene.eggCellFertilizeLogic, hostCell);
+			outputEarly = ThroughGates(hostCell.gene.eggCellFertilizeLogic, hostCell);
 		} else if (signalUnit == SignalUnitEnum.Dendrites) {
-			outputEarly = outputLate = ThroughGates(hostCell.gene.dendrites, hostCell);
+			outputEarly = ThroughGates(hostCell.gene.dendrites, hostCell);
 		}
 	}
 
