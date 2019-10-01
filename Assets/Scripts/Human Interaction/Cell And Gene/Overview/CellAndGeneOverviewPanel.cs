@@ -19,6 +19,7 @@ public class CellAndGeneOverviewPanel : MonoBehaviour {
 	public Text connectionGroupCountLabel;
 	public Text apexAngleLabel;
 	public Text eatingOnMeCountLabel; //number of Jaw cells eating on me
+	public Text productionEffectLabel; //footer
 
 	public Button healButton;
 	public Button hurtButton;
@@ -130,13 +131,43 @@ public class CellAndGeneOverviewPanel : MonoBehaviour {
 				effectFromMotherLabel.text = string.Format("P me <= mother: {0:F2}W", selectedCell.effectFluxFromMotherAttached); //kill me
 				effectToChildrenLabel.text = string.Format("P me => children: {0:F2}W", selectedCell.effectFluxToChildrenAttached); //kill me
 
-				isOrigoLabel.text = selectedCell.isOrigin ? "Origin" : "!Origin";
-				isPlacentaLabel.text = selectedCell.isPlacenta ? "Placenta" : "!Placenta";
+				isOrigoLabel.text = selectedCell.isOrigin ? "Origin" : "...";
+				isPlacentaLabel.text = selectedCell.isPlacenta ? "Placenta" : "...";
 				neighboursCountLabel.text = "Neighbours: " + (selectedCell.neighbourCountAll - selectedCell.neighbourCountConnectedRelatives) + ((selectedCell.neighbourCountConnectedRelatives > 0) ? (" + " + selectedCell.neighbourCountConnectedRelatives + " rel.") : "");
 				connectionGroupCountLabel.text = "Connection Groups: " + selectedCell.groups;
 				apexAngleLabel.text = "Apex angle: " + selectedCell.apexAngle.ToString();
 				connectedVeinsCountLabel.text = "Veins: " + selectedCell.creature.phenotype.NonPlacentaVeinsConnectedToCellCount(selectedCell) + (selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) > 0 ? (" + " + selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) + " children") : "");
 				eatingOnMeCountLabel.text = "Eating on me: " + selectedCell.predatorCount;
+
+				productionEffectLabel.text = string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, false, false), selectedCell.GetEffectDown(true, false, false, false), selectedCell.GetEffect(true, false, false, false));
+				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
+					productionEffectLabel.color = Color.gray; // since we have it presented above allready, confusing to show it twice
+				} else {
+					productionEffectLabel.color = Color.black;
+				}
+			} else {
+				energyBar.isOn = false;
+				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
+					effectLabel.text = "Total Effect: ";
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
+					effectLabel.text = "Production Effect: ";
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
+					effectLabel.text = "Flux Effect: ";
+				}
+
+				effectFromNeighboursLabel.text = "P me <= neighbours: -";
+				effectToNeighboursLabel.text = "P me => neighbours: -";
+				effectFromMotherLabel.text = "P me <= mother: -";
+				effectToChildrenLabel.text = "P me => children: -";
+				isOrigoLabel.text = "-";
+				isPlacentaLabel.text = "-";
+				neighboursCountLabel.text = "Neighbours: -";
+				connectionGroupCountLabel.text = "Connection Groups: -";
+				apexAngleLabel.text = "Apex angle: -";
+				connectedVeinsCountLabel.text = "Veins: -";
+				eatingOnMeCountLabel.text = "Eating on me: -";
+
+				productionEffectLabel.text = "Production Effect: todo [1.00...4.00] - [1.00...2.00] = [-1.00...3.00] W";
 			}
 
 			armourLabel.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedGene.armour, GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(20f) / selectedGene.armour);

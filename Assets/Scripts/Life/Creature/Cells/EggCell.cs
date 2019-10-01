@@ -40,6 +40,7 @@ public class EggCell : Cell {
 
 	public override void UpdateCellSignal(int deltaTicks, ulong worldTicks) {
 		//TODO: Check with gene if anybody is listening to this output
+		base.UpdateCellSignal(deltaTicks, worldTicks);
 		fertilizeEnergySensor.UpdateOutputs(this, deltaTicks, worldTicks);
 		fertilizeLogicBox.UpdateOutputs(this, deltaTicks, worldTicks);
 	}

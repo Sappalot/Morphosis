@@ -1670,14 +1670,24 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	//----------Signal--------------------------------
+	// Signal
+	public SignalUnit dendrites = new LogicBox(SignalUnitEnum.Dendrites); //component
+	public SignalUnit energySensor = new EnergySensor(SignalUnitEnum.EnergySensor); // component
 
 	virtual public void UpdateCellSignal(int deltaTicks, ulong worldTicks) {
-		// tick all common cell signals
+		// Update cells common units here
+		// TODO: Check if anybodey is listening to output, update only in that case
+		dendrites.UpdateOutputs(this, deltaTicks, worldTicks);
+		energySensor.UpdateOutputs(this, deltaTicks, worldTicks);
 	}
 
 	public virtual bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
-		
 		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for
+		if (outputUnit == SignalUnitEnum.Dendrites) {
+			return dendrites.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.EnergySensor) {
+			return energySensor.GetOutput(outputUnitSlot);
+		}
 
 		return false;
 	}

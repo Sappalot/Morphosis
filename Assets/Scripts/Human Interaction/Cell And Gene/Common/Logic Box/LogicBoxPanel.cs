@@ -31,7 +31,6 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 				return selectedGene.dendrites;
 			}
 			return null;
-			
 		}
 	}
 

@@ -11,8 +11,10 @@
 	}
 
 	public override void UpdateOutputs(Cell hostCell, int deltaTicks, ulong worldTicks) {
-		if (signalUnit == SignalUnitEnum.WorkLogicBoxA) {
+		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 			outputEarly = outputLate = ThroughGates(hostCell.gene.eggCellFertilizeLogic, hostCell);
+		} else if (signalUnit == SignalUnitEnum.Dendrites) {
+			outputEarly = outputLate = ThroughGates(hostCell.gene.dendrites, hostCell);
 		}
 	}
 

@@ -130,19 +130,26 @@ public class Gene {
 
 		// egg
 		// Force gateLayer0 to And, lock it so that it cant be changed by apply (= load)
-
 		eggCellFertilizeLogic.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, true);
 		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.Or, 1, 3, false);
 		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.And);
-
 		eggCellFertilizeLogic.GetInput(0).nerve.inputUnit = SignalUnitEnum.Void;
 		eggCellFertilizeLogic.GetInput(1).nerve.inputUnit = SignalUnitEnum.Void;
 		eggCellFertilizeLogic.GetInput(2).nerve.inputUnit = SignalUnitEnum.Void;
 		eggCellFertilizeLogic.GetInput(3).nerve.inputUnit = SignalUnitEnum.Void;
 		eggCellFertilizeLogic.GetInput(4).nerve.inputUnit = SignalUnitEnum.Void;
-
-
 		eggCellFertilizeLogic.UpdateConnections();
+		// ^ egg ^
+
+		// dendrites
+		dendrites.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, true);
+		dendrites.GetInput(0).nerve.inputUnit = SignalUnitEnum.Void;
+		dendrites.GetInput(1).nerve.inputUnit = SignalUnitEnum.Void;
+		dendrites.GetInput(2).nerve.inputUnit = SignalUnitEnum.Void;
+		dendrites.GetInput(3).nerve.inputUnit = SignalUnitEnum.Void;
+		dendrites.GetInput(4).nerve.inputUnit = SignalUnitEnum.Void;
+		dendrites.UpdateConnections();
+		// ^ dendrites ^
 	}
 
 	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {

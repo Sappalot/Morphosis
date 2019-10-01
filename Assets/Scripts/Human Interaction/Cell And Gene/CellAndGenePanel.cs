@@ -100,7 +100,12 @@ public class CellAndGenePanel : MonoBehaviour {
 			if (workComponentPanel.cellType == CellTypeEnum.Egg) {
 				outTransform = workComponentPanel.eggPanel.fertilizeEnergySensorPanel.GetLocation(signalUnitSlot);
 			}
+		} else if (signalUnit == SignalUnitEnum.Dendrites) {
+			outTransform = dendritesComponentPanel.GetLocation(signalUnitSlot);
+		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
+			outTransform = energySensorComponentPanel.GetLocation(signalUnitSlot);
 		}
+
 		if (outTransform != null) {
 			return TotalOffset(outTransform);
 		} else {

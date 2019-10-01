@@ -28,7 +28,6 @@ public class LogicBoxGatePanel : MonoBehaviour {
 				return selectedGene.dendrites.GetGate(row, index);
 			}
 
-
 			return null;
 		}
 	}
