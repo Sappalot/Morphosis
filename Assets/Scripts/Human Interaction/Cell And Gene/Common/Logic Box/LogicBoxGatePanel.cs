@@ -8,7 +8,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	public Image andButtonImage;
 	public Image orButtonImage;
 
-	public Image[] inputArrows = new Image[5];
+	public Image[] inputArrows = new Image[GeneLogicBox.columnCount];
 
 	private bool isMouseHoverng;
 

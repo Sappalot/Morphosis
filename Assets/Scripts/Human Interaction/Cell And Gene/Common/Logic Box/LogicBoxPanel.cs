@@ -8,8 +8,8 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 	public Image outputImageEarly;
 	public Transform bodyPanel;
 
-	private static Vector2 rowSize = new Vector2(270f, 40f);
-	public static float cellWidth = rowSize.x * (1f / 5f);
+	private static Vector2 rowSize = new Vector2(625f, 40f);
+	public static float cellWidth = rowSize.x * (1f / GeneLogicBox.columnCount);
 	public static float cellHeight = 40;
 
 	[HideInInspector]
@@ -154,6 +154,9 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 			if (mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null) {
 				outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedLate) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedEarly) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+			} else {
+				outputImageLate.color = ColorScheme.instance.signalOff;
+				outputImageEarly.color = ColorScheme.instance.signalOff;
 			}
 
 			outputLabel.text = outputText;

@@ -1,6 +1,6 @@
 ﻿public class GeneLogicBox : GeneSignalUnit {
 	public static int rowCount = 3; // excluding, bottom input row
-	public static int columnCount = 5;
+	public static int columnCount = 6;
 	public static int rightmostFlank = columnCount;
 	public static int maxGatesPerRow = columnCount / 2;
 
