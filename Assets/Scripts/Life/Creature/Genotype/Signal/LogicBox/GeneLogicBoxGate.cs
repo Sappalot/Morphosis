@@ -4,30 +4,6 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 	public LogicOperatorEnum operatorType = LogicOperatorEnum.And;
 	public List<GeneLogicBoxPart> partsConnected = new List<GeneLogicBoxPart>(); // store conections even if they are not used
 	
-	//public List<GeneLogicBoxGate> gatesConnected {
-	//	get {
-	//		List<GeneLogicBoxGate> newList = new List<GeneLogicBoxGate>();
-	//		foreach(GeneLogicBoxPart p in partsConnected) {
-	//			if (p is GeneLogicBoxGate) {
-	//				newList.Add(p as GeneLogicBoxGate);
-	//			}
-	//		}
-	//		return newList;
-	//	}
-	//}
-
-	//public List<GeneLogicBoxInput> inputsConnected {
-	//	get {
-	//		List<GeneLogicBoxInput> newList = new List<GeneLogicBoxInput>();
-	//		foreach (GeneLogicBoxInput p in partsConnected) {
-	//			if (p is GeneLogicBoxInput) {
-	//				newList.Add(p as GeneLogicBoxInput);
-	//			}
-	//		}
-	//		return newList;
-	//	}
-	//}
-
 	public bool isUsed = false; // is taking place inside logic box (might be blocked, might not)
 	
 	private GeneLogicBox geneLogicBox;
@@ -57,10 +33,15 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 	public bool TryMoveLeftFlankRight() {
 		if (leftFlank < GeneLogicBox.rightmostFlank - 2) {
 			if (width == 2) {
-				rightFlank++;
+				if (!geneLogicBox.IsCellOccupiedByGate(row, GetColumnRightOfFlank(rightFlank))) {
+					rightFlank++;
+					leftFlank++;
+					return true;
+				}
+			} else {
+				leftFlank++;
+				return true;
 			}
-			leftFlank++;
-			return true;
 		}
 		return false;
 	}
@@ -76,10 +57,15 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 	public bool TryMoveRightFlankLeft() {
 		if (rightFlank > 2) {
 			if (width == 2) {
-				leftFlank--;
+				if (!geneLogicBox.IsCellOccupiedByGate(row, GetColumnLeftOfFlank(leftFlank))) {
+					leftFlank--;
+					rightFlank--;
+					return true;
+				}
+			} else {
+				rightFlank--;
+				return true;
 			}
-			rightFlank--;
-			return true;
 		}
 		return false;
 	}

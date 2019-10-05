@@ -23,6 +23,10 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 	private LogicBoxGatePanel[] gatesRow2 = new LogicBoxGatePanel[GeneLogicBox.maxGatesPerRow];
 	public LogicBoxInputPanel[] inputRow3 = new LogicBoxInputPanel[GeneLogicBox.maxGatesPerRow];
 
+	private void Awake() {
+		gateTemplate.gameObject.SetActive(false);
+	}
+
 	public GeneLogicBox affectedGeneLogicBox {
 		get {
 			if (selectedGene.type == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
