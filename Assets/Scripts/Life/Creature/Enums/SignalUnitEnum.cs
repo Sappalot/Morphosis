@@ -8,9 +8,14 @@ public enum SignalUnitEnum {
 
 	WorkHibernate, //4 cell types' is hibernating
 	
-	// Egg
-	WorkLogicBoxA, // Egg Fertilize
-	WorkSensorA, // Egg Energy
+
+	WorkLogicBoxA, // Egg: Fertilize asexually
+	WorkLogicBoxB, // Egg: fertilize sexually
+	WorkSensorA, // Egg: Energy fertilize
+	WorkSensorB,
+	WorkSensorC, 
+	WorkSensorD, 
+	WorkSensorE, // All: constant
 
 	Axon,
 

@@ -93,8 +93,18 @@ public class CellAndGenePanel : MonoBehaviour {
 
 		if (signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 			outTransform = workComponentPanel.nerveLocationsPanel.logicBoxA.GetLocation(signalUnitSlot);
+		} else if (signalUnit == SignalUnitEnum.WorkLogicBoxB) {
+			outTransform = workComponentPanel.nerveLocationsPanel.logicBoxB.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.WorkSensorA) {
 			outTransform = workComponentPanel.nerveLocationsPanel.sensorA.GetLocation(signalUnitSlot);
+		} else if (signalUnit == SignalUnitEnum.WorkSensorB) {
+			outTransform = workComponentPanel.nerveLocationsPanel.sensorB.GetLocation(signalUnitSlot);
+		} else if (signalUnit == SignalUnitEnum.WorkSensorC) {
+			outTransform = workComponentPanel.nerveLocationsPanel.sensorC.GetLocation(signalUnitSlot);
+		} else if (signalUnit == SignalUnitEnum.WorkSensorD) {
+			outTransform = workComponentPanel.nerveLocationsPanel.sensorD.GetLocation(signalUnitSlot);
+		} else if (signalUnit == SignalUnitEnum.WorkSensorE) {
+			outTransform = workComponentPanel.nerveLocationsPanel.sensorE.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.Dendrites) {
 			outTransform = dendritesComponentPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.EnergySensor) {

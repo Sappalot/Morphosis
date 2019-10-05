@@ -25,7 +25,9 @@ public class SensorOutputPanel : MonoBehaviour {
 
 	public void OnClicked() {
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-			LogicBoxInputPanel.AnswerSetReference(motherPanel.affectedGeneSensor.signalUnit, signalUnitSlot);
+			//LogicBoxInputPanel.AnswerSetReference(motherPanel.affectedGeneSensor.signalUnit, signalUnitSlot);
+			LogicBoxInputPanel.AnswerSetReference(signalUnit, signalUnitSlot);
+
 			// TODO: We are sure the conection from something to this one was a LogicBoxInputPanel, so ask every possible Class!
 
 			MouseAction.instance.actionState = MouseActionStateEnum.free;

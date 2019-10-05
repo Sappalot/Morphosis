@@ -25,10 +25,12 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 
 	public LogicBoxPanel fertilizeLogicBoxPanel;
 	public EnergySensorPanel fertilizeEnergySensorPanel;
+	public ConstantSensorPanel constantSensorPanel;
 
 	public override void Initialize(PhenoGenoEnum mode) {
 		fertilizeLogicBoxPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxA, true);
 		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA, true);
+		constantSensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorE, true);
 
 		ignoreSliderMoved = true;
 		fertilizeSlider.minValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMin;
@@ -51,6 +53,8 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 		base.MakeDirty();
 		fertilizeLogicBoxPanel.MakeDirty();
 		fertilizeEnergySensorPanel.MakeDirty();
+
+		constantSensorPanel.MakeDirty();
 	}
 
 

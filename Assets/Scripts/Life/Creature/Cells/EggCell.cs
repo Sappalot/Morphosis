@@ -34,8 +34,8 @@ public class EggCell : Cell {
 	}
 
 	// Signal
-	public SignalUnit fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkLogicBoxA);
-	public SignalUnit fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkSensorA); // locked one
+	public LogicBox fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkLogicBoxA);
+	public EnergySensor fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkSensorA); // locked one
 
 	public override void FeedSignal() {
 		base.FeedSignal();
@@ -45,6 +45,7 @@ public class EggCell : Cell {
 	public override void ComputeSignalOutputs(int deltaTicks, ulong worldTicks) {
 		//TODO: Check with gene if anybody is listening to this output
 		base.ComputeSignalOutputs(deltaTicks, worldTicks);
+		
 		fertilizeLogicBox.ComputeSignalOutput(this, deltaTicks, worldTicks);
 		fertilizeEnergySensor.ComputeSignalOutput(this, deltaTicks, worldTicks);
 	}

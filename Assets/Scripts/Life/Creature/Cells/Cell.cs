@@ -1669,8 +1669,9 @@ public abstract class Cell : MonoBehaviour {
 
 	//----------Signal--------------------------------
 	// Signal
-	public SignalUnit dendrites = new LogicBox(SignalUnitEnum.Dendrites); //component
-	public SignalUnit energySensor = new EnergySensor(SignalUnitEnum.EnergySensor); // component
+	public ConstantSensor constantSensor = new ConstantSensor(SignalUnitEnum.WorkSensorE);
+	public LogicBox dendrites = new LogicBox(SignalUnitEnum.Dendrites); //component
+	public EnergySensor energySensor = new EnergySensor(SignalUnitEnum.EnergySensor); // component
 
 	// if processor: output early ==> output late
 	virtual public void FeedSignal() {
@@ -1684,6 +1685,7 @@ public abstract class Cell : MonoBehaviour {
 	virtual public void ComputeSignalOutputs(int deltaTicks, ulong worldTicks) {
 		// Update cells common units here
 		// TODO: Check if anybodey is listening to output, update only in that case
+		constantSensor.ComputeSignalOutput(this, deltaTicks, worldTicks);
 		dendrites.ComputeSignalOutput(this, deltaTicks, worldTicks);
 		energySensor.ComputeSignalOutput(this, deltaTicks, worldTicks);
 	}
@@ -1692,9 +1694,12 @@ public abstract class Cell : MonoBehaviour {
 
 	public virtual bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
 		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for
-		if (outputUnit == SignalUnitEnum.Dendrites) {
+		if (outputUnit == SignalUnitEnum.WorkSensorE) {
+			return constantSensor.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.Dendrites) {
 			return dendrites.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.EnergySensor) {
+		}
+		else if (outputUnit == SignalUnitEnum.EnergySensor) {
 			return energySensor.GetOutput(outputUnitSlot);
 		}
 

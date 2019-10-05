@@ -10,6 +10,7 @@ public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 	protected bool ignoreSliderMoved = false;
 	protected bool isDirty = false;
 
+
 	protected PhenoGenoEnum GetMode() {
 		return mode;
 	}

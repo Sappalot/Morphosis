@@ -118,9 +118,9 @@ public class LogicBoxInputPanel : MonoBehaviour {
 
 			if (mode == PhenoGenoEnum.Genotype) {
 				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
-					inputButtonImage.color = ColorScheme.instance.grayedOut;
+					inputButtonImage.color = ColorScheme.instance.signalUnused;
 				} else if (affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
-					inputButtonImage.color = Color.black; // signal will allways be OFF (since we are conected to the void)
+					inputButtonImage.color = Color.magenta; // should never happen
 				} else {
 					inputButtonImage.color = ColorScheme.instance.signalOff; // we have a chance of an ON signal
 				}
@@ -131,9 +131,9 @@ public class LogicBoxInputPanel : MonoBehaviour {
 
 			} else {
 				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve) {
-					inputButtonImage.color = ColorScheme.instance.grayedOut;
-				} else if (runtimeOutput == LogicBoxInputEnum.VoidInput) {
-					inputButtonImage.color = Color.black;
+					inputButtonImage.color = ColorScheme.instance.signalUnused;
+				} else if (runtimeOutput == LogicBoxInputEnum.VoidInput) { // should never happen
+					inputButtonImage.color = Color.magenta;
 				} else if (runtimeOutput == LogicBoxInputEnum.On) {
 					inputButtonImage.color = ColorScheme.instance.signalOn;
 				} else if (runtimeOutput == LogicBoxInputEnum.Off) {
@@ -142,10 +142,8 @@ public class LogicBoxInputPanel : MonoBehaviour {
 					inputButtonImage.color = Color.red;
 				}
 			}
-
 			ignoreSliderMoved = false;
 
-			//geneAndGeneCellPanel.MakeDirty();
 			isDirty = false;
 		}
 	}

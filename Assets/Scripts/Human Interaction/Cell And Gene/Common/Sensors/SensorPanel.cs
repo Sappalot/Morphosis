@@ -9,7 +9,9 @@ public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
 	protected bool isUsed = false;
 
 	private void Awake() {
-		settingsPanel.gameObject.SetActive(false);
+		if (!isUsed) {
+			settingsPanel.gameObject.SetActive(false);
+		}
 	}
 
 	public GeneSignalUnit affectedGeneSensor {

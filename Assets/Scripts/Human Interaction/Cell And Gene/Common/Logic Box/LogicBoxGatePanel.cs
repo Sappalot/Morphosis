@@ -140,7 +140,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 					operatorTypeLabel.text = affectedGeneLogicBoxGate.operatorType.ToString().ToUpper() + (affectedGeneLogicBoxGate.isLocked ? " (L)" : "");
 				}
 				
-				operatorTypeLabel.color = affectedGeneLogicBoxGate.isTransmittingSignal ? ColorScheme.instance.signalOff : Color.gray;
+				operatorTypeLabel.color = affectedGeneLogicBoxGate.isTransmittingSignal ? ColorScheme.instance.signalOff : ColorScheme.instance.signalUnused;
 			} else {
 				operatorTypeLabel.text = "???";
 			}
@@ -181,7 +181,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 
 				Color arrowColor = Color.black;
 				if (mode == PhenoGenoEnum.Genotype) {
-					arrowColor = connectedPart.isTransmittingSignal ? ColorScheme.instance.signalOff : ColorScheme.instance.signalGrayedOut;
+					arrowColor = connectedPart.isTransmittingSignal ? ColorScheme.instance.signalOff : ColorScheme.instance.signalUnused;
 				} else {
 					if (connectedPart.isTransmittingSignal) {
 						if (connectedPart is GeneLogicBoxGate) {
@@ -190,7 +190,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 							arrowColor = LogicBox.GetInputResult((connectedPart as GeneLogicBoxInput), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						}
 					} else {
-						arrowColor = ColorScheme.instance.signalGrayedOut;
+						arrowColor = ColorScheme.instance.signalUnused;
 					}
 				}
 				inputArrows[arrowIndex].GetComponent<Image>().color = arrowColor;
