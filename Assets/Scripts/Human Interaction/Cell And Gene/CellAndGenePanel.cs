@@ -92,14 +92,9 @@ public class CellAndGenePanel : MonoBehaviour {
 		//TODO: let egg cell define where all output locations are
 
 		if (signalUnit == SignalUnitEnum.WorkLogicBoxA) {
-			if (workComponentPanel.cellType == CellTypeEnum.Egg) {
-				outTransform = workComponentPanel.eggPanel.fertilizeLogicBoxPanel.GetLocation(signalUnitSlot);
-			}
+			outTransform = workComponentPanel.nerveLocationsPanel.logicBoxA.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.WorkSensorA) {
-			// signalUnitSlot doesn't matter
-			if (workComponentPanel.cellType == CellTypeEnum.Egg) {
-				outTransform = workComponentPanel.eggPanel.fertilizeEnergySensorPanel.GetLocation(signalUnitSlot);
-			}
+			outTransform = workComponentPanel.nerveLocationsPanel.sensorA.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.Dendrites) {
 			outTransform = dendritesComponentPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.EnergySensor) {

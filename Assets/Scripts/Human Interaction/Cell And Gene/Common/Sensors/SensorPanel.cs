@@ -5,6 +5,12 @@ using UnityEngine.UI;
 // Me <== EnergySensorPanel, EffectSensorPanel
 public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
 	public SensorOutputPanel[] outputPanels;
+	public RectTransform settingsPanel;
+	protected bool isUsed = false;
+
+	private void Awake() {
+		settingsPanel.gameObject.SetActive(false);
+	}
 
 	public GeneSignalUnit affectedGeneSensor {
 		get {
@@ -26,6 +32,8 @@ public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
 
 	public override void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, bool isInsideOtherComponent) {
 		base.Initialize(mode, signalUnit, isInsideOtherComponent);
+		settingsPanel.gameObject.SetActive(true);
+		isUsed = true;
 
 		for (int i = 0; i < outputPanels.Length; i++) {
 			outputPanels[i].Initialize(mode, signalUnit, (SignalUnitSlotEnum)i, this);

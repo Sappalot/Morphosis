@@ -44,9 +44,9 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 		affectedGeneLogicBox.UpdateConnections();
 	}
 
-	override public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, bool isInsideOtherComponent ) {
+	override public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, bool isInsideOtherComponent) {
 		base.Initialize(mode, signalUnit, isInsideOtherComponent);
-
+		gateTemplate.gameObject.SetActive(true);
 		gateRow0 = GameObject.Instantiate(gateTemplate, bodyPanel.transform);
 		gateRow0.transform.position = gateTemplate.transform.position + Vector3.right * 0f * cellWidth + Vector3.down * 0f * cellHeight;
 		gateRow0.transform.SetAsFirstSibling();

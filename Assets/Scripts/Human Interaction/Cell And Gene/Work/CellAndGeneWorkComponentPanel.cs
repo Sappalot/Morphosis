@@ -10,6 +10,8 @@ public class CellAndGeneWorkComponentPanel : MonoBehaviour {
 	public RootCellPanel rootPanel;
 	public ShellCellPanel shellPanel;
 	public VeinCellPanel veinPanel;
+
+	public NerveLocationsPanel nerveLocationsPanel;
 	
 	public Dropdown typeDropdown;
 

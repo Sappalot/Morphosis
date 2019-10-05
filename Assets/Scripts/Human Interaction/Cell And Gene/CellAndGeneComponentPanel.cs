@@ -23,7 +23,7 @@ public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 	}
 
 	
-	public void MakeDirty() {
+	public virtual void MakeDirty() {
 		isDirty = true;
 	}
 

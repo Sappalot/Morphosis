@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 // TODO Generalize to just be an input panel for all units
 public class LogicBoxInputPanel : MonoBehaviour {
-	public Image motherBlockBackground;
-	public Image motherPassBackground;
+	public Image blockButton;
+	public Image passButton;
 
 	public Image inputButtonImage;
 	[HideInInspector]
@@ -13,6 +13,8 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	private int column;
 	private bool isDirty = false;
 	private bool ignoreSliderMoved = false;
+	private bool isUsed = false;
+
 	private LogicBoxPanel motherPanel;
 	public GeneLogicBoxInput affectedGeneLogicBoxInput { 
 		get {
@@ -33,6 +35,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		this.mode = mode;
 		this.motherPanel = motherPanel;
 		this.column = column;
+		isUsed = true;
 	}
 
 	private PhenoGenoEnum GetMode() {
@@ -43,7 +46,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		isDirty = true;
 	}
 
-	public void OnMotherBlockClicked() {
+	public void OnBlockClicked() {
 		if (mode == PhenoGenoEnum.Phenotype || ignoreSliderMoved) {
 			return;
 		}
@@ -56,7 +59,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		MakeDirty();
 	}
 
-	public void OnMotherPassClicked() {
+	public void OnPassClicked() {
 		if (mode == PhenoGenoEnum.Phenotype || ignoreSliderMoved) {
 			return;
 		}
@@ -70,7 +73,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	}
 
 	public void OnSetReferenceClicked() {
-		if (MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
+		if (isUsed && MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
 			MouseAction.instance.actionState = MouseActionStateEnum.selectSignalOutput;
 			Debug.Assert(staticAffectedGeneLogicBoxInputPanel == null);
 			staticAffectedGeneLogicBoxInputPanel = this;
@@ -109,8 +112,8 @@ public class LogicBoxInputPanel : MonoBehaviour {
 			ignoreSliderMoved = true;
 
 			if (selectedGene != null && affectedGeneLogicBoxInput != null) {
-				motherBlockBackground.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
-				motherPassBackground.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+				blockButton.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+				passButton.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 			}
 
 			if (mode == PhenoGenoEnum.Genotype) {

@@ -2,6 +2,8 @@
 using UnityEngine.UI;
 
 public class EnergySensorPanel : SensorPanel {
+	
+
 	public Text energyThresholdSliderLabel;
 	public Slider energyThresholdSlider;
 

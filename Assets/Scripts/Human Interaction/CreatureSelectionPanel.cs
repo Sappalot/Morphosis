@@ -631,6 +631,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		ClearStoredCreatures();
 
+		CellPanel.instance.MakeDirty();
+		GenePanel.instance.MakeDirty();
 
 		return placedCreatures;
 	}

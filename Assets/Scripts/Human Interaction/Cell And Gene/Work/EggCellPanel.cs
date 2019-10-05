@@ -24,7 +24,7 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 	public Slider detatchEnergySlider;
 
 	public LogicBoxPanel fertilizeLogicBoxPanel;
-	public SensorPanel fertilizeEnergySensorPanel;
+	public EnergySensorPanel fertilizeEnergySensorPanel;
 
 	public override void Initialize(PhenoGenoEnum mode) {
 		fertilizeLogicBoxPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxA, true);
@@ -46,6 +46,13 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 
 		base.Initialize(mode);
 	}
+
+	public override void MakeDirty() {
+		base.MakeDirty();
+		fertilizeLogicBoxPanel.MakeDirty();
+		fertilizeEnergySensorPanel.MakeDirty();
+	}
+
 
 	public override List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
 		return fertilizeLogicBoxPanel.GetAllGeneGeneLogicBoxInputs();
@@ -160,9 +167,7 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 				ignoreSliderMoved = false;
 			}
 
-			fertilizeLogicBoxPanel.outputText = "Fertilize";
-			fertilizeLogicBoxPanel.MakeDirty();
-			fertilizeEnergySensorPanel.MakeDirty();
+			fertilizeLogicBoxPanel.outputText = "Fertilize asexually";
 
 			isDirty = false;
 		}
