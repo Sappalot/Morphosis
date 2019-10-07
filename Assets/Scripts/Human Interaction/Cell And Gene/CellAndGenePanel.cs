@@ -6,6 +6,7 @@ public class CellAndGenePanel : MonoBehaviour {
 
 	public CellAndGeneOverviewPanel overvirewPanel;
 	public CellAndGeneWorkComponentPanel workComponentPanel;
+	public SensorPanel constantSensorComponentPanel;
 	public CellAndGeneAxonComponentPanel axonComponentPanel;
 	public LogicBoxPanel dendritesComponentPanel;
 	public SensorPanel energySensorComponentPanel;
@@ -23,9 +24,11 @@ public class CellAndGenePanel : MonoBehaviour {
 
 		overvirewPanel.Initialize(mode);
 		workComponentPanel.Initialize(mode);
+		constantSensorComponentPanel.Initialize(mode, SignalUnitEnum.ConstantSensor, false);
 		axonComponentPanel.Initialize(mode);
 		dendritesComponentPanel.Initialize(mode, SignalUnitEnum.Dendrites, false);
 		energySensorComponentPanel.Initialize(mode, SignalUnitEnum.EnergySensor, false);
+		
 
 		buildPriorityComponentPanel.mode = mode;
 		originComponentPanel.mode = mode;
@@ -55,11 +58,9 @@ public class CellAndGenePanel : MonoBehaviour {
 		}
 
 		overvirewPanel.MakeDirty();
-
 		workComponentPanel.MakeDirty();
-
+		constantSensorComponentPanel.MakeDirty();
 		axonComponentPanel.MakeDirty();
-
 		dendritesComponentPanel.MakeDirty();
 		energySensorComponentPanel.MakeDirty();
 
@@ -103,8 +104,8 @@ public class CellAndGenePanel : MonoBehaviour {
 			outTransform = workComponentPanel.nerveLocationsPanel.sensorC.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.WorkSensorD) {
 			outTransform = workComponentPanel.nerveLocationsPanel.sensorD.GetLocation(signalUnitSlot);
-		} else if (signalUnit == SignalUnitEnum.WorkSensorE) {
-			outTransform = workComponentPanel.nerveLocationsPanel.sensorE.GetLocation(signalUnitSlot);
+		} else if (signalUnit == SignalUnitEnum.ConstantSensor) {
+			outTransform = constantSensorComponentPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.Dendrites) {
 			outTransform = dendritesComponentPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.EnergySensor) {

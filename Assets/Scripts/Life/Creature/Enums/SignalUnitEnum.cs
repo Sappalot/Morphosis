@@ -15,7 +15,8 @@ public enum SignalUnitEnum {
 	WorkSensorB,
 	WorkSensorC, 
 	WorkSensorD, 
-	WorkSensorE, // All: constant
+
+	ConstantSensor,
 
 	Axon,
 

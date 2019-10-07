@@ -7,5 +7,4 @@ public class NerveLocationsPanel : MonoBehaviour {
 	public SensorPanel sensorB;
 	public SensorPanel sensorC;
 	public SensorPanel sensorD;
-	public SensorPanel sensorE; // constant
 }
