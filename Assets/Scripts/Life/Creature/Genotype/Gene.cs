@@ -46,7 +46,6 @@ public class Gene {
 				return 1f;
 			}
 		}
-		
 	}
 
 	// Axon
@@ -118,7 +117,6 @@ public class Gene {
 		}
 	}
 
-
 	public readonly Arrangement[] arrangements = new Arrangement[3];
 
 	public Gene(int index) {
@@ -131,23 +129,20 @@ public class Gene {
 		// ...egg...
 		// Force gateLayer0 to And, lock it so that it cant be changed by apply (= load)
 		eggCellFertilizeLogic.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, true);
-		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.Or, 1, 3, false);
-		eggCellFertilizeLogic.TryCreateGate(1, LogicOperatorEnum.And);
-		eggCellFertilizeLogic.GetInput(0).nerve.inputUnit = SignalUnitEnum.Void;
-		eggCellFertilizeLogic.GetInput(1).nerve.inputUnit = SignalUnitEnum.Void;
-		eggCellFertilizeLogic.GetInput(2).nerve.inputUnit = SignalUnitEnum.Void;
-		eggCellFertilizeLogic.GetInput(3).nerve.inputUnit = SignalUnitEnum.Void;
-		eggCellFertilizeLogic.GetInput(4).nerve.inputUnit = SignalUnitEnum.Void;
+		eggCellFertilizeLogic.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
+		eggCellFertilizeLogic.SetAllInputToBlocked();
+		eggCellFertilizeLogic.ConnectInputTo(0, SignalUnitEnum.WorkSensorA, SignalUnitSlotEnum.A); // connect to on board energy sensor
+		eggCellFertilizeLogic.SetInputToPass(0);
+		eggCellFertilizeLogic.SetInputToLocked(0);
+		eggCellFertilizeLogic.SetCellToLocked(1, 0);
+		eggCellFertilizeLogic.SetCellToLocked(2, 0);
 		eggCellFertilizeLogic.UpdateConnections();
 		// ^ egg ^
 
 		// ...dendrites...
 		dendrites.TryCreateGate(0, LogicOperatorEnum.Or, 0, GeneLogicBox.rightmostFlank, false);
-		dendrites.GetInput(0).nerve.inputUnit = SignalUnitEnum.Void;
-		dendrites.GetInput(1).nerve.inputUnit = SignalUnitEnum.Void;
-		dendrites.GetInput(2).nerve.inputUnit = SignalUnitEnum.Void;
-		dendrites.GetInput(3).nerve.inputUnit = SignalUnitEnum.Void;
-		dendrites.GetInput(4).nerve.inputUnit = SignalUnitEnum.Void;
+		dendrites.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
+		dendrites.SetAllInputToBlocked();
 		dendrites.UpdateConnections();
 		// ^ dendrites ^
 	}

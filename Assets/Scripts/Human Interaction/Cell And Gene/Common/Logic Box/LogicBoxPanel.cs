@@ -13,15 +13,19 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 	public static float cellHeight = 40;
 
 	[HideInInspector]
-	public string outputText; 
+	public string outputText;
 
 	public Text outputLabel;
 	public LogicBoxGatePanel gateTemplate;
+
+	public RectTransform lockedCellTemplate;
 
 	private LogicBoxGatePanel gateRow0;
 	private LogicBoxGatePanel[] gatesRow1 = new LogicBoxGatePanel[GeneLogicBox.maxGatesPerRow];
 	private LogicBoxGatePanel[] gatesRow2 = new LogicBoxGatePanel[GeneLogicBox.maxGatesPerRow];
 	public LogicBoxInputPanel[] inputRow3 = new LogicBoxInputPanel[GeneLogicBox.maxGatesPerRow];
+
+	public RectTransform[,] lockedCells = new RectTransform[GeneLogicBox.rowCount - 1, GeneLogicBox.columnCount];
 
 	private void Awake() {
 		gateTemplate.gameObject.SetActive(false);
@@ -80,9 +84,20 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 			inputRow3[column].Initialize(mode, column, this);
 		}
 
-		MakeDirty();
+		// Create locked overlays
+		for (int row = 1; row < GeneLogicBox.rowCount; row++) {
+			for (int column = 0; column < GeneLogicBox.columnCount; column++) {
+				RectTransform lockedCell = GameObject.Instantiate(lockedCellTemplate, bodyPanel.transform);
+				lockedCell.GetComponent<RectTransform>().sizeDelta = new Vector2(cellWidth, cellHeight);
+				lockedCell.transform.position = gateTemplate.transform.position + Vector3.right * column * cellWidth + Vector3.down * row * cellHeight;
+				lockedCell.transform.SetAsLastSibling();
+				lockedCell.gameObject.SetActive(false);
 
-		
+				lockedCells[row - 1, column] = lockedCell;
+			}
+		}
+
+		MakeDirty();
 	}
 
 	public void MarkAsNewForge() {
@@ -163,8 +178,37 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 				outputImageEarly.color = ColorScheme.instance.signalOff;
 			}
 
+			// locked cells
+			if (mode == PhenoGenoEnum.Phenotype && selectedCell != null || mode == PhenoGenoEnum.Genotype && selectedGene != null) {
+				for (int row = 1; row < GeneLogicBox.rowCount; row++) {
+					for (int column = 0; column < GeneLogicBox.columnCount; column++) {
+						lockedCells[row - 1, column].gameObject.SetActive(mode == PhenoGenoEnum.Genotype && affectedGeneLogicBox.IsCellOccupiedByLock(row, column));
+					}
+				}
+			}
+
 			outputLabel.text = outputText;
 			isDirty = false;
+		}
+	}
+
+	private Gene selectedGene {
+		get {
+			if (mode == PhenoGenoEnum.Phenotype) {
+				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
+			} else {
+				return GenePanel.instance.selectedGene;
+			}
+		}
+	}
+
+	private Cell selectedCell {
+		get {
+			if (mode == PhenoGenoEnum.Phenotype) {
+				return CellPanel.instance.selectedCell;
+			} else {
+				return null; // there could be many cells selected for the same gene
+			}
 		}
 	}
 }

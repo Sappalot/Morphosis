@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class LogicBoxGatePanel : MonoBehaviour {
 	public Text operatorTypeLabel;
+	public Image lockedOverlayImage;
 
 	public GameObject buttonOverlay;
 	public Image andButtonImage;
@@ -81,7 +82,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	}
 
 	public void OnClickedDelete() {
-		if (affectedGeneLogicBoxGate != null) {
+		if (affectedGeneLogicBoxGate != null && affectedGeneLogicBoxGate.row > 0) {
 			affectedGeneLogicBoxGate.isUsed = false;
 			motherPanel.UpdateConnections();
 			motherPanel.MarkAsNewForge();
@@ -135,11 +136,17 @@ public class LogicBoxGatePanel : MonoBehaviour {
 
 			if (affectedGeneLogicBoxGate != null) {
 				if (affectedGeneLogicBoxGate.GetTransmittingInputCount() <= 1) {
-					operatorTypeLabel.text = "'" + affectedGeneLogicBoxGate.operatorType.ToString().ToLower() + "'" + (affectedGeneLogicBoxGate.isLocked ? " (L)" : "");
+					operatorTypeLabel.text = "'" + affectedGeneLogicBoxGate.operatorType.ToString().ToLower() + "'";
 				} else {
-					operatorTypeLabel.text = affectedGeneLogicBoxGate.operatorType.ToString().ToUpper() + (affectedGeneLogicBoxGate.isLocked ? " (L)" : "");
+					operatorTypeLabel.text = affectedGeneLogicBoxGate.operatorType.ToString().ToUpper();
 				}
-				
+				if (mode == PhenoGenoEnum.Genotype) {
+					lockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxGate.isLocked);
+				} else if (mode == PhenoGenoEnum.Phenotype) {
+					lockedOverlayImage.gameObject.SetActive(false);
+				}
+
+
 				operatorTypeLabel.color = affectedGeneLogicBoxGate.isTransmittingSignal ? ColorScheme.instance.signalOff : ColorScheme.instance.signalUnused;
 			} else {
 				operatorTypeLabel.text = "???";

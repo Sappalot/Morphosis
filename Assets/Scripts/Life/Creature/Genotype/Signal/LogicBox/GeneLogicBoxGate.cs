@@ -23,7 +23,7 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 	}
 
 	public bool TryMoveLeftFlankLeft() {
-		if (leftFlank > 0 && !geneLogicBox.IsCellOccupiedByGate(row, GetColumnLeftOfFlank(leftFlank))) {
+		if (row > 0 && leftFlank > 0 && !geneLogicBox.IsCellOccupiedByGateOrLock(row, GetColumnLeftOfFlank(leftFlank))) {
 			leftFlank--;
 			return true;
 		}
@@ -31,9 +31,9 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 	}
 
 	public bool TryMoveLeftFlankRight() {
-		if (leftFlank < GeneLogicBox.rightmostFlank - 2) {
+		if (row > 0 && leftFlank < GeneLogicBox.rightmostFlank - 2) {
 			if (width == 2) {
-				if (!geneLogicBox.IsCellOccupiedByGate(row, GetColumnRightOfFlank(rightFlank))) {
+				if (!geneLogicBox.IsCellOccupiedByGateOrLock(row, GetColumnRightOfFlank(rightFlank))) {
 					rightFlank++;
 					leftFlank++;
 					return true;
@@ -47,7 +47,7 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 	}
 
 	public bool TryMoveRightFlankRight() {
-		if (rightFlank < GeneLogicBox.rightmostFlank && !geneLogicBox.IsCellOccupiedByGate(row, GetColumnRightOfFlank(rightFlank))) {
+		if (row > 0 && rightFlank < GeneLogicBox.rightmostFlank && !geneLogicBox.IsCellOccupiedByGateOrLock(row, GetColumnRightOfFlank(rightFlank))) {
 			rightFlank++;
 			return true;
 		}
@@ -55,9 +55,9 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 	}
 
 	public bool TryMoveRightFlankLeft() {
-		if (rightFlank > 2) {
+		if (row > 0 && rightFlank > 2) {
 			if (width == 2) {
-				if (!geneLogicBox.IsCellOccupiedByGate(row, GetColumnLeftOfFlank(leftFlank))) {
+				if (!geneLogicBox.IsCellOccupiedByGateOrLock(row, GetColumnLeftOfFlank(leftFlank))) {
 					leftFlank--;
 					rightFlank--;
 					return true;

@@ -11,6 +11,7 @@
 	private GeneLogicBoxGate[] gateRow1 = new GeneLogicBoxGate[maxGatesPerRow];
 	private GeneLogicBoxGate[] gateRow2 = new GeneLogicBoxGate[maxGatesPerRow];
 	private GeneLogicBoxInput[] inputRow3 = new GeneLogicBoxInput[columnCount];
+	private bool[,] lockedCellMatrix = new bool[rowCount, columnCount];
 
 	public GeneLogicBox(SignalUnitEnum signalUnit, bool isLocked) {
 		this.signalUnit = signalUnit;
@@ -24,6 +25,36 @@
 		for (int i = 0; i < columnCount; i++) {
 			inputRow3[i] = new GeneLogicBoxInput(3, i, signalUnit);
 		}
+	}
+
+	public void ConnectAllInputInputTo(SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
+		for (int i = 0; i < columnCount; i++) {
+			inputRow3[i].nerve.inputUnit = signalUnit;
+			inputRow3[i].nerve.inputUnitSlot = signalUnitSlot;
+		}
+	}
+
+	public void SetAllInputToBlocked() {
+		for (int i = 0; i < columnCount; i++) {
+			inputRow3[i].valveMode = SignalValveModeEnum.Block;
+		}
+	}
+
+	public void SetInputToPass(int column) {
+			inputRow3[column].valveMode = SignalValveModeEnum.Pass;
+	}
+
+	public void SetInputToLocked(int column) {
+		inputRow3[column].isLocked = true;
+	}
+
+	public void SetCellToLocked(int row, int column) {
+		lockedCellMatrix[row, column] = true;
+	}
+
+	public void ConnectInputTo(int column, SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
+		inputRow3[column].nerve.inputUnit = signalUnit;
+		inputRow3[column].nerve.inputUnitSlot = signalUnitSlot;
 	}
 
 	public GeneLogicBoxGate GetGate(int row, int index) {
@@ -151,11 +182,7 @@
 	}
 
 	public bool HasGateAbove(GeneLogicBoxGate gate) {
-		return AreSomeGateCellsOccupied(gate.row - 1, gate.leftFlank, gate.rightFlank);
-	}
-
-	public bool HasGatBelow(GeneLogicBoxGate gate) {
-		return AreSomeGateCellsOccupied(gate.row - 1, gate.leftFlank, gate.rightFlank);
+		return AreSomeCellsOccupiedByGate(gate.row - 1, gate.leftFlank, gate.rightFlank);
 	}
 
 	public void RemoveAllGates() {
@@ -184,7 +211,7 @@
 	// When bringing back a gate from the dead all data will be lost, so there is no chance to get back some old good stuff, in a mutation, that was disabled
 	// Guess it doesn't mather, since we cant store so much 'good stuff' in a gate anyway
 	public bool TryCreateGate(int row, LogicOperatorEnum operatorType, int leftFlank, int rightFlank, bool isLocked) {
-		if (AreAllGateCellsFree(row, leftFlank, rightFlank)) {
+		if (AreAllCellsFreeFromGateAndLock(row, leftFlank, rightFlank)) {
 			GeneLogicBoxGate newGate = GetAnUnusedGate(row);
 			if (newGate != null) {
 				newGate.operatorType = operatorType;
@@ -211,11 +238,11 @@
 		return null;
 	}
 
-	public bool AreAllGateCellsFree(int row, int leftFlank, int rightFlank) {
-		return !AreSomeGateCellsOccupied(row, leftFlank, rightFlank);
+	public bool AreAllCellsFreeFromGate(int row, int leftFlank, int rightFlank) {
+		return !AreSomeCellsOccupiedByGate(row, leftFlank, rightFlank);
 	}
 
-	public bool AreSomeGateCellsOccupied(int row, int leftFlank, int rightFlank) {
+	public bool AreSomeCellsOccupiedByGate(int row, int leftFlank, int rightFlank) {
 		for (int column = leftFlank; column < rightFlank; column++) {
 			if (IsCellOccupiedByGate(row, column)) {
 				return true;
@@ -238,6 +265,30 @@
 				if (gateRow2[i].IsOccupyingColumn(column)) {
 					return true;
 				}
+			}
+		}
+		return false;
+	}
+
+	public bool IsCellOccupiedByLock(int row, int column) {
+		return lockedCellMatrix[row, column];
+	}
+
+	public bool IsCellOccupiedByGateOrLock(int row, int column) {
+		return IsCellOccupiedByGate(row, column) || IsCellOccupiedByLock(row, column);
+	}
+
+	public bool AreAllCellsFreeFromGateAndLock(int row, int leftFlank, int rightFlank) {
+		return !AreSomeCellsOccupiedByGateOrLock(row, leftFlank, rightFlank);
+	}
+
+	public bool AreSomeCellsOccupiedByGateOrLock(int row, int leftFlank, int rightFlank) {
+		if (AreSomeCellsOccupiedByGate(row, leftFlank, rightFlank)) {
+			return true;
+		}
+		for (int flank = leftFlank; flank < rightFlank; flank++) {
+			if (IsCellOccupiedByLock(row, flank)) {
+				return true;
 			}
 		}
 		return false;

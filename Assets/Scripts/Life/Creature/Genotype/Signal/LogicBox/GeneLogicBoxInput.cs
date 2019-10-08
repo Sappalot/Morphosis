@@ -1,7 +1,19 @@
 ﻿public class GeneLogicBoxInput : GeneLogicBoxPart {
 
-	public SignalValveModeEnum valveMode = SignalValveModeEnum.Pass;
+	// TODO make it so that nerve input can't be changed if locked
 	public GeneNerve nerve = new GeneNerve();
+
+	private SignalValveModeEnum m_valveMode;
+	public SignalValveModeEnum valveMode { 
+		get {
+			return m_valveMode;
+		}
+		set {
+			if (!isLocked) {
+				m_valveMode = value;
+			}
+		}
+	}
 
 	public GeneLogicBoxInput(int row, int column, SignalUnitEnum signalUnit) {
 		this.row = row;
@@ -30,8 +42,6 @@
 
 	// Load
 	public void ApplyData(GeneLogicBoxInputData geneLogicBoxInputData) {
-		if (!isLocked) {
-			valveMode = geneLogicBoxInputData.valveMode;
-		}
+		valveMode = geneLogicBoxInputData.valveMode;
 	}
 }

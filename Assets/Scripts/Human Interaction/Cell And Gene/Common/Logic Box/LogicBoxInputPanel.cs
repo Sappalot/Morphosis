@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class LogicBoxInputPanel : MonoBehaviour {
 	public Image blockButton;
 	public Image passButton;
+	public Image lockedOverlayImage;
 
 	public Image inputButtonImage;
 	[HideInInspector]
@@ -47,7 +48,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	}
 
 	public void OnBlockClicked() {
-		if (mode == PhenoGenoEnum.Phenotype || ignoreSliderMoved) {
+		if (mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput.isLocked || ignoreSliderMoved) {
 			return;
 		}
 		affectedGeneLogicBoxInput.valveMode = SignalValveModeEnum.Block;
@@ -60,7 +61,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	}
 
 	public void OnPassClicked() {
-		if (mode == PhenoGenoEnum.Phenotype || ignoreSliderMoved) {
+		if (mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput.isLocked || ignoreSliderMoved) {
 			return;
 		}
 		affectedGeneLogicBoxInput.valveMode = SignalValveModeEnum.Pass;
@@ -73,7 +74,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	}
 
 	public void OnSetReferenceClicked() {
-		if (isUsed && MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
+		if (isUsed && !affectedGeneLogicBoxInput.isLocked && MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
 			MouseAction.instance.actionState = MouseActionStateEnum.selectSignalOutput;
 			Debug.Assert(staticAffectedGeneLogicBoxInputPanel == null);
 			staticAffectedGeneLogicBoxInputPanel = this;
@@ -128,7 +129,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 				if (staticAffectedGeneLogicBoxInputPanel != null && staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput == affectedGeneLogicBoxInput) {
 					inputButtonImage.color = new Color(0f, 1f, 0f);
 				}
-
+				lockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxInput.isLocked);
 			} else {
 				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused;
@@ -141,6 +142,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 				} else if (runtimeOutput == LogicBoxInputEnum.Error) {
 					inputButtonImage.color = Color.red;
 				}
+				lockedOverlayImage.gameObject.SetActive(false);
 			}
 			ignoreSliderMoved = false;
 
