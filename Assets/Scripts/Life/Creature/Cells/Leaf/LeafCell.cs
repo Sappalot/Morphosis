@@ -31,7 +31,8 @@ public class LeafCell : Cell {
 	}
 
 	override public bool IsHibernating() {
-		return (gene.leafCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.leafCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
+		return false;
+		//return (gene.leafCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.leafCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
 	}
 
 	public override void OnBorrowToWorld() {

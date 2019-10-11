@@ -32,7 +32,8 @@ public class MuscleCell : Cell {
 	}
 
 	override public bool IsHibernating() {
-		return (gene.muscleCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.muscleCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
+		return false;
+		//return (gene.muscleCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.muscleCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
 	}
 
 	override public float springFrequenzy {

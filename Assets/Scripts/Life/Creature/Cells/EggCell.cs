@@ -21,7 +21,8 @@ public class EggCell : Cell {
 	}
 
 	override public bool IsHibernating() {
-		return (gene.eggCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.eggCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
+		return false;
+		//return (gene.eggCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.eggCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
 	}
 
 	[HideInInspector]

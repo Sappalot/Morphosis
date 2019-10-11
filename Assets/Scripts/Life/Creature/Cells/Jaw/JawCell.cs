@@ -42,7 +42,8 @@ public class JawCell : Cell {
 	}
 
 	override public bool IsHibernating() {
-		return (gene.jawCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.jawCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
+		return false;
+		//return (gene.jawCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.jawCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
 	}
 
 	private float eatEffect {
