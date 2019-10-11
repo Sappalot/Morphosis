@@ -13,7 +13,6 @@ public class CellData {
 	public FlipSideEnum flipSide;
 	public float radius = 0.5f;
 	public Vector2 velocity;
-	public float timeOffset; //To be removed
 	public float lastTime; //Last time muscle cell was updated
 	public float energy;
 

@@ -143,8 +143,6 @@ public class Phenotype : MonoBehaviour {
 	public bool connectionsDiffersFromCells = true;
 	[HideInInspector]
 	public Dictionary<Cell, Vector2> detatchmentKick;
-	[HideInInspector]
-	public float timeOffset;
 
 	[HideInInspector]
 	public bool isGrabbed { get; private set; }
@@ -271,8 +269,6 @@ public class Phenotype : MonoBehaviour {
 
 	//SpawnPosition is the position where the center of the origin cell will appear in word space
 	private void Setup(Vector2 spawnPosition, float spawnHeading) {
-		timeOffset = 0f; // Random.Range(0f, 7f); //TODO: Remove
-
 		Clear();
 
 		isAlive = true;
@@ -1079,7 +1075,6 @@ public class Phenotype : MonoBehaviour {
 		cell.SetGene(gene);
 		cell.bindCardinalIndex = bindCardinalIndex;
 		cell.flipSide = flipSide;
-		cell.timeOffset = timeOffset;
 		cell.creature = creature;
 		cell.energy = spawnEnergy; 
 
@@ -1631,7 +1626,6 @@ public class Phenotype : MonoBehaviour {
 	// Save
 	private PhenotypeData phenotypeData = new PhenotypeData();
 	public PhenotypeData UpdateData() {
-		phenotypeData.timeOffset = timeOffset;
 		phenotypeData.cellDataList.Clear();
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
@@ -1655,8 +1649,6 @@ public class Phenotype : MonoBehaviour {
 
 	// Load
 	public void ApplyData(PhenotypeData phenotypeData, Creature creature) {
-		timeOffset = phenotypeData.timeOffset;
-
 		Setup(phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
 		for (int index = 0; index < phenotypeData.cellDataList.Count; index++) {
 			CellData cellData = phenotypeData.cellDataList[index];

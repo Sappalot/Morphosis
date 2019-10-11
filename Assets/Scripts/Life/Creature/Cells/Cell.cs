@@ -60,9 +60,6 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public float radius = 0.5f;
 
-	[HideInInspector]
-	public float timeOffset; // unused
-
 	//  The direction the cell is facing in creature space
 	[HideInInspector]
 	public int bindCardinalIndex; // where cells flip triangle is pointing in gene mode (0 is 30 degrees, N is 30 + N * 60 drgrees)
@@ -1536,7 +1533,6 @@ public abstract class Cell : MonoBehaviour {
 		groups = 0;
 
 		lastTime = 0;
-		timeOffset = 0;
 		buildIndex = 0;
 
 		radius = 0.5f;
@@ -1572,7 +1568,6 @@ public abstract class Cell : MonoBehaviour {
 		cellData.mapPosition = mapPosition;
 		cellData.buildIndex = buildIndex;
 		cellData.flipSide = flipSide;
-		cellData.timeOffset = timeOffset;
 		cellData.lastTime = lastTime;
 		cellData.radius = radius;
 		cellData.velocity = theRigidBody.velocity;
@@ -1607,7 +1602,6 @@ public abstract class Cell : MonoBehaviour {
 		mapPosition = cellData.mapPosition;
 		buildIndex = cellData.buildIndex;
 		flipSide = cellData.flipSide;
-		timeOffset = cellData.timeOffset;
 		lastTime = cellData.lastTime;
 		radius = cellData.radius;
 		theRigidBody.velocity = cellData.velocity;

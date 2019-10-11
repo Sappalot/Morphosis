@@ -9,10 +9,6 @@ public class Edges : MonoBehaviour {
 
 	public LineRenderer peripheryLoop;
 
-	public void Awake() {
-		timeOffset = UnityEngine.Random.Range(0f, 7f);
-	}
-
 	public Edge edgePrefab;
 
 	private List<Edge> edgeList = new List<Edge>();
