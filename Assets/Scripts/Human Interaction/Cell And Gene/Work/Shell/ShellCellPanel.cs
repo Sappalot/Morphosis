@@ -10,6 +10,10 @@ public class ShellCellPanel : CellAndGeneComponentPanel {
 
 	private ShellCellPanelButton[,] buttonMatrix = new ShellCellPanelButton[ShellCell.armourClassCount, ShellCell.transparencyClassCount];
 
+	public override void MakeDirty() {
+		base.MakeDirty();
+	}
+
 	private void Awake() {
 		float width = 46;
 		float height = 22;
@@ -31,12 +35,12 @@ public class ShellCellPanel : CellAndGeneComponentPanel {
 			}
 
 			if (selectedGene != null) {
-				productionEffectText.text = string.Format("Production Effect: 0.00 - {0:F2} W", ShellCell.GetEffectCost(selectedGene.shellCellArmorClass, GenePanel.instance.selectedGene.shellCellTransparancyClass));
+				footerPanel.SetProductionEffectText(0f, ShellCell.GetEffectCost(selectedGene.shellCellArmorClass, GenePanel.instance.selectedGene.shellCellTransparancyClass));
+				
 				armorText.text = string.Format("Armour: {0:F2} (* normal)", ShellCell.GetStrength(selectedGene.shellCellArmorClass));
 				transparancyText.text = string.Format("Transparancy: {0:F0} %", ShellCell.GetTransparancy(selectedGene.shellCellTransparancyClass) * 100f);
 				UpdateButtonMatrix();
 			}
-
 			isDirty = false; 
 		}
 	}

@@ -200,6 +200,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		GenotypePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.MakeDirty();
+		
+		GenePanel.instance.MakeDirty();
+		CellPanel.instance.MakeDirty();
 
 		UpdateSelectionCluster();
 	}

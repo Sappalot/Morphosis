@@ -40,5 +40,4 @@ public class ShellCellPanelButton : MonoBehaviour {
 	public void OnClicked() {
 		shellCellPanel.SelectButton(this);
 	}
-
 }

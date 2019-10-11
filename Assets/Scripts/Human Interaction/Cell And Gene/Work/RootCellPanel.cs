@@ -9,6 +9,8 @@ public class RootCellPanel : CellAndGeneComponentPanel {
 				Debug.Log("Update CellPanel");
 			}
 
+			footerPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.rootCellEffectCost);
+
 			isDirty = false; 
 		}
 	}

@@ -47,7 +47,7 @@ public class MuscleCell : Cell {
 		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
 			effectProductionInternalDown = GlobalSettings.instance.phenotype.cellHibernateEffectCost;
 
-			bool contracting = false;
+			bool isContracting = false;
 
 			if (!IsHibernating()) {
 				theRigidBody.WakeUp();
@@ -55,7 +55,7 @@ public class MuscleCell : Cell {
 					Cell masterAxon = creature.phenotype.cellMap.GetCell(masterAxonGridPosition);
 					if (masterAxon != null) {
 						if (masterAxoneDistance != null) {
-							contracting = masterAxon.IsAxonePulseContracting((int)masterAxoneDistance);
+							isContracting = masterAxon.IsAxonePulseContracting((int)masterAxoneDistance);
 						} else {
 							Debug.LogError("We have found a master axone, but failed to calculate the distance there from me!");
 						}
@@ -65,20 +65,20 @@ public class MuscleCell : Cell {
 
 			bool isRadiusDirty = false;
 
-			if (contracting && !creature.phenotype.IsSliding(worldTicks)) {
+			if (isContracting && !creature.phenotype.IsSliding(worldTicks)) {
 				// Contracting
 				if (radius > minRadius) {
 					effectProductionInternalDown = contractionCostEffect + GlobalSettings.instance.phenotype.cellHibernateEffectCost;
 					isRadiusDirty = true;
 				}
-				isContracting = true;
+				this.isContracting = true;
 				radius = Mathf.Max(radius - shrinkageRadiusDiffConstant, minRadius);
 			} else {
 				// You have Leelax
 				if (radius < medRadius) {
 					isRadiusDirty = true;
 				}
-				isContracting = false;
+				this.isContracting = false;
 				radius = Mathf.Min(radius + relaxRadiusDiffConstant, medRadius);
 			}
 

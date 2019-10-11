@@ -3,8 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class EggCellPanel : CellAndGeneComponentPanel {
-	public CellAndGeneFooterPanel footerPanel;
-
 	public Text fertilizeHeadingText;
 	public Text fertilizeSliderText;
 	public Slider fertilizeSlider;
@@ -124,8 +122,6 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 
 			if (GetMode() == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					footerPanel.SetProductionEffectText(productionEffectPhenotypeString);
-
 					fertilizeSlider.interactable = false;
 					detatchSizeToggle.interactable = false;
 					detatchEnergyToggle.interactable = false;
@@ -136,8 +132,6 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 					fertilizeButton.gameObject.SetActive(true);
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
-				footerPanel.SetProductionEffectText(string.Format("Production Effect: 0.00 - {0:F2} W", GlobalSettings.instance.phenotype.eggCellEffectCost));
-
 				fertilizeSlider.interactable = IsUnlocked();
 				detatchSizeToggle.interactable = IsUnlocked();
 				detatchEnergyToggle.interactable = IsUnlocked();
@@ -146,6 +140,7 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 
 				fertilizeButton.gameObject.SetActive(false);
 			}
+			footerPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.eggCellEffectCost);
 
 			if (selectedGene != null) {
 				ignoreSliderMoved = true;

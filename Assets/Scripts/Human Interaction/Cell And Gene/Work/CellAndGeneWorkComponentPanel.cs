@@ -28,8 +28,8 @@ public class CellAndGeneWorkComponentPanel : MonoBehaviour {
 		workPanels[2] = jawPanel;
 		workPanels[3] = leafPanel;
 		workPanels[4] = musclePanel;
-		workPanels[5] = shellPanel;
-		workPanels[6] = rootPanel;
+		workPanels[5] = rootPanel;
+		workPanels[6] = shellPanel;
 		workPanels[7] = veinPanel;
 		foreach (CellAndGeneComponentPanel m in workPanels) {
 			m.Initialize(mode);

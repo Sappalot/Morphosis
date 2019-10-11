@@ -19,7 +19,7 @@ public class CellAndGeneOverviewPanel : MonoBehaviour {
 	public Text connectionGroupCountLabel;
 	public Text apexAngleLabel;
 	public Text eatingOnMeCountLabel; //number of Jaw cells eating on me
-	public Text productionEffectLabel; //footer
+	public CellAndGeneFooterPanel footerPanel; //footer
 
 	public Button healButton;
 	public Button hurtButton;
@@ -139,11 +139,12 @@ public class CellAndGeneOverviewPanel : MonoBehaviour {
 				connectedVeinsCountLabel.text = "Veins: " + selectedCell.creature.phenotype.NonPlacentaVeinsConnectedToCellCount(selectedCell) + (selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) > 0 ? (" + " + selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) + " children") : "");
 				eatingOnMeCountLabel.text = "Eating on me: " + selectedCell.predatorCount;
 
-				productionEffectLabel.text = string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, false, false), selectedCell.GetEffectDown(true, false, false, false), selectedCell.GetEffect(true, false, false, false));
+				footerPanel.SetProductionEffectText(selectedCell.GetEffectUp(true, false, false), selectedCell.GetEffectDown(true, false, false, false));
+
 				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
-					productionEffectLabel.color = Color.gray; // since we have it presented above allready, confusing to show it twice
+					footerPanel.productionEffectLabel.color = Color.gray; // since we have it presented above allready, confusing to show it twice
 				} else {
-					productionEffectLabel.color = Color.black;
+					footerPanel.productionEffectLabel.color = Color.black;
 				}
 			} else {
 				energyBar.isOn = false;
@@ -167,7 +168,7 @@ public class CellAndGeneOverviewPanel : MonoBehaviour {
 				connectedVeinsCountLabel.text = "Veins: -";
 				eatingOnMeCountLabel.text = "Eating on me: -";
 
-				productionEffectLabel.text = "Production Effect: todo [1.00...4.00] - [1.00...2.00] = [-1.00...3.00] W";
+				footerPanel.SetProductionEffectText("Production Effect: todo [1.00...4.00] - [1.00...2.00] = [-1.00...3.00] W");
 			}
 
 			armourLabel.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedGene.armour, GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(20f) / selectedGene.armour);

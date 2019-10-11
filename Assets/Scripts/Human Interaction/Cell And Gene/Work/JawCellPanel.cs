@@ -71,8 +71,7 @@ public class JawCellPanel : CellAndGeneComponentPanel {
 
 			if (GetMode() == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					productionEffectText.text = productionEffectPhenotypeString;
-
+					footerPanel.SetProductionEffectText(selectedCell.effectProductionInternalUp, GlobalSettings.instance.phenotype.jawCellEffectCost);
 					prayCellCount.text = "Pray count: " + (CellPanel.instance.selectedCell as JawCell).prayCount;
 					cannibalizeKinToggle.interactable = false;
 					cannibalizeMotherToggle.interactable = false;
@@ -81,10 +80,8 @@ public class JawCellPanel : CellAndGeneComponentPanel {
 					cannibalizeChildrenToggle.interactable = false;
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
-				productionEffectText.text = string.Format("Production Effect: [pray count (0...6)] * {0:F2} - {1:F2} W <color=#808080ff>(@ normal pray armor)</color>", GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(20f) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor, GlobalSettings.instance.phenotype.jawCellEffectCost);
-
+				footerPanel.SetProductionEffectText(string.Format("Production Effect: [pray count (0...6)] * {0:F2} - {1:F2} W <color=#808080ff>(@ normal pray armor)</color>", GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(20f) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor, GlobalSettings.instance.phenotype.jawCellEffectCost));
 				prayCellCount.text = "Pray Count: -";
-
 				cannibalizeKinToggle.interactable = IsUnlocked();
 				cannibalizeMotherToggle.interactable = IsUnlocked();
 				cannibalizeFatherToggle.interactable = IsUnlocked();

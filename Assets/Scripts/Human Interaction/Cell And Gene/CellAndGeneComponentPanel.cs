@@ -9,7 +9,7 @@ public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 	protected PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 	protected bool ignoreSliderMoved = false;
 	protected bool isDirty = false;
-
+	public CellAndGeneFooterPanel footerPanel;
 
 	protected PhenoGenoEnum GetMode() {
 		return mode;
@@ -22,7 +22,6 @@ public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 	public virtual List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
 		return null;
 	}
-
 	
 	public virtual void MakeDirty() {
 		isDirty = true;
@@ -43,13 +42,6 @@ public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 		CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
 		CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
 		CreatureSelectionPanel.instance.soloSelected.generation = 1;
-	}
-
-	public string productionEffectPhenotypeString {
-		get {
-			return string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2} W", selectedCell.effectProductionInternalUp, selectedCell.effectProductionInternalDown, selectedCell.effectProductionInternalUp - selectedCell.effectProductionInternalDown)
-			 + (selectedCell.IsHibernating() ? " (hibernating)" : "");
-		}
 	}
 
 	public Gene selectedGene {
