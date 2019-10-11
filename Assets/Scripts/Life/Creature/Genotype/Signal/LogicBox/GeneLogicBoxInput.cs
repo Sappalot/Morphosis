@@ -37,11 +37,13 @@
 	private GeneLogicBoxInputData geneLogicBoxInputData = new GeneLogicBoxInputData();
 	public GeneLogicBoxInputData UpdateData() {
 		geneLogicBoxInputData.valveMode = valveMode;
+		geneLogicBoxInputData.geneNerveData = nerve.UpdateData();
 		return geneLogicBoxInputData;
 	}
 
 	// Load
 	public void ApplyData(GeneLogicBoxInputData geneLogicBoxInputData) {
 		valveMode = geneLogicBoxInputData.valveMode;
+		nerve.ApplyData(geneLogicBoxInputData.geneNerveData); 
 	}
 }

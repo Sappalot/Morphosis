@@ -5,7 +5,22 @@ public class GeneNerve {
 	public SignalUnitEnum inputUnit = SignalUnitEnum.Void; // The input to me "the nerve" (Somebodey elses output)
 	public SignalUnitSlotEnum inputUnitSlot; // The slot on that (above) unit
 
-	// TODO: let nerv listen to other cells than self (external input)
-	// TODO: bool IsAvailableForUnit(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot)
-	// TODO: save/load
+
+	// Save
+	private GeneNerveData geneNerveData = new GeneNerveData();
+	public GeneNerveData UpdateData() {
+		geneNerveData.outputUnit = outputUnit;
+		geneNerveData.outputUnitSlot = outputUnitSlot;
+		geneNerveData.inputUnit = inputUnit;
+		geneNerveData.inputUnitSlot = inputUnitSlot;
+		return geneNerveData;
+	}
+
+	//Load
+	public void ApplyData(GeneNerveData geneNerveData) {
+		outputUnit = geneNerveData.outputUnit;
+		outputUnitSlot = geneNerveData.outputUnitSlot;
+		inputUnit = geneNerveData.inputUnit;
+		inputUnitSlot = geneNerveData.inputUnitSlot;
+	}
 }

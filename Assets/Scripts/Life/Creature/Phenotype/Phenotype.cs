@@ -1648,6 +1648,8 @@ public class Phenotype : MonoBehaviour {
 		phenotypeData.shellCellTick = shellCellTick;
 		phenotypeData.veinCellTick = veinCellTick;
 
+		phenotypeData.signalTick = signalTick;
+
 		return phenotypeData;
 	}
 
@@ -1672,6 +1674,8 @@ public class Phenotype : MonoBehaviour {
 		rootCellTick = phenotypeData.rootCellTick;
 		shellCellTick = phenotypeData.shellCellTick;
 		veinCellTick = phenotypeData.veinCellTick;
+
+		signalTick = phenotypeData.signalTick;
 
 		//Turn arrrows right
 		UpdateRotation();

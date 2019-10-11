@@ -9,8 +9,8 @@ public class Gene {
 	public float eggCellDetatchEnergyThreshold = 0.4f; //part of max energy(* 100 to get  %)
 	public bool eggCellHibernateWhenAttachedToMother = false;
 	public bool eggCellHibernateWhenAttachedToChild = false;
-	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkLogicBoxA, true);
-	public GeneSignalUnit eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkSensorA, true);
+	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkLogicBoxA);
+	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkSensorA);
 	// ^ Egg cell ^
 
 	// Jaw Cell
@@ -67,11 +67,11 @@ public class Gene {
 	// ^ Axon ^
 
 	// Dendrites....
-	public GeneLogicBox dendrites = new GeneLogicBox(SignalUnitEnum.Dendrites, false);
+	public GeneLogicBox dendrites = new GeneLogicBox(SignalUnitEnum.Dendrites);
 	// ^ Dendrites ^
 
 	// Energy Sensor...
-	public GeneEnergySensor energySensor = new GeneEnergySensor(SignalUnitEnum.EnergySensor, false);
+	public GeneEnergySensor energySensor = new GeneEnergySensor(SignalUnitEnum.EnergySensor);
 	// Energy Sensor
 
 	// Origin...
@@ -379,6 +379,7 @@ public class Gene {
 		geneData.eggCellHibernateWhenAttachedToMother = eggCellHibernateWhenAttachedToMother;
 		geneData.eggCellHibernateWhenAttachedToChild = eggCellHibernateWhenAttachedToChild;
 		geneData.eggFertilizeLogicBoxData = eggCellFertilizeLogic.UpdateData();
+		geneData.eggFertilizeEnergySensorData = eggCellFertilizeEnergySensor.UpdateData();
 
 		// Jaw
 		geneData.jawCellCannibalizeKin =      jawCellCannibalizeKin;
@@ -409,15 +410,11 @@ public class Gene {
 		geneData.axonRelaxContract = axonRelaxContract;
 		geneData.axonIsReverse = axonIsReverse;
 
-		// Sensors
-		//geneData.sensorType = sensorType;
-		// Effect sensor
-		//geneData.effectSensorThresholdEffect = effectSensorThresholdEffect;
-		//geneData.effectSensorRadius = effectSensorRadius;
+		// Dendrites
+		geneData.dendritesData = dendrites.UpdateData();
 
-		geneData.arrangementData[0] = arrangements[0].UpdateData();
-		geneData.arrangementData[1] = arrangements[1].UpdateData();
-		geneData.arrangementData[2] = arrangements[2].UpdateData();
+		//Sensors
+		geneData.energySensorData = energySensor.UpdateData();
 
 		// Origin
 		geneData.originPulsePeriodTicks =     originPulsePeriodTicks;
@@ -459,6 +456,7 @@ public class Gene {
 		eggCellHibernateWhenAttachedToMother = geneData.eggCellHibernateWhenAttachedToMother;
 		eggCellHibernateWhenAttachedToChild = geneData.eggCellHibernateWhenAttachedToChild;
 		eggCellFertilizeLogic.ApplyData(geneData.eggFertilizeLogicBoxData); // An operator for gate atl level 0 might be set here, though it is overridden in constructor
+		eggCellFertilizeEnergySensor.ApplyData(geneData.eggFertilizeEnergySensorData);
 
 		// Jaw
 		jawCellCannibalizeKin =      geneData.jawCellCannibalizeKin;
@@ -489,11 +487,11 @@ public class Gene {
 		axonRelaxContract =         geneData.axonRelaxContract;
 		axonIsReverse =             geneData.axonIsReverse;
 
+		// Dendrites
+		dendrites.ApplyData(geneData.dendritesData);
+
 		// Sensors
-		//sensorType = geneData.sensorType;
-		// Effect sensor
-		//effectSensorThresholdEffect = geneData.effectSensorThresholdEffect;
-		//effectSensorRadius = geneData.effectSensorRadius;
+		energySensor.ApplyData(geneData.energySensorData);
 
 		// Origin
 		originPulsePeriodTicks = geneData.originPulsePeriodTicks == 0 ? 80 : geneData.originPulsePeriodTicks;

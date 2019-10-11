@@ -13,9 +13,8 @@
 	private GeneLogicBoxInput[] inputRow3 = new GeneLogicBoxInput[columnCount];
 	private bool[,] lockedCellMatrix = new bool[rowCount, columnCount];
 
-	public GeneLogicBox(SignalUnitEnum signalUnit, bool isLocked) {
+	public GeneLogicBox(SignalUnitEnum signalUnit) {
 		this.signalUnit = signalUnit;
-		this.isLocked = isLocked;
 
 		gateRow0 = new GeneLogicBoxGate(this, 0);
 		for (int g = 0; g < maxGatesPerRow; g++) {

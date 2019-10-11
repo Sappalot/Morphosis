@@ -12,6 +12,7 @@ public class GeneData {
 	public bool eggCellHibernateWhenAttachedToMother;
 	public bool eggCellHibernateWhenAttachedToChild;
 	public GeneLogicBoxData eggFertilizeLogicBoxData;
+	public GeneEnergySensorData eggFertilizeEnergySensorData;
 
 	// Jaw
 	public bool jawCellCannibalizeKin;
@@ -41,10 +42,11 @@ public class GeneData {
 	public float axonRelaxContract;
 	public bool axonIsReverse;
 
-	//Sensors
-	//public SensorTypeEnum sensorType;
-	//public float effectSensorThresholdEffect;
-	//public int effectSensorRadius;
+	// Dendrites
+	public GeneLogicBoxData dendritesData;
+
+	// Sensors
+	public GeneEnergySensorData energySensorData;
 
 	public int originPulsePeriodTicks; // ticks / complete wave
 	public float buildPriorityBias;
