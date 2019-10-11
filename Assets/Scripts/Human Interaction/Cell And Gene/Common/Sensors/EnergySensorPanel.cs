@@ -24,7 +24,7 @@ public class EnergySensorPanel : SensorPanel {
 				Debug.Log("Update Energy Sensor Panel");
 			}
 
-			if (selectedGene != null) {
+			if (selectedGene != null && affectedGeneSensor != null) {
 				ignoreSliderMoved = true;
 				energyThresholdSliderLabel.text = string.Format("On if energy > {0:F1} J", (affectedGeneSensor as GeneEnergySensor).threshold);
 				energyThresholdSlider.value = (affectedGeneSensor as GeneEnergySensor).threshold;

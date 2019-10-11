@@ -97,10 +97,33 @@ public class CellAndGeneWorkComponentPanel : MonoBehaviour {
 		}
 	}
 
+	public CellAndGeneComponentPanel currentWorkPanel {
+		get {
+			if (cellType == CellTypeEnum.Egg) {
+				return eggPanel;
+			} else if (cellType == CellTypeEnum.Fungal) {
+				return fungalPanel;
+			} else if (cellType == CellTypeEnum.Jaw) {
+				return jawPanel;
+			} else if (cellType == CellTypeEnum.Leaf) {
+				return leafPanel;
+			} else if (cellType == CellTypeEnum.Muscle) {
+				return musclePanel;
+			} else if (cellType == CellTypeEnum.Root) {
+				return rootPanel;
+			} else if (cellType == CellTypeEnum.Shell) {
+				return shellPanel;
+			} else if (cellType == CellTypeEnum.Vein) {
+				return veinPanel;
+			}
+			return null;
+		}
+	}
+
 	[HideInInspector]
 	public CellTypeEnum cellType {
 		get {
-			return (CellTypeEnum)typeDropdown.value;
+			return selectedGene.type;
 		}
 	}
 

@@ -253,6 +253,7 @@ public class World : MonoSingleton<World> {
 		File.WriteAllText(path + filename, worldToSave);
 
 		GlobalPanel.instance.SelectPausePhysics();
+		CreatureSelectionPanel.instance.ClearSelection();
 		GraphPlotter.instance.MakeDirty();
 	}
 

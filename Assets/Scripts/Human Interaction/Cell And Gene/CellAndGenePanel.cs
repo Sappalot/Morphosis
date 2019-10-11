@@ -80,8 +80,9 @@ public class CellAndGenePanel : MonoBehaviour {
 
 	public List<GeneLogicBoxInput> GetAllGeneLogicBoxInputs() {
 		List<GeneLogicBoxInput> inputList = new List<GeneLogicBoxInput>();
-		if (workComponentPanel.cellType == CellTypeEnum.Egg) {
-			inputList.AddRange(workComponentPanel.eggPanel.GetAllGeneGeneLogicBoxInputs());
+		List<GeneLogicBoxInput> inputs = workComponentPanel.currentWorkPanel.GetAllGeneGeneLogicBoxInputs();
+		if (inputs != null) {
+			inputList.AddRange(inputs);
 		}
 		inputList.AddRange(dendritesComponentPanel.GetAllGeneGeneLogicBoxInputs());
 		return inputList;

@@ -33,6 +33,9 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 
 	public GeneLogicBox affectedGeneLogicBox {
 		get {
+			if (selectedGene == null) {
+				return null;
+			}
 			if (selectedGene.type == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 				return selectedGene.eggCellFertilizeLogic;
 			} else if (signalUnit == SignalUnitEnum.Dendrites) {
@@ -171,15 +174,17 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 			}
 
 			if (mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null) {
-				outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedLate) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-				outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedEarly) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+				if (affectedGeneLogicBox != null) {
+					outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedLate) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedEarly) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+				}
 			} else {
 				outputImageLate.color = ColorScheme.instance.signalOff;
 				outputImageEarly.color = ColorScheme.instance.signalOff;
 			}
 
 			// locked cells
-			if (mode == PhenoGenoEnum.Phenotype && selectedCell != null || mode == PhenoGenoEnum.Genotype && selectedGene != null) {
+			if (affectedGeneLogicBox != null && (mode == PhenoGenoEnum.Phenotype && selectedCell != null || mode == PhenoGenoEnum.Genotype && selectedGene != null)) {
 				for (int row = 1; row < GeneLogicBox.rowCount; row++) {
 					for (int column = 0; column < GeneLogicBox.columnCount; column++) {
 						lockedCells[row - 1, column].gameObject.SetActive(mode == PhenoGenoEnum.Genotype && affectedGeneLogicBox.IsCellOccupiedByLock(row, column));

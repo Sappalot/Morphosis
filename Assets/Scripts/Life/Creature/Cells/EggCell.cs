@@ -10,9 +10,7 @@ public class EggCell : Cell {
 			} else {
 				effectProductionInternalUp = 0f;
 				effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCellEffectCost;
-				if (energyFullness > gene.eggCellFertilizeThreshold) {
-					shouldFertilize = true;
-				}
+				shouldFertilize = fertilizeLogicBox.GetOutput(SignalUnitSlotEnum.processedEarly);
 			}
 
 			base.UpdateCellWork(deltaTicks, worldTicks);
