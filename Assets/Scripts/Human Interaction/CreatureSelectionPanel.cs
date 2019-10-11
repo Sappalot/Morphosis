@@ -221,7 +221,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.MakeDirty();
 		LockedUnlockedPanel.instance.MakeDirty();
 
-		//StoreAllSelectedsState(); // needed for revert
+		GenePanel.instance.MakeDirty();
+		CellPanel.instance.MakeDirty();
 
 		UpdateSelectionCluster();
 	}
