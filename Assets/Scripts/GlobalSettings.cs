@@ -17,9 +17,6 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float cellTypeLeave = 100f;
 		public float cellTypeRandom = 1f;
 
-		public float eggCellFertilizeThresholdLeave = 100f;
-		public float eggCellFertilizeThresholdRandom = 10f;
-
 		public float eggCellDetatchModeLeave = 1000f;
 		public float eggCellDetatchModeChange = 10f;
 
@@ -131,9 +128,6 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	public class Phenotype {
 		//Egg Cell
 		public float eggCellEffectCost = 0.2f; //W
-
-		public float eggCellFertilizeThresholdMin = 0.3f; //cell energy fullness J/J
-		public float eggCellFertilizeThresholdMax = 0.99f; //cell energy fullness J/J
 
 		public float eggCellDetatchSizeThresholdMin = 0.01f;   //creature completeness count/count
 		public float eggCellDetatchSizeThresholdMax = 1f; //creature completeness count/count

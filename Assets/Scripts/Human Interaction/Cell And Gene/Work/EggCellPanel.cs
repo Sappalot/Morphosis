@@ -3,10 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class EggCellPanel : CellAndGeneComponentPanel {
-	public Text fertilizeHeadingText;
-	public Text fertilizeSliderText;
-	public Slider fertilizeSlider;
-
 	public Button fertilizeButton;
 
 	public Text detatchHeadingText;
@@ -29,9 +25,6 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA, true);
 
 		ignoreSliderMoved = true; 
-		fertilizeSlider.minValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMin;
-		fertilizeSlider.maxValue = GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMax;
-
 		detatchSizeSlider.minValue = GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMin;
 		detatchSizeSlider.maxValue = GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax;
 
@@ -60,19 +53,6 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 		if (CreatureSelectionPanel.instance.hasSoloSelected && GetMode() == PhenoGenoEnum.Phenotype) {
 			World.instance.life.FertilizeCreature(CellPanel.instance.selectedCell, true, World.instance.worldTicks, true);
 		}
-	}
-
-	public void OnFertilizeSliderMoved() {
-		if (ignoreSliderMoved) {
-			return;
-		}
-
-		selectedGene.eggCellFertilizeThreshold = fertilizeSlider.value;
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
-			CreatureSelectionPanel.instance.soloSelected.generation = 1;
-		}
-		MakeDirty();
 	}
 
 	public void OnDetatchModeToggleChanged() {
@@ -122,7 +102,6 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 
 			if (GetMode() == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					fertilizeSlider.interactable = false;
 					detatchSizeToggle.interactable = false;
 					detatchEnergyToggle.interactable = false;
 					detatchSizeSlider.interactable = false;
@@ -132,7 +111,6 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 					fertilizeButton.gameObject.SetActive(true);
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
-				fertilizeSlider.interactable = IsUnlocked();
 				detatchSizeToggle.interactable = IsUnlocked();
 				detatchEnergyToggle.interactable = IsUnlocked();
 				detatchSizeSlider.interactable = IsUnlocked();
@@ -145,9 +123,6 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 			if (selectedGene != null) {
 				ignoreSliderMoved = true;
 
-				fertilizeSlider.value = selectedGene.eggCellFertilizeThreshold;
-				fertilizeSliderText.text = string.Format("Egg Energy ≥ {0:F1}%", selectedGene.eggCellFertilizeThreshold * 100f);
-				
 				detatchSizeToggle.isOn = selectedGene.eggCellDetatchMode == ChildDetatchModeEnum.Size;
 				detatchEnergyToggle.isOn = selectedGene.eggCellDetatchMode == ChildDetatchModeEnum.Energy;
 

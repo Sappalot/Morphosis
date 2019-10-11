@@ -2,7 +2,6 @@
 
 public class Gene {
 	// Egg cell
-	public float eggCellFertilizeThreshold = 0.4f; //part of max energy (* 100 to get  %)
 	// Has to be stored in childs origin cell, so that inf can be kept when i'm gone
 	public ChildDetatchModeEnum eggCellDetatchMode = ChildDetatchModeEnum.Size;
 	public float eggCellDetatchSizeThreshold = 0.5f; // completeness count / max count 
@@ -163,12 +162,6 @@ public class Gene {
 
 		// Egg
 		float spread = 0.06f; // TODO move toGlobal settings
-		mut = Random.Range(0, gs.mutation.eggCellFertilizeThresholdLeave + gs.mutation.eggCellFertilizeThresholdRandom * strength);
-		if (mut < gs.mutation.eggCellFertilizeThresholdRandom * strength) {
-			eggCellFertilizeThreshold = Mathf.Clamp(eggCellFertilizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellFertilizeThresholdMin, gs.phenotype.eggCellFertilizeThresholdMax); // Cell energy fullness J/J
-		}
-
-		spread = 0.06f; // TODO move toGlobal settings
 		mut = Random.Range(0, gs.mutation.eggCellDetatchSizeThresholdLeave + gs.mutation.eggCellDetatchSizeThresholdRandom * strength);
 		if (mut < gs.mutation.eggCellDetatchSizeThresholdRandom * strength) {
 			eggCellDetatchSizeThreshold = Mathf.Clamp(eggCellDetatchSizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellDetatchSizeThresholdMin, gs.phenotype.eggCellDetatchSizeThresholdMax); // count / max count
@@ -372,7 +365,6 @@ public class Gene {
 		geneData.index = index;
 
 		// Egg
-		geneData.eggCellFertilizeThreshold = eggCellFertilizeThreshold;
 		geneData.eggCellDetatchMode = eggCellDetatchMode;
 		geneData.eggCellDetatchSizeThreshold = eggCellDetatchSizeThreshold;
 		geneData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
@@ -437,11 +429,6 @@ public class Gene {
 
 		// Egg
 		//backward compatibility
-		if (geneData.eggCellFertilizeThreshold > GlobalSettings.instance.phenotype.eggCellFertilizeThresholdMax) {// if more than 100% must be old (where we measured cell energy)
-			eggCellFertilizeThreshold = geneData.eggCellFertilizeThreshold / 100f;
-		} else {
-			eggCellFertilizeThreshold = geneData.eggCellFertilizeThreshold;
-		}
 		eggCellDetatchMode = geneData.eggCellDetatchMode;
 		if (geneData.eggCellDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
 			eggCellDetatchSizeThreshold = geneData.eggCellDetatchSizeThreshold / 30f;

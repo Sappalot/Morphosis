@@ -5,7 +5,6 @@ public class GeneData {
 	public int index;
 
 	// Egg
-	public float eggCellFertilizeThreshold; // J
 	public ChildDetatchModeEnum eggCellDetatchMode; //J 
 	public float eggCellDetatchSizeThreshold; //J 
 	public float eggCellDetatchEnergyThreshold; //J
