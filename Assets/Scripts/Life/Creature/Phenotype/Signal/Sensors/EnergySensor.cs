@@ -15,7 +15,7 @@ public class EnergySensor : SignalUnit {
 		return output[(int)signalUnitSlot];
 	}
 
-	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks, ulong worldTicks) {
+	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {
 		if (signalUnit == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) {
 			for (int i = 0; i < output.Length; i++) {
 				output[i] = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
@@ -28,5 +28,29 @@ public class EnergySensor : SignalUnit {
 		}
 		// Other energy sensor
 		
+	}
+
+	// Load Save
+	private EnergySensorData energySensorData = new EnergySensorData();
+
+	// Save
+	public EnergySensorData UpdateData() {
+		energySensorData.slotA = output[0];
+		energySensorData.slotB = output[1];
+		energySensorData.slotC = output[2];
+		energySensorData.slotD = output[3];
+		energySensorData.slotE = output[4];
+		energySensorData.slotF = output[5];
+		return energySensorData;
+	}
+
+	// Load
+	public void ApplyData(EnergySensorData energySensorData) {
+		output[0] = energySensorData.slotA;
+		output[1] = energySensorData.slotB;
+		output[2] = energySensorData.slotC;
+		output[3] = energySensorData.slotD;
+		output[4] = energySensorData.slotE;
+		output[5] = energySensorData.slotF;
 	}
 }

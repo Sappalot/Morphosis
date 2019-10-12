@@ -41,12 +41,12 @@ public class EggCell : Cell {
 		fertilizeLogicBox.FeedSignal();
 	}
 
-	public override void ComputeSignalOutputs(int deltaTicks, ulong worldTicks) {
+	public override void ComputeSignalOutputs(int deltaTicks) {
 		//TODO: Check with gene if anybody is listening to this output
-		base.ComputeSignalOutputs(deltaTicks, worldTicks);
+		base.ComputeSignalOutputs(deltaTicks);
 		
-		fertilizeLogicBox.ComputeSignalOutput(this, deltaTicks, worldTicks);
-		fertilizeEnergySensor.ComputeSignalOutput(this, deltaTicks, worldTicks);
+		fertilizeLogicBox.ComputeSignalOutput(this, deltaTicks);
+		fertilizeEnergySensor.ComputeSignalOutput(this, deltaTicks);
 	}
 
 

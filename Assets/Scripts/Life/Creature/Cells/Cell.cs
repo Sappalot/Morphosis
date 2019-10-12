@@ -1577,12 +1577,25 @@ public abstract class Cell : MonoBehaviour {
 		cellData.eggCellDetatchMode = eggCellDetatchMode;
 		cellData.eggCellDetatchSizeThreshold = eggCellDetatchSizeThreshold;
 		cellData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
+		if (GetCellType() == CellTypeEnum.Egg) {
+			cellData.eggCellFertilizeLogicBoxData = (this as EggCell).fertilizeLogicBox.UpdateData();
+			cellData.eggCellFertilizeEnergySensorData = (this as EggCell).fertilizeEnergySensor.UpdateData();
+		}
+
+		// Constant
+		cellData.constantSensorData = constantSensor.UpdateData();
 
 		// Leaf ... might be time to move this save / load stuff to respective cell
 		if (GetCellType() == CellTypeEnum.Leaf) {
 			cellData.leafCellLowPassExposure = (this as LeafCell).lowPassExposure;
 		}
 		// Leaf ^
+
+		// Dendrites
+		cellData.dendritesLogicBoxData = dendrites.UpdateData();
+
+		// Sensors
+		cellData.energySensorData = energySensor.UpdateData();
 
 		// Origin
 		cellData.originDetatchMode = originDetatchMode;
@@ -1610,6 +1623,10 @@ public abstract class Cell : MonoBehaviour {
 		// Egg
 		// detatch mode
 		eggCellDetatchMode = cellData.eggCellDetatchMode;
+		if (GetCellType() == CellTypeEnum.Egg) {
+			(this as EggCell).fertilizeLogicBox.ApplyData(cellData.eggCellFertilizeLogicBoxData);
+			(this as EggCell).fertilizeEnergySensor.ApplyData(cellData.eggCellFertilizeEnergySensorData);
+		}
 
 		// detatch size
 		if (cellData.eggCellDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
@@ -1625,7 +1642,7 @@ public abstract class Cell : MonoBehaviour {
 			eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold;
 		}
 
-		// egg ^
+		// ^ egg ^
 
 		// Leaf
 		if (GetCellType() == CellTypeEnum.Leaf) {
@@ -1638,6 +1655,15 @@ public abstract class Cell : MonoBehaviour {
 			(this as MuscleCell).scale.localScale = new Vector3(radius * 2f, radius * 2f, 1f);
 		}
 		// ^ Muscle ^
+
+		// Constant
+		constantSensor.ApplyData(cellData.constantSensorData);
+
+		// Dendrites
+		dendrites.ApplyData(cellData.dendritesLogicBoxData);
+
+		// Sensors
+		energySensor.ApplyData(cellData.energySensorData);
 
 		// Origin
 		originDetatchMode = cellData.originDetatchMode;
@@ -1662,7 +1688,6 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	//----------Signal--------------------------------
-	// Signal
 	public ConstantSensor constantSensor = new ConstantSensor(SignalUnitEnum.ConstantSensor);
 	public LogicBox dendrites = new LogicBox(SignalUnitEnum.Dendrites); //component
 	public EnergySensor energySensor = new EnergySensor(SignalUnitEnum.EnergySensor); // component
@@ -1676,15 +1701,13 @@ public abstract class Cell : MonoBehaviour {
 
 	// if sensor: Update to late directly from condition (check environment or body, even globally? moon, sun)
 	// if processor (logic box or filter): Update early from input (which is taken from sensors or other processors late)
-	virtual public void ComputeSignalOutputs(int deltaTicks, ulong worldTicks) {
+	virtual public void ComputeSignalOutputs(int deltaTicks) {
 		// Update cells common units here
 		// TODO: Check if anybodey is listening to output, update only in that case
-		constantSensor.ComputeSignalOutput(this, deltaTicks, worldTicks);
-		dendrites.ComputeSignalOutput(this, deltaTicks, worldTicks);
-		energySensor.ComputeSignalOutput(this, deltaTicks, worldTicks);
+		constantSensor.ComputeSignalOutput(this, deltaTicks);
+		dendrites.ComputeSignalOutput(this, deltaTicks);
+		energySensor.ComputeSignalOutput(this, deltaTicks);
 	}
-
-
 
 	public virtual bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
 		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for

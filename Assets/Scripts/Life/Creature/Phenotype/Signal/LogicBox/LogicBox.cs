@@ -19,7 +19,7 @@
 		outputLate = outputEarly;
 	}
 
-	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks, ulong worldTicks) {
+	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {
 		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 			outputEarly = ThroughGates(hostCell.gene.eggCellFertilizeLogic, hostCell);
 		} else if (signalUnit == SignalUnitEnum.Dendrites) {
@@ -81,4 +81,23 @@
 	private bool TestInput(int leftFlank) {
 		return leftFlank == 0 || leftFlank == 2 || leftFlank == 4; 
 	}
+
+	// Load Save
+	private LogicBoxData logicBoxData = new LogicBoxData();
+
+	// Save
+	public LogicBoxData UpdateData() {
+		logicBoxData.outputEarly = outputEarly;
+		logicBoxData.outputLate = outputLate;
+		return logicBoxData;
+	}
+
+	// Load
+	public void ApplyData(LogicBoxData logicBoxData) {
+		outputEarly = logicBoxData.outputEarly;
+		outputLate = logicBoxData.outputLate;
+	}
+
+
+	// ^ Load Save ^
 }

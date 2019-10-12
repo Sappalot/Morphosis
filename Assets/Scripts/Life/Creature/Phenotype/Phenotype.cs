@@ -1446,7 +1446,7 @@ public class Phenotype : MonoBehaviour {
 
 		for (int index = 0; index < cellList.Count; index++) {
 			if (signalTick == 0) {
-				cellList[index].ComputeSignalOutputs(GlobalSettings.instance.quality.signalTickPeriod, worldTick);
+				cellList[index].ComputeSignalOutputs(GlobalSettings.instance.quality.signalTickPeriod);
 			}
 		}
 	}
@@ -1667,7 +1667,13 @@ public class Phenotype : MonoBehaviour {
 		shellCellTick = phenotypeData.shellCellTick;
 		veinCellTick = phenotypeData.veinCellTick;
 
+		// Update signals
 		signalTick = phenotypeData.signalTick;
+		for (int index = 0; index < cellList.Count; index++) {
+			if (signalTick == 0) {
+				cellList[index].ComputeSignalOutputs(GlobalSettings.instance.quality.signalTickPeriod);
+			}
+		}
 
 		//Turn arrrows right
 		UpdateRotation();

@@ -20,9 +20,20 @@ public class CellData {
 	public ChildDetatchModeEnum eggCellDetatchMode;
 	public float eggCellDetatchSizeThreshold;
 	public float eggCellDetatchEnergyThreshold;
+	public LogicBoxData eggCellFertilizeLogicBoxData;
+	public EnergySensorData eggCellFertilizeEnergySensorData;
 
 	// Leaf
 	public float leafCellLowPassExposure;
+
+	// Constant
+	public ConstantSensorData constantSensorData;
+
+	// Dendrites
+	public LogicBoxData dendritesLogicBoxData;
+
+	// Sensors
+	public EnergySensorData energySensorData;
 
 	// Origin
 	public ChildDetatchModeEnum originDetatchMode;
