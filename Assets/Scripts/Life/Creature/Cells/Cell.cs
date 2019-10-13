@@ -95,27 +95,6 @@ public abstract class Cell : MonoBehaviour {
 	private int didUpdateFunctionThisFrame = 0;
 	private int didUpdateEnergyThisFrame = 0;
 
-	// Egg
-	[HideInInspector]
-	public ChildDetatchModeEnum eggCellDetatchMode;
-
-	[HideInInspector]
-	public float eggCellDetatchSizeThreshold; //part of creature (* 100 to get  %)
-
-	[HideInInspector]
-	public float eggCellDetatchEnergyThreshold; //part of max energy (* 100 to get  %) 
-
-	// Egg only
-
-	//---- Origin only
-	[HideInInspector]
-	public ChildDetatchModeEnum originDetatchMode;
-	[HideInInspector]
-	public float originDetatchSizeThreshold;
-	[HideInInspector]
-	public float originDetatchEnergyThreshold; // J ==> part of max energy (* 100 to get  %), If we have more energy than this in the origin cell and it is attached with mother, it will separate
-											   //   This amoutn is inherited from the mothers eggCell (eggCellSeparateThreshold), set at the moment of fertilization and can not be changed 
-
 	// Origin only
 	[HideInInspector]
 	public int originPulseTick = 0;
@@ -1574,9 +1553,6 @@ public abstract class Cell : MonoBehaviour {
 		cellData.energy = energy;
 
 		//Egg
-		cellData.eggCellDetatchMode = eggCellDetatchMode;
-		cellData.eggCellDetatchSizeThreshold = eggCellDetatchSizeThreshold;
-		cellData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
 		if (GetCellType() == CellTypeEnum.Egg) {
 			cellData.eggCellFertilizeLogicBoxData = (this as EggCell).fertilizeLogicBox.UpdateData();
 			cellData.eggCellFertilizeEnergySensorData = (this as EggCell).fertilizeEnergySensor.UpdateData();
@@ -1598,9 +1574,6 @@ public abstract class Cell : MonoBehaviour {
 		cellData.energySensorData = energySensor.UpdateData();
 
 		// Origin
-		cellData.originDetatchMode = originDetatchMode; // TODO: remove
-		cellData.originDetatchSizeThreshold = originDetatchSizeThreshold; // TODO: remove
-		cellData.originDetatchEnergyThreshold = originDetatchEnergyThreshold; // TODO: remove
 		cellData.originPulseTick = originPulseTick;
 		cellData.originDetatchLogicBoxData = originDetatchLogicBox.UpdateData();
 
@@ -1623,26 +1596,10 @@ public abstract class Cell : MonoBehaviour {
 
 		// Egg
 		// detatch mode
-		eggCellDetatchMode = cellData.eggCellDetatchMode;
 		if (GetCellType() == CellTypeEnum.Egg) {
 			(this as EggCell).fertilizeLogicBox.ApplyData(cellData.eggCellFertilizeLogicBoxData);
 			(this as EggCell).fertilizeEnergySensor.ApplyData(cellData.eggCellFertilizeEnergySensorData);
 		}
-
-		// detatch size
-		if (cellData.eggCellDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
-			eggCellDetatchSizeThreshold = cellData.eggCellDetatchSizeThreshold / 30f;
-		} else {
-			eggCellDetatchSizeThreshold = cellData.eggCellDetatchSizeThreshold;
-		}
-
-		// detatch energy
-		if (cellData.eggCellDetatchEnergyThreshold > GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax) { // if more than 100% must be old (where we measured cell energy)
-			eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold / 100f;
-		} else {
-			eggCellDetatchEnergyThreshold = cellData.eggCellDetatchEnergyThreshold;
-		}
-
 		// ^ egg ^
 
 		// Leaf
@@ -1665,23 +1622,6 @@ public abstract class Cell : MonoBehaviour {
 
 		// Sensors
 		energySensor.ApplyData(cellData.energySensorData);
-
-		// Origin
-		originDetatchMode = cellData.originDetatchMode; //remove
-
-		// detatch size remove
-		if (cellData.originDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
-			originDetatchSizeThreshold = cellData.originDetatchSizeThreshold / 30f;
-		} else {
-			originDetatchSizeThreshold = cellData.originDetatchSizeThreshold;
-		}
-
-		// detatch energy remove
-		if (cellData.originDetatchEnergyThreshold > GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax) { // if more than 100% must be old (where we measured cell energy)
-			originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold / 100f;
-		} else {
-			originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold;
-		}
 
 		originPulseTick = cellData.originPulseTick;
 		originDetatchLogicBox.ApplyData(cellData.originDetatchLogicBoxData);

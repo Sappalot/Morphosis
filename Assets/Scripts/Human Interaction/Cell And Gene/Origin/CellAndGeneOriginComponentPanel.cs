@@ -6,6 +6,8 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 	// Detatch
 	public LogicBoxPanel detatchLogicBoxPanel;
 
+	// Embryo max size
+
 	// Pulse
 	public Text pulseFrequenzySliderText;
 	public Slider pulseFrequenzySlider;
@@ -59,10 +61,6 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 			if (mode == PhenoGenoEnum.Phenotype) {
 				Cell originCell = CellPanel.instance.selectedCell;
 
-				if (!isOriginPhenotypeSelected) {
-					//detatchConditionsText.text = "Detatch when: -";
-				} 
-
 				// pulse
 				pulseFrequenzySlider.interactable = false;
 
@@ -72,8 +70,6 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 					pulseWaveCompletenessText.text = string.Format("Wave complete: -");
 				}
 			} else {
-				//detatchConditionsText.text = "Detatch when: -";
-
 				//pulse
 				pulseFrequenzySlider.interactable = isOriginGenotypeSelected && isUnlocked();
 

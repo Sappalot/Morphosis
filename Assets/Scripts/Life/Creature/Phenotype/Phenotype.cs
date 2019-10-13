@@ -1078,13 +1078,6 @@ public class Phenotype : MonoBehaviour {
 		cell.creature = creature;
 		cell.energy = spawnEnergy; 
 
-		// Gene settings
-		// Egg
-		// form gene (egg settings) to cell (egg settings)
-		cell.eggCellDetatchMode =              gene.eggCellDetatchMode;
-		cell.eggCellDetatchSizeThreshold =     gene.eggCellDetatchSizeThreshold; 
-		cell.eggCellDetatchEnergyThreshold =   gene.eggCellDetatchEnergyThreshold;
-
 		cell.SetNormalDrag();
 
 		return cell;

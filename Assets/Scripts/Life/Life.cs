@@ -155,10 +155,7 @@ public class Life : MonoBehaviour {
 		//.GetMutatedClone(0.2f)
 		child.GenerateEmbryo(mother.genotype.GetMutatedClone(GlobalSettings.instance.mutation.masterMutationStrength), eggCell.position, eggCell.heading); //Mutation Hack
 		child.phenotype.originCell.energy = eggEnergy;
-		child.phenotype.originCell.originDetatchMode = eggCell.eggCellDetatchMode;
-		child.phenotype.originCell.originDetatchSizeThreshold = eggCell.eggCellDetatchSizeThreshold;
-		child.phenotype.originCell.originDetatchEnergyThreshold = eggCell.eggCellDetatchEnergyThreshold; // form mothers eggCell to childs origin
-		child.phenotype.originCell.originPulseTick = mother.phenotype.originCell.originPulseTick; // should be 0 for both allready...
+		child.phenotype.originCell.originPulseTick = mother.phenotype.originCell.originPulseTick; // make them swim locomote, should be 0 for both allready...
 
 		ChildData childData = new ChildData();
 		childData.id = child.id; // a creature carying a child with an id that can not be found in life ==> child concidered dead to mother

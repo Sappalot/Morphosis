@@ -17,9 +17,6 @@ public class CellData {
 	public float energy;
 
 	// Egg
-	public ChildDetatchModeEnum eggCellDetatchMode;
-	public float eggCellDetatchSizeThreshold;
-	public float eggCellDetatchEnergyThreshold;
 	public LogicBoxData eggCellFertilizeLogicBoxData;
 	public EnergySensorData eggCellFertilizeEnergySensorData;
 
@@ -36,10 +33,6 @@ public class CellData {
 	public EnergySensorData energySensorData;
 
 	// Origin
-	public ChildDetatchModeEnum originDetatchMode; // TODO remove
-	public float originDetatchSizeThreshold; // TODO remove
-	public float originDetatchEnergyThreshold; // TODO remove
-
 	public int originPulseTick;
 	public LogicBoxData originDetatchLogicBoxData;
 }
