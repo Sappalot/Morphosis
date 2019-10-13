@@ -69,13 +69,17 @@ public class Gene {
 	public GeneLogicBox dendritesLogicBox = new GeneLogicBox(SignalUnitEnum.DendritesLogicBox);
 	// ^ Dendrites ^
 
-	// Energy Sensor...
+	// Sensors...
 	public GeneEnergySensor energySensor = new GeneEnergySensor(SignalUnitEnum.EnergySensor);
-	// Energy Sensor
+	// ^ sensors ^
 
 	// Origin...
 	public int originPulsePeriodTicks = 80;
 	public GeneLogicBox originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox);
+	public EmbryoMaxSizeModeEnum embryoMaxSizeMode;
+	public float embryoMaxSizeCompleteness = 0.5f;
+
+	// ^ origin ^
 
 	public float originPulsePeriod {
 		get {
