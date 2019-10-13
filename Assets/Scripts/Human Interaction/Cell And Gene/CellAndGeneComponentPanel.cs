@@ -63,4 +63,8 @@ public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 			}
 		}
 	}
+
+	public bool isUnlocked() {
+		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
+	}
 }

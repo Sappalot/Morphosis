@@ -38,9 +38,13 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 			}
 			if (selectedGene.type == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 				return selectedGene.eggCellFertilizeLogic;
-			} else if (signalUnit == SignalUnitEnum.Dendrites) {
-				return selectedGene.dendrites;
+			} else if (signalUnit == SignalUnitEnum.DendritesLogicBox) {
+				return selectedGene.dendritesLogicBox;
+			} else if (signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
+				return selectedGene.originDetatchLogicBox;
 			}
+
+
 			return null;
 		}
 	}
@@ -55,8 +59,8 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 		affectedGeneLogicBox.UpdateConnections();
 	}
 
-	override public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, bool isInsideOtherComponent) {
-		base.Initialize(mode, signalUnit, isInsideOtherComponent);
+	override public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
+		base.Initialize(mode, signalUnit);
 		gateTemplate.gameObject.SetActive(true);
 		gateRow0 = GameObject.Instantiate(gateTemplate, bodyPanel.transform);
 		gateRow0.transform.position = gateTemplate.transform.position + Vector3.right * 0f * cellWidth + Vector3.down * 0f * cellHeight;
@@ -194,26 +198,6 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 
 			outputLabel.text = outputText;
 			isDirty = false;
-		}
-	}
-
-	private Gene selectedGene {
-		get {
-			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
-			} else {
-				return GenePanel.instance.selectedGene;
-			}
-		}
-	}
-
-	private Cell selectedCell {
-		get {
-			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell;
-			} else {
-				return null; // there could be many cells selected for the same gene
-			}
 		}
 	}
 }

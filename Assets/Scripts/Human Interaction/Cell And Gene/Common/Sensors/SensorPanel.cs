@@ -32,8 +32,8 @@ public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
 		}
 	}
 
-	public override void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, bool isInsideOtherComponent) {
-		base.Initialize(mode, signalUnit, isInsideOtherComponent);
+	public override void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
+		base.Initialize(mode, signalUnit);
 		settingsPanel.gameObject.SetActive(true);
 		isUsed = true;
 

@@ -23,15 +23,25 @@ public class CellAndGenePanel : MonoBehaviour {
 		this.mode = mode;
 
 		overvirewPanel.Initialize(mode);
-		workComponentPanel.Initialize(mode);
-		constantSensorComponentPanel.Initialize(mode, SignalUnitEnum.ConstantSensor, false);
-		axonComponentPanel.Initialize(mode);
-		dendritesComponentPanel.Initialize(mode, SignalUnitEnum.Dendrites, false);
-		energySensorComponentPanel.Initialize(mode, SignalUnitEnum.EnergySensor, false);
-		
 
+		workComponentPanel.Initialize(mode);
+
+		constantSensorComponentPanel.Initialize(mode, SignalUnitEnum.ConstantSensor);
+
+		axonComponentPanel.Initialize(mode);
+
+		// dendrites
+		dendritesComponentPanel.Initialize(mode, SignalUnitEnum.DendritesLogicBox);
+
+		// sensors
+		energySensorComponentPanel.Initialize(mode, SignalUnitEnum.EnergySensor);
+
+		// origin
+		originComponentPanel.Initialize(mode);
+
+		// build priority
 		buildPriorityComponentPanel.mode = mode;
-		originComponentPanel.mode = mode;
+
 
 		if (mode == PhenoGenoEnum.Genotype) {
 			geneNeighbourComponentPanel.gameObject.SetActive(true);
@@ -63,6 +73,8 @@ public class CellAndGenePanel : MonoBehaviour {
 		axonComponentPanel.MakeDirty();
 		dendritesComponentPanel.MakeDirty();
 		energySensorComponentPanel.MakeDirty();
+		originComponentPanel.MakeDirty();
+		buildPriorityComponentPanel.MakeDirty();
 
 		if (selectedGene.isOrigin) {
 			originComponentPanel.MakeDirty();
@@ -85,6 +97,10 @@ public class CellAndGenePanel : MonoBehaviour {
 			inputList.AddRange(inputs);
 		}
 		inputList.AddRange(dendritesComponentPanel.GetAllGeneGeneLogicBoxInputs());
+		inputs = originComponentPanel.GetAllGeneGeneLogicBoxInputs();
+		if (inputs != null) {
+			inputList.AddRange(inputs);
+		}
 		return inputList;
 	}
 
@@ -107,10 +123,12 @@ public class CellAndGenePanel : MonoBehaviour {
 			outTransform = workComponentPanel.nerveLocationsPanel.sensorD.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.ConstantSensor) {
 			outTransform = constantSensorComponentPanel.GetLocation(signalUnitSlot);
-		} else if (signalUnit == SignalUnitEnum.Dendrites) {
+		} else if (signalUnit == SignalUnitEnum.DendritesLogicBox) {
 			outTransform = dendritesComponentPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
 			outTransform = energySensorComponentPanel.GetLocation(signalUnitSlot);
+		} else if (signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
+			outTransform = originComponentPanel.detatchLogicBoxPanel.GetLocation(signalUnitSlot);
 		}
 
 		if (outTransform != null) {

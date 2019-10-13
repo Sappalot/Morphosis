@@ -23,9 +23,9 @@ public enum SignalUnitEnum {
 	FilterChange,
 	FilterTrend,
 	
-	Dendrites, //Dendrites
+	DendritesLogicBox, //Dendrites
 	
 	EnergySensor,
 
-	OriginDetatch,
+	OriginDetatchLogicBox,
 }

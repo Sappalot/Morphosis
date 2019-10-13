@@ -767,9 +767,11 @@ public class Creature : MonoBehaviour {
 
 			// Detatch child from mother
 			if (PhenotypePhysicsPanel.instance.detatch.isOn && IsAttachedToMotherAlive()) {
-				if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.originCell.originDetatchSizeThreshold < 1f && phenotype.cellCount >= Mathf.Clamp(Mathf.RoundToInt(phenotype.originCell.originDetatchSizeThreshold * genotype.geneCellCount), 1, genotype.geneCellCount)) ||
-					(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energyFullness >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchAfterCompletePersistance)) {
-
+				//if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.originCell.originDetatchSizeThreshold < 1f && phenotype.cellCount >= Mathf.Clamp(Mathf.RoundToInt(phenotype.originCell.originDetatchSizeThreshold * genotype.geneCellCount), 1, genotype.geneCellCount)) ||
+				//	(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energyFullness >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchAfterCompletePersistance)) {
+				//	detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
+				//}
+				if (PhenotypePhysicsPanel.instance.detatch.isOn && phenotype.originCell.originDetatchLogicBox.GetOutput(SignalUnitSlotEnum.processedEarly)) {
 					detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
 				}
 			}

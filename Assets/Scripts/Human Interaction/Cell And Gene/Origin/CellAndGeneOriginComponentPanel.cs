@@ -1,19 +1,21 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class CellAndGeneOriginComponentPanel : MonoBehaviour {
-	public Text detatchConditionsText;
+public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
+	// Detatch
+	public LogicBoxPanel detatchLogicBoxPanel;
 
-	[HideInInspector]
-	public PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
-
+	// Pulse
 	public Text pulseFrequenzySliderText;
 	public Slider pulseFrequenzySlider;
 	public Text pulseWaveCompletenessText;
 
-	private bool ignoreSliderMoved = false;
+	public override void Initialize(PhenoGenoEnum mode) {
+		base.Initialize(mode);
 
-	private void Awake() {
+		detatchLogicBoxPanel.Initialize(mode, SignalUnitEnum.OriginDetatchLogicBox);
+
 		ignoreSliderMoved = true;
 		pulseFrequenzySlider.minValue = GlobalSettings.instance.phenotype.originPulseFrequenzyMin;
 		pulseFrequenzySlider.maxValue = GlobalSettings.instance.phenotype.originPulseFrequenzyMax;
@@ -34,9 +36,13 @@ public class CellAndGeneOriginComponentPanel : MonoBehaviour {
 		MakeDirty();
 	}
 
-	protected bool isDirty = false;
-	public void MakeDirty() {
-		isDirty = true;
+	public override List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
+		return detatchLogicBoxPanel.GetAllGeneGeneLogicBoxInputs();
+	}
+
+	public override void MakeDirty() {
+		base.MakeDirty();
+		detatchLogicBoxPanel.MakeDirty();
 	}
 
 	private void Update() {
@@ -50,19 +56,13 @@ public class CellAndGeneOriginComponentPanel : MonoBehaviour {
 			bool isOriginPhenotypeSelected = mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null && CellPanel.instance.selectedCell.isOrigin;
 			bool isOriginGenotypeSelected = mode == PhenoGenoEnum.Genotype && GenePanel.instance.selectedGene != null && GenePanel.instance.selectedGene.isOrigin;
 			
-
 			if (mode == PhenoGenoEnum.Phenotype) {
 				Cell originCell = CellPanel.instance.selectedCell;
 
 				if (!isOriginPhenotypeSelected) {
-					detatchConditionsText.text = "Detatch when: -";
-				} else if (originCell.creature.creation != CreatureCreationEnum.Born) {
-					detatchConditionsText.text = "Detatch when: Creature wasn't born ==> No detatch conditions";
-				} else if (originCell.originDetatchMode == ChildDetatchModeEnum.Size) {
-					detatchConditionsText.text = string.Format("Detatch when: Body size ≥ {0:F1}% which is {1:F0} of {2:F0} cells", originCell.originDetatchSizeThreshold * 100f, (Mathf.Clamp(Mathf.RoundToInt(originCell.originDetatchSizeThreshold * originCell.creature.genotype.geneCellCount), 1, originCell.creature.genotype.geneCellCount)), originCell.creature.genotype.geneCellCount);
-				} else {
-					detatchConditionsText.text = string.Format("Detatch when: Can't grow more and cell energy ≥ {0:F1}%", originCell.originDetatchEnergyThreshold * 100f);
-				}
+					//detatchConditionsText.text = "Detatch when: -";
+				} 
+
 				// pulse
 				pulseFrequenzySlider.interactable = false;
 
@@ -72,7 +72,8 @@ public class CellAndGeneOriginComponentPanel : MonoBehaviour {
 					pulseWaveCompletenessText.text = string.Format("Wave complete: -");
 				}
 			} else {
-				detatchConditionsText.text = "Detatch when: -";
+				//detatchConditionsText.text = "Detatch when: -";
+
 				//pulse
 				pulseFrequenzySlider.interactable = isOriginGenotypeSelected && isUnlocked();
 
@@ -86,12 +87,10 @@ public class CellAndGeneOriginComponentPanel : MonoBehaviour {
 				pulseFrequenzySliderText.text = "Ferquenzy: -";
 			}
 
+			detatchLogicBoxPanel.outputText = "Detatch from mother";
+
 			ignoreSliderMoved = false;
 			isDirty = false;
 		}
-	}
-
-	private bool isUnlocked() {
-		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
 	}
 }

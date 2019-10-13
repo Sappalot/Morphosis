@@ -1592,16 +1592,17 @@ public abstract class Cell : MonoBehaviour {
 		// Leaf ^
 
 		// Dendrites
-		cellData.dendritesLogicBoxData = dendrites.UpdateData();
+		cellData.dendritesLogicBoxData = dendritesLogicBox.UpdateData();
 
 		// Sensors
 		cellData.energySensorData = energySensor.UpdateData();
 
 		// Origin
-		cellData.originDetatchMode = originDetatchMode;
-		cellData.originDetatchSizeThreshold = originDetatchSizeThreshold;
-		cellData.originDetatchEnergyThreshold = originDetatchEnergyThreshold;
+		cellData.originDetatchMode = originDetatchMode; // TODO: remove
+		cellData.originDetatchSizeThreshold = originDetatchSizeThreshold; // TODO: remove
+		cellData.originDetatchEnergyThreshold = originDetatchEnergyThreshold; // TODO: remove
 		cellData.originPulseTick = originPulseTick;
+		cellData.originDetatchLogicBoxData = originDetatchLogicBox.UpdateData();
 
 		return cellData;
 	}
@@ -1660,22 +1661,22 @@ public abstract class Cell : MonoBehaviour {
 		constantSensor.ApplyData(cellData.constantSensorData);
 
 		// Dendrites
-		dendrites.ApplyData(cellData.dendritesLogicBoxData);
+		dendritesLogicBox.ApplyData(cellData.dendritesLogicBoxData);
 
 		// Sensors
 		energySensor.ApplyData(cellData.energySensorData);
 
 		// Origin
-		originDetatchMode = cellData.originDetatchMode;
+		originDetatchMode = cellData.originDetatchMode; //remove
 
-		// detatch size
+		// detatch size remove
 		if (cellData.originDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
 			originDetatchSizeThreshold = cellData.originDetatchSizeThreshold / 30f;
 		} else {
 			originDetatchSizeThreshold = cellData.originDetatchSizeThreshold;
 		}
 
-		// detatch energy
+		// detatch energy remove
 		if (cellData.originDetatchEnergyThreshold > GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax) { // if more than 100% must be old (where we measured cell energy)
 			originDetatchEnergyThreshold = cellData.originDetatchEnergyThreshold / 100f;
 		} else {
@@ -1683,20 +1684,25 @@ public abstract class Cell : MonoBehaviour {
 		}
 
 		originPulseTick = cellData.originPulseTick;
+		originDetatchLogicBox.ApplyData(cellData.originDetatchLogicBoxData);
 
 		this.creature = creature;
 	}
 
 	//----------Signal--------------------------------
-	public ConstantSensor constantSensor = new ConstantSensor(SignalUnitEnum.ConstantSensor);
-	public LogicBox dendrites = new LogicBox(SignalUnitEnum.Dendrites); //component
-	public EnergySensor energySensor = new EnergySensor(SignalUnitEnum.EnergySensor); // component
+	public ConstantSensor constantSensor = new ConstantSensor(SignalUnitEnum.ConstantSensor); // own component
+	public LogicBox dendritesLogicBox = new LogicBox(SignalUnitEnum.DendritesLogicBox); // own component
+	public EnergySensor energySensor = new EnergySensor(SignalUnitEnum.EnergySensor); // own component
+	public LogicBox originDetatchLogicBox = new LogicBox(SignalUnitEnum.OriginDetatchLogicBox); // inside origin component
 
 	// if processor: output early ==> output late
 	virtual public void FeedSignal() {
 		// Update cells common units here
 		// TODO: Check if anybodey is listening to output, feed only in that case
-		dendrites.FeedSignal();
+		dendritesLogicBox.FeedSignal();
+		if (isOrigin) {
+			originDetatchLogicBox.FeedSignal();
+		}
 	}
 
 	// if sensor: Update to late directly from condition (check environment or body, even globally? moon, sun)
@@ -1705,19 +1711,23 @@ public abstract class Cell : MonoBehaviour {
 		// Update cells common units here
 		// TODO: Check if anybodey is listening to output, update only in that case
 		constantSensor.ComputeSignalOutput(this, deltaTicks);
-		dendrites.ComputeSignalOutput(this, deltaTicks);
+		dendritesLogicBox.ComputeSignalOutput(this, deltaTicks);
 		energySensor.ComputeSignalOutput(this, deltaTicks);
+		if (isOrigin) {
+			originDetatchLogicBox.ComputeSignalOutput(this, deltaTicks);
+		}
 	}
 
 	public virtual bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
 		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for
 		if (outputUnit == SignalUnitEnum.ConstantSensor) {
 			return constantSensor.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.Dendrites) {
-			return dendrites.GetOutput(outputUnitSlot);
-		}
-		else if (outputUnit == SignalUnitEnum.EnergySensor) {
+		} else if (outputUnit == SignalUnitEnum.DendritesLogicBox) {
+			return dendritesLogicBox.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.EnergySensor) {
 			return energySensor.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.OriginDetatchLogicBox) {
+			return originDetatchLogicBox.GetOutput(outputUnitSlot);
 		}
 
 		return false;

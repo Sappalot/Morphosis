@@ -21,8 +21,11 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		get {
 			if (selectedGene.type == CellTypeEnum.Egg && motherPanel.signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 				return selectedGene.eggCellFertilizeLogic.GetInput(column);
-			} else if (motherPanel.signalUnit == SignalUnitEnum.Dendrites) {
-				return selectedGene.dendrites.GetInput(column);
+			} else if (motherPanel.signalUnit == SignalUnitEnum.DendritesLogicBox) {
+				return selectedGene.dendritesLogicBox.GetInput(column);
+			}
+			if (motherPanel.signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
+				return selectedGene.originDetatchLogicBox.GetInput(column);
 			}
 			return null;
 		}

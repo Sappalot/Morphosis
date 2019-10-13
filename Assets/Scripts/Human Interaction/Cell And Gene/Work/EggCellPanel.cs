@@ -21,8 +21,8 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 	public EnergySensorPanel fertilizeEnergySensorPanel;
 
 	public override void Initialize(PhenoGenoEnum mode) {
-		fertilizeLogicBoxPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxA, true);
-		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA, true);
+		fertilizeLogicBoxPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxA);
+		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA);
 
 		ignoreSliderMoved = true; 
 		detatchSizeSlider.minValue = GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMin;

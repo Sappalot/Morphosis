@@ -25,9 +25,14 @@ public class LogicBoxGatePanel : MonoBehaviour {
 
 			if (selectedGene.type == CellTypeEnum.Egg && motherPanel.signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 				return selectedGene.eggCellFertilizeLogic.GetGate(row, index);
-			} else if (motherPanel.signalUnit == SignalUnitEnum.Dendrites) {
-				return selectedGene.dendrites.GetGate(row, index);
+			} else if (motherPanel.signalUnit == SignalUnitEnum.DendritesLogicBox) {
+				return selectedGene.dendritesLogicBox.GetGate(row, index);
 			}
+
+			if (motherPanel.signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
+				return selectedGene.originDetatchLogicBox.GetGate(row, index);
+			}
+
 
 			return null;
 		}

@@ -22,8 +22,10 @@
 	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {
 		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 			outputEarly = ThroughGates(hostCell.gene.eggCellFertilizeLogic, hostCell);
-		} else if (signalUnit == SignalUnitEnum.Dendrites) {
-			outputEarly = ThroughGates(hostCell.gene.dendrites, hostCell);
+		} else if (signalUnit == SignalUnitEnum.DendritesLogicBox) {
+			outputEarly = ThroughGates(hostCell.gene.dendritesLogicBox, hostCell);
+		} else if (signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
+			outputEarly = ThroughGates(hostCell.gene.originDetatchLogicBox, hostCell);
 		}
 	}
 

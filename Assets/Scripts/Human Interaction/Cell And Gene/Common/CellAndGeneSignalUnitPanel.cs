@@ -7,8 +7,6 @@ public abstract class CellAndGeneSignalUnitPanel : CellAndGeneComponentPanel {
 	public SignalLocations locations = new SignalLocations();
 	public GameObject headingPanel;
 
-	protected bool isInsideOtherComponent; // inside other component
-
 	[HideInInspector]
 	public SignalUnitEnum signalUnit;
 
@@ -45,10 +43,9 @@ public abstract class CellAndGeneSignalUnitPanel : CellAndGeneComponentPanel {
 		return null;
 	}
 
-	public virtual void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, bool isInsideOtherComponent) {
+	public virtual void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
 		base.Initialize(mode);
 		this.signalUnit = signalUnit;
-		this.isInsideOtherComponent = isInsideOtherComponent;
 		//headingPanel.SetActive(!isInsideOtherComponent);
 	}
 }

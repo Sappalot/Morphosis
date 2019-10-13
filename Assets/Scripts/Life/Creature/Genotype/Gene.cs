@@ -66,7 +66,7 @@ public class Gene {
 	// ^ Axon ^
 
 	// Dendrites....
-	public GeneLogicBox dendrites = new GeneLogicBox(SignalUnitEnum.Dendrites);
+	public GeneLogicBox dendritesLogicBox = new GeneLogicBox(SignalUnitEnum.DendritesLogicBox);
 	// ^ Dendrites ^
 
 	// Energy Sensor...
@@ -75,6 +75,7 @@ public class Gene {
 
 	// Origin...
 	public int originPulsePeriodTicks = 80;
+	public GeneLogicBox originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox);
 
 	public float originPulsePeriod {
 		get {
@@ -139,11 +140,18 @@ public class Gene {
 		// ^ egg ^
 
 		// ...dendrites...
-		dendrites.TryCreateGate(0, LogicOperatorEnum.Or, 0, GeneLogicBox.rightmostFlank, false);
-		dendrites.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
-		dendrites.SetAllInputToBlocked();
-		dendrites.UpdateConnections();
+		dendritesLogicBox.TryCreateGate(0, LogicOperatorEnum.Or, 0, GeneLogicBox.rightmostFlank, false);
+		dendritesLogicBox.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
+		dendritesLogicBox.SetAllInputToBlocked();
+		dendritesLogicBox.UpdateConnections();
 		// ^ dendrites ^
+
+		// ...origing...
+		originDetatchLogicBox.TryCreateGate(0, LogicOperatorEnum.Or, 0, GeneLogicBox.rightmostFlank, false);
+		originDetatchLogicBox.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
+		originDetatchLogicBox.SetAllInputToBlocked();
+		originDetatchLogicBox.UpdateConnections();
+		// ^ origin ^
 	}
 
 	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
@@ -403,13 +411,14 @@ public class Gene {
 		geneData.axonIsReverse = axonIsReverse;
 
 		// Dendrites
-		geneData.dendritesData = dendrites.UpdateData();
+		geneData.dendritesLogicBoxData = dendritesLogicBox.UpdateData();
 
 		//Sensors
 		geneData.energySensorData = energySensor.UpdateData();
 
 		// Origin
 		geneData.originPulsePeriodTicks =     originPulsePeriodTicks;
+		geneData.originDetatchLogicBoxData = originDetatchLogicBox.UpdateData();
 
 		//build order
 		geneData.buildPriorityBias = buildPriorityBias;
@@ -475,13 +484,14 @@ public class Gene {
 		axonIsReverse =             geneData.axonIsReverse;
 
 		// Dendrites
-		dendrites.ApplyData(geneData.dendritesData);
+		dendritesLogicBox.ApplyData(geneData.dendritesLogicBoxData);
 
 		// Sensors
 		energySensor.ApplyData(geneData.energySensorData);
 
 		// Origin
 		originPulsePeriodTicks = geneData.originPulsePeriodTicks == 0 ? 80 : geneData.originPulsePeriodTicks;
+		originDetatchLogicBox.ApplyData(geneData.originDetatchLogicBoxData);
 
 		// Build order
 		buildPriorityBias = geneData.buildPriorityBias;

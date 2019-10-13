@@ -42,12 +42,15 @@ public class GeneData {
 	public bool axonIsReverse;
 
 	// Dendrites
-	public GeneLogicBoxData dendritesData;
+	public GeneLogicBoxData dendritesLogicBoxData;
 
 	// Sensors
 	public GeneEnergySensorData energySensorData;
-
+	
+	// origin
 	public int originPulsePeriodTicks; // ticks / complete wave
+	public GeneLogicBoxData originDetatchLogicBoxData;
+
 	public float buildPriorityBias;
 	public ArrangementData[] arrangementData = new ArrangementData[3];
 }
