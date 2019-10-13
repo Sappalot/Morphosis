@@ -33,7 +33,6 @@ public class LogicBoxGatePanel : MonoBehaviour {
 				return selectedGene.originDetatchLogicBox.GetGate(row, index);
 			}
 
-
 			return null;
 		}
 	}

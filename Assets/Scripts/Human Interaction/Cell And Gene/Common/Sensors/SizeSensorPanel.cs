@@ -13,7 +13,7 @@ public class SizeSensorPanel : SensorPanel {
 		}
 
 		(affectedGeneSensor as GeneEnergySensor).threshold = energyThresholdSlider.value;
-		ApplyChange();
+		OnGenomeChanged(false);
 	}
 
 	public override void Update() {

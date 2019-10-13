@@ -28,7 +28,7 @@ public class JawCellPanel : CellAndGeneComponentPanel {
 			return;
 		}
 		selectedGene.jawCellCannibalizeKin = cannibalizeKinToggle.isOn;
-		ApplyChange();
+		OnGenomeChanged(false);
 	}
 
 	public void OnChangedCannibalizeMother() {
@@ -36,7 +36,7 @@ public class JawCellPanel : CellAndGeneComponentPanel {
 			return;
 		}
 		selectedGene.jawCellCannibalizeMother = cannibalizeMotherToggle.isOn;
-		ApplyChange();
+		OnGenomeChanged(false);
 	}
 
 	public void OnChangedCannibalizeFather() {
@@ -44,7 +44,7 @@ public class JawCellPanel : CellAndGeneComponentPanel {
 			return;
 		}
 		selectedGene.jawCellCannibalizeFather = cannibalizeFatherToggle.isOn;
-		ApplyChange();
+		OnGenomeChanged(false);
 	}
 
 	public void OnChangedCannibalizeSiblings() {
@@ -52,7 +52,7 @@ public class JawCellPanel : CellAndGeneComponentPanel {
 			return;
 		}
 		selectedGene.jawCellCannibalizeSiblings = cannibalizeSiblingsToggle.isOn;
-		ApplyChange();
+		OnGenomeChanged(false);
 	}
 
 	public void OnChangedCannibalizeChildren() {
@@ -60,7 +60,7 @@ public class JawCellPanel : CellAndGeneComponentPanel {
 			return;
 		}
 		selectedGene.jawCellCannibalizeChildren = cannibalizeChildrenToggle.isOn;
-		ApplyChange();
+		OnGenomeChanged(false);
 	}
 
 	private void Update() {

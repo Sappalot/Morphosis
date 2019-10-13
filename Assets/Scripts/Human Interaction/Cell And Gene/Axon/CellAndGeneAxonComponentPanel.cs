@@ -46,10 +46,7 @@ public class CellAndGeneAxonComponentPanel : CellAndGeneComponentPanel {
 			return;
 		}
 		GenePanel.instance.selectedGene.axonIsEnabled = enabledToggle.isOn;
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			MakeCreatureChanged();
-		}
-		MakeDirty();
+		OnGenomeChanged(true);
 	}
 
 	public void OnFromOriginOffsetSliderMoved() {
@@ -57,10 +54,7 @@ public class CellAndGeneAxonComponentPanel : CellAndGeneComponentPanel {
 			return;
 		}
 		GenePanel.instance.selectedGene.axonFromOriginOffset = fromOriginOffsetSlider.value;
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			MakeCreatureChanged();
-		}
-		MakeDirty();
+		OnGenomeChanged(true);
 	}
 
 	public void OnToggleFromOriginPlus180TextChanged() {
@@ -68,10 +62,7 @@ public class CellAndGeneAxonComponentPanel : CellAndGeneComponentPanel {
 			return;
 		}
 		GenePanel.instance.selectedGene.axonIsFromOriginPlus180 = fromOriginPlus180Toggle.isOn;
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			MakeCreatureChanged();
-		}
-		MakeDirty();
+		OnGenomeChanged(true);
 	}
 
 	public void OnFromMeOffsetSliderMoved() {
@@ -79,10 +70,7 @@ public class CellAndGeneAxonComponentPanel : CellAndGeneComponentPanel {
 			return;
 		}
 		GenePanel.instance.selectedGene.axonFromMeOffset = fromMeOffsetSlider.value;
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			MakeCreatureChanged();
-		}
-		MakeDirty();
+		OnGenomeChanged(true);
 	}
 
 	public void OnRelaxContractSliderMoved() {
@@ -90,10 +78,7 @@ public class CellAndGeneAxonComponentPanel : CellAndGeneComponentPanel {
 			return;
 		}
 		GenePanel.instance.selectedGene.axonRelaxContract = relaxContractSlider.value;
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			MakeCreatureChanged();
-		}
-		MakeDirty();
+		OnGenomeChanged(true);
 	}
 
 	public void OnToggleReverseChanged() {
@@ -101,10 +86,7 @@ public class CellAndGeneAxonComponentPanel : CellAndGeneComponentPanel {
 			return;
 		}
 		GenePanel.instance.selectedGene.axonIsReverse = reverseToggle.isOn;
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			MakeCreatureChanged();
-		}
-		MakeDirty();
+		OnGenomeChanged(true);
 	}
 
 	private void Update() {

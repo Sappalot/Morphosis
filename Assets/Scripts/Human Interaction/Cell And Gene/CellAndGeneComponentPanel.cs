@@ -27,21 +27,21 @@ public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 		isDirty = true;
 	}
 
-	public void ApplyChange() {
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			MakeCreatureChanged();
-		}
-		MakeDirty();
-	}
-
 	public bool IsUnlocked() {
 		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
 	}
 
-	public void MakeCreatureChanged() {
-		CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
-		CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
-		CreatureSelectionPanel.instance.soloSelected.generation = 1;
+	public void OnGenomeChanged(bool geneCellsDiffersFromGenome) {
+		if (CreatureSelectionPanel.instance.hasSoloSelected) {
+			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = geneCellsDiffersFromGenome;
+			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+			CreatureSelectionPanel.instance.soloSelected.generation = 1;
+		}
+
+		CreatureSelectionPanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
+		MakeDirty();
+
 	}
 
 	public Gene selectedGene {
@@ -62,9 +62,5 @@ public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 				return null; // there could be many cells selected for the same gene
 			}
 		}
-	}
-
-	public bool isUnlocked() {
-		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
 	}
 }

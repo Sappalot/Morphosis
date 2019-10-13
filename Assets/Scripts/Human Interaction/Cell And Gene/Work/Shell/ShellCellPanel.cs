@@ -64,7 +64,7 @@ public class ShellCellPanel : CellAndGeneComponentPanel {
 				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 			}
 
-			MakeCreatureChanged();
+			OnGenomeChanged(true);
 		}
 	}
 }
