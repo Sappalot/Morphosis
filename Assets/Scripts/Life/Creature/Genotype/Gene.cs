@@ -76,7 +76,7 @@ public class Gene {
 	// Origin...
 	public int originPulsePeriodTicks = 80;
 	public GeneLogicBox originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox);
-	public EmbryoMaxSizeModeEnum embryoMaxSizeMode;
+	public GeneSizeSensor originSizeSensor = new GeneSizeSensor(SignalUnitEnum.OriginSizeSensor);
 	public float embryoMaxSizeCompleteness = 0.5f;
 
 	// ^ origin ^
@@ -423,6 +423,8 @@ public class Gene {
 		// Origin
 		geneData.originPulsePeriodTicks =     originPulsePeriodTicks;
 		geneData.originDetatchLogicBoxData = originDetatchLogicBox.UpdateData();
+		geneData.originSizeSensorData = originSizeSensor.UpdateData();
+		geneData.embryoMaxSizeCompleteness = embryoMaxSizeCompleteness;
 
 		//build order
 		geneData.buildPriorityBias = buildPriorityBias;
@@ -496,6 +498,8 @@ public class Gene {
 		// Origin
 		originPulsePeriodTicks = geneData.originPulsePeriodTicks == 0 ? 80 : geneData.originPulsePeriodTicks;
 		originDetatchLogicBox.ApplyData(geneData.originDetatchLogicBoxData);
+		originSizeSensor.ApplyData(geneData.originSizeSensorData);
+		embryoMaxSizeCompleteness = geneData.embryoMaxSizeCompleteness;
 
 		// Build order
 		buildPriorityBias = geneData.buildPriorityBias;

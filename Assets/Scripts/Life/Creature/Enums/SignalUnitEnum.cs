@@ -28,4 +28,5 @@ public enum SignalUnitEnum {
 	EnergySensor,
 
 	OriginDetatchLogicBox,
+	OriginSizeSensor,
 }

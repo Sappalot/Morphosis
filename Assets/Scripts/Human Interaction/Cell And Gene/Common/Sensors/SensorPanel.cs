@@ -26,6 +26,10 @@ public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
 					return selectedGene.energySensor;
 				}
 
+				if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
+					return selectedGene.originSizeSensor;
+				}
+
 			}
 
 			return null;
@@ -44,10 +48,6 @@ public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
 
 	public virtual void Update() {
 		if (isDirty) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update Energy Sensor Panel");
-			}
-
 			foreach (SensorOutputPanel output in outputPanels) {
 				output.MakeDirty();
 			}

@@ -1576,6 +1576,7 @@ public abstract class Cell : MonoBehaviour {
 		// Origin
 		cellData.originPulseTick = originPulseTick;
 		cellData.originDetatchLogicBoxData = originDetatchLogicBox.UpdateData();
+		cellData.originSizeSensorData = originSizeSensor.UpdateData();
 
 		return cellData;
 	}
@@ -1625,6 +1626,7 @@ public abstract class Cell : MonoBehaviour {
 
 		originPulseTick = cellData.originPulseTick;
 		originDetatchLogicBox.ApplyData(cellData.originDetatchLogicBoxData);
+		originSizeSensor.ApplyData(cellData.originSizeSensorData);
 
 		this.creature = creature;
 	}
@@ -1634,6 +1636,7 @@ public abstract class Cell : MonoBehaviour {
 	public LogicBox dendritesLogicBox = new LogicBox(SignalUnitEnum.DendritesLogicBox); // own component
 	public EnergySensor energySensor = new EnergySensor(SignalUnitEnum.EnergySensor); // own component
 	public LogicBox originDetatchLogicBox = new LogicBox(SignalUnitEnum.OriginDetatchLogicBox); // inside origin component
+	public SizeSensor originSizeSensor = new SizeSensor(SignalUnitEnum.OriginSizeSensor);
 
 	// if processor: output early ==> output late
 	virtual public void FeedSignal() {
@@ -1655,6 +1658,7 @@ public abstract class Cell : MonoBehaviour {
 		energySensor.ComputeSignalOutput(this, deltaTicks);
 		if (isOrigin) {
 			originDetatchLogicBox.ComputeSignalOutput(this, deltaTicks);
+			originSizeSensor.ComputeSignalOutput(this, deltaTicks);
 		}
 	}
 
@@ -1668,6 +1672,8 @@ public abstract class Cell : MonoBehaviour {
 			return energySensor.GetOutput(outputUnitSlot);
 		} else if (outputUnit == SignalUnitEnum.OriginDetatchLogicBox) {
 			return originDetatchLogicBox.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.OriginSizeSensor) {
+			return originSizeSensor.GetOutput(outputUnitSlot);
 		}
 
 		return false;

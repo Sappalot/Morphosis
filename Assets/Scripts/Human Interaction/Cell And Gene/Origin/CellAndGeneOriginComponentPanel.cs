@@ -6,9 +6,10 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 	// Detatch
 	public LogicBoxPanel detatchLogicBoxPanel;
 
+	// Creature size sensor
+	public SizeSensorPanel sizeSensorPanel;
+
 	// Embryo max size
-	public Image embryoMaxSizeLimitButtonImage;
-	public Image embryoMaxSizeAsBigAsPossibleButtonImage;
 	public Text embryoMaxSizeSliderLabel;
 	public Slider embryoMaxSizeSlider;
 
@@ -21,6 +22,8 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 		base.Initialize(mode);
 
 		detatchLogicBoxPanel.Initialize(mode, SignalUnitEnum.OriginDetatchLogicBox);
+
+		sizeSensorPanel.Initialize(mode, SignalUnitEnum.OriginSizeSensor);
 
 		ignoreSliderMoved = true;
 		pulseFrequenzySlider.minValue = GlobalSettings.instance.phenotype.originPulseFrequenzyMin;
@@ -40,20 +43,6 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 	// ^pulse^
 
 	// ...embryo max size...
-	public void OnClickedEmbryoSizeLimitSize() {
-		if (mode == PhenoGenoEnum.Genotype) {
-			GenePanel.instance.selectedGene.embryoMaxSizeMode = EmbryoMaxSizeModeEnum.LimitSize;
-			OnGenomeChanged(false);
-		}
-	}
-
-	public void OnClickedEmbryoSizeAsBigAsPoissble() {
-		if (mode == PhenoGenoEnum.Genotype) {
-			GenePanel.instance.selectedGene.embryoMaxSizeMode = EmbryoMaxSizeModeEnum.AsBigAsPossible;
-			OnGenomeChanged(false);
-		}
-	}
-
 	public void OnEmbryoSizeSliderMoved() {
 		if (ignoreSliderMoved || mode == PhenoGenoEnum.Phenotype) {
 			return;
@@ -64,8 +53,6 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 	}
 	// ^embryo max size^
 
-
-
 	public override List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
 		return detatchLogicBoxPanel.GetAllGeneGeneLogicBoxInputs();
 	}
@@ -73,6 +60,7 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 	public override void MakeDirty() {
 		base.MakeDirty();
 		detatchLogicBoxPanel.MakeDirty();
+		sizeSensorPanel.MakeDirty();
 	}
 
 	private void Update() {
@@ -85,7 +73,7 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 
 			bool isOriginPhenotypeSelected = mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null && CellPanel.instance.selectedCell.isOrigin;
 			bool isOriginGenotypeSelected = mode == PhenoGenoEnum.Genotype && GenePanel.instance.selectedGene != null && GenePanel.instance.selectedGene.isOrigin;
-			if (!(isOriginPhenotypeSelected || isOriginGenotypeSelected)) {
+			if (!(isOriginPhenotypeSelected || isOriginGenotypeSelected) || !CreatureSelectionPanel.instance.hasSoloSelected) {
 				isDirty = false;
 				return;
 			}
@@ -93,9 +81,7 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 			Cell originCell = CellPanel.instance.selectedCell;
 
 			// embryo max size
-			embryoMaxSizeLimitButtonImage.color = originCell.gene.embryoMaxSizeMode == EmbryoMaxSizeModeEnum.LimitSize ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
-			embryoMaxSizeAsBigAsPossibleButtonImage.color = originCell.gene.embryoMaxSizeMode == EmbryoMaxSizeModeEnum.AsBigAsPossible ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
-			embryoMaxSizeSliderLabel.text = pulseWaveCompletenessText.text = string.Format("Grow until size: {0:F0} % ==> {1} of {2} cells", originCell.gene.embryoMaxSizeCompleteness * 100f, Mathf.Max(1, Mathf.RoundToInt(originCell.gene.embryoMaxSizeCompleteness * CreatureSelectionPanel.instance.soloSelected.genotype.geneCellCount)), CreatureSelectionPanel.instance.soloSelected.genotype.geneCellCount);
+			embryoMaxSizeSliderLabel.text = pulseWaveCompletenessText.text = string.Format("Grow until size: {0:F0} % ==> {1} of {2} cells", originCell.gene.embryoMaxSizeCompleteness * 100f, CreatureSelectionPanel.instance.soloSelected.CompletenessCellCount(originCell.gene.embryoMaxSizeCompleteness), CreatureSelectionPanel.instance.soloSelected.genotype.geneCellCount);
 
 			if (mode == PhenoGenoEnum.Phenotype) {
 				// embryo max size
@@ -111,6 +97,7 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 				pulseFrequenzySlider.interactable = isOriginGenotypeSelected && IsUnlocked();
 				pulseWaveCompletenessText.text = string.Format("Wave complete: -");
 			}
+
 			// embryo max size
 			embryoMaxSizeSlider.value = originCell.gene.embryoMaxSizeCompleteness;
 

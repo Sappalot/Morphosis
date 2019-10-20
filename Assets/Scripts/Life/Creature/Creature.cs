@@ -422,11 +422,10 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public int opaqueCellCount {
-		get {
-			return phenotype.opaqueCellCount;
-		}
+	public int CompletenessCellCount(float completeness) {
+		return genotype.CompletenessCellCount(completeness);
 	}
+
 
 	public Vector2 GetOriginPosition(PhenoGenoEnum type) {
 		if (type == PhenoGenoEnum.Phenotype) {
@@ -748,18 +747,21 @@ public class Creature : MonoBehaviour {
 
 		if (growTicks == 0) {
 			if (PhenotypePhysicsPanel.instance.grow.isOn) {
-				NoGrowthReason reason;
-				didGrowCount = phenotype.TryGrow(this, true, false, 1, false, true, worldTicks, false, out reason);
-				if (didGrowCount > 0) {
-					PhenotypePanel.instance.MakeDirty();
-					CellPanel.instance.MakeDirty();
-					cantGrowMore = 0;
-				} else if (reason.fullyGrown) {
-					cantGrowMore = int.MaxValue;
-				} else if (((reason.spaceIsOccupied || reason.tooFarAwayFromNeighbours) && !reason.notEnoughNeighbourEnergy && !reason.waitingForRespawnCooldown)) {
-					cantGrowMore++; // wait a while before giving up on finding a spot to grow another cell
-				} else {
-					cantGrowMore = 0;
+				if (!IsAttachedToMotherAlive() || cellCount < CompletenessCellCount(genotype.originCell.gene.embryoMaxSizeCompleteness) ) {
+					// able to grow if i am free from mother OR if i as embry hasn't reached max embryo size
+					NoGrowthReason reason;
+					didGrowCount = phenotype.TryGrow(this, true, false, 1, false, true, worldTicks, false, out reason);
+					if (didGrowCount > 0) {
+						PhenotypePanel.instance.MakeDirty();
+						CellPanel.instance.MakeDirty();
+						cantGrowMore = 0;
+					} else if (reason.fullyGrown) {
+						cantGrowMore = int.MaxValue;
+					} else if (((reason.spaceIsOccupied || reason.tooFarAwayFromNeighbours) && !reason.notEnoughNeighbourEnergy && !reason.waitingForRespawnCooldown)) {
+						cantGrowMore++; // wait a while before giving up on finding a spot to grow another cell
+					} else {
+						cantGrowMore = 0;
+					}
 				}
 			}
 			// ☠ ꕕ Haha, make use of these

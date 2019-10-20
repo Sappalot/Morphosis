@@ -35,4 +35,5 @@ public class CellData {
 	// Origin
 	public int originPulseTick;
 	public LogicBoxData originDetatchLogicBoxData;
+	public SizeSensorData originSizeSensorData;
 }

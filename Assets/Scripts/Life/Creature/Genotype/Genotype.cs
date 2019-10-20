@@ -93,6 +93,10 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
+	public int CompletenessCellCount(float completeness) {
+		return Mathf.Max(1, Mathf.RoundToInt(completeness * geneCellCount));
+	}
+
 	public int GetGeneCellOfTypeCount(CellTypeEnum type) {
 		int count = 0;
 		foreach (Cell c in geneCellListIndexSorted) {

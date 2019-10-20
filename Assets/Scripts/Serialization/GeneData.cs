@@ -50,6 +50,8 @@ public class GeneData {
 	// origin
 	public int originPulsePeriodTicks; // ticks / complete wave
 	public GeneLogicBoxData originDetatchLogicBoxData;
+	public GeneSizeSensorData originSizeSensorData;
+	public float embryoMaxSizeCompleteness;
 
 	public float buildPriorityBias;
 	public ArrangementData[] arrangementData = new ArrangementData[3];
