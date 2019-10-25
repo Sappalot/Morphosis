@@ -6,6 +6,10 @@ public class EffectSensor : SignalUnit {
 	
 	public float threshold;
 
+	public override void Clear() {
+
+	}
+
 	public EffectSensor(SignalUnitEnum outputUnit) {
 		this.signalUnit = outputUnit;
 	}

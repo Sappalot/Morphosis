@@ -5,11 +5,11 @@ using UnityEngine.UI;
 // Me <== EnergySensorPanel, EffectSensorPanel
 public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
 	public SensorOutputPanel[] outputPanels;
-	public RectTransform settingsPanel;
+	public RectTransform settingsPanel; // Not all sensor panels use settings panel
 	protected bool isUsed = false;
 
 	private void Awake() {
-		if (!isUsed) {
+		if (!isUsed && settingsPanel != null) {
 			settingsPanel.gameObject.SetActive(false);
 		}
 	}
@@ -17,8 +17,11 @@ public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
 	public GeneSignalUnit affectedGeneSensor {
 		get {
 			if (selectedGene != null) {
-				if (selectedGene.type == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkSensorA) {
-					return selectedGene.eggCellFertilizeEnergySensor;
+				if (selectedGene.type == CellTypeEnum.Egg) {
+					if (signalUnit == SignalUnitEnum.WorkSensorA) {
+						return selectedGene.eggCellFertilizeEnergySensor;
+					}
+					// Do we need attachment sensor? 
 				}
 
 				// not a work sensor of any kind
@@ -38,7 +41,10 @@ public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
 
 	public override void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
 		base.Initialize(mode, signalUnit);
-		settingsPanel.gameObject.SetActive(true);
+		if (settingsPanel != null) {
+			settingsPanel.gameObject.SetActive(true); // Not all sensor panels use settings panel
+		}
+		
 		isUsed = true;
 
 		for (int i = 0; i < outputPanels.Length; i++) {

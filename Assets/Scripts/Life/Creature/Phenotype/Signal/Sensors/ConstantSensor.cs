@@ -21,6 +21,12 @@ public class ConstantSensor : SignalUnit {
 		}
 	}
 
+	public override void Clear() {
+		for (int i = 0; i < output.Length; i++) {
+			output[i] = false;
+		}
+	}
+
 	// Load Save
 	private ConstantSensorData constantSensorData = new ConstantSensorData();
 

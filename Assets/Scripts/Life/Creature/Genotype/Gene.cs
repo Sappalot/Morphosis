@@ -10,6 +10,7 @@ public class Gene {
 	public bool eggCellHibernateWhenAttachedToChild = false;
 	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkLogicBoxA);
 	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkSensorA);
+	// AttachmentSensor needs no gene, since it has no settings
 	// ^ Egg cell ^
 
 	// Jaw Cell
@@ -47,7 +48,7 @@ public class Gene {
 		}
 	}
 
-	// Axon
+	// ...Axon...
 	private bool m_axonIsEnabled;
 	public bool axonIsEnabled {
 		get {
@@ -78,7 +79,6 @@ public class Gene {
 	public GeneLogicBox originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox);
 	public GeneSizeSensor originSizeSensor = new GeneSizeSensor(SignalUnitEnum.OriginSizeSensor);
 	public float embryoMaxSizeCompleteness = 0.5f;
-
 	// ^ origin ^
 
 	public float originPulsePeriod {
@@ -136,10 +136,15 @@ public class Gene {
 		eggCellFertilizeLogic.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
 		eggCellFertilizeLogic.SetAllInputToBlocked();
 		eggCellFertilizeLogic.ConnectInputTo(0, SignalUnitEnum.WorkSensorA, SignalUnitSlotEnum.A); // connect to on board energy sensor
-		eggCellFertilizeLogic.SetInputToPass(0);
-		eggCellFertilizeLogic.SetInputToLocked(0);
-		eggCellFertilizeLogic.SetCellToLocked(1, 0);
-		eggCellFertilizeLogic.SetCellToLocked(2, 0);
+		eggCellFertilizeLogic.ConnectInputTo(1, SignalUnitEnum.WorkSensorB, SignalUnitSlotEnum.B); // connect to on board attachemnt sensor (free from mother)
+		eggCellFertilizeLogic.SetInputToPass(0); // energy
+		eggCellFertilizeLogic.SetInputToPass(1); // attachment
+		eggCellFertilizeLogic.SetInputToLocked(0); // energy
+		eggCellFertilizeLogic.SetInputToLocked(1); // attachment
+		eggCellFertilizeLogic.SetCellToLocked(1, 0); // above energy
+		eggCellFertilizeLogic.SetCellToLocked(2, 0); // above energy
+		eggCellFertilizeLogic.SetCellToLocked(1, 1); // above attachment
+		eggCellFertilizeLogic.SetCellToLocked(2, 1); // above attachment
 		eggCellFertilizeLogic.UpdateConnections();
 		// ^ egg ^
 
@@ -298,8 +303,6 @@ public class Gene {
 		if (mut < gs.mutation.axonIsReverseChange * strength) {
 			axonIsReverse = !axonIsReverse; //toggle
 		}
-
-
 		// ^ Axon ^ 
 
 		// Origin..

@@ -7,10 +7,12 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 
 	public LogicBoxPanel fertilizeLogicBoxPanel;
 	public EnergySensorPanel fertilizeEnergySensorPanel;
+	public AttachmentSensorPanel fertilizeAttachmentSensorPanel;
 
 	public override void Initialize(PhenoGenoEnum mode) {
 		fertilizeLogicBoxPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxA);
 		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA);
+		fertilizeAttachmentSensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorB);
 
 		MakeDirty();
 
@@ -21,8 +23,8 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 		base.MakeDirty();
 		fertilizeLogicBoxPanel.MakeDirty();
 		fertilizeEnergySensorPanel.MakeDirty();
+		fertilizeAttachmentSensorPanel.MakeDirty();
 	}
-
 
 	public override List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
 		return fertilizeLogicBoxPanel.GetAllGeneGeneLogicBoxInputs();

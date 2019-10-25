@@ -30,27 +30,33 @@ public class EnergySensor : SignalUnit {
 		
 	}
 
+	public override void Clear() {
+		for (int i = 0; i < output.Length; i++) {
+			output[i] = false;
+		}
+	}
+
 	// Load Save
-	private EnergySensorData energySensorData = new EnergySensorData();
+	private CommonSensorData sensorData = new CommonSensorData();
 
 	// Save
-	public EnergySensorData UpdateData() {
-		energySensorData.slotA = output[0];
-		energySensorData.slotB = output[1];
-		energySensorData.slotC = output[2];
-		energySensorData.slotD = output[3];
-		energySensorData.slotE = output[4];
-		energySensorData.slotF = output[5];
-		return energySensorData;
+	public CommonSensorData UpdateData() {
+		sensorData.slotA = output[0];
+		sensorData.slotB = output[1];
+		sensorData.slotC = output[2];
+		sensorData.slotD = output[3];
+		sensorData.slotE = output[4];
+		sensorData.slotF = output[5];
+		return sensorData;
 	}
 
 	// Load
-	public void ApplyData(EnergySensorData energySensorData) {
-		output[0] = energySensorData.slotA;
-		output[1] = energySensorData.slotB;
-		output[2] = energySensorData.slotC;
-		output[3] = energySensorData.slotD;
-		output[4] = energySensorData.slotE;
-		output[5] = energySensorData.slotF;
+	public void ApplyData(CommonSensorData sensorData) {
+		output[0] = sensorData.slotA;
+		output[1] = sensorData.slotB;
+		output[2] = sensorData.slotC;
+		output[3] = sensorData.slotD;
+		output[4] = sensorData.slotE;
+		output[5] = sensorData.slotF;
 	}
 }

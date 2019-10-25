@@ -27,6 +27,12 @@ public class SizeSensor : SignalUnit {
 		}
 	}
 
+	public override void Clear() {
+		for (int i = 0; i < output.Length; i++) {
+			output[i] = false;
+		}
+	}
+
 	// Load Save
 	private SizeSensorData sizeSensorData = new SizeSensorData();
 

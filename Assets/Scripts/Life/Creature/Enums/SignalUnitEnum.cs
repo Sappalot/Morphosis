@@ -12,7 +12,7 @@ public enum SignalUnitEnum {
 	WorkLogicBoxA, // Egg: Fertilize asexually
 	WorkLogicBoxB, // Egg: fertilize sexually
 	WorkSensorA, // Egg: Energy fertilize
-	WorkSensorB,
+	WorkSensorB, // Egg: Attachment fertilize
 	WorkSensorC, 
 	WorkSensorD, 
 

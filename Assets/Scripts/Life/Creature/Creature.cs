@@ -784,14 +784,13 @@ public class Creature : MonoBehaviour {
 		// Execute pending Egg Fertilize
 		// If Egg was disabled there is no point checking here either
 		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
-			if (phenotype.originCell.originPulseTick == 0) { // Allways fertilize at start of pulse
+			if (phenotype.originCell.originPulseTick == 0) { // Allways fertilize at start of pulse to make mother and child locomote together
 				Cell fertilizeCell = null;
 				foreach (Cell c in phenotype.cellList) {
 					if (c is EggCell) {
 						EggCell eggCell = c as EggCell;
-						if (eggCell.shouldFertilize) {
+						if (eggCell.fertilizeLogicBox.GetOutput(SignalUnitSlotEnum.processedEarly)) {
 							fertilizeCell = eggCell;
-							eggCell.shouldFertilize = false;
 							break;
 						}
 					}

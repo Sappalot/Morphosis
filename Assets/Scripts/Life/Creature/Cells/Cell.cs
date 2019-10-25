@@ -1533,6 +1533,9 @@ public abstract class Cell : MonoBehaviour {
 		effectFluxToChildrenAttached = 0f;
 		effectFluxToSelf = 0f;
 		effectFluxFromSelf = 0f;
+
+		// signal
+		ClearSignal();
 	}
 
 	virtual public void OnBorrowToWorld() { }
@@ -1556,6 +1559,7 @@ public abstract class Cell : MonoBehaviour {
 		if (GetCellType() == CellTypeEnum.Egg) {
 			cellData.eggCellFertilizeLogicBoxData = (this as EggCell).fertilizeLogicBox.UpdateData();
 			cellData.eggCellFertilizeEnergySensorData = (this as EggCell).fertilizeEnergySensor.UpdateData();
+			cellData.eggCellFertilizeAttachmentSensorData = (this as EggCell).fertilizeAttachmentSensor.UpdateData();
 		}
 
 		// Constant
@@ -1600,6 +1604,7 @@ public abstract class Cell : MonoBehaviour {
 		if (GetCellType() == CellTypeEnum.Egg) {
 			(this as EggCell).fertilizeLogicBox.ApplyData(cellData.eggCellFertilizeLogicBoxData);
 			(this as EggCell).fertilizeEnergySensor.ApplyData(cellData.eggCellFertilizeEnergySensorData);
+			(this as EggCell).fertilizeAttachmentSensor.ApplyData(cellData.eggCellFertilizeAttachmentSensorData);
 		}
 		// ^ egg ^
 
@@ -1637,6 +1642,14 @@ public abstract class Cell : MonoBehaviour {
 	public EnergySensor energySensor = new EnergySensor(SignalUnitEnum.EnergySensor); // own component
 	public LogicBox originDetatchLogicBox = new LogicBox(SignalUnitEnum.OriginDetatchLogicBox); // inside origin component
 	public SizeSensor originSizeSensor = new SizeSensor(SignalUnitEnum.OriginSizeSensor);
+
+	virtual public void ClearSignal() {
+		constantSensor.Clear();
+		dendritesLogicBox.Clear();
+		energySensor.Clear();
+		originDetatchLogicBox.Clear();
+		originSizeSensor.Clear();
+	}
 
 	// if processor: output early ==> output late
 	virtual public void FeedSignal() {

@@ -10,7 +10,6 @@ public class EggCell : Cell {
 			} else {
 				effectProductionInternalUp = 0f;
 				effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCellEffectCost;
-				shouldFertilize = fertilizeLogicBox.GetOutput(SignalUnitSlotEnum.processedEarly);
 			}
 
 			base.UpdateCellWork(deltaTicks, worldTicks);
@@ -25,16 +24,21 @@ public class EggCell : Cell {
 		//return (gene.eggCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.eggCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
 	}
 
-	[HideInInspector]
-	public bool shouldFertilize = false;
-
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Egg;
 	}
 
 	// Signal
 	public LogicBox fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkLogicBoxA);
-	public EnergySensor fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkSensorA); // locked one
+	public EnergySensor fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkSensorA);
+	public AttachmentSensor fertilizeAttachmentSensor = new AttachmentSensor(SignalUnitEnum.WorkSensorB);
+
+	public override void ClearSignal() {
+		base.ClearSignal();
+		fertilizeLogicBox.Clear();
+		fertilizeEnergySensor.Clear();
+		fertilizeAttachmentSensor.Clear();
+	}
 
 	public override void FeedSignal() {
 		base.FeedSignal();
@@ -47,14 +51,16 @@ public class EggCell : Cell {
 		
 		fertilizeLogicBox.ComputeSignalOutput(this, deltaTicks);
 		fertilizeEnergySensor.ComputeSignalOutput(this, deltaTicks);
+		fertilizeAttachmentSensor.ComputeSignalOutput(this, deltaTicks);
 	}
-
 
 	public override bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
 		if (outputUnit == SignalUnitEnum.WorkLogicBoxA) {
 			return fertilizeLogicBox.GetOutput(outputUnitSlot);
 		} else if (outputUnit == SignalUnitEnum.WorkSensorA) {
 			return fertilizeEnergySensor.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.WorkSensorB) {
+			return fertilizeAttachmentSensor.GetOutput(outputUnitSlot);
 		}
 		return base.GetOutputFromUnit(outputUnit, outputUnitSlot); //Couldnt find output unith here in egg work, 
 	}

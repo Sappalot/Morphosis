@@ -8,4 +8,6 @@ public abstract class SignalUnit {
 	public virtual void ComputeSignalOutput(Cell hostCell, int deltaTicks) { }
 
 	public virtual void FeedSignal() { }
+
+	public abstract void Clear();
 }

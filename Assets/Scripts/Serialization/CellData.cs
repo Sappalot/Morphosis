@@ -18,7 +18,8 @@ public class CellData {
 
 	// Egg
 	public LogicBoxData eggCellFertilizeLogicBoxData;
-	public EnergySensorData eggCellFertilizeEnergySensorData;
+	public CommonSensorData eggCellFertilizeEnergySensorData;
+	public CommonSensorData eggCellFertilizeAttachmentSensorData;
 
 	// Leaf
 	public float leafCellLowPassExposure;
@@ -30,7 +31,7 @@ public class CellData {
 	public LogicBoxData dendritesLogicBoxData;
 
 	// Sensors
-	public EnergySensorData energySensorData;
+	public CommonSensorData energySensorData;
 
 	// Origin
 	public int originPulseTick;

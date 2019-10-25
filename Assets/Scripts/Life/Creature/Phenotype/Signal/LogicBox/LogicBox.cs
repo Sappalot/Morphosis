@@ -6,6 +6,11 @@
 		base.signalUnit = signalUnit;
 	}
 
+	public override void Clear() {
+		outputEarly = false;
+		outputLate = false;
+	}
+
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
 		if (signalUnitSlot == SignalUnitSlotEnum.processedEarly) {
 			return outputEarly;
