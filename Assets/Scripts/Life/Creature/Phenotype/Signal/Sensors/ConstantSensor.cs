@@ -28,10 +28,10 @@ public class ConstantSensor : SignalUnit {
 	}
 
 	// Load Save
-	private ConstantSensorData constantSensorData = new ConstantSensorData();
+	private CommonSensorData constantSensorData = new CommonSensorData();
 
 	// Save
-	public ConstantSensorData UpdateData() {
+	public CommonSensorData UpdateData() {
 		constantSensorData.slotA = output[0];
 		constantSensorData.slotB = output[1];
 		constantSensorData.slotC = output[2];
@@ -42,7 +42,7 @@ public class ConstantSensor : SignalUnit {
 	}
 
 	// Load
-	public void ApplyData(ConstantSensorData constantSensorData) {
+	public void ApplyData(CommonSensorData constantSensorData) {
 		output[0] = constantSensorData.slotA;
 		output[1] = constantSensorData.slotB;
 		output[2] = constantSensorData.slotC;

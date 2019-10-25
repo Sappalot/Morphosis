@@ -34,10 +34,10 @@ public class SizeSensor : SignalUnit {
 	}
 
 	// Load Save
-	private SizeSensorData sizeSensorData = new SizeSensorData();
+	private CommonSensorData sizeSensorData = new CommonSensorData();
 
 	// Save
-	public SizeSensorData UpdateData() {
+	public CommonSensorData UpdateData() {
 		sizeSensorData.slotA = output[0];
 		sizeSensorData.slotB = output[1];
 		sizeSensorData.slotC = output[2];
@@ -48,7 +48,7 @@ public class SizeSensor : SignalUnit {
 	}
 
 	// Load
-	public void ApplyData(SizeSensorData sizeSensorData) {
+	public void ApplyData(CommonSensorData sizeSensorData) {
 		output[0] = sizeSensorData.slotA;
 		output[1] = sizeSensorData.slotB;
 		output[2] = sizeSensorData.slotC;

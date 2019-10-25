@@ -25,7 +25,7 @@ public class CellData {
 	public float leafCellLowPassExposure;
 
 	// Constant
-	public ConstantSensorData constantSensorData;
+	public CommonSensorData constantSensorData;
 
 	// Dendrites
 	public LogicBoxData dendritesLogicBoxData;
@@ -36,5 +36,5 @@ public class CellData {
 	// Origin
 	public int originPulseTick;
 	public LogicBoxData originDetatchLogicBoxData;
-	public SizeSensorData originSizeSensorData;
+	public CommonSensorData originSizeSensorData;
 }
