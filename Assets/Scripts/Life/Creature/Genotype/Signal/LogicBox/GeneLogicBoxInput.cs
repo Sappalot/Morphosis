@@ -9,7 +9,7 @@
 			return m_valveMode;
 		}
 		set {
-			if (!isLocked) {
+			if (lockness == LocknessEnum.Unlocked || lockness == LocknessEnum.SemiLocked) { 
 				m_valveMode = value;
 			}
 		}

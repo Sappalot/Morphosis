@@ -139,8 +139,8 @@ public class Gene {
 		eggCellFertilizeLogic.ConnectInputTo(1, SignalUnitEnum.WorkSensorB, SignalUnitSlotEnum.B); // connect to on board attachemnt sensor (free from mother)
 		eggCellFertilizeLogic.SetInputToPass(0); // energy
 		eggCellFertilizeLogic.SetInputToPass(1); // attachment
-		eggCellFertilizeLogic.SetInputToLocked(0); // energy
-		eggCellFertilizeLogic.SetInputToLocked(1); // attachment
+		eggCellFertilizeLogic.SetInputLockness(0, LocknessEnum.Locked); // energy
+		eggCellFertilizeLogic.SetInputLockness(1, LocknessEnum.SemiLocked); // attachment
 		eggCellFertilizeLogic.SetCellToLocked(1, 0); // above energy
 		eggCellFertilizeLogic.SetCellToLocked(2, 0); // above energy
 		eggCellFertilizeLogic.SetCellToLocked(1, 1); // above attachment
@@ -164,8 +164,8 @@ public class Gene {
 		originDetatchLogicBox.ConnectInputTo(5, SignalUnitEnum.OriginSizeSensor, SignalUnitSlotEnum.F);
 		originDetatchLogicBox.SetInputToPass(4); // blocked
 		originDetatchLogicBox.SetInputToPass(5); // max size
-		originDetatchLogicBox.SetInputToLocked(4); // blocked
-		originDetatchLogicBox.SetInputToLocked(5); // max size
+		originDetatchLogicBox.SetInputLockness(4, LocknessEnum.SemiLocked); // blocked
+		originDetatchLogicBox.SetInputLockness(5, LocknessEnum.SemiLocked); // max size
 		originDetatchLogicBox.UpdateConnections();
 		// ^ origin ^
 	}

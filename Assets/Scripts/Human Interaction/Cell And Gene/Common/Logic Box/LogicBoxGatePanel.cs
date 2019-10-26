@@ -60,7 +60,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	}
 
 	public void OnPointerEnterArea() {
-		isMouseHoverng = (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && !affectedGeneLogicBoxGate.isLocked);
+		isMouseHoverng = (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && affectedGeneLogicBoxGate.lockness  == LocknessEnum.Unlocked);
 		MakeDirty();
 	}
 
@@ -145,7 +145,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 					operatorTypeLabel.text = affectedGeneLogicBoxGate.operatorType.ToString().ToUpper();
 				}
 				if (mode == PhenoGenoEnum.Genotype) {
-					lockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxGate.isLocked);
+					lockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxGate.lockness == LocknessEnum.Locked);
 				} else if (mode == PhenoGenoEnum.Phenotype) {
 					lockedOverlayImage.gameObject.SetActive(false);
 				}

@@ -86,7 +86,7 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 
 	// Load
 	public void ApplyData(GeneLogicBoxGateData geneLogicBoxGateData) {
-		if (!isLocked) {
+		if (lockness == LocknessEnum.Unlocked) {
 			operatorType = geneLogicBoxGateData.operatorType;
 			leftFlank = geneLogicBoxGateData.leftFlank;
 			rightFlank = geneLogicBoxGateData.rightFlank;

@@ -43,8 +43,8 @@
 			inputRow3[column].valveMode = SignalValveModeEnum.Pass;
 	}
 
-	public void SetInputToLocked(int column) {
-		inputRow3[column].isLocked = true;
+	public void SetInputLockness(int column, LocknessEnum lockness) {
+		inputRow3[column].lockness = lockness;
 	}
 
 	public void SetCellToLocked(int row, int column) {
@@ -216,7 +216,7 @@
 				newGate.operatorType = operatorType;
 				newGate.leftFlank = leftFlank;
 				newGate.rightFlank = rightFlank;
-				newGate.isLocked = isLocked;
+				newGate.lockness = isLocked ? LocknessEnum.Locked : LocknessEnum.Unlocked;
 				newGate.isUsed = true;
 				return true;
 			}

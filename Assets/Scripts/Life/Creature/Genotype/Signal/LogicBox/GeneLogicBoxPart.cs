@@ -5,7 +5,7 @@ public abstract class GeneLogicBoxPart {
 	public int leftFlank;
 	public int rightFlank;
 
-	public bool isLocked = false; // No need to save/load this one as it is hardcoded, set by gene (would be the same every time)
+	public LocknessEnum lockness = LocknessEnum.Unlocked;// No need to save/load this one as it is hardcoded, set by gene (would be the same every time)
 	public bool isTransmittingSignal = false;
 	
 	public int width {
