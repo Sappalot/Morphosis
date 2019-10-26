@@ -156,9 +156,16 @@ public class Gene {
 		// ^ dendrites ^
 
 		// ...origing...
-		originDetatchLogicBox.TryCreateGate(0, LogicOperatorEnum.Or, 0, GeneLogicBox.rightmostFlank, false);
+		originDetatchLogicBox.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, false);
+		originDetatchLogicBox.TryCreateGate(2, LogicOperatorEnum.Or, 4, GeneLogicBox.rightmostFlank, true);
 		originDetatchLogicBox.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
 		originDetatchLogicBox.SetAllInputToBlocked();
+		originDetatchLogicBox.ConnectInputTo(4, SignalUnitEnum.OriginSizeSensor, SignalUnitSlotEnum.E);
+		originDetatchLogicBox.ConnectInputTo(5, SignalUnitEnum.OriginSizeSensor, SignalUnitSlotEnum.F);
+		originDetatchLogicBox.SetInputToPass(4); // blocked
+		originDetatchLogicBox.SetInputToPass(5); // max size
+		originDetatchLogicBox.SetInputToLocked(4); // blocked
+		originDetatchLogicBox.SetInputToLocked(5); // max size
 		originDetatchLogicBox.UpdateConnections();
 		// ^ origin ^
 	}

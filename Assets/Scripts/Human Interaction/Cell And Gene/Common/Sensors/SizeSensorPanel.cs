@@ -3,9 +3,8 @@ using UnityEngine.UI;
 
 // TODO: rename growth sensor panel
 public class SizeSensorPanel : SensorPanel {
-	
-
-	public Text sizeThresholdSliderLabel;
+	public Text sizeMoreThanSliderLabel;
+	public Text sizeLessThanSliderLabel;
 	public Slider sizeThresholdSlider;
 
 	public Text growthBlockedPatienseThresholdSliderLabel;
@@ -39,11 +38,12 @@ public class SizeSensorPanel : SensorPanel {
 
 			if (selectedGene != null && affectedGeneSensor != null) {
 				ignoreSliderMoved = true;
-				sizeThresholdSliderLabel.text = string.Format("A: Creature Size > {0:F1} %", (affectedGeneSensor as GeneSizeSensor).sizeThreshold);
+				sizeMoreThanSliderLabel.text = string.Format("A: Size ≥ {0:F0} % ({1:F0} cells or bigger)", (affectedGeneSensor as GeneSizeSensor).sizeThreshold * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness((affectedGeneSensor as GeneSizeSensor).sizeThreshold));
+				sizeLessThanSliderLabel.text = string.Format("B: Size < {0:F0} % ({1:F0} cells or smaller)", (affectedGeneSensor as GeneSizeSensor).sizeThreshold * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness((affectedGeneSensor as GeneSizeSensor).sizeThreshold) - 1);
 				sizeThresholdSlider.value = (affectedGeneSensor as GeneSizeSensor).sizeThreshold;
 				sizeThresholdSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
-				growthBlockedPatienseThresholdSliderLabel.text = string.Format("E: Growth blocked > {0:F0} s", (affectedGeneSensor as GeneSizeSensor).growthBlockedPatienseThreshold);
+				growthBlockedPatienseThresholdSliderLabel.text = string.Format("E: Growth blocked ≥ {0:F0} s", (affectedGeneSensor as GeneSizeSensor).growthBlockedPatienseThreshold);
 				growthBlockedPatienseThresholdSlider.value = (affectedGeneSensor as GeneSizeSensor).growthBlockedPatienseThreshold;
 				growthBlockedPatienseThresholdSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 

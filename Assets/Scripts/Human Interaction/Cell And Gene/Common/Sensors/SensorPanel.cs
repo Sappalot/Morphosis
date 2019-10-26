@@ -21,7 +21,7 @@ public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
 					if (signalUnit == SignalUnitEnum.WorkSensorA) {
 						return selectedGene.eggCellFertilizeEnergySensor;
 					}
-					// Do we need attachment sensor? 
+					// Do we need attachment sensor? the thisn is it has no gene representation (holds no data)
 				}
 
 				// not a work sensor of any kind

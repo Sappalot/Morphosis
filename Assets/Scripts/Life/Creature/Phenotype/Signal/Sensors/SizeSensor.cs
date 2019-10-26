@@ -5,8 +5,6 @@ using UnityEngine;
 public class SizeSensor : SignalUnit {
 	private bool[] output = new bool[6]; // outputs 
 
-	public float threshold;
-
 	public SizeSensor(SignalUnitEnum outputUnit) {
 		this.signalUnit = outputUnit;
 	}
@@ -17,13 +15,12 @@ public class SizeSensor : SignalUnit {
 
 	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {
 		if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
-			for (int i = 0; i < output.Length; i++) {
-				if (i == 5) {
-					output[5] = hostCell.creature.phenotype.cellCount >= hostCell.creature.CompletenessCellCount((hostCell.gene.originSizeSensor as GeneSizeSensor).sizeThreshold); // F
-				} else {
-					output[i] = false;
-				}
-			}
+			output[0] = hostCell.creature.phenotype.cellCount >= hostCell.creature.CellCountAtCompleteness((hostCell.gene.originSizeSensor as GeneSizeSensor).sizeThreshold); // A
+			output[1] = hostCell.creature.phenotype.cellCount < hostCell.creature.CellCountAtCompleteness((hostCell.gene.originSizeSensor as GeneSizeSensor).sizeThreshold); // B
+			output[2] = false;
+			output[3] = false;
+			output[4] = hostCell.creature.growthBlocked * GlobalSettings.instance.quality.growTickPeriod * Time.fixedDeltaTime >= (hostCell.gene.originSizeSensor as GeneSizeSensor).growthBlockedPatienseThreshold; // E
+			output[5] = hostCell.creature.phenotype.cellCount >= hostCell.creature.CellCountAtCompleteness(hostCell.gene.embryoMaxSizeCompleteness); // F
 		}
 	}
 

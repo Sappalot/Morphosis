@@ -1658,6 +1658,7 @@ public abstract class Cell : MonoBehaviour {
 		dendritesLogicBox.FeedSignal();
 		if (isOrigin) {
 			originDetatchLogicBox.FeedSignal();
+			originDetatchLogicBox.FeedSignal();
 		}
 	}
 

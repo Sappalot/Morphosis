@@ -81,7 +81,7 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 			Cell originCell = CellPanel.instance.selectedCell;
 
 			// embryo max size
-			embryoMaxSizeSliderLabel.text = pulseWaveCompletenessText.text = string.Format("Grow until size: {0:F0} % ==> {1} of {2} cells", originCell.gene.embryoMaxSizeCompleteness * 100f, CreatureSelectionPanel.instance.soloSelected.CompletenessCellCount(originCell.gene.embryoMaxSizeCompleteness), CreatureSelectionPanel.instance.soloSelected.genotype.geneCellCount);
+			embryoMaxSizeSliderLabel.text = pulseWaveCompletenessText.text = string.Format("Grow until size: {0:F0} % ==> {1} of {2} cells", originCell.gene.embryoMaxSizeCompleteness * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness(originCell.gene.embryoMaxSizeCompleteness), CreatureSelectionPanel.instance.soloSelected.genotype.geneCellCount);
 
 			if (mode == PhenoGenoEnum.Phenotype) {
 				// embryo max size

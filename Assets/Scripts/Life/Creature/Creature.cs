@@ -38,7 +38,7 @@ public class Creature : MonoBehaviour {
 	//time ^
 
 	private bool detatch = false;
-	private int cantGrowMore = 0;
+	public int growthBlocked { get; private set; } // blocked by myself, child/mother/other creature, or terrain(?)
 
 	public string sceneGraphName {
 		get {
@@ -422,7 +422,7 @@ public class Creature : MonoBehaviour {
 		}
 	}
 
-	public int CompletenessCellCount(float completeness) {
+	public int CellCountAtCompleteness(float completeness) {
 		return genotype.CompletenessCellCount(completeness);
 	}
 
@@ -500,7 +500,7 @@ public class Creature : MonoBehaviour {
 		creation = CreatureCreationEnum.Unset;
 
 		detatch = false;
-		cantGrowMore = 0;
+		growthBlocked = 0;
 		growTicks = 0;
 
 		ClearMotherAndChildrenReferences();
@@ -741,26 +741,25 @@ public class Creature : MonoBehaviour {
 
 			PhenotypePanel.instance.MakeDirty();
 			CellPanel.instance.MakeDirty();
-			cantGrowMore = 0;
+			growthBlocked = 0;
 			detatch = false;
 		}
 
 		if (growTicks == 0) {
 			if (PhenotypePhysicsPanel.instance.grow.isOn) {
-				if (!IsAttachedToMotherAlive() || cellCount < CompletenessCellCount(genotype.originCell.gene.embryoMaxSizeCompleteness) ) {
+				if (!IsAttachedToMotherAlive() || cellCount < CellCountAtCompleteness(genotype.originCell.gene.embryoMaxSizeCompleteness) ) {
 					// able to grow if i am free from mother OR if i as embry hasn't reached max embryo size
 					NoGrowthReason reason;
 					didGrowCount = phenotype.TryGrow(this, true, false, 1, false, true, worldTicks, false, out reason);
 					if (didGrowCount > 0) {
 						PhenotypePanel.instance.MakeDirty();
 						CellPanel.instance.MakeDirty();
-						cantGrowMore = 0;
-					} else if (reason.fullyGrown) {
-						cantGrowMore = int.MaxValue;
-					} else if (((reason.spaceIsOccupied || reason.tooFarAwayFromNeighbours) && !reason.notEnoughNeighbourEnergy && !reason.waitingForRespawnCooldown)) {
-						cantGrowMore++; // wait a while before giving up on finding a spot to grow another cell
+						growthBlocked = 0;
+					} else if (((reason.spaceIsOccupied || reason.tooFarAwayFromNeighbours) && !reason.fullyGrown && !reason.notEnoughNeighbourEnergy && !reason.waitingForRespawnCooldown)) {
+						// ? Should we count tooFarAwayFromNeighbours as blocked ??
+						growthBlocked++; // Wait a while before giving up on finding a spot to grow another cell
 					} else {
-						cantGrowMore = 0;
+						growthBlocked = 0;
 					}
 				}
 			}
@@ -770,8 +769,8 @@ public class Creature : MonoBehaviour {
 			// Detatch child from mother
 			if (PhenotypePhysicsPanel.instance.detatch.isOn && IsAttachedToMotherAlive()) {
 				//if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.originCell.originDetatchSizeThreshold < 1f && phenotype.cellCount >= Mathf.Clamp(Mathf.RoundToInt(phenotype.originCell.originDetatchSizeThreshold * genotype.geneCellCount), 1, genotype.geneCellCount)) ||
-				//	(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energyFullness >= phenotype.originCell.originDetatchEnergyThreshold && cantGrowMore >= GlobalSettings.instance.phenotype.detatchAfterCompletePersistance)) {
-				//	detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
+				//	(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energyFullness >= phenotype.originCell.originDetatchEnergyThreshold && growthBlocked >= GlobalSettings.instance.phenotype.detatchAfterCompletePersistance)) {
+				//	detatch = true; 
 				//}
 				if (PhenotypePhysicsPanel.instance.detatch.isOn && phenotype.originCell.originDetatchLogicBox.GetOutput(SignalUnitSlotEnum.processedEarly)) {
 					detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
@@ -848,7 +847,7 @@ public class Creature : MonoBehaviour {
 
 		//time
 		creatureData.growTicks = growTicks;
-		creatureData.cantGrowMore = cantGrowMore;
+		creatureData.cantGrowMore = growthBlocked;
 		creatureData.detatch = detatch;
 
 		//Relatives
@@ -884,7 +883,7 @@ public class Creature : MonoBehaviour {
 		genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
 
 		growTicks = creatureData.growTicks;
-		cantGrowMore = creatureData.cantGrowMore;
+		growthBlocked = creatureData.cantGrowMore;
 		detatch = creatureData.detatch;
 
 		phenotype.ApplyData(creatureData.phenotypeData, this);

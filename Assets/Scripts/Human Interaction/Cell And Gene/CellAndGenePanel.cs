@@ -129,6 +129,8 @@ public class CellAndGenePanel : MonoBehaviour {
 			outTransform = energySensorComponentPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
 			outTransform = originComponentPanel.detatchLogicBoxPanel.GetLocation(signalUnitSlot);
+		} else if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
+			outTransform = originComponentPanel.sizeSensorPanel.GetLocation(signalUnitSlot);
 		}
 
 		if (outTransform != null) {
