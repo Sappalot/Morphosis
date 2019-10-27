@@ -52,6 +52,7 @@ public class GeneData {
 	public GeneLogicBoxData originDetatchLogicBoxData;
 	public GeneSizeSensorData originSizeSensorData;
 	public float embryoMaxSizeCompleteness;
+	public int growPriorityCellPersistance; // s
 
 	public float buildPriorityBias;
 	public ArrangementData[] arrangementData = new ArrangementData[3];

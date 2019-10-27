@@ -223,7 +223,6 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public AnimationCurve detatchmentKickAtCellCount;
 		public float detatchSlideDurationTicks = 10; // s
 		public float detatchSlideDurationTicksRandomDiff = 2; // s
-		public int detatchAfterCompletePersistance = 5; // How many times will we retry to find a spot to grow next cell in before we give up and realize that it is time to detatch (1 ==> give up (and detatch) after failing one time)
 
 		// General -> Drag
 		public float normalDrag = 0.15f;

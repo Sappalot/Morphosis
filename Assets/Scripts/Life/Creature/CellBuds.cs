@@ -47,4 +47,8 @@ public class CellBuds : MonoBehaviour {
 	public void SetEnabledPriority(int cardinalDirection, bool enabled) {
 		priority[cardinalDirection].enabled = enabled;
 	}
+
+	public void SetColorOfPriority(int cardinalDirection, Color color) {
+		priority[cardinalDirection].color = color;
+	}
 }

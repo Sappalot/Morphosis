@@ -79,6 +79,7 @@ public class Gene {
 	public GeneLogicBox originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox);
 	public GeneSizeSensor originSizeSensor = new GeneSizeSensor(SignalUnitEnum.OriginSizeSensor);
 	public float embryoMaxSizeCompleteness = 0.5f;
+	public int growPriorityCellPersistance = 20; //secounds
 	// ^ origin ^
 
 	public float originPulsePeriod {
@@ -435,6 +436,7 @@ public class Gene {
 		geneData.originDetatchLogicBoxData = originDetatchLogicBox.UpdateData();
 		geneData.originSizeSensorData = originSizeSensor.UpdateData();
 		geneData.embryoMaxSizeCompleteness = embryoMaxSizeCompleteness;
+		geneData.growPriorityCellPersistance = growPriorityCellPersistance;
 
 		//build order
 		geneData.buildPriorityBias = buildPriorityBias;
@@ -510,6 +512,7 @@ public class Gene {
 		originDetatchLogicBox.ApplyData(geneData.originDetatchLogicBoxData);
 		originSizeSensor.ApplyData(geneData.originSizeSensorData);
 		embryoMaxSizeCompleteness = geneData.embryoMaxSizeCompleteness;
+		growPriorityCellPersistance = geneData.growPriorityCellPersistance;
 
 		// Build order
 		buildPriorityBias = geneData.buildPriorityBias;

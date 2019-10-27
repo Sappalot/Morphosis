@@ -13,6 +13,10 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 	public Text embryoMaxSizeSliderLabel;
 	public Slider embryoMaxSizeSlider;
 
+	// Cell frowth persistance
+	public Text growPriorityCellPersistanceLabel;
+	public Slider growPriorityCellPersistanceSlider;
+
 	// Pulse
 	public Text pulseFrequenzySliderText;
 	public Slider pulseFrequenzySlider;
@@ -53,6 +57,15 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 	}
 	// ^embryo max size^
 
+	public void OnGrowPriorityCellPersistanceSliderMoved() {
+		if (ignoreSliderMoved || mode == PhenoGenoEnum.Phenotype) {
+			return;
+		}
+
+		GenePanel.instance.selectedGene.growPriorityCellPersistance = (int)growPriorityCellPersistanceSlider.value;
+		OnGenomeChanged(false);
+	}
+
 	public override List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
 		return detatchLogicBoxPanel.GetAllGeneGeneLogicBoxInputs();
 	}
@@ -80,12 +93,13 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 
 			Cell originCell = CellPanel.instance.selectedCell;
 
-			// embryo max size
-			embryoMaxSizeSliderLabel.text = pulseWaveCompletenessText.text = string.Format("Grow until size: {0:F0} % ==> {1} of {2} cells", originCell.gene.embryoMaxSizeCompleteness * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness(originCell.gene.embryoMaxSizeCompleteness), CreatureSelectionPanel.instance.soloSelected.genotype.geneCellCount);
-
+			embryoMaxSizeSliderLabel.text = string.Format("Embryo max size: {0:F0} % ==> {1} of {2} cells", originCell.gene.embryoMaxSizeCompleteness * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness(originCell.gene.embryoMaxSizeCompleteness), CreatureSelectionPanel.instance.soloSelected.genotype.geneCellCount);
+			growPriorityCellPersistanceLabel.text = string.Format("Persist to grow blocked priority cell for up to: {0:F0} s", originCell.gene.growPriorityCellPersistance);
+			
 			if (mode == PhenoGenoEnum.Phenotype) {
-				// embryo max size
 				embryoMaxSizeSlider.interactable = false;
+				growPriorityCellPersistanceSlider.interactable = false;
+
 				// pulse
 				pulseFrequenzySlider.interactable = false;
 				pulseWaveCompletenessText.text = string.Format("Wave complete: {0:F1} of {1:F0} ticks, completeness {2:F2}", originCell.originPulseTick, originCell.gene.originPulsePeriodTicks, originCell.originPulseCompleteness);
@@ -100,6 +114,8 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 
 			// embryo max size
 			embryoMaxSizeSlider.value = originCell.gene.embryoMaxSizeCompleteness;
+
+			growPriorityCellPersistanceSlider.value = originCell.gene.growPriorityCellPersistance;
 
 			pulseFrequenzySlider.value = 1f / (GenePanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime);
 			pulseFrequenzySliderText.text = string.Format("Ferquenzy: {0:F2} Hz ==> Period: {1:F2} s = {2:F0} ticks", 1f / (GenePanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime), GenePanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime, GenePanel.instance.selectedGene.originPulsePeriodTicks);

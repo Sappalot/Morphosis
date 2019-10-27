@@ -249,7 +249,7 @@ public class Phenotype : MonoBehaviour {
 	public void InitiateEmbryo(Creature creature, Vector2 position, float heading) {
 		Setup(position, heading);
 		NoGrowthReason reason;
-		TryGrow(creature, false, true, 1, true, false, 0, true, out reason);
+		TryGrow(creature, false, true, 1, true, false, 0, true, true, out reason);
 
 		cellsDiffersFromGeneCells = false;
 	}
@@ -286,14 +286,12 @@ public class Phenotype : MonoBehaviour {
 
 	public int TryGrowFully(Creature creature, bool allowOvergrowAttached) {
 		NoGrowthReason reason;
-		return TryGrow(creature, false, allowOvergrowAttached, creature.genotype.geneCellCount, true, false, 0, true, out reason);
+		return TryGrow(creature, false, allowOvergrowAttached, creature.genotype.geneCellCount, true, false, 0, true, true, out reason);
 	}
 
+	private int failedToGrowBuds = 0;
 
-	private int buildAtPriority = 0;
-	private int failedBuildsAtPriority = 0;
-
-	public int TryGrow(Creature creature, bool highestPriorityFirst, bool allowOvergrow, int cellGrowTargetCount, bool buildWithoutCost, bool tryPlayFx, ulong worldTick, bool enableInstantRegrowth, out NoGrowthReason noGrowthReason) {
+	public int TryGrow(Creature creature, bool highestPriorityFirst, bool allowOvergrow, int cellGrowTargetCount, bool buildWithoutCost, bool tryPlayFx, ulong worldTick, bool enableInstantRegrowth, bool growOtherIfBudsBlocked, out NoGrowthReason noGrowthReason) {
 		noGrowthReason = new NoGrowthReason();
 		
 		// If fully grown => return
@@ -339,17 +337,26 @@ public class Phenotype : MonoBehaviour {
 				// Use this bail out when growing cells one by one, only
 				if (highestPriorityFirst) {
 					if (highestPriority == null) {
-						highestPriority = buildGeneCell.buildIndex;
+						highestPriority = buildGeneCell.buildPriority;
 					}
 					if (buildGeneCell.buildPriority > highestPriority) { // highestPriority = lowest number
 						// We are here since NO 'cell to be' in previous priority 'layer' could be built
 
 						if (noGrowthReason.notEnoughNeighbourEnergy || noGrowthReason.waitingForRespawnCooldown || noGrowthReason.tooFarAwayFromNeighbours) {
-							// if the excuse, for at least one 'cell to be', was a lame one (lame = it should be able to build shortly) than don't try to build lower priority cells
+							// if the excuse, for at least one 'cell to be', was a lame one (lame = it should be able to build shortly) than don't try to build lower priority cells at all, but just wait for problem to be solved
 							break;
 						}
-						// there was a reasonable excuse for all cells is previos build 'layer' (reasonable = there was something in the way), so we coutin building in the next lowe level 'layer'
-						highestPriority = buildGeneCell.buildPriority; //step up highestPriority 'layer' a notch, and give all cells at this priority 'layer' a chance
+						// there was a reasonable excuse for all cells is previos build 'layer' (reasonable = there was something in the way), so we coutin building in the next lower level 'layer'
+						// but first wait a try a bit more before we give up and build
+						failedToGrowBuds++;
+						bool isNoNormalBlockingJustMotherOfChildBlocking = !noGrowthReason.spaceIsOccupied && (noGrowthReason.spaceIsOccupiedByMotherPlacenta || noGrowthReason.spaceIsOccupiedByChildOrigin);
+						if (growOtherIfBudsBlocked || isNoNormalBlockingJustMotherOfChildBlocking || failedToGrowBuds > Mathf.FloorToInt(originCell.gene.growPriorityCellPersistance / (GlobalSettings.instance.quality.growTickPeriod * Time.fixedDeltaTime))) {
+							//failedToGrowBuds = 0;
+							highestPriority = buildGeneCell.buildPriority; //step up highestPriority 'layer' a notch, and give all cells at this priority 'layer' a chance
+						} else {
+							
+							break; // Wait until more important cells have been grown
+						}
 					}
 				}
 
@@ -367,9 +374,16 @@ public class Phenotype : MonoBehaviour {
 				// This fix was tested on a case where a creature would go into edge error during telepoke. The fix would in this case cause the "C" to avoid building "P" in the neighbour spot of "O"
 
 				// Is the cell map position is free to grow on (regarding children and mother)?
-				if (!allowOvergrow && (IsMotherPlacentaLocation(creature, buildGeneCell.mapPosition) || IsChildOriginLocation(creature, buildGeneCell.mapPosition))) {
-					noGrowthReason.spaceIsOccupied = true;
-					continue;
+				//
+				//if (!allowOvergrow && (IsMotherPlacentaLocation(creature, buildGeneCell.mapPosition) || IsChildOriginLocation(creature, buildGeneCell.mapPosition)) ) {
+				if (! allowOvergrow) {
+					if (IsMotherPlacentaLocation(creature, buildGeneCell.mapPosition)) {
+						noGrowthReason.spaceIsOccupiedByMotherPlacenta = true;
+						continue;
+					} else if (IsChildOriginLocation(creature, buildGeneCell.mapPosition)) {
+						noGrowthReason.spaceIsOccupiedByChildOrigin = true;
+						continue;
+					}
 				}
 
 				Vector3 averagePosition = Vector3.zero;
@@ -481,6 +495,8 @@ public class Phenotype : MonoBehaviour {
 				SetCellDragNormal();
 			}
 
+			failedToGrowBuds = 0; // Reset 'wait for a moment to grow if blocked' 
+
 			PhenotypePanel.instance.MakeDirty();
 			MakeDirty();
 			connectionsDiffersFromCells = true;
@@ -492,7 +508,7 @@ public class Phenotype : MonoBehaviour {
 		isDirty = true;
 	}
 
-	private bool IsChildOriginLocation(Creature creature, Vector2i mapPosition) {
+	public bool IsChildOriginLocation(Creature creature, Vector2i mapPosition) {
 		//My(placenta) <====> Child(origin)
 		foreach (Creature child in creature.GetChildrenAlive()) {
 			if (creature.IsAttachedToChildAlive(child.id) && creature.ChildOriginMapPosition(child.id) == mapPosition) {
@@ -502,7 +518,7 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	private bool IsMotherPlacentaLocation(Creature creature, Vector2i mapPosition) {
+	public bool IsMotherPlacentaLocation(Creature creature, Vector2i mapPosition) {
 		//My(origin) <====> Mohther(placenta)
 		if (creature.IsAttachedToMotherAlive()) {
 			Creature creatureMother = creature.GetMotherAlive();

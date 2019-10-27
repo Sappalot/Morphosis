@@ -187,7 +187,9 @@ public abstract class Cell : MonoBehaviour {
 			for (int worldCardinalIndex = 0; worldCardinalIndex < 6; worldCardinalIndex++) {
 				int localCardinalIndex = AngleUtil.CardinalIndexRawToSafe(bindCardinalIndex + worldCardinalIndex - 1);
 				Cell budCell = creature.genotype.GetCellAtGridPosition(CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
-				bool show = !HasNeighbourCell(localCardinalIndex) && budCell != null;
+				bool show = !HasOwnNeighbourCell(localCardinalIndex) && budCell != null; // If it is an empty spot (or if it full but child origin or mother placenta)
+				bool isMotherPlacenta = creature.phenotype.IsMotherPlacentaLocation(creature, CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
+				bool isChildOrigin = creature.phenotype.IsChildOriginLocation(creature, CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
 				buds.SetEnabledBud(worldCardinalIndex, show);
 				buds.SetEnabledPriority(worldCardinalIndex, false);
 				if (show) {
@@ -195,6 +197,11 @@ public abstract class Cell : MonoBehaviour {
 					if (n != null) {
 						bool isPriorityBud = n.isPriorityBud; //Priority bud status should allready have been updated in phenotype
 						buds.SetEnabledPriority(worldCardinalIndex, isPriorityBud);
+						if (creature.IsAttachedToMotherAlive() && creature.phenotype.cellCount >= creature.CellCountAtCompleteness(creature.genotype.originCell.gene.embryoMaxSizeCompleteness)) { // embryo max size
+							buds.SetColorOfPriority(worldCardinalIndex, isMotherPlacenta || isChildOrigin ? Color.gray : Color.red);
+						} else {
+							buds.SetColorOfPriority(worldCardinalIndex, isMotherPlacenta || isChildOrigin ? Color.gray : Color.white);
+						}
 						buds.SetColorOfBud(worldCardinalIndex, budCell.GetColor());
 					}
 				}

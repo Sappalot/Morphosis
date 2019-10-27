@@ -520,10 +520,10 @@ public class Creature : MonoBehaviour {
 		genotype.GenomeScramble();
 	}
 
-	// Apply on Phenotype
+	// Button ==> Apply on Phenotype
 	public void TryGrow(bool allowOvergrowthOfAttached, int cellCount, bool playEffects) {
 		NoGrowthReason reason;
-		phenotype.TryGrow(this, true, allowOvergrowthOfAttached, cellCount, true, playEffects, 0, true, out reason);
+		phenotype.TryGrow(this, true, allowOvergrowthOfAttached, cellCount, true, playEffects, 0, true, true, out reason);
 		isDirtyGraphics = true;
 	}
 
@@ -750,12 +750,12 @@ public class Creature : MonoBehaviour {
 				if (!IsAttachedToMotherAlive() || cellCount < CellCountAtCompleteness(genotype.originCell.gene.embryoMaxSizeCompleteness) ) {
 					// able to grow if i am free from mother OR if i as embry hasn't reached max embryo size
 					NoGrowthReason reason;
-					didGrowCount = phenotype.TryGrow(this, true, false, 1, false, true, worldTicks, false, out reason);
+					didGrowCount = phenotype.TryGrow(this, true, false, 1, false, true, worldTicks, false, false, out reason);
 					if (didGrowCount > 0) {
 						PhenotypePanel.instance.MakeDirty();
 						CellPanel.instance.MakeDirty();
 						growthBlocked = 0;
-					} else if (((reason.spaceIsOccupied || reason.tooFarAwayFromNeighbours) && !reason.fullyGrown && !reason.notEnoughNeighbourEnergy && !reason.waitingForRespawnCooldown)) {
+					} else if (reason.spaceIsOccupied && !reason.tooFarAwayFromNeighbours && !reason.fullyGrown && !reason.notEnoughNeighbourEnergy && !reason.waitingForRespawnCooldown) {
 						// ? Should we count tooFarAwayFromNeighbours as blocked ??
 						growthBlocked++; // Wait a while before giving up on finding a spot to grow another cell
 					} else {
@@ -767,14 +767,8 @@ public class Creature : MonoBehaviour {
 			//Debug.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
 
 			// Detatch child from mother
-			if (PhenotypePhysicsPanel.instance.detatch.isOn && IsAttachedToMotherAlive()) {
-				//if ((phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Size && phenotype.originCell.originDetatchSizeThreshold < 1f && phenotype.cellCount >= Mathf.Clamp(Mathf.RoundToInt(phenotype.originCell.originDetatchSizeThreshold * genotype.geneCellCount), 1, genotype.geneCellCount)) ||
-				//	(phenotype.originCell.originDetatchMode == ChildDetatchModeEnum.Energy && phenotype.originCell.energyFullness >= phenotype.originCell.originDetatchEnergyThreshold && growthBlocked >= GlobalSettings.instance.phenotype.detatchAfterCompletePersistance)) {
-				//	detatch = true; 
-				//}
-				if (PhenotypePhysicsPanel.instance.detatch.isOn && phenotype.originCell.originDetatchLogicBox.GetOutput(SignalUnitSlotEnum.processedEarly)) {
-					detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
-				}
+			if (PhenotypePhysicsPanel.instance.detatch.isOn && IsAttachedToMotherAlive() && phenotype.originCell.originDetatchLogicBox.GetOutput(SignalUnitSlotEnum.processedEarly)) {
+				detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
 			}
 		}
 	}
