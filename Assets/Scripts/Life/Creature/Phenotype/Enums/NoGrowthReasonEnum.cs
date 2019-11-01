@@ -6,5 +6,6 @@
 	public bool spaceIsOccupied; // other creatures' animal cell (if attached not child origin or mother placenta) (Terrain still TODO)
 	public bool spaceIsOccupiedByChildOrigin;
 	public bool spaceIsOccupiedByMotherPlacenta;
-	public bool fullyGrown; // creature has built all its cells, thus reached it's max size
+	public bool fullyGrownDetatched; // creature has built all its cells, thus reached it's max size, may be bigger than embryo size
+	public bool fullyGrownEmbryo;
 }

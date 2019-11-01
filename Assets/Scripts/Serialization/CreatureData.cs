@@ -15,7 +15,7 @@ public class CreatureData {
 	public PhenotypeData phenotypeData = new PhenotypeData();
 
 	public int growTicks;
-	public int cantGrowMore;
+	public int canNotGrowMoreTicks;
 	public bool detatch;
 
 	public MotherData motherData = null;

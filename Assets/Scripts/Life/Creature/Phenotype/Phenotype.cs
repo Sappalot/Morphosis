@@ -293,12 +293,18 @@ public class Phenotype : MonoBehaviour {
 
 	public int TryGrow(Creature creature, bool highestPriorityFirst, bool allowOvergrow, int cellGrowTargetCount, bool buildWithoutCost, bool tryPlayFx, ulong worldTick, bool enableInstantRegrowth, bool growOtherIfBudsBlocked, out NoGrowthReason noGrowthReason) {
 		noGrowthReason = new NoGrowthReason();
-		
-		// If fully grown => return
+		Genotype genotype = creature.genotype;
+
+		// If fully embryo grown => return
+		if (creature.IsAttachedToMotherAlive() && cellCount == creature.CellCountAtCompleteness(genotype.originCell.gene.embryoMaxSizeCompleteness)) {
+			noGrowthReason.fullyGrownEmbryo = true;
+			return 0;
+		}
+
+		// If fully detatched grown => return
 		int growCellCount = 0;
-		Genotype genotype  = creature.genotype;
 		if (cellGrowTargetCount < 1 || this.cellCount >= genotype.geneCellCount) {
-			noGrowthReason.fullyGrown = true;
+			noGrowthReason.fullyGrownDetatched = true;
 			return 0;
 		}
 
@@ -344,7 +350,7 @@ public class Phenotype : MonoBehaviour {
 
 						if (noGrowthReason.notEnoughNeighbourEnergy || noGrowthReason.waitingForRespawnCooldown || noGrowthReason.tooFarAwayFromNeighbours) {
 							// if the excuse, for at least one 'cell to be', was a lame one (lame = it should be able to build shortly) than don't try to build lower priority cells at all, but just wait for problem to be solved
-							break;
+							break; // don't grow anything this time
 						}
 						// there was a reasonable excuse for all cells is previos build 'layer' (reasonable = there was something in the way), so we coutin building in the next lower level 'layer'
 						// but first wait a try a bit more before we give up and build
@@ -354,8 +360,7 @@ public class Phenotype : MonoBehaviour {
 							//failedToGrowBuds = 0;
 							highestPriority = buildGeneCell.buildPriority; //step up highestPriority 'layer' a notch, and give all cells at this priority 'layer' a chance
 						} else {
-							
-							break; // Wait until more important cells have been grown
+							break; // don't grow anything this time
 						}
 					}
 				}
@@ -502,6 +507,56 @@ public class Phenotype : MonoBehaviour {
 			connectionsDiffersFromCells = true;
 		}
 		return growCellCount;
+	}
+
+	public bool CanGrowMore(Creature creature) {
+		Genotype genotype = creature.genotype;
+		if (cellCount >= genotype.geneCellCount || creature.IsAttachedToMotherAlive() && cellCount >= creature.CellCountAtCompleteness(genotype.originCell.gene.embryoMaxSizeCompleteness)) {
+			// max size as embryo or detatched reached
+			return false;
+		}
+
+		List<Cell> buildList = genotype.geneCellListIndexSorted;
+		foreach (Cell buildGeneCell in buildList) {
+			// Is buildGeneCell an unbuilt cell with built neighbour(s)?
+			if (!IsCellBuiltForGeneCell(buildGeneCell) && IsCellBuiltAtNeighbourPosition(buildGeneCell.mapPosition)) {
+				if (IsMotherPlacentaLocation(creature, buildGeneCell.mapPosition)) {
+					// We are never going to grow on mother placenta
+					continue;
+				} else if (IsChildOriginLocation(creature, buildGeneCell.mapPosition)) {
+					// We are here since an egg has been fertilized which is no the origin of our attached little embry origin. We are never going to grow on child embryo origin
+					continue;
+				}
+
+				Vector3 averagePosition = Vector3.zero;
+				int positionCount = 0;
+
+				// Find neighbours around cell to build
+
+				for (int neighbourIndex = 0; neighbourIndex < 6; neighbourIndex++) {
+					Cell gridNeighbourBuilder = cellMap.GetGridNeighbourCell(buildGeneCell.mapPosition, neighbourIndex);
+					if (gridNeighbourBuilder != null) {
+						int indexToMe = CardinaIndexToNeighbour(gridNeighbourBuilder, buildGeneCell);
+						float meFromNeightbourBindPose = AngleUtil.CardinalIndexToAngle(indexToMe);
+						float meFromNeighbour = (gridNeighbourBuilder.angleDiffFromBindpose + meFromNeightbourBindPose) % 360f;
+						float distance = buildGeneCell.radius + gridNeighbourBuilder.radius;
+						averagePosition += gridNeighbourBuilder.transform.position + new Vector3(distance * Mathf.Cos(meFromNeighbour * Mathf.Deg2Rad), distance * Mathf.Sin(meFromNeighbour * Mathf.Deg2Rad), 0f);
+						positionCount++;
+					}
+				}
+
+				// Is the cell map position is free to grow on (regarding any cell)?
+				// TODO: Check obstacles (AKA terrain) in addition to cells! Otherwise cell can be built inside terrain ==> creatures shoots away
+				Vector2 spawnPosition = averagePosition / positionCount;
+				if (CanGrowAtPosition(spawnPosition, GlobalSettings.instance.phenotype.cellBuildNeededRadius)) {
+					// We are happy, since there was a place where neighbours could grow an ungrown cell
+					return true;
+				}
+			}
+		} // ^ for each (geneCell in geneCellList) ^
+
+		// Sorry, we have been through all unbuilt cells and none of them could be grown
+		return false;
 	}
 
 	public void MakeDirty() {
