@@ -198,9 +198,9 @@ public abstract class Cell : MonoBehaviour {
 						bool isPriorityBud = n.isPriorityBud; //Priority bud status should allready have been updated in phenotype
 						buds.SetEnabledPriority(worldCardinalIndex, isPriorityBud);
 						if (creature.IsAttachedToMotherAlive() && creature.phenotype.cellCount >= creature.CellCountAtCompleteness(creature.genotype.originCell.gene.embryoMaxSizeCompleteness)) { // embryo max size
-							buds.SetColorOfPriority(worldCardinalIndex, n.isPriorityBudOnAttachedCreature ? Color.gray : Color.red);
+							buds.SetColorOfPriority(worldCardinalIndex, n.isPriorityBudOnAttachedCreature ? ColorScheme.instance.budBlockedByAttached : ColorScheme.instance.budEmbryoMaxSize);
 						} else {
-							buds.SetColorOfPriority(worldCardinalIndex, n.isPriorityBudOnAttachedCreature ? Color.gray : Color.white);
+							buds.SetColorOfPriority(worldCardinalIndex, n.isPriorityBudOnAttachedCreature ? ColorScheme.instance.budBlockedByAttached : ColorScheme.instance.budHighestPrio);
 						}
 						buds.SetColorOfBud(worldCardinalIndex, budCell.GetColor());
 					}

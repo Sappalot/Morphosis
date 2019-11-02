@@ -46,8 +46,8 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color creatureLocked;
 	public Color creatureUnlocked;
 
-	public Color motherColor;
-	public Color fatherColor;
+	public Color mother;
+	public Color father;
 
 	public Color signalOn;
 	public Color signalOff;
@@ -55,6 +55,10 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color signalUnused;
 
 	public Color grayedOut;
+
+	public Color budHighestPrio;
+	public Color budBlockedByAttached;
+	public Color budEmbryoMaxSize;
 
 	public Color ToColor(CellTypeEnum cellType) {
 		if (cellType == CellTypeEnum.Egg) {

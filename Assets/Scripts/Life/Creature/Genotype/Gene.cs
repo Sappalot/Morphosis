@@ -147,6 +147,7 @@ public class Gene {
 		eggCellFertilizeLogic.SetCellToLocked(1, 1); // above attachment
 		eggCellFertilizeLogic.SetCellToLocked(2, 1); // above attachment
 		eggCellFertilizeLogic.UpdateConnections();
+		eggCellFertilizeEnergySensor.thresholdMin = 30f;
 		// ^ egg ^
 
 		// ...dendrites...
