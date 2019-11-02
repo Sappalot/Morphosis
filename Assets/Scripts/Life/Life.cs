@@ -565,13 +565,14 @@ public class Life : MonoBehaviour {
 			CreatureData creatureData = lifeData.creatureList[index];
 			Creature creature = InstantiateCreature(creatureData.id);
 			creature.ApplyData(creatureData);
+			creature.OnLoaded();
 			ProgressBar.instance.SpawnCreature();
 			yield return 0;
 		}
 
 		//update spring lengths for all creatures, we need to have them all in order to be updaint spring lengths even between mother and child
 		for (int index = 0; index < lifeData.creatureList.Count; index++) {
-			creatureList[index].phenotype.UpdateSpringLengths();
+			creatureList[index].OnLoaded(); // Now that we know our relatives we can update buds properly
 		}
 
 		creatureDeadCount =           lifeData.creatureDeadCount;

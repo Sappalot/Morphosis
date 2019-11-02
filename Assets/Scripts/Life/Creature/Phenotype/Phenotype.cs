@@ -1399,34 +1399,59 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	// only for graphics
 	private void UpdatePriorityBuds(Creature creature) {
-		float? highestPriority = null; // highest priority = lowest number
-		foreach (Cell buildGeneCell in creature.genotype.geneCellListPrioritySorted) {
-			if (!IsCellBuiltForGeneCell(buildGeneCell) && IsCellBuiltAtNeighbourPosition(buildGeneCell.mapPosition)) {
-				if (highestPriority == null) {
-					highestPriority = buildGeneCell.buildPriority;
+		float? highestPriorityValue = 0f; // highest priority = lowest number
+		List<Cell> highestPriorityGeneCells = new List<Cell>(); // an unbuilt cell
+		List<Cell> remainingGeneCells = new List<Cell>(creature.genotype.geneCellListPrioritySorted);
+
+		bool hasHighestPriorityNormalCell = false;
+		for (int safety = 0; safety < 100 && (highestPriorityValue != null && !hasHighestPriorityNormalCell && remainingGeneCells.Count > 0); safety++) {
+
+			if (safety > 90) {
+				Debug.Log("Ooooops!");
+			}
+			// one or more highest priority cells ==> highestPriorityGeneCells
+			highestPriorityValue = null;
+			foreach (Cell buildGeneCell in remainingGeneCells) {
+				if (!IsCellBuiltForGeneCell(buildGeneCell) && IsCellBuiltAtNeighbourPosition(buildGeneCell.mapPosition)) {
+					// Empty spot to build on with build neighbours
+					if (highestPriorityValue == null || buildGeneCell.buildPriority <= highestPriorityValue) {
+						highestPriorityGeneCells.Add(buildGeneCell);
+						highestPriorityValue = buildGeneCell.buildPriority;
+					} 
 				}
-				for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
-					Cell builtNeighbourToUnbuilt = cellMap.GetCell(CellMap.GetGridNeighbourGridPosition(buildGeneCell.mapPosition, cardinalIndex));
-					if (builtNeighbourToUnbuilt != null) {
-						// for the neighbours of the unbuilt set (neighbour in unbuilts direction (that is +180 degrees)) isPriorityBudSatus
-						CellNeighbour n = builtNeighbourToUnbuilt.GetNeighbour(AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3));
-						if (n != null) {
-							n.isPriorityBud = (buildGeneCell.buildPriority == highestPriority);
+			}
+
+			hasHighestPriorityNormalCell = false;
+			foreach (Cell buildGeneCell in highestPriorityGeneCells) {
+				if (IsChildOriginLocation(creature, buildGeneCell.mapPosition) || IsMotherPlacentaLocation(creature, buildGeneCell.mapPosition)) {
+					remainingGeneCells.Remove(buildGeneCell);
+				} else {
+					// A normal place to build a highest priority cell was found
+					hasHighestPriorityNormalCell = true;
+				}
+			}
+		}
+
+		foreach (Cell buildGeneCell in creature.genotype.geneCellListPrioritySorted) {
+			for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
+				Cell builtNeighbourToUnbuilt = cellMap.GetCell(CellMap.GetGridNeighbourGridPosition(buildGeneCell.mapPosition, cardinalIndex));
+				if (builtNeighbourToUnbuilt != null) {
+					// for the neighbours of the unbuilt set (neighbour in unbuilts direction (that is +180 degrees)) isPriorityBudSatus
+					CellNeighbour n = builtNeighbourToUnbuilt.GetNeighbour(AngleUtil.CardinalIndexRawToSafe(cardinalIndex + 3));
+					if (n != null) {
+						n.isPriorityBud = highestPriorityGeneCells.Contains(buildGeneCell);
+						if (IsChildOriginLocation(creature, buildGeneCell.mapPosition) || IsMotherPlacentaLocation(creature, buildGeneCell.mapPosition)) {
+							n.isPriorityBudOnAttachedCreature = true;
+						} else {
+							n.isPriorityBudOnAttachedCreature = false;
 						}
 					}
 				}
 			}
 		}
 	}
-
-	//public void SetEnabledAllGraphics(bool enabled) {
-	//	for (int index = 0; index < cellList.Count; index++) {
-	//		cellList[index].SetEnabledAllGraphics(enabled);
-	//	}
-	//}
-
-	
 
 	// Update
 	public void UpdateGraphics(Creature creature) {
@@ -1687,6 +1712,23 @@ public class Phenotype : MonoBehaviour {
 
 	//... Load / Save...
 
+	public void OnLoaded(Creature creature) {
+		UpdateSpringLengths();
+
+		// Update signals
+		for (int index = 0; index < cellList.Count; index++) {
+			if (signalTick == 0) {
+				cellList[index].ComputeSignalOutputs(GlobalSettings.instance.quality.signalTickPeriod);
+			}
+		}
+
+		//Turn arrrows right
+		UpdateRotation();
+		UpdateMasterAxons();
+
+		MakeBudsDirty(); // so that the priority bud arrows graphics will be updated
+	}
+
 	// Save
 	private PhenotypeData phenotypeData = new PhenotypeData();
 	public PhenotypeData UpdateData() {
@@ -1731,17 +1773,9 @@ public class Phenotype : MonoBehaviour {
 		shellCellTick = phenotypeData.shellCellTick;
 		veinCellTick = phenotypeData.veinCellTick;
 
-		// Update signals
 		signalTick = phenotypeData.signalTick;
-		for (int index = 0; index < cellList.Count; index++) {
-			if (signalTick == 0) {
-				cellList[index].ComputeSignalOutputs(GlobalSettings.instance.quality.signalTickPeriod);
-			}
-		}
 
-		//Turn arrrows right
-		UpdateRotation();
-		UpdateMasterAxons();
+		//OnLoaded(creature);
 	}
 
 	// ^ Load / Save ^

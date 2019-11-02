@@ -791,6 +791,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	private void RestoreCreatures() {
 		foreach (KeyValuePair<Creature, CreatureData> pair in storedCreatures) {
 			pair.Key.ApplyData(pair.Value);
+			pair.Key.OnLoaded();
 		}
 	}
 

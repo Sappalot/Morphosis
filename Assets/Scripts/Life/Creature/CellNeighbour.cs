@@ -9,6 +9,7 @@ public class CellNeighbour {
 	public int cardinalIndex; //cardinal direction index
 
 	public bool isPriorityBud; //Only graphical
+	public bool isPriorityBudOnAttachedCreature; //Only graphical
 
 	public CellNeighbour(int cardinalIndex) {
 		this.cardinalIndex = cardinalIndex;

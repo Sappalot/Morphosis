@@ -296,6 +296,7 @@ public class Freezer : MonoSingleton<Freezer> {
 			creatureData.id = Morphosis.instance.idGenerator.GetUniqueId(); // Freezer ids will allways start from scratch, then moved to range after load when other creatures are loaded
 			Creature creature = InstantiateCreature(creatureData.id);
 			creature.ApplyData(creatureData);
+			creature.OnLoaded();
 			creature.OnFreeze();
 			ProgressBar.instance.SpawnCreature();
 			yield return 0;

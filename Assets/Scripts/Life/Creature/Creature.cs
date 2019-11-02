@@ -804,6 +804,10 @@ public class Creature : MonoBehaviour {
 		Clear();
 	}
 
+	public void OnLoaded() {
+		phenotype.OnLoaded(this);
+	}
+
 	// Load / Save
 
 	private CreatureData creatureData = new CreatureData();
@@ -816,6 +820,7 @@ public class Creature : MonoBehaviour {
 	//Everything is deep cloned even the id. Change this not to have trouble
 	public void Clone(Creature original) {
 		ApplyData(original.UpdateData());
+		OnLoaded();
 	}
 
 	// Save
