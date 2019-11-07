@@ -2,12 +2,6 @@
 
 public class Gene {
 	// Egg cell
-	// Has to be stored in childs origin cell, so that inf can be kept when i'm gone
-	public ChildDetatchModeEnum eggCellDetatchMode = ChildDetatchModeEnum.Size;
-	public float eggCellDetatchSizeThreshold = 0.5f; // completeness count / max count 
-	public float eggCellDetatchEnergyThreshold = 0.4f; //part of max energy(* 100 to get  %)
-	public bool eggCellHibernateWhenAttachedToMother = false;
-	public bool eggCellHibernateWhenAttachedToChild = false;
 	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkLogicBoxA);
 	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkSensorA);
 	// AttachmentSensor needs no gene, since it has no settings
@@ -19,18 +13,12 @@ public class Gene {
 	public bool jawCellCannibalizeFather;
 	public bool jawCellCannibalizeSiblings;
 	public bool jawCellCannibalizeChildren;
-	public bool jawCellHibernateWhenAttachedToMother = false;
-	public bool jawCellHibernateWhenAttachedToChild = false;
 	// ^ Jaw Cell ^
 
 	// Leaf Cell
-	public bool leafCellHibernateWhenAttachedToMother = false;
-	public bool leafCellHibernateWhenAttachedToChild = false;
 	// ^ Leaf Cell ^
 
 	// Muscle Cell
-	public bool muscleCellHibernateWhenAttachedToMother = false;
-	public bool muscleCellHibernateWhenAttachedToChild = false;
 	// ^ Muscle Cell ^
 
 	// Shell
@@ -75,16 +63,18 @@ public class Gene {
 	// ^ sensors ^
 
 	// Origin...
-	public int originPulsePeriodTicks = 80;
+	public int originPulseTickPeriod = 80;
 	public GeneLogicBox originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox);
 	public GeneSizeSensor originSizeSensor = new GeneSizeSensor(SignalUnitEnum.OriginSizeSensor);
-	public float embryoMaxSizeCompleteness = 0.5f;
-	public int growPriorityCellPersistance = 20; //secounds
+	public float originEmbryoMaxSizeCompleteness = 0.5f;
+	public int originGrowPriorityCellPersistance = 20; //secounds
+
+
 	// ^ origin ^
 
 	public float originPulsePeriod {
 		get {
-			return originPulsePeriodTicks * Time.fixedDeltaTime;
+			return originPulseTickPeriod * Time.fixedDeltaTime;
 		}
 	}
 
@@ -147,7 +137,7 @@ public class Gene {
 		eggCellFertilizeLogic.SetCellToLocked(1, 1); // above attachment
 		eggCellFertilizeLogic.SetCellToLocked(2, 1); // above attachment
 		eggCellFertilizeLogic.UpdateConnections();
-		eggCellFertilizeEnergySensor.thresholdMin = 30f;
+		eggCellFertilizeEnergySensor.thresholdMin = 20f;
 		// ^ egg ^
 
 		// ...dendrites...
@@ -180,156 +170,120 @@ public class Gene {
 
 	public void Mutate(float strength) {
 		GlobalSettings gs = GlobalSettings.instance;
-		float mut = Random.Range(0, gs.mutation.cellTypeLeave + gs.mutation.cellTypeRandom * strength);
-		if (mut < gs.mutation.cellTypeRandom * strength) {
+		float mut = Random.Range(0, 1000f + gs.mutation.cellTypeChange * strength);
+		if (mut < gs.mutation.cellTypeChange * strength) {
 			type = (CellTypeEnum)Random.Range(0, 8);
 			ScrambleMetabolism();
 		}
 
-		// Egg
-		float spread = 0.06f; // TODO move toGlobal settings
-		mut = Random.Range(0, gs.mutation.eggCellDetatchSizeThresholdLeave + gs.mutation.eggCellDetatchSizeThresholdRandom * strength);
-		if (mut < gs.mutation.eggCellDetatchSizeThresholdRandom * strength) {
-			eggCellDetatchSizeThreshold = Mathf.Clamp(eggCellDetatchSizeThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellDetatchSizeThresholdMin, gs.phenotype.eggCellDetatchSizeThresholdMax); // count / max count
-		}
-
-		spread = 0.06f;
-		mut = Random.Range(0, gs.mutation.eggCellDetatchEnergyThresholdLeave + gs.mutation.eggCellDetatchEnergyThresholdRandom * strength);
-		if (mut < gs.mutation.eggCellDetatchEnergyThresholdRandom * strength) {
-			eggCellDetatchEnergyThreshold = Mathf.Clamp(eggCellDetatchEnergyThreshold - spread + Random.Range(0f, spread) + Random.Range(0f, spread), gs.phenotype.eggCellDetatchEnergyThresholdMin, gs.phenotype.eggCellDetatchEnergyThresholdMax); // J
-		}
-
-		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
-		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			eggCellHibernateWhenAttachedToMother = !eggCellHibernateWhenAttachedToMother; //toggle
-		}
-		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
-		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			eggCellHibernateWhenAttachedToChild = !eggCellHibernateWhenAttachedToChild; //toggle
-		}
+		// Egg...
+		eggCellFertilizeLogic.Mutate(strength);
+		eggCellFertilizeEnergySensor.Mutate(strength);
 		// ^ Egg ^
 
-		// Jaw
-		mut = Random.Range(0, gs.mutation.jawCellCannibalizeKinLeave + gs.mutation.jawCellCannibalizeKinChange * strength);
+		// Jaw...
+		mut = Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeKinChange * strength);
 		if (mut < gs.mutation.jawCellCannibalizeKinChange * strength) {
 			jawCellCannibalizeKin = !jawCellCannibalizeKin;
 		}
 
-		mut = Random.Range(0, gs.mutation.jawCellCannibalizeMotherLeave + gs.mutation.jawCellCannibalizeMotherChange * strength);
+		mut = Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeMotherChange * strength);
 		if (mut < gs.mutation.jawCellCannibalizeMotherChange * strength) {
 			jawCellCannibalizeMother = !jawCellCannibalizeMother;
 		}
 
-		mut = Random.Range(0, gs.mutation.jawCellCannibalizeFatherLeave + gs.mutation.jawCellCannibalizeFatherChange * strength);
+		mut = Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeFatherChange * strength);
 		if (mut < gs.mutation.jawCellCannibalizeFatherChange * strength) {
 			jawCellCannibalizeFather = !jawCellCannibalizeFather;
 		}
 
-		mut = Random.Range(0, gs.mutation.jawCellCannibalizeSiblingsLeave + gs.mutation.jawCellCannibalizeSiblingsChange * strength);
+		mut = Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeSiblingsChange * strength);
 		if (mut < gs.mutation.jawCellCannibalizeSiblingsChange * strength) {
 			jawCellCannibalizeSiblings = !jawCellCannibalizeSiblings;
 		}
 
-		mut = Random.Range(0, gs.mutation.jawCellCannibalizeChildrenLeave + gs.mutation.jawCellCannibalizeChildrenChange * strength);
+		mut = Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeChildrenChange * strength);
 		if (mut < gs.mutation.jawCellCannibalizeChildrenChange * strength) {
 			jawCellCannibalizeChildren = !jawCellCannibalizeChildren;
 		}
-
-		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
-		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			jawCellHibernateWhenAttachedToMother = !jawCellHibernateWhenAttachedToMother; //toggle
-		}
-		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
-		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			jawCellHibernateWhenAttachedToChild = !jawCellHibernateWhenAttachedToChild; //toggle
-		}
 		// ^ Jaw ^
 
-		// Leaf
-		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
-		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			leafCellHibernateWhenAttachedToMother = !leafCellHibernateWhenAttachedToMother; //toggle
-		}
-		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
-		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			leafCellHibernateWhenAttachedToChild = !leafCellHibernateWhenAttachedToChild; //toggle
-		}
-		// ^ Leaf ^ 
-
-		// Muscle
-		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
-		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			muscleCellHibernateWhenAttachedToMother = !muscleCellHibernateWhenAttachedToMother; //toggle
-		}
-		mut = Random.Range(0, gs.mutation.cellIdleWhenAttachedLeave + gs.mutation.cellIdleWhenAttachedChange * strength);
-		if (mut < gs.mutation.cellIdleWhenAttachedChange * strength) {
-			muscleCellHibernateWhenAttachedToChild = !muscleCellHibernateWhenAttachedToChild; //toggle
-		}
-		// ^ Muscle ^
-
-		// Shell
-		mut = Random.Range(0, gs.mutation.shellCellArmorClassLeave + gs.mutation.shellCellArmorClassChange * strength);
+		// Shell...
+		mut = Random.Range(0, 1000f + gs.mutation.shellCellArmorClassChange * strength);
 		if (mut < gs.mutation.shellCellArmorClassChange * strength) {
 			shellCellArmorClass = Mathf.Clamp(shellCellArmorClass - 2 + Random.Range(0, 5), 0, ShellCell.armourClassCount - 1);
 		}
-		mut = Random.Range(0, gs.mutation.shellCellTransparancyClassLeave + gs.mutation.shellCellTransparancyClassChange * strength);
+		mut = Random.Range(0, 1000f + gs.mutation.shellCellTransparancyClassChange * strength);
 		if (mut < gs.mutation.shellCellTransparancyClassChange * strength) {
 			shellCellTransparancyClass = Mathf.Clamp(shellCellTransparancyClass - 2 + Random.Range(0, 5), 0, ShellCell.transparencyClassCount - 1);
 		}
 		// ^ Shell ^
 
 
-		// Axon
-		mut = Random.Range(0, gs.mutation.axonEnabledLeave + gs.mutation.axonEnabledChange * strength);
-		if (mut < gs.mutation.axonEnabledChange * strength) {
+		// Axon...
+		mut = Random.Range(0, 1000f + gs.mutation.axonEnabledToggle * strength);
+		if (mut < gs.mutation.axonEnabledToggle * strength) {
 			axonIsEnabled = !axonIsEnabled; //toggle
 		}
 
-		spread = 45f;
-		mut = Random.Range(0, gs.mutation.axonFromOriginOffsetLeave + gs.mutation.axonFromOriginOffsetChange * strength);
+		mut = Random.Range(0, 1000f + gs.mutation.axonFromOriginOffsetChange * strength);
 		if (mut < gs.mutation.axonFromOriginOffsetChange * strength) {
-			axonFromOriginOffset = Mathf.Clamp(axonFromOriginOffset - spread + Random.Range(0f, spread) + Random.Range(0f, spread), 0f, 360f);
+			axonFromOriginOffset += gs.mutation.RandomDistributedValue() * gs.mutation.axonFromOriginOffsetChangeMaxAmount % 360f;
+			if (axonFromOriginOffset < 0f) {
+				axonFromOriginOffset += 360f;
+			}
 		}
 
-		mut = Random.Range(0, gs.mutation.axonIsFromOriginPlus180Leave + gs.mutation.axonIsFromOriginPlus180Change * strength);
-		if (mut < gs.mutation.axonIsFromOriginPlus180Change * strength) {
+		mut = Random.Range(0, 1000f + gs.mutation.axonIsFromOriginPlus180Toggle * strength);
+		if (mut < gs.mutation.axonIsFromOriginPlus180Toggle * strength) {
 			axonIsFromOriginPlus180 = !axonIsFromOriginPlus180; //toggle
 		}
 
-		spread = 45f;
-		mut = Random.Range(0, gs.mutation.axonFromMeOffsetLeave + gs.mutation.axonFromMeOffsetChange * strength);
+		mut = Random.Range(0, 1000f + gs.mutation.axonFromMeOffsetChange * strength);
 		if (mut < gs.mutation.axonFromMeOffsetChange * strength) {
-			axonFromMeOffset = Mathf.Clamp(axonFromMeOffset - spread + Random.Range(0f, spread) + Random.Range(0f, spread), 0f, 360f);
+			axonFromMeOffset = Mathf.Clamp(axonFromMeOffset + gs.mutation.RandomDistributedValue() * gs.mutation.axonFromMeOffsetChangeMaxAmount, 0, 360);
+			if (axonFromMeOffset < 0f) {
+				axonFromMeOffset += 360f;
+			}
 		}
 
-		spread = 0.25f;
-		mut = Random.Range(0, gs.mutation.axonRelaxContractLeave + gs.mutation.axonRelaxContractChange * strength);
+		mut = Random.Range(0, 1000f + gs.mutation.axonRelaxContractChange * strength);
 		if (mut < gs.mutation.axonRelaxContractChange * strength) {
-			axonRelaxContract = Mathf.Clamp(axonRelaxContract - spread + Random.Range(0f, spread) + Random.Range(0f, spread), -1f, 1f);
+			axonRelaxContract = Mathf.Clamp(axonRelaxContract + gs.mutation.RandomDistributedValue() * gs.mutation.axonRelaxContractChangeMaxAmount, -1f, 1f);
 		}
 
-		mut = Random.Range(0, gs.mutation.axonIsReverseLeave + gs.mutation.axonIsReverseChange * strength);
-		if (mut < gs.mutation.axonIsReverseChange * strength) {
+		mut = Random.Range(0, 1000f + gs.mutation.axonIsReverseToggle * strength);
+		if (mut < gs.mutation.axonIsReverseToggle * strength) {
 			axonIsReverse = !axonIsReverse; //toggle
 		}
 		// ^ Axon ^ 
 
 		// Origin..
-		spread = 40;
-		mut = Random.Range(0, gs.mutation.OriginPulseFrequenzyLeave + gs.mutation.OriginPulseFrequenzyRandom * strength);
-		if (mut < gs.mutation.OriginPulseFrequenzyRandom * strength) {
-			originPulsePeriodTicks = (int)Mathf.Clamp(originPulsePeriodTicks - spread + Random.Range(0, spread) + Random.Range(0, spread), 1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMax), 1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMin));
+		originDetatchLogicBox.Mutate(strength);
+		originSizeSensor.Mutate(strength);
+
+		mut = Random.Range(0, 1000f + gs.mutation.originEmbryoMaxSizeCompletenessChange * strength);
+		if (mut < gs.mutation.originEmbryoMaxSizeCompletenessChange * strength) {
+			originEmbryoMaxSizeCompleteness = Mathf.Clamp(originEmbryoMaxSizeCompleteness + gs.mutation.originEmbryoMaxSizeCompletenessChangeMaxAmount * gs.mutation.RandomDistributedValue(), 0f, 1f);
+		}
+
+		mut = Random.Range(0, gs.mutation.originGrowPriorityCellPersistenceChange * strength + 1000f);
+		if (mut < gs.mutation.originGrowPriorityCellPersistenceChange * strength) {
+			originGrowPriorityCellPersistance = (int)Mathf.Clamp(originGrowPriorityCellPersistance + gs.mutation.originGrowPriorityCellPersistenceMaxAmount * gs.mutation.RandomDistributedValue(), 0f, 120f);
+		}
+
+		mut = Random.Range(0, 1000f + gs.mutation.originPulseTickPeriodChange * strength);
+		if (mut < gs.mutation.originPulseTickPeriodChange * strength) {
+			originPulseTickPeriod = (int)Mathf.Clamp(originPulseTickPeriod + gs.mutation.originPulseTickPeriodChangeMaxAmount * gs.mutation.RandomDistributedValue(), 1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMax), 1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMin));
 		}
 		// ^ Origin ^
 
 		// Build priority
-		spread = 5;
-		mut = Random.Range(0, gs.mutation.buildPriorityBiasLeave + gs.mutation.buildPriorityBiasRandom * strength);
-		if (mut < gs.mutation.buildPriorityBiasRandom * strength) {
-			buildPriorityBias = Mathf.Clamp(buildPriorityBias - spread + Random.Range(0, spread) + Random.Range(0, spread), GlobalSettings.instance.phenotype.buildPriorityBiasMin, GlobalSettings.instance.phenotype.buildPriorityBiasMax);
+		mut = Random.Range(0, 1000f + gs.mutation.buildPriorityBiasChange * strength);
+		if (mut < gs.mutation.buildPriorityBiasChange * strength) {
+			buildPriorityBias = Mathf.Clamp(buildPriorityBias + gs.mutation.buildPriorityBiasChangeMaxAmount * gs.mutation.RandomDistributedValue(), GlobalSettings.instance.phenotype.buildPriorityBiasMin, GlobalSettings.instance.phenotype.buildPriorityBiasMax);
 			buildPriorityBias = Mathf.Round(buildPriorityBias * 10f) / 10f; // Round to closest tenth
 		}
-
 		// ^ Build Priority ^
 
 		//arrangements
@@ -389,11 +343,6 @@ public class Gene {
 		geneData.index = index;
 
 		// Egg
-		geneData.eggCellDetatchMode = eggCellDetatchMode;
-		geneData.eggCellDetatchSizeThreshold = eggCellDetatchSizeThreshold;
-		geneData.eggCellDetatchEnergyThreshold = eggCellDetatchEnergyThreshold;
-		geneData.eggCellHibernateWhenAttachedToMother = eggCellHibernateWhenAttachedToMother;
-		geneData.eggCellHibernateWhenAttachedToChild = eggCellHibernateWhenAttachedToChild;
 		geneData.eggFertilizeLogicBoxData = eggCellFertilizeLogic.UpdateData();
 		geneData.eggFertilizeEnergySensorData = eggCellFertilizeEnergySensor.UpdateData();
 
@@ -403,16 +352,10 @@ public class Gene {
 		geneData.jawCellCannibalizeFather =   jawCellCannibalizeFather;
 		geneData.jawCellCannibalizeSiblings = jawCellCannibalizeSiblings;
 		geneData.jawCellCannibalizeChildren = jawCellCannibalizeChildren;
-		geneData.jawCellHibernateWhenAttachedToMother = jawCellHibernateWhenAttachedToMother;
-		geneData.jawCellHibernateWhenAttachedToChild = jawCellHibernateWhenAttachedToChild;
 
 		// Leaf
-		geneData.leafCellHibernateWhenAttachedToMother = leafCellHibernateWhenAttachedToMother;
-		geneData.leafCellHibernateWhenAttachedToChild = leafCellHibernateWhenAttachedToChild;
 
 		// Muscle
-		geneData.muscleCellHibernateWhenAttachedToMother = muscleCellHibernateWhenAttachedToMother;
-		geneData.muscleCellHibernateWhenAttachedToChild = muscleCellHibernateWhenAttachedToChild;
 
 		// Shell
 		geneData.shellCellArmourClass = shellCellArmorClass;
@@ -433,11 +376,11 @@ public class Gene {
 		geneData.energySensorData = energySensor.UpdateData();
 
 		// Origin
-		geneData.originPulsePeriodTicks =     originPulsePeriodTicks;
+		geneData.originPulsePeriodTicks =     originPulseTickPeriod;
 		geneData.originDetatchLogicBoxData = originDetatchLogicBox.UpdateData();
 		geneData.originSizeSensorData = originSizeSensor.UpdateData();
-		geneData.embryoMaxSizeCompleteness = embryoMaxSizeCompleteness;
-		geneData.growPriorityCellPersistance = growPriorityCellPersistance;
+		geneData.embryoMaxSizeCompleteness = originEmbryoMaxSizeCompleteness;
+		geneData.growPriorityCellPersistance = originGrowPriorityCellPersistance;
 
 		//build order
 		geneData.buildPriorityBias = buildPriorityBias;
@@ -457,19 +400,6 @@ public class Gene {
 
 		// Egg
 		//backward compatibility
-		eggCellDetatchMode = geneData.eggCellDetatchMode;
-		if (geneData.eggCellDetatchSizeThreshold > GlobalSettings.instance.phenotype.eggCellDetatchSizeThresholdMax) {
-			eggCellDetatchSizeThreshold = geneData.eggCellDetatchSizeThreshold / 30f;
-		} else {
-			eggCellDetatchSizeThreshold = geneData.eggCellDetatchSizeThreshold;
-		}
-		if (geneData.eggCellDetatchEnergyThreshold > GlobalSettings.instance.phenotype.eggCellDetatchEnergyThresholdMax) {
-			eggCellDetatchEnergyThreshold = geneData.eggCellDetatchEnergyThreshold / 100f;
-		} else {
-			eggCellDetatchEnergyThreshold = geneData.eggCellDetatchEnergyThreshold;
-		}
-		eggCellHibernateWhenAttachedToMother = geneData.eggCellHibernateWhenAttachedToMother;
-		eggCellHibernateWhenAttachedToChild = geneData.eggCellHibernateWhenAttachedToChild;
 		eggCellFertilizeLogic.ApplyData(geneData.eggFertilizeLogicBoxData); // An operator for gate atl level 0 might be set here, though it is overridden in constructor
 		eggCellFertilizeEnergySensor.ApplyData(geneData.eggFertilizeEnergySensorData);
 
@@ -479,16 +409,10 @@ public class Gene {
 		jawCellCannibalizeFather =   geneData.jawCellCannibalizeFather;
 		jawCellCannibalizeSiblings = geneData.jawCellCannibalizeSiblings;
 		jawCellCannibalizeChildren = geneData.jawCellCannibalizeChildren;
-		jawCellHibernateWhenAttachedToMother = geneData.jawCellHibernateWhenAttachedToMother;
-		jawCellHibernateWhenAttachedToChild = geneData.jawCellHibernateWhenAttachedToChild;
 
 		// Leaf
-		leafCellHibernateWhenAttachedToMother = geneData.leafCellHibernateWhenAttachedToMother;
-		leafCellHibernateWhenAttachedToChild = geneData.leafCellHibernateWhenAttachedToChild;
 
 		// Muscle
-		muscleCellHibernateWhenAttachedToMother = geneData.muscleCellHibernateWhenAttachedToMother;
-		muscleCellHibernateWhenAttachedToChild = geneData.muscleCellHibernateWhenAttachedToChild;
 
 		// Shell
 		shellCellArmorClass = geneData.shellCellArmourClass;
@@ -509,11 +433,11 @@ public class Gene {
 		energySensor.ApplyData(geneData.energySensorData);
 
 		// Origin
-		originPulsePeriodTicks = geneData.originPulsePeriodTicks == 0 ? 80 : geneData.originPulsePeriodTicks;
+		originPulseTickPeriod = geneData.originPulsePeriodTicks == 0 ? 80 : geneData.originPulsePeriodTicks;
 		originDetatchLogicBox.ApplyData(geneData.originDetatchLogicBoxData);
 		originSizeSensor.ApplyData(geneData.originSizeSensorData);
-		embryoMaxSizeCompleteness = geneData.embryoMaxSizeCompleteness;
-		growPriorityCellPersistance = geneData.growPriorityCellPersistance;
+		originEmbryoMaxSizeCompleteness = geneData.embryoMaxSizeCompleteness;
+		originGrowPriorityCellPersistance = geneData.growPriorityCellPersistance;
 
 		// Build order
 		buildPriorityBias = geneData.buildPriorityBias;

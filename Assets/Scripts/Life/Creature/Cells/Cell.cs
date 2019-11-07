@@ -102,7 +102,7 @@ public abstract class Cell : MonoBehaviour {
 	public float originPulsePeriod {
 		get {
 			Debug.Assert(isOrigin);
-			return gene.originPulsePeriodTicks * Time.fixedDeltaTime;
+			return gene.originPulseTickPeriod * Time.fixedDeltaTime;
 		}
 	}
 
@@ -116,7 +116,7 @@ public abstract class Cell : MonoBehaviour {
 	public float originPulseCompleteness {
 		get {
 			Debug.Assert(isOrigin);
-			return (float)originPulseTick / (float)gene.originPulsePeriodTicks;
+			return (float)originPulseTick / (float)gene.originPulseTickPeriod;
 		}
 	}
 	// ^ Origin only ^
@@ -197,7 +197,7 @@ public abstract class Cell : MonoBehaviour {
 					if (n != null) {
 						bool isPriorityBud = n.isPriorityBud; //Priority bud status should allready have been updated in phenotype
 						buds.SetEnabledPriority(worldCardinalIndex, isPriorityBud);
-						if (creature.IsAttachedToMotherAlive() && creature.phenotype.cellCount >= creature.CellCountAtCompleteness(creature.genotype.originCell.gene.embryoMaxSizeCompleteness)) { // embryo max size
+						if (creature.IsAttachedToMotherAlive() && creature.phenotype.cellCount >= creature.CellCountAtCompleteness(creature.genotype.originCell.gene.originEmbryoMaxSizeCompleteness)) { // embryo max size
 							buds.SetColorOfPriority(worldCardinalIndex, n.isPriorityBudOnAttachedCreature ? ColorScheme.instance.budBlockedByAttached : ColorScheme.instance.budEmbryoMaxSize);
 						} else {
 							buds.SetColorOfPriority(worldCardinalIndex, n.isPriorityBudOnAttachedCreature ? ColorScheme.instance.budBlockedByAttached : ColorScheme.instance.budHighestPrio);
@@ -515,7 +515,7 @@ public abstract class Cell : MonoBehaviour {
 	//Origin only
 	public void UpdatePulse() {
 		originPulseTick++;
-		if (originPulseTick >= gene.originPulsePeriodTicks) {
+		if (originPulseTick >= gene.originPulseTickPeriod) {
 			originPulseTick = 0;
 		}
 	}
@@ -1368,7 +1368,7 @@ public abstract class Cell : MonoBehaviour {
 					} else {
 						SetLabelText(buildPriority.ToString());
 					}
-
+					
 					if (gene.buildPriorityBias < 0) {
 						SetLabelColor(Color.green);
 					} else if (gene.buildPriorityBias > 0) {

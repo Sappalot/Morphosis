@@ -3,12 +3,137 @@ using System.Collections.Generic;
 
 // A blueprint of the final creature
 // A way to know how cells are positioned relative to each other in the final creature
+// Used by both genotype and phenotype
 
 public class CellMap {
 	private Dictionary<GridPosition, Cell> grid = new Dictionary<GridPosition, Cell>();
-	private List<Vector2i> illegalPositions = new List<Vector2i>();
+	private List<Vector2i> illegalPositions = new List<Vector2i>(); // cell position allready occupied with another cell of lower build order
 
-	private Dictionary<Vector2i, float?> positionKilledTimeStamp = new Dictionary<Vector2i, float?>();
+	private Dictionary<Vector2i, float?> positionKilledTimeStamp = new Dictionary<Vector2i, float?>(); // phenotype
+	
+	private static Dictionary<Vector2i, int> radiusAtGridPosition = new Dictionary<Vector2i, int>();
+	private static List<Vector2i> gridPositionsWithinRadius0 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius1 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius2 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius3 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius4 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius5 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius6 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius7 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius8 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius9 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius10 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius11 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius12 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius13 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius14 = new List<Vector2i>();
+	private static List<Vector2i> gridPositionsWithinRadius15 = new List<Vector2i>();
+	private static List<List<Vector2i>> gridPositionsWithinRadiusList = new List<List<Vector2i>>();
+
+	// hexaRadius = 0; just gridPosition Cell
+	public static bool IsInsideMaximumHexagon(Vector2i gridPosition) {
+		return GetManhexanDistanceFromOrigin(gridPosition) <= Creature.maxRadiusHexagon;
+	}
+
+	public static List<Vector2i> GetGridPositionsWithinHexagon(int hexaRadius) {
+		return gridPositionsWithinRadiusList[hexaRadius];
+	}
+
+	public static int ManhexanDistance(Vector2i gridPositionA, Vector2i gridPositionB) {
+		Vector2i transformedGridPositionB = gridPositionB - gridPositionA;
+		return GetManhexanDistanceFromOrigin(transformedGridPositionB);
+	}
+
+	public static int GetManhexanDistanceFromOrigin(Vector2i gridPosition) {
+		return radiusAtGridPosition[gridPosition];
+	}
+
+	public static List<Vector2i> GetGridPositionsInHexagonAroundPosition(Vector2i gridPosition, int hexaRadius) {
+		return GetGridPositionsInHexagonAroundPosition(gridPosition, hexaRadius, new List<Vector2i>());
+	}
+
+	public static List<Vector2i> GetGridPositionsInHexagonAroundPosition(Vector2i gridPosition, int hexaRadius, List<Vector2i> gridPositions) {
+		List<Vector2i> hexagon = GetGridPositionsWithinHexagon(hexaRadius);
+		foreach (Vector2i position in hexagon) {
+			Vector2i transformedPosition = position + gridPosition;
+			
+			//fix strange transform distortion
+			if (gridPosition.x % 2 != 0 && transformedPosition.x % 2 == 0) {
+				transformedPosition.y++;
+			}
+
+			if (IsInsideMaximumHexagon(transformedPosition)) {
+				gridPositions.Add(transformedPosition);
+			}
+		}
+		return gridPositions;
+	}
+
+	public List<Cell> GetCellsInHexagonAroundPosition(Vector2i gridPosition, int hexaRadius) {
+		return GetCellsInHexagonAroundPosition(gridPosition, hexaRadius, new List<Cell>());
+	}
+
+	public List<Cell> GetCellsInHexagonAroundPosition(Vector2i gridPosition, int hexaRadius, List<Cell> cells) {
+		List<Vector2i> hexagon = GetGridPositionsInHexagonAroundPosition(gridPosition, hexaRadius);
+		foreach (Vector2i position in hexagon) {
+			if (HasCell(position)) {
+				cells.Add(GetCell(position));
+			}
+		}
+		return cells;
+
+	}
+
+	// Takes some time at startup save this shit
+	public static void Init() {
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius0);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius1);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius2);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius3);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius4);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius5);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius6);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius7);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius8);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius9);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius10);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius11);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius12);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius13);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius14);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius15);
+
+		for (int radius = 0; radius <= 15; radius++) {
+			for (int y = -radius; y <= radius; y++) {
+				for (int x = -radius; x <= radius; x++) {
+					if (IsInsideHexagon(new Vector2i(x, y), radius)) {
+						gridPositionsWithinRadiusList[radius].Add(new Vector2i(x, y));
+					}
+				}
+			}
+		}
+
+		for (int radius = 0; radius <= 15; radius++) {
+			for (int cellIndex = 0; cellIndex < gridPositionsWithinRadiusList[radius].Count; cellIndex++) {
+				if (!radiusAtGridPosition.ContainsKey(gridPositionsWithinRadiusList[radius][cellIndex])) {
+					radiusAtGridPosition.Add(gridPositionsWithinRadiusList[radius][cellIndex], radius);
+				}
+			}
+		}
+	}
+
+	private static bool IsInsideHexagon(Vector2i gridPosition, int hexaradius) {
+		int xStep = Mathf.Abs(gridPosition.x);
+		if (xStep > hexaradius || Mathf.Abs(gridPosition.y) > hexaradius) {
+			return false;
+		}
+		if (gridPosition.y > 0 && gridPosition.y > hexaradius - Mathf.CeilToInt(xStep * 0.5f - 0.01f)) {
+			return false;
+		} else if (gridPosition.y < -hexaradius + Mathf.FloorToInt(xStep * 0.5f + 0.01f)) {
+			return false;
+		}
+		return true;
+	}
 
 	public bool HasKilledTimeStamp(Vector2i gridPosition) {
 		return positionKilledTimeStamp.ContainsKey(gridPosition);
@@ -32,18 +157,6 @@ public class CellMap {
 	public int cellCount {
 		get {
 			return grid.Count;
-		}
-	}
-
-	public int opaqueCellCount {
-		get {
-			int count = 0;
-			foreach (Cell c in grid.Values) {
-				if (c.GetCellType() != CellTypeEnum.Shell) {
-					count++;
-				}
-			}
-			return count;
 		}
 	}
 
@@ -152,19 +265,6 @@ public class CellMap {
 			neighbour = new Vector2i(gridPosition.x + 1, gridPosition.y - even); // south east
 		}
 		return neighbour;
-	}
-
-	public static bool IsInsideHexagon(Vector2i gridPosition, int hexaradius) {
-		int xStep = Mathf.Abs(gridPosition.x);
-		if (xStep > hexaradius || Mathf.Abs(gridPosition.y) > hexaradius) {
-			return false;
-		}
-		if (gridPosition.y > 0 && gridPosition.y > hexaradius - Mathf.CeilToInt(xStep * 0.5f - 0.01f)) {
-			return false;
-		} else if (gridPosition.y < -hexaradius + Mathf.FloorToInt(xStep * 0.5f + 0.01f)) {
-			return false;
-		}
-		return true;
 	}
 
 	// Sweet name if i may say so myself :)

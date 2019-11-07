@@ -19,8 +19,8 @@ public class SizeSensor : SignalUnit {
 			output[1] = hostCell.creature.phenotype.cellCount < hostCell.creature.CellCountAtCompleteness((hostCell.gene.originSizeSensor as GeneSizeSensor).sizeThreshold); // B
 			output[2] = hostCell.creature.canNotGrowMoreTicks == 0; // C
 			output[3] = hostCell.creature.canNotGrowMoreTicks > 0; // D
-			output[4] = hostCell.creature.canNotGrowMoreTicks * Time.fixedDeltaTime > (hostCell.gene.originSizeSensor as GeneSizeSensor).hasNoRoomToGrowPatienseThreshold; // E
-			output[5] = hostCell.creature.phenotype.cellCount >= hostCell.creature.CellCountAtCompleteness(hostCell.gene.embryoMaxSizeCompleteness); // F
+			output[4] = hostCell.creature.canNotGrowMoreTicks * Time.fixedDeltaTime > (hostCell.gene.originSizeSensor as GeneSizeSensor).cantGrowMorePatienseThreshold; // E
+			output[5] = hostCell.creature.phenotype.cellCount >= hostCell.creature.CellCountAtCompleteness(hostCell.gene.originEmbryoMaxSizeCompleteness); // F
 		}
 	}
 

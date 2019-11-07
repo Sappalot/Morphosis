@@ -5,11 +5,6 @@ public class GeneData {
 	public int index;
 
 	// Egg
-	public ChildDetatchModeEnum eggCellDetatchMode; //J 
-	public float eggCellDetatchSizeThreshold; //J 
-	public float eggCellDetatchEnergyThreshold; //J
-	public bool eggCellHibernateWhenAttachedToMother;
-	public bool eggCellHibernateWhenAttachedToChild;
 	public GeneLogicBoxData eggFertilizeLogicBoxData;
 	public GeneEnergySensorData eggFertilizeEnergySensorData;
 
@@ -19,16 +14,10 @@ public class GeneData {
 	public bool jawCellCannibalizeFather;
 	public bool jawCellCannibalizeSiblings;
 	public bool jawCellCannibalizeChildren;
-	public bool jawCellHibernateWhenAttachedToMother;
-	public bool jawCellHibernateWhenAttachedToChild;
 
 	// Leaf
-	public bool leafCellHibernateWhenAttachedToMother;
-	public bool leafCellHibernateWhenAttachedToChild;
 
 	// Muscle
-	public bool muscleCellHibernateWhenAttachedToMother;
-	public bool muscleCellHibernateWhenAttachedToChild;
 
 	public int shellCellArmourClass;
 	public int shellCellTransparancyClass;

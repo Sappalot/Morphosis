@@ -30,6 +30,12 @@ public class EnergySensor : SignalUnit {
 		
 	}
 
+	public void Mutate(float strength) {
+		GlobalSettings gs = GlobalSettings.instance;
+		float rnd;
+
+	}
+
 	public override void Clear() {
 		for (int i = 0; i < output.Length; i++) {
 			output[i] = false;

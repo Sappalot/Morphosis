@@ -1,125 +1,108 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
-	//[Serializable]
-	//public class Mutation {
-	//	public float mutationStrength = 1f;
-
-	//}
-
 	[Serializable]
 	public class Mutation {
 		public float masterMutationStrength = 1f;
+		
+		public float cellTypeChange = 10f;
 
-		public float cellTypeLeave = 100f;
-		public float cellTypeRandom = 1f;
+		// ...Egg...
+		// TODO: child direction
+		// ^ Egg ^
 
-		public float eggCellDetatchModeLeave = 1000f;
-		public float eggCellDetatchModeChange = 10f;
-
-		public float eggCellDetatchSizeThresholdLeave = 1000f;
-		public float eggCellDetatchSizeThresholdRandom = 10f;
-
-		public float eggCellDetatchEnergyThresholdLeave = 1000f;
-		public float eggCellDetatchEnergyThresholdRandom = 10f;
-
-		public float jawCellCannibalizeKinLeave = 1000f;
+		// ...Jaw...
 		public float jawCellCannibalizeKinChange = 10f;
-
-		public float jawCellCannibalizeMotherLeave = 1000f;
 		public float jawCellCannibalizeMotherChange = 10f;
-
-		public float jawCellCannibalizeFatherLeave = 1000f;
 		public float jawCellCannibalizeFatherChange = 10f;
-
-		public float jawCellCannibalizeSiblingsLeave = 1000f;
 		public float jawCellCannibalizeSiblingsChange = 10f;
-
-		public float jawCellCannibalizeChildrenLeave = 1000f;
 		public float jawCellCannibalizeChildrenChange = 10f;
+		// ^ Jaw ^
 
-		public float shellCellArmorClassLeave = 1000f;
+		// ...Shell...
 		public float shellCellArmorClassChange = 10f;
-
-		public float shellCellTransparancyClassLeave = 1000f;
 		public float shellCellTransparancyClassChange = 10f;
+		// ^ Shell ^
 
-		// General cell
-		public float cellIdleWhenAttachedLeave = 1000f;
-		public float cellIdleWhenAttachedChange = 10f;
-		// ^ General Cell ^
+		public float axonEnabledToggle = 10f;
 
-		public float axonEnabledLeave = 1000f;
-		public float axonEnabledChange = 10f;
-
-		public float axonFromOriginOffsetLeave = 1000f;
 		public float axonFromOriginOffsetChange = 50f;
+		public float axonFromOriginOffsetChangeMaxAmount = 45f;
 
-		public float axonIsFromOriginPlus180Leave = 1000f;
-		public float axonIsFromOriginPlus180Change = 10f;
+		public float axonIsFromOriginPlus180Toggle = 10f;
 
-		public float axonFromMeOffsetLeave = 1000f;
 		public float axonFromMeOffsetChange = 10f;
+		public float axonFromMeOffsetChangeMaxAmount = 45f;
 
-		public float axonRelaxContractLeave = 1000f;
 		public float axonRelaxContractChange = 10f;
+		public float axonRelaxContractChangeMaxAmount = 2.5f;
 
-		public float axonIsReverseLeave = 1000f;
-		public float axonIsReverseChange = 10f;
+		public float axonIsReverseToggle = 10f;
 
-		public float OriginPulseFrequenzyLeave = 1000f;
-		public float OriginPulseFrequenzyRandom = 10f;
+		public float originEmbryoMaxSizeCompletenessChange = 50f;
+		public float originEmbryoMaxSizeCompletenessChangeMaxAmount = 0.2f; // % of full size 
+		
+		public float originGrowPriorityCellPersistenceChange = 10f;
+		public float originPersistToGrowBlockedPriorityCellPatienseChangeMaxAmount = 30f; //s
+		
+		public float originPulseTickPeriodChange = 10f;
+		public float originPulseTickPeriodChangeMaxAmount = 40f;
 
-		public float buildPriorityBiasLeave = 1000f;
-		public float buildPriorityBiasRandom = 10f;
+		public float buildPriorityBiasChange = 50f;
+		public float buildPriorityBiasChangeMaxAmount = 4f;
 
-		public float isEnabledLeave = 100f;
-		public float isEnabledToggle = 1f;
+		// logic box (works the same regardles if inside work panel or not)
+		public float logicBoxInputValveToggle = 10f;
 
-		public float referenceLeave = 100f;
-		public float referenceRandom = 1f;
+		// sensor (works the same regardles if inside work panel or not)
+		public float energySensorThresholdChange = 50f;
+		public float energySensorThresholdChangeMaxAmount = 30f; // +/-
 
-		public float flipTypeSameOppositeLeave = 100f;
-		public float flipTypeSameOppositeToggle = 1f;
+		public float sizeSensorSizeThresholdChange = 10f;
+		public float sizeSensorSizeThresholdChangeMaxAmount = 0.2f; // % of body size
 
-		public float flipTypeBlackWhiteToArrowLeave = 100f;
-		public float flipTypeBlackWhiteToArrowToggle = 1f;
+		public float sizeSensorCantGrowMorePatienseChange = 50f;
+		public float originGrowPriorityCellPersistenceMaxAmount = 30; // s
 
-		public float isflipPairsEnabledLeave = 100f;
-		public float isflipPairsEnabledToggle = 1f;
+		// arrangement
+		public float isEnabledToggle = 10f;
+		public float referenceChange = 10f;
+		public float flipTypeSameOppositeToggle = 10f;
+		public float flipTypeBlackWhiteToArrowToggle = 10f;
+		public float isflipPairsEnabledToggle = 10f;
+		public float typeChange = 10f;
 
-		public float typeLeave = 100f;
-		public float typeChange = 1f;
+		public float referenceCountDecrease1 = 30f;
+		public float referenceCountDecrease2 = 20f;
+		public float referenceCountDecrease3 = 10f;
+		public float referenceCountIncrease1 = 30f;
+		public float referenceCountIncrease2 = 20f;
+		public float referenceCountIncrease3 = 10f;
 
-		public float referenceCountLeave = 100f;
-		public float referenceCountDecrease1 = 3f;
-		public float referenceCountDecrease2 = 2f;
-		public float referenceCountDecrease3 = 1f;
-		public float referenceCountIncrease1 = 3f;
-		public float referenceCountIncrease2 = 2f;
-		public float referenceCountIncrease3 = 1f;
+		public float arrowIndexDecrease1 = 30f;
+		public float arrowIndexDecrease2 = 20f;
+		public float arrowIndexDecrease3 = 10f;
+		public float arrowIndexIncrease1 = 30f;
+		public float arrowIndexIncrease2 = 20f;
+		public float arrowIndexIncrease3 = 10f;
 
-		public float arrowIndexLeave = 100f;
-		public float arrowIndexDecrease1 = 3f;
-		public float arrowIndexDecrease2 = 2f;
-		public float arrowIndexDecrease3 = 1f;
-		public float arrowIndexIncrease1 = 3f;
-		public float arrowIndexIncrease2 = 2f;
-		public float arrowIndexIncrease3 = 1f;
+		public float gapDecrease1 = 30f;
+		public float gapDecrease2 = 20f;
+		public float gapDecrease3 = 10f;
+		public float gapIncrease1 = 30f;
+		public float gapIncrease2 = 20f;
+		public float gapIncrease3 = 10f;
 
-		public float gapLeave = 100f;
-		public float gapDecrease1 = 3f;
-		public float gapDecrease2 = 2f;
-		public float gapDecrease3 = 1f;
-		public float gapIncrease1 = 3f;
-		public float gapIncrease2 = 2f;
-		public float gapIncrease3 = 1f;
+		public float referenceSideToggle = 10f;
 
-		public float referenceSideLeave = 100f;
-		public float referenceSideToggle = 1f;
+		public AnimationCurve randomDistributionCurve;
+		// leaves a value in between [-1 ... 1] most likely close to 0
+		public float RandomDistributedValue() {
+			return randomDistributionCurve.Evaluate(UnityEngine.Random.Range(0f, 1f));
+		}
+
 	}
 	public Mutation mutation;
 
@@ -128,12 +111,6 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	public class Phenotype {
 		//Egg Cell
 		public float eggCellEffectCost = 0.2f; //W
-
-		public float eggCellDetatchSizeThresholdMin = 0.01f;   //creature completeness count/count
-		public float eggCellDetatchSizeThresholdMax = 1f; //creature completeness count/count
-
-		public float eggCellDetatchEnergyThresholdMin = 0f;   //cell energy fullness J/J
-		public float eggCellDetatchEnergyThresholdMax = 1.1f; //cell energy fullness J/J
 
 		//Fungal Cell
 		public float fungalCellEffectCost = 0f; // W
@@ -171,7 +148,6 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public AnimationCurve shellCellEffectCostMultiplierAtTransparancy; //cheeper the more transparent (when armor class constant) beacuse blocking leaf more
 		public AnimationCurve shellCellStrengthAtArmor;
 		public AnimationCurve shellCellArmorAtNormalizedArmorClass; // sets how the values (strength & cost) are distributed over the buttons (along x-axis)
-		
 
 		//           shellCellEffect =                    0.0 W
 		public float shellCellStrengthFactorDeprecated = 20f; // 1=> as easy as other cells, 0.5 => weak, 20 ==> strong
@@ -194,8 +170,8 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float nonFinForceFactor = 0.5f;
 
 		//Origin
-		public float originPulseFrequenzyMin = 0.05f;
-		public float originPulseFrequenzyMax = 2f;
+		public float originPulseFrequenzyMin = 0.05f; //TODO change to period
+		public float originPulseFrequenzyMax = 2f; //TODO change to period
 
 		// Build Priority Bias
 		public float buildPriorityBiasMin = -10f;
@@ -222,7 +198,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		//General -> Detatch
 		public AnimationCurve detatchmentKickAtCellCount;
 		public float detatchSlideDurationTicks = 10; // s
-		public float detatchSlideDurationTicksRandomDiff = 2; // s
+		public float detatchSlideDurationTicksRandomDiff = 2; // s to make child locomotion come out of sync with mother
 
 		// General -> Drag
 		public float normalDrag = 0.15f;

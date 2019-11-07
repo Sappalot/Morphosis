@@ -14,7 +14,10 @@ public class Morphosis : MonoSingleton<Morphosis> {
 	public RelationArrows relationArrows;
 
 	private void Start () {
-		// TODO: load last world
+
+		CellMap.Init();
+		
+
 		// Creature id's will be set from file
 		World.instance.Init(); // Just 1 world, lots of work keeping several instances at once
 

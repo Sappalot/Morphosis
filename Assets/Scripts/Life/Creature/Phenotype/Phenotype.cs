@@ -182,12 +182,6 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public int opaqueCellCount {
-		get {
-			return cellMap.opaqueCellCount;
-		}
-	}
-
 	public int GetCellOfTypeCount(CellTypeEnum type) {
 		int count = 0;
 		foreach (Cell c in cellList) {
@@ -296,7 +290,7 @@ public class Phenotype : MonoBehaviour {
 		Genotype genotype = creature.genotype;
 
 		// If fully embryo grown => return
-		if (creature.IsAttachedToMotherAlive() && cellCount == creature.CellCountAtCompleteness(genotype.originCell.gene.embryoMaxSizeCompleteness)) {
+		if (creature.IsAttachedToMotherAlive() && cellCount == creature.CellCountAtCompleteness(genotype.originCell.gene.originEmbryoMaxSizeCompleteness)) {
 			noGrowthReason.fullyGrownEmbryo = true;
 			return 0;
 		}
@@ -356,7 +350,7 @@ public class Phenotype : MonoBehaviour {
 						// but first wait a try a bit more before we give up and build
 						failedToGrowBuds++;
 						bool isNoNormalBlockingJustMotherOfChildBlocking = !noGrowthReason.spaceIsOccupied && (noGrowthReason.spaceIsOccupiedByMotherPlacenta || noGrowthReason.spaceIsOccupiedByChildOrigin);
-						if (growOtherIfBudsBlocked || isNoNormalBlockingJustMotherOfChildBlocking || failedToGrowBuds > Mathf.FloorToInt(originCell.gene.growPriorityCellPersistance / (GlobalSettings.instance.quality.growTickPeriod * Time.fixedDeltaTime))) {
+						if (growOtherIfBudsBlocked || isNoNormalBlockingJustMotherOfChildBlocking || failedToGrowBuds > Mathf.FloorToInt(originCell.gene.originGrowPriorityCellPersistance / (GlobalSettings.instance.quality.growTickPeriod * Time.fixedDeltaTime))) {
 							//failedToGrowBuds = 0;
 							highestPriority = buildGeneCell.buildPriority; //step up highestPriority 'layer' a notch, and give all cells at this priority 'layer' a chance
 						} else {
@@ -511,7 +505,7 @@ public class Phenotype : MonoBehaviour {
 
 	public bool CanGrowMore(Creature creature) {
 		Genotype genotype = creature.genotype;
-		if (cellCount >= genotype.geneCellCount || creature.IsAttachedToMotherAlive() && cellCount >= creature.CellCountAtCompleteness(genotype.originCell.gene.embryoMaxSizeCompleteness)) {
+		if (cellCount >= genotype.geneCellCount || creature.IsAttachedToMotherAlive() && cellCount >= creature.CellCountAtCompleteness(genotype.originCell.gene.originEmbryoMaxSizeCompleteness)) {
 			// max size as embryo or detatched reached
 			return false;
 		}

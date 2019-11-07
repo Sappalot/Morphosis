@@ -19,6 +19,7 @@ public class EggCell : Cell {
 		}
 	}
 
+	// Are we going to let cell hibernate or not??
 	override public bool IsHibernating() {
 		return false;
 		//return (gene.eggCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.eggCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());

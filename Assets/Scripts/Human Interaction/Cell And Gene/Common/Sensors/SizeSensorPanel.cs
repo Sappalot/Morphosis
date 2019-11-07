@@ -24,7 +24,7 @@ public class SizeSensorPanel : SensorPanel {
 			return;
 		}
 
-		(affectedGeneSensor as GeneSizeSensor).hasNoRoomToGrowPatienseThreshold = (int)cantGrowMoreTimeSlider.value;
+		(affectedGeneSensor as GeneSizeSensor).cantGrowMorePatienseThreshold = (int)cantGrowMoreTimeSlider.value;
 		OnGenomeChanged(false);
 	}
 
@@ -42,12 +42,12 @@ public class SizeSensorPanel : SensorPanel {
 				sizeLessThanSliderLabel.text = string.Format("B: Size < {0:F0} % ({1:F0} cells or smaller)", (affectedGeneSensor as GeneSizeSensor).sizeThreshold * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness((affectedGeneSensor as GeneSizeSensor).sizeThreshold) - 1);
 				// C: Can grow more
 				// D: Can't grow more
-				cantGrowMoreTime.text = string.Format("E: Can't grow more for t > {0:F0} s", (affectedGeneSensor as GeneSizeSensor).hasNoRoomToGrowPatienseThreshold);
+				cantGrowMoreTime.text = string.Format("E: Can't grow more for t > {0:F0} s", (affectedGeneSensor as GeneSizeSensor).cantGrowMorePatienseThreshold);
 				// F: Embry max size reached
 
 				sizeThresholdSlider.value = (affectedGeneSensor as GeneSizeSensor).sizeThreshold;
 				sizeThresholdSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
-				cantGrowMoreTimeSlider.value = (affectedGeneSensor as GeneSizeSensor).hasNoRoomToGrowPatienseThreshold;
+				cantGrowMoreTimeSlider.value = (affectedGeneSensor as GeneSizeSensor).cantGrowMorePatienseThreshold;
 				cantGrowMoreTimeSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
 				ignoreSliderMoved = false;

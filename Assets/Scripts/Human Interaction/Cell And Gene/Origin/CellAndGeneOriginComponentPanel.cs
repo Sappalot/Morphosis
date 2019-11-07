@@ -41,7 +41,7 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 			return;
 		}
 
-		GenePanel.instance.selectedGene.originPulsePeriodTicks = Mathf.CeilToInt(1f / (Time.fixedDeltaTime * pulseFrequenzySlider.value));
+		GenePanel.instance.selectedGene.originPulseTickPeriod = Mathf.CeilToInt(1f / (Time.fixedDeltaTime * pulseFrequenzySlider.value));
 		OnGenomeChanged(false);
 	}
 	// ^pulse^
@@ -52,7 +52,7 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 			return;
 		}
 
-		GenePanel.instance.selectedGene.embryoMaxSizeCompleteness = embryoMaxSizeSlider.value;
+		GenePanel.instance.selectedGene.originEmbryoMaxSizeCompleteness = embryoMaxSizeSlider.value;
 		OnGenomeChanged(false);
 	}
 	// ^embryo max size^
@@ -62,7 +62,7 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 			return;
 		}
 
-		GenePanel.instance.selectedGene.growPriorityCellPersistance = (int)growPriorityCellPersistanceSlider.value;
+		GenePanel.instance.selectedGene.originGrowPriorityCellPersistance = (int)growPriorityCellPersistanceSlider.value;
 		OnGenomeChanged(false);
 	}
 
@@ -93,8 +93,8 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 
 			Cell originCell = CellPanel.instance.selectedCell;
 
-			embryoMaxSizeSliderLabel.text = string.Format("Embryo max size: {0:F0} % ==> {1} of {2} cells", originCell.gene.embryoMaxSizeCompleteness * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness(originCell.gene.embryoMaxSizeCompleteness), CreatureSelectionPanel.instance.soloSelected.genotype.geneCellCount);
-			growPriorityCellPersistanceLabel.text = string.Format("Persist to grow blocked priority cell for up to: {0:F0} s", originCell.gene.growPriorityCellPersistance);
+			embryoMaxSizeSliderLabel.text = string.Format("Embryo max size: {0:F0} % ==> {1} of {2} cells", originCell.gene.originEmbryoMaxSizeCompleteness * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness(originCell.gene.originEmbryoMaxSizeCompleteness), CreatureSelectionPanel.instance.soloSelected.genotype.geneCellCount);
+			growPriorityCellPersistanceLabel.text = string.Format("Persist to grow blocked priority cell for up to: {0:F0} s", originCell.gene.originGrowPriorityCellPersistance);
 			
 			if (mode == PhenoGenoEnum.Phenotype) {
 				embryoMaxSizeSlider.interactable = false;
@@ -102,7 +102,7 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 
 				// pulse
 				pulseFrequenzySlider.interactable = false;
-				pulseWaveCompletenessText.text = string.Format("Wave complete: {0:F1} of {1:F0} ticks, completeness {2:F2}", originCell.originPulseTick, originCell.gene.originPulsePeriodTicks, originCell.originPulseCompleteness);
+				pulseWaveCompletenessText.text = string.Format("Wave complete: {0:F1} of {1:F0} ticks, completeness {2:F2}", originCell.originPulseTick, originCell.gene.originPulseTickPeriod, originCell.originPulseCompleteness);
 
 			} else {
 				embryoMaxSizeSlider.interactable = isOriginGenotypeSelected && IsUnlocked();
@@ -113,12 +113,12 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 			}
 
 			// embryo max size
-			embryoMaxSizeSlider.value = originCell.gene.embryoMaxSizeCompleteness;
+			embryoMaxSizeSlider.value = originCell.gene.originEmbryoMaxSizeCompleteness;
 
-			growPriorityCellPersistanceSlider.value = originCell.gene.growPriorityCellPersistance;
+			growPriorityCellPersistanceSlider.value = originCell.gene.originGrowPriorityCellPersistance;
 
-			pulseFrequenzySlider.value = 1f / (GenePanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime);
-			pulseFrequenzySliderText.text = string.Format("Ferquenzy: {0:F2} Hz ==> Period: {1:F2} s = {2:F0} ticks", 1f / (GenePanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime), GenePanel.instance.selectedGene.originPulsePeriodTicks * Time.fixedDeltaTime, GenePanel.instance.selectedGene.originPulsePeriodTicks);
+			pulseFrequenzySlider.value = 1f / (GenePanel.instance.selectedGene.originPulseTickPeriod * Time.fixedDeltaTime);
+			pulseFrequenzySliderText.text = string.Format("Ferquenzy: {0:F2} Hz ==> Period: {1:F2} s = {2:F0} ticks", 1f / (GenePanel.instance.selectedGene.originPulseTickPeriod * Time.fixedDeltaTime), GenePanel.instance.selectedGene.originPulseTickPeriod * Time.fixedDeltaTime, GenePanel.instance.selectedGene.originPulseTickPeriod);
 
 			detatchLogicBoxPanel.outputText = "Detatch from mother";
 

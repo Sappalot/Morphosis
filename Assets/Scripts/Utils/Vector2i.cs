@@ -15,6 +15,14 @@ public class Vector2i {
 		this.y = y;
 	}
 
+	public static Vector2i operator -(Vector2i a, Vector2i b) {
+		return new Vector2i(a.x - b.x, a.y - b.y);
+	}
+
+	public static Vector2i operator +(Vector2i a, Vector2i b) {
+		return new Vector2i(a.x + b.x, a.y + b.y);
+	}
+
 	public static bool operator ==(Vector2i obj1, Vector2i obj2) {
 		if (ReferenceEquals(obj1, obj2)) {
 			return true;

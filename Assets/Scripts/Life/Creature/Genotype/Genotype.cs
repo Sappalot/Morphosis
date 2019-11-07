@@ -20,7 +20,6 @@ public class Genotype : MonoBehaviour {
 	[HideInInspector]
 	public List<Cell> geneCellListIndexSorted = new List<Cell>();
 	//[HideInInspector]
-	//public List<Cell> m_geneCellListPrioritySorted = new List<Cell>();
 	public List<Cell> geneCellListPrioritySorted {
 		get {
 			List<Cell> prioritySorted = new List<Cell>(geneCellListIndexSorted);
@@ -29,19 +28,12 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	//private bool isGeneCellListPrioritySortedDirty;
-	//public void MakeGeneCellListPrioritySortedDirty() {
-	//	isGeneCellListPrioritySortedDirty = true;
-	//}
-
 	public void AddCellToGeneCellLists(Cell cell) {
 		geneCellListIndexSorted.Add(cell);
-		//m_geneCellListPrioritySorted.Add(cell);
 	}
 
 	public void ClearGeneCellLists() {
 		geneCellListIndexSorted.Clear();
-		//m_geneCellListPrioritySorted.Clear();
 	}
 	// ^ geneCellLists ^
 
@@ -328,12 +320,8 @@ public class Genotype : MonoBehaviour {
 							Gene referenceGene = geneReference.gene;
 							Vector2i referenceCellMapPosition = CellMap.GetGridNeighbourGridPosition(spawningFromCell.mapPosition, referenceBindHeading);
 
-							//Check if reference position is still inside of creature size max area mask
-							//if (referenceCellMapPosition.x > Creature.maxRadiusHexagon || referenceCellMapPosition.x < -Creature.maxRadiusHexagon || referenceCellMapPosition.y > Creature.maxRadiusHexagon || referenceCellMapPosition.y < -Creature.maxRadiusHexagon) {
-							//	continue;
-							//}
-
-							if (!CellMap.IsInsideHexagon(referenceCellMapPosition, Creature.maxRadiusHexagon)) {
+							//if (!CellMap.IsInsideHexagon(referenceCellMapPosition, Creature.maxRadiusHexagon)) {
+							if (!CellMap.IsInsideMaximumHexagon(referenceCellMapPosition)) {
 								continue;
 							}
 

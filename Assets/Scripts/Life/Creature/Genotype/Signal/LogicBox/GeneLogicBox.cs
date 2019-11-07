@@ -293,6 +293,12 @@
 		return false;
 	}
 
+	public void Mutate(float strength) {
+		for (int i = 0; i < columnCount; i++) {
+			inputRow3[i].Mutate(strength);
+		}
+	}
+
 	// Save
 	private GeneLogicBoxData geneLogicBoxData = new GeneLogicBoxData();
 	public GeneLogicBoxData UpdateData() {
