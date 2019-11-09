@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
+using SerializerFree;
+using SerializerFree.Serializers;
 
 // A blueprint of the final creature
 // A way to know how cells are positioned relative to each other in the final creature
@@ -32,19 +35,26 @@ public class CellMap {
 
 	// hexaRadius = 0; just gridPosition Cell
 	public static bool IsInsideMaximumHexagon(Vector2i gridPosition) {
-		return GetManhexanDistanceFromOrigin(gridPosition) <= Creature.maxRadiusHexagon;
+		return ManhexanDistanceFromOrigin(gridPosition) <= Creature.maxRadiusHexagon;
 	}
 
 	public static List<Vector2i> GetGridPositionsWithinHexagon(int hexaRadius) {
 		return gridPositionsWithinRadiusList[hexaRadius];
 	}
 
-	public static int ManhexanDistance(Vector2i gridPositionA, Vector2i gridPositionB) {
-		Vector2i transformedGridPositionB = gridPositionB - gridPositionA;
-		return GetManhexanDistanceFromOrigin(transformedGridPositionB);
+	public static int ManhexanDistance(Vector2i positionA, Vector2i positionB) {
+		Vector2i transformedGridPositionB = positionB - positionA;
+	
+		// COmpensate for walking in hexa grid distortion
+		if (positionB.x % 2 == 0 && positionA.x % 2 == 1) {
+			transformedGridPositionB.y--;
+		}
+
+		return ManhexanDistanceFromOrigin(transformedGridPositionB);
 	}
 
-	public static int GetManhexanDistanceFromOrigin(Vector2i gridPosition) {
+	// Sweet name if i may say so myself :)
+	public static int ManhexanDistanceFromOrigin(Vector2i gridPosition) {
 		return radiusAtGridPosition[gridPosition];
 	}
 
@@ -82,44 +92,6 @@ public class CellMap {
 		}
 		return cells;
 
-	}
-
-	// Takes some time at startup save this shit
-	public static void Init() {
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius0);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius1);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius2);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius3);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius4);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius5);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius6);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius7);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius8);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius9);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius10);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius11);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius12);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius13);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius14);
-		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius15);
-
-		for (int radius = 0; radius <= 15; radius++) {
-			for (int y = -radius; y <= radius; y++) {
-				for (int x = -radius; x <= radius; x++) {
-					if (IsInsideHexagon(new Vector2i(x, y), radius)) {
-						gridPositionsWithinRadiusList[radius].Add(new Vector2i(x, y));
-					}
-				}
-			}
-		}
-
-		for (int radius = 0; radius <= 15; radius++) {
-			for (int cellIndex = 0; cellIndex < gridPositionsWithinRadiusList[radius].Count; cellIndex++) {
-				if (!radiusAtGridPosition.ContainsKey(gridPositionsWithinRadiusList[radius][cellIndex])) {
-					radiusAtGridPosition.Add(gridPositionsWithinRadiusList[radius][cellIndex], radius);
-				}
-			}
-		}
 	}
 
 	private static bool IsInsideHexagon(Vector2i gridPosition, int hexaradius) {
@@ -267,12 +239,6 @@ public class CellMap {
 		return neighbour;
 	}
 
-	// Sweet name if i may say so myself :)
-	private int GetManhexanDistanceToOrigo(Vector2i gridPosition) {
-		// TODO
-		return 0;
-	}
-
 	//returned position is in creature space
 	public static Vector2 ToModelSpacePosition(Vector2i gridPosition) {
 		float defaultCellRadius = 0.5f;
@@ -385,5 +351,279 @@ public class CellMap {
 				MarkCellAtNeighbours(neighbourPosition);
 			}
 		}
+	}
+
+	// Takes some time at startup save this shit
+	public static void Init() {
+		//CellMapData cellMapData = LoadCellMapData();
+		//if (cellMapData != null) {
+		//	//Apply old
+		//	ApplyData(cellMapData);
+		//} else {
+
+		// Generate
+		// takes just ~0.02 s ==> no need for this save load shit :/ , note check time cost to generate first before creating some fancy solution!!!!!!!!!!!!!!!! 
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius0);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius1);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius2);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius3);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius4);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius5);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius6);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius7);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius8);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius9);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius10);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius11);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius12);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius13);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius14);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius15);
+
+		for (int radius = 0; radius <= 15; radius++) {
+			for (int y = -radius; y <= radius; y++) {
+				for (int x = -radius; x <= radius; x++) {
+					if (IsInsideHexagon(new Vector2i(x, y), radius)) {
+						gridPositionsWithinRadiusList[radius].Add(new Vector2i(x, y));
+					}
+				}
+			}
+		}
+
+		for (int radius = 0; radius <= 15; radius++) {
+			for (int cellIndex = 0; cellIndex < gridPositionsWithinRadiusList[radius].Count; cellIndex++) {
+				if (!radiusAtGridPosition.ContainsKey(gridPositionsWithinRadiusList[radius][cellIndex])) {
+					radiusAtGridPosition.Add(gridPositionsWithinRadiusList[radius][cellIndex], radius);
+				}
+			}
+		}
+
+		//SaveCellMapData();
+		//}
+	}
+
+	// Save
+	public static CellMapData UpdateData() {
+		cellMapData.radiusAtGridPositionKey.Clear();
+		cellMapData.radiusAtGridPositionValue.Clear();
+		foreach (KeyValuePair<Vector2i, int> pair in radiusAtGridPosition) {
+			cellMapData.radiusAtGridPositionKey.Add(pair.Key);
+			cellMapData.radiusAtGridPositionValue.Add(pair.Value);
+		}
+
+		cellMapData.gridPositionsWithinRadius0.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius0) {
+			cellMapData.gridPositionsWithinRadius0.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius1.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius1) {
+			cellMapData.gridPositionsWithinRadius1.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius2.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius2) {
+			cellMapData.gridPositionsWithinRadius2.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius3.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius3) {
+			cellMapData.gridPositionsWithinRadius3.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius4.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius4) {
+			cellMapData.gridPositionsWithinRadius4.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius5.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius5) {
+			cellMapData.gridPositionsWithinRadius5.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius6.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius6) {
+			cellMapData.gridPositionsWithinRadius6.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius7.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius7) {
+			cellMapData.gridPositionsWithinRadius7.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius8.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius8) {
+			cellMapData.gridPositionsWithinRadius8.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius9.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius9) {
+			cellMapData.gridPositionsWithinRadius9.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius10.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius10) {
+			cellMapData.gridPositionsWithinRadius10.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius11.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius11) {
+			cellMapData.gridPositionsWithinRadius11.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius12.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius12) {
+			cellMapData.gridPositionsWithinRadius12.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius13.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius13) {
+			cellMapData.gridPositionsWithinRadius13.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius14.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius14) {
+			cellMapData.gridPositionsWithinRadius14.Add(positin);
+		}
+
+		cellMapData.gridPositionsWithinRadius15.Clear();
+		foreach (Vector2i positin in gridPositionsWithinRadius15) {
+			cellMapData.gridPositionsWithinRadius15.Add(positin);
+		}
+
+		return cellMapData;
+	}
+
+	// Load
+	public static void ApplyData(CellMapData cellMapData) {
+
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius0);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius1);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius2);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius3);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius4);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius5);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius6);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius7);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius8);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius9);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius10);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius11);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius12);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius13);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius14);
+		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius15);
+
+		radiusAtGridPosition.Clear();
+		for (int index = 0; index < cellMapData.radiusAtGridPositionKey.Count; index++) {
+			radiusAtGridPosition.Add(cellMapData.radiusAtGridPositionKey[index], cellMapData.radiusAtGridPositionValue[index]);
+		}
+
+		gridPositionsWithinRadius0.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius0) {
+			gridPositionsWithinRadius0.Add(positin);
+		}
+
+		gridPositionsWithinRadius1.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius1) {
+			gridPositionsWithinRadius1.Add(positin);
+		}
+
+		gridPositionsWithinRadius2.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius2) {
+			gridPositionsWithinRadius2.Add(positin);
+		}
+
+		gridPositionsWithinRadius3.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius3) {
+			gridPositionsWithinRadius3.Add(positin);
+		}
+
+		gridPositionsWithinRadius4.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius4) {
+			gridPositionsWithinRadius4.Add(positin);
+		}
+
+		gridPositionsWithinRadius5.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius5) {
+			gridPositionsWithinRadius5.Add(positin);
+		}
+
+		gridPositionsWithinRadius6.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius6) {
+			gridPositionsWithinRadius6.Add(positin);
+		}
+
+		gridPositionsWithinRadius7.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius7) {
+			gridPositionsWithinRadius7.Add(positin);
+		}
+
+		gridPositionsWithinRadius8.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius8) {
+			gridPositionsWithinRadius8.Add(positin);
+		}
+
+		gridPositionsWithinRadius9.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius9) {
+			gridPositionsWithinRadius9.Add(positin);
+		}
+
+		gridPositionsWithinRadius10.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius10) {
+			gridPositionsWithinRadius10.Add(positin);
+		}
+
+		gridPositionsWithinRadius11.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius11) {
+			gridPositionsWithinRadius11.Add(positin);
+		}
+
+		gridPositionsWithinRadius12.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius12) {
+			gridPositionsWithinRadius12.Add(positin);
+		}
+
+		gridPositionsWithinRadius13.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius13) {
+			gridPositionsWithinRadius13.Add(positin);
+		}
+
+		gridPositionsWithinRadius14.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius14) {
+			gridPositionsWithinRadius14.Add(positin);
+		}
+
+		gridPositionsWithinRadius15.Clear();
+		foreach (Vector2i positin in cellMapData.gridPositionsWithinRadius15) {
+			gridPositionsWithinRadius15.Add(positin);
+		}
+	}
+
+	private static CellMapData cellMapData = new CellMapData();
+
+	private static CellMapData LoadCellMapData() {
+		string filename = "CellMapHexagon.txt";
+
+		string path = "F:/Morphosis/";
+		if (File.Exists(path + filename)) {
+			string serializedString = File.ReadAllText(path + filename);
+			return Serializer.Deserialize<CellMapData>(serializedString, new UnityJsonSerializer());
+		}
+
+		return null;
+	}
+
+	public static void SaveCellMapData() {
+		cellMapData = UpdateData();
+		string filename = "cellMapHexagon.txt";
+		string path = path = "F:/Morphosis/";
+
+		string cellMapToSave = Serializer.Serialize(cellMapData, new UnityJsonSerializer());
+		if (!Directory.Exists(path)) {
+			Directory.CreateDirectory(path);
+		}
+
+		File.WriteAllText(path + filename, cellMapToSave);
 	}
 }

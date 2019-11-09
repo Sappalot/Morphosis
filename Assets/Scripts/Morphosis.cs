@@ -15,8 +15,9 @@ public class Morphosis : MonoSingleton<Morphosis> {
 
 	private void Start () {
 
+		float time = Time.realtimeSinceStartup;
 		CellMap.Init();
-		
+		Debug.Log("Elapsed time: " + (Time.realtimeSinceStartup - time) + " s");
 
 		// Creature id's will be set from file
 		World.instance.Init(); // Just 1 world, lots of work keeping several instances at once
