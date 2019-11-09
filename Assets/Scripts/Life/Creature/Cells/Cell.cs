@@ -1368,7 +1368,9 @@ public abstract class Cell : MonoBehaviour {
 					} else {
 						SetLabelText(buildPriority.ToString());
 					}
-					
+
+					//SetLabelText(CellMap.ManhexanDistance(new Vector2i(2, 3), mapPosition).ToString());
+					//SetLabelText(CellMap.GetGridPositionsInHexagonAroundPosition(new Vector2i(3, 3), 3).Contains(mapPosition) ? "X": ".");
 					if (gene.buildPriorityBias < 0) {
 						SetLabelColor(Color.green);
 					} else if (gene.buildPriorityBias > 0) {

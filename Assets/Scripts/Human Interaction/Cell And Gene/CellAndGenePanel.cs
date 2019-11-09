@@ -73,7 +73,6 @@ public class CellAndGenePanel : MonoBehaviour {
 		axonComponentPanel.MakeDirty();
 		dendritesComponentPanel.MakeDirty();
 		energySensorComponentPanel.MakeDirty();
-		originComponentPanel.MakeDirty();
 		buildPriorityComponentPanel.MakeDirty();
 
 		if (selectedGene.isOrigin) {
@@ -97,10 +96,14 @@ public class CellAndGenePanel : MonoBehaviour {
 			inputList.AddRange(inputs);
 		}
 		inputList.AddRange(dendritesComponentPanel.GetAllGeneGeneLogicBoxInputs());
-		inputs = originComponentPanel.GetAllGeneGeneLogicBoxInputs();
-		if (inputs != null) {
-			inputList.AddRange(inputs);
+
+		if (selectedGene.isOrigin) {
+			inputs = originComponentPanel.GetAllGeneGeneLogicBoxInputs();
+			if (inputs != null) {
+				inputList.AddRange(inputs);
+			}
 		}
+
 		return inputList;
 	}
 
