@@ -43,14 +43,23 @@ public class CellMap {
 	}
 
 	public static int ManhexanDistance(Vector2i positionA, Vector2i positionB) {
-		Vector2i transformedGridPositionB = positionB - positionA;
-	
-		// COmpensate for walking in hexa grid distortion
-		if (positionB.x % 2 == 0 && positionA.x % 2 == 1) {
-			transformedGridPositionB.y--;
-		}
+		return ManhexanDistanceFromOrigin(HexagonalMinus(positionB, positionA));
+	}
 
-		return ManhexanDistanceFromOrigin(transformedGridPositionB);
+	public static Vector2i HexagonalMinus(Vector2i vectorA, Vector2i vectorB) {
+		Vector2i transformed = vectorA - vectorB;
+		if (vectorA.x % 2 == 0 && vectorB.x % 2 == 1) {
+			transformed.y--;
+		}
+		return transformed;
+	}
+
+	public static Vector2i HexagonalPlus(Vector2i vectorA, Vector2i vectorB) {
+		Vector2i transformed = vectorA + vectorB;
+		if (vectorA.x % 2 != 0 && vectorB.x % 2 != 0) {
+			transformed.y++;
+		}
+		return transformed;
 	}
 
 	// Sweet name if i may say so myself :)
@@ -65,15 +74,16 @@ public class CellMap {
 	public static List<Vector2i> GetGridPositionsInHexagonAroundPosition(Vector2i gridPosition, int hexaRadius, List<Vector2i> gridPositions) {
 		List<Vector2i> hexagon = GetGridPositionsWithinHexagon(hexaRadius);
 		foreach (Vector2i position in hexagon) {
-			Vector2i transformedPosition = position + gridPosition;
-			
-			//fix strange transform distortion
-			if (gridPosition.x % 2 != 0 && transformedPosition.x % 2 == 0) {
-				transformedPosition.y++;
-			}
+			//Vector2i transformedPosition = position + gridPosition;
 
-			if (IsInsideMaximumHexagon(transformedPosition)) {
-				gridPositions.Add(transformedPosition);
+			////fix strange transform distortion
+			//if (gridPosition.x % 2 != 0 && transformedPosition.x % 2 == 0) {
+			//	transformedPosition.y++;
+			//}
+
+			Vector2i transformed = HexagonalPlus(position, gridPosition);
+			if (IsInsideMaximumHexagon(transformed)) {
+				gridPositions.Add(transformed);
 			}
 		}
 		return gridPositions;
@@ -91,7 +101,6 @@ public class CellMap {
 			}
 		}
 		return cells;
-
 	}
 
 	private static bool IsInsideHexagon(Vector2i gridPosition, int hexaradius) {

@@ -1370,7 +1370,7 @@ public abstract class Cell : MonoBehaviour {
 					}
 
 					//SetLabelText(CellMap.ManhexanDistance(new Vector2i(2, 3), mapPosition).ToString());
-					//SetLabelText(CellMap.GetGridPositionsInHexagonAroundPosition(new Vector2i(3, 3), 3).Contains(mapPosition) ? "X": ".");
+					//SetLabelText(CellMap.GetGridPositionsInHexagonAroundPosition(new Vector2i(2, 3), 3).Contains(mapPosition) ? "X": ".");
 					if (gene.buildPriorityBias < 0) {
 						SetLabelColor(Color.green);
 					} else if (gene.buildPriorityBias > 0) {
