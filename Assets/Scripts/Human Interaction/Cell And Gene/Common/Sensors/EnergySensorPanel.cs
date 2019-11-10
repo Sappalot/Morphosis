@@ -2,9 +2,17 @@
 using UnityEngine.UI;
 
 public class EnergySensorPanel : SensorPanel {
-	
 
-	public Text energyThresholdSliderLabel;
+	public Text cellEnergyMoreThanLabel;
+	public Text cellEnergyLessThanLabel;
+	public Text areaEnergyMoreThanLabel;
+	public Text areaEnergyLessThanLabel;
+	public Text creatureEnergyMoreThanLabel;
+	public Text creatureEnergyLessThanLabel;
+
+	public Text areaRadiusSliderLabel;
+	public Slider areaRadiusSlider;
+
 	public Slider energyThresholdSlider;
 
 	public void OnEnergyThresholdSliderMoved() {
@@ -13,6 +21,15 @@ public class EnergySensorPanel : SensorPanel {
 		}
 
 		(affectedGeneSensor as GeneEnergySensor).threshold = energyThresholdSlider.value;
+		OnGenomeChanged(false);
+	}
+
+	public void OnAreaRadiusSliderMoved() {
+		if (ignoreSliderMoved) {
+			return;
+		}
+
+		(affectedGeneSensor as GeneEnergySensor).areaRadius = (int)areaRadiusSlider.value;
 		OnGenomeChanged(false);
 	}
 
@@ -26,9 +43,24 @@ public class EnergySensorPanel : SensorPanel {
 
 			if (selectedGene != null && affectedGeneSensor != null) {
 				ignoreSliderMoved = true;
-				energyThresholdSliderLabel.text = string.Format("On if energy > {0:F1} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+
+				cellEnergyMoreThanLabel.text = string.Format("Cell E ≥ {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+				cellEnergyLessThanLabel.text = string.Format("Cell E < {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+
+				areaEnergyMoreThanLabel.text = string.Format("Area E ≥ {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+				areaEnergyLessThanLabel.text = string.Format("Area E < {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+
+				creatureEnergyMoreThanLabel.text = string.Format("Ctr. E ≥ {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+				creatureEnergyLessThanLabel.text = string.Format("Ctr. E < {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+
+				areaRadiusSliderLabel.text = string.Format("Area radius: {0:F0} m", (affectedGeneSensor as GeneEnergySensor).areaRadius);
+
+				areaRadiusSlider.value = (affectedGeneSensor as GeneEnergySensor).areaRadius;
+				areaRadiusSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
+
 				energyThresholdSlider.value = (affectedGeneSensor as GeneEnergySensor).threshold;
 				energyThresholdSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
+
 				ignoreSliderMoved = false;
 			}
 

@@ -5,6 +5,8 @@ using UnityEngine;
 public class EnergySensor : SignalUnit {
 	private bool[] output = new bool[6]; // outputs 
 
+	private List<Cell> areaCells = new List<Cell>();
+
 	public float threshold;
 
 	public EnergySensor(SignalUnitEnum outputUnit) {
@@ -15,19 +17,53 @@ public class EnergySensor : SignalUnit {
 		return output[(int)signalUnitSlot];
 	}
 
+	public override void UpdateSignalConnections(Cell hostCell) {
+		areaCells.Clear();
+		if (signalUnit == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) {
+			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).areaRadius);
+		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
+			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.energySensor as GeneEnergySensor).areaRadius);
+		}
+	}
+
 	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {
 		if (signalUnit == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) {
-			for (int i = 0; i < output.Length; i++) {
-				output[i] = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
+			output[0] = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
+			output[1] = hostCell.energy < (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
+
+			if (areaCells != null) {
+				float averageEnergy = GetAverageEnergy(areaCells);
+				output[2] = averageEnergy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
+				output[3] = averageEnergy < (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 			}
-			
+
+			float creatureEnergy = hostCell.creature.phenotype.energyPerCell;
+			output[4] = creatureEnergy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
+			output[5] = creatureEnergy < (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
+
 		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
-			for (int i = 0; i < output.Length; i++) {
-				output[i] = hostCell.energy >= (hostCell.gene.energySensor as GeneEnergySensor).threshold;
+			output[0] = hostCell.energy >= (hostCell.gene.energySensor as GeneEnergySensor).threshold;
+			output[1] = hostCell.energy < (hostCell.gene.energySensor as GeneEnergySensor).threshold;
+
+			if (areaCells != null) {
+				float averageEnergy = GetAverageEnergy(areaCells);
+				output[2] = averageEnergy >= (hostCell.gene.energySensor as GeneEnergySensor).threshold;
+				output[3] = averageEnergy < (hostCell.gene.energySensor as GeneEnergySensor).threshold;
 			}
+
+			float creatureEnergy = hostCell.creature.phenotype.energyPerCell;
+			output[4] = creatureEnergy >= (hostCell.gene.energySensor as GeneEnergySensor).threshold;
+			output[5] = creatureEnergy < (hostCell.gene.energySensor as GeneEnergySensor).threshold;
 		}
 		// Other energy sensor
-		
+	}
+
+	private float GetAverageEnergy(List<Cell> cells) {
+		float energySum = 0f;
+		foreach (Cell c in cells) {
+			energySum += c.energy;
+		}
+		return energySum / cells.Count;
 	}
 
 	public void Mutate(float strength) {

@@ -1652,6 +1652,14 @@ public abstract class Cell : MonoBehaviour {
 	public LogicBox originDetatchLogicBox = new LogicBox(SignalUnitEnum.OriginDetatchLogicBox); // inside origin component
 	public SizeSensor originSizeSensor = new SizeSensor(SignalUnitEnum.OriginSizeSensor);
 
+	public virtual void UpdateSignalConnections() {
+		dendritesLogicBox.UpdateSignalConnections(this);
+		energySensor.UpdateSignalConnections(this);
+		if (isOrigin) {
+			originDetatchLogicBox.UpdateSignalConnections(this);
+		}
+	}
+
 	virtual public void ClearSignal() {
 		constantSensor.Clear();
 		dendritesLogicBox.Clear();

@@ -236,10 +236,6 @@ public class Phenotype : MonoBehaviour {
 		return true;
 	}
 
-	public void ShuffleCellUpdateOrder() {
-		ListUtil.Shuffle(cellList);
-	}
-
 	public void InitiateEmbryo(Creature creature, Vector2 position, float heading) {
 		Setup(position, heading);
 		NoGrowthReason reason;
@@ -637,6 +633,7 @@ public class Phenotype : MonoBehaviour {
 	// Connect springs in between all connected (special case for mother and child)
 	// Update groups
 	// Update wings
+	// Update Signal connections
 	public bool UpdateConnectionsFromCellsBody(Creature creature, string motherId) {
 		if (connectionsDiffersFromCells) {
 
@@ -675,6 +672,9 @@ public class Phenotype : MonoBehaviour {
 
 			// Update buds in graphics
 			MakeBudsDirty();
+
+			// Signal
+			UpdateSignalConnections();
 
 			//Clean
 			connectionsDiffersFromCells = false;
@@ -1769,8 +1769,14 @@ public class Phenotype : MonoBehaviour {
 
 		signalTick = phenotypeData.signalTick;
 
-		//OnLoaded(creature);
 	}
 
 	// ^ Load / Save ^
+
+	// Signal
+	private void UpdateSignalConnections() {
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].UpdateSignalConnections();
+		}
+	}
 }

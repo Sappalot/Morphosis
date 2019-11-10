@@ -60,6 +60,9 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float energySensorThresholdChange = 50f;
 		public float energySensorThresholdChangeMaxAmount = 30f; // +/-
 
+		public float energySensorAreaRadiusChange = 50f;
+		public float energySensorAreaRadiusChangeMaxAmount = 3f;
+
 		public float sizeSensorSizeThresholdChange = 10f;
 		public float sizeSensorSizeThresholdChangeMaxAmount = 0.2f; // % of body size
 

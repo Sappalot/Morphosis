@@ -24,6 +24,10 @@
 		outputLate = outputEarly;
 	}
 
+	public override void UpdateSignalConnections(Cell hostCell) {
+		// TODO: we are here since body has changed and signal nerves need to reconnect
+	}
+
 	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {
 		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 			outputEarly = ThroughGates(hostCell.gene.eggCellFertilizeLogic, hostCell);

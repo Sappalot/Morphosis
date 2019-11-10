@@ -46,6 +46,12 @@ public class EggCell : Cell {
 		fertilizeLogicBox.FeedSignal();
 	}
 
+	public override void UpdateSignalConnections() {
+		base.UpdateSignalConnections();
+		fertilizeLogicBox.UpdateSignalConnections(this);
+		fertilizeEnergySensor.UpdateSignalConnections(this);
+	}
+
 	public override void ComputeSignalOutputs(int deltaTicks) {
 		//TODO: Check with gene if anybody is listening to this output
 		base.ComputeSignalOutputs(deltaTicks);
