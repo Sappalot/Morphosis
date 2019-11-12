@@ -173,7 +173,7 @@ public class Gene {
 		float mut = Random.Range(0, 1000f + gs.mutation.cellTypeChange * strength);
 		if (mut < gs.mutation.cellTypeChange * strength) {
 			type = (CellTypeEnum)Random.Range(0, 8);
-			ScrambleMetabolism();
+			ScrambleMetabolism(); // not really a good idea to allways do this, todo make it occur occationaly
 		}
 
 		// Egg...

@@ -54,7 +54,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			if (creature.allowedToChangeGenome) {
-				creature.MutateCummulative(GlobalSettings.instance.mutation.masterMutationStrength * 10f);
+				creature.MutateCummulative(GlobalSettings.instance.mutation.masterMutationStrength); //  * 10f
 				creature.creation = CreatureCreationEnum.Forged;
 				GenePanel.instance.selectedGene = null;
 			}
