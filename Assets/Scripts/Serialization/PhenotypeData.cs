@@ -7,7 +7,6 @@ public class PhenotypeData {
 	public List<CellData> cellDataList = new List<CellData>();
 	public bool differsFromGenotype;
 
-	public int eggCellTick;
 	public int fungalCellTick;
 	public int jawCellTick;
 	public int leafCellTick;

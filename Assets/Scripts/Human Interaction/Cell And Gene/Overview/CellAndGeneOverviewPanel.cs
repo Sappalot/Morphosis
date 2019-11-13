@@ -115,15 +115,15 @@ public class CellAndGeneOverviewPanel : MonoBehaviour {
 				energyBar.fullness = selectedCell.energyFullness;
 				energyBar.effectTotal = selectedCell.Effect(true, true, true, true);
 				energyBar.effectProd = selectedCell.Effect(true, false, false, false);
-				energyBar.effectStress = selectedCell.Effect(false, false, false, true);
-				energyBar.effectFlux = selectedCell.Effect(false, true, true, false);
+				energyBar.effectExternal = selectedCell.Effect(false, true, false, false);
+				energyBar.effectFlux = selectedCell.Effect(false, false, true, true);
 
 				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
 					effectLabel.text = string.Format("Total Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.EffectUp(true, true, true), selectedCell.EffectDown(true, true, true, true), selectedCell.Effect(true, true, true, true));
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
 					effectLabel.text = string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.EffectUp(true, false, false), selectedCell.EffectDown(true, false, false, false), selectedCell.Effect(true, false, false, false));
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
-					effectLabel.text = string.Format("Flux Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.EffectUp(false, true, true), selectedCell.EffectDown(false, true, true, false), selectedCell.Effect(false, true, true, false));
+					effectLabel.text = string.Format("Flux Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.EffectUp(false, true, true), selectedCell.EffectDown(false, false, true, true), selectedCell.Effect(false, false, true, true));
 				}
 
 				effectFromNeighboursLabel.text = string.Format("P me <= neighbours: {0:F2}W", selectedCell.effectFluxFromSelf); //kill me

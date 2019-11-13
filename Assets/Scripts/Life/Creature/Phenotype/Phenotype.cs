@@ -82,26 +82,27 @@ public class Phenotype : MonoBehaviour {
 				return Effect(true, true, true, true);
 			case EffectMeassureEnum.Production:
 				return Effect(true, false, false, false);
-			case EffectMeassureEnum.Flux:
-				return Effect(false, true, true, false);
 			case EffectMeassureEnum.External:
-				return Effect(false, false, false, true);
+				return Effect(false, true, false, false);
+			case EffectMeassureEnum.Flux:
+				return Effect(false, false, true, true);
+
 		}
 		return -6666666;
 	}
 
-	public float Effect(bool production, bool fluxSelf, bool fluxAttached, bool stress) {
+	public float Effect(bool production, bool external, bool fluxSelf, bool fluxAttached) {
 		float effect = 0;
 		foreach (Cell cell in cellList) {
-			effect += cell.Effect(production, fluxSelf, fluxAttached, stress);
+			effect += cell.Effect(production, external, fluxSelf, fluxAttached);
 		}
 		return effect;
 	}
 
-	public float EffectDown(bool production, bool fluxSelf, bool fluxAttached, bool stress) {
+	public float EffectDown(bool production, bool external, bool fluxSelf, bool fluxAttached) {
 		float effect = 0;
 		foreach (Cell cell in cellList) {
-			effect += cell.EffectDown(production, fluxSelf, fluxAttached, stress);
+			effect += cell.EffectDown(production, external, fluxSelf, fluxAttached);
 		}
 		return effect;
 	}
@@ -117,23 +118,23 @@ public class Phenotype : MonoBehaviour {
 	public float EffectPerCell(EffectMeassureEnum effectMeassure) {
 		switch (effectMeassure) {
 			case EffectMeassureEnum.Total:
-				return Effect(true, false, true, true) / cellCount;
+				return Effect(true, true, false, true) / cellCount;
 			case EffectMeassureEnum.Production:
 				return Effect(true, false, false, false) / cellCount;
-			case EffectMeassureEnum.Flux:
-				return Effect(false, false, true, false) / cellCount;
 			case EffectMeassureEnum.External:
+				return Effect(false, true, false, false) / cellCount;
+			case EffectMeassureEnum.Flux:
 				return Effect(false, false, false, true) / cellCount;
 		}
 		return -6666666;
 	}
 
-	public float EffectPerCell(bool production, bool fluxAttached, bool stress) {
-		return Effect(production, false, fluxAttached, stress) / cellCount;
+	public float EffectPerCell(bool production, bool external, bool fluxAttached) {
+		return Effect(production, external, false, fluxAttached) / cellCount;
 	}
 
-	public float EffectDownPerCell(bool production, bool fluxAttached, bool stress) {
-		return EffectDown(production, false, fluxAttached, stress) / cellCount;
+	public float EffectDownPerCell(bool production, bool external, bool fluxAttached) {
+		return EffectDown(production, external, false, fluxAttached) / cellCount;
 	}
 
 	public float EffectUpPerCell(bool production, bool fluxAttached) {
@@ -1097,6 +1098,9 @@ public class Phenotype : MonoBehaviour {
 				cell.effectFluxToChildrenAttached = 0f;
 			}
 
+			// async muscle ticks (for the sake of veins, so that sync will not propagate throug generations)
+			muscleAndFluxCellTick = Random.Range(0, GlobalSettings.instance.quality.muscleCellTickPeriod);
+
 			CreatureSelectionPanel.instance.MakeDirty();
 			CreatureSelectionPanel.instance.UpdateSelectionCluster();
 			return true;
@@ -1523,7 +1527,7 @@ public class Phenotype : MonoBehaviour {
 	private int fungalCellTick;
 	private int jawCellTick;
 	private int leafCellTick;
-	private int muscleCellTick;
+	public int muscleAndFluxCellTick;
 	private int rootCellTick;
 	private int shellCellTick;
 	private int veinCellTick;
@@ -1565,11 +1569,6 @@ public class Phenotype : MonoBehaviour {
 	private void UpdateWorkAndMetabolism(Creature creature, ulong worldTick) {
 
 		//time
-		eggCellTick++;
-		if (eggCellTick >= GlobalSettings.instance.quality.eggCellTickPeriod) {
-			eggCellTick = 0;
-		}
-
 		fungalCellTick++;
 		if (fungalCellTick >= GlobalSettings.instance.quality.fungalCellTickPeriod) {
 			fungalCellTick = 0;
@@ -1585,9 +1584,9 @@ public class Phenotype : MonoBehaviour {
 			leafCellTick = 0;
 		}
 
-		muscleCellTick++;
-		if (muscleCellTick >= GlobalSettings.instance.quality.muscleCellTickPeriod) {
-			muscleCellTick = 0;
+		muscleAndFluxCellTick++;
+		if (muscleAndFluxCellTick >= GlobalSettings.instance.quality.muscleCellTickPeriod) {
+			muscleAndFluxCellTick = 0;
 		}
 
 		rootCellTick++;
@@ -1639,17 +1638,15 @@ public class Phenotype : MonoBehaviour {
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
 
-			if (cell.GetCellType() == CellTypeEnum.Egg) {
-				if (originCell.originPulseTick == 0) {
-					cell.UpdateCellWork(GlobalSettings.instance.quality.eggCellTickPeriod, worldTick);
-				}
+			if (originCell.originPulseTick == 0 && cell.GetCellType() == CellTypeEnum.Egg) {
+				cell.UpdateCellWork(GlobalSettings.instance.quality.eggCellTickPeriod, worldTick);
 			} else if (fungalCellTick == 0 && cell.GetCellType() == CellTypeEnum.Fungal) {
 				cell.UpdateCellWork(GlobalSettings.instance.quality.fungalCellTickPeriod, worldTick);
 			} else if (jawCellTick == 0 && cell.GetCellType() == CellTypeEnum.Jaw) {
 				cell.UpdateCellWork(GlobalSettings.instance.quality.jawCellTickPeriod, worldTick);
 			} else if (leafCellTick == 0 && cell.GetCellType() == CellTypeEnum.Leaf) {
 				cell.UpdateCellWork((int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed), worldTick);
-			} else if (muscleCellTick == 0 && cell.GetCellType() == CellTypeEnum.Muscle) {
+			} else if (muscleAndFluxCellTick == 0 && cell.GetCellType() == CellTypeEnum.Muscle) {
 				cell.UpdateCellWork(GlobalSettings.instance.quality.muscleCellTickPeriod, worldTick);
 			} else if (rootCellTick == 0 && cell.GetCellType() == CellTypeEnum.Root) {
 				cell.UpdateCellWork(GlobalSettings.instance.quality.rootCellTickPeriod, worldTick);
@@ -1660,8 +1657,15 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 
-		if (muscleCellTick == 0) {
+		if (muscleAndFluxCellTick == 0) {
 			if (PhenotypePhysicsPanel.instance.flux.isOn) {
+				// clear all flux effect
+				if (PhenotypePhysicsPanel.instance.flux.isOn) {
+					foreach (Cell c in cellList) {
+						c.effectFluxFromSelf = 0f;
+						c.effectFluxToSelf = 0f;
+					}
+				}
 				veins.UpdateEffect(GlobalSettings.instance.quality.muscleCellTickPeriod);
 				veins.UpdateCellsPlacentaEffects();
 			}
@@ -1761,11 +1765,10 @@ public class Phenotype : MonoBehaviour {
 		}
 		phenotypeData.differsFromGenotype = cellsDiffersFromGeneCells;
 
-		phenotypeData.eggCellTick = eggCellTick;
 		phenotypeData.fungalCellTick = fungalCellTick;
 		phenotypeData.jawCellTick = jawCellTick;
 		phenotypeData.leafCellTick = leafCellTick;
-		phenotypeData.muscleCellTick = muscleCellTick;
+		phenotypeData.muscleCellTick = muscleAndFluxCellTick;
 		phenotypeData.rootCellTick = rootCellTick;
 		phenotypeData.shellCellTick = shellCellTick;
 		phenotypeData.veinCellTick = veinCellTick;
@@ -1786,11 +1789,10 @@ public class Phenotype : MonoBehaviour {
 		cellsDiffersFromGeneCells = false; //This work is done
 		connectionsDiffersFromCells = true; //We need to connect mothers with children
 
-		eggCellTick = phenotypeData.eggCellTick;
 		fungalCellTick = phenotypeData.fungalCellTick;
 		jawCellTick = phenotypeData.jawCellTick;
 		leafCellTick = phenotypeData.leafCellTick;
-		muscleCellTick = phenotypeData.muscleCellTick;
+		muscleAndFluxCellTick = phenotypeData.muscleCellTick;
 		rootCellTick = phenotypeData.rootCellTick;
 		shellCellTick = phenotypeData.shellCellTick;
 		veinCellTick = phenotypeData.veinCellTick;

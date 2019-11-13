@@ -7,16 +7,16 @@ public class GeneEffectSensor : GeneSignalUnit {
 
 	public EffectMeassureEnum effectMeassure = EffectMeassureEnum.Total;
 
-	public int areaRadiusTotal;
+	public int areaRadiusTotal = 1;
 	public float effectThresholdTotal;
 
-	public int areaRadiusProduction;
+	public int areaRadiusProduction = 1;
 	public float effectThresholdProduction;
 
-	public int areaRadiusFlux;
+	public int areaRadiusFlux = 1;
 	public float effectThresholdFlux;
 
-	public int areaRadiusExternal;
+	public int areaRadiusExternal = 1;
 	public float effectThresholdExternal; // hurt by jaw
 
 	public int usedAreaRadius {
@@ -82,9 +82,6 @@ public class GeneEffectSensor : GeneSignalUnit {
 			}
 		}
 	}
-
-
-
 
 	public void Mutate(float strength) {
 		GlobalSettings gs = GlobalSettings.instance;

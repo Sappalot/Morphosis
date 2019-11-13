@@ -277,26 +277,23 @@ public abstract class Cell : MonoBehaviour {
 			case EffectMeassureEnum.Production:
 				return Effect(true, false, false, false);
 			case EffectMeassureEnum.Flux:
-				return Effect(false, true, true, false);
+				return Effect(false, false, true, true);
 			case EffectMeassureEnum.External:
-				return Effect(false, false, false, true);
+				return Effect(false, true, false, false);
 		}
 		return -6666666;
 	}
 
-	public float Effect(bool production, bool fluxSelf, bool fluxAttached, bool stress) {
-		//return 0f;
-		return EffectUp(production, fluxSelf, fluxAttached) - EffectDown(production, fluxSelf, fluxAttached, stress);
+	public float Effect(bool production, bool external, bool fluxSelf, bool fluxAttached) {
+		return EffectUp(production, fluxSelf, fluxAttached) - EffectDown(production, external, fluxSelf, fluxAttached);
 	}
 
-	public float EffectDown(bool production, bool fluxSelf, bool fluxAttached, bool stress) {
-		//return 0f;
+	public float EffectDown(bool production, bool external, bool fluxSelf, bool fluxAttached) {
 		// The effect lost by any cell when eate by jaw is counted under stress (effectProductionPredPrayDown)
-		return (production ? effectProductionInternalDown : 0f) + (stress ? effectProductionPredPrayDown : 0f) + (fluxSelf ? effectFluxSelfDown : 0f) + (fluxAttached ? effectFluxAttachedDown : 0f);
+		return (production ? effectProductionInternalDown : 0f) + (external ? effectProductionPredPrayDown : 0f) + (fluxSelf ? effectFluxSelfDown : 0f) + (fluxAttached ? effectFluxAttachedDown : 0f);
 	}
 
 	public float EffectUp(bool production, bool fluxSelf, bool fluxAttached) {
-		//return 0f;
 		// The effect gained by jaw eating other is counted under production (effectProductionPredPrayUp)
 		return (production ? effectProductionInternalUp + effectProductionPredPrayUp : 0f) + (fluxSelf ? effectFluxSelfUp : 0f) + (fluxAttached ? effectFluxAttachedUp : 0f);
 	}
@@ -516,7 +513,7 @@ public abstract class Cell : MonoBehaviour {
 	//production effect is updated by each cell type in their own way
 	public void UpdateEnergy(int deltaTicks, bool enableFlux) {
 
-		energy = Mathf.Clamp(energy + Effect(true, enableFlux, enableFlux, true) * deltaTicks * Time.fixedDeltaTime, -13f, GlobalSettings.instance.phenotype.cellMaxEnergy);
+		energy = Mathf.Clamp(energy + Effect(true, true, enableFlux, enableFlux) * deltaTicks * Time.fixedDeltaTime, -13f, GlobalSettings.instance.phenotype.cellMaxEnergy);
 		didUpdateEnergyThisFrame = 2;
 	}
 
@@ -1242,7 +1239,7 @@ public abstract class Cell : MonoBehaviour {
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(energyFullness);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.flux) {
 				float intensity = 0.2f;
-				float red = Mathf.Min(EffectDown(false, true, true, false) * intensity, 1f);
+				float red = Mathf.Min(EffectDown(false, false, true, true) * intensity, 1f);
 				float green = Mathf.Min(EffectUp(false, true, true) * intensity, 1f);
 				filledCircleSprite.color = new Color(red, green, 0f);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.effect) {
@@ -1253,13 +1250,13 @@ public abstract class Cell : MonoBehaviour {
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction) {
 					effectValue = 0.5f + Effect(true, false, false, false) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux) {
-					effectValue = 0.5f + Effect(false, true, true, false) * 0.1f;
+					effectValue = 0.5f + Effect(false, false, true, true) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
 					effectValue = 0.5f + creature.phenotype.EffectPerCell(true, true, true) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
 					effectValue = 0.5f + creature.phenotype.EffectPerCell(true, false, false) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
-					effectValue = 0.5f + creature.phenotype.EffectPerCell(false, true, false) * 0.1f;
+					effectValue = 0.5f + creature.phenotype.EffectPerCell(false, false, true) * 0.1f;
 				}
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure) {

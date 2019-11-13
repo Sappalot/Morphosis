@@ -59,18 +59,6 @@ public class Veins : MonoBehaviour {
 				continue;
 			}
 
-			vein.frontCell.effectFluxFromSelf = 0f;
-			vein.frontCell.effectFluxToSelf = 0f;
-
-			vein.backCell.effectFluxFromSelf = 0f;
-			vein.backCell.effectFluxToSelf = 0f;
-		}
-
-		foreach (Vein vein in veinList) {
-			if (vein.isPlacentaVein) {
-				continue;
-			}
-
 			//front cell
 			if (vein.flowEffectFrontToBack > 0f) {
 				vein.frontCell.effectFluxToSelf += vein.flowEffectFrontToBack;
@@ -98,7 +86,7 @@ public class Veins : MonoBehaviour {
 		// Let all mothers update their giving (placenta effect minus) and the child's receiving (placenta effect plus)
 		foreach (Vein vein in veinList) {
 			if (vein.isPlacentaVein) {
-				//this vein is connecting mother placenta (front) to child root (back)
+				//this vein is connecting mother placenta (front) to child origin (back)
 
 				//Add to mother cells giving
 				if (!myGivingCells.ContainsKey(vein.frontCell)) {

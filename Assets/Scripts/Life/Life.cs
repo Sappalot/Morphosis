@@ -156,6 +156,7 @@ public class Life : MonoBehaviour {
 		child.GenerateEmbryo(mother.genotype.GetMutatedClone(GlobalSettings.instance.mutation.masterMutationStrength), eggCell.position, eggCell.heading); //Mutation Hack
 		child.phenotype.originCell.energy = eggEnergy;
 		child.phenotype.originCell.originPulseTick = mother.phenotype.originCell.originPulseTick; // make them swim locomote, should be 0 for both allready...
+		child.phenotype.muscleAndFluxCellTick = mother.phenotype.muscleAndFluxCellTick; // to make veins pump energy into child without jerkyness they need to be synced
 
 		ChildData childData = new ChildData();
 		childData.id = child.id; // a creature carying a child with an id that can not be found in life ==> child concidered dead to mother
@@ -472,6 +473,7 @@ public class Life : MonoBehaviour {
 		}
 
 		// ^ Ticks ^
+
 		for (int index = 0; index < creatureList.Count; index++) {
 			creatureList[index].UpdatePhysics(worldTicks);
 		}

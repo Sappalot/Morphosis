@@ -4,6 +4,6 @@
 public enum EffectMeassureEnum {
 	Total,
 	Production,
-	Flux,
 	External,
+	Flux,
 }

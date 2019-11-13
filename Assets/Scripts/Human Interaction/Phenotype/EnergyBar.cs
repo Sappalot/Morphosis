@@ -14,9 +14,9 @@ public class EnergyBar : MonoBehaviour {
 	public Image effectArrowProdNeg;
 	public Text prodText;
 
-	public Image effectArrowStressPos;
-	public Image effectArrowStressNeg;
-	public Text stressText;
+	public Image effectArrowExternalPos;
+	public Image effectArrowExternalNeg;
+	public Text externalText;
 
 	public Image effectArrowFluxPos;
 	public Image effectArrowFluxNeg;
@@ -111,29 +111,29 @@ public class EnergyBar : MonoBehaviour {
 		}
 	}
 
-	private float m_effectStress = 0f;
-	public float effectStress {
+	private float m_effectExternal = 0f;
+	public float effectExternal {
 		get {
-			return m_effectStress;
+			return m_effectExternal;
 		}
 		set {
-			m_effectStress = value;
+			m_effectExternal = value;
 			if (!isOn) {
 				return;
 			}
 			//arrow
 			float backgroundWidth = background.rectTransform.rect.width;
-			Color color = ColorScheme.instance.cellGradientEffect.Evaluate(0.5f + m_effectStress * 0.1f);
-			if (m_effectStress >= 0f) {
-				effectArrowStressPos.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowStressPos.rectTransform.anchoredPosition.y);
-				effectArrowStressPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (m_effectStress / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
-				effectArrowStressPos.color = new Color(color.r, color.g, color.b, alphaArrow);
-				effectArrowStressNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+			Color color = ColorScheme.instance.cellGradientEffect.Evaluate(0.5f + m_effectExternal * 0.1f);
+			if (m_effectExternal >= 0f) {
+				effectArrowExternalPos.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowExternalPos.rectTransform.anchoredPosition.y);
+				effectArrowExternalPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (m_effectExternal / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
+				effectArrowExternalPos.color = new Color(color.r, color.g, color.b, alphaArrow);
+				effectArrowExternalNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
 			} else {
-				effectArrowStressNeg.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowStressPos.rectTransform.anchoredPosition.y);
-				effectArrowStressNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, -(m_effectStress / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
-				effectArrowStressNeg.color = new Color(color.r, color.g, color.b, alphaArrow);
-				effectArrowStressPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowExternalNeg.rectTransform.anchoredPosition = new Vector2(backgroundWidth * m_fullness, effectArrowExternalPos.rectTransform.anchoredPosition.y);
+				effectArrowExternalNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, -(m_effectExternal / GlobalSettings.instance.phenotype.cellMaxEnergy) * backgroundWidth * 10f);
+				effectArrowExternalNeg.color = new Color(color.r, color.g, color.b, alphaArrow);
+				effectArrowExternalPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
 			}
 		}
 	}
@@ -190,10 +190,10 @@ public class EnergyBar : MonoBehaviour {
 				effectArrowProdPos.color = ColorScheme.instance.grayedOut;
 				effectArrowProdNeg.color = ColorScheme.instance.grayedOut;
 
-				effectArrowStressPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
-				effectArrowStressNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
-				effectArrowStressPos.color = ColorScheme.instance.grayedOut;
-				effectArrowStressNeg.color = ColorScheme.instance.grayedOut;
+				effectArrowExternalPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowExternalNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
+				effectArrowExternalPos.color = ColorScheme.instance.grayedOut;
+				effectArrowExternalNeg.color = ColorScheme.instance.grayedOut;
 
 				effectArrowFluxPos.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
 				effectArrowFluxNeg.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0f);
