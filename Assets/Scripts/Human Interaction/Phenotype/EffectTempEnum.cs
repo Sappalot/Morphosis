@@ -2,5 +2,6 @@
 	None,
 	Total,
 	Production,
+	External,
 	Flux,
 }

@@ -31,6 +31,7 @@ public class EnergyBar : MonoBehaviour {
 		set {
 			totalText.color = value == EffectTempEnum.Total ? colorSelected : colorNotSelected;
 			prodText.color = value == EffectTempEnum.Production ? colorSelected : colorNotSelected;
+			externalText.color = value == EffectTempEnum.External ? colorSelected : colorNotSelected;
 			fluxText.color = value == EffectTempEnum.Flux ? colorSelected : colorNotSelected;
 		}
 	}

@@ -76,6 +76,8 @@ public class CellAndGeneOverviewPanel : MonoBehaviour {
 					energyBar.effectMeasure = EffectTempEnum.Total;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction) {
 					energyBar.effectMeasure = EffectTempEnum.Production;
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellExternal) {
+					energyBar.effectMeasure = EffectTempEnum.External;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux) {
 					energyBar.effectMeasure = EffectTempEnum.Flux;
 				}
@@ -122,6 +124,8 @@ public class CellAndGeneOverviewPanel : MonoBehaviour {
 					effectLabel.text = string.Format("Total Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.EffectUp(true, true, true), selectedCell.EffectDown(true, true, true, true), selectedCell.Effect(true, true, true, true));
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
 					effectLabel.text = string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.EffectUp(true, false, false), selectedCell.EffectDown(true, false, false, false), selectedCell.Effect(true, false, false, false));
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellExternal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureExternal) {
+					effectLabel.text = string.Format("External Effect: {0:F2} - {1:F2} = {2:F2}W", 0f, selectedCell.EffectDown(false, true, false, false), selectedCell.EffectDown(false, true, false, false));
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
 					effectLabel.text = string.Format("Flux Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.EffectUp(false, true, true), selectedCell.EffectDown(false, false, true, true), selectedCell.Effect(false, false, true, true));
 				}
@@ -152,6 +156,8 @@ public class CellAndGeneOverviewPanel : MonoBehaviour {
 					effectLabel.text = "Total Effect: ";
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
 					effectLabel.text = "Production Effect: ";
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellExternal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureExternal) {
+					effectLabel.text = "External Effect: ";
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
 					effectLabel.text = "Flux Effect: ";
 				}

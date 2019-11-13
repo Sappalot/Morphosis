@@ -1249,12 +1249,16 @@ public abstract class Cell : MonoBehaviour {
 					effectValue = 0.5f + Effect(true, true, true, true) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction) {
 					effectValue = 0.5f + Effect(true, false, false, false) * 0.1f;
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellExternal) {
+					effectValue = 0.5f + Effect(false, true, false, false) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux) {
 					effectValue = 0.5f + Effect(false, false, true, true) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
 					effectValue = 0.5f + creature.phenotype.EffectPerCell(true, true, true) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
 					effectValue = 0.5f + creature.phenotype.EffectPerCell(true, false, false) * 0.1f;
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureExternal) {
+					effectValue = 0.5f + creature.phenotype.EffectPerCell(false, true, false) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
 					effectValue = 0.5f + creature.phenotype.EffectPerCell(false, false, true) * 0.1f;
 				}

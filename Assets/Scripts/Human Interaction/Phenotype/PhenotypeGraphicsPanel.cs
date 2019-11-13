@@ -45,9 +45,11 @@ public class PhenotypeGraphicsPanel : MonoSingleton<PhenotypeGraphicsPanel> {
 	public enum EffectMeasureEnum {
 		CellTotal,
 		CellProduction,
+		CellExternal,
 		CellFlux,
 		CreatureTotal,
 		CreatureProduction,
+		CreatureExternal,
 		CreatureFlux,
 	}
 	[HideInInspector]
