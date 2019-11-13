@@ -60,6 +60,7 @@ public class Gene {
 
 	// Sensors...
 	public GeneEnergySensor energySensor = new GeneEnergySensor(SignalUnitEnum.EnergySensor);
+	public GeneEffectSensor effectSensor = new GeneEffectSensor(SignalUnitEnum.EffectSensor);
 	// ^ sensors ^
 
 	// Origin...
@@ -374,6 +375,7 @@ public class Gene {
 
 		//Sensors
 		geneData.energySensorData = energySensor.UpdateData();
+		geneData.effectSensorData = effectSensor.UpdateData();
 
 		// Origin
 		geneData.originPulsePeriodTicks =     originPulseTickPeriod;
@@ -431,6 +433,7 @@ public class Gene {
 
 		// Sensors
 		energySensor.ApplyData(geneData.energySensorData);
+		effectSensor.ApplyData(geneData.effectSensorData);
 
 		// Origin
 		originPulseTickPeriod = geneData.originPulsePeriodTicks == 0 ? 80 : geneData.originPulsePeriodTicks;

@@ -76,40 +76,68 @@ public class Phenotype : MonoBehaviour {
 
 	// ---------------- EFFECT -----------------------------
 
-	public float GetEffect(bool production, bool stress, bool fluxSelf, bool fluxAttached) {
+	public float Effect(EffectMeassureEnum effectMeassure) {
+		switch (effectMeassure) {
+			case EffectMeassureEnum.Total:
+				return Effect(true, true, true, true);
+			case EffectMeassureEnum.Production:
+				return Effect(true, false, false, false);
+			case EffectMeassureEnum.Flux:
+				return Effect(false, true, true, false);
+			case EffectMeassureEnum.External:
+				return Effect(false, false, false, true);
+		}
+		return -6666666;
+	}
+
+	public float Effect(bool production, bool fluxSelf, bool fluxAttached, bool stress) {
 		float effect = 0;
 		foreach (Cell cell in cellList) {
-			effect += cell.GetEffect(production, stress, fluxSelf, fluxAttached);
+			effect += cell.Effect(production, fluxSelf, fluxAttached, stress);
 		}
 		return effect;
 	}
 
-	public float GetEffectDown(bool production, bool stress, bool fluxSelf, bool fluxAttached) {
+	public float EffectDown(bool production, bool fluxSelf, bool fluxAttached, bool stress) {
 		float effect = 0;
 		foreach (Cell cell in cellList) {
-			effect += cell.GetEffectDown(production, stress, fluxSelf, fluxAttached);
+			effect += cell.EffectDown(production, fluxSelf, fluxAttached, stress);
 		}
 		return effect;
 	}
 
-	public float GetEffectUp(bool production, bool fluxSelf, bool fluxAttached) {
+	public float EffectUp(bool production, bool fluxSelf, bool fluxAttached) {
 		float effect = 0;
 		foreach (Cell cell in cellList) {
-			effect += cell.GetEffectUp(production, fluxSelf, fluxAttached);
+			effect += cell.EffectUp(production, fluxSelf, fluxAttached);
 		}
 		return effect;
 	}
 
-	public float GetEffectPerCell(bool production, bool stress, bool fluxAttached) {
-		return GetEffect(production, stress, false, fluxAttached) / cellCount;
+	public float EffectPerCell(EffectMeassureEnum effectMeassure) {
+		switch (effectMeassure) {
+			case EffectMeassureEnum.Total:
+				return Effect(true, false, true, true) / cellCount;
+			case EffectMeassureEnum.Production:
+				return Effect(true, false, false, false) / cellCount;
+			case EffectMeassureEnum.Flux:
+				return Effect(false, false, true, false) / cellCount;
+			case EffectMeassureEnum.External:
+				return Effect(false, false, false, true) / cellCount;
+		}
+		return -6666666;
 	}
 
-	public float GetEffectDownPerCell(bool production, bool stress, bool fluxAttached) {
-		return GetEffectDown(production, stress, false, fluxAttached) / cellCount;
+	public float EffectPerCell(bool production, bool fluxAttached, bool stress) {
+		return Effect(production, false, fluxAttached, stress) / cellCount;
 	}
 
-	public float GetEffectUpPerCell(bool production, bool fluxAttached) {
-		return GetEffectUp(production, false, fluxAttached) / cellCount;
+	public float EffectDownPerCell(bool production, bool fluxAttached, bool stress) {
+		return EffectDown(production, false, fluxAttached, stress) / cellCount;
+	}
+
+	public float EffectUpPerCell(bool production, bool fluxAttached) {
+		return EffectUp(production, false, fluxAttached) / cellCount;
 	}
 
 	// --------------- ^ EFFECT ^ ------------------------

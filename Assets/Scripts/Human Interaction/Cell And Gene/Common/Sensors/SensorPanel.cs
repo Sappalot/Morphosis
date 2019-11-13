@@ -29,6 +29,10 @@ public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
 					return selectedGene.energySensor;
 				}
 
+				if (signalUnit == SignalUnitEnum.EffectSensor) {
+					return selectedGene.effectSensor;
+				}
+
 				if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
 					return selectedGene.originSizeSensor;
 				}

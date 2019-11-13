@@ -270,19 +270,32 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// -------------------------------EFFECT -----------------------------------------
-
-	public float GetEffect(bool production, bool stress, bool fluxSelf, bool fluxAttached) {
-		//return 0f;
-		return GetEffectUp(production, fluxSelf, fluxAttached) - GetEffectDown(production, stress, fluxSelf, fluxAttached);
+	public float Effect(EffectMeassureEnum effectMeassure) {
+		switch (effectMeassure) {
+			case EffectMeassureEnum.Total:
+				return Effect(true, true, true, true);
+			case EffectMeassureEnum.Production:
+				return Effect(true, false, false, false);
+			case EffectMeassureEnum.Flux:
+				return Effect(false, true, true, false);
+			case EffectMeassureEnum.External:
+				return Effect(false, false, false, true);
+		}
+		return -6666666;
 	}
 
-	public float GetEffectDown(bool production, bool stress, bool fluxSelf, bool fluxAttached) {
+	public float Effect(bool production, bool fluxSelf, bool fluxAttached, bool stress) {
+		//return 0f;
+		return EffectUp(production, fluxSelf, fluxAttached) - EffectDown(production, fluxSelf, fluxAttached, stress);
+	}
+
+	public float EffectDown(bool production, bool fluxSelf, bool fluxAttached, bool stress) {
 		//return 0f;
 		// The effect lost by any cell when eate by jaw is counted under stress (effectProductionPredPrayDown)
 		return (production ? effectProductionInternalDown : 0f) + (stress ? effectProductionPredPrayDown : 0f) + (fluxSelf ? effectFluxSelfDown : 0f) + (fluxAttached ? effectFluxAttachedDown : 0f);
 	}
 
-	public float GetEffectUp(bool production, bool fluxSelf, bool fluxAttached) {
+	public float EffectUp(bool production, bool fluxSelf, bool fluxAttached) {
 		//return 0f;
 		// The effect gained by jaw eating other is counted under production (effectProductionPredPrayUp)
 		return (production ? effectProductionInternalUp + effectProductionPredPrayUp : 0f) + (fluxSelf ? effectFluxSelfUp : 0f) + (fluxAttached ? effectFluxAttachedUp : 0f);
@@ -503,7 +516,7 @@ public abstract class Cell : MonoBehaviour {
 	//production effect is updated by each cell type in their own way
 	public void UpdateEnergy(int deltaTicks, bool enableFlux) {
 
-		energy = Mathf.Clamp(energy + GetEffect(true, true, enableFlux, enableFlux) * deltaTicks * Time.fixedDeltaTime, -13f, GlobalSettings.instance.phenotype.cellMaxEnergy);
+		energy = Mathf.Clamp(energy + Effect(true, enableFlux, enableFlux, true) * deltaTicks * Time.fixedDeltaTime, -13f, GlobalSettings.instance.phenotype.cellMaxEnergy);
 		didUpdateEnergyThisFrame = 2;
 	}
 
@@ -1229,24 +1242,24 @@ public abstract class Cell : MonoBehaviour {
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(energyFullness);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.flux) {
 				float intensity = 0.2f;
-				float red = Mathf.Min(GetEffectDown(false, false, true, true) * intensity, 1f);
-				float green = Mathf.Min(GetEffectUp(false, true, true) * intensity, 1f);
+				float red = Mathf.Min(EffectDown(false, true, true, false) * intensity, 1f);
+				float green = Mathf.Min(EffectUp(false, true, true) * intensity, 1f);
 				filledCircleSprite.color = new Color(red, green, 0f);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.effect) {
 				float effectValue = 0f;
 
 				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal) {
-					effectValue = 0.5f + GetEffect(true, true, true, true) * 0.1f;
+					effectValue = 0.5f + Effect(true, true, true, true) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction) {
-					effectValue = 0.5f + GetEffect(true, false, false, false) * 0.1f;
+					effectValue = 0.5f + Effect(true, false, false, false) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux) {
-					effectValue = 0.5f + GetEffect(false, false, true, true) * 0.1f;
+					effectValue = 0.5f + Effect(false, true, true, false) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
-					effectValue = 0.5f + creature.phenotype.GetEffectPerCell(true, true, true) * 0.1f;
+					effectValue = 0.5f + creature.phenotype.EffectPerCell(true, true, true) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
-					effectValue = 0.5f + creature.phenotype.GetEffectPerCell(true, false, false) * 0.1f;
+					effectValue = 0.5f + creature.phenotype.EffectPerCell(true, false, false) * 0.1f;
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
-					effectValue = 0.5f + creature.phenotype.GetEffectPerCell(false, false, true) * 0.1f;
+					effectValue = 0.5f + creature.phenotype.EffectPerCell(false, true, false) * 0.1f;
 				}
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure) {
@@ -1585,6 +1598,7 @@ public abstract class Cell : MonoBehaviour {
 
 		// Sensors
 		cellData.energySensorData = energySensor.UpdateData();
+		cellData.effectSensorData = effectSensor.UpdateData();
 
 		// Origin
 		cellData.originPulseTick = originPulseTick;
@@ -1637,6 +1651,7 @@ public abstract class Cell : MonoBehaviour {
 
 		// Sensors
 		energySensor.ApplyData(cellData.energySensorData);
+		effectSensor.ApplyData(cellData.effectSensorData);
 
 		originPulseTick = cellData.originPulseTick;
 		originDetatchLogicBox.ApplyData(cellData.originDetatchLogicBoxData);
@@ -1649,12 +1664,14 @@ public abstract class Cell : MonoBehaviour {
 	public ConstantSensor constantSensor = new ConstantSensor(SignalUnitEnum.ConstantSensor); // own component
 	public LogicBox dendritesLogicBox = new LogicBox(SignalUnitEnum.DendritesLogicBox); // own component
 	public EnergySensor energySensor = new EnergySensor(SignalUnitEnum.EnergySensor); // own component
+	public EffectSensor effectSensor = new EffectSensor(SignalUnitEnum.EffectSensor); // own component
 	public LogicBox originDetatchLogicBox = new LogicBox(SignalUnitEnum.OriginDetatchLogicBox); // inside origin component
-	public SizeSensor originSizeSensor = new SizeSensor(SignalUnitEnum.OriginSizeSensor);
+	public SizeSensor originSizeSensor = new SizeSensor(SignalUnitEnum.OriginSizeSensor); // inside origin component
 
 	public virtual void UpdateSignalConnections() {
 		dendritesLogicBox.UpdateSignalConnections(this);
 		energySensor.UpdateSignalConnections(this);
+		effectSensor.UpdateSignalConnections(this);
 		if (isOrigin) {
 			originDetatchLogicBox.UpdateSignalConnections(this);
 		}
@@ -1664,6 +1681,7 @@ public abstract class Cell : MonoBehaviour {
 		constantSensor.Clear();
 		dendritesLogicBox.Clear();
 		energySensor.Clear();
+		effectSensor.Clear();
 		originDetatchLogicBox.Clear();
 		originSizeSensor.Clear();
 	}
@@ -1687,6 +1705,7 @@ public abstract class Cell : MonoBehaviour {
 		constantSensor.ComputeSignalOutput(this, deltaTicks);
 		dendritesLogicBox.ComputeSignalOutput(this, deltaTicks);
 		energySensor.ComputeSignalOutput(this, deltaTicks);
+		effectSensor.ComputeSignalOutput(this, deltaTicks);
 		if (isOrigin) {
 			originDetatchLogicBox.ComputeSignalOutput(this, deltaTicks);
 			originSizeSensor.ComputeSignalOutput(this, deltaTicks);
@@ -1701,6 +1720,8 @@ public abstract class Cell : MonoBehaviour {
 			return dendritesLogicBox.GetOutput(outputUnitSlot);
 		} else if (outputUnit == SignalUnitEnum.EnergySensor) {
 			return energySensor.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.EffectSensor) {
+			return effectSensor.GetOutput(outputUnitSlot);
 		} else if (outputUnit == SignalUnitEnum.OriginDetatchLogicBox) {
 			return originDetatchLogicBox.GetOutput(outputUnitSlot);
 		} else if (outputUnit == SignalUnitEnum.OriginSizeSensor) {

@@ -10,6 +10,7 @@ public class CellAndGenePanel : MonoBehaviour {
 	public CellAndGeneAxonComponentPanel axonComponentPanel;
 	public LogicBoxPanel dendritesComponentPanel;
 	public SensorPanel energySensorComponentPanel;
+	public SensorPanel effectSensorComponentPanel;
 	public CellAndGeneBuildPriorityComponentPanel buildPriorityComponentPanel;
 	public CellAndGeneOriginComponentPanel originComponentPanel;
 	public GeneNeighboursComponentPanel geneNeighbourComponentPanel;
@@ -35,6 +36,7 @@ public class CellAndGenePanel : MonoBehaviour {
 
 		// sensors
 		energySensorComponentPanel.Initialize(mode, SignalUnitEnum.EnergySensor);
+		effectSensorComponentPanel.Initialize(mode, SignalUnitEnum.EffectSensor);
 
 		// origin
 		originComponentPanel.Initialize(mode);
@@ -73,6 +75,7 @@ public class CellAndGenePanel : MonoBehaviour {
 		axonComponentPanel.MakeDirty();
 		dendritesComponentPanel.MakeDirty();
 		energySensorComponentPanel.MakeDirty();
+		effectSensorComponentPanel.MakeDirty();
 		buildPriorityComponentPanel.MakeDirty();
 
 		if (selectedGene.isOrigin) {
@@ -130,6 +133,8 @@ public class CellAndGenePanel : MonoBehaviour {
 			outTransform = dendritesComponentPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
 			outTransform = energySensorComponentPanel.GetLocation(signalUnitSlot);
+		} else if (signalUnit == SignalUnitEnum.EffectSensor) {
+			outTransform = effectSensorComponentPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
 			outTransform = originComponentPanel.detatchLogicBoxPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.OriginSizeSensor) {

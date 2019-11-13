@@ -36,16 +36,16 @@ public class GeneEnergySensor : GeneSignalUnit {
 	}
 
 	// Save
-	private GeneEnergySensorData geneEnergySensorData = new GeneEnergySensorData();
+	private GeneEnergySensorData data = new GeneEnergySensorData();
 	public GeneEnergySensorData UpdateData() {
-		geneEnergySensorData.areaRadius = areaRadius;
-		geneEnergySensorData.energyThreshold = threshold;
-		return geneEnergySensorData;
+		data.areaRadius = areaRadius;
+		data.energyThreshold = threshold;
+		return data;
 	}
 
 	// Load
 	public void ApplyData(GeneEnergySensorData geneEnergySensorData) {
-		areaRadius = geneEnergySensorData.areaRadius;
+		areaRadius = Mathf.Max(1, geneEnergySensorData.areaRadius);
 		threshold = geneEnergySensorData.energyThreshold;
 	}
 }

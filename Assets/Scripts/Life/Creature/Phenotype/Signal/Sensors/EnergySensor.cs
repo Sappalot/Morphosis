@@ -23,7 +23,7 @@ public class EnergySensor : SignalUnit {
 			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).areaRadius);
 		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
 			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.energySensor as GeneEnergySensor).areaRadius);
-		}
+		} 
 	}
 
 	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {

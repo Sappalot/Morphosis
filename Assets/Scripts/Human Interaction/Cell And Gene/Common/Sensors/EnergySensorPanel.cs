@@ -44,16 +44,16 @@ public class EnergySensorPanel : SensorPanel {
 			if (selectedGene != null && affectedGeneSensor != null) {
 				ignoreSliderMoved = true;
 
-				cellEnergyMoreThanLabel.text = string.Format("Cell E ≥ {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
-				cellEnergyLessThanLabel.text = string.Format("Cell E < {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+				cellEnergyMoreThanLabel.text = string.Format("Cl. E ≥ {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+				cellEnergyLessThanLabel.text = string.Format("Cl. E < {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
 
-				areaEnergyMoreThanLabel.text = string.Format("Area E ≥ {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
-				areaEnergyLessThanLabel.text = string.Format("Area E < {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+				areaEnergyMoreThanLabel.text = string.Format("Hx. E ≥ {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+				areaEnergyLessThanLabel.text = string.Format("Hx. E < {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
 
-				creatureEnergyMoreThanLabel.text = string.Format("Ctr. E ≥ {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
-				creatureEnergyLessThanLabel.text = string.Format("Ctr. E < {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+				creatureEnergyMoreThanLabel.text = string.Format("Ct. E ≥ {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
+				creatureEnergyLessThanLabel.text = string.Format("Ct. E < {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
 
-				areaRadiusSliderLabel.text = string.Format("Area radius: {0:F0} m", (affectedGeneSensor as GeneEnergySensor).areaRadius);
+				areaRadiusSliderLabel.text = string.Format("Hexagon radius: {0:F0} m", (affectedGeneSensor as GeneEnergySensor).areaRadius);
 
 				areaRadiusSlider.value = (affectedGeneSensor as GeneEnergySensor).areaRadius;
 				areaRadiusSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;

@@ -113,17 +113,17 @@ public class CellAndGeneOverviewPanel : MonoBehaviour {
 			if (mode == PhenoGenoEnum.Phenotype) {
 				energyBar.isOn = true;
 				energyBar.fullness = selectedCell.energyFullness;
-				energyBar.effectTotal = selectedCell.GetEffect(true, true, true, true);
-				energyBar.effectProd = selectedCell.GetEffect(true, false, false, false);
-				energyBar.effectStress = selectedCell.GetEffect(false, true, false, false);
-				energyBar.effectFlux = selectedCell.GetEffect(false, false, true, true);
+				energyBar.effectTotal = selectedCell.Effect(true, true, true, true);
+				energyBar.effectProd = selectedCell.Effect(true, false, false, false);
+				energyBar.effectStress = selectedCell.Effect(false, false, false, true);
+				energyBar.effectFlux = selectedCell.Effect(false, true, true, false);
 
 				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
-					effectLabel.text = string.Format("Total Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, true, true), selectedCell.GetEffectDown(true, true, true, true), selectedCell.GetEffect(true, true, true, true));
+					effectLabel.text = string.Format("Total Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.EffectUp(true, true, true), selectedCell.EffectDown(true, true, true, true), selectedCell.Effect(true, true, true, true));
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
-					effectLabel.text = string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(true, false, false), selectedCell.GetEffectDown(true, false, false, false), selectedCell.GetEffect(true, false, false, false));
+					effectLabel.text = string.Format("Production Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.EffectUp(true, false, false), selectedCell.EffectDown(true, false, false, false), selectedCell.Effect(true, false, false, false));
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
-					effectLabel.text = string.Format("Flux Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.GetEffectUp(false, true, true), selectedCell.GetEffectDown(false, false, true, true), selectedCell.GetEffect(false, false, true, true));
+					effectLabel.text = string.Format("Flux Effect: {0:F2} - {1:F2} = {2:F2}W", selectedCell.EffectUp(false, true, true), selectedCell.EffectDown(false, true, true, false), selectedCell.Effect(false, true, true, false));
 				}
 
 				effectFromNeighboursLabel.text = string.Format("P me <= neighbours: {0:F2}W", selectedCell.effectFluxFromSelf); //kill me
@@ -139,7 +139,7 @@ public class CellAndGeneOverviewPanel : MonoBehaviour {
 				connectedVeinsCountLabel.text = "Veins: " + selectedCell.creature.phenotype.NonPlacentaVeinsConnectedToCellCount(selectedCell) + (selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) > 0 ? (" + " + selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) + " children") : "");
 				eatingOnMeCountLabel.text = "Eating on me: " + selectedCell.predatorCount;
 
-				footerPanel.SetProductionEffectText(selectedCell.GetEffectUp(true, false, false), selectedCell.GetEffectDown(true, false, false, false));
+				footerPanel.SetProductionEffectText(selectedCell.EffectUp(true, false, false), selectedCell.EffectDown(true, false, false, false));
 
 				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
 					footerPanel.productionEffectLabel.color = Color.gray; // since we have it presented above allready, confusing to show it twice

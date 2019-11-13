@@ -26,6 +26,7 @@ public enum SignalUnitEnum {
 	DendritesLogicBox, //Dendrites
 	
 	EnergySensor,
+	EffectSensor,
 
 	OriginDetatchLogicBox,
 	OriginSizeSensor,
