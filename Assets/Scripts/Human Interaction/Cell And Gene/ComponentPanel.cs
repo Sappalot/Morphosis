@@ -3,13 +3,13 @@ using UnityEngine;
 
 
 // a panel that can change genotype
-// Me <== (CellAndGeneSignalUnitPanel), EggCellPanel, JawCellPanel
-public abstract class CellAndGeneComponentPanel : MonoBehaviour {
+// Me <== (SignalUnitPanel), EggCellPanel, JawCellPanel
+public abstract class ComponentPanel : MonoBehaviour {
 	[HideInInspector]
 	protected PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 	protected bool ignoreSliderMoved = false;
 	protected bool isDirty = false;
-	public CellAndGeneFooterPanel footerPanel;
+	public ComponentFooterPanel componentFooterPanel;
 
 	protected PhenoGenoEnum GetMode() {
 		return mode;

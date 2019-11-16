@@ -17,7 +17,7 @@ public class AxonInputPanel : MonoBehaviour {
 	private bool ignoreSliderMoved = false;
 	private bool isUsed = false;
 
-	private CellAndGeneAxonComponentPanel motherPanel;
+	private AxonPanel motherPanel;
 	public GeneAxonInput affectedGeneAxonInput { 
 		get {
 			if (column == 0) {
@@ -34,7 +34,7 @@ public class AxonInputPanel : MonoBehaviour {
 		return affectedGeneAxonInput.nerve;
 	}
 
-	public void Initialize(PhenoGenoEnum mode, int column, CellAndGeneAxonComponentPanel motherPanel) {
+	public void Initialize(PhenoGenoEnum mode, int column, AxonPanel motherPanel) {
 		this.mode = mode;
 		this.motherPanel = motherPanel;
 		this.column = column;
@@ -57,8 +57,8 @@ public class AxonInputPanel : MonoBehaviour {
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
-		CellPanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
+		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
+		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		MakeDirty();
 	}
 
@@ -70,8 +70,8 @@ public class AxonInputPanel : MonoBehaviour {
 		motherPanel.MarkAsNewForge();
 		//motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
-		CellPanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
+		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
+		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		MakeDirty();
 	}
 
@@ -93,8 +93,8 @@ public class AxonInputPanel : MonoBehaviour {
 		staticAffectedGeneAxonInputPanel.affectedGeneAxonInput.nerve.inputUnit = inputUnit;
 		staticAffectedGeneAxonInputPanel.affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
 		staticAffectedGeneAxonInputPanel.motherPanel.MakeDirty();
-		CellPanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
+		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
+		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		staticAffectedGeneAxonInputPanel = null;
 	}
 

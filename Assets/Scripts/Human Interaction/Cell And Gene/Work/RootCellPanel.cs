@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class RootCellPanel : CellAndGeneComponentPanel {
+public class RootCellPanel : ComponentPanel {
 
 	private void Update() {
 		if (isDirty) {
@@ -9,7 +9,7 @@ public class RootCellPanel : CellAndGeneComponentPanel {
 				Debug.Log("Update CellPanel");
 			}
 
-			footerPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.rootCellEffectCost);
+			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.rootCellEffectCost);
 
 			isDirty = false; 
 		}

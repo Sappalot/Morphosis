@@ -4,18 +4,18 @@ using UnityEngine;
 public class CellAndGenePanel : MonoBehaviour {
 	public RectTransform cellAndGenePanelRectTransform;
 
-	public CellAndGeneOverviewPanel overvirewPanel;
-	public CellAndGeneWorkComponentPanel workComponentPanel;
-	public SensorPanel constantSensorComponentPanel;
-	public CellAndGeneAxonComponentPanel axonComponentPanel;
-	public LogicBoxPanel dendritesComponentPanel;
-	public SensorPanel energySensorComponentPanel;
-	public SensorPanel effectSensorComponentPanel;
-	public CellAndGeneBuildPriorityComponentPanel buildPriorityComponentPanel;
-	public CellAndGeneOriginComponentPanel originComponentPanel;
-	public GeneNeighboursComponentPanel geneNeighbourComponentPanel;
+	public OverviewPanel overvirewPanel;
+	public WorkPanel workPanel;
+	public SensorPanel constantSensorPanel;
+	public AxonPanel axonPanel;
+	public LogicBoxPanel dendritesLogicBoxPanel;
+	public SensorPanel energySensorPanel;
+	public SensorPanel effectSensorPanel;
+	public BuildPriorityPanel buildPriorityPanel;
+	public OriginPanel originPanel;
+	public GeneNeighboursPanel geneNeighboursPanel;
 	
-	public HudSignalArrowHandler arrowHandler;
+	public HudSignalArrowHandler hudSignalArrowHandler;
 
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 	private bool isDirty = true;
@@ -25,35 +25,35 @@ public class CellAndGenePanel : MonoBehaviour {
 
 		overvirewPanel.Initialize(mode);
 
-		workComponentPanel.Initialize(mode);
+		workPanel.Initialize(mode);
 
-		constantSensorComponentPanel.Initialize(mode, SignalUnitEnum.ConstantSensor);
+		constantSensorPanel.Initialize(mode, SignalUnitEnum.ConstantSensor);
 
-		axonComponentPanel.Initialize(mode);
+		axonPanel.Initialize(mode);
 
 		// dendrites
-		dendritesComponentPanel.Initialize(mode, SignalUnitEnum.DendritesLogicBox);
+		dendritesLogicBoxPanel.Initialize(mode, SignalUnitEnum.DendritesLogicBox);
 
 		// sensors
-		energySensorComponentPanel.Initialize(mode, SignalUnitEnum.EnergySensor);
-		effectSensorComponentPanel.Initialize(mode, SignalUnitEnum.EffectSensor);
+		energySensorPanel.Initialize(mode, SignalUnitEnum.EnergySensor);
+		effectSensorPanel.Initialize(mode, SignalUnitEnum.EffectSensor);
 
 		// origin
-		originComponentPanel.Initialize(mode);
+		originPanel.Initialize(mode);
 
 		// build priority
-		buildPriorityComponentPanel.mode = mode;
+		buildPriorityPanel.mode = mode;
 
 
 		if (mode == PhenoGenoEnum.Genotype) {
-			geneNeighbourComponentPanel.gameObject.SetActive(true);
-			geneNeighbourComponentPanel.Initialize();
+			geneNeighboursPanel.gameObject.SetActive(true);
+			geneNeighboursPanel.Initialize();
 		} else {
-			geneNeighbourComponentPanel.gameObject.SetActive(false);
+			geneNeighboursPanel.gameObject.SetActive(false);
 		}
 		
 
-		arrowHandler.Initialize(mode);
+		hudSignalArrowHandler.Initialize(mode);
 	}
 
 	public PhenoGenoEnum GetMode() {
@@ -70,39 +70,39 @@ public class CellAndGenePanel : MonoBehaviour {
 		}
 
 		overvirewPanel.MakeDirty();
-		workComponentPanel.MakeDirty();
-		constantSensorComponentPanel.MakeDirty();
-		axonComponentPanel.MakeDirty();
-		dendritesComponentPanel.MakeDirty();
-		energySensorComponentPanel.MakeDirty();
-		effectSensorComponentPanel.MakeDirty();
-		buildPriorityComponentPanel.MakeDirty();
+		workPanel.MakeDirty();
+		constantSensorPanel.MakeDirty();
+		axonPanel.MakeDirty();
+		dendritesLogicBoxPanel.MakeDirty();
+		energySensorPanel.MakeDirty();
+		effectSensorPanel.MakeDirty();
+		buildPriorityPanel.MakeDirty();
 
 		if (selectedGene.isOrigin) {
-			originComponentPanel.MakeDirty();
+			originPanel.MakeDirty();
 		} else {
-			buildPriorityComponentPanel.MakeDirty();
+			buildPriorityPanel.MakeDirty();
 		}
 
 		if (mode == PhenoGenoEnum.Genotype) {
-			geneNeighbourComponentPanel.MakeDirty();
+			geneNeighboursPanel.MakeDirty();
 		}
 
-		arrowHandler.MakeDirtyConnections();
-		arrowHandler.MakeDirtySignal();
+		hudSignalArrowHandler.MakeDirtyConnections();
+		hudSignalArrowHandler.MakeDirtySignal();
 	}
 
 	public List<IGeneInput> GetAllGeneInputs() {
 		List<IGeneInput> inputList = new List<IGeneInput>();
-		List<IGeneInput> inputs = workComponentPanel.currentWorkPanel.GetAllGeneInputs();
+		List<IGeneInput> inputs = workPanel.currentWorkPanel.GetAllGeneInputs();
 		if (inputs != null) {
 			inputList.AddRange(inputs);
 		}
-		inputList.AddRange(axonComponentPanel.GetAllGeneInputs());
-		inputList.AddRange(dendritesComponentPanel.GetAllGeneInputs());
+		inputList.AddRange(axonPanel.GetAllGeneInputs());
+		inputList.AddRange(dendritesLogicBoxPanel.GetAllGeneInputs());
 
 		if (selectedGene.isOrigin) {
-			inputs = originComponentPanel.GetAllGeneInputs();
+			inputs = originPanel.GetAllGeneInputs();
 			if (inputs != null) {
 				inputList.AddRange(inputs);
 			}
@@ -114,34 +114,33 @@ public class CellAndGenePanel : MonoBehaviour {
 	public Vector3 TotalPanelOffset(SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
 		RectTransform outTransform = null;
 
-		//TODO: let egg cell define where all output locations are
 
 		if (signalUnit == SignalUnitEnum.WorkLogicBoxA) {
-			outTransform = workComponentPanel.nerveLocationsPanel.logicBoxA.GetLocation(signalUnitSlot);
+			outTransform = workPanel.nerveLocationsPanel.logicBoxA.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.WorkLogicBoxB) {
-			outTransform = workComponentPanel.nerveLocationsPanel.logicBoxB.GetLocation(signalUnitSlot);
+			outTransform = workPanel.nerveLocationsPanel.logicBoxB.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.WorkSensorA) {
-			outTransform = workComponentPanel.nerveLocationsPanel.sensorA.GetLocation(signalUnitSlot);
+			outTransform = workPanel.nerveLocationsPanel.sensorA.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.WorkSensorB) {
-			outTransform = workComponentPanel.nerveLocationsPanel.sensorB.GetLocation(signalUnitSlot);
+			outTransform = workPanel.nerveLocationsPanel.sensorB.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.WorkSensorC) {
-			outTransform = workComponentPanel.nerveLocationsPanel.sensorC.GetLocation(signalUnitSlot);
+			outTransform = workPanel.nerveLocationsPanel.sensorC.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.WorkSensorD) {
-			outTransform = workComponentPanel.nerveLocationsPanel.sensorD.GetLocation(signalUnitSlot);
+			outTransform = workPanel.nerveLocationsPanel.sensorD.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.ConstantSensor) {
-			outTransform = constantSensorComponentPanel.GetLocation(signalUnitSlot);
+			outTransform = constantSensorPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.Axon) {
-			outTransform = axonComponentPanel.GetLocation(signalUnitSlot);
+			outTransform = axonPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.DendritesLogicBox) {
-			outTransform = dendritesComponentPanel.GetLocation(signalUnitSlot);
+			outTransform = dendritesLogicBoxPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
-			outTransform = energySensorComponentPanel.GetLocation(signalUnitSlot);
+			outTransform = energySensorPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.EffectSensor) {
-			outTransform = effectSensorComponentPanel.GetLocation(signalUnitSlot);
+			outTransform = effectSensorPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
-			outTransform = originComponentPanel.detatchLogicBoxPanel.GetLocation(signalUnitSlot);
+			outTransform = originPanel.detatchLogicBoxPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
-			outTransform = originComponentPanel.sizeSensorPanel.GetLocation(signalUnitSlot);
+			outTransform = originPanel.sizeSensorPanel.GetLocation(signalUnitSlot);
 		}
 
 		if (outTransform != null) {
@@ -176,8 +175,8 @@ public class CellAndGenePanel : MonoBehaviour {
 				return;
 			}
 
-			originComponentPanel.gameObject.SetActive(selectedGene.isOrigin);
-			buildPriorityComponentPanel.gameObject.SetActive(!selectedGene.isOrigin);
+			originPanel.gameObject.SetActive(selectedGene.isOrigin);
+			buildPriorityPanel.gameObject.SetActive(!selectedGene.isOrigin);
 
 			isDirty = false;
 		}

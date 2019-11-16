@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class VeinCellPanel : CellAndGeneComponentPanel {
+public class VeinCellPanel : ComponentPanel {
 
 	private void Update() {
 		if (isDirty) {
@@ -9,7 +9,7 @@ public class VeinCellPanel : CellAndGeneComponentPanel {
 				Debug.Log("Update CellPanel");
 			}
 
-			footerPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.veinCellEffectCost);
+			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.veinCellEffectCost);
 
 			isDirty = false; 
 		}

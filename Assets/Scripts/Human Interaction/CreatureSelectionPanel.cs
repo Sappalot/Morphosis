@@ -199,7 +199,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		PhenotypePanel.instance.MakeDirty();
 		GenotypePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
-		GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.MakeDirty();
+		GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.MakeDirty();
 		
 		GenePanel.instance.MakeDirty();
 		CellPanel.instance.MakeDirty();
@@ -218,7 +218,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		PhenotypePanel.instance.MakeDirty();
 		GenotypePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
-		GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.MakeDirty();
+		GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.MakeDirty();
 		LockedUnlockedPanel.instance.MakeDirty();
 
 		GenePanel.instance.MakeDirty();
@@ -248,7 +248,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		PhenotypePanel.instance.MakeDirty();
 		GenotypePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
-		GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.MakeDirty();
+		GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.MakeDirty();
 		LockedUnlockedPanel.instance.MakeDirty();
 
 		UpdateSelectionCluster();
@@ -277,7 +277,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		PhenotypePanel.instance.MakeDirty();
 		GenotypePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
-		GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.MakeDirty();
+		GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.MakeDirty();
 		LockedUnlockedPanel.instance.MakeDirty();
 
 		World.instance.life.UpdateStructure();

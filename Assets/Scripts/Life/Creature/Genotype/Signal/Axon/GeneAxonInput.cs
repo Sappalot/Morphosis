@@ -3,6 +3,7 @@
 public class GeneAxonInput : IGeneInput {
 
 	// TODO make it so that nerve input can't be changed if locked
+	// TODO don't access nerve directly
 	public GeneNerve m_nerve = new GeneNerve();
 
 	public GeneNerve nerve {

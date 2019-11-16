@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class GeneNeighboursComponentPanel : MonoBehaviour {
+public class GeneNeighboursPanel : MonoBehaviour {
 	public GameObject circles;
 
 	private bool isDirty = true;

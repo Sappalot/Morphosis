@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class CellAndGeneWorkComponentPanel : MonoBehaviour {
+public class WorkPanel : MonoBehaviour {
 	public EggCellPanel eggPanel;
 	public FungalCellPanel fungalPanel;
 	public JawCellPanel jawPanel;
@@ -15,7 +15,7 @@ public class CellAndGeneWorkComponentPanel : MonoBehaviour {
 	
 	public Dropdown typeDropdown;
 
-	private CellAndGeneComponentPanel[] workPanels = new CellAndGeneComponentPanel[8];
+	private ComponentPanel[] workPanels = new ComponentPanel[8];
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 	private bool isDirty = true;
 	private bool ignoreMenuChange;
@@ -31,7 +31,7 @@ public class CellAndGeneWorkComponentPanel : MonoBehaviour {
 		workPanels[5] = rootPanel;
 		workPanels[6] = shellPanel;
 		workPanels[7] = veinPanel;
-		foreach (CellAndGeneComponentPanel m in workPanels) {
+		foreach (ComponentPanel m in workPanels) {
 			m.Initialize(mode);
 		}
 		MakeDirty();
@@ -97,7 +97,7 @@ public class CellAndGeneWorkComponentPanel : MonoBehaviour {
 		}
 	}
 
-	public CellAndGeneComponentPanel currentWorkPanel {
+	public ComponentPanel currentWorkPanel {
 		get {
 			if (cellType == CellTypeEnum.Egg) {
 				return eggPanel;

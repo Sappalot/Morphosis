@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class FungalCellPanel : CellAndGeneComponentPanel {
+public class FungalCellPanel : ComponentPanel {
 
 	private void Update() {
 		if (isDirty) {
@@ -9,7 +9,7 @@ public class FungalCellPanel : CellAndGeneComponentPanel {
 				Debug.Log("Update CellPanel");
 			}
 
-			footerPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.fungalCellEffectCost);
+			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.fungalCellEffectCost);
 
 			isDirty = false; 
 		}

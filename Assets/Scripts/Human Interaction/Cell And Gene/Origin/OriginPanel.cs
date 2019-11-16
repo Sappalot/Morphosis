@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
+public class OriginPanel : ComponentPanel {
 	// Detatch
 	public LogicBoxPanel detatchLogicBoxPanel;
 

@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CellAndGeneAxonComponentPanel : CellAndGeneSignalUnitPanel {
+public class AxonPanel : SignalUnitPanel {
 	public Toggle enabledToggle;
 
 	// ...Pulse...

@@ -5,7 +5,7 @@ public class ArrangementPanel : MonoBehaviour {
 	public Toggle enableToggle;
 	public GameObject circles;
 	[HideInInspector]
-	public GeneNeighboursComponentPanel genePanel;
+	public GeneNeighboursPanel genePanel;
 
 	public Image grayOut;
 	public GameObject arrangementButtons;
@@ -175,7 +175,7 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	public void OnClickedSetReference() {
-		GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.SetAskingForGeneReference(this);
+		GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.SetAskingForGeneReference(this);
 		MouseAction.instance.actionState = MouseActionStateEnum.selectGene;
 	}
 
@@ -185,8 +185,8 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	private void MakeAllGenomeStuffDirty() {
-		GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.MakeDirty();
-		GenePanel.instance.cellAndGenePanel.buildPriorityComponentPanel.MakeDirty(); // since change of genome might have an effect on wether same gena is expressed on several build index locations
+		GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.MakeDirty();
+		GenePanel.instance.cellAndGenePanel.buildPriorityPanel.MakeDirty(); // since change of genome might have an effect on wether same gena is expressed on several build index locations
 		GenomePanel.instance.MakeDirty();
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;

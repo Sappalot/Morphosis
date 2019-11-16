@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class ShellCellPanel : CellAndGeneComponentPanel {
+public class ShellCellPanel : ComponentPanel {
 	public Text productionEffectText;
 
 	public ShellCellPanelButton templateButton;
@@ -35,7 +35,7 @@ public class ShellCellPanel : CellAndGeneComponentPanel {
 			}
 
 			if (selectedGene != null) {
-				footerPanel.SetProductionEffectText(0f, ShellCell.GetEffectCost(selectedGene.shellCellArmorClass, GenePanel.instance.selectedGene.shellCellTransparancyClass));
+				componentFooterPanel.SetProductionEffectText(0f, ShellCell.GetEffectCost(selectedGene.shellCellArmorClass, GenePanel.instance.selectedGene.shellCellTransparancyClass));
 				
 				armorText.text = string.Format("Armour: {0:F2} (* normal)", ShellCell.GetStrength(selectedGene.shellCellArmorClass));
 				transparancyText.text = string.Format("Transparancy: {0:F0} %", ShellCell.GetTransparancy(selectedGene.shellCellTransparancyClass) * 100f);

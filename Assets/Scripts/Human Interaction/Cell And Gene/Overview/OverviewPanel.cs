@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 
 // general most important Cell- and (Gene) information
-public class CellAndGeneOverviewPanel : MonoBehaviour {
+public class OverviewPanel : MonoBehaviour {
 	public EnergyBar energyBar;
 	public Text effectLabel;
 	public Text armourLabel;
@@ -19,7 +19,7 @@ public class CellAndGeneOverviewPanel : MonoBehaviour {
 	public Text connectionGroupCountLabel;
 	public Text apexAngleLabel;
 	public Text eatingOnMeCountLabel; //number of Jaw cells eating on me
-	public CellAndGeneFooterPanel footerPanel; //footer
+	public ComponentFooterPanel footerPanel; //footer
 
 	public Button healButton;
 	public Button hurtButton;

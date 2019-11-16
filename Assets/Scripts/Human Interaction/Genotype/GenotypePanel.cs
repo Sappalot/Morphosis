@@ -84,14 +84,14 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 	public void OnClickedBlackWhite() {
 		viewedFlipSide = FlipSideEnum.BlackWhite;
 		isDirty = true;
-		GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.MakeDirty();
+		GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 
 	public void OnClickedWhiteBlack() {
 		viewedFlipSide = FlipSideEnum.WhiteBlack;
 		isDirty = true;
-		GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.MakeDirty();
+		GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 	}
 

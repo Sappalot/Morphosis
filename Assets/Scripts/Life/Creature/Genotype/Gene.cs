@@ -125,6 +125,10 @@ public class Gene {
 		eggCellFertilizeEnergySensor.thresholdMin = 20f;
 		// ^ egg ^
 
+		// ... axon ....
+		axon.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
+		// ^ axon ^
+
 		// ...dendrites...
 		dendritesLogicBox.TryCreateGate(0, LogicOperatorEnum.Or, 0, GeneLogicBox.rightmostFlank, false);
 		dendritesLogicBox.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0

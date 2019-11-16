@@ -2,10 +2,10 @@
 using UnityEngine;
 
 // a panel that can change genotype and handles signals
-// Me <== (SensorPanel), LogicBox
-public abstract class CellAndGeneSignalUnitPanel : CellAndGeneComponentPanel {
+// Me <== (SensorPanel), LogicBoxPnel, AxonPanel
+public abstract class SignalUnitPanel : ComponentPanel {
 	public SignalLocations locations = new SignalLocations();
-	public GameObject headingPanel;
+	public GameObject componentHeaderPanel;
 
 	[HideInInspector]
 	public SignalUnitEnum signalUnit;

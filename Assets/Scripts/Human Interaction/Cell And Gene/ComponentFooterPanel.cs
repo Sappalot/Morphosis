@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CellAndGeneFooterPanel : MonoBehaviour {
+public class ComponentFooterPanel : MonoBehaviour {
 	public Text productionEffectLabel;
 
 	public void SetProductionEffectText(float produce, float consume) {

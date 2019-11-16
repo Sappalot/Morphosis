@@ -34,7 +34,7 @@ public class GenomeGenePanel : MonoBehaviour {
 				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 			}
 		} else if (MouseAction.instance.actionState == MouseActionStateEnum.selectGene) {
-			GenePanel.instance.cellAndGenePanel.geneNeighbourComponentPanel.GiveAnswerGeneReference(gene);
+			GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.GiveAnswerGeneReference(gene);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		}
 	}

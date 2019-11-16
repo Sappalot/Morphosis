@@ -59,8 +59,8 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
-		CellPanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
+		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
+		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		MakeDirty();
 	}
 
@@ -72,8 +72,8 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
-		CellPanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
+		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
+		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		MakeDirty();
 	}
 
@@ -94,8 +94,8 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
 		staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
 		staticAffectedGeneLogicBoxInputPanel.motherPanel.MakeDirty();
-		CellPanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
+		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
+		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		staticAffectedGeneLogicBoxInputPanel = null;
 	}
 

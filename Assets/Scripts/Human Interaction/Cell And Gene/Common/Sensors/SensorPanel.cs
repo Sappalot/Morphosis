@@ -2,8 +2,8 @@
 using UnityEngine.UI;
 
 //a panel that can change genotype and handles signals and has 6 output and 0 input(signals)
-// Me <== EnergySensorPanel, EffectSensorPanel
-public abstract class SensorPanel : CellAndGeneSignalUnitPanel {
+// Me <== ConstantSensorPanel, EnergySensorPanel, EffectSensorPanel, Attachment 
+public abstract class SensorPanel : SignalUnitPanel {
 	public SensorOutputPanel[] outputPanels;
 	public RectTransform settingsPanel; // Not all sensor panels use settings panel
 	protected bool isUsed = false;

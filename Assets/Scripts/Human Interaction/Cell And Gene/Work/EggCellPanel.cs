@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EggCellPanel : CellAndGeneComponentPanel {
+public class EggCellPanel : ComponentPanel {
 	public Button fertilizeButton;
 
 	public LogicBoxPanel fertilizeLogicBoxPanel;
@@ -47,7 +47,7 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
 				fertilizeButton.gameObject.SetActive(false);
 			}
-			footerPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.eggCellEffectCost);
+			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.eggCellEffectCost);
 
 			fertilizeLogicBoxPanel.outputText = "Fertilize asexually";
 

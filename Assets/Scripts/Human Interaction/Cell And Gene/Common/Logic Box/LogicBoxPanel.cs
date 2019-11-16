@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
+public class LogicBoxPanel : SignalUnitPanel {
 	public Image outputImageLate;
 	public Image outputImageEarly;
 	public Transform bodyPanel;

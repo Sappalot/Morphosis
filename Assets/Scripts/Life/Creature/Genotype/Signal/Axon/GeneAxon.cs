@@ -20,10 +20,23 @@ public class GeneAxon {
 	public GeneAxonInput axonInputLeft = new GeneAxonInput(0, SignalUnitEnum.Axon); // left, A
 	public GeneAxonInput axonInputRight = new GeneAxonInput(1, SignalUnitEnum.Axon); // right, B
 
+	public int pulseProgram11;
+	public int pulseProgram10;
+	public int pulseProgram01;
+	public int pulseProgram00;
+
 	public void UpdateConnections() {
 		// what do we want to do here?????
 	}
-	
+
+	public void ConnectAllInputInputTo(SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
+		axonInputLeft.nerve.inputUnit = signalUnit;
+		axonInputLeft.nerve.inputUnitSlot = signalUnitSlot;
+
+		axonInputRight.nerve.inputUnit = signalUnit;
+		axonInputRight.nerve.inputUnitSlot = signalUnitSlot;
+	}
+
 	public void Mutate(float strength) {
 		GlobalSettings gs = GlobalSettings.instance;
 
@@ -74,6 +87,14 @@ public class GeneAxon {
 		data.axonFromMeOffset = axonFromMeOffset;
 		data.axonRelaxContract = axonRelaxContract;
 		data.axonIsReverse = axonIsReverse;
+
+		data.pulseProgram11 = pulseProgram11;
+		data.pulseProgram10 = pulseProgram10;
+		data.pulseProgram01 = pulseProgram01;
+		data.pulseProgram00 = pulseProgram00;
+
+		data.axonInputLeft = axonInputLeft.UpdateData();
+		data.axonInputRight = axonInputRight.UpdateData();
 		return data;
 	}
 
@@ -85,5 +106,13 @@ public class GeneAxon {
 		axonFromMeOffset = axonData.axonFromMeOffset;
 		axonRelaxContract = axonData.axonRelaxContract;
 		axonIsReverse = axonData.axonIsReverse;
+
+		pulseProgram11 = axonData.pulseProgram11;
+		pulseProgram10 = axonData.pulseProgram10;
+		pulseProgram01 = axonData.pulseProgram01;
+		pulseProgram00 = axonData.pulseProgram00;
+
+		axonInputLeft.ApplyData(axonData.axonInputLeft);
+		axonInputRight.ApplyData(axonData.axonInputRight);
 	}
 }
