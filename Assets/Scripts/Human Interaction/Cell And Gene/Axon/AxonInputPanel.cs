@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 
 // TODO Generalize to just be an input panel for all units
-public class LogicBoxInputPanel : MonoBehaviour {
+public class AxonInputPanel : MonoBehaviour {
 	public Image blockButton;
 	public Image passButton;
 	public Image lockedOverlayImage;
@@ -17,26 +17,24 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	private bool ignoreSliderMoved = false;
 	private bool isUsed = false;
 
-	private LogicBoxPanel motherPanel;
-	public GeneLogicBoxInput affectedGeneLogicBoxInput { 
+	private CellAndGeneAxonComponentPanel motherPanel;
+	public GeneAxonInput affectedGeneAxonInput { 
 		get {
-			if (selectedGene.type == CellTypeEnum.Egg && motherPanel.signalUnit == SignalUnitEnum.WorkLogicBoxA) {
-				return selectedGene.eggCellFertilizeLogic.GetInput(column);
-			} else if (motherPanel.signalUnit == SignalUnitEnum.DendritesLogicBox) {
-				return selectedGene.dendritesLogicBox.GetInput(column);
+			if (column == 0) {
+				return selectedGene.axon.axonInputLeft;
+			} else if (column == 1) {
+				return selectedGene.axon.axonInputRight;
 			}
-			if (motherPanel.signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
-				return selectedGene.originDetatchLogicBox.GetInput(column);
-			}
+
 			return null;
 		}
 	}
 
 	public GeneNerve GetGeneNerve() {
-		return affectedGeneLogicBoxInput.nerve;
+		return affectedGeneAxonInput.nerve;
 	}
 
-	public void Initialize(PhenoGenoEnum mode, int column, LogicBoxPanel motherPanel) {
+	public void Initialize(PhenoGenoEnum mode, int column, CellAndGeneAxonComponentPanel motherPanel) {
 		this.mode = mode;
 		this.motherPanel = motherPanel;
 		this.column = column;
@@ -52,10 +50,10 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	}
 
 	public void OnBlockClicked() {
-		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked || ignoreSliderMoved) {
+		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneAxonInput.lockness == LocknessEnum.Locked || ignoreSliderMoved) {
 			return;
 		}
-		affectedGeneLogicBoxInput.valveMode = SignalValveModeEnum.Block;
+		affectedGeneAxonInput.valveMode = SignalValveModeEnum.Block;
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
@@ -65,12 +63,12 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	}
 
 	public void OnPassClicked() {
-		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked || ignoreSliderMoved) {
+		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneAxonInput.lockness == LocknessEnum.Locked || ignoreSliderMoved) {
 			return;
 		}
-		affectedGeneLogicBoxInput.valveMode = SignalValveModeEnum.Pass;
+		affectedGeneAxonInput.valveMode = SignalValveModeEnum.Pass;
 		motherPanel.MarkAsNewForge();
-		motherPanel.UpdateConnections();
+		//motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
 		CellPanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
 		GenePanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
@@ -78,25 +76,26 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	}
 
 	public void OnSetReferenceClicked() {
-		if (isUsed && IsUnlocked() && affectedGeneLogicBoxInput.lockness == LocknessEnum.Unlocked && MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
+		if (isUsed && IsUnlocked() && affectedGeneAxonInput.lockness == LocknessEnum.Unlocked && MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass) {
 			MouseAction.instance.actionState = MouseActionStateEnum.selectSignalOutput;
-			Debug.Assert(staticAffectedGeneLogicBoxInputPanel == null);
-			staticAffectedGeneLogicBoxInputPanel = this;
+			Debug.Assert(staticAffectedGeneAxonInputPanel == null);
+			staticAffectedGeneAxonInputPanel = this;
 			motherPanel.MakeDirty();
 		}
 	}
 
-	public static LogicBoxInputPanel staticAffectedGeneLogicBoxInputPanel;
+	public static AxonInputPanel staticAffectedGeneAxonInputPanel;
 	public static void TryAnswerSetReference(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
-		if (staticAffectedGeneLogicBoxInputPanel == null) {
+		if (staticAffectedGeneAxonInputPanel == null) {
 			return;
 		}
-		staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
-		staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
-		staticAffectedGeneLogicBoxInputPanel.motherPanel.MakeDirty();
+
+		staticAffectedGeneAxonInputPanel.affectedGeneAxonInput.nerve.inputUnit = inputUnit;
+		staticAffectedGeneAxonInputPanel.affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
+		staticAffectedGeneAxonInputPanel.motherPanel.MakeDirty();
 		CellPanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
 		GenePanel.instance.cellAndGenePanel.arrowHandler.MakeDirtyConnections();
-		staticAffectedGeneLogicBoxInputPanel = null;
+		staticAffectedGeneAxonInputPanel = null;
 	}
 
 	private void Update() {
@@ -104,7 +103,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 			if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput) {
 				Audio.instance.ActionAbort(1f);
 				MouseAction.instance.actionState = MouseActionStateEnum.free;
-				staticAffectedGeneLogicBoxInputPanel = null;
+				staticAffectedGeneAxonInputPanel = null;
 				motherPanel.MakeDirty();
 			}
 		}
@@ -115,32 +114,32 @@ public class LogicBoxInputPanel : MonoBehaviour {
 
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update Hibernate Panel");
+				Debug.Log("Update Anone Input Panel");
 			}
 			ignoreSliderMoved = true;
 
-			if (selectedGene == null || affectedGeneLogicBoxInput == null) {
+			if (selectedGene == null || affectedGeneAxonInput == null) {
 				isDirty = false;
 				return;
 			}
 
-			blockButton.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
-			passButton.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+			blockButton.color = affectedGeneAxonInput.valveMode == SignalValveModeEnum.Block ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+			passButton.color = affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
 
 			if (mode == PhenoGenoEnum.Genotype) {
-				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
+				if (affectedGeneAxonInput.valveMode == SignalValveModeEnum.Block) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused;
-				} else if (affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
+				} else if (affectedGeneAxonInput.nerve.inputUnit == SignalUnitEnum.Void) {
 					inputButtonImage.color = Color.magenta; // should never happen
 				} else {
 					inputButtonImage.color = ColorScheme.instance.signalOff; // we have a chance of an ON signal
 				}
 				// Color while choosing output
-				if (staticAffectedGeneLogicBoxInputPanel != null && staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput == affectedGeneLogicBoxInput) {
+				if (staticAffectedGeneAxonInputPanel != null && staticAffectedGeneAxonInputPanel.affectedGeneAxonInput == affectedGeneAxonInput) {
 					inputButtonImage.color = new Color(0f, 1f, 0f);
 				}
-				lockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked);
-				semiLockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxInput.lockness == LocknessEnum.SemiLocked);
+				lockedOverlayImage.gameObject.SetActive(affectedGeneAxonInput.lockness == LocknessEnum.Locked);
+				semiLockedOverlayImage.gameObject.SetActive(affectedGeneAxonInput.lockness == LocknessEnum.SemiLocked);
 			} else {
 				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused;
@@ -164,14 +163,14 @@ public class LogicBoxInputPanel : MonoBehaviour {
 
 	private LogicBoxInputEnum runtimeOutput {
 		get {
-			if (affectedGeneLogicBoxInput != null) {
-				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
+			if (affectedGeneAxonInput != null) {
+				if (affectedGeneAxonInput.valveMode == SignalValveModeEnum.Block) {
 					return LogicBoxInputEnum.BlockedByValve;
-				} else if (affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
+				} else if (affectedGeneAxonInput.nerve.inputUnit == SignalUnitEnum.Void) {
 					return LogicBoxInputEnum.VoidInput;
 				} else {
 					if (selectedCell != null) {
-						return selectedCell.GetOutputFromUnit(affectedGeneLogicBoxInput.nerve.inputUnit, affectedGeneLogicBoxInput.nerve.inputUnitSlot) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
+						return selectedCell.GetOutputFromUnit(affectedGeneAxonInput.nerve.inputUnit, affectedGeneAxonInput.nerve.inputUnitSlot) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
 					}
 				}
 			}

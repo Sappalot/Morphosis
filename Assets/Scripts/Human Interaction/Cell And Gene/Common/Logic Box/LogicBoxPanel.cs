@@ -132,8 +132,8 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 		}
 	}
 
-	public override List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
-		List<GeneLogicBoxInput> arrows = new List<GeneLogicBoxInput>();
+	public override List<IGeneInput> GetAllGeneInputs() {
+		List<IGeneInput> arrows = new List<IGeneInput>();
 		for (int i = 0; i < inputRow3.Length; i++) {
 			arrows.Add(inputRow3[i].affectedGeneLogicBoxInput);
 		}
@@ -155,7 +155,9 @@ public class LogicBoxPanel : CellAndGeneSignalUnitPanel {
 
 	public void OnClickedOutputButton() { // The arrow, processed late
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-			LogicBoxInputPanel.AnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedLate);
+			LogicBoxInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedLate);
+			AxonInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedLate);
+
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		}
 	}

@@ -3,6 +3,6 @@
 [Serializable]
 public enum LocknessEnum {
 	Unlocked,
-	SemiLocked,
+	SemiLocked, // valve is unlocked, input reference is locked
 	Locked,
 }

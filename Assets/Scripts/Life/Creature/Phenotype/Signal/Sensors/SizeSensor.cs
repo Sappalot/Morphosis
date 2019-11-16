@@ -5,8 +5,8 @@ using UnityEngine;
 public class SizeSensor : SignalUnit {
 	private bool[] output = new bool[6]; // outputs 
 
-	public SizeSensor(SignalUnitEnum outputUnit) {
-		this.signalUnit = outputUnit;
+	public SizeSensor(SignalUnitEnum signalUnit) {
+		this.signalUnit = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {

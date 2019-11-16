@@ -9,8 +9,8 @@ public class EffectSensor : SignalUnit {
 
 	public float threshold;
 
-	public EffectSensor(SignalUnitEnum outputUnit) {
-		this.signalUnit = outputUnit;
+	public EffectSensor(SignalUnitEnum signalUnit) {
+		base.signalUnit = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {

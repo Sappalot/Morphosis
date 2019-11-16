@@ -39,7 +39,6 @@
 	}
 
 	private bool ThroughGates(GeneLogicBox geneLogicBox, Cell hostCell) {
-		
 		return GetGateResult(geneLogicBox.GetGate(0, 0), hostCell);
 	}
 

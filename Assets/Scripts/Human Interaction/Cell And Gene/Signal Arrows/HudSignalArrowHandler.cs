@@ -40,25 +40,25 @@ public class HudSignalArrowHandler : MonoBehaviour {
 				return;
 			}
 
-			List<GeneLogicBoxInput> geneLogicBoxInputList = cellAndGenePanel.GetAllGeneLogicBoxInputs();
+			List<IGeneInput> geneInputList = cellAndGenePanel.GetAllGeneInputs();
 
 			foreach (HudSignalArrow arrow in arrowList) {
 				hudSignalArrowPool.Recycle(arrow);
 			}
 			arrowList.Clear();
 
-			foreach (GeneLogicBoxInput geneLogicBoxInput in geneLogicBoxInputList) {
-				if (geneLogicBoxInput.nerve.inputUnit != SignalUnitEnum.Void && geneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
+			foreach (IGeneInput geneInput in geneInputList) {
+				if (geneInput.nerve.inputUnit != SignalUnitEnum.Void && geneInput.valveMode == SignalValveModeEnum.Pass) {
 					HudSignalArrow arrow = hudSignalArrowPool.Borrow();
 					arrow.gameObject.SetActive(true);
 					
-					arrow.inputUnit = geneLogicBoxInput.nerve.inputUnit;
-					arrow.inputUnitSlot = geneLogicBoxInput.nerve.inputUnitSlot;
-					arrow.outputUnit = geneLogicBoxInput.nerve.outputUnit;
-					arrow.outputUnitSlot = geneLogicBoxInput.nerve.outputUnitSlot;
+					arrow.inputUnit = geneInput.nerve.inputUnit;
+					arrow.inputUnitSlot = geneInput.nerve.inputUnitSlot;
+					arrow.outputUnit = geneInput.nerve.outputUnit;
+					arrow.outputUnitSlot = geneInput.nerve.outputUnitSlot;
 
-					Vector2 head = cellAndGenePanel.TotalPanelOffset(geneLogicBoxInput.nerve.outputUnit, geneLogicBoxInput.nerve.outputUnitSlot);
-					Vector2 tail = cellAndGenePanel.TotalPanelOffset(geneLogicBoxInput.nerve.inputUnit, geneLogicBoxInput.nerve.inputUnitSlot);
+					Vector2 head = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.outputUnit, geneInput.nerve.outputUnitSlot);
+					Vector2 tail = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.inputUnit, geneInput.nerve.inputUnitSlot);
 					arrow.GetComponent<RectTransform>().localPosition = (head + tail) / 2f;
 					arrow.GetComponent<RectTransform>().sizeDelta = new Vector2(Vector2.Distance(head, tail), 10f);
 					arrow.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0f, 0f, Mathf.Rad2Deg * Mathf.Atan2(head.y - tail.y, head.x - tail.x));

@@ -46,6 +46,5 @@ public abstract class CellAndGeneSignalUnitPanel : CellAndGeneComponentPanel {
 	public virtual void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
 		base.Initialize(mode);
 		this.signalUnit = signalUnit;
-		//headingPanel.SetActive(!isInsideOtherComponent);
 	}
 }

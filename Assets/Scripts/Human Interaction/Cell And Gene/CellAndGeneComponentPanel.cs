@@ -19,10 +19,12 @@ public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 		this.mode = mode;
 	}
 
-	public virtual List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
+	// not pretty :/ try to merge into one input
+	public virtual List<IGeneInput> GetAllGeneInputs() {
 		return null;
 	}
-	
+	// ^ merge ^
+
 	public virtual void MakeDirty() {
 		isDirty = true;
 	}
@@ -41,7 +43,6 @@ public abstract class CellAndGeneComponentPanel : MonoBehaviour {
 		CreatureSelectionPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		MakeDirty();
-
 	}
 
 	public Gene selectedGene {

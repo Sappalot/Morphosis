@@ -92,16 +92,17 @@ public class CellAndGenePanel : MonoBehaviour {
 		arrowHandler.MakeDirtySignal();
 	}
 
-	public List<GeneLogicBoxInput> GetAllGeneLogicBoxInputs() {
-		List<GeneLogicBoxInput> inputList = new List<GeneLogicBoxInput>();
-		List<GeneLogicBoxInput> inputs = workComponentPanel.currentWorkPanel.GetAllGeneGeneLogicBoxInputs();
+	public List<IGeneInput> GetAllGeneInputs() {
+		List<IGeneInput> inputList = new List<IGeneInput>();
+		List<IGeneInput> inputs = workComponentPanel.currentWorkPanel.GetAllGeneInputs();
 		if (inputs != null) {
 			inputList.AddRange(inputs);
 		}
-		inputList.AddRange(dendritesComponentPanel.GetAllGeneGeneLogicBoxInputs());
+		inputList.AddRange(axonComponentPanel.GetAllGeneInputs());
+		inputList.AddRange(dendritesComponentPanel.GetAllGeneInputs());
 
 		if (selectedGene.isOrigin) {
-			inputs = originComponentPanel.GetAllGeneGeneLogicBoxInputs();
+			inputs = originComponentPanel.GetAllGeneInputs();
 			if (inputs != null) {
 				inputList.AddRange(inputs);
 			}
@@ -129,6 +130,8 @@ public class CellAndGenePanel : MonoBehaviour {
 			outTransform = workComponentPanel.nerveLocationsPanel.sensorD.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.ConstantSensor) {
 			outTransform = constantSensorComponentPanel.GetLocation(signalUnitSlot);
+		} else if (signalUnit == SignalUnitEnum.Axon) {
+			outTransform = axonComponentPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.DendritesLogicBox) {
 			outTransform = dendritesComponentPanel.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.EnergySensor) {

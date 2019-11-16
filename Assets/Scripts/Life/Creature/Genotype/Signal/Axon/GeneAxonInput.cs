@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 
-public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
+public class GeneAxonInput : IGeneInput {
 
 	// TODO make it so that nerve input can't be changed if locked
-	// TODO don't access nerve directly
 	public GeneNerve m_nerve = new GeneNerve();
 
 	public GeneNerve nerve {
@@ -27,24 +26,11 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 		}
 	}
 
-	public GeneLogicBoxInput(int row, int column, SignalUnitEnum signalUnit) {
-		this.row = row;
-		leftFlank = GetFlankLeftOfColumn(column);
-		rightFlank = GetFlankRightOfColumn(column);
+	public LocknessEnum lockness = LocknessEnum.Unlocked;// No need to save/load this one as it is hardcoded, set by gene (would be the same every time)
+
+	public GeneAxonInput(int column, SignalUnitEnum signalUnit) {
 		nerve.outputUnit = signalUnit;
 		nerve.outputUnitSlot = (SignalUnitSlotEnum)column;
-	}
-
-	public int column {
-		get {
-			return GetColumnRightOfFlank(leftFlank);
-		}
-	}
-
-
-
-	public override int GetTransmittingInputCount() {
-		return isTransmittingSignal ? 1 : 0;
 	}
 
 	public void Mutate(float strength) {

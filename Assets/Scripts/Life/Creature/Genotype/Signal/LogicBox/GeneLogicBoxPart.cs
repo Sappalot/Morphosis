@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+// Gate and input
 public abstract class GeneLogicBoxPart {
 	public int row;
 	public int leftFlank;

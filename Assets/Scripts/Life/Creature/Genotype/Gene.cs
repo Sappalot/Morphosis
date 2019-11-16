@@ -36,23 +36,7 @@ public class Gene {
 		}
 	}
 
-	// ...Axon...
-	private bool m_axonIsEnabled;
-	public bool axonIsEnabled {
-		get {
-			return m_axonIsEnabled || isOrigin;
-		}
-		set {
-			m_axonIsEnabled = value;
-		}
-	}
-	
-	public float axonFromOriginOffset;
-	public bool axonIsFromOriginPlus180;
-	public float axonFromMeOffset;
-	public float axonRelaxContract;
-	public bool axonIsReverse;
-	// ^ Axon ^
+	public GeneAxon axon = new GeneAxon();
 
 	// Dendrites....
 	public GeneLogicBox dendritesLogicBox = new GeneLogicBox(SignalUnitEnum.DendritesLogicBox);
@@ -220,44 +204,15 @@ public class Gene {
 		}
 		// ^ Shell ^
 
+		// Axone
+		axon.Mutate(strength);
 
-		// Axon...
-		mut = Random.Range(0, 1000f + gs.mutation.axonEnabledToggle * strength);
-		if (mut < gs.mutation.axonEnabledToggle * strength) {
-			axonIsEnabled = !axonIsEnabled; //toggle
-		}
+		// Dendrites
+		dendritesLogicBox.Mutate(strength);
 
-		mut = Random.Range(0, 1000f + gs.mutation.axonFromOriginOffsetChange * strength);
-		if (mut < gs.mutation.axonFromOriginOffsetChange * strength) {
-			axonFromOriginOffset += gs.mutation.RandomDistributedValue() * gs.mutation.axonFromOriginOffsetChangeMaxAmount % 360f;
-			if (axonFromOriginOffset < 0f) {
-				axonFromOriginOffset += 360f;
-			}
-		}
-
-		mut = Random.Range(0, 1000f + gs.mutation.axonIsFromOriginPlus180Toggle * strength);
-		if (mut < gs.mutation.axonIsFromOriginPlus180Toggle * strength) {
-			axonIsFromOriginPlus180 = !axonIsFromOriginPlus180; //toggle
-		}
-
-		mut = Random.Range(0, 1000f + gs.mutation.axonFromMeOffsetChange * strength);
-		if (mut < gs.mutation.axonFromMeOffsetChange * strength) {
-			axonFromMeOffset = Mathf.Clamp(axonFromMeOffset + gs.mutation.RandomDistributedValue() * gs.mutation.axonFromMeOffsetChangeMaxAmount, 0, 360);
-			if (axonFromMeOffset < 0f) {
-				axonFromMeOffset += 360f;
-			}
-		}
-
-		mut = Random.Range(0, 1000f + gs.mutation.axonRelaxContractChange * strength);
-		if (mut < gs.mutation.axonRelaxContractChange * strength) {
-			axonRelaxContract = Mathf.Clamp(axonRelaxContract + gs.mutation.RandomDistributedValue() * gs.mutation.axonRelaxContractChangeMaxAmount, -1f, 1f);
-		}
-
-		mut = Random.Range(0, 1000f + gs.mutation.axonIsReverseToggle * strength);
-		if (mut < gs.mutation.axonIsReverseToggle * strength) {
-			axonIsReverse = !axonIsReverse; //toggle
-		}
-		// ^ Axon ^ 
+		// Sensors
+		energySensor.Mutate(strength);
+		effectSensor.Mutate(strength);
 
 		// Origin..
 		originDetatchLogicBox.Mutate(strength);
@@ -363,17 +318,12 @@ public class Gene {
 		geneData.shellCellTransparancyClass = shellCellTransparancyClass;
 
 		// Axon
-		geneData.axonIsEnabled = axonIsEnabled;
-		geneData.axonFromOriginOffset = axonFromOriginOffset;
-		geneData.axonIsFromOriginPlus180 = axonIsFromOriginPlus180;
-		geneData.axonFromMeOffset = axonFromMeOffset;
-		geneData.axonRelaxContract = axonRelaxContract;
-		geneData.axonIsReverse = axonIsReverse;
+		geneData.geneAxoneData = axon.UpdateData();
 
 		// Dendrites
 		geneData.dendritesLogicBoxData = dendritesLogicBox.UpdateData();
 
-		//Sensors
+		// Sensors
 		geneData.energySensorData = energySensor.UpdateData();
 		geneData.effectSensorData = effectSensor.UpdateData();
 
@@ -391,6 +341,8 @@ public class Gene {
 		geneData.arrangementData[0] = arrangements[0].UpdateData();
 		geneData.arrangementData[1] = arrangements[1].UpdateData();
 		geneData.arrangementData[2] = arrangements[2].UpdateData();
+
+		
 
 		return geneData;
 	}
@@ -421,12 +373,7 @@ public class Gene {
 		shellCellTransparancyClass = geneData.shellCellTransparancyClass;
 
 		// Axon
-		axonIsEnabled =             geneData.axonIsEnabled;
-		axonFromOriginOffset =      geneData.axonFromOriginOffset;
-		axonIsFromOriginPlus180 =   geneData.axonIsFromOriginPlus180;
-		axonFromMeOffset =          geneData.axonFromMeOffset;
-		axonRelaxContract =         geneData.axonRelaxContract;
-		axonIsReverse =             geneData.axonIsReverse;
+		axon.ApplyData(geneData.geneAxoneData);
 
 		// Dendrites
 		dendritesLogicBox.ApplyData(geneData.dendritesLogicBoxData);

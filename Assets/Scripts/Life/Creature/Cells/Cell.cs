@@ -124,17 +124,17 @@ public abstract class Cell : MonoBehaviour {
 	// Axon
 	public bool isAxonEnabled {
 		get {
-			return gene.axonIsEnabled;
+			return gene.axon.axonIsEnabled;
 		}
 	}
 
 	public float GetAxonPulseValue(int distance) {
-		float fromOriginOffset = (gene.axonFromOriginOffset + (gene.axonIsFromOriginPlus180 && flipSide == FlipSideEnum.WhiteBlack ? 180f : 0f)) / 360f;
-		float fromMeOffest = (gene.axonFromMeOffset * distance) / 360f;
-		if (!gene.axonIsReverse) {
-			return Mathf.Cos((fromOriginOffset + fromMeOffest + creature.phenotype.originCell.originPulseCompleteness) * 2f * Mathf.PI) + gene.axonRelaxContract;
+		float fromOriginOffset = (gene.axon.axonFromOriginOffset + (gene.axon.axonIsFromOriginPlus180 && flipSide == FlipSideEnum.WhiteBlack ? 180f : 0f)) / 360f;
+		float fromMeOffest = (gene.axon.axonFromMeOffset * distance) / 360f;
+		if (!gene.axon.axonIsReverse) {
+			return Mathf.Cos((fromOriginOffset + fromMeOffest + creature.phenotype.originCell.originPulseCompleteness) * 2f * Mathf.PI) + gene.axon.axonRelaxContract;
 		} else {
-			return Mathf.Cos((fromOriginOffset + fromMeOffest - creature.phenotype.originCell.originPulseCompleteness) * 2f * Mathf.PI) + gene.axonRelaxContract; // is this really the right way of reversing????!!!!
+			return Mathf.Cos((fromOriginOffset + fromMeOffest - creature.phenotype.originCell.originPulseCompleteness) * 2f * Mathf.PI) + gene.axon.axonRelaxContract; // is this really the right way of reversing????!!!!
 		}
 	}
 
@@ -1663,6 +1663,7 @@ public abstract class Cell : MonoBehaviour {
 
 	//----------Signal--------------------------------
 	public ConstantSensor constantSensor = new ConstantSensor(SignalUnitEnum.ConstantSensor); // own component
+	public Axon axon = new Axon(SignalUnitEnum.Axon);
 	public LogicBox dendritesLogicBox = new LogicBox(SignalUnitEnum.DendritesLogicBox); // own component
 	public EnergySensor energySensor = new EnergySensor(SignalUnitEnum.EnergySensor); // own component
 	public EffectSensor effectSensor = new EffectSensor(SignalUnitEnum.EffectSensor); // own component

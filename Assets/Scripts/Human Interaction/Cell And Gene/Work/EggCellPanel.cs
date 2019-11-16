@@ -26,8 +26,8 @@ public class EggCellPanel : CellAndGeneComponentPanel {
 		fertilizeAttachmentSensorPanel.MakeDirty();
 	}
 
-	public override List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
-		return fertilizeLogicBoxPanel.GetAllGeneGeneLogicBoxInputs();
+	public override List<IGeneInput> GetAllGeneInputs() {
+		return fertilizeLogicBoxPanel.GetAllGeneInputs();
 	}
 
 	public void OnClickFertilize() {

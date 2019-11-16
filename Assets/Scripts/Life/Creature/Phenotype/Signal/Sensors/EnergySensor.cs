@@ -9,8 +9,8 @@ public class EnergySensor : SignalUnit {
 
 	public float threshold;
 
-	public EnergySensor(SignalUnitEnum outputUnit) {
-		this.signalUnit = outputUnit;
+	public EnergySensor(SignalUnitEnum signalUnit) {
+		this.signalUnit = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {

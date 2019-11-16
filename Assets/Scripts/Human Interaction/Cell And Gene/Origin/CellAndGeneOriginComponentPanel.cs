@@ -66,8 +66,8 @@ public class CellAndGeneOriginComponentPanel : CellAndGeneComponentPanel {
 		OnGenomeChanged(false);
 	}
 
-	public override List<GeneLogicBoxInput> GetAllGeneGeneLogicBoxInputs() {
-		return detatchLogicBoxPanel.GetAllGeneGeneLogicBoxInputs();
+	public override List<IGeneInput> GetAllGeneInputs() {
+		return detatchLogicBoxPanel.GetAllGeneInputs();
 	}
 
 	public override void MakeDirty() {

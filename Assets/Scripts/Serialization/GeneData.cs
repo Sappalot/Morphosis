@@ -22,13 +22,8 @@ public class GeneData {
 	public int shellCellArmourClass;
 	public int shellCellTransparancyClass;
 
-	// Axon
-	public bool axonIsEnabled;
-	public float axonFromOriginOffset;
-	public bool axonIsFromOriginPlus180;
-	public float axonFromMeOffset;
-	public float axonRelaxContract;
-	public bool axonIsReverse;
+	// Axone
+	public GeneAxonData geneAxoneData;
 
 	// Dendrites
 	public GeneLogicBoxData dendritesLogicBoxData;
@@ -46,4 +41,6 @@ public class GeneData {
 
 	public float buildPriorityBias;
 	public ArrangementData[] arrangementData = new ArrangementData[3];
+
+	
 }
