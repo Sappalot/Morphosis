@@ -3,11 +3,6 @@
 [Serializable]
 public class GeneAxonData {
 	public bool axonIsEnabled;
-	public float axonFromOriginOffset;
-	public bool axonIsFromOriginPlus180;
-	public float axonFromMeOffset;
-	public float axonRelaxContract;
-	public bool axonIsReverse;
 
 	public int pulseProgram3;
 	public int pulseProgram2;
@@ -16,4 +11,9 @@ public class GeneAxonData {
 
 	public GeneLogicBoxInputData axonInputLeft = new GeneLogicBoxInputData();
 	public GeneLogicBoxInputData axonInputRight = new GeneLogicBoxInputData();
+
+	public GeneAxonPulseData pulseDataA = new GeneAxonPulseData();
+	public GeneAxonPulseData pulseDataB = new GeneAxonPulseData();
+	public GeneAxonPulseData pulseDataC = new GeneAxonPulseData();
+	public GeneAxonPulseData pulseDataD = new GeneAxonPulseData();
 }

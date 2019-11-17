@@ -49,12 +49,12 @@ public class Axon : SignalUnit {
 
 	public float GetPulseValue(int distance) {
 		if (isEnabled && selectedProgram > 0) {
-			float fromOriginOffset = (hostCell.gene.axon.axonFromOriginOffset + (hostCell.gene.axon.axonIsFromOriginPlus180 && hostCell.flipSide == FlipSideEnum.WhiteBlack ? 180f : 0f)) / 360f;
-			float fromMeOffest = (hostCell.gene.axon.axonFromMeOffset * distance) / 360f;
-			if (!hostCell.gene.axon.axonIsReverse) {
-				return Mathf.Cos((fromOriginOffset + fromMeOffest + hostCell.creature.phenotype.originCell.originPulseCompleteness) * 2f * Mathf.PI) + hostCell.gene.axon.axonRelaxContract;
+			float fromOriginOffset = (hostCell.gene.axon.GetPulse(selectedProgram).axonFromOriginOffset + (hostCell.gene.axon.GetPulse(selectedProgram).axonIsFromOriginPlus180 && hostCell.flipSide == FlipSideEnum.WhiteBlack ? 180f : 0f)) / 360f;
+			float fromMeOffest = (hostCell.gene.axon.GetPulse(selectedProgram).axonFromMeOffset * distance) / 360f;
+			if (!hostCell.gene.axon.GetPulse(selectedProgram).axonIsReverse) {
+				return Mathf.Cos((fromOriginOffset + fromMeOffest + hostCell.creature.phenotype.originCell.originPulseCompleteness) * 2f * Mathf.PI) + hostCell.gene.axon.GetPulse(selectedProgram).axonRelaxContract;
 			} else {
-				return Mathf.Cos((fromOriginOffset + fromMeOffest - hostCell.creature.phenotype.originCell.originPulseCompleteness) * 2f * Mathf.PI) + hostCell.gene.axon.axonRelaxContract; // is this really the right way of reversing????!!!!
+				return Mathf.Cos((fromOriginOffset + fromMeOffest - hostCell.creature.phenotype.originCell.originPulseCompleteness) * 2f * Mathf.PI) + hostCell.gene.axon.GetPulse(selectedProgram).axonRelaxContract; // is this really the right way of reversing????!!!!
 			}
 		} else {
 			return 0f; // relax
@@ -128,5 +128,26 @@ public class Axon : SignalUnit {
 	// get pulse ??
 	public bool HasSignalPostInputValve(IGeneInput input) {
 		return (input as IGeneInput).valveMode == SignalValveModeEnum.Pass && (input as IGeneInput).nerve.inputUnit != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as IGeneInput).nerve.inputUnit, (input as IGeneInput).nerve.inputUnitSlot);
+	}
+
+	// Load Save
+	private AxonData axonData = new AxonData();
+
+	// Save
+	public AxonData UpdateData() {
+		for (int i = 0; i < 6; i++) {
+			axonData.outputEarly[i] = outputEarly[i];
+			axonData.outputLate[i] = outputLate[i];
+		}
+
+		return axonData;
+	}
+
+	// Load
+	public void ApplyData(AxonData axonData) {
+		for (int i = 0; i < 6; i++) {
+			outputEarly[i] = axonData.outputEarly[i];
+			outputLate[i] = axonData.outputLate[i];
+		}
 	}
 }

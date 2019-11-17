@@ -13,11 +13,16 @@ public class GeneAxon {
 
 	public bool isOrigin;
 
-	public float axonFromOriginOffset;
-	public bool axonIsFromOriginPlus180;
-	public float axonFromMeOffset;
-	public float axonRelaxContract;
-	public bool axonIsReverse;
+	private GeneAxonPulse pulseA = new GeneAxonPulse();
+	private GeneAxonPulse pulseB = new GeneAxonPulse();
+	private GeneAxonPulse pulseC = new GeneAxonPulse();
+	private GeneAxonPulse pulseD = new GeneAxonPulse();
+
+	public GeneAxonPulse GetPulse(int index) {
+		return pulses[index - 1]; // pulse A = 1
+	}
+
+	public GeneAxonPulse[] pulses = new GeneAxonPulse[4];
 
 	public GeneAxonInput axonInputLeft = new GeneAxonInput(0, SignalUnitEnum.Axon); // left, A
 	public GeneAxonInput axonInputRight = new GeneAxonInput(1, SignalUnitEnum.Axon); // right, B
@@ -26,6 +31,13 @@ public class GeneAxon {
 	public int pulseProgram2 = 2; // ...
 	public int pulseProgram1 = 1; // 1 = A
 	public int pulseProgram0 = 0; // 0 == relaxed
+
+	public GeneAxon() {
+		pulses[0] = pulseA;
+		pulses[1] = pulseB;
+		pulses[2] = pulseC;
+		pulses[3] = pulseD;
+	}
 
 	public void UpdateConnections() {
 		// what do we want to do here?????
@@ -47,48 +59,21 @@ public class GeneAxon {
 			axonIsEnabled = !axonIsEnabled; //toggle
 		}
 
-		mut = Random.Range(0, 1000f + gs.mutation.axonFromOriginOffsetChange * strength);
-		if (mut < gs.mutation.axonFromOriginOffsetChange * strength) {
-			axonFromOriginOffset += gs.mutation.RandomDistributedValue() * gs.mutation.axonFromOriginOffsetChangeMaxAmount % 360f;
-			if (axonFromOriginOffset < 0f) {
-				axonFromOriginOffset += 360f;
-			}
-		}
-
-		mut = Random.Range(0, 1000f + gs.mutation.axonIsFromOriginPlus180Toggle * strength);
-		if (mut < gs.mutation.axonIsFromOriginPlus180Toggle * strength) {
-			axonIsFromOriginPlus180 = !axonIsFromOriginPlus180; //toggle
-		}
-
-		mut = Random.Range(0, 1000f + gs.mutation.axonFromMeOffsetChange * strength);
-		if (mut < gs.mutation.axonFromMeOffsetChange * strength) {
-			axonFromMeOffset = Mathf.Clamp(axonFromMeOffset + gs.mutation.RandomDistributedValue() * gs.mutation.axonFromMeOffsetChangeMaxAmount, 0, 360);
-			if (axonFromMeOffset < 0f) {
-				axonFromMeOffset += 360f;
-			}
-		}
-
-		mut = Random.Range(0, 1000f + gs.mutation.axonRelaxContractChange * strength);
-		if (mut < gs.mutation.axonRelaxContractChange * strength) {
-			axonRelaxContract = Mathf.Clamp(axonRelaxContract + gs.mutation.RandomDistributedValue() * gs.mutation.axonRelaxContractChangeMaxAmount, -1f, 1f);
-		}
-
-		mut = Random.Range(0, 1000f + gs.mutation.axonIsReverseToggle * strength);
-		if (mut < gs.mutation.axonIsReverseToggle * strength) {
-			axonIsReverse = !axonIsReverse; //toggle
-		}
-
+		pulseA.Mutate(strength);
+		pulseB.Mutate(strength);
+		pulseC.Mutate(strength);
+		pulseD.Mutate(strength);
 	}
 
 	// Save
 	private GeneAxonData data = new GeneAxonData();
 	public GeneAxonData UpdateData() {
 		data.axonIsEnabled = axonIsEnabled;
-		data.axonFromOriginOffset = axonFromOriginOffset;
-		data.axonIsFromOriginPlus180 = axonIsFromOriginPlus180;
-		data.axonFromMeOffset = axonFromMeOffset;
-		data.axonRelaxContract = axonRelaxContract;
-		data.axonIsReverse = axonIsReverse;
+
+		data.pulseDataA = pulseA.UpdateData();
+		data.pulseDataB = pulseB.UpdateData();
+		data.pulseDataC = pulseC.UpdateData();
+		data.pulseDataD = pulseD.UpdateData();
 
 		data.pulseProgram3 = pulseProgram3;
 		data.pulseProgram2 = pulseProgram2;
@@ -103,11 +88,11 @@ public class GeneAxon {
 	// Load
 	public void ApplyData(GeneAxonData axonData) {
 		axonIsEnabled = axonData.axonIsEnabled;
-		axonFromOriginOffset = axonData.axonFromOriginOffset;
-		axonIsFromOriginPlus180 = axonData.axonIsFromOriginPlus180;
-		axonFromMeOffset = axonData.axonFromMeOffset;
-		axonRelaxContract = axonData.axonRelaxContract;
-		axonIsReverse = axonData.axonIsReverse;
+
+		pulseA.ApplyData(axonData.pulseDataA);
+		pulseB.ApplyData(axonData.pulseDataB);
+		pulseC.ApplyData(axonData.pulseDataC);
+		pulseD.ApplyData(axonData.pulseDataD);
 
 		pulseProgram3 = axonData.pulseProgram3;
 		pulseProgram2 = axonData.pulseProgram2;
