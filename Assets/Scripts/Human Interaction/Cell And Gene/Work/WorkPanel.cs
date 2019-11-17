@@ -14,6 +14,8 @@ public class WorkPanel : MonoBehaviour {
 	public NerveLocationsPanel nerveLocationsPanel;
 	
 	public Dropdown typeDropdown;
+	public Image typeDropdownImageShow;
+	public Image typeDropdownImageList;
 
 	private ComponentPanel[] workPanels = new ComponentPanel[8];
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
@@ -34,6 +36,10 @@ public class WorkPanel : MonoBehaviour {
 		foreach (ComponentPanel m in workPanels) {
 			m.Initialize(mode);
 		}
+
+		typeDropdownImageShow.color = ColorScheme.instance.selectedChanged;
+		typeDropdownImageList.color = ColorScheme.instance.selectedChanged;
+
 		MakeDirty();
 	}
 

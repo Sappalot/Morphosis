@@ -33,7 +33,7 @@ public class ShellCellPanelButton : MonoBehaviour {
 
 	public bool hasSelectedFrame {
 		set {
-			buttonImage.color = value ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+			buttonImage.color = value ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
 		}
 	}
 

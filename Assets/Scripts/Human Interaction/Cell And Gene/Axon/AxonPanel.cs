@@ -28,10 +28,24 @@ public class AxonPanel : SignalUnitPanel {
 	// ^ Pulse ^
 
 	// ...Switch...
-	public Dropdown dropdown11;
-	public Dropdown dropdown10;
-	public Dropdown dropdown01;
-	public Dropdown dropdown00;
+	public Dropdown dropdown3; // 11
+	public Dropdown dropdown2; // 10
+	public Dropdown dropdown1; // 01
+	public Dropdown dropdown0; // 00
+
+	public Image dropdownBackgroundShow3;
+	public Image dropdownBackgroundList3;
+	public Image dropdownBackgroundShow2;
+	public Image dropdownBackgroundList2;
+	public Image dropdownBackgroundShow1;
+	public Image dropdownBackgroundList1;
+	public Image dropdownBackgroundShow0;
+	public Image dropdownBackgroundList0;
+
+	public Image combinationImage3; // 11
+	public Image combinationImage2; // 10
+	public Image combinationImage1; // 01
+	public Image combinationImage0; // 00
 
 	public AxonInputPanel inputLeftPanel;
 	public AxonInputPanel inputRightPanel;
@@ -55,6 +69,15 @@ public class AxonPanel : SignalUnitPanel {
 
 		inputLeftPanel.Initialize(mode, 0, this); // left
 		inputRightPanel.Initialize(mode, 1, this); // right
+
+		dropdownBackgroundShow3.color = ColorScheme.instance.selectedChanged;
+		dropdownBackgroundList3.color = ColorScheme.instance.selectedChanged;
+		dropdownBackgroundShow2.color = ColorScheme.instance.selectedChanged;
+		dropdownBackgroundList2.color = ColorScheme.instance.selectedChanged;
+		dropdownBackgroundShow1.color = ColorScheme.instance.selectedChanged;
+		dropdownBackgroundList1.color = ColorScheme.instance.selectedChanged;
+		dropdownBackgroundShow0.color = ColorScheme.instance.selectedChanged;
+		dropdownBackgroundList0.color = ColorScheme.instance.selectedChanged;
 
 		ignoreSliderMoved = false;
 	}
@@ -149,8 +172,15 @@ public class AxonPanel : SignalUnitPanel {
 				enabledToggle.isOn = GenePanel.instance.selectedGene.axon.axonIsEnabled;
 				if (GetMode() == PhenoGenoEnum.Genotype) {
 					fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", GenePanel.instance.selectedGene.axon.axonFromOriginOffset);
-					postInputBoxLeft.color = Color.yellow; ////ColorScheme.instance.signalOff;
 					
+					postInputBoxLeft.color = ColorScheme.instance.signalOff;
+					postInputBoxRight.color = ColorScheme.instance.signalOff;
+
+					combinationImage3.color = ColorScheme.instance.signalOff; // 11
+					combinationImage2.color = ColorScheme.instance.signalOff; // 10
+					combinationImage1.color = ColorScheme.instance.signalOff; // 01
+					combinationImage0.color = ColorScheme.instance.signalOff; // 00
+
 				} else if (GetMode() == PhenoGenoEnum.Phenotype) {
 
 					if (GenePanel.instance.selectedGene.axon.axonIsFromOriginPlus180 && CellPanel.instance.selectedCell.flipSide == FlipSideEnum.WhiteBlack) {
@@ -159,7 +189,13 @@ public class AxonPanel : SignalUnitPanel {
 						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", GenePanel.instance.selectedGene.axon.axonFromOriginOffset);
 					}
 
-					postInputBoxLeft.color = Axon.GetInputResult(inputLeftPanel.affectedGeneAxonInput, selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					combinationImage3.color = selectedCell.axon.HasSignalAtCombination(3) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					combinationImage2.color = selectedCell.axon.HasSignalAtCombination(2) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					combinationImage1.color = selectedCell.axon.HasSignalAtCombination(1) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					combinationImage0.color = selectedCell.axon.HasSignalAtCombination(0) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+
+					postInputBoxLeft.color = selectedCell.axon.HasSignalPostInputValve(inputLeftPanel.affectedGeneAxonInput) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					postInputBoxRight.color = selectedCell.axon.HasSignalPostInputValve(inputRightPanel.affectedGeneAxonInput) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 				fromOriginOffsetSlider.value = GenePanel.instance.selectedGene.axon.axonFromOriginOffset;
 

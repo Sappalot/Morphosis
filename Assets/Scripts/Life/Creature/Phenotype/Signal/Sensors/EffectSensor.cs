@@ -9,7 +9,7 @@ public class EffectSensor : SignalUnit {
 
 	public float threshold;
 
-	public EffectSensor(SignalUnitEnum signalUnit) {
+	public EffectSensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
 		base.signalUnit = signalUnit;
 	}
 
@@ -17,14 +17,14 @@ public class EffectSensor : SignalUnit {
 		return output[(int)signalUnitSlot];
 	}
 
-	public override void UpdateSignalConnections(Cell hostCell) {
+	public override void UpdateSignalConnections() {
 		areaCells.Clear();
 		if (signalUnit == SignalUnitEnum.EffectSensor) { // redundant check ? 
 			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.effectSensor as GeneEffectSensor).usedAreaRadius);
 		}
 	}
 
-	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {
+	public override void ComputeSignalOutput(int deltaTicks) {
 		if (signalUnit == SignalUnitEnum.EffectSensor) { // redundant check ? 
 			output[0] = hostCell.Effect((hostCell.gene.effectSensor as GeneEffectSensor).effectMeassure) >= (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;
 			output[1] = hostCell.Effect((hostCell.gene.effectSensor as GeneEffectSensor).effectMeassure) < (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;

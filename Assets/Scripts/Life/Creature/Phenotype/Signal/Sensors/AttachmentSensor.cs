@@ -5,15 +5,15 @@ using UnityEngine;
 public class AttachmentSensor : SignalUnit {
 	private bool[] output = new bool[6]; // outputs 
 
-	public AttachmentSensor(SignalUnitEnum outputUnit) {
-		this.signalUnit = outputUnit;
+	public AttachmentSensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
+		this.signalUnit = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
 		return output[(int)signalUnitSlot];
 	}
 
-	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {
+	public override void ComputeSignalOutput(int deltaTicks) {
 		// There are no settings on this sensor, so it doesn't matter which sensor this is, it should be reporting the same info
 		output[0] = hostCell.creature.IsAttachedToMotherAlive();
 		output[1] = !hostCell.creature.IsAttachedToMotherAlive();

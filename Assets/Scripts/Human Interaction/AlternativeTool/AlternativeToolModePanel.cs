@@ -59,9 +59,9 @@ public class AlternativeToolModePanel : MonoSingleton<AlternativeToolModePanel> 
 	}
 
 	private void UpdateHUD() {
-		springImage.color = (toolMode == RMBToolMode.spring) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
-		spawnEmbryoImage.color = (toolMode == RMBToolMode.spawnEmbryo) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
-		spawnFreakImage.color = (toolMode == RMBToolMode.spawnFreak) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+		springImage.color = (toolMode == RMBToolMode.spring) ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+		spawnEmbryoImage.color = (toolMode == RMBToolMode.spawnEmbryo) ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+		spawnFreakImage.color = (toolMode == RMBToolMode.spawnFreak) ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
 	}
 
 	private void OnGUI() {

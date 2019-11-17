@@ -4,12 +4,14 @@ public class GeneAxon {
 	private bool m_axonIsEnabled;
 	public bool axonIsEnabled {
 		get {
-			return m_axonIsEnabled /*|| isOrigin*/;
+			return m_axonIsEnabled || isOrigin;
 		}
 		set {
 			m_axonIsEnabled = value;
 		}
 	}
+
+	public bool isOrigin;
 
 	public float axonFromOriginOffset;
 	public bool axonIsFromOriginPlus180;
@@ -20,10 +22,10 @@ public class GeneAxon {
 	public GeneAxonInput axonInputLeft = new GeneAxonInput(0, SignalUnitEnum.Axon); // left, A
 	public GeneAxonInput axonInputRight = new GeneAxonInput(1, SignalUnitEnum.Axon); // right, B
 
-	public int pulseProgram11;
-	public int pulseProgram10;
-	public int pulseProgram01;
-	public int pulseProgram00;
+	public int pulseProgram3; // -1 == relaxed
+	public int pulseProgram2;
+	public int pulseProgram1;
+	public int pulseProgram0;
 
 	public void UpdateConnections() {
 		// what do we want to do here?????
@@ -88,10 +90,10 @@ public class GeneAxon {
 		data.axonRelaxContract = axonRelaxContract;
 		data.axonIsReverse = axonIsReverse;
 
-		data.pulseProgram11 = pulseProgram11;
-		data.pulseProgram10 = pulseProgram10;
-		data.pulseProgram01 = pulseProgram01;
-		data.pulseProgram00 = pulseProgram00;
+		data.pulseProgram3 = pulseProgram3;
+		data.pulseProgram2 = pulseProgram2;
+		data.pulseProgram1 = pulseProgram1;
+		data.pulseProgram0 = pulseProgram0;
 
 		data.axonInputLeft = axonInputLeft.UpdateData();
 		data.axonInputRight = axonInputRight.UpdateData();
@@ -107,10 +109,10 @@ public class GeneAxon {
 		axonRelaxContract = axonData.axonRelaxContract;
 		axonIsReverse = axonData.axonIsReverse;
 
-		pulseProgram11 = axonData.pulseProgram11;
-		pulseProgram10 = axonData.pulseProgram10;
-		pulseProgram01 = axonData.pulseProgram01;
-		pulseProgram00 = axonData.pulseProgram00;
+		pulseProgram3 = axonData.pulseProgram3;
+		pulseProgram2 = axonData.pulseProgram2;
+		pulseProgram1 = axonData.pulseProgram1;
+		pulseProgram0 = axonData.pulseProgram0;
 
 		axonInputLeft.ApplyData(axonData.axonInputLeft);
 		axonInputRight.ApplyData(axonData.axonInputRight);

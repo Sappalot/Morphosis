@@ -109,8 +109,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 			StartCoroutine(UpdateIsVisible());
 
-			blackWhiteImage.color = (viewedFlipSide == FlipSideEnum.BlackWhite) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
-			whiteBlackImage.color = (viewedFlipSide == FlipSideEnum.WhiteBlack) ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+			blackWhiteImage.color = (viewedFlipSide == FlipSideEnum.BlackWhite) ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+			whiteBlackImage.color = (viewedFlipSide == FlipSideEnum.WhiteBlack) ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
 			isDirty = false;
 		}
 	}

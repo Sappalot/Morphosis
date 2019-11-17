@@ -56,7 +56,7 @@ public class MuscleCell : Cell {
 					Cell masterAxon = creature.phenotype.cellMap.GetCell(masterAxonGridPosition);
 					if (masterAxon != null) {
 						if (masterAxoneDistance != null) {
-							isContracting = masterAxon.IsAxonePulseContracting((int)masterAxoneDistance);
+							isContracting = masterAxon.IsAxonPulseContracting((int)masterAxoneDistance);
 						} else {
 							Debug.LogError("We have found a master axone, but failed to calculate the distance there from me!");
 						}

@@ -2,6 +2,13 @@
 
 public class EggCell : Cell {
 
+	private new void Awake() {
+		fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkLogicBoxA, this);
+		fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkSensorA, this);
+		fertilizeAttachmentSensor = new AttachmentSensor(SignalUnitEnum.WorkSensorB, this);
+		base.Awake();
+	}
+
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
 			if (IsHibernating()) {
@@ -30,9 +37,9 @@ public class EggCell : Cell {
 	}
 
 	// Signal
-	public LogicBox fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkLogicBoxA);
-	public EnergySensor fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkSensorA);
-	public AttachmentSensor fertilizeAttachmentSensor = new AttachmentSensor(SignalUnitEnum.WorkSensorB);
+	public LogicBox fertilizeLogicBox;
+	public EnergySensor fertilizeEnergySensor;
+	public AttachmentSensor fertilizeAttachmentSensor;
 
 	public override void ClearSignal() {
 		base.ClearSignal();
@@ -48,17 +55,17 @@ public class EggCell : Cell {
 
 	public override void UpdateSignalConnections() {
 		base.UpdateSignalConnections();
-		fertilizeLogicBox.UpdateSignalConnections(this);
-		fertilizeEnergySensor.UpdateSignalConnections(this);
+		fertilizeLogicBox.UpdateSignalConnections();
+		fertilizeEnergySensor.UpdateSignalConnections();
 	}
 
 	public override void ComputeSignalOutputs(int deltaTicks) {
 		//TODO: Check with gene if anybody is listening to this output
 		base.ComputeSignalOutputs(deltaTicks);
 		
-		fertilizeLogicBox.ComputeSignalOutput(this, deltaTicks);
-		fertilizeEnergySensor.ComputeSignalOutput(this, deltaTicks);
-		fertilizeAttachmentSensor.ComputeSignalOutput(this, deltaTicks);
+		fertilizeLogicBox.ComputeSignalOutput(deltaTicks);
+		fertilizeEnergySensor.ComputeSignalOutput( deltaTicks);
+		fertilizeAttachmentSensor.ComputeSignalOutput( deltaTicks);
 	}
 
 	public override bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {

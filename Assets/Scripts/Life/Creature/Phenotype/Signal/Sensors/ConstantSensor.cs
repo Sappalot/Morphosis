@@ -5,8 +5,8 @@ using UnityEngine;
 public class ConstantSensor : SignalUnit {
 	private bool[] output = new bool[6]; // outputs 
 
-	public ConstantSensor(SignalUnitEnum outputUnit) {
-		this.signalUnit = outputUnit;
+	public ConstantSensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
+		this.signalUnit = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
@@ -15,7 +15,7 @@ public class ConstantSensor : SignalUnit {
 
 	// TODO: optimize don't update unnessessarily
 	// TODO: add random 0/1 at startup. odds controlled by gene 
-	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {
+	public override void ComputeSignalOutput(int deltaTicks) {
 		for (int i = 0; i < output.Length; i++) {
 			output[i] = i == 1; // only slot 1 is 1 rest is 0
 		}

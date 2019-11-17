@@ -9,7 +9,7 @@ public class EnergySensor : SignalUnit {
 
 	public float threshold;
 
-	public EnergySensor(SignalUnitEnum signalUnit) {
+	public EnergySensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
 		this.signalUnit = signalUnit;
 	}
 
@@ -17,7 +17,7 @@ public class EnergySensor : SignalUnit {
 		return output[(int)signalUnitSlot];
 	}
 
-	public override void UpdateSignalConnections(Cell hostCell) {
+	public override void UpdateSignalConnections() {
 		areaCells.Clear();
 		if (signalUnit == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) {
 			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).areaRadius);
@@ -26,7 +26,7 @@ public class EnergySensor : SignalUnit {
 		} 
 	}
 
-	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {
+	public override void ComputeSignalOutput(int deltaTicks) {
 		if (signalUnit == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) {
 			output[0] = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 			output[1] = hostCell.energy < (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;

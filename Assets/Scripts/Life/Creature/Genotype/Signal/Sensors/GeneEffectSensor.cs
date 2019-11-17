@@ -120,19 +120,19 @@ public class GeneEffectSensor : GeneSignalUnit {
 	}
 
 	// Load
-	public void ApplyData(GeneEffectSensorData geneEnergySensorData) {
-		effectMeassure = data.effectMeassure;
+	public void ApplyData(GeneEffectSensorData geneEffectSensorData) {
+		effectMeassure = geneEffectSensorData.effectMeassure;
 
-		areaRadiusTotal = Mathf.Max(1, data.areaRadiusTotal);
-		effectThresholdTotal = data.effectThresholdTotal;
+		areaRadiusTotal = Mathf.Max(1, geneEffectSensorData.areaRadiusTotal);
+		effectThresholdTotal = geneEffectSensorData.effectThresholdTotal;
 
-		areaRadiusProduction = Mathf.Max(1, data.areaRadiusProduction);
-		effectThresholdProduction = data.effectThresholdProduction;
+		areaRadiusProduction = Mathf.Max(1, geneEffectSensorData.areaRadiusProduction);
+		effectThresholdProduction = geneEffectSensorData.effectThresholdProduction;
 
-		areaRadiusFlux = Mathf.Max(1, data.areaRadiusFlux);
-		effectThresholdFlux = data.effectThresholdFlux;
+		areaRadiusFlux = Mathf.Max(1, geneEffectSensorData.areaRadiusFlux);
+		effectThresholdFlux = geneEffectSensorData.effectThresholdFlux;
 
-		areaRadiusExternal = Mathf.Max(1, data.areaRadiusExternal);
-		effectThresholdExternal = data.effectThresholdExternal;
+		areaRadiusExternal = Mathf.Max(1, geneEffectSensorData.areaRadiusExternal);
+		effectThresholdExternal = geneEffectSensorData.effectThresholdExternal;
 	}
 }

@@ -11,11 +11,11 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Gradient creatureAgeGradient;
 	public Gradient creatureAgeTextGradient;
 
-	public Color selectedButtonSymbol;
-	public Color notSelectedButtonSymbol;
+	public Color selectedViewed;
+	public Color notSelectedViewed;
 
-	public Color selectedButtonBackground;
-	public Color notSelectedButtonBackground;
+	public Color selectedChanged;
+	public Color notSelectedChanged;
 
 	public Color mouseTextAction;
 	public Color mouseTextBussy;

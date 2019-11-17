@@ -9,10 +9,10 @@ public class GeneAxonData {
 	public float axonRelaxContract;
 	public bool axonIsReverse;
 
-	public int pulseProgram11;
-	public int pulseProgram10;
-	public int pulseProgram01;
-	public int pulseProgram00;
+	public int pulseProgram3;
+	public int pulseProgram2;
+	public int pulseProgram1;
+	public int pulseProgram0;
 
 	public GeneLogicBoxInputData axonInputLeft = new GeneLogicBoxInputData();
 	public GeneLogicBoxInputData axonInputRight = new GeneLogicBoxInputData();

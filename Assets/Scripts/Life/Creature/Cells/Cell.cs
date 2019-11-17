@@ -124,30 +124,16 @@ public abstract class Cell : MonoBehaviour {
 	// Axon
 	public bool isAxonEnabled {
 		get {
-			return gene.axon.axonIsEnabled;
+			return axon.isEnabled;
 		}
 	}
 
 	public float GetAxonPulseValue(int distance) {
-		float fromOriginOffset = (gene.axon.axonFromOriginOffset + (gene.axon.axonIsFromOriginPlus180 && flipSide == FlipSideEnum.WhiteBlack ? 180f : 0f)) / 360f;
-		float fromMeOffest = (gene.axon.axonFromMeOffset * distance) / 360f;
-		if (!gene.axon.axonIsReverse) {
-			return Mathf.Cos((fromOriginOffset + fromMeOffest + creature.phenotype.originCell.originPulseCompleteness) * 2f * Mathf.PI) + gene.axon.axonRelaxContract;
-		} else {
-			return Mathf.Cos((fromOriginOffset + fromMeOffest - creature.phenotype.originCell.originPulseCompleteness) * 2f * Mathf.PI) + gene.axon.axonRelaxContract; // is this really the right way of reversing????!!!!
-		}
+		return axon.GetPulseValue(distance);
 	}
 
-	public bool IsAxonePulseContracting(int distance) {
-		return isAxonEnabled && GetAxonPulseValue(distance) > 0;
-
-		// haxor test with sensor
-		//if (signal.effectSensor.isOutputOn) {
-		//	return false; // Leelax if have enough effect
-		//} else {
-		//	return isAxonEnabled && GetAxonPulseValue(distance) > 0;
-		//}
-
+	public bool IsAxonPulseContracting(int distance) {
+		return axon.IsPulseContracting(distance);
 	}
 
 	// ^ Axon ^
@@ -713,7 +699,7 @@ public abstract class Cell : MonoBehaviour {
 		Init();
 	}
 
-	public void Init() {
+	public virtual void Init() {
 		theRigidBody = GetComponent<Rigidbody2D>();
 
 		cellNeighbourDictionary.Add(0, northEastNeighbour);
@@ -729,9 +715,13 @@ public abstract class Cell : MonoBehaviour {
 		}
 
 		// Sensors...
-		
-
-		//signal.Init(this);
+		constantSensor = new ConstantSensor(SignalUnitEnum.ConstantSensor, this); // own component
+		axon = new Axon(SignalUnitEnum.Axon, this);
+		dendritesLogicBox = new LogicBox(SignalUnitEnum.DendritesLogicBox, this); // own component
+		energySensor = new EnergySensor(SignalUnitEnum.EnergySensor, this); // own component
+		effectSensor = new EffectSensor(SignalUnitEnum.EffectSensor, this); // own component
+		originDetatchLogicBox = new LogicBox(SignalUnitEnum.OriginDetatchLogicBox, this); // inside origin component
+		originSizeSensor = new SizeSensor(SignalUnitEnum.OriginSizeSensor, this); // inside origin component
 
 		// ^ Sensors ^
 	}
@@ -1662,20 +1652,21 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	//----------Signal--------------------------------
-	public ConstantSensor constantSensor = new ConstantSensor(SignalUnitEnum.ConstantSensor); // own component
-	public Axon axon = new Axon(SignalUnitEnum.Axon);
-	public LogicBox dendritesLogicBox = new LogicBox(SignalUnitEnum.DendritesLogicBox); // own component
-	public EnergySensor energySensor = new EnergySensor(SignalUnitEnum.EnergySensor); // own component
-	public EffectSensor effectSensor = new EffectSensor(SignalUnitEnum.EffectSensor); // own component
-	public LogicBox originDetatchLogicBox = new LogicBox(SignalUnitEnum.OriginDetatchLogicBox); // inside origin component
-	public SizeSensor originSizeSensor = new SizeSensor(SignalUnitEnum.OriginSizeSensor); // inside origin component
+	// instantiated at Init()
+	public ConstantSensor constantSensor;
+	public Axon axon;
+	public LogicBox dendritesLogicBox;
+	public EnergySensor energySensor;
+	public EffectSensor effectSensor;
+	public LogicBox originDetatchLogicBox;
+	public SizeSensor originSizeSensor;
 
 	public virtual void UpdateSignalConnections() {
-		dendritesLogicBox.UpdateSignalConnections(this);
-		energySensor.UpdateSignalConnections(this);
-		effectSensor.UpdateSignalConnections(this);
+		dendritesLogicBox.UpdateSignalConnections();
+		energySensor.UpdateSignalConnections();
+		effectSensor.UpdateSignalConnections();
 		if (isOrigin) {
-			originDetatchLogicBox.UpdateSignalConnections(this);
+			originDetatchLogicBox.UpdateSignalConnections();
 		}
 	}
 
@@ -1704,13 +1695,13 @@ public abstract class Cell : MonoBehaviour {
 	virtual public void ComputeSignalOutputs(int deltaTicks) {
 		// Update cells common units here
 		// TODO: Check if anybodey is listening to output, update only in that case
-		constantSensor.ComputeSignalOutput(this, deltaTicks);
-		dendritesLogicBox.ComputeSignalOutput(this, deltaTicks);
-		energySensor.ComputeSignalOutput(this, deltaTicks);
-		effectSensor.ComputeSignalOutput(this, deltaTicks);
+		constantSensor.ComputeSignalOutput(deltaTicks);
+		dendritesLogicBox.ComputeSignalOutput(deltaTicks);
+		energySensor.ComputeSignalOutput(deltaTicks);
+		effectSensor.ComputeSignalOutput(deltaTicks);
 		if (isOrigin) {
-			originDetatchLogicBox.ComputeSignalOutput(this, deltaTicks);
-			originSizeSensor.ComputeSignalOutput(this, deltaTicks);
+			originDetatchLogicBox.ComputeSignalOutput(deltaTicks);
+			originSizeSensor.ComputeSignalOutput(deltaTicks);
 		}
 	}
 
@@ -1732,4 +1723,7 @@ public abstract class Cell : MonoBehaviour {
 
 		return false;
 	}
+
+	
+
 }

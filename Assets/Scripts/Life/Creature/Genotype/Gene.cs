@@ -123,10 +123,12 @@ public class Gene {
 		eggCellFertilizeLogic.SetCellToLocked(2, 1); // above attachment
 		eggCellFertilizeLogic.UpdateConnections();
 		eggCellFertilizeEnergySensor.thresholdMin = 20f;
+		eggCellFertilizeEnergySensor.threshold = 25f;
 		// ^ egg ^
 
 		// ... axon ....
 		axon.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
+		axon.isOrigin = isOrigin;
 		// ^ axon ^
 
 		// ...dendrites...

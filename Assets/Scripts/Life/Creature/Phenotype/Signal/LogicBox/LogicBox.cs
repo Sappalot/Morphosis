@@ -2,7 +2,7 @@
 	private bool outputEarly;
 	private bool outputLate; // TODO: save/load state
 
-	public LogicBox(SignalUnitEnum signalUnit) {
+	public LogicBox(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
 		base.signalUnit = signalUnit;
 	}
 
@@ -24,25 +24,28 @@
 		outputLate = outputEarly;
 	}
 
-	public override void UpdateSignalConnections(Cell hostCell) {
+	public override void UpdateSignalConnections() {
 		// TODO: we are here since body has changed and signal nerves need to reconnect
 	}
 
-	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {
+	public override void ComputeSignalOutput(int deltaTicks) {
 		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
-			outputEarly = ThroughGates(hostCell.gene.eggCellFertilizeLogic, hostCell);
+			outputEarly = ThroughGates(hostCell.gene.eggCellFertilizeLogic);
 		} else if (signalUnit == SignalUnitEnum.DendritesLogicBox) {
-			outputEarly = ThroughGates(hostCell.gene.dendritesLogicBox, hostCell);
+			outputEarly = ThroughGates(hostCell.gene.dendritesLogicBox);
 		} else if (signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
-			outputEarly = ThroughGates(hostCell.gene.originDetatchLogicBox, hostCell);
+			outputEarly = ThroughGates(hostCell.gene.originDetatchLogicBox);
 		}
 	}
 
-	private bool ThroughGates(GeneLogicBox geneLogicBox, Cell hostCell) {
-		return GetGateResult(geneLogicBox.GetGate(0, 0), hostCell);
+	private bool ThroughGates(GeneLogicBox geneLogicBox) {
+		return HasSignalPostGate(geneLogicBox.GetGate(0, 0), hostCell);
 	}
 
-	public static bool GetGateResult(GeneLogicBoxGate gate, Cell hostCell) {
+	// TODO: find out a way not to use static functions here
+	// we need to know what logic box we are talking to in panel as we want to update signal colors
+
+	public static bool HasSignalPostGate(GeneLogicBoxGate gate, Cell hostCell) {
 		if (gate.row == 0 && !gate.isTransmittingSignal) {
 			return false; // If we are not transmitting anything through top gate, this box is useless. undefined but let's just turn output off
 		}
@@ -56,7 +59,7 @@
 							return false; // one off ==> AND is off :(
 						}
 					} else if (nextPart is GeneLogicBoxGate) {
-						if (!GetGateResult((nextPart as GeneLogicBoxGate), hostCell)) {
+						if (!HasSignalPostGate((nextPart as GeneLogicBoxGate), hostCell)) {
 							// next part turned out to be a gate with output off
 							return false; // one false ==> AND is off :(
 						}
@@ -73,7 +76,7 @@
 							return true; // one on ==> OR is on :)
 						}
 					} else if (nextPart is GeneLogicBoxGate) {
-						if (GetGateResult((nextPart as GeneLogicBoxGate), hostCell)) {
+						if (HasSignalPostGate((nextPart as GeneLogicBoxGate), hostCell)) {
 							// next part turned out to be a gate with output on
 							return true; // one on ==> OR is on :)
 						}
@@ -84,8 +87,8 @@
 		}
 	}
 
-	public static bool GetInputResult(GeneLogicBoxInput input, Cell hostCell) {
-		return (input as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && (input as GeneLogicBoxInput).nerve.inputUnit != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as GeneLogicBoxInput).nerve.inputUnit, (input as GeneLogicBoxInput).nerve.inputUnitSlot);
+	public static bool HasSignalPostInputValve(IGeneInput input, Cell hostCell) {
+		return (input as IGeneInput).valveMode == SignalValveModeEnum.Pass && (input as IGeneInput).nerve.inputUnit != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as IGeneInput).nerve.inputUnit, (input as IGeneInput).nerve.inputUnitSlot);
 	}
 
 	private bool TestInput(int leftFlank) {

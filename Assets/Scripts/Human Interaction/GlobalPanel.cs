@@ -251,8 +251,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	public void SelectPausePhysics() {
 		if (!isRunPhysicsGrayOut) {
-			pausePhysicsImage.color = ColorScheme.instance.selectedButtonBackground;
-			runPhysicsImage.color = ColorScheme.instance.notSelectedButtonBackground;
+			pausePhysicsImage.color = ColorScheme.instance.selectedChanged;
+			runPhysicsImage.color = ColorScheme.instance.notSelectedChanged;
 			
 		}
 		isRunPhysics = false;
@@ -266,8 +266,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	public void SelectRunPhysics() {
 		if (!isRunPhysicsGrayOut) {
-			pausePhysicsImage.color = ColorScheme.instance.notSelectedButtonBackground;
-			runPhysicsImage.color = ColorScheme.instance.selectedButtonBackground;
+			pausePhysicsImage.color = ColorScheme.instance.notSelectedChanged;
+			runPhysicsImage.color = ColorScheme.instance.selectedChanged;
 			isRunPhysics = true;
 		}
 	}

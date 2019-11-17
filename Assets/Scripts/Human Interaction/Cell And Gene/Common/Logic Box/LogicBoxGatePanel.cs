@@ -166,8 +166,8 @@ public class LogicBoxGatePanel : MonoBehaviour {
 
 			buttonOverlay.SetActive(isMouseHoverng);
 			if (buttonOverlay && affectedGeneLogicBoxGate != null) {
-				andButtonImage.color = affectedGeneLogicBoxGate.operatorType == LogicOperatorEnum.And ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
-				orButtonImage.color = affectedGeneLogicBoxGate.operatorType == LogicOperatorEnum.Or ? ColorScheme.instance.selectedButtonBackground : ColorScheme.instance.notSelectedButtonBackground;
+				andButtonImage.color = affectedGeneLogicBoxGate.operatorType == LogicOperatorEnum.And ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
+				orButtonImage.color = affectedGeneLogicBoxGate.operatorType == LogicOperatorEnum.Or ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
 			}
 
 			// input arrows
@@ -196,9 +196,9 @@ public class LogicBoxGatePanel : MonoBehaviour {
 				} else {
 					if (connectedPart.isTransmittingSignal) {
 						if (connectedPart is GeneLogicBoxGate) {
-							arrowColor = LogicBox.GetGateResult((connectedPart as GeneLogicBoxGate), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+							arrowColor = LogicBox.HasSignalPostGate((connectedPart as GeneLogicBoxGate), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						} else if (connectedPart is GeneLogicBoxInput) {
-							arrowColor = LogicBox.GetInputResult((connectedPart as GeneLogicBoxInput), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+							arrowColor = LogicBox.HasSignalPostInputValve((connectedPart as GeneLogicBoxInput), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						}
 					} else {
 						arrowColor = ColorScheme.instance.signalUnused;

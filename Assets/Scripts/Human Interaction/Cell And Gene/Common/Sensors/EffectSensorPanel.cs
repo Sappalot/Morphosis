@@ -19,6 +19,15 @@ public class EffectSensorPanel : SensorPanel {
 
 	public Slider effectThresholdSlider;
 
+	public Image measureDropdownImageShow;
+	public Image measureDropdownImageList;
+
+	public override void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
+		base.Initialize(mode, signalUnit);
+		measureDropdownImageShow.color = ColorScheme.instance.selectedChanged;
+		measureDropdownImageList.color = ColorScheme.instance.selectedChanged;
+	}
+
 	public void OnDropdownMeasureChanged() {
 		if (ignoreSliderMoved) {
 			return;

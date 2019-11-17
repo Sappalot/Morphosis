@@ -5,7 +5,7 @@ using UnityEngine;
 public class SizeSensor : SignalUnit {
 	private bool[] output = new bool[6]; // outputs 
 
-	public SizeSensor(SignalUnitEnum signalUnit) {
+	public SizeSensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
 		this.signalUnit = signalUnit;
 	}
 
@@ -13,7 +13,7 @@ public class SizeSensor : SignalUnit {
 		return output[(int)signalUnitSlot];
 	}
 
-	public override void ComputeSignalOutput(Cell hostCell, int deltaTicks) {
+	public override void ComputeSignalOutput(int deltaTicks) {
 		if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
 			output[0] = hostCell.creature.phenotype.cellCount >= hostCell.creature.CellCountAtCompleteness((hostCell.gene.originSizeSensor as GeneSizeSensor).sizeThreshold); // A
 			output[1] = hostCell.creature.phenotype.cellCount < hostCell.creature.CellCountAtCompleteness((hostCell.gene.originSizeSensor as GeneSizeSensor).sizeThreshold); // B
