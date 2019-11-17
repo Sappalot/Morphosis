@@ -5,6 +5,14 @@ using UnityEngine.UI;
 public class AxonPanel : SensorPanel {
 	public Toggle enabledToggle;
 
+	// view pulse
+	private int pulseView = 1; // 1 = A
+	public Image pulseViewAButtonImage;
+	public Image pulseViewBButtonImage;
+	public Image pulseViewCButtonImage;
+	public Image pulseViewDButtonImage;
+
+
 	// ...Pulse...
 	public Text fromOriginOffsetText;
 	public Text fromOriginDeg0Text;
@@ -80,6 +88,26 @@ public class AxonPanel : SensorPanel {
 		dropdownBackgroundList0.color = ColorScheme.instance.selectedChanged;
 
 		ignoreSliderMoved = false;
+	}
+
+	public void OnClickedPulseViewA() {
+		pulseView = 1;
+		MakeDirty();
+	}
+
+	public void OnClickedPulseViewB() {
+		pulseView = 2;
+		MakeDirty();
+	}
+
+	public void OnClickedPulseViewC() {
+		pulseView = 3;
+		MakeDirty();
+	}
+
+	public void OnClickedPulseViewD() {
+		pulseView = 4;
+		MakeDirty();
 	}
 
 	public override List<IGeneInput> GetAllGeneInputs() {
@@ -195,6 +223,12 @@ public class AxonPanel : SensorPanel {
 
 			enabledToggle.interactable = interractable;
 
+			pulseViewAButtonImage.color = pulseView == 1 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+			pulseViewBButtonImage.color = pulseView == 2 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+			pulseViewCButtonImage.color = pulseView == 3 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+			pulseViewDButtonImage.color = pulseView == 4 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+
+			// Pulse
 			fromOriginOffsetSlider.interactable = interractable;
 			fromOriginPlus180Toggle.interactable = interractable;
 
@@ -203,11 +237,13 @@ public class AxonPanel : SensorPanel {
 			relaxContractSlider.interactable = interractable;
 
 			reverseToggle.interactable = interractable;
+			// ^ Pulse ^
 
-			dropdown3.interactable = (mode == PhenoGenoEnum.Genotype);
-			dropdown2.interactable = (mode == PhenoGenoEnum.Genotype);
-			dropdown1.interactable = (mode == PhenoGenoEnum.Genotype);
-			dropdown0.interactable = (mode == PhenoGenoEnum.Genotype);
+
+			dropdown3.interactable = interractable;
+			dropdown2.interactable = interractable;
+			dropdown1.interactable = interractable;
+			dropdown0.interactable = interractable;
 
 			dropdown3.value = selectedGene.axon.pulseProgram3;
 			dropdown2.value = selectedGene.axon.pulseProgram2;
