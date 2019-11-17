@@ -14,7 +14,7 @@ public class EffectSensor : SignalUnit {
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
-		return output[(int)signalUnitSlot];
+		return output[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}
 
 	public override void UpdateSignalConnections() {

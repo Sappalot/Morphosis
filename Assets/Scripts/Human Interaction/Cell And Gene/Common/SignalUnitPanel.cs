@@ -12,33 +12,69 @@ public abstract class SignalUnitPanel : ComponentPanel {
 
 	[Serializable]
 	public struct SignalLocations {
-		public RectTransform A;
-		public RectTransform B;
-		public RectTransform C;
-		public RectTransform D;
-		public RectTransform E;
-		public RectTransform F;
-		public RectTransform processedEarly; // output for component which has also at leas 1 input
-		public RectTransform processedLate;
+		public RectTransform inputA;
+		public RectTransform inputB;
+		public RectTransform inputC;
+		public RectTransform inputD;
+		public RectTransform inputE;
+		public RectTransform inputF;
+
+		public RectTransform outputEarlyA;
+		public RectTransform outputLateA;
+
+		public RectTransform outputEarlyB;
+		public RectTransform outputLateB;
+
+		public RectTransform outputEarlyC;
+		public RectTransform outputLateC;
+
+		public RectTransform outputEarlyD;
+		public RectTransform outputLateD;
+
+		public RectTransform outputEarlyE;
+		public RectTransform outputLateE;
+
+		public RectTransform outputEarlyF;
+		public RectTransform outputLateF;
 	}
 
 	public RectTransform GetLocation(SignalUnitSlotEnum slot) {
-		if (slot == SignalUnitSlotEnum.A) {
-			return locations.A;
-		} else if (slot == SignalUnitSlotEnum.B) {
-			return locations.B;
-		} else if (slot == SignalUnitSlotEnum.C) {
-			return locations.C;
-		} else if (slot == SignalUnitSlotEnum.D) {
-			return locations.D;
-		} else if (slot == SignalUnitSlotEnum.E) {
-			return locations.E;
-		} else if (slot == SignalUnitSlotEnum.F) {
-			return locations.F;
-		} else if (slot == SignalUnitSlotEnum.processedEarly) { // Will we ever need to reach this one?
-			return locations.processedEarly;
-		} else if (slot == SignalUnitSlotEnum.processedLate) {
-			return locations.processedLate;
+		if (slot == SignalUnitSlotEnum.inputA) {
+			return locations.inputA;
+		} else if (slot == SignalUnitSlotEnum.inputB) {
+			return locations.inputB;
+		} else if (slot == SignalUnitSlotEnum.inputC) {
+			return locations.inputC;
+		} else if (slot == SignalUnitSlotEnum.inputD) {
+			return locations.inputD;
+		} else if (slot == SignalUnitSlotEnum.inputE) {
+			return locations.inputE;
+		} else if (slot == SignalUnitSlotEnum.inputF) {
+			return locations.inputF;
+		} else if (slot == SignalUnitSlotEnum.outputEarlyA) {
+			return locations.outputEarlyA;
+		} else if (slot == SignalUnitSlotEnum.outputLateA) {
+			return locations.outputLateA;
+		} else if (slot == SignalUnitSlotEnum.outputEarlyB) {
+			return locations.outputEarlyB;
+		} else if (slot == SignalUnitSlotEnum.outputLateB) {
+			return locations.outputLateB;
+		} else if (slot == SignalUnitSlotEnum.outputEarlyC) {
+			return locations.outputEarlyC;
+		} else if (slot == SignalUnitSlotEnum.outputLateC) {
+			return locations.outputLateC;
+		} else if (slot == SignalUnitSlotEnum.outputEarlyD) {
+			return locations.outputEarlyD;
+		} else if (slot == SignalUnitSlotEnum.outputLateD) {
+			return locations.outputLateD;
+		} else if (slot == SignalUnitSlotEnum.outputEarlyE) {
+			return locations.outputEarlyE;
+		} else if (slot == SignalUnitSlotEnum.outputLateE) {
+			return locations.outputLateE;
+		} else if (slot == SignalUnitSlotEnum.outputEarlyF) {
+			return locations.outputEarlyF;
+		} else if (slot == SignalUnitSlotEnum.outputLateF) {
+			return locations.outputLateF;
 		}
 		return null;
 	}
@@ -46,5 +82,22 @@ public abstract class SignalUnitPanel : ComponentPanel {
 	public virtual void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
 		base.Initialize(mode);
 		this.signalUnit = signalUnit;
+	}
+
+	public SignalUnitSlotEnum IndexToSignalUnitSlotEnum(int index) {
+		if (index == 0) {
+			return SignalUnitSlotEnum.outputLateA;
+		} else if (index == 1) {
+			return SignalUnitSlotEnum.outputLateB;
+		} else if (index == 2) {
+			return SignalUnitSlotEnum.outputLateC;
+		} else if (index == 3) {
+			return SignalUnitSlotEnum.outputLateD;
+		} else if (index == 4) {
+			return SignalUnitSlotEnum.outputLateE;
+		} else if (index == 5) {
+			return SignalUnitSlotEnum.outputLateF;
+		}
+		return SignalUnitSlotEnum.outputLateA; // error
 	}
 }

@@ -10,7 +10,7 @@ public class ConstantSensor : SignalUnit {
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
-		return output[(int)signalUnitSlot];
+		return output[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}
 
 	// TODO: optimize don't update unnessessarily

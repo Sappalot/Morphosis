@@ -764,7 +764,7 @@ public class Creature : MonoBehaviour {
 			//Debug.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
 
 			// Detatch child from mother
-			if (PhenotypePhysicsPanel.instance.detatch.isOn && IsAttachedToMotherAlive() && phenotype.originCell.originDetatchLogicBox.GetOutput(SignalUnitSlotEnum.processedEarly)) {
+			if (PhenotypePhysicsPanel.instance.detatch.isOn && IsAttachedToMotherAlive() && phenotype.originCell.originDetatchLogicBox.GetOutput(SignalUnitSlotEnum.outputEarlyA)) {
 				detatch = true; // Make sure we go one loop and reach UpdateStructure() before detatching from mother. Otherwise: if we just grew, originCell wouldn't know about placenta in mother and kick wouldn't be made properly
 			}
 		}
@@ -779,7 +779,7 @@ public class Creature : MonoBehaviour {
 				foreach (Cell c in phenotype.cellList) {
 					if (c is EggCell) {
 						EggCell eggCell = c as EggCell;
-						if (eggCell.fertilizeLogicBox.GetOutput(SignalUnitSlotEnum.processedEarly)) {
+						if (eggCell.fertilizeLogicBox.GetOutput(SignalUnitSlotEnum.outputEarlyA)) {
 							fertilizeCell = eggCell;
 							break;
 						}

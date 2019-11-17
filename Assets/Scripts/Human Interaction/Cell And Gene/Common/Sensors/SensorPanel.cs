@@ -52,7 +52,7 @@ public abstract class SensorPanel : SignalUnitPanel {
 		isUsed = true;
 
 		for (int i = 0; i < outputPanels.Length; i++) {
-			outputPanels[i].Initialize(mode, signalUnit, (SignalUnitSlotEnum)i, this);
+			outputPanels[i].Initialize(mode, signalUnit, IndexToSignalUnitSlotEnum(i), this);
 		}
 	}
 

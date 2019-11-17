@@ -109,10 +109,10 @@ public class Gene {
 		// ...egg...
 		// Force gateLayer0 to And, lock it so that it cant be changed by apply (= load)
 		eggCellFertilizeLogic.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, true);
-		eggCellFertilizeLogic.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
+		eggCellFertilizeLogic.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
 		eggCellFertilizeLogic.SetAllInputToBlocked();
-		eggCellFertilizeLogic.ConnectInputTo(0, SignalUnitEnum.WorkSensorA, SignalUnitSlotEnum.A); // connect to on board energy sensor
-		eggCellFertilizeLogic.ConnectInputTo(1, SignalUnitEnum.WorkSensorB, SignalUnitSlotEnum.B); // connect to on board attachemnt sensor (free from mother)
+		eggCellFertilizeLogic.ConnectInputTo(0, SignalUnitEnum.WorkSensorA, SignalUnitSlotEnum.outputLateA); // connect to on board energy sensor
+		eggCellFertilizeLogic.ConnectInputTo(1, SignalUnitEnum.WorkSensorB, SignalUnitSlotEnum.outputLateB); // connect to on board attachemnt sensor (free from mother)
 		eggCellFertilizeLogic.SetInputToPass(0); // energy
 		eggCellFertilizeLogic.SetInputToPass(1); // attachment
 		eggCellFertilizeLogic.SetInputLockness(0, LocknessEnum.Locked); // energy
@@ -127,13 +127,13 @@ public class Gene {
 		// ^ egg ^
 
 		// ... axon ....
-		axon.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
+		axon.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
 		axon.isOrigin = isOrigin;
 		// ^ axon ^
 
 		// ...dendrites...
 		dendritesLogicBox.TryCreateGate(0, LogicOperatorEnum.Or, 0, GeneLogicBox.rightmostFlank, false);
-		dendritesLogicBox.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
+		dendritesLogicBox.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
 		dendritesLogicBox.SetAllInputToBlocked();
 		dendritesLogicBox.UpdateConnections();
 		// ^ dendrites ^
@@ -141,10 +141,10 @@ public class Gene {
 		// ...origing...
 		originDetatchLogicBox.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, false);
 		originDetatchLogicBox.TryCreateGate(2, LogicOperatorEnum.Or, 4, GeneLogicBox.rightmostFlank, true);
-		originDetatchLogicBox.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.A); // constant 0
+		originDetatchLogicBox.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
 		originDetatchLogicBox.SetAllInputToBlocked();
-		originDetatchLogicBox.ConnectInputTo(4, SignalUnitEnum.OriginSizeSensor, SignalUnitSlotEnum.E);
-		originDetatchLogicBox.ConnectInputTo(5, SignalUnitEnum.OriginSizeSensor, SignalUnitSlotEnum.F);
+		originDetatchLogicBox.ConnectInputTo(4, SignalUnitEnum.OriginSizeSensor, SignalUnitSlotEnum.outputLateE);
+		originDetatchLogicBox.ConnectInputTo(5, SignalUnitEnum.OriginSizeSensor, SignalUnitSlotEnum.outputLateF);
 		originDetatchLogicBox.SetInputToPass(4); // blocked
 		originDetatchLogicBox.SetInputToPass(5); // max size
 		originDetatchLogicBox.SetInputLockness(4, LocknessEnum.SemiLocked); // blocked

@@ -12,9 +12,9 @@
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
-		if (signalUnitSlot == SignalUnitSlotEnum.processedEarly) {
+		if (signalUnitSlot == SignalUnitSlotEnum.outputEarlyA) {
 			return outputEarly;
-		} else if (signalUnitSlot == SignalUnitSlotEnum.processedLate) {
+		} else if (signalUnitSlot == SignalUnitSlotEnum.outputLateA) {
 			return outputLate;
 		}
 		return false;

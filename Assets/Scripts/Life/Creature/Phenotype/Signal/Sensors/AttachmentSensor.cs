@@ -10,7 +10,7 @@ public class AttachmentSensor : SignalUnit {
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
-		return output[(int)signalUnitSlot];
+		return output[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {

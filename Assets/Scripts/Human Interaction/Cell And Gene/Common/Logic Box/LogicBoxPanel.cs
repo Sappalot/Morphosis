@@ -155,8 +155,8 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 	public void OnClickedOutputButton() { // The arrow, processed late
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-			LogicBoxInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedLate);
-			AxonInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedLate);
+			LogicBoxInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
+			AxonInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
 
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		}
@@ -181,8 +181,8 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 			if (mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null) {
 				if (affectedGeneLogicBox != null) {
-					outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedLate) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-					outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.processedEarly) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputEarlyA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 			} else {
 				outputImageLate.color = ColorScheme.instance.signalOff;
