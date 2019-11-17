@@ -22,10 +22,10 @@ public class GeneAxon {
 	public GeneAxonInput axonInputLeft = new GeneAxonInput(0, SignalUnitEnum.Axon); // left, A
 	public GeneAxonInput axonInputRight = new GeneAxonInput(1, SignalUnitEnum.Axon); // right, B
 
-	public int pulseProgram3; // -1 == relaxed
-	public int pulseProgram2;
-	public int pulseProgram1;
-	public int pulseProgram0;
+	public int pulseProgram3 = 3; //  
+	public int pulseProgram2 = 2; // ...
+	public int pulseProgram1 = 1; // 1 = A
+	public int pulseProgram0 = 0; // 0 == relaxed
 
 	public void UpdateConnections() {
 		// what do we want to do here?????

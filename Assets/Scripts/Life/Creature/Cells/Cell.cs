@@ -1672,6 +1672,7 @@ public abstract class Cell : MonoBehaviour {
 
 	virtual public void ClearSignal() {
 		constantSensor.Clear();
+		axon.Clear();
 		dendritesLogicBox.Clear();
 		energySensor.Clear();
 		effectSensor.Clear();
@@ -1683,6 +1684,7 @@ public abstract class Cell : MonoBehaviour {
 	virtual public void FeedSignal() {
 		// Update cells common units here
 		// TODO: Check if anybodey is listening to output, feed only in that case
+		axon.FeedSignal();
 		dendritesLogicBox.FeedSignal();
 		if (isOrigin) {
 			originDetatchLogicBox.FeedSignal();
@@ -1696,6 +1698,7 @@ public abstract class Cell : MonoBehaviour {
 		// Update cells common units here
 		// TODO: Check if anybodey is listening to output, update only in that case
 		constantSensor.ComputeSignalOutput(deltaTicks);
+		axon.ComputeSignalOutput(deltaTicks);
 		dendritesLogicBox.ComputeSignalOutput(deltaTicks);
 		energySensor.ComputeSignalOutput(deltaTicks);
 		effectSensor.ComputeSignalOutput(deltaTicks);
@@ -1709,6 +1712,8 @@ public abstract class Cell : MonoBehaviour {
 		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for
 		if (outputUnit == SignalUnitEnum.ConstantSensor) {
 			return constantSensor.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.Axon) {
+			return axon.GetOutput(outputUnitSlot);
 		} else if (outputUnit == SignalUnitEnum.DendritesLogicBox) {
 			return dendritesLogicBox.GetOutput(outputUnitSlot);
 		} else if (outputUnit == SignalUnitEnum.EnergySensor) {

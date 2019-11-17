@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AxonPanel : SignalUnitPanel {
+public class AxonPanel : SensorPanel {
 	public Toggle enabledToggle;
 
 	// ...Pulse...
@@ -137,6 +137,38 @@ public class AxonPanel : SignalUnitPanel {
 		OnGenomeChanged(true);
 	}
 
+	public void OnDropdownCombination3Changed() {
+		if (ignoreSliderMoved) {
+			return;
+		}
+		selectedGene.axon.pulseProgram3 = dropdown3.value; // 0 = relax, 1 = A ....
+		OnGenomeChanged(false);
+	}
+
+	public void OnDropdownCombination2Changed() {
+		if (ignoreSliderMoved) {
+			return;
+		}
+		selectedGene.axon.pulseProgram2 = dropdown2.value; // 0 = relax, 1 = A ....
+		OnGenomeChanged(false);
+	}
+
+	public void OnDropdownCombination1Changed() {
+		if (ignoreSliderMoved) {
+			return;
+		}
+		selectedGene.axon.pulseProgram1 = dropdown1.value; // 0 = relax, 1 = A ....
+		OnGenomeChanged(false);
+	}
+
+	public void OnDropdownCombination0Changed() {
+		if (ignoreSliderMoved) {
+			return;
+		}
+		selectedGene.axon.pulseProgram0 = dropdown0.value; // 0 = relax, 1 = A ....
+		OnGenomeChanged(false);
+	}
+
 	public void MarkAsNewForge() {
 		CreatureSelectionPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -150,8 +182,14 @@ public class AxonPanel : SignalUnitPanel {
 		selectedGene.axon.UpdateConnections();
 	}
 
-	private void Update() {
+	public override void Update() {
 		if (isDirty) {
+			base.Update();
+			
+			if (selectedGene == null) {
+				isDirty = false;
+				return;
+			}
 
 			bool interractable = GetMode() == PhenoGenoEnum.Genotype && IsUnlocked();
 
@@ -165,6 +203,16 @@ public class AxonPanel : SignalUnitPanel {
 			relaxContractSlider.interactable = interractable;
 
 			reverseToggle.interactable = interractable;
+
+			dropdown3.interactable = (mode == PhenoGenoEnum.Genotype);
+			dropdown2.interactable = (mode == PhenoGenoEnum.Genotype);
+			dropdown1.interactable = (mode == PhenoGenoEnum.Genotype);
+			dropdown0.interactable = (mode == PhenoGenoEnum.Genotype);
+
+			dropdown3.value = selectedGene.axon.pulseProgram3;
+			dropdown2.value = selectedGene.axon.pulseProgram2;
+			dropdown1.value = selectedGene.axon.pulseProgram1;
+			dropdown0.value = selectedGene.axon.pulseProgram0;
 
 			if (GenePanel.instance.selectedGene != null && CreatureSelectionPanel.instance.hasSoloSelected) {
 				ignoreSliderMoved = true;
@@ -208,6 +256,8 @@ public class AxonPanel : SignalUnitPanel {
 				relaxContractRelaxContractText.text = string.Format("Relax/Contract offset: {0:F2}", GenePanel.instance.selectedGene.axon.axonRelaxContract);
 
 				reverseToggle.isOn = GenePanel.instance.selectedGene.axon.axonIsReverse;
+
+				// Output
 
 				// Switcher
 				inputLeftPanel.MakeDirty();
