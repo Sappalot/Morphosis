@@ -551,6 +551,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		foreach (Creature copy in copies) {
 			Creature creatureCopy = World.instance.life.GetCreature(copy.id);
 			Creature creatureOriginal = World.instance.life.GetCreature(copyToOriginal[copy.id]);
+			//hack
+			if (creatureOriginal == null) {
+				creatureOriginal = Freezer.instance.GetCreature(copyToOriginal[copy.id]);
+			}
 
 			creatureCopy.ClearMotherAndChildrenReferences();
 

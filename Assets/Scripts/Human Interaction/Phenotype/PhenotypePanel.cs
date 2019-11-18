@@ -140,7 +140,12 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 			if (solo.creation != CreatureCreationEnum.Frozen) {
 				ulong ageInSeconds = (ulong)(solo.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime);
-				creatureAgeText.text = "Age: " + TimeUtil.GetTimeString(ageInSeconds);
+				if (ageInSeconds < 3600) {
+					creatureAgeText.text = "Age: " + TimeUtil.GetTimeString(ageInSeconds);
+				} else {
+					creatureAgeText.text = "Age: Ancient";
+				}
+
 				ageBar.isOn = true;
 				ageBar.SetAge(ageInSeconds, GlobalSettings.instance.phenotype.maxAge);
 			}
