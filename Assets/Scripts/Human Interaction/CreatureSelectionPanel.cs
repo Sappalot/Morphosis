@@ -551,7 +551,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		foreach (Creature copy in copies) {
 			Creature creatureCopy = World.instance.life.GetCreature(copy.id);
 			Creature creatureOriginal = World.instance.life.GetCreature(copyToOriginal[copy.id]);
-			//hack
+			// We use this one for freezer as well, and was not finding original in life of course, so let's look in the freezer if it wasn't there
+			// Why did we have a problem with this first autumn 2019? it was made and has been working for a year or so .... strange!!
+			// This seem to patch up the problem
 			if (creatureOriginal == null) {
 				creatureOriginal = Freezer.instance.GetCreature(copyToOriginal[copy.id]);
 			}
