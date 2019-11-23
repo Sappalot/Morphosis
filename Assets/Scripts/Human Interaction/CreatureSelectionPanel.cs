@@ -35,8 +35,12 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public Text childrenButtonText;
 	// ^ left side ^
 
+	public Text selectPreviousGroupLabel;
+
 	[HideInInspector]
 	public List<Creature> selection = new List<Creature>();
+	[HideInInspector]
+	public List<string> selectionPreviousIds = new List<string>();
 	[HideInInspector]
 	public List<Creature> selectionCluster = new List<Creature>();
 
@@ -155,6 +159,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	//UI done
 	public void ClearSelection() {
+		StoreSelectionToPrevious();
+
 		DirtyMarkSelection();
 		selection.Clear();
 
@@ -181,7 +187,46 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		MakeDirty();
 	}
 
+	private void StoreSelectionToPrevious() {
+		selectionPreviousIds.Clear();
+		foreach (Creature c in selection) {
+			selectionPreviousIds.Add(c.id);
+		}
+	}
+
+	private void UpdatePreviousSelectionWhatIsLeft() {
+		List<Creature> whatIsLeft = new List<Creature>();
+		foreach (string id in selectionPreviousIds) {
+			Creature stillThere = World.instance.life.GetCreature(id);
+			if (stillThere != null && stillThere.phenotype.isAlive) {
+				whatIsLeft.Add(stillThere);
+			}
+		}
+		selectionPreviousIds.Clear();
+		foreach (Creature c in whatIsLeft) {
+			selectionPreviousIds.Add(c.id);
+		}
+	}
+
+	private void RestoreSelectionFromPrevious() {
+		UpdatePreviousSelectionWhatIsLeft();
+		List<Creature> whatIsLeft = new List<Creature>();
+		foreach (string id in selectionPreviousIds) {
+			whatIsLeft.Add(World.instance.life.GetCreature(id));
+		}
+
+		if (whatIsLeft.Count > 0) {
+			Select(whatIsLeft);
+		}
+	}
+
+	public void OnPressedRestorePreviousSelection() {
+		RestoreSelectionFromPrevious();
+	}
+
 	public void Select(Creature creature, Cell cell = null) {
+		StoreSelectionToPrevious();
+
 		if (cell == null) {
 			cell = creature.phenotype.originCell;
 		}
@@ -208,6 +253,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void Select(List<Creature> creatures) {
+		StoreSelectionToPrevious();
+
 		List<Creature> allCreatures = World.instance.life.creatures;
 
 		ClearSelection();
@@ -228,14 +275,19 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void AddToSelection(List<Creature> creatures) {
+		StoreSelectionToPrevious();
 		for (int index = 0; index < creatures.Count; index++) {
-			AddToSelection(creatures[index]);
+			AddToSelection(creatures[index], false);
 		}
 
 		UpdateSelectionCluster();
 	}
 
-	public void AddToSelection(Creature creature) {
+	public void AddToSelection(Creature creature, bool storePreviousSelection) {
+		if (storePreviousSelection) {
+			StoreSelectionToPrevious();
+		}
+
 		if (selection.Contains(creature)) {
 			return;
 		}
@@ -255,14 +307,19 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void RemoveFromSelection(List<Creature> creatures) {
+		StoreSelectionToPrevious();
 		for (int index = 0; index < creatures.Count; index++) {
-			RemoveFromSelection(creatures[index]);
+			RemoveFromSelection(creatures[index], false);
 		}
 
 		UpdateSelectionCluster();
 	}
 
-	public void RemoveFromSelection(Creature creature) {
+	public void RemoveFromSelection(Creature creature, bool storePreviousSelection) {
+		if (storePreviousSelection) {
+			StoreSelectionToPrevious();
+		}
+
 		if (!selection.Contains(creature)) {
 			return;
 		}
@@ -811,7 +868,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 
 		// Abort copy / breed
-		if (Input.GetKey(KeyCode.Escape)) {
+		if (Input.GetKeyDown(KeyCode.Escape)) {
 			if (MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.combineMoveCreatures) {
 				Audio.instance.ActionAbort(1f);
 
@@ -856,6 +913,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				PhenotypePanel.instance.MakeDirty();
 				GenotypePanel.instance.MakeDirty();
 			}
+		} else if (Input.GetKeyDown(KeyCode.Backspace)) {
+			OnPressedRestorePreviousSelection();
 		}
 
 		if (isDirty) {
@@ -866,6 +925,30 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			StartCoroutine(UpdateIsVisible());
 
 			RemoveDeletedAndRecycledFromSelection();
+
+			UpdatePreviousSelectionWhatIsLeft();
+			if (selectionPreviousIds.Count == 0) {
+				selectPreviousGroupLabel.color = ColorScheme.instance.grayedOut;
+				selectPreviousGroupLabel.text = "Select previous creatures";
+			} else {
+				selectPreviousGroupLabel.color = ColorScheme.instance.normalText;
+				if (selectionPreviousIds.Count == 1) {
+					selectPreviousGroupLabel.text = "Select previous creature";
+				} else {
+					List<string> ids = new List<string>();
+					foreach (Creature c in selection) {
+						ids.Add(c.id);
+					}
+					if (IsEqual(selectionPreviousIds, ids)) {
+						selectPreviousGroupLabel.color = ColorScheme.instance.grayedOut;
+						selectPreviousGroupLabel.text = "Select previous creatures";
+					} else {
+						selectPreviousGroupLabel.color = ColorScheme.instance.normalText;
+						selectPreviousGroupLabel.text = "Select previous " + selectionPreviousIds.Count + " creatures";
+					}
+					
+				}
+			}
 
 			if (selection.Count == 0) {
 				selectedCreatureText.text = "";
@@ -1027,6 +1110,23 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			//c.ShowMarkers(IsSelected(c));
 			c.ShowMarkers(false);
 		}
+	}
+
+	private bool IsEqual(List<string> collection1, List<string> collection2) {
+		if (collection1.Count != collection2.Count)
+			return false; // the collections are not equal
+
+		foreach (string item in collection1) {
+			if (!collection2.Contains(item))
+				return false; // the collections are not equal
+		}
+
+		foreach (string item in collection2) {
+			if (!collection1.Contains(item))
+				return false; // the collections are not equal
+		}
+
+		return true; // the collections are equal
 	}
 
 	private IEnumerator UpdateIsVisible() {

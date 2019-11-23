@@ -147,9 +147,10 @@ public class CameraController : MouseDrag  {
 		}
 
 		camera.transform.position += new Vector3(
-			horizontalMove * cameraMoveSpeed  * 2f * camera.orthographicSize * Time.deltaTime,
-			verticalMove * cameraMoveSpeed * 2f * camera.orthographicSize * Time.deltaTime,
+			horizontalMove * cameraMoveSpeed  * 2f * camera.orthographicSize * Time.unscaledDeltaTime,
+			verticalMove * cameraMoveSpeed * 2f * camera.orthographicSize * Time.unscaledDeltaTime,
 			0f);
+
 	}
 
 	private void TryReleaseCameraLock() {

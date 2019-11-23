@@ -8,10 +8,22 @@ public class LMBInWorld : MonoBehaviour {
 
 	private bool mouseDown0;
 
+	private float doubleClickCooldown;
+
 	//Bevare of LMB Mouse Drag in selectionController
 	private void Update() {
+
+		// HAxor double click :D
+		if (Input.GetMouseButtonDown(0) && doubleClickCooldown > 0f) {
+			ViewSelectedCreaturePanel.instance.OnPressedViewAllSelectedCreatures();
+			doubleClickCooldown = 0f;
+		}
+
+
 		if (Input.GetKey("mouse 0") && !mouseDown0) {
 			mouseDown0 = true;
+
+
 			if (!EventSystem.current.IsPointerOverGameObject() && !GraphPlotter.instance.IsMouseInside() && !AlternativeToolModePanel.instance.isOn) {
 				if (MouseAction.instance.actionState == MouseActionStateEnum.free) {
 					if (Input.GetKey(KeyCode.LeftShift)) {
@@ -34,9 +46,9 @@ public class LMBInWorld : MonoBehaviour {
 							return;
 						}
 						if (CreatureSelectionPanel.instance.IsSelected(creature)) {
-							CreatureSelectionPanel.instance.RemoveFromSelection(creature);
+							CreatureSelectionPanel.instance.RemoveFromSelection(creature, true);
 						} else {
-							CreatureSelectionPanel.instance.AddToSelection(creature);
+							CreatureSelectionPanel.instance.AddToSelection(creature, true);
 						}
 					} else {
 						CreatureSelectionPanel.instance.Select(creature, cell);
@@ -44,6 +56,8 @@ public class LMBInWorld : MonoBehaviour {
 						GenomePanel.instance.MakeDirty();
 						GenomePanel.instance.MakeScrollDirty();
 						CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
+
+						doubleClickCooldown = 0.2f; // for double click
 					}
 
 				} else if ((MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures)
@@ -87,6 +101,8 @@ public class LMBInWorld : MonoBehaviour {
 		if (!Input.GetKey("mouse 0")) {
 			mouseDown0 = false;
 		}
+
+		doubleClickCooldown -= Time.unscaledDeltaTime;
 	}
 
 	//TODO move to some util
