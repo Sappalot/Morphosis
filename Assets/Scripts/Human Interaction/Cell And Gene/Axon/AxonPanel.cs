@@ -66,7 +66,7 @@ public class AxonPanel : SensorPanel {
 	public override void Initialize(PhenoGenoEnum mode) {
 		base.Initialize(mode, SignalUnitEnum.Axon);
 
-		ignoreSliderMoved = true;
+		ignoreHumanInput = true;
 		fromOriginOffsetSlider.minValue = 0f;
 		fromOriginOffsetSlider.maxValue = 360f;
 
@@ -88,7 +88,7 @@ public class AxonPanel : SensorPanel {
 		dropdownBackgroundShow0.color = ColorScheme.instance.selectedChanged;
 		dropdownBackgroundList0.color = ColorScheme.instance.selectedChanged;
 
-		ignoreSliderMoved = false;
+		ignoreHumanInput = false;
 	}
 
 	public void OnClickedPulseViewA() {
@@ -119,7 +119,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public void OnToggleEnabledChanged() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		GenePanel.instance.selectedGene.axon.axonIsEnabled = enabledToggle.isOn;
@@ -127,7 +127,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public void OnFromOriginOffsetSliderMoved() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromOriginOffset = fromOriginOffsetSlider.value;
@@ -135,7 +135,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public void OnToggleFromOriginPlus180TextChanged() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonIsFromOriginPlus180 = fromOriginPlus180Toggle.isOn;
@@ -143,7 +143,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public void OnFromMeOffsetSliderMoved() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromMeOffset = fromMeOffsetSlider.value;
@@ -151,7 +151,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public void OnRelaxContractSliderMoved() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonRelaxContract = relaxContractSlider.value;
@@ -159,7 +159,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public void OnToggleReverseChanged() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonIsReverse = reverseToggle.isOn;
@@ -167,7 +167,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public void OnDropdownCombination3Changed() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		selectedGene.axon.pulseProgram3 = dropdown3.value; // 0 = relax, 1 = A ....
@@ -175,7 +175,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public void OnDropdownCombination2Changed() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		selectedGene.axon.pulseProgram2 = dropdown2.value; // 0 = relax, 1 = A ....
@@ -183,7 +183,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public void OnDropdownCombination1Changed() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		selectedGene.axon.pulseProgram1 = dropdown1.value; // 0 = relax, 1 = A ....
@@ -191,7 +191,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public void OnDropdownCombination0Changed() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		selectedGene.axon.pulseProgram0 = dropdown0.value; // 0 = relax, 1 = A ....
@@ -219,6 +219,8 @@ public class AxonPanel : SensorPanel {
 				isDirty = false;
 				return;
 			}
+
+			ignoreHumanInput = true;
 
 			bool interractable = GetMode() == PhenoGenoEnum.Genotype && IsUnlocked();
 
@@ -252,7 +254,7 @@ public class AxonPanel : SensorPanel {
 			dropdown0.value = selectedGene.axon.pulseProgram0;
 
 			if (GenePanel.instance.selectedGene != null && CreatureSelectionPanel.instance.hasSoloSelected) {
-				ignoreSliderMoved = true;
+				
 
 				enabledToggle.isOn = GenePanel.instance.selectedGene.axon.axonIsEnabled;
 				if (GetMode() == PhenoGenoEnum.Genotype) {
@@ -300,8 +302,10 @@ public class AxonPanel : SensorPanel {
 				inputLeftPanel.MakeDirty();
 				inputRightPanel.MakeDirty();
 
-				ignoreSliderMoved = false;
+				
 			}
+
+			ignoreHumanInput = false;
 
 			isDirty = false;
 		}

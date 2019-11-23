@@ -1,22 +1,21 @@
 ﻿using UnityEngine;
 
 static class SpatialUtil {
-
-	public static float GetMarkerScale() {
+	public static float MarkerScale() {
 		return Mathf.Lerp(2f, 6f, Mathf.InverseLerp(10f, 50f, Morphosis.instance.camera.orthographicSize));
 	}
 
-	public static void GetFxGrade(Vector2 position, bool isLoud, out bool hasAudio, out float audioVolume) {
+	public static void FxGrade(Vector2 position, bool isLoud, out bool hasAudio, out float audioVolume) {
 		hasAudio = false;
 		audioVolume = 0f;
 
 		if (GlobalPanel.instance.soundCreatures.isOn && (isLoud ? IsInsideLoudAudioVolume(position) : IsInsideQuietAudioVolume(position))) {
 			hasAudio = true;
-			audioVolume = GetAudioVolume(isLoud);
+			audioVolume = AudioVolume(isLoud);
 		}
 	}
 
-	public static void GetFxGrade(Vector2 position, bool isLoud, out bool hasAudio, out float audioVolume, out bool hasParticles) {
+	public static void FxGrade(Vector2 position, bool isLoud, out bool hasAudio, out float audioVolume, out bool hasParticles) {
 		hasAudio = false;
 		audioVolume = 0f;
 		hasParticles = false;
@@ -28,7 +27,7 @@ static class SpatialUtil {
 
 		if (GlobalPanel.instance.soundCreatures.isOn && (isLoud ? IsInsideLoudAudioVolume(position) : IsInsideQuietAudioVolume(position))) {
 			hasAudio = true;
-			audioVolume = GetAudioVolume(isLoud);
+			audioVolume = AudioVolume(isLoud);
 		}
 
 		if (GlobalPanel.instance.graphicsEffectsToggle.isOn && IsDetailedGraphicsDistance() && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
@@ -36,7 +35,7 @@ static class SpatialUtil {
 		}
 	}
 
-	public static void GetFxGrade(Vector2 position, bool isLoud, out bool hasAudio, out float audioVolume, out bool hasParticles, out bool hasMarker) {
+	public static void FxGrade(Vector2 position, bool isLoud, out bool hasAudio, out float audioVolume, out bool hasParticles, out bool hasMarker) {
 		hasAudio = false;
 		audioVolume = 0f;
 		hasParticles = false;
@@ -48,7 +47,7 @@ static class SpatialUtil {
 
 		if (GlobalPanel.instance.soundCreatures.isOn && (isLoud ? IsInsideLoudAudioVolume(position) : IsInsideQuietAudioVolume(position))) {
 			hasAudio = true;
-			audioVolume = GetAudioVolume(isLoud);
+			audioVolume = AudioVolume(isLoud);
 		}
 
 		if (GlobalPanel.instance.graphicsEffectsToggle.isOn) {
@@ -71,7 +70,7 @@ static class SpatialUtil {
 		return IsInsideFrustum(position) && IsLoudAudioDistance();
 	}
 
-	private static float GetAudioVolume(bool isLoud) {
+	private static float AudioVolume(bool isLoud) {
 		if (isLoud) {
 			return GlobalSettings.instance.loudAudioVolumeAtOrtho.Evaluate(Morphosis.instance.camera.orthographicSize);
 		} else {
@@ -89,10 +88,6 @@ static class SpatialUtil {
 	}
 
 	private static bool IsLoudAudioDistance() {
-		return Morphosis.instance.camera.orthographicSize < GlobalSettings.instance.loudAudioVolumeAtOrtho[GlobalSettings.instance.loudAudioVolumeAtOrtho.length - 1].time;
-	}
-
-	private static bool IsQuietAudioDistance() {
 		return Morphosis.instance.camera.orthographicSize < GlobalSettings.instance.loudAudioVolumeAtOrtho[GlobalSettings.instance.loudAudioVolumeAtOrtho.length - 1].time;
 	}
 }

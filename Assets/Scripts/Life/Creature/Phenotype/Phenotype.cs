@@ -35,6 +35,23 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public Bounds AABB {
+		get {
+			Bounds aabb = new Bounds(float.MaxValue, float.MinValue, float.MaxValue, float.MinValue);
+			foreach (Cell cell in cellList) {
+				aabb.xMin = Mathf.Min(cell.position.x, aabb.xMin);
+				aabb.xMax = Mathf.Max(cell.position.x, aabb.xMax);
+				aabb.yMin = Mathf.Min(cell.position.y, aabb.yMin);
+				aabb.yMax = Mathf.Max(cell.position.y, aabb.yMax);
+			}
+			aabb.xMin -= 0.5f;
+			aabb.xMax += 0.5f;
+			aabb.yMin -= 0.5f;
+			aabb.yMax += 0.5f;
+			return aabb;
+		}
+	}
+
 	[HideInInspector]
 	public Cell originCell {
 		get {
@@ -208,6 +225,18 @@ public class Phenotype : MonoBehaviour {
 	public int cellCount {
 		get {
 			return cellMap.cellCount;
+		}
+	}
+
+	public int leafCellCount {
+		get {
+			int count = 0;
+			foreach (Cell c in cellList) {
+				if (c.GetCellType() == CellTypeEnum.Leaf) {
+					count++;
+				}
+			}
+			return count;
 		}
 	}
 
@@ -501,7 +530,7 @@ public class Phenotype : MonoBehaviour {
 				// Play Fx
 				if (tryPlayFx) {
 					bool hasAudio; float audioVolume; bool hasParticles;
-					SpatialUtil.GetFxGrade(newCell.position, false, out hasAudio, out audioVolume, out hasParticles);
+					SpatialUtil.FxGrade(newCell.position, false, out hasAudio, out audioVolume, out hasParticles);
 					if (hasAudio) {
 						Audio.instance.CellBirth(audioVolume * 0.25f);
 					}
@@ -900,7 +929,7 @@ public class Phenotype : MonoBehaviour {
 
 		if (tryPlayFx) {
 			bool hasAudio; float audioVolume; bool hasParticles;
-			SpatialUtil.GetFxGrade(deleteCell.position, false, out hasAudio, out audioVolume, out hasParticles);
+			SpatialUtil.FxGrade(deleteCell.position, false, out hasAudio, out audioVolume, out hasParticles);
 
 			if (hasAudio) {
 				Audio.instance.CellDeath(audioVolume * 0.25f);
@@ -1037,7 +1066,7 @@ public class Phenotype : MonoBehaviour {
 				Cell originCell = creature.phenotype.originCell;
 
 				bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
-				SpatialUtil.GetFxGrade(originCell.position, false, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
+				SpatialUtil.FxGrade(originCell.position, false, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
 
 				if (hasAudio) {
 					Audio.instance.CreatureDetatch(audioVolume);
@@ -1047,7 +1076,7 @@ public class Phenotype : MonoBehaviour {
 				}
 				if (hasMarker) {
 					float angle = originCell.heading - 90f;
-					EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDetatch, originCell.position, angle, SpatialUtil.GetMarkerScale());
+					EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDetatch, originCell.position, angle, SpatialUtil.MarkerScale());
 				}
 			}
 

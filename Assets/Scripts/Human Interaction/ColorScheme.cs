@@ -33,6 +33,10 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Gradient shellArmourTransparentClear;
 	public Color vein;
 
+	public Color isHurt;
+	public Color isSliding;
+	public Color isTelepoked;
+
 	public Gradient creatureFinWake;
 
 	public Color outlineCluster;
@@ -55,6 +59,7 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color signalUnused;
 
 	public Color grayedOut;
+	public Color normalText;
 
 	public Color budHighestPrio;
 	public Color budBlockedByAttached;

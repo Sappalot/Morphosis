@@ -29,7 +29,7 @@ public class EffectSensorPanel : SensorPanel {
 	}
 
 	public void OnDropdownMeasureChanged() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 
@@ -39,7 +39,7 @@ public class EffectSensorPanel : SensorPanel {
 	}
 
 	public void OnAreaRadiusSliderMoved() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 
@@ -49,7 +49,7 @@ public class EffectSensorPanel : SensorPanel {
 	}
 
 	public void OnEffectThresholdSliderMoved() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 
@@ -68,7 +68,7 @@ public class EffectSensorPanel : SensorPanel {
 			}
 
 			if (selectedGene != null && affectedGeneSensor != null) {
-				ignoreSliderMoved = true;
+				ignoreHumanInput = true;
 
 				effectMeasuredDropdown.value = (int)(affectedGeneSensor as GeneEffectSensor).effectMeassure;
 
@@ -89,7 +89,7 @@ public class EffectSensorPanel : SensorPanel {
 				effectThresholdSlider.value = (affectedGeneSensor as GeneEffectSensor).usedThreshold;
 				effectThresholdSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
-				ignoreSliderMoved = false;
+				ignoreHumanInput = false;
 			}
 
 			isDirty = false;

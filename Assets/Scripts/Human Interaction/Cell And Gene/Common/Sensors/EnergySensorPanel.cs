@@ -16,7 +16,7 @@ public class EnergySensorPanel : SensorPanel {
 	public Slider energyThresholdSlider;
 
 	public void OnEnergyThresholdSliderMoved() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 
@@ -25,7 +25,7 @@ public class EnergySensorPanel : SensorPanel {
 	}
 
 	public void OnAreaRadiusSliderMoved() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 
@@ -42,7 +42,7 @@ public class EnergySensorPanel : SensorPanel {
 			}
 
 			if (selectedGene != null && affectedGeneSensor != null) {
-				ignoreSliderMoved = true;
+				ignoreHumanInput = true;
 
 				cellEnergyMoreThanLabel.text = string.Format("Cl. E ≥ {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
 				cellEnergyLessThanLabel.text = string.Format("Cl. E < {0:F0} J", (affectedGeneSensor as GeneEnergySensor).threshold);
@@ -61,7 +61,7 @@ public class EnergySensorPanel : SensorPanel {
 				energyThresholdSlider.value = (affectedGeneSensor as GeneEnergySensor).threshold;
 				energyThresholdSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
-				ignoreSliderMoved = false;
+				ignoreHumanInput = false;
 			}
 
 			isDirty = false;

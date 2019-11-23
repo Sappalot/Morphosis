@@ -31,9 +31,9 @@ public class LeafCellPanel : ComponentPanel {
 			}
 
 			if (selectedGene != null) {
-				ignoreSliderMoved = true;
+				ignoreHumanInput = true;
 
-				ignoreSliderMoved = false;
+				ignoreHumanInput = false;
 			}
 
 			isDirty = false;

@@ -126,13 +126,13 @@ public class Life : MonoBehaviour {
 
 		if (tryPlayFx) {
 			bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
-			SpatialUtil.GetFxGrade(eggCell.position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
+			SpatialUtil.FxGrade(eggCell.position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
 
 			if (hasAudio) {
 				Audio.instance.CreatureBirth(audioVolume);
 			}
 			if (hasMarker) {
-				EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureBorn, eggCell.position, 0f, SpatialUtil.GetMarkerScale());
+				EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureBorn, eggCell.position, 0f, SpatialUtil.MarkerScale());
 			}
 		}
 
@@ -276,12 +276,12 @@ public class Life : MonoBehaviour {
 
 		if (tryPlayFX) {
 			bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
-			SpatialUtil.GetFxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
+			SpatialUtil.FxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
 			if (hasAudio) {
 				Audio.instance.CreatureDeath(audioVolume);
 			}
 			if (hasMarker) {
-				EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDeath, position, 0f, SpatialUtil.GetMarkerScale());
+				EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDeath, position, 0f, SpatialUtil.MarkerScale());
 			}
 		}
 	}
@@ -383,13 +383,13 @@ public class Life : MonoBehaviour {
 
 	private void SpawnAddEffect(Vector2 position) {
 		if (GlobalPanel.instance.graphicsEffectsToggle.isOn) {
-			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureAdd, position, 0f, SpatialUtil.GetMarkerScale());
+			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureAdd, position, 0f, SpatialUtil.MarkerScale());
 		}
 	}
 
 	private void SpawnBirthEffect(Vector2 position) {
 		if (GlobalPanel.instance.graphicsEffectsToggle.isOn) {
-			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureBorn, position, 0f, SpatialUtil.GetMarkerScale());
+			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureBorn, position, 0f, SpatialUtil.MarkerScale());
 		}
 	}
 

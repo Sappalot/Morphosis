@@ -101,7 +101,7 @@ public class Portal : MonoBehaviour {
 
 	private void PlayTeleportEffect(Creature traveler) {
 		bool hasAudio; float audioVolume; bool hasParticles;
-		SpatialUtil.GetFxGrade(traveler.phenotype.originCell.position, false, out hasAudio, out audioVolume, out hasParticles);
+		SpatialUtil.FxGrade(traveler.phenotype.originCell.position, false, out hasAudio, out audioVolume, out hasParticles);
 		if (hasAudio) {
 			Audio.instance.CreatureTeleport(audioVolume);
 		}

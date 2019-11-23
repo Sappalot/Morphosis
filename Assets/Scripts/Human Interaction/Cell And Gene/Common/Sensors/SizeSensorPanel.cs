@@ -11,7 +11,7 @@ public class SizeSensorPanel : SensorPanel {
 	public Slider cantGrowMoreTimeSlider;
 
 	public void OnSizeThresholdSliderMoved() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 
@@ -20,7 +20,7 @@ public class SizeSensorPanel : SensorPanel {
 	}
 
 	public void OnBlockedGrowthPatienseThresholdSliderMoved() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 
@@ -37,7 +37,7 @@ public class SizeSensorPanel : SensorPanel {
 			}
 
 			if (CreatureSelectionPanel.instance.hasSoloSelected && selectedGene != null && affectedGeneSensor != null) {
-				ignoreSliderMoved = true;
+				ignoreHumanInput = true;
 				sizeMoreThanSliderLabel.text = string.Format("A: Size ≥ {0:F0} % ({1:F0} cells or bigger)", (affectedGeneSensor as GeneSizeSensor).sizeThreshold * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness((affectedGeneSensor as GeneSizeSensor).sizeThreshold));
 				sizeLessThanSliderLabel.text = string.Format("B: Size < {0:F0} % ({1:F0} cells or smaller)", (affectedGeneSensor as GeneSizeSensor).sizeThreshold * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness((affectedGeneSensor as GeneSizeSensor).sizeThreshold) - 1);
 				// C: Can grow more
@@ -50,7 +50,7 @@ public class SizeSensorPanel : SensorPanel {
 				cantGrowMoreTimeSlider.value = (affectedGeneSensor as GeneSizeSensor).cantGrowMorePatienseThreshold;
 				cantGrowMoreTimeSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
-				ignoreSliderMoved = false;
+				ignoreHumanInput = false;
 			}
 
 			isDirty = false;

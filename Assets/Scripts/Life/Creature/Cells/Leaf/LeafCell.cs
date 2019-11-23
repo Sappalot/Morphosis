@@ -241,14 +241,14 @@ public class LeafCell : Cell {
 
 		if (type == CollisionType.ownCell) {
 			float transparencyAtHit = GetTransparencyOfHit(hit);
-			return Mathf.Lerp(energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.cellCount), energyLossAir, transparencyAtHit);
+			return Mathf.Lerp(energyLossAir * 15f /*GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.phenotype.leafCellCount)*/, energyLossAir, transparencyAtHit);
 			//if (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal) {
 			//	return energyLossAir;
 			//}
 			//return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.cellCount); //J / m
 		} else if (type == CollisionType.othersCell) {
 			float transparencyAtHit = GetTransparencyOfHit(hit);
-			return Mathf.Lerp(energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.cellCount), energyLossAir, transparencyAtHit);
+			return Mathf.Lerp(energyLossAir * 15f /*GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.phenotype.leafCellCount)*/, energyLossAir, transparencyAtHit);
 			//if (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal) {
 			//	return energyLossAir;
 			//}

@@ -71,4 +71,8 @@ public class Vector2i {
 			return hashCode;
 		}
 	}
+
+	public override string ToString() {
+		return x + " : " + y;
+	}
 }

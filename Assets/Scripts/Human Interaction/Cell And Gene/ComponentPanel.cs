@@ -7,7 +7,7 @@ using UnityEngine;
 public abstract class ComponentPanel : MonoBehaviour {
 	[HideInInspector]
 	protected PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
-	protected bool ignoreSliderMoved = false;
+	protected bool ignoreHumanInput = false;
 	protected bool isDirty = false;
 	public ComponentFooterPanel componentFooterPanel;
 

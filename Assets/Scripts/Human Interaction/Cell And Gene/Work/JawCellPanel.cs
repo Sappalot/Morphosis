@@ -24,7 +24,7 @@ public class JawCellPanel : ComponentPanel {
 	public Text cannibalizeChildrenText;
 
 	public void OnChangedCannibalizeKin() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		selectedGene.jawCellCannibalizeKin = cannibalizeKinToggle.isOn;
@@ -32,7 +32,7 @@ public class JawCellPanel : ComponentPanel {
 	}
 
 	public void OnChangedCannibalizeMother() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		selectedGene.jawCellCannibalizeMother = cannibalizeMotherToggle.isOn;
@@ -40,7 +40,7 @@ public class JawCellPanel : ComponentPanel {
 	}
 
 	public void OnChangedCannibalizeFather() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		selectedGene.jawCellCannibalizeFather = cannibalizeFatherToggle.isOn;
@@ -48,7 +48,7 @@ public class JawCellPanel : ComponentPanel {
 	}
 
 	public void OnChangedCannibalizeSiblings() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		selectedGene.jawCellCannibalizeSiblings = cannibalizeSiblingsToggle.isOn;
@@ -56,7 +56,7 @@ public class JawCellPanel : ComponentPanel {
 	}
 
 	public void OnChangedCannibalizeChildren() {
-		if (ignoreSliderMoved) {
+		if (ignoreHumanInput) {
 			return;
 		}
 		selectedGene.jawCellCannibalizeChildren = cannibalizeChildrenToggle.isOn;
@@ -90,7 +90,7 @@ public class JawCellPanel : ComponentPanel {
 			}
 
 			if (selectedGene != null) {
-				ignoreSliderMoved = true;
+				ignoreHumanInput = true;
 
 				cannibalizeKinToggle.isOn = selectedGene.jawCellCannibalizeKin;
 				cannibalizeMotherToggle.isOn = selectedGene.jawCellCannibalizeMother;
@@ -98,7 +98,7 @@ public class JawCellPanel : ComponentPanel {
 				cannibalizeSiblingsToggle.isOn = selectedGene.jawCellCannibalizeSiblings;
 				cannibalizeChildrenToggle.isOn = selectedGene.jawCellCannibalizeChildren;
 
-				ignoreSliderMoved = false;
+				ignoreHumanInput = false;
 			}
 
 			isDirty = false;

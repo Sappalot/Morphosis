@@ -20,7 +20,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public Text deleteButtonText;
 	public Text cloneButtonText;
 	public Text combineButtonText;
-
 	// ^ right side ^
 
 	// left side
@@ -41,7 +40,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	[HideInInspector]
 	public List<Creature> selectionCluster = new List<Creature>();
 
-	private bool isDirty = true;
+	public bool isDirty = true;
 
 	public enum TemperatureState {
 		Defrosted,
@@ -83,6 +82,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	public void MakeDirty() {
 		isDirty = true;
+		ViewSelectedCreaturePanel.instance.MakeDirty();
 	}
 
 	public Creature soloSelected {
@@ -158,7 +158,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		DirtyMarkSelection();
 		selection.Clear();
 
-		isDirty = true;
+		MakeDirty();
 		PhenotypePanel.instance.MakeDirty();
 		GenotypePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -178,7 +178,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	public void SetCellAndGeneSelectionToOrigin() {
 		selectedCell = null;
 		GenePanel.instance.selectedGene = null;
-		isDirty = true;
+		MakeDirty();
 	}
 
 	public void Select(Creature creature, Cell cell = null) {
@@ -195,7 +195,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		LockedUnlockedPanel.instance.MakeDirty();
 
 		creature.MakeDirtyGraphics();
-		isDirty = true;
+		MakeDirty();
 		PhenotypePanel.instance.MakeDirty();
 		GenotypePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -214,7 +214,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		selection.AddRange(creatures);
 
 		World.instance.life.MakeAllCreaturesDirty();
-		isDirty = true;
+		MakeDirty();
 		PhenotypePanel.instance.MakeDirty();
 		GenotypePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -244,7 +244,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		selection.Add(creature);
 
 		DirtyMarkSelection();
-		isDirty = true;
+		MakeDirty();
 		PhenotypePanel.instance.MakeDirty();
 		GenotypePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -273,7 +273,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		SetCellAndGeneSelectionToOrigin();
 
-		isDirty = true;
+		MakeDirty();
 		PhenotypePanel.instance.MakeDirty();
 		GenotypePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -772,7 +772,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	private void SpawnAddEffect(Vector2 position) {
 		if (MouseAction.instance.actionState == MouseActionStateEnum.combineMoveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures) {
-			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureAdd, position, 0f, SpatialUtil.GetMarkerScale());
+			EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureAdd, position, 0f, SpatialUtil.MarkerScale());
 		}
 	}
 
@@ -859,8 +859,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 
 		if (isDirty) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update CreatureSelectionPanel");
+			}
 
 			StartCoroutine(UpdateIsVisible());
 
@@ -898,7 +899,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				selectedCreatureText.text = soloSelected.id; // soloSelected.nickname;
 				//motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
 
-				creatureCreatedText.text = soloSelected.creation.ToString() + (soloSelected.creation != CreatureCreationEnum.Forged && soloSelected.creation != CreatureCreationEnum.Frozen ? ", Generation: " + soloSelected.generation : "");
+				creatureCreatedText.text = soloSelected.creation.ToString() + (soloSelected.creation != CreatureCreationEnum.Frozen ? ", Generation: " + soloSelected.generation : "");
 				
 
 				//right side

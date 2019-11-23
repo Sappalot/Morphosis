@@ -13,6 +13,8 @@ public class CameraController : MouseDrag  {
 	private Vector3 downPositionCamera;
 	private bool isDragging = false;
 
+
+
 	public override void OnDraggingStart(int mouseButton) {
 		// implement this for start of dragging
 		if ((mouseButton == 1 || mouseButton == 2) && !EventSystem.current.IsPointerOverGameObject()) {

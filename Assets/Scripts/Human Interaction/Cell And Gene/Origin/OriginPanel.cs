@@ -29,15 +29,15 @@ public class OriginPanel : ComponentPanel {
 
 		sizeSensorPanel.Initialize(mode, SignalUnitEnum.OriginSizeSensor);
 
-		ignoreSliderMoved = true;
+		ignoreHumanInput = true;
 		pulseFrequenzySlider.minValue = GlobalSettings.instance.phenotype.originPulseFrequenzyMin;
 		pulseFrequenzySlider.maxValue = GlobalSettings.instance.phenotype.originPulseFrequenzyMax;
-		ignoreSliderMoved = false;
+		ignoreHumanInput = false;
 	}
 
 	// ...pulse...
 	public void OnPulseFrequenzySliderMoved() { 
-		if (ignoreSliderMoved || mode == PhenoGenoEnum.Phenotype) {
+		if (ignoreHumanInput || mode == PhenoGenoEnum.Phenotype) {
 			return;
 		}
 
@@ -48,7 +48,7 @@ public class OriginPanel : ComponentPanel {
 
 	// ...embryo max size...
 	public void OnEmbryoSizeSliderMoved() {
-		if (ignoreSliderMoved || mode == PhenoGenoEnum.Phenotype) {
+		if (ignoreHumanInput || mode == PhenoGenoEnum.Phenotype) {
 			return;
 		}
 
@@ -58,7 +58,7 @@ public class OriginPanel : ComponentPanel {
 	// ^embryo max size^
 
 	public void OnGrowPriorityCellPersistanceSliderMoved() {
-		if (ignoreSliderMoved || mode == PhenoGenoEnum.Phenotype) {
+		if (ignoreHumanInput || mode == PhenoGenoEnum.Phenotype) {
 			return;
 		}
 
@@ -78,7 +78,7 @@ public class OriginPanel : ComponentPanel {
 
 	private void Update() {
 		if (isDirty) {
-			ignoreSliderMoved = true;
+			ignoreHumanInput = true;
 
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update CellPanel");
@@ -122,7 +122,7 @@ public class OriginPanel : ComponentPanel {
 
 			detatchLogicBoxPanel.outputText = "Detatch from mother";
 
-			ignoreSliderMoved = false;
+			ignoreHumanInput = false;
 			isDirty = false;
 		}
 	}

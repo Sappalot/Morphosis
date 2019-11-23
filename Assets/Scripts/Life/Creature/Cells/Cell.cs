@@ -511,6 +511,10 @@ public abstract class Cell : MonoBehaviour {
 	//Origin only
 	public void UpdatePulse() {
 		originPulseTick++;
+		if (gene == null) {
+			Debug.Log("No gene in cell: " + ToString()); // Why don't we get an exception
+		}
+
 		if (originPulseTick >= gene.originPulseTickPeriod) {
 			originPulseTick = 0;
 		}
@@ -1215,16 +1219,19 @@ public abstract class Cell : MonoBehaviour {
 			if (creature.creation == CreatureCreationEnum.Frozen) {
 				filledCircleSprite.color = GetColor();
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.type) {
-				if (creature.phenotype.visualTelepoke > 0) {
-					filledCircleSprite.color = Color.white;
-				} else {
-					if (IsHibernating()) {
-						filledCircleSprite.color = Color.black;
-					} else {
-						filledCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
-					}
-				}
-				openCircleSprite.color = Color.Lerp(GetColor(PhenoGenoEnum.Phenotype), Color.red, Mathf.Min(1f, effectProductionPredPrayDown));
+
+				filledCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
+				openCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
+
+				// overrides
+				if (effectProductionPredPrayDown > 0f) {
+					openCircleSprite.color = ColorScheme.instance.isHurt;
+				} else if (creature.phenotype.visualTelepoke > 0) {
+					openCircleSprite.color = ColorScheme.instance.isTelepoked;
+				} else if (creature.phenotype.IsSliding(World.instance.worldTicks)) {
+					openCircleSprite.color = ColorScheme.instance.isSliding;
+				} 
+				
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.energy) {
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(energyFullness);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.flux) {

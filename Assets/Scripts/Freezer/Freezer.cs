@@ -97,12 +97,12 @@ public class Freezer : MonoSingleton<Freezer> {
 
 		if (tryPlayFx) {
 			bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
-			SpatialUtil.GetFxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
+			SpatialUtil.FxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
 			if (hasAudio) {
 				Audio.instance.CreatureDeath(audioVolume);
 			}
 			if (hasMarker) {
-				EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDeath, position, 0f, SpatialUtil.GetMarkerScale());
+				EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDeath, position, 0f, SpatialUtil.MarkerScale());
 			}
 		}
 	}
