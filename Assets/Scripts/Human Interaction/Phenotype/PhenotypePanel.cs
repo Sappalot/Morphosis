@@ -21,6 +21,16 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 	private bool isDirty = true;
 
+	public void OnFollowToggleChanged() {
+		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !followToggle.isOn && CreatureSelectionPanel.instance.hasSoloSelected){
+			World.instance.cameraController.TurnCameraStraightAfterCameraLock();
+		} else {
+			if (CreatureSelectionPanel.instance.selectionCount > 1) {
+				//CreatureSelectionPanel.instance.ClearSelection();
+			}
+		}
+	}
+
 	public void OnGrowClicked() {
 		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
 			creature.TryGrow(false, 1, true);

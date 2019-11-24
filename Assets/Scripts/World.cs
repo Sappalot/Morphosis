@@ -10,6 +10,7 @@ public class World : MonoSingleton<World> {
 	public Life life;
 	public Terrain terrain;
 	public CreatureSelectionController creatureSelectionController;
+	public CameraController cameraController;
 
 	public History history = new History();
 	[HideInInspector]

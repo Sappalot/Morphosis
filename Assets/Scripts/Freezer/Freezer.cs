@@ -69,6 +69,8 @@ public class Freezer : MonoSingleton<Freezer> {
 	}
 
 	public void KillCreatureSafe(Creature creature, bool tryPlayFx) {
+		
+
 		Vector2 position = creature.GetOriginPosition(PhenoGenoEnum.Phenotype);
 
 		creature.KillAllCells(tryPlayFx); // for the fx :)

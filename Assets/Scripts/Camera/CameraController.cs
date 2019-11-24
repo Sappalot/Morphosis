@@ -17,15 +17,22 @@ public class CameraController : MouseDrag  {
 	private float followMargin = 10f;
 
 	private bool followToggle = false;
+	private Bounds AABB;
+
+	public bool isFollowinCreature {
+		get {
+			return PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive;
+		}
+	}
 
 	public override void OnDraggingStart(int mouseButton) {
 		// implement this for start of dragging
-		if ((mouseButton == 1 || mouseButton == 2) && !EventSystem.current.IsPointerOverGameObject()) {
+		if (!followToggle && (mouseButton == 1 || mouseButton == 2) && !EventSystem.current.IsPointerOverGameObject()) {
 			downPositionMouse = Input.mousePosition;
 			downPositionCamera = camera.transform.position;
 			isDragging = true;
 
-			TryReleaseCameraLock();
+			//TryReleaseCameraLock();
 			//Debug.Log("MouseButton" + mouseButton + " START Drag");
 		}
 	}
@@ -64,23 +71,27 @@ public class CameraController : MouseDrag  {
 		UpdateMouseCursor();
 
 		camera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-		if (PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive) { //&& !Input.GetMouseButton(0)
+		if (isFollowinCreature) { //&& !Input.GetMouseButton(0)
 			if (!followToggle) {
 				followMargin = camera.orthographicSize * (HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking).height / HUD.instance.hudSize.y);
 				followToggle = true;
 			}
-			Bounds AABB = new Bounds(	CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x - followMargin,
+			AABB = new Bounds(	CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x - followMargin,
 										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
 										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
 										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y + followMargin);
 
-			cameraMovement.MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking), true);
+			cameraMovement.MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
 
 			if (PhenotypePanel.instance.yawToggle.isOn) {
 				//camera.transform.localRotation = Quaternion.Euler(0f, 0f, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
 				camera.transform.RotateAround(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position, Vector3.forward, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
 			}
 		} else {
+			if (followToggle) {
+				//camera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+				//cameraMovement.MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
+			}
 			followToggle = false;
 		}
 	}
@@ -132,24 +143,28 @@ public class CameraController : MouseDrag  {
 	}
 
 	private void UpdatePositionViaKeys() {
+		if (followToggle) {
+			return;
+		}
+
 		float horizontalMove = 0f;
 		float verticalMove = 0f;
 
 		if (Input.GetKey(KeyCode.A) && !GlobalPanel.instance.isWritingHistoryNote) {
 			horizontalMove = -1;
-			TryReleaseCameraLock();
+			//TryReleaseCameraLock();
 		}
 		if (Input.GetKey(KeyCode.D) && !GlobalPanel.instance.isWritingHistoryNote) {
 			horizontalMove = 1;
-			TryReleaseCameraLock();
+			//TryReleaseCameraLock();
 		}
 		if (Input.GetKey(KeyCode.S) && !GlobalPanel.instance.isWritingHistoryNote) {
 			verticalMove = -1;
-			TryReleaseCameraLock();
+			//TryReleaseCameraLock();
 		}
 		if (Input.GetKey(KeyCode.W) && !GlobalPanel.instance.isWritingHistoryNote) {
 			verticalMove = 1;
-			TryReleaseCameraLock();
+			//TryReleaseCameraLock();
 		}
 
 		camera.transform.position += new Vector3(
@@ -159,9 +174,23 @@ public class CameraController : MouseDrag  {
 
 	}
 
-	private void TryReleaseCameraLock() {
-		if (CreatureSelectionPanel.instance.hasSelection && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+
+	// Messy to turn thing right after lock
+	public void TryReleaseCameraLock() {
+		if (PhenotypePanel.instance.followToggle.isOn && CreatureSelectionPanel.instance.hasSoloSelected) {
 			PhenotypePanel.instance.followToggle.isOn = false;
+			TurnCameraStraightAfterCameraLock();
+		}
+	}
+
+	public void TurnCameraStraightAfterCameraLock() {
+		if (CreatureSelectionPanel.instance.hasSoloSelected) {
+			camera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+			AABB = new Bounds(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x - followMargin,
+										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
+										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
+										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y + followMargin);
+			cameraMovement.MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
 		}
 	}
 }

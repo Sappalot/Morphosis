@@ -462,6 +462,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (!hasSelection || isInterferredBySomeAction) {
 			return;
 		}
+
+		World.instance.cameraController.TryReleaseCameraLock();
+
 		DetatchAllUnselectedRelatives();
 		StoreCreatures(selection);
 
@@ -479,7 +482,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (!hasSelection || isInterferredBySomeAction) {
 			return;
 		}
-		
+
+		World.instance.cameraController.TryReleaseCameraLock();
+
 		DetatchAllUnselectedRelatives();
 		StoreCreatures(selection);
 
@@ -527,6 +532,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (!hasSelection || selectionCount == 1 || isInterferredBySomeAction) {
 			return;
 		}
+
+		World.instance.cameraController.TryReleaseCameraLock();
+
 		Combine();
 	}
 
@@ -565,6 +573,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (!hasSelection || isInterferredBySomeAction) {
 			return;
 		}
+
+		World.instance.cameraController.TryReleaseCameraLock();
+
 		creaturesInOriginalSelectionCount = selection.Count;
 		TemperatureState temperatureState = GetTemperatureState(selection);
 		if (hasDefrostedSelection) {

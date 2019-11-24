@@ -39,6 +39,10 @@ public class LMBInWorld : MonoBehaviour {
 
 					if (cell == null) {
 						if (!Input.GetKey(KeyCode.LeftControl)) {
+							if (PhenotypePanel.instance.followToggle.isOn) {
+								World.instance.cameraController.TurnCameraStraightAfterCameraLock(); // but don't remove lock
+							}
+							
 							CreatureSelectionPanel.instance.ClearSelection();
 						}
 						return;
@@ -51,9 +55,14 @@ public class LMBInWorld : MonoBehaviour {
 							return;
 						}
 						if (CreatureSelectionPanel.instance.IsSelected(creature)) {
-							CreatureSelectionPanel.instance.RemoveFromSelection(creature, true);
+							if (!PhenotypePanel.instance.followToggle.isOn) {
+								CreatureSelectionPanel.instance.RemoveFromSelection(creature, true);
+							}
 						} else {
-							CreatureSelectionPanel.instance.AddToSelection(creature, true);
+							if (!PhenotypePanel.instance.followToggle.isOn) {
+								CreatureSelectionPanel.instance.AddToSelection(creature, true);
+							}
+
 						}
 					} else {
 						CreatureSelectionPanel.instance.Select(creature, cell);

@@ -26,6 +26,11 @@ public class CreatureSelectionController : MouseDrag {
 	private List<Creature> alreadySelected;
 
 	public override void OnDraggingStart(int mouseButton) {
+		if (PhenotypePanel.instance.followToggle.isOn) {
+			return;
+		}
+
+
 		if (mouseButton == 0 && !EventSystem.current.IsPointerOverGameObject() && MouseAction.instance.actionState == MouseActionStateEnum.free && !GraphPlotter.instance.IsMouseInside() && !AlternativeToolModePanel.instance.isOn) {
 			downPositionMouse = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 
@@ -81,8 +86,12 @@ public class CreatureSelectionController : MouseDrag {
 	}
 
 	public override void OnDragging(int mouseButton) {
-		// implement this for dragging
+		if (PhenotypePanel.instance.followToggle.isOn) {
+			return;
+		}
+
 		if (mouseButton == 0 && MouseAction.instance.actionState == MouseActionStateEnum.free && selectingMode != SelectingMode.idle) {
+
 			Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 			Vector3 rectPosition = (downPositionMouse + mousePosition) / 2f;
 			Vector2 rectScale = new Vector2(Mathf.Abs(downPositionMouse.x - mousePosition.x), Mathf.Abs(downPositionMouse.y - mousePosition.y));

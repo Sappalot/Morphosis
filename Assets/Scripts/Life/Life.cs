@@ -243,6 +243,10 @@ public class Life : MonoBehaviour {
 
 	//This is the only way, where the world creature GO is deleted
 	public void KillCreatureSafe(Creature creature, bool tryPlayFX) {
+		if (CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected == creature) {
+			World.instance.cameraController.TryReleaseCameraLock();
+		}
+
 		Vector2 position = creature.GetOriginPosition(PhenoGenoEnum.Phenotype);
 
 		creature.DetatchFromMother(false, tryPlayFX);
