@@ -7,13 +7,16 @@ public class CameraController : MouseDrag  {
 	public float cameraZoomStep = 0.1f;
 
 	public new Camera camera;
+	public CameraMovement cameraMovement;
 
 	private Vector3 dragVector = new Vector3();
 	private Vector3 downPositionMouse;
 	private Vector3 downPositionCamera;
 	private bool isDragging = false;
 
+	private float followMargin = 10f;
 
+	private bool followToggle = false;
 
 	public override void OnDraggingStart(int mouseButton) {
 		// implement this for start of dragging
@@ -61,29 +64,24 @@ public class CameraController : MouseDrag  {
 		UpdateMouseCursor();
 
 		camera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-		if (PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) { //&& !Input.GetMouseButton(0)
-			if (CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive) {
-				float aspect = Screen.width / Screen.height;
-				Vector2 focus = CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position + Vector2.right * 0.5f * camera.orthographicSize * aspect + Vector2.down * 0.1f * camera.orthographicSize;
-				camera.transform.position = new Vector3(focus.x, focus.y, camera.transform.position.z);
-				if (PhenotypePanel.instance.yawToggle.isOn) {
-					camera.transform.localRotation = Quaternion.Euler(0f, 0f, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
-				}
-			} else if (CreatureSelectionPanel.instance.selectionCount > 1) {
-				List<Creature> selection = CreatureSelectionPanel.instance.selection;
-				int count = 0;
-				Vector2 sum = new Vector2();
-				foreach (Creature c in selection) {
-					if (c.phenotype.isAlive) {
-						sum += c.phenotype.originCell.position;
-						count++;
-					}
-				}
-				if (count > 0) {
-					sum /= count;
-					camera.transform.position = new Vector3(sum.x, sum.y, camera.transform.position.z);
-				}
+		if (PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive) { //&& !Input.GetMouseButton(0)
+			if (!followToggle) {
+				followMargin = camera.orthographicSize * (HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking).height / HUD.instance.hudSize.y);
+				followToggle = true;
 			}
+			Bounds AABB = new Bounds(	CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x - followMargin,
+										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
+										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
+										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y + followMargin);
+
+			cameraMovement.MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking), true);
+
+			if (PhenotypePanel.instance.yawToggle.isOn) {
+				//camera.transform.localRotation = Quaternion.Euler(0f, 0f, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
+				camera.transform.RotateAround(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position, Vector3.forward, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
+			}
+		} else {
+			followToggle = false;
 		}
 	}
 
@@ -97,6 +95,10 @@ public class CameraController : MouseDrag  {
 				float factor = 1f + cameraZoomStep;
 				camera.orthographicSize *= factor;
 				camera.transform.position += (Vector3)(cameraToTarget * (1f - factor));
+
+				if (PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive) {
+					followMargin *= factor;
+				}
 			}
 		}
 		if (Input.GetAxis("Mouse ScrollWheel") > 0) {
@@ -108,6 +110,10 @@ public class CameraController : MouseDrag  {
 				float factor = 1f / (1f + cameraZoomStep);
 				camera.orthographicSize *= factor;
 				camera.transform.position += (Vector3)(cameraToTarget * (1f - factor));
+
+				if (PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive) {
+					followMargin *= factor;
+				}
 			}
 		}
 	}

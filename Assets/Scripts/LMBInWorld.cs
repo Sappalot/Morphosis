@@ -13,12 +13,17 @@ public class LMBInWorld : MonoBehaviour {
 	//Bevare of LMB Mouse Drag in selectionController
 	private void Update() {
 
-		// HAxor double click :D
+		// Haxor double click :D
+		doubleClickCooldown -= Time.unscaledDeltaTime;
 		if (Input.GetMouseButtonDown(0) && doubleClickCooldown > 0f) {
 			ViewSelectedCreaturePanel.instance.OnPressedViewAllSelectedCreatures();
 			doubleClickCooldown = 0f;
+			return;
 		}
-
+		// just after double click
+		if (doubleClickCooldown > -0.05f) {
+			return;
+		}
 
 		if (Input.GetKey("mouse 0") && !mouseDown0) {
 			mouseDown0 = true;
@@ -57,7 +62,7 @@ public class LMBInWorld : MonoBehaviour {
 						GenomePanel.instance.MakeScrollDirty();
 						CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 
-						doubleClickCooldown = 0.2f; // for double click
+						doubleClickCooldown = 0.4f; // for double click
 					}
 
 				} else if ((MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures)
@@ -102,7 +107,7 @@ public class LMBInWorld : MonoBehaviour {
 			mouseDown0 = false;
 		}
 
-		doubleClickCooldown -= Time.unscaledDeltaTime;
+		
 	}
 
 	//TODO move to some util
