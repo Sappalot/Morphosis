@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
-public class CreatureSelectionController : MouseDrag {
+public class CreatureSelectionRectangle : MouseDrag {
 	public new Camera camera;
 	public Transform rectangle;
 
@@ -12,7 +12,6 @@ public class CreatureSelectionController : MouseDrag {
 		}
 	}
 
-	private Vector3 dragVector = new Vector3();
 	private Vector3 downPositionMouse; //World space
 
 	private enum SelectingMode {

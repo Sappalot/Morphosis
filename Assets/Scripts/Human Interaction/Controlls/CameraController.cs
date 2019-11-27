@@ -7,7 +7,6 @@ public class CameraController : MouseDrag  {
 	public float cameraZoomStep = 0.1f;
 
 	public new Camera camera;
-	public CameraMovement cameraMovement;
 
 	private Vector3 dragVector = new Vector3();
 	private Vector3 downPositionMouse;
@@ -19,7 +18,7 @@ public class CameraController : MouseDrag  {
 	private bool followToggle = false;
 	private Bounds AABB;
 
-	public bool isFollowinCreature {
+	public bool isFollowingCreature {
 		get {
 			return PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive;
 		}
@@ -31,9 +30,6 @@ public class CameraController : MouseDrag  {
 			downPositionMouse = Input.mousePosition;
 			downPositionCamera = camera.transform.position;
 			isDragging = true;
-
-			//TryReleaseCameraLock();
-			//Debug.Log("MouseButton" + mouseButton + " START Drag");
 		}
 	}
 
@@ -46,7 +42,6 @@ public class CameraController : MouseDrag  {
 
 			dragVector = (Input.mousePosition - downPositionMouse) * unitsPerPixel;
 			camera.transform.position = downPositionCamera - dragVector;
-			//Debug.Log("MouseButton" + mouseButton + "DRAGGING: " + dragVector);
 		}
 	}
 
@@ -54,7 +49,6 @@ public class CameraController : MouseDrag  {
 		// implement this for end of dragging
 		if (mouseButton == 1 || mouseButton == 2) {
 			isDragging = false;
-			//Debug.Log("MouseButton" + mouseButton + " END Drag");
 		}
 	}
 
@@ -71,27 +65,23 @@ public class CameraController : MouseDrag  {
 		UpdateMouseCursor();
 
 		camera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-		if (isFollowinCreature) { //&& !Input.GetMouseButton(0)
+		if (isFollowingCreature) { //&& !Input.GetMouseButton(0)
 			if (!followToggle) {
 				followMargin = camera.orthographicSize * (HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking).height / HUD.instance.hudSize.y);
 				followToggle = true;
 			}
 			AABB = new Bounds(	CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x - followMargin,
-										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
-										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
-										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y + followMargin);
+								CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
+								CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
+								CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y + followMargin);
 
-			cameraMovement.MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
+			MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
 
 			if (PhenotypePanel.instance.yawToggle.isOn) {
-				//camera.transform.localRotation = Quaternion.Euler(0f, 0f, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
+				// YEY ROTATE AROUND SAVES THE DAY!
 				camera.transform.RotateAround(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position, Vector3.forward, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
 			}
 		} else {
-			if (followToggle) {
-				//camera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-				//cameraMovement.MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
-			}
 			followToggle = false;
 		}
 	}
@@ -107,7 +97,7 @@ public class CameraController : MouseDrag  {
 				camera.orthographicSize *= factor;
 				camera.transform.position += (Vector3)(cameraToTarget * (1f - factor));
 
-				if (PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive) {
+				if (isFollowingCreature) {
 					followMargin *= factor;
 				}
 			}
@@ -122,7 +112,7 @@ public class CameraController : MouseDrag  {
 				camera.orthographicSize *= factor;
 				camera.transform.position += (Vector3)(cameraToTarget * (1f - factor));
 
-				if (PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.phenotype.isAlive) {
+				if (isFollowingCreature) {
 					followMargin *= factor;
 				}
 			}
@@ -143,7 +133,7 @@ public class CameraController : MouseDrag  {
 	}
 
 	private void UpdatePositionViaKeys() {
-		if (followToggle) {
+		if (PhenotypePanel.instance.followToggle.isOn) {
 			return;
 		}
 
@@ -152,19 +142,15 @@ public class CameraController : MouseDrag  {
 
 		if (Input.GetKey(KeyCode.A) && !GlobalPanel.instance.isWritingHistoryNote) {
 			horizontalMove = -1;
-			//TryReleaseCameraLock();
 		}
 		if (Input.GetKey(KeyCode.D) && !GlobalPanel.instance.isWritingHistoryNote) {
 			horizontalMove = 1;
-			//TryReleaseCameraLock();
 		}
 		if (Input.GetKey(KeyCode.S) && !GlobalPanel.instance.isWritingHistoryNote) {
 			verticalMove = -1;
-			//TryReleaseCameraLock();
 		}
 		if (Input.GetKey(KeyCode.W) && !GlobalPanel.instance.isWritingHistoryNote) {
 			verticalMove = 1;
-			//TryReleaseCameraLock();
 		}
 
 		camera.transform.position += new Vector3(
@@ -175,7 +161,7 @@ public class CameraController : MouseDrag  {
 	}
 
 
-	// Messy to turn thing right after lock
+	// Messy to turn camera right after lock
 	public void TryReleaseCameraLock() {
 		if (PhenotypePanel.instance.followToggle.isOn && CreatureSelectionPanel.instance.hasSoloSelected) {
 			PhenotypePanel.instance.followToggle.isOn = false;
@@ -190,7 +176,44 @@ public class CameraController : MouseDrag  {
 										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
 										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
 										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y + followMargin);
-			cameraMovement.MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
+			MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
 		}
+	}
+
+	public void MoveToBounds(Bounds worldRect, Vector2i screentBoundsHUD, Bounds viewportBoundsHUD) {
+
+		float worldRectAspect = worldRect.width / worldRect.height;
+		float worldViewportBoundsAspect = viewportBoundsHUD.width / viewportBoundsHUD.height;
+
+		float enclosingWidth = 0f;
+		float enclosingHeight = 0f;
+
+		if (worldRectAspect < worldViewportBoundsAspect) {
+			// world rect is touching floor and ceiling of viewport
+			enclosingHeight = worldRect.height;
+			enclosingWidth = worldRect.height * worldViewportBoundsAspect;
+		} else {
+			// world rect is touching left and rigth wall of viewport
+			enclosingWidth = worldRect.width;
+			enclosingHeight = worldRect.width / worldViewportBoundsAspect;
+		}
+
+		float enclosingWidthHalf = enclosingWidth / 2f;
+		float enclosingHeightHalf = enclosingHeight / 2f;
+
+		Bounds viewportBoundsWorld = new Bounds(worldRect.center.x - enclosingWidthHalf,
+											worldRect.center.x + enclosingWidthHalf,
+											worldRect.center.y - enclosingHeightHalf,
+											worldRect.center.y + enclosingHeightHalf);
+
+		Bounds screenBoundsWorld = new Bounds(viewportBoundsWorld.xMin - viewportBoundsHUD.xMin * (viewportBoundsWorld.width / viewportBoundsHUD.width),
+												viewportBoundsWorld.xMax + (screentBoundsHUD.x - viewportBoundsHUD.xMax) * (viewportBoundsWorld.width / viewportBoundsHUD.width),
+												viewportBoundsWorld.yMin - viewportBoundsHUD.yMin * (viewportBoundsWorld.height / viewportBoundsHUD.height),
+												viewportBoundsWorld.yMax + (screentBoundsHUD.y - viewportBoundsHUD.yMax) * (viewportBoundsWorld.height / viewportBoundsHUD.height));
+
+		Vector2 center = screenBoundsWorld.center;
+		camera.transform.position = new Vector3(center.x, center.y, camera.transform.position.z);
+
+		camera.orthographicSize = screenBoundsWorld.height * 0.5f;
 	}
 }

@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	//--
+	public CameraController cameraController;
+
 	public GameObject showHideRoot;
 
 	public new Camera camera;
@@ -376,6 +378,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (isInterferredBySomeAction) { return; }
 
 		if (hasSoloSelected && soloSelected.HasMotherAlive() && soloSelected.GetMotherAlive() != null) {
+			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypePanel.instance.followToggle.isOn) {
+				World.instance.cameraController.TurnCameraStraightAfterCameraLock();
+			}
+
 			Select(soloSelected.GetMotherAlive());
 		}
 	}
@@ -389,6 +395,10 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		if (isInterferredBySomeAction) { return; }
 
 		if (hasSoloSelected && soloSelected.HasChildrenAlive()) {
+			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypePanel.instance.followToggle.isOn) {
+				World.instance.cameraController.TurnCameraStraightAfterCameraLock();
+			}
+
 			List<Creature> select = new List<Creature>();
 			foreach(Creature child in soloSelected.GetChildrenAlive()) {
 				select.Add(child);

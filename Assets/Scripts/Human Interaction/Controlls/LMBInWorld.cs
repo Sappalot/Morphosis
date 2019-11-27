@@ -39,7 +39,7 @@ public class LMBInWorld : MonoBehaviour {
 
 					if (cell == null) {
 						if (!Input.GetKey(KeyCode.LeftControl)) {
-							if (PhenotypePanel.instance.followToggle.isOn) {
+							if (PhenotypePanel.instance.followToggle.isOn && CreatureSelectionPanel.instance.hasSoloSelected) {
 								World.instance.cameraController.TurnCameraStraightAfterCameraLock(); // but don't remove lock
 							}
 							
