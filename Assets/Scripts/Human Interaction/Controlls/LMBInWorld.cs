@@ -16,7 +16,7 @@ public class LMBInWorld : MonoBehaviour {
 		// Haxor double click :D
 		doubleClickCooldown -= Time.unscaledDeltaTime;
 		if (Input.GetMouseButtonDown(0) && doubleClickCooldown > 0f) {
-			ViewSelectedCreaturePanel.instance.OnPressedViewAllSelectedCreatures();
+			ViewSelectedCreaturePanel.instance.OnPressedFilmAllSelectedCreatures();
 			doubleClickCooldown = 0f;
 			return;
 		}
@@ -40,7 +40,7 @@ public class LMBInWorld : MonoBehaviour {
 					if (cell == null) {
 						if (!Input.GetKey(KeyCode.LeftControl)) {
 							if (PhenotypePanel.instance.followToggle.isOn && CreatureSelectionPanel.instance.hasSoloSelected) {
-								World.instance.cameraController.TurnCameraStraightAfterCameraLock(); // but don't remove lock
+								World.instance.cameraController.TurnCameraStraightAtCameraUnlock(); // but don't remove lock
 							}
 							
 							CreatureSelectionPanel.instance.ClearSelection();

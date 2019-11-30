@@ -40,7 +40,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 			return;
 		}
 
-		World.instance.cameraController.TryReleaseCameraLock();
+		World.instance.cameraController.TryUnlockCamera();
 
 		m_mode = PhenoGenoEnum.Genotype;
 		GlobalPanel.instance.isRunPhysicsGrayOut = true;

@@ -379,7 +379,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		if (hasSoloSelected && soloSelected.HasMotherAlive() && soloSelected.GetMotherAlive() != null) {
 			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypePanel.instance.followToggle.isOn) {
-				World.instance.cameraController.TurnCameraStraightAfterCameraLock();
+				World.instance.cameraController.TurnCameraStraightAtCameraUnlock();
 			}
 
 			Select(soloSelected.GetMotherAlive());
@@ -396,7 +396,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		if (hasSoloSelected && soloSelected.HasChildrenAlive()) {
 			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypePanel.instance.followToggle.isOn) {
-				World.instance.cameraController.TurnCameraStraightAfterCameraLock();
+				World.instance.cameraController.TurnCameraStraightAtCameraUnlock();
 			}
 
 			List<Creature> select = new List<Creature>();
@@ -473,7 +473,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			return;
 		}
 
-		World.instance.cameraController.TryReleaseCameraLock();
+		World.instance.cameraController.TryUnlockCamera();
 
 		DetatchAllUnselectedRelatives();
 		StoreCreatures(selection);
@@ -493,7 +493,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			return;
 		}
 
-		World.instance.cameraController.TryReleaseCameraLock();
+		World.instance.cameraController.TryUnlockCamera();
 
 		DetatchAllUnselectedRelatives();
 		StoreCreatures(selection);
@@ -543,7 +543,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			return;
 		}
 
-		World.instance.cameraController.TryReleaseCameraLock();
+		World.instance.cameraController.TryUnlockCamera();
 
 		Combine();
 	}
@@ -584,7 +584,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			return;
 		}
 
-		World.instance.cameraController.TryReleaseCameraLock();
+		World.instance.cameraController.TryUnlockCamera();
 
 		creaturesInOriginalSelectionCount = selection.Count;
 		TemperatureState temperatureState = GetTemperatureState(selection);

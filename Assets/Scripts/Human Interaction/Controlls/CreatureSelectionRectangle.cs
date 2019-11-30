@@ -50,40 +50,6 @@ public class CreatureSelectionRectangle : MouseDrag {
 		}
 	}
 
-	private List<Creature> oldSelection = new List<Creature>();
-
-	private bool AreSelectionsSame(List<Creature> s1, List<Creature> s2) {
-		if (s1.Count == s2.Count) {
-			foreach (Creature c in s1) {
-				if (!s2.Contains(c)) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
-	private List<Creature> ToAdd(List<Creature> oldSelection, List<Creature> newSelection) {
-		List<Creature> extra = new List<Creature>();
-		foreach (Creature c in newSelection) {
-			if (!oldSelection.Contains(c)) {
-				extra.Add(c);
-			}
-		}
-		return extra;
-	}
-
-	private List<Creature> ToRemove(List<Creature> oldSelection, List<Creature> newSelection) {
-		List<Creature> remove = new List<Creature>();
-		foreach (Creature c in oldSelection) {
-			if (!newSelection.Contains(c)) {
-				remove.Add(c);
-			}
-		}
-		return remove;
-	}
-
 	public override void OnDragging(int mouseButton) {
 		if (PhenotypePanel.instance.followToggle.isOn) {
 			return;

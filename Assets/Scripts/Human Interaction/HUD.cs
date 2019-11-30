@@ -10,13 +10,13 @@ public class HUD : MonoSingleton<HUD> {
 	}
 	// the bounds of the view rectangle inside the entire hud window, in pixels 
 	[HideInInspector]
-	public Bounds worldViewportBounds {
+	public Bounds worldViewportBoundsHUD {
 		get {
-			return WorldViewportBounds(worldViewportPanel.usedViewportPanel);
+			return WorldViewportBoundsHUD(worldViewportPanel.usedViewportPanel);
 		}
 	}
 
-	public Bounds WorldViewportBounds(RectTransform panel) {
+	public Bounds WorldViewportBoundsHUD(RectTransform panel) {
 			return new Bounds(	panel.anchoredPosition.x,
 								panel.anchoredPosition.x + panel.rect.width,
 								windowResolution.y - panel.rect.height + panel.anchoredPosition.y,

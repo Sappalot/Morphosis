@@ -23,7 +23,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 	public void OnFollowToggleChanged() {
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !followToggle.isOn && CreatureSelectionPanel.instance.hasSoloSelected) {
-			World.instance.cameraController.TurnCameraStraightAfterCameraLock();
+			World.instance.cameraController.TurnCameraStraightAtCameraUnlock();
 		}
 	}
 

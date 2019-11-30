@@ -31,4 +31,16 @@ public struct Bounds {
 		}
 	}
 
+	public Vector2 size {
+		get {
+			return new Vector2(width, height);
+		}
+	}
+
+	public float aspect {
+		get {
+			return width / height;
+		}
+	}
+
 }
