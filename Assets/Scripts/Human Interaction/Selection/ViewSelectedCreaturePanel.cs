@@ -14,37 +14,38 @@ public class ViewSelectedCreaturePanel : MonoSingleton<ViewSelectedCreaturePanel
 	private bool isDirty;
 	private int viewedIndex;
 
-	public void OnPressedFilmAllSelectedCreatures() {
+	public void OnPressedViewAllSelectedCreatures() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			FilmCreatures(CreatureSelectionPanel.instance.selection, HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking);
+			MoveCameraToBoundsOfCreatures(CreatureSelectionPanel.instance.selection, HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking);
 		} else {
-			FilmCreatures(CreatureSelectionPanel.instance.selection, HUD.instance.worldViewportPanel.bottomPanelBlocking);
+			MoveCameraToBoundsOfCreatures(CreatureSelectionPanel.instance.selection, HUD.instance.worldViewportPanel.bottomPanelBlocking);
 		}
+
 	}
 
-	public void OnPressedFilmPreviousSelectedCreature()	{
+	public void OnPressedViewPreviousSelectedCreature() {
 		viewedIndex--;
 		if (viewedIndex < 0) {
 			viewedIndex = CreatureSelectionPanel.instance.selectionCount - 1;
 		}
 
-		FilmCreature(CreatureSelectionPanel.instance.selection[viewedIndex], HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking);
+		MoveCameraToBoundsOfCreature(CreatureSelectionPanel.instance.selection[viewedIndex], HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking);
 	}
 
-	public void OnPressedFilmNextSelectedCreature()	{
+	public void OnPressedViewNextSelectedCreature() {
 		viewedIndex++;
 		viewedIndex %= CreatureSelectionPanel.instance.selectionCount;
 
-		FilmCreature(CreatureSelectionPanel.instance.selection[viewedIndex], HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking);
+		MoveCameraToBoundsOfCreature(CreatureSelectionPanel.instance.selection[viewedIndex], HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking);
 	}
 
-	private void FilmCreature(Creature creature, RectTransform panel) {
+	private void MoveCameraToBoundsOfCreature(Creature creature, RectTransform panel) {
 		List<Creature> listOfOne = new List<Creature>();
 		listOfOne.Add(creature);
-		FilmCreatures(listOfOne, panel);
+		MoveCameraToBoundsOfCreatures(listOfOne, panel);
 	}
 
-	private void FilmCreatures(List<Creature> creatures, RectTransform panel) {
+	private void MoveCameraToBoundsOfCreatures(List<Creature> creatures, RectTransform panel) {
 		Bounds groupAABB = new Bounds(float.MaxValue, float.MinValue, float.MaxValue, float.MinValue);
 		foreach (Creature c in creatures) {
 
@@ -66,14 +67,13 @@ public class ViewSelectedCreaturePanel : MonoSingleton<ViewSelectedCreaturePanel
 		groupAABB.yMin -= Mathf.Max(height * marginPercentage, marginMeters);
 		groupAABB.yMax += Mathf.Max(height * marginPercentage, marginMeters);
 
-
-		float angle = 0f;
-		if (cameraController.isFollowingCreature && PhenotypePanel.instance.yawToggle.isOn) {
-			angle = CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f;
-		}
-
-		cameraController.FilmAnimateWorldRect(groupAABB.center, new Vector2(groupAABB.width, groupAABB.height), angle, HUD.instance.hudSize, HUD.instance.WorldViewportBoundsHUD(panel));
+		cameraController.MoveToBounds(groupAABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(panel));
 	}
+
+	private void MoveCameraToCenterOnCreature() {
+
+	}
+
 
 	public void MakeDirty() {
 		isDirty = true;
@@ -82,11 +82,11 @@ public class ViewSelectedCreaturePanel : MonoSingleton<ViewSelectedCreaturePanel
 
 	private void Update() {
 		if (Input.GetKeyDown(KeyCode.Space)) {
-			OnPressedFilmAllSelectedCreatures();
+			OnPressedViewAllSelectedCreatures();
 		} else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-			OnPressedFilmPreviousSelectedCreature();
+			OnPressedViewPreviousSelectedCreature();
 		} else if (Input.GetKeyDown(KeyCode.RightArrow)) {
-			OnPressedFilmNextSelectedCreature();
+			OnPressedViewNextSelectedCreature();
 		}
 
 		if (isDirty) {

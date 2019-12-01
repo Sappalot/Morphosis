@@ -2,7 +2,7 @@
 
 public class HUD : MonoSingleton<HUD> {
 	public WorldViewportPanel worldViewportPanel;
-	
+
 	public Vector2i hudSize { // in pixels
 		get {
 			return windowResolution;
@@ -10,17 +10,17 @@ public class HUD : MonoSingleton<HUD> {
 	}
 	// the bounds of the view rectangle inside the entire hud window, in pixels 
 	[HideInInspector]
-	public Bounds worldViewportBoundsHUD {
+	public Bounds worldViewportBounds {
 		get {
-			return WorldViewportBoundsHUD(worldViewportPanel.usedViewportPanel);
+			return WorldViewportBounds(worldViewportPanel.usedViewportPanel);
 		}
 	}
 
-	public Bounds WorldViewportBoundsHUD(RectTransform panel) {
-			return new Bounds(	panel.anchoredPosition.x,
-								panel.anchoredPosition.x + panel.rect.width,
-								windowResolution.y - panel.rect.height + panel.anchoredPosition.y,
-								windowResolution.y + panel.anchoredPosition.y);
+	public Bounds WorldViewportBounds(RectTransform panel) {
+		return new Bounds(panel.anchoredPosition.x,
+							panel.anchoredPosition.x + panel.rect.width,
+							windowResolution.y - panel.rect.height + panel.anchoredPosition.y,
+							windowResolution.y + panel.anchoredPosition.y);
 	}
 
 	private Vector2i windowResolution;
