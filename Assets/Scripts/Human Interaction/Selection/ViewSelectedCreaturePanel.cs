@@ -39,13 +39,13 @@ public class ViewSelectedCreaturePanel : MonoSingleton<ViewSelectedCreaturePanel
 		MoveCameraToBoundsOfCreature(CreatureSelectionPanel.instance.selection[viewedIndex], HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking);
 	}
 
-	private void MoveCameraToBoundsOfCreature(Creature creature, RectTransform panel) {
+	public void MoveCameraToBoundsOfCreature(Creature creature, RectTransform panel) {
 		List<Creature> listOfOne = new List<Creature>();
 		listOfOne.Add(creature);
 		MoveCameraToBoundsOfCreatures(listOfOne, panel);
 	}
 
-	private void MoveCameraToBoundsOfCreatures(List<Creature> creatures, RectTransform panel) {
+	public void MoveCameraToBoundsOfCreatures(List<Creature> creatures, RectTransform panel) {
 		Bounds groupAABB = new Bounds(float.MaxValue, float.MinValue, float.MaxValue, float.MinValue);
 		foreach (Creature c in creatures) {
 

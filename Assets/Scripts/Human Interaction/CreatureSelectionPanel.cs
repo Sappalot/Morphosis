@@ -382,6 +382,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				World.instance.cameraController.TurnCameraStraightAtCameraUnlock();
 			}
 
+			ViewSelectedCreaturePanel.instance.MoveCameraToBoundsOfCreature(soloSelected.GetMotherAlive(), HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking);
+
 			Select(soloSelected.GetMotherAlive());
 		}
 	}
@@ -403,6 +405,13 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			foreach(Creature child in soloSelected.GetChildrenAlive()) {
 				select.Add(child);
 			}
+
+			if (select.Count == 1) {
+				ViewSelectedCreaturePanel.instance.MoveCameraToBoundsOfCreatures(select, HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking);
+			} else {
+				ViewSelectedCreaturePanel.instance.MoveCameraToBoundsOfCreatures(select, HUD.instance.worldViewportPanel.bottomPanelBlocking);
+			}
+
 			Select(select);
 		}
 	}

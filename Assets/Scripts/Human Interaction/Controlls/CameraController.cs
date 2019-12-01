@@ -3,10 +3,15 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class CameraController : MouseDrag {
-	public float cameraMoveSpeed = 1f; //Screenwidths per second
-	public float cameraZoomStep = 0.1f;
+	public float follownessAutomatic = 8f;
+	public float follownessManual = 30f;
+	private float followness;
 
-	public new Camera camera;
+	public float cameraMoveSpeed = 1f; //Screenwidths per second
+	public float cameraZoomStep = 0.4f;
+
+	public Camera cameraVirtual;
+	public Camera cameraView;
 
 	private Vector3 dragVector = new Vector3();
 	private Vector3 downPositionMouse;
@@ -28,20 +33,21 @@ public class CameraController : MouseDrag {
 		// implement this for start of dragging
 		if (!followToggle && (mouseButton == 1 || mouseButton == 2) && !EventSystem.current.IsPointerOverGameObject()) {
 			downPositionMouse = Input.mousePosition;
-			downPositionCamera = camera.transform.position;
+			downPositionCamera = cameraVirtual.transform.position;
 			isDragging = true;
+			followness = follownessManual;
 		}
 	}
 
 	public override void OnDragging(int mouseButton) {
 		// implement this for dragging
 		if ((mouseButton == 1 || mouseButton == 2) && isDragging) {
-			float pixels = camera.pixelHeight;
-			float units = camera.orthographicSize * 2f;
+			float pixels = cameraVirtual.pixelHeight;
+			float units = cameraVirtual.orthographicSize * 2f;
 			float unitsPerPixel = units / pixels;
 
 			dragVector = (Input.mousePosition - downPositionMouse) * unitsPerPixel;
-			camera.transform.position = downPositionCamera - dragVector;
+			cameraVirtual.transform.position = downPositionCamera - dragVector;
 		}
 	}
 
@@ -50,52 +56,25 @@ public class CameraController : MouseDrag {
 		if (mouseButton == 1 || mouseButton == 2) {
 			isDragging = false;
 		}
+		followness = follownessAutomatic;
 	}
 
 	private void Start() {
 		base.EvoStart();
 	}
 
-	private void Update() {
-		base.EvoUpdate();
 
-		UpdatePositionViaKeys();
-		UpdateSize();
-
-		UpdateMouseCursor();
-
-		camera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-		if (isFollowingCreature) { //&& !Input.GetMouseButton(0)
-			if (!followToggle) {
-				followMargin = camera.orthographicSize * (HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking).height / HUD.instance.hudSize.y);
-				followToggle = true;
-			}
-			AABB = new Bounds(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x - followMargin,
-								CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
-								CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
-								CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y + followMargin);
-
-			MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
-
-			if (PhenotypePanel.instance.yawToggle.isOn) {
-				// YEY ROTATE AROUND SAVES THE DAY!
-				camera.transform.RotateAround(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position, Vector3.forward, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
-			}
-		} else {
-			followToggle = false;
-		}
-	}
 
 	private void UpdateSize() {
 		if (Input.GetAxis("Mouse ScrollWheel") < 0) {
 			if (GraphPlotter.instance.IsMouseInside()) {
 				GraphPlotter.instance.ZoomStepOut();
-			} else if (camera.orthographicSize < 300f) {
-				Vector2 targetPostition = camera.ScreenToWorldPoint(Input.mousePosition);
-				Vector2 cameraToTarget = targetPostition - (Vector2)camera.transform.position;
+			} else if (cameraVirtual.orthographicSize < 300f) {
+				Vector2 targetPostition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition);
+				Vector2 cameraToTarget = targetPostition - (Vector2)cameraVirtual.transform.position;
 				float factor = 1f + cameraZoomStep;
-				camera.orthographicSize *= factor;
-				camera.transform.position += (Vector3)(cameraToTarget * (1f - factor));
+				cameraVirtual.orthographicSize *= factor;
+				cameraVirtual.transform.position += (Vector3)(cameraToTarget * (1f - factor));
 
 				if (isFollowingCreature) {
 					followMargin *= factor;
@@ -105,12 +84,12 @@ public class CameraController : MouseDrag {
 		if (Input.GetAxis("Mouse ScrollWheel") > 0) {
 			if (GraphPlotter.instance.IsMouseInside()) {
 				GraphPlotter.instance.ZoomStepIn();
-			} else if (camera.orthographicSize > 1f) {
-				Vector2 targetPostition = camera.ScreenToWorldPoint(Input.mousePosition);
-				Vector2 cameraToTarget = targetPostition - (Vector2)camera.transform.position;
+			} else if (cameraVirtual.orthographicSize > 1f) {
+				Vector2 targetPostition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition);
+				Vector2 cameraToTarget = targetPostition - (Vector2)cameraVirtual.transform.position;
 				float factor = 1f / (1f + cameraZoomStep);
-				camera.orthographicSize *= factor;
-				camera.transform.position += (Vector3)(cameraToTarget * (1f - factor));
+				cameraVirtual.orthographicSize *= factor;
+				cameraVirtual.transform.position += (Vector3)(cameraToTarget * (1f - factor));
 
 				if (isFollowingCreature) {
 					followMargin *= factor;
@@ -142,20 +121,23 @@ public class CameraController : MouseDrag {
 
 		if (Input.GetKey(KeyCode.A) && !GlobalPanel.instance.isWritingHistoryNote) {
 			horizontalMove = -1;
-		}
-		if (Input.GetKey(KeyCode.D) && !GlobalPanel.instance.isWritingHistoryNote) {
+			//followSpeed = followManualSpeed;
+		} else if (Input.GetKey(KeyCode.D) && !GlobalPanel.instance.isWritingHistoryNote) {
 			horizontalMove = 1;
-		}
-		if (Input.GetKey(KeyCode.S) && !GlobalPanel.instance.isWritingHistoryNote) {
+			//followSpeed = followManualSpeed;
+		} else if (Input.GetKey(KeyCode.S) && !GlobalPanel.instance.isWritingHistoryNote) {
 			verticalMove = -1;
-		}
-		if (Input.GetKey(KeyCode.W) && !GlobalPanel.instance.isWritingHistoryNote) {
+			//followSpeed = followManualSpeed;
+		} else if (Input.GetKey(KeyCode.W) && !GlobalPanel.instance.isWritingHistoryNote) {
 			verticalMove = 1;
+			//followSpeed = followManualSpeed;
+		} else {
+			//followSpeed = followAutomaticSpeed;
 		}
 
-		camera.transform.position += new Vector3(
-			horizontalMove * cameraMoveSpeed * 2f * camera.orthographicSize * Time.unscaledDeltaTime,
-			verticalMove * cameraMoveSpeed * 2f * camera.orthographicSize * Time.unscaledDeltaTime,
+		cameraVirtual.transform.position += new Vector3(
+			horizontalMove * cameraMoveSpeed * 2f * cameraVirtual.orthographicSize * Time.unscaledDeltaTime,
+			verticalMove * cameraMoveSpeed * 2f * cameraVirtual.orthographicSize * Time.unscaledDeltaTime,
 			0f);
 
 	}
@@ -171,7 +153,7 @@ public class CameraController : MouseDrag {
 
 	public void TurnCameraStraightAtCameraUnlock() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			camera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+			cameraVirtual.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 			AABB = new Bounds(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x - followMargin,
 										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
 										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
@@ -212,8 +194,70 @@ public class CameraController : MouseDrag {
 												viewportBoundsWorld.yMax + (screentBoundsHUD.y - viewportBoundsHUD.yMax) * (viewportBoundsWorld.height / viewportBoundsHUD.height));
 
 		Vector2 center = screenBoundsWorld.center;
-		camera.transform.position = new Vector3(center.x, center.y, camera.transform.position.z);
+		cameraVirtual.transform.position = new Vector3(center.x, center.y, cameraVirtual.transform.position.z);
 
-		camera.orthographicSize = screenBoundsWorld.height * 0.5f;
+		cameraVirtual.orthographicSize = screenBoundsWorld.height * 0.5f;
+	}
+
+	private void Update() {
+		base.EvoUpdate();
+
+		UpdatePositionViaKeys();
+		UpdateSize();
+
+		UpdateMouseCursor();
+
+		cameraVirtual.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+		if (isFollowingCreature) { //&& !Input.GetMouseButton(0)
+			if (!followToggle) {
+				followMargin = cameraVirtual.orthographicSize * (HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking).height / HUD.instance.hudSize.y);
+				followToggle = true;
+			}
+			AABB = new Bounds(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x - followMargin,
+								CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
+								CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
+								CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y + followMargin);
+
+			MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
+
+			if (PhenotypePanel.instance.yawToggle.isOn) {
+				// YEY ROTATE AROUND SAVES THE DAY!
+				cameraVirtual.transform.RotateAround(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position, Vector3.forward, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
+			}
+		} else {
+			followToggle = false;
+		}
+
+		// let cameraView follow cameraVirtual
+		//CameraData cameraViewData = new CameraData(cameraView.transform.position, cameraView.transform.rotation, cameraView.orthographicSize);
+		//CameraData cameraVirtualData = new CameraData(cameraVirtual.transform.position, cameraVirtual.transform.rotation, cameraVirtual.orthographicSize);
+
+		
+
+		Vector2 lerpPosition = Vector2.Lerp(cameraView.transform.position, cameraVirtual.transform.position, Time.unscaledDeltaTime * followness);
+		cameraView.transform.position = new Vector3(lerpPosition.x, lerpPosition.y, cameraVirtual.transform.position.z);
+
+		cameraView.transform.rotation = Quaternion.Lerp(cameraView.transform.rotation, cameraVirtual.transform.rotation, Time.unscaledDeltaTime * follownessAutomatic);
+		
+		cameraView.orthographicSize = Mathf.Lerp(cameraView.orthographicSize, cameraVirtual.orthographicSize, Time.unscaledDeltaTime * follownessAutomatic);
+	}
+
+	private struct CameraData {
+		Vector2 position;
+		Quaternion rotation;
+		float orthographicSize;
+
+		public CameraData(Vector2 position, Quaternion rotation, float orthographicSize) {
+			this.position = position;
+			this.rotation = rotation;
+			this.orthographicSize = orthographicSize;
+		}
+
+		public CameraData Lerp(CameraData from, CameraData to, float t) {
+			CameraData mix = new CameraData();
+			
+			return mix;
+		}
+
 	}
 }
