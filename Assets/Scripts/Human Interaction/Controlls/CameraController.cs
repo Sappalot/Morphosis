@@ -145,7 +145,7 @@ public class CameraController : MouseDrag {
 
 	// Messy to turn camera right after lock
 	public void TryUnlockCamera() {
-		if (PhenotypePanel.instance.followToggle.isOn && CreatureSelectionPanel.instance.hasSoloSelected) {
+		if (PhenotypePanel.instance.followToggle.isOn && CreatureSelectionPanel.instance.hasSelection) {
 			PhenotypePanel.instance.followToggle.isOn = false;
 			TurnCameraStraightAtCameraUnlock();
 		}
@@ -154,10 +154,10 @@ public class CameraController : MouseDrag {
 	public void TurnCameraStraightAtCameraUnlock() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			cameraVirtual.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-			AABB = new Bounds(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x - followMargin,
-										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
-										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
-										CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y + followMargin);
+			//AABB = new Bounds(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x - followMargin,
+			//							CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
+			//							CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
+			//							CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y + followMargin);
 			MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
 		}
 	}
@@ -208,19 +208,27 @@ public class CameraController : MouseDrag {
 		UpdateMouseCursor();
 
 		cameraVirtual.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-		if (isFollowingCreature) { //&& !Input.GetMouseButton(0)
+		if (PhenotypePanel.instance.followToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.hasSelection) { //&& !Input.GetMouseButton(0)
 			if (!followToggle) {
 				followMargin = cameraVirtual.orthographicSize * (HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking).height / HUD.instance.hudSize.y);
 				followToggle = true;
 			}
-			AABB = new Bounds(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x - followMargin,
-								CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
-								CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
-								CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y + followMargin);
 
-			MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
 
-			if (PhenotypePanel.instance.yawToggle.isOn) {
+			if (CreatureSelectionPanel.instance.hasSoloSelected) {
+				AABB = new Bounds(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x - followMargin,
+									CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.x + followMargin,
+									CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y - followMargin,
+									CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position.y + followMargin);
+				MoveToBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking));
+			} else {
+
+				AABB = ViewSelectedCreaturePanel.BoundsOfCreatures(CreatureSelectionPanel.instance.selection); // HUD.instance.worldViewportPanel.bottomPanelBlocking
+				Vector2 pos = ViewSelectedCreaturePanel.CenterOfBounds(AABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(HUD.instance.worldViewportPanel.bottomPanelBlocking));
+				cameraVirtual.transform.position = new Vector3(pos.x, pos.y, cameraVirtual.transform.position.z);
+			}
+
+			if (CreatureSelectionPanel.instance.hasSoloSelected && PhenotypePanel.instance.yawToggle.isOn) {
 				// YEY ROTATE AROUND SAVES THE DAY!
 				cameraVirtual.transform.RotateAround(CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.position, Vector3.forward, CreatureSelectionPanel.instance.soloSelected.phenotype.originCell.heading - 90f);
 			}

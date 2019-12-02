@@ -55,13 +55,13 @@ public class LMBInWorld : MonoBehaviour {
 							return;
 						}
 						if (CreatureSelectionPanel.instance.IsSelected(creature)) {
-							if (!PhenotypePanel.instance.followToggle.isOn) {
-								CreatureSelectionPanel.instance.RemoveFromSelection(creature, true);
-							}
+							//if (!PhenotypePanel.instance.followToggle.isOn) {
+							CreatureSelectionPanel.instance.RemoveFromSelection(creature, true);
+							//}
 						} else {
-							if (!PhenotypePanel.instance.followToggle.isOn) {
-								CreatureSelectionPanel.instance.AddToSelection(creature, true);
-							}
+							//if (!PhenotypePanel.instance.followToggle.isOn) {
+							CreatureSelectionPanel.instance.AddToSelection(creature, true);
+							//}
 
 						}
 					} else {

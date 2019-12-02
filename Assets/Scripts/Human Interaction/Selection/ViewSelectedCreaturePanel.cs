@@ -16,8 +16,10 @@ public class ViewSelectedCreaturePanel : MonoSingleton<ViewSelectedCreaturePanel
 
 	public void OnPressedViewAllSelectedCreatures() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
+			cameraController.TryUnlockCamera();
 			MoveCameraToBoundsOfCreatures(CreatureSelectionPanel.instance.selection, HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking);
 		} else {
+			cameraController.TryUnlockCamera();
 			MoveCameraToBoundsOfCreatures(CreatureSelectionPanel.instance.selection, HUD.instance.worldViewportPanel.bottomPanelBlocking);
 		}
 
@@ -28,14 +30,14 @@ public class ViewSelectedCreaturePanel : MonoSingleton<ViewSelectedCreaturePanel
 		if (viewedIndex < 0) {
 			viewedIndex = CreatureSelectionPanel.instance.selectionCount - 1;
 		}
-
+		cameraController.TryUnlockCamera();
 		MoveCameraToBoundsOfCreature(CreatureSelectionPanel.instance.selection[viewedIndex], HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking);
 	}
 
 	public void OnPressedViewNextSelectedCreature() {
 		viewedIndex++;
 		viewedIndex %= CreatureSelectionPanel.instance.selectionCount;
-
+		cameraController.TryUnlockCamera();
 		MoveCameraToBoundsOfCreature(CreatureSelectionPanel.instance.selection[viewedIndex], HUD.instance.worldViewportPanel.bottomAndRightPanelsBlocking);
 	}
 
@@ -45,7 +47,7 @@ public class ViewSelectedCreaturePanel : MonoSingleton<ViewSelectedCreaturePanel
 		MoveCameraToBoundsOfCreatures(listOfOne, panel);
 	}
 
-	public void MoveCameraToBoundsOfCreatures(List<Creature> creatures, RectTransform panel) {
+	public static Bounds BoundsOfCreatures(List<Creature> creatures) {
 		Bounds groupAABB = new Bounds(float.MaxValue, float.MinValue, float.MaxValue, float.MinValue);
 		foreach (Creature c in creatures) {
 
@@ -67,15 +69,48 @@ public class ViewSelectedCreaturePanel : MonoSingleton<ViewSelectedCreaturePanel
 		groupAABB.yMin -= Mathf.Max(height * marginPercentage, marginMeters);
 		groupAABB.yMax += Mathf.Max(height * marginPercentage, marginMeters);
 
-		cameraController.MoveToBounds(groupAABB, HUD.instance.hudSize, HUD.instance.WorldViewportBounds(panel));
+		return groupAABB;
 	}
 
-	private void MoveCameraToCenterOnCreature() {
-
+	public void MoveCameraToBoundsOfCreatures(List<Creature> creatures, RectTransform panel) {
+		cameraController.MoveToBounds(BoundsOfCreatures(creatures), HUD.instance.hudSize, HUD.instance.WorldViewportBounds(panel));
 	}
 
+	public static Vector2 CenterOfBounds(Bounds worldRect, Vector2i screentBoundsHUD, Bounds viewportBoundsHUD) {
 
-	public void MakeDirty() {
+		float worldRectAspect = worldRect.width / worldRect.height;
+		float worldViewportBoundsAspect = viewportBoundsHUD.width / viewportBoundsHUD.height;
+
+		float enclosingWidth = 0f;
+		float enclosingHeight = 0f;
+
+		if (worldRectAspect < worldViewportBoundsAspect) {
+			// world rect is touching floor and ceiling of viewport
+			enclosingHeight = worldRect.height;
+			enclosingWidth = worldRect.height * worldViewportBoundsAspect;
+		} else {
+			// world rect is touching left and rigth wall of viewport
+			enclosingWidth = worldRect.width;
+			enclosingHeight = worldRect.width / worldViewportBoundsAspect;
+		}
+
+		float enclosingWidthHalf = enclosingWidth / 2f;
+		float enclosingHeightHalf = enclosingHeight / 2f;
+
+		Bounds viewportBoundsWorld = new Bounds(worldRect.center.x - enclosingWidthHalf,
+											worldRect.center.x + enclosingWidthHalf,
+											worldRect.center.y - enclosingHeightHalf,
+											worldRect.center.y + enclosingHeightHalf);
+
+		Bounds screenBoundsWorld = new Bounds(viewportBoundsWorld.xMin - viewportBoundsHUD.xMin * (viewportBoundsWorld.width / viewportBoundsHUD.width),
+												viewportBoundsWorld.xMax + (screentBoundsHUD.x - viewportBoundsHUD.xMax) * (viewportBoundsWorld.width / viewportBoundsHUD.width),
+												viewportBoundsWorld.yMin - viewportBoundsHUD.yMin * (viewportBoundsWorld.height / viewportBoundsHUD.height),
+												viewportBoundsWorld.yMax + (screentBoundsHUD.y - viewportBoundsHUD.yMax) * (viewportBoundsWorld.height / viewportBoundsHUD.height));
+
+		return screenBoundsWorld.center;
+	}
+
+		public void MakeDirty() {
 		isDirty = true;
 	}
 
