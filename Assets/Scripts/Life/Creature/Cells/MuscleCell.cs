@@ -46,7 +46,7 @@ public class MuscleCell : Cell {
 		effectProductionInternalUp = 0f;
 
 		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
-			effectProductionInternalDown = GlobalSettings.instance.phenotype.cellHibernateEffectCost;
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.muscleEffectCostRelaxing;
 
 			bool isContracting = false;
 
@@ -69,7 +69,7 @@ public class MuscleCell : Cell {
 			if (isContracting && !creature.phenotype.IsSliding(worldTicks)) {
 				// Contracting
 				if (radius > minRadius) {
-					effectProductionInternalDown = contractionCostEffect + GlobalSettings.instance.phenotype.cellHibernateEffectCost;
+					effectProductionInternalDown = GlobalSettings.instance.phenotype.muscleEffectCostRelaxing + contractionCostEffect;
 					isRadiusDirty = true;
 				}
 				this.isContracting = true;

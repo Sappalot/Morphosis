@@ -13,7 +13,9 @@ public class Morphosis : MonoSingleton<Morphosis> {
 	public EdgePool edgePool;
 	public RelationArrows relationArrows;
 
-	private void Start () { 
+	private void Start () {
+		Debug.Log(Application.persistentDataPath);
+		Application.runInBackground = true;
 		CellMap.Init();
 
 		// Creature id's will be set from file

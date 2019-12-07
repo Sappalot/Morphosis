@@ -239,16 +239,16 @@ public class LeafCell : Cell {
 	private float GetEnergyLoss(RaycastHit2D hit, float energyLossAir) {
 		CollisionType type = GetCollisionType(hit);
 
-		if (type == CollisionType.ownCell) {
+		if (type == CollisionType.ownCell || type == CollisionType.connectedViaClusterCell) {
 			float transparencyAtHit = GetTransparencyOfHit(hit);
-			return Mathf.Lerp(energyLossAir * 15f /*GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.phenotype.leafCellCount)*/, energyLossAir, transparencyAtHit);
+			return Mathf.Lerp(energyLossAir * 10f /*GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.phenotype.leafCellCount)*/, energyLossAir, transparencyAtHit);
 			//if (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal) {
 			//	return energyLossAir;
 			//}
 			//return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.cellCount); //J / m
 		} else if (type == CollisionType.othersCell) {
 			float transparencyAtHit = GetTransparencyOfHit(hit);
-			return Mathf.Lerp(energyLossAir * 15f /*GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.phenotype.leafCellCount)*/, energyLossAir, transparencyAtHit);
+			return Mathf.Lerp(energyLossAir * 20f /*GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.phenotype.leafCellCount)*/, energyLossAir, transparencyAtHit);
 			//if (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal) {
 			//	return energyLossAir;
 			//}
@@ -298,16 +298,23 @@ public class LeafCell : Cell {
 
 	private enum CollisionType {
 		ownCell,
+		connectedViaClusterCell,
 		othersCell,
 		otherObstacle,
 	}
 
 	private CollisionType GetCollisionType(RaycastHit2D hit) {
 		if (hit.collider.gameObject.GetComponent<Cell>() != null) {
-
-			if (hit.collider.gameObject.GetComponent<Cell>().creature == creature) {
+			Creature hitCreature = hit.collider.gameObject.GetComponent<Cell>().creature; 
+			if (hitCreature == creature) {
 				return CollisionType.ownCell;
 			} else {
+				List<Creature> creaturesInCluster = creature.creaturesInCluster; // is this one expensive? in case it is cache it and update it when cluster might change
+				foreach (Creature c in creaturesInCluster) { 
+					if (hitCreature == c) {
+						return CollisionType.connectedViaClusterCell;
+					}
+				}
 				return CollisionType.othersCell;
 			}
 		}

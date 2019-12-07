@@ -136,9 +136,10 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float leafCellSunMaxRange = 25.0f; //m
 		public AnimationCurve leafCellSunLossFactorOwnCell;// Effect lost (W / m) own body penetrated : at phenotype size
 		public AnimationCurve leafCellSunLossFactorOtherCell; // Effect lost (W/ m) others body penetrated : at phenotype size
-		public float leafCellDefaultExposure = 0.33f; 
+		public float leafCellDefaultExposure = 0.33f;
 
 		//Muscle Cell
+		public float muscleEffectCostRelaxing = 0.05f;
 		public float muscleCellEnergyCostPerContraction = 2f; //J
 												  //           muscleCellEffect                     0.0 W
 

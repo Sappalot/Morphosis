@@ -278,6 +278,10 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		World.instance.AddHistoryEvent(new HistoryEvent(historyGraphNote.text, false, new Color(0.5f, 0.5f, 0f)));
 	}
 
+	public void OnExitMorphosisClicked() {
+		Application.Quit();
+	}
+
 	//Called on all MonoBehaviours on quitting application
 	void OnApplicationQuit() {
 		Freezer.instance.Save();
