@@ -232,7 +232,7 @@ public class Freezer : MonoSingleton<Freezer> {
 	public FreezerData LoadFreezerData() {
 		string filename = "freezer.txt";
 
-		string path = "F:/Morphosis/";
+		string path = Morphosis.savePath;
 		if (!File.Exists(path + filename)) {
 			Save();
 		}
@@ -255,7 +255,7 @@ public class Freezer : MonoSingleton<Freezer> {
 	public void Save() {
 		UpdateData();
 
-		string path = path = "F:/Morphosis/";
+		string path = Morphosis.savePath;
 		string freezerToSave = Serializer.Serialize(freezerData, new UnityJsonSerializer());
 		if (!Directory.Exists(path)) {
 			Directory.CreateDirectory(path);

@@ -614,7 +614,7 @@ public class CellMap {
 	private static CellMapData LoadCellMapData() {
 		string filename = "CellMapHexagon.txt";
 
-		string path = "F:/Morphosis/";
+		string path = Morphosis.savePath;
 		if (File.Exists(path + filename)) {
 			string serializedString = File.ReadAllText(path + filename);
 			return Serializer.Deserialize<CellMapData>(serializedString, new UnityJsonSerializer());
@@ -626,7 +626,7 @@ public class CellMap {
 	public static void SaveCellMapData() {
 		cellMapData = UpdateData();
 		string filename = "cellMapHexagon.txt";
-		string path = path = "F:/Morphosis/";
+		string path = Morphosis.savePath;
 
 		string cellMapToSave = Serializer.Serialize(cellMapData, new UnityJsonSerializer());
 		if (!Directory.Exists(path)) {

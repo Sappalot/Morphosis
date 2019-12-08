@@ -205,10 +205,7 @@ public class World : MonoSingleton<World> {
 		if (filename == "") {
 			filename = "save.txt";
 		}
-		string path = GlobalPanel.instance.worldSaveDirerectory.text;
-		if (path == "") {
-			path = "F:/Morphosis/";
-		}
+		string path = Morphosis.savePath;
 		float timeStamp = Time.realtimeSinceStartup;
 		string serializedString = File.ReadAllText(path + filename);
 
@@ -239,10 +236,8 @@ public class World : MonoSingleton<World> {
 
 		UpdateData();
 
-		string path = GlobalPanel.instance.worldSaveDirerectory.text;
-		if (path == "") {
-			path = "F:/Morphosis/";
-		}
+		string path = Morphosis.savePath;
+
 		string worldToSave = Serializer.Serialize(worldData, new UnityJsonSerializer());
 
 		if (!Directory.Exists(path)) {
