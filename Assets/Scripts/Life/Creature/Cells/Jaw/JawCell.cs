@@ -8,6 +8,17 @@ public class JawCell : Cell {
 	public Dictionary<Cell, Pray> prays = new Dictionary<Cell, Pray>(); //Who am i eating on? Me gain? other lose?
 	private bool deleteFlagged;
 
+	public new void Awake() {
+		base.Init();
+	}
+
+	public override void Setup(PhenoGenoEnum phenoGeno) {
+		if (phenoGeno == PhenoGenoEnum.Genotype) {
+			mouth.gameObject.SetActive(false);
+		}
+		base.Setup(phenoGeno);
+	}
+
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		if (deleteFlagged) {
 			return;
@@ -80,6 +91,9 @@ public class JawCell : Cell {
 		if (IsHibernating()) {
 			return;
 		}
+		//if (phenoGeno == PhenoGenoEnum.Genotype) {
+		//	return;
+		//}
 
 		Cell prayCell = other.GetComponent<Cell>();
 

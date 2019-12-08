@@ -86,7 +86,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 
-	private PhenoGenoEnum phenoGeno = PhenoGenoEnum.Void;
+	protected PhenoGenoEnum phenoGeno = PhenoGenoEnum.Void;
 
 	protected SpringJoint2D[] placentaSprings; //only if i am an origo cell, the springs go to placenta cells on my mother
 
@@ -732,7 +732,7 @@ public abstract class Cell : MonoBehaviour {
 
 	
 
-	public void Setup(PhenoGenoEnum phenoGeno) {
+	public virtual void Setup(PhenoGenoEnum phenoGeno) {
 		this.phenoGeno = phenoGeno;
 		SetLabelEnabled(phenoGeno == PhenoGenoEnum.Genotype);
 		//if (phenoGeno == PhenoGenoEnum.Phenotype) {
