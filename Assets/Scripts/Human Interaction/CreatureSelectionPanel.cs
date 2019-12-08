@@ -6,11 +6,9 @@ using UnityEngine.UI;
 public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	//--
-	public CameraController cameraController;
-
 	public GameObject showHideRoot;
 
-	public new Camera camera;
+	public Camera cameraVirtual;
 	public LineRenderer lineRenderer;
 
 	public Text selectedCreatureText;
@@ -509,7 +507,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		moveCreatures.AddRange(selection);
 
-		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+		Vector3 mousePosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			foreach (Creature c in moveCreatures) {
 				c.Grab(PhenoGenoEnum.Phenotype);
@@ -682,7 +680,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void StartMoveCreatures() {
-		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+		Vector3 mousePosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 
 			foreach (Creature c in moveCreatures) {
@@ -1095,7 +1093,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			OnCombineClicked();
 		}
 
-		Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+		Vector3 mousePosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 
 		//move
 		if (MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures ||

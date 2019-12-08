@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class LMBInWorld : MonoBehaviour {
-	public new Camera camera;
+	public Camera cameraVirtual;
 
 	private bool mouseDown0;
 
@@ -34,7 +34,7 @@ public class LMBInWorld : MonoBehaviour {
 					if (Input.GetKey(KeyCode.LeftShift)) {
 						return;
 					}
-					Vector2 pickPosition = camera.ScreenToWorldPoint(Input.mousePosition);
+					Vector2 pickPosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition);
 					Cell cell = Morphosis.instance.GetCellAtPosition(pickPosition);
 
 					if (cell == null) {

@@ -2,7 +2,7 @@
 
 static class SpatialUtil {
 	public static float MarkerScale() {
-		return Mathf.Lerp(2f, 6f, Mathf.InverseLerp(10f, 50f, Morphosis.instance.camera.orthographicSize));
+		return Mathf.Lerp(2f, 6f, Mathf.InverseLerp(10f, 50f, Morphosis.instance.cameraVirtual.orthographicSize));
 	}
 
 	public static void FxGrade(Vector2 position, bool isLoud, out bool hasAudio, out float audioVolume) {
@@ -72,22 +72,22 @@ static class SpatialUtil {
 
 	private static float AudioVolume(bool isLoud) {
 		if (isLoud) {
-			return GlobalSettings.instance.loudAudioVolumeAtOrtho.Evaluate(Morphosis.instance.camera.orthographicSize);
+			return GlobalSettings.instance.loudAudioVolumeAtOrtho.Evaluate(Morphosis.instance.cameraVirtual.orthographicSize);
 		} else {
-			return GlobalSettings.instance.quietAudioVolumeAtOrtho.Evaluate(Morphosis.instance.camera.orthographicSize);
+			return GlobalSettings.instance.quietAudioVolumeAtOrtho.Evaluate(Morphosis.instance.cameraVirtual.orthographicSize);
 		}
 	}
 
 	public static bool IsInsideFrustum(Vector2 position) {
-		Vector3 viewportPosition = Morphosis.instance.camera.WorldToViewportPoint(position);
+		Vector3 viewportPosition = Morphosis.instance.cameraVirtual.WorldToViewportPoint(position);
 		return viewportPosition.x > 0 && viewportPosition.x < 1f && viewportPosition.y > 0f && viewportPosition.y < 1f;
 	}
 
 	public static bool IsDetailedGraphicsDistance() {
-		return Morphosis.instance.camera.orthographicSize < GlobalSettings.instance.detailedGraphicsOrthoLimit;
+		return Morphosis.instance.cameraVirtual.orthographicSize < GlobalSettings.instance.detailedGraphicsOrthoLimit;
 	}
 
 	private static bool IsLoudAudioDistance() {
-		return Morphosis.instance.camera.orthographicSize < GlobalSettings.instance.loudAudioVolumeAtOrtho[GlobalSettings.instance.loudAudioVolumeAtOrtho.length - 1].time;
+		return Morphosis.instance.cameraVirtual.orthographicSize < GlobalSettings.instance.loudAudioVolumeAtOrtho[GlobalSettings.instance.loudAudioVolumeAtOrtho.length - 1].time;
 	}
 }

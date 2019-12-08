@@ -3,7 +3,7 @@ using System;
 
 public class Morphosis : MonoSingleton<Morphosis> {
 	public IdGenerator idGenerator = new IdGenerator();
-	public new Camera camera;
+	public Camera cameraVirtual;
 
 	// TODO: Move to Morphosis, since they are used in freezer as well
 	public CreaturePool creaturePool;

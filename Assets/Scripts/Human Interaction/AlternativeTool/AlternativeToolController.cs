@@ -4,13 +4,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class AlternativeToolController : MouseDrag {
-	public new Camera camera;
+	public Camera cameraVirtual;
 	public SpringJoint2D spring;
 	private Vector3 downPositionMouse; //World space
 
 	public override void OnDraggingStart(int mouseButton) {
 		if (mouseButton == 0 && AlternativeToolModePanel.instance.isOn && !PhenotypePanel.instance.followToggle.isOn && !EventSystem.current.IsPointerOverGameObject()) {
-			downPositionMouse = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+			downPositionMouse = cameraVirtual.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 			if (AlternativeToolModePanel.instance.toolMode == AlternativeToolModePanel.RMBToolMode.spring && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 				Cell cell = World.instance.life.GetCellAtPosition(downPositionMouse);
 				if (cell != null) {
@@ -21,13 +21,13 @@ public class AlternativeToolController : MouseDrag {
 					spring.GetComponent<LineRenderer>().SetPosition(0, spring.connectedBody.transform.position);
 					spring.GetComponent<LineRenderer>().enabled = true;
 				}
-			} else if (AlternativeToolModePanel.instance.toolMode == AlternativeToolModePanel.RMBToolMode.spawnEmbryo && TerrainPerimeter.instance.IsInside(camera.ScreenToWorldPoint(Input.mousePosition))) {
+			} else if (AlternativeToolModePanel.instance.toolMode == AlternativeToolModePanel.RMBToolMode.spawnEmbryo && TerrainPerimeter.instance.IsInside(cameraVirtual.ScreenToWorldPoint(Input.mousePosition))) {
 				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 					Creature spawned = World.instance.life.SpawnCreatureSimple(downPositionMouse, 90f, World.instance.worldTicks);
 					EffectsUtils.SpawnAddCreature(spawned);
 					HistoryUtil.SpawnAddCreatureEvent(1);
 				}
-			} else if (AlternativeToolModePanel.instance.toolMode == AlternativeToolModePanel.RMBToolMode.spawnFreak && TerrainPerimeter.instance.IsInside(camera.ScreenToWorldPoint(Input.mousePosition))) {
+			} else if (AlternativeToolModePanel.instance.toolMode == AlternativeToolModePanel.RMBToolMode.spawnFreak && TerrainPerimeter.instance.IsInside(cameraVirtual.ScreenToWorldPoint(Input.mousePosition))) {
 				if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 					Creature spawned = World.instance.life.SpawnCreatureFreak(downPositionMouse, 90f, World.instance.worldTicks);
 					EffectsUtils.SpawnAddCreature(spawned);
@@ -40,7 +40,7 @@ public class AlternativeToolController : MouseDrag {
 	public override void OnDragging(int mouseButton) {
 		if (mouseButton == 0) {
 			if (AlternativeToolModePanel.instance.isOn && spring.connectedBody != null) {
-				Vector3 mousePosition = camera.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+				Vector3 mousePosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
 				spring.anchor = mousePosition;
 				spring.GetComponent<LineRenderer>().SetPosition(1, mousePosition);
 				spring.GetComponent<LineRenderer>().SetPosition(0, spring.connectedBody.transform.position);
