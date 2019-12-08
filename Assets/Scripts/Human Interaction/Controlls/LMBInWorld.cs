@@ -76,9 +76,9 @@ public class LMBInWorld : MonoBehaviour {
 
 				} else if ((MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures)
 					&& CreatureSelectionPanel.instance.CanPlaceMoveCreatures(CreatureSelectionPanel.MoveCreatureType.Move, Input.GetKey(KeyCode.LeftControl))) {
+					
 					Audio.instance.CreaturePlace(1f);
-
-					List<Creature> creatures = CreatureSelectionPanel.instance.PlaceHoveringCreatures();
+					CreatureSelectionPanel.instance.PlaceHoveringCreatures();
 
 				} else if (MouseAction.instance.actionState == MouseActionStateEnum.copyMoveCreatures
 					&& CreatureSelectionPanel.instance.CanPlaceMoveCreatures(CreatureSelectionPanel.MoveCreatureType.Copy, Input.GetKey(KeyCode.LeftControl))) {

@@ -88,9 +88,6 @@ public class Axon : SignalUnit {
 
 	public int selectedCombination {
 		get {
-			IGeneInput inputLeft = hostCell.gene.axon.axonInputLeft;
-			IGeneInput inputRight = hostCell.gene.axon.axonInputRight;
-
 			if (HasSignalAtCombination(3)) {
 				return 3;
 			} else if (HasSignalAtCombination(2)) {

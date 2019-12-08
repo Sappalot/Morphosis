@@ -6,7 +6,8 @@ public class ParticlesCellBleed : Particles {
 	public ParticleSystem cellBleed;
 
 	public void Play(Color bloodColor) {
-		cellBleed.startColor = bloodColor;
+		var mainModule = cellBleed.main;
+		mainModule.startColor = bloodColor;
 		cellBleed.Play();
 		StartCoroutine(RemoveSelf());
 	}

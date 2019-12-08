@@ -13,7 +13,7 @@ public class JawCell : Cell {
 	}
 
 	public override void Setup(PhenoGenoEnum phenoGeno) {
-		if (phenoGeno == PhenoGenoEnum.Genotype) {
+		if (phenoGeno == PhenoGenoEnum.Genotype) { 
 			mouth.gameObject.SetActive(false);
 		}
 		base.Setup(phenoGeno);

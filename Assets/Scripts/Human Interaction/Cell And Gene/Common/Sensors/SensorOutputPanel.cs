@@ -8,13 +8,12 @@ public class SensorOutputPanel : MonoBehaviour {
 	public PhenoGenoEnum mode { get; set; }
 	private SignalUnitEnum signalUnit;
 	private SignalUnitSlotEnum signalUnitSlot;
-	private SensorPanel motherPanel;
+
 
 	public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot, SensorPanel motherPanel) {
 		this.mode = mode;
 		this.signalUnit = signalUnit;
 		this.signalUnitSlot = signalUnitSlot;
-		this.motherPanel = motherPanel;
 	}
 
 	[HideInInspector]

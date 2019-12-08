@@ -6,7 +6,8 @@ public class ParticlesCellTeleport : Particles {
 	public ParticleSystem cellTeleport;
 
 	public void Play(Color shardColor) {
-		cellTeleport.startColor = shardColor;
+		var mainModule = cellTeleport.main;
+		mainModule.startColor = shardColor;
 		cellTeleport.Play();
 		StartCoroutine(RemoveSelf()); 
 	}

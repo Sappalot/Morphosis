@@ -41,7 +41,6 @@ public class EventSymbolPool : MonoSingleton<EventSymbolPool> {
 		}
 
 		effect.transform.parent = transform.parent;
-
 		m_loanedCount++;
 		return effect;
 	}

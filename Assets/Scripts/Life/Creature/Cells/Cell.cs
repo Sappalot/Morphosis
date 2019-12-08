@@ -203,8 +203,8 @@ public abstract class Cell : MonoBehaviour {
 	// ^ Buds ^
 
 
-	// bleed particles...
-	private List<ParticlesCellBleed> currentParticlesBleed = new List<ParticlesCellBleed>();
+
+
 
 	// we don't want blood to linger with host while he is going in the recycling
 	public void DetatchParticles() {

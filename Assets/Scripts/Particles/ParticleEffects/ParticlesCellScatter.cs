@@ -6,7 +6,8 @@ public class ParticlesCellScatter : Particles {
 	public ParticleSystem cellScatter;
 
 	public void Play(Color shardColor) {
-		cellScatter.startColor = shardColor;
+		var mainModule = cellScatter.main;
+		mainModule.startColor = shardColor;
 		cellScatter.Play();
 		StartCoroutine(RemoveSelf()); 
 	}

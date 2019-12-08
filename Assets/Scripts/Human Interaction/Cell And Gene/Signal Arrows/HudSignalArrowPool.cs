@@ -36,7 +36,7 @@ public class HudSignalArrowPool : MonoBehaviour {
 	//Note: make sure there are no object out there with references to this returned cell
 	public void Recycle(HudSignalArrow arrow) {
 		arrow.OnRecycle();
-		arrow.transform.parent = transform;
+		arrow.transform.SetParent(transform, false);
 		arrow.gameObject.SetActive(false);
 		storedQueue.Enqueue(arrow);
 		m_loanedCount--;
@@ -54,7 +54,7 @@ public class HudSignalArrowPool : MonoBehaviour {
 	private HudSignalArrow Instantiate() {
 		HudSignalArrow arrow = (Instantiate(hudSignalArrowPrefab, Vector3.zero, Quaternion.identity) as HudSignalArrow);
 		arrow.name = "HudSignalArrow" + serialNumber++;
-		arrow.transform.parent = transform;
+		arrow.transform.SetParent(transform, false);
 		return arrow;
 	}
 }

@@ -52,10 +52,6 @@ public class BuildPriorityPanel : MonoBehaviour {
 				Debug.Log("Update CellBuildPriorityPanel");
 			}
 
-			bool isOriginPhenotypeSelected = mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null && CellPanel.instance.selectedCell.isOrigin;
-			bool isOriginGenotypeSelected = mode == PhenoGenoEnum.Genotype && GenePanel.instance.selectedGene != null && GenePanel.instance.selectedGene.isOrigin;
-
-
 			if (mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null) {
 				buildIndexText.text = string.Format("Build index: {0:F0}", CellPanel.instance.selectedCell.buildIndex);
 				buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", CellPanel.instance.selectedCell.gene.buildPriorityBias);

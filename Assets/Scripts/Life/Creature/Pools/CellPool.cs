@@ -139,7 +139,6 @@ public class CellPool : MonoBehaviour {
 
 		cell.name = type.ToString() + serialNumber[type]++;
 		cell.transform.parent = transform;
-
 		return cell;
 	}
 

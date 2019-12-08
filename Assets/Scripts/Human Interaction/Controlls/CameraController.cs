@@ -236,36 +236,11 @@ public class CameraController : MouseDrag {
 			followToggle = false;
 		}
 
-		// let cameraView follow cameraVirtual
-		//CameraData cameraViewData = new CameraData(cameraView.transform.position, cameraView.transform.rotation, cameraView.orthographicSize);
-		//CameraData cameraVirtualData = new CameraData(cameraVirtual.transform.position, cameraVirtual.transform.rotation, cameraVirtual.orthographicSize);
-
-		
-
 		Vector2 lerpPosition = Vector2.Lerp(cameraView.transform.position, cameraVirtual.transform.position, Time.unscaledDeltaTime * followness);
 		cameraView.transform.position = new Vector3(lerpPosition.x, lerpPosition.y, cameraVirtual.transform.position.z);
 
 		cameraView.transform.rotation = Quaternion.Lerp(cameraView.transform.rotation, cameraVirtual.transform.rotation, Time.unscaledDeltaTime * follownessAutomatic);
 		
 		cameraView.orthographicSize = Mathf.Lerp(cameraView.orthographicSize, cameraVirtual.orthographicSize, Time.unscaledDeltaTime * follownessAutomatic);
-	}
-
-	private struct CameraData {
-		Vector2 position;
-		Quaternion rotation;
-		float orthographicSize;
-
-		public CameraData(Vector2 position, Quaternion rotation, float orthographicSize) {
-			this.position = position;
-			this.rotation = rotation;
-			this.orthographicSize = orthographicSize;
-		}
-
-		public CameraData Lerp(CameraData from, CameraData to, float t) {
-			CameraData mix = new CameraData();
-			
-			return mix;
-		}
-
 	}
 }

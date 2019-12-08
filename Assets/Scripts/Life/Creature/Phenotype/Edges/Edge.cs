@@ -26,7 +26,7 @@ public class Edge : MonoBehaviour {
 	private Cell previousCell; //used woth wings apexEdge 60 & 120 
 	private Rigidbody2D frontCellRB; //used with wings
 	private Rigidbody2D backCellRB; //used with wings
-	private Rigidbody2D previousCellRB; //used with wings
+
 
 	private Vector3 normal; //used with wings
 	private Vector3 velocity; //used with wings
@@ -139,9 +139,7 @@ public class Edge : MonoBehaviour {
 
 		frontCellRB = this.frontCell.theRigidBody;
 		backCellRB =  this.backCell.theRigidBody;
-		if (previousCell != null) {
-			previousCellRB = previousCell.theRigidBody; // only used for apexEdge60 and apexEdge120
-		}
+
 	}
 
 	public void UpdateGraphics() {

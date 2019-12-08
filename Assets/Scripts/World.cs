@@ -17,7 +17,7 @@ public class World : MonoSingleton<World> {
 	public ulong worldTicks = 0;
 
 	private string worldName = "Gaia";
-	private int metaCreatureCount;
+
 	private bool doSave = false;
 	private List<HistoryEvent> historyEvents = new List<HistoryEvent>();
 
@@ -273,7 +273,6 @@ public class World : MonoSingleton<World> {
 	// Load
 	private void ApplyData(WorldData worldData, Action onDone) {
 		worldName = worldData.worldName;
-		metaCreatureCount = worldData.metaCreatureCount;
 		
 		life.ApplyData(worldData.lifeData, () => {
 			worldTicks = worldData.worldTicks;

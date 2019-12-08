@@ -23,7 +23,7 @@ public class GraphMeasuringTool : MonoBehaviour {
 		text.GetComponent<RectTransform>().anchoredPosition = new Vector2(position, text.GetComponent<RectTransform>().anchoredPosition.y);
 	}
 
-	private int oldPositionCount = 0;
+
 	public void UpdateGraphics(Rect graphArea, float scale, ulong secoundsAgo) {
 		float position = -(secoundsAgo * scale);
 		SetPosition(graphArea, position, true);

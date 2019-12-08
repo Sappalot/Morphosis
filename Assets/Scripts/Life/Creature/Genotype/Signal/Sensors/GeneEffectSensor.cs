@@ -84,8 +84,8 @@ public class GeneEffectSensor : GeneSignalUnit {
 	}
 
 	public void Mutate(float strength) {
-		GlobalSettings gs = GlobalSettings.instance;
-		float rnd;
+		//GlobalSettings gs = GlobalSettings.instance;
+		//float rnd;
 
 		// TODO
 		//rnd = Random.Range(0, gs.mutation.energySensorAreaRadiusChange * strength + 1000f);

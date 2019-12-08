@@ -455,7 +455,6 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	private void DetatchAllUnselectedRelatives() {
-		List<Creature> attachedUnselectedChildren = new List<Creature>();
 		foreach (Creature creature in selection) {
 			//mother
 			if (creature.HasMotherAlive() && !selection.Contains(creature.GetMotherAlive())) {
@@ -594,7 +593,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		World.instance.cameraController.TryUnlockCamera();
 
 		creaturesInOriginalSelectionCount = selection.Count;
-		TemperatureState temperatureState = GetTemperatureState(selection);
+
 		if (hasDefrostedSelection) {
 			AddDefrostedCoppiesToMoveCreature(selection);
 		} else if (hasFrozenSoloSelected) {
@@ -680,7 +679,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	public void StartMoveCreatures() {
-		Vector3 mousePosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 25;
+
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 
 			foreach (Creature c in moveCreatures) {

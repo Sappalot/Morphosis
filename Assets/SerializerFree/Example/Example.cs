@@ -56,19 +56,19 @@ namespace SerializerFree.Sample
 				default:
 				case 0:
 					return new BinarySerializer ();
-					break;
+					//break;
 				case 1:
 					return new JsonDotNetBSONSerializer ();
-					break;
+					//break;
 				case 2:
 					return new JsonDotNetSerializer ();
-					break;
+					//break;
 				case 3:
 					return new UnityJsonSerializer ();
-					break;
+					//break;
 				case 4:
 					return new XmlSerializerFree ();
-					break;
+					//break;
 			}
 		}
 

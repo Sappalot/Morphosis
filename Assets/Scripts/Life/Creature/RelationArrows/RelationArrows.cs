@@ -75,11 +75,6 @@ public class RelationArrows : MonoBehaviour {
 				childArrow.transform.parent = transform;
 				childArrow.name = "Arrow to child " + childIndex;
 
-				
-
-				//Material m = new Material(materialChild);
-				//childArrow.sharedMaterial = m;
-
 				childArrow.gameObject.SetActive(true);
 				arrows.Add(childArrow);
 			}
