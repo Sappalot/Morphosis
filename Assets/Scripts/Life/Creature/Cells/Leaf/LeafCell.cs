@@ -11,6 +11,11 @@ public class LeafCell : Cell {
 
 	private const float defaultLowPasExposure = 0.33f;
 
+	public new void Awake() {
+		OnBorrowToWorld();
+		base.Init();
+	}
+
 	private float m_lowPassExposure = defaultLowPasExposure;
 	public float lowPassExposure {
 		get {
@@ -23,11 +28,6 @@ public class LeafCell : Cell {
 			m_lowPassExposure = value;
 			exposureRecorCursor = 0;
 		}
-	}
-
-	public void Awake() {
-		OnBorrowToWorld();
-		base.Init();
 	}
 
 	override public bool IsHibernating() {

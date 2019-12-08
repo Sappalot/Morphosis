@@ -3,7 +3,6 @@
 public class MuscleCell : Cell {
 	public Transform scale;
 
-	private float modularTime = 0f;
 	private bool isContracting;
 	private bool scaleIsDirty = true;
 
@@ -13,7 +12,6 @@ public class MuscleCell : Cell {
 	private const float minRadius = 0.3f; // meters
 	private const float medRadius = 0.5f; // meters
 	private const float contractSpeed = 0.2f; // meters / second
-	private const float relaxSpeed = 0.2f; // meters / second
 
 	private static float shrinkageRadiusDiffConstant;
 	private static float relaxRadiusDiffConstant;
