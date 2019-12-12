@@ -1812,7 +1812,7 @@ public class Phenotype : MonoBehaviour {
 		Setup(phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
 		for (int index = 0; index < phenotypeData.cellDataList.Count; index++) {
 			CellData cellData = phenotypeData.cellDataList[index];
-			Cell cell = InstantiateCell(creature.genotype.genome[cellData.geneIndex].type, cellData.mapPosition);
+			Cell cell = InstantiateCell(creature.genotype.genes[cellData.geneIndex].type, cellData.mapPosition);
 			cell.ApplyData(cellData, creature);
 		}
 		cellsDiffersFromGeneCells = false; //This work is done

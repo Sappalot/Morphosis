@@ -7,6 +7,14 @@ public class GeneAxonPulse {
 	public float axonRelaxContract;
 	public bool axonIsReverse;
 
+	public void SetDefault() {
+		axonFromOriginOffset = 0f;
+		axonIsFromOriginPlus180 = false;
+		axonFromMeOffset = 0f;
+		axonRelaxContract = 0f;
+		axonIsReverse = false;
+	}
+
 	public void Mutate(float strength) {
 		GlobalSettings gs = GlobalSettings.instance;
 

@@ -83,6 +83,10 @@ public class GeneEffectSensor : GeneSignalUnit {
 		}
 	}
 
+	public void SetScrambled() {
+
+	}
+
 	public void Mutate(float strength) {
 		//GlobalSettings gs = GlobalSettings.instance;
 		//float rnd;

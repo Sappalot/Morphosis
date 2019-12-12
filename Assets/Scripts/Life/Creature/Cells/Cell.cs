@@ -1611,7 +1611,7 @@ public abstract class Cell : MonoBehaviour {
 		transform.position = cellData.position;
 		heading = cellData.heading;
 		bindCardinalIndex = cellData.bindCardinalIndex;
-		SetGene(creature.genotype.genome[cellData.geneIndex]);
+		SetGene(creature.genotype.genes[cellData.geneIndex]);
 		mapPosition = cellData.mapPosition;
 		buildIndex = cellData.buildIndex;
 		flipSide = cellData.flipSide;

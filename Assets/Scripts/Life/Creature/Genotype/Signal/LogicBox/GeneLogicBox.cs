@@ -293,7 +293,19 @@
 		return false;
 	}
 
+	public void Defaultify() {
+		RemoveAllGates();
+		ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
+		SetAllInputToBlocked();
+	}
+
+	public void Randomize() {
+
+	}
+
 	public void Mutate(float strength) {
+		// TODO mutate gates as well
+
 		for (int i = 0; i < columnCount; i++) {
 			inputRow3[i].Mutate(strength);
 		}

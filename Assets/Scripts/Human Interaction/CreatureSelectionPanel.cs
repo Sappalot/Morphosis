@@ -557,7 +557,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	private void Combine() {
 		List<Gene[]> genomes = new List<Gene[]>();
 		foreach (Creature source in selection) {
-			genomes.Add(source.genotype.genome);
+			genomes.Add(source.genotype.genes);
 		}
 
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {

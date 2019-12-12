@@ -40,6 +40,10 @@ public class Creature : MonoBehaviour {
 	private bool detatch = false;
 	public int canNotGrowMoreTicks { get; private set; } // blocked by myself, child/mother/other creature, or terrain(?)
 
+	public void Initialize() {
+		genotype.Initialize();
+	}
+
 	public string sceneGraphName {
 		get {
 			if (creation == CreatureCreationEnum.Frozen) {
@@ -52,7 +56,7 @@ public class Creature : MonoBehaviour {
 
 	public void OnFreeze() {
 		creation = CreatureCreationEnum.Frozen;
-		generation = 0;
+		generation = 1;
 		phenotype.DetatchFromMother(this, false, false);
 		phenotype.SetAllCellStatesToDefault();
 		
@@ -464,13 +468,13 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void GenerateSimple(Vector3 position, float heading) {
-		genotype.GenomeEmpty();
+		genotype.SetDefault();
 		UpdateCellsAndGeneCells(position, heading);
 	}
 
 	public void GenerateFreak(Vector3 position, float heading) {
-		genotype.GenomeEmpty();
-		genotype.GenomeScramble();
+		genotype.SetDefault();
+		genotype.SetScrambled();
 		UpdateCellsAndGeneCells(position, heading);
 	}
 
@@ -504,20 +508,7 @@ public class Creature : MonoBehaviour {
 		growTicks = 0;
 
 		ClearMotherAndChildrenReferences();
-		genotype.GenomeEmpty();
-	}
-
-	public void MutateAbsolute(float strength) {
-		RestoreState();
-		genotype.GenomeMutate(strength);
-	}
-
-	public void MutateCummulative(float strength) {
-		genotype.GenomeMutate(strength);
-	}
-
-	public void Scramble() {
-		genotype.GenomeScramble();
+		genotype.SetDefault();
 	}
 
 	// Button ==> Apply on Phenotype
@@ -811,11 +802,6 @@ public class Creature : MonoBehaviour {
 	// Load / Save
 
 	private CreatureData creatureData = new CreatureData();
-
-	public void RestoreState() {
-		genotype.ApplyData(creatureData.genotypeData);
-		isDirtyGraphics = true;
-	}
 
 	//Everything is deep cloned even the id. Change this not to have trouble
 	public void Clone(Creature original) {

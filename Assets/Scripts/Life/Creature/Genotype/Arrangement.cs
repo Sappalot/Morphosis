@@ -65,7 +65,40 @@ public class Arrangement {
 		}
 	}
 
-	//-------------------------------------
+	public Arrangement(int index) {
+		Defaultify(index);
+	}
+
+	public void Defaultify(int index) {
+		isEnabled = false;
+		referenceGeneIndex = Mathf.Min(Genotype.genomeLength - 1, index + 1); // each gene reffer to th nex on in the order
+		flipTypeSameOpposite = ArrangementFlipSmOpTypeEnum.Same; // SIDE & STAR
+		flipTypeBlackWhiteToArrow = ArrangementFlipBtaWtaTypeEnum.BlackToArrow; // MIRROR
+		isFlipPairsEnabled = false; //MIRROR4 & STAR6
+		type = ArrangementTypeEnum.Side;
+		referenceCount = 1;
+		arrowIndex = 0;
+		gap = 0;
+		referenceSide = ArrangementReferenceSideEnum.Black; //SIDE
+	}
+
+	public void Randomize() {
+		isEnabled = Random.Range(0, 3) == 0;
+		referenceGeneIndex = Random.Range(1, Genotype.genomeLength);
+		flipTypeSameOpposite = Random.Range(0, 2) == 0 ? ArrangementFlipSmOpTypeEnum.Same : ArrangementFlipSmOpTypeEnum.Opposite;
+		flipTypeBlackWhiteToArrow = Random.Range(0, 2) == 0 ? ArrangementFlipBtaWtaTypeEnum.BlackToArrow : ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
+		isFlipPairsEnabled = Random.Range(0, 2) == 0;
+		type = (ArrangementTypeEnum)Random.Range(0, 3);
+		if (type == ArrangementTypeEnum.Side) {
+			referenceCount = Random.Range(1, 6);
+		} else {
+			referenceCount = Random.Range(1, 7);
+		}
+		arrowIndex = Random.Range(-5, 7);
+		gap = Random.Range(0, 5);
+		referenceSide = Random.Range(0, 2) == 0 ? ArrangementReferenceSideEnum.Black : ArrangementReferenceSideEnum.White;
+	}
+
 	public void Mutate(float strength) {
 		GlobalSettings gs = GlobalSettings.instance;
 		float rnd;
@@ -257,24 +290,6 @@ public class Arrangement {
 
 		SnapToLegalValues();
 	}
-
-	public void Scramble() {
-		isEnabled = Random.Range(0, 3) == 0;
-		referenceGeneIndex = Random.Range(1, Genotype.genomeLength);
-		flipTypeSameOpposite = Random.Range(0, 2) == 0 ? ArrangementFlipSmOpTypeEnum.Same : ArrangementFlipSmOpTypeEnum.Opposite;
-		flipTypeBlackWhiteToArrow = Random.Range(0, 2) == 0 ? ArrangementFlipBtaWtaTypeEnum.BlackToArrow : ArrangementFlipBtaWtaTypeEnum.WhiteToArrow;
-		isFlipPairsEnabled = Random.Range(0, 2) == 0;
-		type = (ArrangementTypeEnum)Random.Range(0, 3);
-		if (type == ArrangementTypeEnum.Side) {
-			referenceCount = Random.Range(1, 6);
-		} else {
-			referenceCount = Random.Range(1, 7);
-		}
-		arrowIndex = Random.Range(-5, 7);
-		gap = Random.Range(0, 5);
-		referenceSide = Random.Range(0, 2) == 0 ? ArrangementReferenceSideEnum.Black : ArrangementReferenceSideEnum.White;
-	}
-
 
 	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
 		referenceGene = genes[referenceGeneIndex];
@@ -580,7 +595,7 @@ public class Arrangement {
 	}
 
 	public Arrangement GetClone() {
-		Arrangement clone = new Arrangement();
+		Arrangement clone = new Arrangement(1);
 		clone.ApplyData(UpdateData());
 		return clone;
 	}

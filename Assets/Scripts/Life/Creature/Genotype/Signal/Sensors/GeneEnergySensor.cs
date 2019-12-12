@@ -20,6 +20,10 @@ public class GeneEnergySensor : GeneSignalUnit {
 
 	public float thresholdMin = 0f; // hardcoded, no load save 
 
+	public void Randomize() {
+
+	}
+
 	public void Mutate(float strength) {
 		GlobalSettings gs = GlobalSettings.instance;
 		float rnd;

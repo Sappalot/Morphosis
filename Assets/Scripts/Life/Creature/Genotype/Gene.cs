@@ -101,16 +101,51 @@ public class Gene {
 
 	public Gene(int index) {
 		this.index = index;
+		arrangements[0] = new Arrangement(index);
+		arrangements[1] = new Arrangement(index);
+		arrangements[2] = new Arrangement(index);
 
-		arrangements[0] = new Arrangement();
-		arrangements[1] = new Arrangement();
-		arrangements[2] = new Arrangement();
+		Defaultify();
+	}
 
+	public void Defaultify() {
+		// Cell neighbours
+		arrangements[0].Defaultify(index);
+		arrangements[1].Defaultify(index);
+		arrangements[2].Defaultify(index);
+
+		// Metabolism
+		type = CellTypeEnum.Leaf;
+
+		// Jaw Cell
+		jawCellCannibalizeKin = false;
+		jawCellCannibalizeMother = false;
+		jawCellCannibalizeFather = false;
+		jawCellCannibalizeSiblings = false;
+		jawCellCannibalizeChildren = false;
+		// ^ Jaw Cell ^
+
+		// Shell
+		shellCellArmorClass = 2;
+		shellCellTransparancyClass = 2;
+		// ^ Shell ^
+
+		// Origin...
+		originPulseTickPeriod = 80;
+		originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox);
+		originSizeSensor = new GeneSizeSensor(SignalUnitEnum.OriginSizeSensor);
+		originEmbryoMaxSizeCompleteness = 0.5f;
+		originGrowPriorityCellPersistance = 20; //secounds
+
+		// Build order
+		buildPriorityBias = 0;
+		// ^ Build Order ^
+
+		// Signal
 		// ...egg...
 		// Force gateLayer0 to And, lock it so that it cant be changed by apply (= load)
+		eggCellFertilizeLogic.Defaultify();
 		eggCellFertilizeLogic.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, true);
-		eggCellFertilizeLogic.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
-		eggCellFertilizeLogic.SetAllInputToBlocked();
 		eggCellFertilizeLogic.ConnectInputTo(0, SignalUnitEnum.WorkSensorA, SignalUnitSlotEnum.outputLateA); // connect to on board energy sensor
 		eggCellFertilizeLogic.ConnectInputTo(1, SignalUnitEnum.WorkSensorB, SignalUnitSlotEnum.outputLateB); // connect to on board attachemnt sensor (free from mother)
 		eggCellFertilizeLogic.SetInputToPass(0); // energy
@@ -127,22 +162,21 @@ public class Gene {
 		// ^ egg ^
 
 		// ... axon ....
-		axon.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
-		axon.isOrigin = isOrigin;
+		axon.Defaultify();
+		axon.isOrigin = isOrigin; // origin is allways enabled
+		
 		// ^ axon ^
 
 		// ...dendrites...
+		dendritesLogicBox.Defaultify();
 		dendritesLogicBox.TryCreateGate(0, LogicOperatorEnum.Or, 0, GeneLogicBox.rightmostFlank, false);
-		dendritesLogicBox.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
-		dendritesLogicBox.SetAllInputToBlocked();
 		dendritesLogicBox.UpdateConnections();
 		// ^ dendrites ^
 
 		// ...origing...
+		originDetatchLogicBox.Defaultify();
 		originDetatchLogicBox.TryCreateGate(0, LogicOperatorEnum.And, 0, GeneLogicBox.rightmostFlank, false);
 		originDetatchLogicBox.TryCreateGate(2, LogicOperatorEnum.Or, 4, GeneLogicBox.rightmostFlank, true);
-		originDetatchLogicBox.ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
-		originDetatchLogicBox.SetAllInputToBlocked();
 		originDetatchLogicBox.ConnectInputTo(4, SignalUnitEnum.OriginSizeSensor, SignalUnitSlotEnum.outputLateE);
 		originDetatchLogicBox.ConnectInputTo(5, SignalUnitEnum.OriginSizeSensor, SignalUnitSlotEnum.outputLateF);
 		originDetatchLogicBox.SetInputToPass(4); // blocked
@@ -150,13 +184,22 @@ public class Gene {
 		originDetatchLogicBox.SetInputLockness(4, LocknessEnum.SemiLocked); // blocked
 		originDetatchLogicBox.SetInputLockness(5, LocknessEnum.SemiLocked); // max size
 		originDetatchLogicBox.UpdateConnections();
-		// ^ origin ^
 	}
 
-	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
-		arrangements[0].SetReferenceGeneFromReferenceGeneIndex(genes);
-		arrangements[1].SetReferenceGeneFromReferenceGeneIndex(genes);
-		arrangements[2].SetReferenceGeneFromReferenceGeneIndex(genes);
+	public void Randomize() {
+		type = (CellTypeEnum)Random.Range(0, 8);
+		arrangements[0].Randomize();
+		arrangements[1].Randomize();
+		arrangements[2].Randomize();
+
+		eggCellFertilizeLogic.Randomize();
+		eggCellFertilizeEnergySensor.Randomize();
+		
+		axon.Randomize();
+		axon.isOrigin = isOrigin;
+
+		dendritesLogicBox.Randomize();
+		originDetatchLogicBox.Randomize();
 	}
 
 	public void Mutate(float strength) {
@@ -164,7 +207,7 @@ public class Gene {
 		float mut = Random.Range(0, 1000f + gs.mutation.cellTypeChange * strength);
 		if (mut < gs.mutation.cellTypeChange * strength) {
 			type = (CellTypeEnum)Random.Range(0, 8);
-			ScrambleMetabolism(); // not really a good idea to allways do this, todo make it occur occationaly
+			//ScrambleMetabolism(); // not really a good idea to allways do this, todo make it occur occationaly
 		}
 
 		// Egg...
@@ -254,13 +297,6 @@ public class Gene {
 		arrangements[2].Mutate(strength);
 	}
 
-	public void ScrambleArrangements() {
-		type = (CellTypeEnum)Random.Range(0, 8);
-		arrangements[0].Scramble();
-		arrangements[1].Scramble();
-		arrangements[2].Scramble();
-	}
-
 	private void ScrambleMetabolism() {
 		if (type == CellTypeEnum.Shell) {
 			if (Random.Range(0, 3) == 0) {
@@ -268,6 +304,12 @@ public class Gene {
 				shellCellTransparancyClass = Random.Range(0, ShellCell.transparencyClassCount);
 			}
 		}
+	}
+
+	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
+		arrangements[0].SetReferenceGeneFromReferenceGeneIndex(genes);
+		arrangements[1].SetReferenceGeneFromReferenceGeneIndex(genes);
+		arrangements[2].SetReferenceGeneFromReferenceGeneIndex(genes);
 	}
 
 	public GeneReference GetFlippableReference(int referenceCardinalIndex, FlipSideEnum flipSide) {
@@ -280,16 +322,6 @@ public class Gene {
 			}
 		}
 		return first;
-	}
-
-	public void SetDefault(Gene[] genome) {
-		arrangements[0].referenceGene = genome[1];
-		arrangements[1].referenceGene = genome[1];
-		arrangements[2].referenceGene = genome[1];
-
-		arrangements[0].isEnabled = false;
-		arrangements[1].isEnabled = false;
-		arrangements[2].isEnabled = false;
 	}
 
 	public Gene GetClone() {

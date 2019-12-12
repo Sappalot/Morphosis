@@ -32,13 +32,6 @@ public class GeneAxon {
 	public int pulseProgram1 = 1; // 1 = A
 	public int pulseProgram0 = 0; // 0 == relaxed
 
-	public GeneAxon() {
-		pulses[0] = pulseA;
-		pulses[1] = pulseB;
-		pulses[2] = pulseC;
-		pulses[3] = pulseD;
-	}
-
 	public void UpdateConnections() {
 		// what do we want to do here?????
 	}
@@ -49,6 +42,25 @@ public class GeneAxon {
 
 		axonInputRight.nerve.inputUnit = signalUnit;
 		axonInputRight.nerve.inputUnitSlot = signalUnitSlot;
+	}
+
+	public void Defaultify() {
+		axonIsEnabled = false;
+		ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
+
+		pulses[0] = pulseA;
+		pulses[1] = pulseB;
+		pulses[2] = pulseC;
+		pulses[3] = pulseD;
+
+		pulseA.SetDefault();
+		pulseB.SetDefault();
+		pulseC.SetDefault();
+		pulseD.SetDefault();
+	}
+
+	public void Randomize() {
+		// TODO
 	}
 
 	public void Mutate(float strength) {

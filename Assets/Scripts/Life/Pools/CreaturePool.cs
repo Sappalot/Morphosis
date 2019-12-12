@@ -60,7 +60,9 @@ public class CreaturePool : MonoSingleton<CreaturePool> {
 	}
 
 	private Creature Instantiate() {
+		// This is the only place where creatures are made
 		Creature creature = (Instantiate(creaturePrefab, Vector3.zero, Quaternion.identity) as Creature);
+		creature.Initialize();
 		creature.name = "Creature" + serialNumber++;
 		creature.transform.parent = transform;
 		return creature;
