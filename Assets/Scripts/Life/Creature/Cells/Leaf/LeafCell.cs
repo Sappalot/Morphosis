@@ -9,7 +9,7 @@ public class LeafCell : Cell {
 	private int exposureRecorCursor = 0;
 	//private int exposureRecordCount = 0;
 
-	private const float defaultLowPasExposure = 0.5f;
+	private const float defaultLowPasExposure = 0.33f;
 
 	public new void Awake() {
 		OnBorrowToWorld();
@@ -232,7 +232,6 @@ public class LeafCell : Cell {
 		} else {
 			effectProductionInternalUp = 0f;
 			effectProductionInternalDown = 0f;
-			//m_lowPassExposure = 0.33f;
 			m_lowPassExposure = defaultLowPasExposure;
 		}
 	}
