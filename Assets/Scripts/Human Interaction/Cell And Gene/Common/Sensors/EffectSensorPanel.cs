@@ -67,6 +67,8 @@ public class EffectSensorPanel : SensorPanel {
 				Debug.Log("Update Effect Sensor Panel");
 			}
 
+			effectMeasuredDropdown.interactable = IsUnlocked();
+
 			if (selectedGene != null && affectedGeneSensor != null) {
 				ignoreHumanInput = true;
 

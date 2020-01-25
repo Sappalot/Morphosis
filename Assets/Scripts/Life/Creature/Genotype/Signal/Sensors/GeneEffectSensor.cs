@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-public class GeneEffectSensor : GeneSignalUnit {
+public class GeneEffectSensor
+: GeneSignalUnit {
 	public GeneEffectSensor(SignalUnitEnum signalUnit) {
 		this.signalUnit = signalUnit;
 	}
@@ -13,11 +14,11 @@ public class GeneEffectSensor : GeneSignalUnit {
 	public int areaRadiusProduction = 1;
 	public float effectThresholdProduction;
 
-	public int areaRadiusFlux = 1;
-	public float effectThresholdFlux;
-
 	public int areaRadiusExternal = 1;
 	public float effectThresholdExternal; // hurt by jaw
+
+	public int areaRadiusFlux = 1;
+	public float effectThresholdFlux;
 
 	public int usedAreaRadius {
 		get {
@@ -83,24 +84,70 @@ public class GeneEffectSensor : GeneSignalUnit {
 		}
 	}
 
-	public void SetScrambled() {
+	public void Defaultify() {
+		effectMeassure = EffectMeassureEnum.Total;
+
+		areaRadiusTotal = 1;
+		effectThresholdTotal = 0f;
+
+		areaRadiusProduction = 1;
+		effectThresholdProduction = 0f;
+
+		areaRadiusFlux = 1;
+		effectThresholdFlux = 0f;
+
+		areaRadiusExternal = 1;
+		effectThresholdExternal = 0f; // hurt by jaw
+	}
+
+	public void Randomize() {
 
 	}
 
 	public void Mutate(float strength) {
-		//GlobalSettings gs = GlobalSettings.instance;
-		//float rnd;
+		GlobalSettings gs = GlobalSettings.instance;
+		float rnd;
+		rnd = Random.Range(0, gs.mutation.effectSensorMeassureChange * strength + 1000f);
+		if (rnd < gs.mutation.effectSensorMeassureChange * strength) {
+			int meassure = Random.Range(0, 4);
+			effectMeassure = (EffectMeassureEnum)meassure;
+		}
 
-		// TODO
-		//rnd = Random.Range(0, gs.mutation.energySensorAreaRadiusChange * strength + 1000f);
-		//if (rnd < gs.mutation.energySensorAreaRadiusChange * strength) {
-		//	areaRadius = (int)Mathf.Clamp(areaRadius + gs.mutation.energySensorAreaRadiusChangeMaxAmount * gs.mutation.RandomDistributedValue(), 0f, Creature.maxRadiusHexagon - 1);
-		//}
+		rnd = Random.Range(0, gs.mutation.effectSensorAreaRadiusChange * strength + 1000f);
+		if (rnd < gs.mutation.effectSensorAreaRadiusChange * strength) {
+			areaRadiusTotal = (int)Mathf.Clamp(areaRadiusTotal + gs.mutation.effectSensorAreaRadiusChangeMaxAmount * gs.mutation.RandomDistributedValue(), 0f, Creature.maxRadiusHexagon - 1);
+		}
+		rnd = Random.Range(0, gs.mutation.effectSensorThresholdChange * strength + 1000f);
+		if (rnd < gs.mutation.effectSensorThresholdChange * strength) {
+			effectThresholdTotal = Mathf.Clamp(effectThresholdTotal + gs.mutation.effectSensorThresholdChangeMaxAmount * gs.mutation.RandomDistributedValue(), -GlobalSettings.instance.mutation.effectSensorThresholdMax, GlobalSettings.instance.mutation.effectSensorThresholdMax);
+		}
 
-		//rnd = Random.Range(0, gs.mutation.energySensorThresholdChange * strength + 1000f);
-		//if (rnd < gs.mutation.energySensorThresholdChange * strength) {
-		//	threshold = Mathf.Clamp(threshold + gs.mutation.energySensorThresholdChangeMaxAmount * gs.mutation.RandomDistributedValue(), 0f, gs.phenotype.cellMaxEnergy);
-		//}
+		rnd = Random.Range(0, gs.mutation.effectSensorAreaRadiusChange * strength + 1000f);
+		if (rnd < gs.mutation.effectSensorAreaRadiusChange * strength) {
+			areaRadiusProduction = (int)Mathf.Clamp(areaRadiusProduction + gs.mutation.effectSensorAreaRadiusChangeMaxAmount * gs.mutation.RandomDistributedValue(), 0f, Creature.maxRadiusHexagon - 1);
+		}
+		rnd = Random.Range(0, gs.mutation.effectSensorThresholdChange * strength + 1000f);
+		if (rnd < gs.mutation.effectSensorThresholdChange * strength) {
+			effectThresholdProduction = Mathf.Clamp(effectThresholdProduction + gs.mutation.effectSensorThresholdChangeMaxAmount * gs.mutation.RandomDistributedValue(), -GlobalSettings.instance.mutation.effectSensorThresholdMax, GlobalSettings.instance.mutation.effectSensorThresholdMax);
+		}
+
+		rnd = Random.Range(0, gs.mutation.effectSensorAreaRadiusChange * strength + 1000f);
+		if (rnd < gs.mutation.effectSensorAreaRadiusChange * strength) {
+			areaRadiusFlux = (int)Mathf.Clamp(areaRadiusFlux + gs.mutation.effectSensorAreaRadiusChangeMaxAmount * gs.mutation.RandomDistributedValue(), 0f, Creature.maxRadiusHexagon - 1);
+		}
+		rnd = Random.Range(0, gs.mutation.effectSensorThresholdChange * strength + 1000f);
+		if (rnd < gs.mutation.effectSensorThresholdChange * strength) {
+			effectThresholdFlux = Mathf.Clamp(effectThresholdFlux + gs.mutation.effectSensorThresholdChangeMaxAmount * gs.mutation.RandomDistributedValue(), -GlobalSettings.instance.mutation.effectSensorThresholdMax, GlobalSettings.instance.mutation.effectSensorThresholdMax);
+		}
+
+		rnd = Random.Range(0, gs.mutation.effectSensorAreaRadiusChange * strength + 1000f);
+		if (rnd < gs.mutation.effectSensorAreaRadiusChange * strength) {
+			areaRadiusExternal = (int)Mathf.Clamp(areaRadiusExternal + gs.mutation.effectSensorAreaRadiusChangeMaxAmount * gs.mutation.RandomDistributedValue(), 0f, Creature.maxRadiusHexagon - 1);
+		}
+		rnd = Random.Range(0, gs.mutation.effectSensorThresholdChange * strength + 1000f);
+		if (rnd < gs.mutation.effectSensorThresholdChange * strength) {
+			effectThresholdExternal = Mathf.Clamp(effectThresholdExternal + gs.mutation.effectSensorThresholdChangeMaxAmount * gs.mutation.RandomDistributedValue(), -GlobalSettings.instance.mutation.effectSensorThresholdMax, GlobalSettings.instance.mutation.effectSensorThresholdMax);
+		}
 	}
 
 	// Save

@@ -34,7 +34,12 @@ public class GeneAxonInput : IGeneInput {
 		nerve.outputUnitSlot = (SignalUnitSlotEnum)column;
 	}
 
-	public void Mutate(float strength) {
+	public void Defaultify() {
+		valveMode = SignalValveModeEnum.Block;
+		nerve.Defaultify();
+	}
+
+	public void Mutate(float strength, bool isOrigin) {
 		GlobalSettings gs = GlobalSettings.instance;
 		float rnd;
 
@@ -42,6 +47,8 @@ public class GeneAxonInput : IGeneInput {
 		if (rnd < gs.mutation.logicBoxInputValveToggle * strength) {
 			valveMode = (valveMode == SignalValveModeEnum.Pass ? SignalValveModeEnum.Block : SignalValveModeEnum.Pass);
 		}
+
+		nerve.Mutate(strength, isOrigin);
 	}
 
 	// Save

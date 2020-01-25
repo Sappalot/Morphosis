@@ -295,19 +295,21 @@
 
 	public void Defaultify() {
 		RemoveAllGates();
-		ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
-		SetAllInputToBlocked();
+		for (int i = 0; i < columnCount; i++) {
+			inputRow3[i].Defaultify();
+		}
 	}
 
 	public void Randomize() {
 
 	}
 
-	public void Mutate(float strength) {
+	public void Mutate(float strength, bool isOrigin) {
 		// TODO mutate gates as well
 
+		// valves
 		for (int i = 0; i < columnCount; i++) {
-			inputRow3[i].Mutate(strength);
+			inputRow3[i].Mutate(strength, isOrigin);
 		}
 	}
 

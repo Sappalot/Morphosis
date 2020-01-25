@@ -8,7 +8,12 @@ public class GeneSizeSensor : GeneSignalUnit {
 	public float sizeThreshold = 0.5f; // 50% of full size
 	public int cantGrowMorePatienseThreshold = 10; // seconds of blocked growth
 
-	public void SetScrambled() {
+	public void Defaultify() {
+		sizeThreshold = 0.5f; // 50% of full size
+		cantGrowMorePatienseThreshold = 10; // seconds of blocked growth
+	}
+
+	public void Randomize() {
 
 	}
 

@@ -9,19 +9,17 @@ public class LeafCell : Cell {
 	private int exposureRecorCursor = 0;
 	//private int exposureRecordCount = 0;
 
-	private const float defaultLowPasExposure = 0.33f;
-
 	public new void Awake() {
 		OnBorrowToWorld();
 		base.Init();
 	}
 
-	private float m_lowPassExposure = defaultLowPasExposure;
+	private float m_lowPassExposure;
 	public float lowPassExposure {
 		get {
 			return m_lowPassExposure;
 		}
-		set {
+		set { 
 			for (int i = 0; i < exposureRecordMaxCapacity; i++) {
 				exposureRecord[i] = value;
 			}
@@ -222,7 +220,7 @@ public class LeafCell : Cell {
 				if (creature.IsAttachedToMotherAlive()) {
 					attachedMotherCellCount = creature.GetMotherAlive().cellCount;
 				}
-				effectProductionInternalUp = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCellSunMaxEffect; // Will small algae take over completely now again? * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.cellCount);
+				effectProductionInternalUp = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.cellCount);
 
 				if (CellPanel.instance.selectedCell == this) {
 					CellPanel.instance.cellAndGenePanel.workPanel.leafPanel.MakeDirty();
@@ -232,7 +230,7 @@ public class LeafCell : Cell {
 		} else {
 			effectProductionInternalUp = 0f;
 			effectProductionInternalDown = 0f;
-			m_lowPassExposure = defaultLowPasExposure;
+			m_lowPassExposure = GlobalSettings.instance.phenotype.leafCellDefaultExposure;
 		}
 	}
 
@@ -240,7 +238,7 @@ public class LeafCell : Cell {
 		CollisionType type = GetCollisionType(hit);
 
 		if (type == CollisionType.ownCell || type == CollisionType.connectedViaClusterCell) {
-			return energyLossAir * 10f;
+			return energyLossAir * 5f;
 			float transparencyAtHit = GetTransparencyOfHit(hit);
 			return Mathf.Lerp(energyLossAir * 10f * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.phenotype.leafCellCount), energyLossAir, transparencyAtHit);
 		} else if (type == CollisionType.othersCell) {

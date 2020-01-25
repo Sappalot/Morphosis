@@ -22,8 +22,8 @@ public class Gene {
 	// ^ Muscle Cell ^
 
 	// Shell
-	public int shellCellArmorClass = 2;
-	public int shellCellTransparancyClass = 2;
+	public int shellCellArmorClass;
+	public int shellCellTransparancyClass;
 	// ^ Shell ^
 
 	public float armour {
@@ -48,13 +48,11 @@ public class Gene {
 	// ^ sensors ^
 
 	// Origin...
-	public int originPulseTickPeriod = 80;
 	public GeneLogicBox originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox);
 	public GeneSizeSensor originSizeSensor = new GeneSizeSensor(SignalUnitEnum.OriginSizeSensor);
-	public float originEmbryoMaxSizeCompleteness = 0.5f;
-	public int originGrowPriorityCellPersistance = 20; //secounds
-
-
+	public int originPulseTickPeriod;
+	public float originEmbryoMaxSizeCompleteness;
+	public int originGrowPriorityCellPersistance;
 	// ^ origin ^
 
 	public float originPulsePeriod {
@@ -130,13 +128,6 @@ public class Gene {
 		shellCellTransparancyClass = 2;
 		// ^ Shell ^
 
-		// Origin...
-		originPulseTickPeriod = 80;
-		originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox);
-		originSizeSensor = new GeneSizeSensor(SignalUnitEnum.OriginSizeSensor);
-		originEmbryoMaxSizeCompleteness = 0.5f;
-		originGrowPriorityCellPersistance = 20; //secounds
-
 		// Build order
 		buildPriorityBias = 0;
 		// ^ Build Order ^
@@ -157,14 +148,15 @@ public class Gene {
 		eggCellFertilizeLogic.SetCellToLocked(1, 1); // above attachment
 		eggCellFertilizeLogic.SetCellToLocked(2, 1); // above attachment
 		eggCellFertilizeLogic.UpdateConnections();
+		eggCellFertilizeEnergySensor.Defaultify();
 		eggCellFertilizeEnergySensor.thresholdMin = 20f;
 		eggCellFertilizeEnergySensor.threshold = 25f;
+		// attachmentSensor: no need, no settings
 		// ^ egg ^
 
 		// ... axon ....
 		axon.Defaultify();
 		axon.isOrigin = isOrigin; // origin is allways enabled
-		
 		// ^ axon ^
 
 		// ...dendrites...
@@ -172,6 +164,9 @@ public class Gene {
 		dendritesLogicBox.TryCreateGate(0, LogicOperatorEnum.Or, 0, GeneLogicBox.rightmostFlank, false);
 		dendritesLogicBox.UpdateConnections();
 		// ^ dendrites ^
+
+		energySensor.Defaultify();
+		effectSensor.Defaultify();
 
 		// ...origing...
 		originDetatchLogicBox.Defaultify();
@@ -184,6 +179,12 @@ public class Gene {
 		originDetatchLogicBox.SetInputLockness(4, LocknessEnum.SemiLocked); // blocked
 		originDetatchLogicBox.SetInputLockness(5, LocknessEnum.SemiLocked); // max size
 		originDetatchLogicBox.UpdateConnections();
+		
+		originSizeSensor.Defaultify();
+	
+		originPulseTickPeriod = 80;
+		originEmbryoMaxSizeCompleteness = 0.5f;
+		originGrowPriorityCellPersistance = 20; //secounds
 	}
 
 	public void Randomize() {
@@ -211,7 +212,7 @@ public class Gene {
 		}
 
 		// Egg...
-		eggCellFertilizeLogic.Mutate(strength);
+		eggCellFertilizeLogic.Mutate(strength, isOrigin);
 		eggCellFertilizeEnergySensor.Mutate(strength);
 		// ^ Egg ^
 
@@ -254,17 +255,17 @@ public class Gene {
 		// ^ Shell ^
 
 		// Axone
-		axon.Mutate(strength);
+		axon.Mutate(strength, isOrigin);
 
 		// Dendrites
-		dendritesLogicBox.Mutate(strength);
+		dendritesLogicBox.Mutate(strength, isOrigin);
 
 		// Sensors
 		energySensor.Mutate(strength);
 		effectSensor.Mutate(strength);
 
 		// Origin..
-		originDetatchLogicBox.Mutate(strength);
+		originDetatchLogicBox.Mutate(strength, isOrigin);
 		originSizeSensor.Mutate(strength);
 
 		mut = Random.Range(0, 1000f + gs.mutation.originEmbryoMaxSizeCompletenessChange * strength);

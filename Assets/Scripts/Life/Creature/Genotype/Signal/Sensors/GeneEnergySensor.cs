@@ -3,6 +3,7 @@
 public class GeneEnergySensor : GeneSignalUnit {
 	public GeneEnergySensor(SignalUnitEnum signalUnit) {
 		this.signalUnit = signalUnit;
+		Defaultify();
 	}
 
 	public int areaRadius = 1; // m
@@ -19,6 +20,12 @@ public class GeneEnergySensor : GeneSignalUnit {
 	} // joules, [0 .... 100]
 
 	public float thresholdMin = 0f; // hardcoded, no load save 
+
+	public void Defaultify() {
+		areaRadius = 1;
+		m_threshold = 50f;
+		thresholdMin = 0f;
+	}
 
 	public void Randomize() {
 

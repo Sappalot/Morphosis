@@ -47,7 +47,16 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 		return isTransmittingSignal ? 1 : 0;
 	}
 
-	public void Mutate(float strength) {
+	public void Defaultify() {
+		valveMode = SignalValveModeEnum.Block;
+		nerve.Defaultify();
+	}
+
+	public void Randomize(bool isOrigin) {
+
+	}
+
+	public void Mutate(float strength, bool isOrigin) {
 		GlobalSettings gs = GlobalSettings.instance;
 		float rnd;
 
@@ -55,6 +64,8 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 		if (rnd < gs.mutation.logicBoxInputValveToggle * strength) {
 			valveMode = (valveMode == SignalValveModeEnum.Pass ? SignalValveModeEnum.Block : SignalValveModeEnum.Pass);
 		}
+
+		nerve.Mutate(strength, isOrigin);
 	}
 
 	// Save

@@ -74,7 +74,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public void UpdateWorldNameAndTime(string worldName, ulong worldTicks) {
 		worldNameAndTimeText.text = worldName + " " + TimeUtil.GetTimeString((ulong)(worldTicks * Time.fixedDeltaTime));
 	}
-	public Text worldSaveDirerectory;
+	public Text saveDirerectoryLabel;
 
 	//Time
 	[HideInInspector]
@@ -110,6 +110,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	public override void Init() {
 		OnRunPhysicsClicked();
+		saveDirerectoryLabel.text = Application.persistentDataPath;
 	}
 
 	// History

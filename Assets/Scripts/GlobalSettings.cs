@@ -53,19 +53,28 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float buildPriorityBiasChange = 50f;
 		public float buildPriorityBiasChangeMaxAmount = 4f;
 
+		// nerve
+		public float nerveSlotChange = 40f;
+		public float nerveUnitAndSlotChange = 10f;
+
 		// logic box (works the same regardles if inside work panel or not)
 		public float logicBoxInputValveToggle = 10f;
 
 		// sensor (works the same regardles if inside work panel or not)
 		public float energySensorThresholdChange = 50f;
 		public float energySensorThresholdChangeMaxAmount = 30f; // +/-
-
 		public float energySensorAreaRadiusChange = 50f;
 		public float energySensorAreaRadiusChangeMaxAmount = 3f;
 
+		public float effectSensorMeassureChange = 10f;
+		public float effectSensorThresholdChange = 50f;
+		public float effectSensorThresholdChangeMaxAmount = 2f; // +/-
+		public float effectSensorThresholdMax = 20f;// +/-
+		public float effectSensorAreaRadiusChange = 50f;
+		public float effectSensorAreaRadiusChangeMaxAmount = 3f;
+
 		public float sizeSensorSizeThresholdChange = 10f;
 		public float sizeSensorSizeThresholdChangeMaxAmount = 0.2f; // % of body size
-
 		public float sizeSensorCantGrowMorePatienseChange = 50f;
 		public float originGrowPriorityCellPersistenceMaxAmount = 30; // s
 

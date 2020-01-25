@@ -44,9 +44,15 @@ public class GeneAxon {
 		axonInputRight.nerve.inputUnitSlot = signalUnitSlot;
 	}
 
+	public void SetAllInputToBlocked() {
+		axonInputLeft.valveMode = SignalValveModeEnum.Block;
+		axonInputRight.valveMode = SignalValveModeEnum.Block;
+	}
+
 	public void Defaultify() {
 		axonIsEnabled = false;
 		ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
+		SetAllInputToBlocked();
 
 		pulses[0] = pulseA;
 		pulses[1] = pulseB;
@@ -57,13 +63,16 @@ public class GeneAxon {
 		pulseB.SetDefault();
 		pulseC.SetDefault();
 		pulseD.SetDefault();
+
+		axonInputLeft.Defaultify();
+		axonInputRight.Defaultify();
 	}
 
 	public void Randomize() {
 		// TODO
 	}
 
-	public void Mutate(float strength) {
+	public void Mutate(float strength, bool isOrigin) {
 		GlobalSettings gs = GlobalSettings.instance;
 
 		float mut = Random.Range(0, 1000f + gs.mutation.axonEnabledToggle * strength);
@@ -75,6 +84,9 @@ public class GeneAxon {
 		pulseB.Mutate(strength);
 		pulseC.Mutate(strength);
 		pulseD.Mutate(strength);
+
+		axonInputLeft.Mutate(strength, isOrigin);
+		axonInputRight.Mutate(strength, isOrigin);
 	}
 
 	// Save

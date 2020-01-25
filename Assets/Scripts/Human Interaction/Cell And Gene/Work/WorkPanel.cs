@@ -86,7 +86,7 @@ public class WorkPanel : MonoBehaviour {
 				return;
 			}
 
-			typeDropdown.interactable = (mode == PhenoGenoEnum.Genotype);
+			typeDropdown.interactable = IsUnlocked();
 
 			ignoreMenuChange = true;
 			typeDropdown.value = (int)selectedGene.type;
@@ -151,5 +151,9 @@ public class WorkPanel : MonoBehaviour {
 				return null; // there could be many cells selected for the same gene
 			}
 		}
+	}
+
+	private bool IsUnlocked() {
+		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
 	}
 }

@@ -688,7 +688,6 @@ public abstract class Cell : MonoBehaviour {
 
 	private Dictionary<int, CellNeighbour> cellNeighbourDictionary = new Dictionary<int, CellNeighbour>();
 
-
 	public List<Cell> GetNeighbourCells() {
 		List<Cell> cells = new List<Cell>();
 		foreach (KeyValuePair<int, CellNeighbour> e in cellNeighbourDictionary) {
@@ -705,6 +704,8 @@ public abstract class Cell : MonoBehaviour {
 
 	public virtual void Init() {
 		theRigidBody = GetComponent<Rigidbody2D>();
+
+		SetDefaultState();
 
 		cellNeighbourDictionary.Add(0, northEastNeighbour);
 		cellNeighbourDictionary.Add(1, northNeighbour);
