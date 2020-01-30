@@ -1092,6 +1092,10 @@ public abstract class Cell : MonoBehaviour {
 	//Phenotype
 	public void UpdatePlacentaSpringConnections(Creature creature) {
 		// Here we connect origin cell to placenta of mother only
+
+		// We destroy these springs and when cell is recycled, which seems costy
+		// Why not just create placenta springs as we need them and let them be??
+
 		if (placentaSprings != null) {
 			for (int i = 0; i < placentaSprings.Length; i++) {
 				Destroy(placentaSprings[i]);
@@ -1560,6 +1564,14 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	virtual public void OnBorrowToWorld() { }
+
+	public  void Update() {
+
+	}
+
+	private void FixedUpdate() {
+
+	}
 
 	// Save
 	private CellData cellData = new CellData();
