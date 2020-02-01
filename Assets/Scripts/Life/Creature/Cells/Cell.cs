@@ -174,8 +174,6 @@ public abstract class Cell : MonoBehaviour {
 				int localCardinalIndex = AngleUtil.CardinalIndexRawToSafe(bindCardinalIndex + worldCardinalIndex - 1);
 				Cell budCell = creature.genotype.GetCellAtGridPosition(CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
 				bool show = !HasOwnNeighbourCell(localCardinalIndex) && budCell != null; // If it is an empty spot (or if it full but child origin or mother placenta)
-				//bool isMotherPlacenta = creature.phenotype.IsMotherPlacentaLocation(creature, CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
-				//bool isChildOrigin = creature.phenotype.IsChildOriginLocation(creature, CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
 				buds.SetEnabledBud(worldCardinalIndex, show);
 				buds.SetEnabledPriority(worldCardinalIndex, false);
 				if (show) {
@@ -201,9 +199,6 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// ^ Buds ^
-
-
-
 
 
 	// we don't want blood to linger with host while he is going in the recycling
@@ -292,7 +287,6 @@ public abstract class Cell : MonoBehaviour {
 
 	public float effectProductionPredPray {
 		get {
-			//return 0f;
 			return effectProductionPredPrayUp - effectProductionPredPrayDown;
 		}
 	}
@@ -305,8 +299,6 @@ public abstract class Cell : MonoBehaviour {
 	//Check with all Jaw cells eating on me. They know and keep up to date
 	public float effectProductionPredPrayDown {
 		get {
-			//return 0f;
-
 			float loss = 0f;
 			foreach (JawCell predator in predators) {
 				loss += predator.GetPrayEatenEffect(this);
@@ -318,7 +310,6 @@ public abstract class Cell : MonoBehaviour {
 	//net effect
 	public float effectFluxSelf {
 		get {
-			//return 0f;
 			return effectFluxFromSelf - effectFluxToSelf;
 		}
 	}
@@ -331,14 +322,12 @@ public abstract class Cell : MonoBehaviour {
 
 	public float effectFluxSelfDown {
 		get {
-			//return 0f;
 			return (effectFluxToSelf > 0f ? effectFluxToSelf : 0f) + (effectFluxFromSelf < 0f ? -effectFluxFromSelf : 0f); // Don't forget the brackets!!
 		}
 	}
 
 	public float effectFluxSelfUp {
 		get {
-			//return 0f;
 			return (effectFluxFromSelf > 0f ? effectFluxFromSelf : 0f) + (effectFluxToSelf < 0f ? -effectFluxToSelf : 0f);
 		}
 	}
@@ -347,7 +336,6 @@ public abstract class Cell : MonoBehaviour {
 
 	public float effectFluxAttached {
 		get {
-			//return 0f;
 			return effectFluxFromMotherAttached - effectFluxToChildrenAttached;
 		}
 	}
@@ -361,7 +349,6 @@ public abstract class Cell : MonoBehaviour {
 	// Will not be negative a negative value will appear in effectAttachedUp instead
 	public float effectFluxAttachedDown {
 		get {
-			//return 0f;
 			return (effectFluxToChildrenAttached > 0f ? effectFluxToChildrenAttached : 0f) + (effectFluxFromMotherAttached < 0f ? -effectFluxFromMotherAttached : 0f);
 		}
 	}
@@ -369,7 +356,6 @@ public abstract class Cell : MonoBehaviour {
 	// Will not be negative a negative value will appear in effectAttachedDown instead
 	public float effectFluxAttachedUp {
 		get {
-			//return 0f;
 			return (effectFluxToChildrenAttached < 0f ? -effectFluxToChildrenAttached : 0f) + (effectFluxFromMotherAttached > 0f ? effectFluxFromMotherAttached : 0f);
 		}
 	}
@@ -520,7 +506,6 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	//virtual public void UpdateRadius(ulong fixedTime) { }
 
 	virtual public void UpdateSpringLengths() { }
 
@@ -604,7 +589,6 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void ShowOutline(bool show) {
-		//creatureSelectedSprite.gameObject.SetActive(show);
 		creatureSelectedSprite.enabled = show;
 	}
 
@@ -736,9 +720,6 @@ public abstract class Cell : MonoBehaviour {
 	public virtual void Setup(PhenoGenoEnum phenoGeno) {
 		this.phenoGeno = phenoGeno;
 		SetLabelEnabled(phenoGeno == PhenoGenoEnum.Genotype);
-		//if (phenoGeno == PhenoGenoEnum.Phenotype) {
-		//	Destroy(labelCanvas.gameObject);
-		//}
 	}
 
 	
@@ -769,12 +750,6 @@ public abstract class Cell : MonoBehaviour {
 		}
 
 		theRigidBody.simulated = false;
-		//theRigidBody.bodyType = RigidbodyType2D.Static;
-	}
-
-	public void EnablePhysicsComponents() {
-		//theRigidBody.simulated = true;
-		//theRigidBody.bodyType = RigidbodyType2D.Dynamic;
 	}
 
 	public void RemovePhysicsComponents() {
@@ -832,7 +807,6 @@ public abstract class Cell : MonoBehaviour {
 					//this(0)...empty(1)...full(2)
 					responceForce += ApplyTorqueToPair(cardinalIndex, cardinalIndex + 2);
 					springs++;
-					//if (springs >= groups - 1) {
 					if (springs >= groups) {
 						break;
 					}
@@ -845,7 +819,6 @@ public abstract class Cell : MonoBehaviour {
 						//this(0)...empty(1)...empty(2)...full(3)
 						responceForce += ApplyTorqueToPair(cardinalIndex, cardinalIndex + 3);
 						springs++;
-						//if (springs >= groups - 1) {
 						if (springs >= groups) {
 							break;
 						}
@@ -859,7 +832,6 @@ public abstract class Cell : MonoBehaviour {
 							//this(0)...empty(1)...empty(2)...empty(3)...full(4)
 							responceForce += ApplyTorqueToPair(cardinalIndex, cardinalIndex + 4);
 							springs++;
-							//if (springs >= groups - 1) {
 							if (springs >= groups) {
 								break;
 							}
@@ -896,8 +868,6 @@ public abstract class Cell : MonoBehaviour {
 
 		float k1 = 0.00005f; //Works with RB mass 0.08
 		float k2 = 0.00003f;
-		//float k1 = 0.0005f;
-		//float k2 = 0.0003f;
 		float magnitude = k1 * diff + Mathf.Sign(diff) * k2 * diff * diff;
 		Vector3 alphaForce = Vector3.Cross(alphaVector, new Vector3(0f, 0f, 1f)) * magnitude;
 		Vector3 betaForce = Vector3.Cross(betaVector, new Vector3(0f, 0f, -1f)) * magnitude;
@@ -1179,23 +1149,7 @@ public abstract class Cell : MonoBehaviour {
 		if (direction.y > 0f)
 			return 180f - angle;
 		return 180f + angle;
-
-		//return 180 + Mathf.Rad2Deg * Mathf.Atan2(direction.y, direction.x);
-
 	}
-
-	//public void SetEnabledAllGraphics(bool enabled) {
-	//	cellSelected.gameObject.SetActive(enabled); //transparent
-	//	triangleSprite.gameObject.SetActive(enabled);
-	//	openCircleSprite.gameObject.SetActive(enabled); //cell type colour
-	//	filledCircleSprite.gameObject.SetActive(enabled); //cell type colour
-	//	creatureSelectedSprite.gameObject.SetActive(enabled);
-	//	shadowSprite.gameObject.SetActive(enabled);
-
-	//	buds.gameObject.SetActive(enabled);
-
-	//	labelCanvas.gameObject.SetActive(enabled);
-	//}
 
 	// Update
 	private bool graphicsWasDisabled;
@@ -1203,13 +1157,6 @@ public abstract class Cell : MonoBehaviour {
 
 	//TODO: update cell graphics from here
 	public void UpdateGraphics(bool mayBeSelected) {
-		//if (!graphicsWasDisabled) {
-		//	DisableGraphics();
-		//	buds.DisableGraphics();
-		//	graphicsWasDisabled = true;
-		//}
-		//return;
-
 		// Selector spin
 		if (mayBeSelected) {
 			cellSelected.transform.Rotate(0f, 0f, -Time.unscaledDeltaTime * 90f);
@@ -1338,7 +1285,6 @@ public abstract class Cell : MonoBehaviour {
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.individual) {
 				filledCircleSprite.color = creature.phenotype.individualColor;
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.pulse) {
-				//filledCircleSprite.color = isOrigin && originPulseTick == 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
 				if (isAxonEnabled) {
 					float red = 0f;
 					float green = 0f;
@@ -1385,8 +1331,6 @@ public abstract class Cell : MonoBehaviour {
 						SetLabelText(buildPriority.ToString());
 					}
 
-					//SetLabelText(CellMap.ManhexanDistance(new Vector2i(2, 3), mapPosition).ToString());
-					//SetLabelText(CellMap.GetGridPositionsInHexagonAroundPosition(new Vector2i(2, 3), 3).Contains(mapPosition) ? "X": ".");
 					if (gene.buildPriorityBias < 0) {
 						SetLabelColor(Color.green);
 					} else if (gene.buildPriorityBias > 0) {
@@ -1565,14 +1509,6 @@ public abstract class Cell : MonoBehaviour {
 
 	virtual public void OnBorrowToWorld() { }
 
-	public  void Update() {
-
-	}
-
-	private void FixedUpdate() {
-
-	}
-
 	// Save
 	private CellData cellData = new CellData();
 	public CellData UpdateData() {
@@ -1748,7 +1684,4 @@ public abstract class Cell : MonoBehaviour {
 
 		return false;
 	}
-
-	
-
 }

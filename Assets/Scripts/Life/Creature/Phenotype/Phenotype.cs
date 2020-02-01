@@ -214,13 +214,6 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public void EnablePhysicsComponents() {
-		foreach (Cell c in cellList) {
-			c.EnablePhysicsComponents();
-		}
-	}
-
-
 	//Grown cells
 	public int cellCount {
 		get {
