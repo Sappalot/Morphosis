@@ -401,7 +401,7 @@ public class Genotype : MonoBehaviour {
 
 		cell.transform.parent = geneCellsTransform;
 		cell.transform.position = CellMap.ToModelSpacePosition(mapPosition);
-		cell.RemovePhysicsComponents();
+		cell.MakeIntoGeneCell();
 		if (cell == null) {
 			throw new System.Exception("Could not create Cell out of type defined in gene");
 		}

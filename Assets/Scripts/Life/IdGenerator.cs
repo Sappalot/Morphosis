@@ -20,6 +20,7 @@ public class IdGenerator {
 	public void RenameToUniqueIds(List<Creature> creatures) {
 		for (int freezerIndex = 0; freezerIndex < creatures.Count; freezerIndex++) {
 			creatures[freezerIndex].id = GetUniqueId();
+			creatures[freezerIndex].transform.name = creatures[freezerIndex].sceneGraphName;
 		}
 	}
 

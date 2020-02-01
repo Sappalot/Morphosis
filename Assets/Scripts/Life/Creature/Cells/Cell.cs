@@ -730,40 +730,59 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
+	// On freeze
 	public void DisablePhysicsComponents() {
-		////My own 3 springs to others
-		//if (northSpring != null) {
-		//	northSpring.enabled = false;
-		//}
-		//if (southEastSpring != null) {
-		//	southEastSpring.enabled = false;
-		//}
-		//if (southWestSpring != null) {
-		//	southWestSpring.enabled = false;
-		//}
+		//My own 3 springs to others
+		if (northSpring != null) {
+			Destroy(northSpring);
+		}
+		if (southEastSpring != null) {
+			Destroy(southEastSpring);
+		}
+		if (southWestSpring != null) {
+			Destroy(southWestSpring);
+		}
 
-		////My placenta springs
-		//if (hasPlacentaSprings) {
-		//	foreach (SpringJoint2D placentaSpring in placentaSprings) {
-		//		placentaSpring.enabled = false;
-		//	}
-		//}
+		//My placenta springs
+		if (hasPlacentaSprings) {
+			foreach (SpringJoint placentaSpring in placentaSprings) {
+				Destroy(placentaSpring);
+			}
+		}
 
-		//theRigidBody.simulated = false;
+		SphereCollider collider = gameObject.GetComponent<SphereCollider>();
+		collider.enabled = false;
+
+		theRigidBody.isKinematic = true;
 	}
 
-	public void RemovePhysicsComponents() {
-		//CircleCollider2D collider = gameObject.GetComponent<CircleCollider2D>();
-		//Destroy(collider);
+	public void EnablePhysicsComponents() {
+		SphereCollider collider = gameObject.GetComponent<SphereCollider>();
+		collider.enabled = true;
 
-		////Destroy hexagonal springs and placenta springs
-		//SpringJoint2D[] springJoints = gameObject.GetComponents<SpringJoint2D>();
-		//foreach (SpringJoint2D springJoint in springJoints) {
-		//	Destroy(springJoint);
-		//}
-		//placentaSprings = new SpringJoint2D[0];
+		theRigidBody.isKinematic = false;
+	}
 
-		Destroy(theRigidBody);
+	// when spawning Gene cell
+	public void MakeIntoGeneCell() {
+		// Destroy collider
+		SphereCollider collider = gameObject.GetComponent<SphereCollider>();
+		if (collider != null) {
+			Destroy(collider);
+		}
+		
+
+		//Destroy ALL hexagonal springs and placenta springs
+		SpringJoint[] springJoints = gameObject.GetComponents<SpringJoint>();
+		foreach (SpringJoint springJoint in springJoints) {
+			Destroy(springJoint);
+		}
+		placentaSprings = new SpringJoint[0];
+
+		//Destroy the 
+		if (theRigidBody != null) {
+			Destroy(theRigidBody);
+		}
 	}
 
 	public int GetDirectionOfOwnNeighbourCell(Creature me, Cell cell) {
@@ -1450,6 +1469,7 @@ public abstract class Cell : MonoBehaviour {
 	//Phenotype only
 	virtual public void OnRecycleCell() {
 		//theRigidBody.simulated = true; //physics seem to have problem when borrowing cells and then enabling RB, it should be ok to enable it here since cell is disabled anyway
+		//theRigidBody.isKinematic = true; // Disabled anyway... we don't want cell to be bouncing about and consume cpu when in storage
 
 		foreach (JawCell predator in predators) {
 			predator.RemovePray(this); // make jaw forget about me as a pray of his

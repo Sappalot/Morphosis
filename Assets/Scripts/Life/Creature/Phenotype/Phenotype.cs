@@ -214,6 +214,12 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public void EnablePhysicsComponents() {
+		foreach (Cell c in cellList) {
+			c.EnablePhysicsComponents();
+		}
+	}
+
 	//Grown cells
 	public int cellCount {
 		get {
@@ -1361,10 +1367,16 @@ public class Phenotype : MonoBehaviour {
 
 	public void Release(Creature creature) {
 		isGrabbed = false;
-		foreach (Cell cell in cellList) {
-			cell.theRigidBody.isKinematic = false;
-			cell.GetComponent<SphereCollider>().enabled = true;
+		if (Freezer.instance.IsCompletelyInside(creature)) {
+			creature.phenotype.DisablePhysicsComponents();
+		} else {
+			creature.phenotype.EnablePhysicsComponents();
 		}
+
+		//foreach (Cell cell in cellList) {
+		//	cell.theRigidBody.isKinematic = false;
+		//	cell.GetComponent<SphereCollider>().enabled = true;
+		//}
 		foreach (Cell cell in cellList) {
 			cell.transform.parent = null;
 		}
@@ -1436,6 +1448,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	// Why not just turn it on and off
 	private bool m_hasCollider = false;
 	public bool hasCollider {
 		get {

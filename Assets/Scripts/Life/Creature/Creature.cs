@@ -19,7 +19,7 @@ public class Creature : MonoBehaviour {
 	public SpriteRenderer genotypePosition;
 	public SpriteRenderer genotypeCellsPosition;
 
-	[HideInInspector]
+	//[HideInInspector]
 	public string id;
 	[HideInInspector]
 	public string nickname;
@@ -61,12 +61,13 @@ public class Creature : MonoBehaviour {
 		phenotype.SetAllCellStatesToDefault();
 		
 		ClearMotherAndChildrenReferences();
-		//--
+
 		phenotype.cellsDiffersFromGeneCells = true;
 		phenotype.UpdateCellsFromGeneCells(this, GetOriginPosition(PhenoGenoEnum.Phenotype), GetOriginHeading(PhenoGenoEnum.Phenotype));
-		phenotype.DisablePhysicsComponents();
-		//--
 		
+		phenotype.DisablePhysicsComponents();
+
+		name = sceneGraphName;
 	}
 
 	public void OnDefrost() {
@@ -77,7 +78,10 @@ public class Creature : MonoBehaviour {
 		phenotype.SetAllCellStatesToDefault();
 		phenotype.cellsDiffersFromGeneCells = true;
 		bornTick = World.instance.worldTicks;
+
+		name = sceneGraphName;
 	}
+
 
 	public void ClearMotherAndChildrenReferences() {
 		ClearMotherReference();
@@ -669,7 +673,7 @@ public class Creature : MonoBehaviour {
 				Debug.Log("Update Creature (due to user input)");
 
 			ShowCurrentGenoPhenoAndHideOther();
-			phenotype.hasCollider = CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !phenotype.isGrabbed;
+			phenotype.hasCollider = CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !phenotype.isGrabbed && creation != CreatureCreationEnum.Frozen;
 
 			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 				//phenotype.ShowShadow(false);
