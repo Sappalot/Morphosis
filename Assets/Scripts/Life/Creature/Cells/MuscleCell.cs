@@ -114,9 +114,9 @@ public class MuscleCell : Cell {
 
 		//Intra creature
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.northEast)) {
-			SpringJoint2D spring = northEastNeighbour.cell.GetSpring(this);
+			SpringJoint spring = northEastNeighbour.cell.GetSpring(this);
 			if (spring != null) {
-				spring.distance = this.radius + northEastNeighbour.cell.radius;
+				//spring.distance = this.radius + northEastNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing north east");
 			}
@@ -124,7 +124,7 @@ public class MuscleCell : Cell {
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
 			if (northSpring != null) {
-				northSpring.distance = this.radius + northNeighbour.cell.radius;
+				//northSpring.distance = this.radius + northNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing north");
 			}
@@ -132,9 +132,9 @@ public class MuscleCell : Cell {
 		}
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.northWest)) {
-			SpringJoint2D spring = northWestNeighbour.cell.GetSpring(this);
+			SpringJoint spring = northWestNeighbour.cell.GetSpring(this);
 			if (spring != null) {
-				spring.distance = this.radius + northWestNeighbour.cell.radius;
+				//spring.distance = this.radius + northWestNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing north west"); // This has occured :/ TODO: figgure out and fix!
 			}
@@ -143,16 +143,16 @@ public class MuscleCell : Cell {
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest)) {
 			if (southWestSpring != null) {
-				southWestSpring.distance = this.radius + southWestNeighbour.cell.radius;
+				//southWestSpring.distance = this.radius + southWestNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing south west");
 			}
 		}
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.south)) {
-			SpringJoint2D spring = southNeighbour.cell.GetSpring(this);
+			SpringJoint spring = southNeighbour.cell.GetSpring(this);
 			if (spring != null) {
-				spring.distance = this.radius + southNeighbour.cell.radius;
+				//spring.distance = this.radius + southNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing south");
 			}
@@ -160,7 +160,7 @@ public class MuscleCell : Cell {
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast)) {
 			if (southEastSpring != null) {
-				southEastSpring.distance = this.radius + southEastNeighbour.cell.radius;
+				//southEastSpring.distance = this.radius + southEastNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing south east");
 			}

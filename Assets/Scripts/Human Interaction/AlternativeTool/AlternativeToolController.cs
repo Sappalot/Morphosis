@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class AlternativeToolController : MouseDrag {
 	public Camera cameraVirtual;
-	public SpringJoint2D spring;
+	public SpringJoint spring;
 	private Vector3 downPositionMouse; //World space
 
 	public override void OnDraggingStart(int mouseButton) {
@@ -16,7 +16,7 @@ public class AlternativeToolController : MouseDrag {
 				if (cell != null) {
 					spring.connectedBody = cell.theRigidBody;
 					spring.anchor = downPositionMouse;
-					spring.distance = 0f;
+					//spring.distance = 0f;
 					spring.GetComponent<LineRenderer>().SetPosition(1, downPositionMouse);
 					spring.GetComponent<LineRenderer>().SetPosition(0, spring.connectedBody.transform.position);
 					spring.GetComponent<LineRenderer>().enabled = true;

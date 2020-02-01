@@ -48,7 +48,7 @@ public class Edges : MonoBehaviour {
 		for (int index = 0; index < edgeList.Count; index++) {
 			tempEdge = edgeList[index];
 			//if (tempEdge.isFin) { // So, we can see forces even if they are not applied
-			tempEdge.ApplyForce();
+				tempEdge.ApplyForce();
 			//}
 		}
 	}

@@ -7,7 +7,7 @@ public abstract class Cell : MonoBehaviour {
 
 	//------- Inspector
 	public SpriteRenderer cellSelected; //transparent
-	public SpriteRenderer triangleSprite;
+	public SpriteRenderer triangleSprite; // black white flip friangle
 	public SpriteRenderer openCircleSprite; //cell type colour
 	public SpriteRenderer filledCircleSprite; //cell type colour
 	public SpriteRenderer creatureSelectedSprite;
@@ -17,13 +17,13 @@ public abstract class Cell : MonoBehaviour {
 
 	public Transform rotatedRoot; // All under this root will be rotated according to heading 0 = east, 90 = north
 
-	public SpringJoint2D northSpring;
-	public SpringJoint2D southEastSpring;
-	public SpringJoint2D southWestSpring;
+	public SpringJoint northSpring;
+	public SpringJoint southEastSpring;
+	public SpringJoint southWestSpring;
 	//----- ^ Inspector ^
 
 	[HideInInspector]
-	public Rigidbody2D theRigidBody;
+	public Rigidbody theRigidBody;
 
 	[HideInInspector]
 	private Gene m_gene;
@@ -88,7 +88,7 @@ public abstract class Cell : MonoBehaviour {
 
 	protected PhenoGenoEnum phenoGeno = PhenoGenoEnum.Void;
 
-	protected SpringJoint2D[] placentaSprings; //only if i am an origo cell, the springs go to placenta cells on my mother
+	protected SpringJoint[] placentaSprings; //only if i am an origo cell, the springs go to placenta cells on my mother
 
 	private List<JawCell> predators = new List<JawCell>(); //Who is eating on me
 
@@ -446,8 +446,8 @@ public abstract class Cell : MonoBehaviour {
 	public bool isPlacenta; // Note: a cell can be placenta of more than 1 child origins
 
 	public void UpdatePlacentaSpringLengths() {
-		foreach (SpringJoint2D placentaSpring in placentaSprings) {
-			placentaSpring.distance = radius + placentaSpring.connectedBody.gameObject.GetComponent<Cell>().radius;
+		foreach (SpringJoint placentaSpring in placentaSprings) {
+			//placentaSpring.distance = radius + placentaSpring.connectedBody.gameObject.GetComponent<Cell>().radius;
 		}
 	}
 
@@ -511,20 +511,20 @@ public abstract class Cell : MonoBehaviour {
 
 
 	public void UpdateSpringFrequenzy() {
-		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
-			northSpring.frequency = (this.springFrequenzy + northNeighbour.cell.springFrequenzy) / 2f;
-			northSpring.dampingRatio = (this.springDamping + northNeighbour.cell.springDamping) / 2f;
-		}
+		//if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
+		//	northSpring.frequency = (this.springFrequenzy + northNeighbour.cell.springFrequenzy) / 2f;
+		//	northSpring.dampingRatio = (this.springDamping + northNeighbour.cell.springDamping) / 2f;
+		//}
 
-		if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest)) {
-			southWestSpring.frequency = (this.springFrequenzy + southWestNeighbour.cell.springFrequenzy) / 2f;
-			southWestSpring.dampingRatio = (this.springDamping + southWestNeighbour.cell.springDamping) / 2f;
-		}
+		//if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest)) {
+		//	southWestSpring.frequency = (this.springFrequenzy + southWestNeighbour.cell.springFrequenzy) / 2f;
+		//	southWestSpring.dampingRatio = (this.springDamping + southWestNeighbour.cell.springDamping) / 2f;
+		//}
 
-		if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast)) {
-			southEastSpring.frequency = (this.springFrequenzy + southEastNeighbour.cell.springFrequenzy) / 2f;
-			southEastSpring.dampingRatio = (this.springDamping + southEastNeighbour.cell.springDamping) / 2f;
-		}
+		//if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast)) {
+		//	southEastSpring.frequency = (this.springFrequenzy + southEastNeighbour.cell.springFrequenzy) / 2f;
+		//	southEastSpring.dampingRatio = (this.springDamping + southEastNeighbour.cell.springDamping) / 2f;
+		//}
 	}
 
 	public void UpdateSpringsBreakingForce() {
@@ -687,7 +687,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public virtual void Init() {
-		theRigidBody = GetComponent<Rigidbody2D>();
+		theRigidBody = GetComponent<Rigidbody>();
 
 		SetDefaultState();
 
@@ -731,37 +731,37 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void DisablePhysicsComponents() {
-		//My own 3 springs to others
-		if (northSpring != null) {
-			northSpring.enabled = false;
-		}
-		if (southEastSpring != null) {
-			southEastSpring.enabled = false;
-		}
-		if (southWestSpring != null) {
-			southWestSpring.enabled = false;
-		}
+		////My own 3 springs to others
+		//if (northSpring != null) {
+		//	northSpring.enabled = false;
+		//}
+		//if (southEastSpring != null) {
+		//	southEastSpring.enabled = false;
+		//}
+		//if (southWestSpring != null) {
+		//	southWestSpring.enabled = false;
+		//}
 
-		//My placenta springs
-		if (hasPlacentaSprings) {
-			foreach (SpringJoint2D placentaSpring in placentaSprings) {
-				placentaSpring.enabled = false;
-			}
-		}
+		////My placenta springs
+		//if (hasPlacentaSprings) {
+		//	foreach (SpringJoint2D placentaSpring in placentaSprings) {
+		//		placentaSpring.enabled = false;
+		//	}
+		//}
 
-		theRigidBody.simulated = false;
+		//theRigidBody.simulated = false;
 	}
 
 	public void RemovePhysicsComponents() {
-		CircleCollider2D collider = gameObject.GetComponent<CircleCollider2D>();
-		Destroy(collider);
+		//CircleCollider2D collider = gameObject.GetComponent<CircleCollider2D>();
+		//Destroy(collider);
 
-		//Destroy hexagonal springs and placenta springs
-		SpringJoint2D[] springJoints = gameObject.GetComponents<SpringJoint2D>();
-		foreach (SpringJoint2D springJoint in springJoints) {
-			Destroy(springJoint);
-		}
-		placentaSprings = new SpringJoint2D[0];
+		////Destroy hexagonal springs and placenta springs
+		//SpringJoint2D[] springJoints = gameObject.GetComponents<SpringJoint2D>();
+		//foreach (SpringJoint2D springJoint in springJoints) {
+		//	Destroy(springJoint);
+		//}
+		//placentaSprings = new SpringJoint2D[0];
 
 		Destroy(theRigidBody);
 	}
@@ -848,7 +848,7 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 
-		theRigidBody.AddForce(responceForce, ForceMode2D.Impulse);
+		theRigidBody.AddForce(responceForce, ForceMode.Impulse);
 	}
 
 	//Applies forces to neighbour and returns reaction force to this
@@ -872,8 +872,8 @@ public abstract class Cell : MonoBehaviour {
 		Vector3 alphaForce = Vector3.Cross(alphaVector, new Vector3(0f, 0f, 1f)) * magnitude;
 		Vector3 betaForce = Vector3.Cross(betaVector, new Vector3(0f, 0f, -1f)) * magnitude;
 
-		alphaNeighbour.cell.theRigidBody.AddForce(alphaForce, ForceMode2D.Impulse);
-		betaNeighbour.cell.theRigidBody.AddForce(betaForce, ForceMode2D.Impulse);
+		alphaNeighbour.cell.theRigidBody.AddForce(alphaForce, ForceMode.Impulse);
+		betaNeighbour.cell.theRigidBody.AddForce(betaForce, ForceMode.Impulse);
 
 		return -(alphaForce + betaForce);
 
@@ -887,7 +887,7 @@ public abstract class Cell : MonoBehaviour {
 		return angle;
 	}
 
-	public SpringJoint2D GetSpring(Cell askingCell) {
+	public SpringJoint GetSpring(Cell askingCell) {
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.north) && askingCell == northNeighbour.cell) {
 			return northSpring;
 		} else if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast) && askingCell == southEastNeighbour.cell) {
@@ -908,17 +908,17 @@ public abstract class Cell : MonoBehaviour {
 				if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.north) {
 					if (northSpring != null) {
 						northSpring.connectedBody = null;
-						northSpring.enabled = false;
+						//northSpring.enabled = false;
 					}
 				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.southWest) {
 					if (southWestSpring != null) {
 						southWestSpring.connectedBody = null;
-						southWestSpring.enabled = false;
+						//southWestSpring.enabled = false;
 					}
 				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.southEast) {
 					if (southEastSpring != null) {
 						southEastSpring.connectedBody = null;
-						southEastSpring.enabled = false;
+						//southEastSpring.enabled = false;
 					}
 				}
 
@@ -1012,6 +1012,8 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void RepairBrokenSprings() {
+		return;
+
 		if (northSpring == null) {
 			northSpring = CreateSpring();
 		}
@@ -1022,40 +1024,44 @@ public abstract class Cell : MonoBehaviour {
 			southEastSpring = CreateSpring();
 		}
 	}
-	private SpringJoint2D CreateSpring() {
-		SpringJoint2D spring = gameObject.AddComponent(typeof(SpringJoint2D)) as SpringJoint2D;
+	private SpringJoint CreateSpring() {
+		SpringJoint spring = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
 		spring.enableCollision = false;
 		spring.autoConfigureConnectedAnchor = false;
-		spring.autoConfigureDistance = false;
-		spring.distance = 1f;
+		//spring.autoConfigureDistance = false;
+		//spring.distance = 1f;
 		spring.connectedBody = null;
 		return spring;
 	}
 
 	public void UpdateSpringConnectionsIntra() {
+		return;
+
+		// WE CANT	UPDATE SPRING CONNECTIONS SINCE THE SPRINGS DOESN'T EXSIST
+
 		// Intra creatures
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
 			northSpring.connectedBody = northNeighbour.cell.theRigidBody;
-			northSpring.enabled = true;
+			//northSpring.enabled = true;
 		} else {
 			northSpring.connectedBody = null;
-			northSpring.enabled = false;
+			//northSpring.enabled = false;
 		}
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest)) {
 			southWestSpring.connectedBody = southWestNeighbour.cell.theRigidBody;
-			southWestSpring.enabled = true;
+			//southWestSpring.enabled = true;
 		} else {
 			southWestSpring.connectedBody = null;
-			southWestSpring.enabled = false;
+			//southWestSpring.enabled = false;
 		}
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast)) {
 			southEastSpring.connectedBody = southEastNeighbour.cell.theRigidBody;
-			southEastSpring.enabled = true;
+			//southEastSpring.enabled = true;
 		} else {
 			southEastSpring.connectedBody = null;
-			southEastSpring.enabled = false;
+			//southEastSpring.enabled = false;
 		}
 	}
 
@@ -1071,7 +1077,7 @@ public abstract class Cell : MonoBehaviour {
 				Destroy(placentaSprings[i]);
 			}
 		}
-		placentaSprings = new SpringJoint2D[0];
+		placentaSprings = new SpringJoint[0];
 
 		if (this != creature.phenotype.originCell || !creature.IsAttachedToMotherAlive()) {
 			return;
@@ -1087,15 +1093,15 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 
-		placentaSprings = new SpringJoint2D[placentaCells.Count];
+		placentaSprings = new SpringJoint[placentaCells.Count];
 		for (int i = 0; i < placentaCells.Count; i++) {
-			placentaSprings[i] = gameObject.AddComponent(typeof(SpringJoint2D)) as SpringJoint2D;
+			placentaSprings[i] = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
 			placentaSprings[i].connectedBody = placentaCells[i].theRigidBody;
-			placentaSprings[i].distance = 1f;
-			placentaSprings[i].autoConfigureDistance = false; // Found ya! :)
+			//placentaSprings[i].distance = 1f;
+			//placentaSprings[i].autoConfigureDistance = false; // Found ya! :)
 
-			placentaSprings[i].frequency = (springFrequenzy + placentaCells[i].springFrequenzy) / 2f;
-			placentaSprings[i].dampingRatio = (springDamping + placentaCells[i].springDamping) / 2f;
+			//placentaSprings[i].frequency = (springFrequenzy + placentaCells[i].springFrequenzy) / 2f;
+			//placentaSprings[i].dampingRatio = (springDamping + placentaCells[i].springDamping) / 2f;
 		}
 	}
 
@@ -1443,7 +1449,7 @@ public abstract class Cell : MonoBehaviour {
 
 	//Phenotype only
 	virtual public void OnRecycleCell() {
-		theRigidBody.simulated = true; //physics seem to have problem when borrowing cells and then enabling RB, it should be ok to enable it here since cell is disabled anyway
+		//theRigidBody.simulated = true; //physics seem to have problem when borrowing cells and then enabling RB, it should be ok to enable it here since cell is disabled anyway
 
 		foreach (JawCell predator in predators) {
 			predator.RemovePray(this); // make jaw forget about me as a pray of his
@@ -1453,24 +1459,24 @@ public abstract class Cell : MonoBehaviour {
 		//My own 3 springs to others
 		if (northSpring != null) {
 			northSpring.connectedBody = null;
-			northSpring.enabled = false;
+			//northSpring.enabled = false;
 		}
 		if (southEastSpring != null) {
 			southEastSpring.connectedBody = null;
-			southEastSpring.enabled = false;
+			//southEastSpring.enabled = false;
 		}
 		if (southWestSpring != null) {
 			southWestSpring.connectedBody = null;
-			southWestSpring.enabled = false;
+			//southWestSpring.enabled = false;
 		}
 
 		//My placenta springs
 		if (placentaSprings != null) {
-			foreach (SpringJoint2D placentaSpring in placentaSprings) {
+			foreach (SpringJoint placentaSpring in placentaSprings) {
 				Destroy(placentaSpring);
 			}
 		}
-		placentaSprings = new SpringJoint2D[0];
+		placentaSprings = new SpringJoint[0];
 
 		ShowOnTop(false);
 
@@ -1489,13 +1495,13 @@ public abstract class Cell : MonoBehaviour {
 		originPulseTick = 0;
 
 		if (northSpring != null) {
-			northSpring.distance = 1f;
+			//northSpring.distance = 1f;
 		}
 		if (southWestSpring != null) {
-			southWestSpring.distance = 1f;
+			//southWestSpring.distance = 1f;
 		}
 		if (southEastSpring != null) {
-			southEastSpring.distance = 1f;
+			//southEastSpring.distance = 1f;
 		}
 
 		effectFluxFromMotherAttached = 0f;

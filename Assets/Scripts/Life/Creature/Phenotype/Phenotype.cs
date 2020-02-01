@@ -20,7 +20,7 @@ public class Phenotype : MonoBehaviour {
 
 	private void AddImpulse(Vector2 impulse) {
 		foreach (Cell c in cellList) {
-			c.theRigidBody.AddForce(impulse, ForceMode2D.Impulse);
+			c.theRigidBody.AddForce(impulse, ForceMode.Impulse);
 		}
 	}
 
@@ -1134,7 +1134,7 @@ public class Phenotype : MonoBehaviour {
 	private void ApplyDetatchKick() {
 		foreach (Cell cell in detatchmentKick.Keys) {
 			if (cell != null) {
-				cell.theRigidBody.AddForce(detatchmentKick[cell], ForceMode2D.Impulse);
+				cell.theRigidBody.AddForce(detatchmentKick[cell], ForceMode.Impulse);
 			}
 		}
 		detatchmentKick = null;
@@ -1299,7 +1299,7 @@ public class Phenotype : MonoBehaviour {
 					cellList[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
 				}
 			} else {
-				cellList[index].ShowTriangle(false);
+				cellList[index].ShowTriangle(true); // temporary to show all cells heading
 			}
 		}
 	}
@@ -1345,7 +1345,7 @@ public class Phenotype : MonoBehaviour {
 
 	public void EnableCollider(bool collider) {
 		foreach (Cell cell in cellList) {
-			cell.GetComponent<Collider2D>().enabled = collider;
+			cell.GetComponent<SphereCollider>().enabled = collider;
 		}
 	}
 
@@ -1354,7 +1354,7 @@ public class Phenotype : MonoBehaviour {
 		foreach (Cell cell in cellList) {
 			cell.theRigidBody.isKinematic = true;
 			cell.theRigidBody.velocity = Vector2.zero;
-			cell.GetComponent<Collider2D>().enabled = false;
+			cell.GetComponent<SphereCollider>().enabled = false;
 		}
 		MoveOriginToOrigo();
 	}
@@ -1363,7 +1363,7 @@ public class Phenotype : MonoBehaviour {
 		isGrabbed = false;
 		foreach (Cell cell in cellList) {
 			cell.theRigidBody.isKinematic = false;
-			cell.GetComponent<Collider2D>().enabled = true;
+			cell.GetComponent<SphereCollider>().enabled = true;
 		}
 		foreach (Cell cell in cellList) {
 			cell.transform.parent = null;
@@ -1432,7 +1432,7 @@ public class Phenotype : MonoBehaviour {
 
 	private void SetCollider(bool on) {
 		foreach (Cell cell in cellList) {
-			cell.GetComponent<Collider2D>().enabled = on;
+			cell.GetComponent<SphereCollider>().enabled = on;
 		}
 	}
 
@@ -1636,7 +1636,7 @@ public class Phenotype : MonoBehaviour {
 		// We are applying force only if mussceles are set to contract
 		// Edges, let edge-wings apply proper forces to neighbouring cells, caused by muscle edges swiming through ether
 
-		if (originCell.theRigidBody.IsAwake()) {
+		//if (originCell.theRigidBody.IsAwake()) {
 			if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
 				edges.UpdatePhysics(creature, worldTick);
 			}
@@ -1648,9 +1648,9 @@ public class Phenotype : MonoBehaviour {
 			}
 			velocity = (cellList.Count > 0f) ? velocity = velocitySum / cellList.Count : new Vector2();
 			speed = velocity.magnitude;
-		} else {
-			speed = 0f;
-		}
+		//} else {
+		//	speed = 0f;
+		//}
 
 		if (!IsSliding(worldTick)) {
 			originCell.UpdatePulse(); // only origin

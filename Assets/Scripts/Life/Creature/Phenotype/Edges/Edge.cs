@@ -24,8 +24,8 @@ public class Edge : MonoBehaviour {
 	private Cell frontCell; //used with wings
 	private Cell backCell; //used with wings
 	private Cell previousCell; //used woth wings apexEdge 60 & 120 
-	private Rigidbody2D frontCellRB; //used with wings
-	private Rigidbody2D backCellRB; //used with wings
+	private Rigidbody frontCellRB; //used with wings
+	private Rigidbody backCellRB; //used with wings
 
 
 	private Vector3 normal; //used with wings
@@ -282,10 +282,10 @@ public class Edge : MonoBehaviour {
 		//}
 		// There is still a possibility that ForceMode2D.Force will work better
 		if (isApex) {
-			backCellRB.AddForce(force, ForceMode2D.Impulse);
+			backCellRB.AddForce(force, ForceMode.Impulse);
 		} else {
-			frontCellRB.AddForce(force * 0.5f, ForceMode2D.Impulse);
-			backCellRB.AddForce(force * 0.5f, ForceMode2D.Impulse);
+			frontCellRB.AddForce(force * 0.5f, ForceMode.Impulse);
+			backCellRB.AddForce(force * 0.5f, ForceMode.Impulse);
 		}
 	}
 
