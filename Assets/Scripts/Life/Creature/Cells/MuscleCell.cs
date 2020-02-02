@@ -36,7 +36,7 @@ public class MuscleCell : Cell {
 
 	override public float springyness {
 		get {
-			return 30f;
+			return 60f;
 		}
 	}
 
@@ -118,6 +118,7 @@ public class MuscleCell : Cell {
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.northEast)) {
 			SpringJoint spring = northEastNeighbour.cell.GetSpring(this);
 			if (spring != null) {
+				spring.minDistance = spring.maxDistance = radius + northEastNeighbour.cell.radius;
 				//spring.distance = this.radius + northEastNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing north east");
@@ -126,6 +127,7 @@ public class MuscleCell : Cell {
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
 			if (northSpring != null) {
+				northSpring.minDistance = northSpring.maxDistance = radius + northNeighbour.cell.radius;
 				//northSpring.distance = this.radius + northNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing north");
@@ -136,6 +138,7 @@ public class MuscleCell : Cell {
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.northWest)) {
 			SpringJoint spring = northWestNeighbour.cell.GetSpring(this);
 			if (spring != null) {
+				spring.minDistance = spring.maxDistance = radius + northWestNeighbour.cell.radius;
 				//spring.distance = this.radius + northWestNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing north west"); // This has occured :/ TODO: figgure out and fix!
@@ -145,6 +148,7 @@ public class MuscleCell : Cell {
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest)) {
 			if (southWestSpring != null) {
+				southWestSpring.minDistance = southWestSpring.maxDistance = radius + southWestNeighbour.cell.radius;
 				//southWestSpring.distance = this.radius + southWestNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing south west");
@@ -154,6 +158,7 @@ public class MuscleCell : Cell {
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.south)) {
 			SpringJoint spring = southNeighbour.cell.GetSpring(this);
 			if (spring != null) {
+				spring.minDistance = spring.maxDistance = radius + southNeighbour.cell.radius;
 				//spring.distance = this.radius + southNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing south");
@@ -162,6 +167,7 @@ public class MuscleCell : Cell {
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast)) {
 			if (southEastSpring != null) {
+				southEastSpring.minDistance = southEastSpring.maxDistance = radius + southEastNeighbour.cell.radius;
 				//southEastSpring.distance = this.radius + southEastNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing south east");

@@ -78,7 +78,7 @@ public class JawCell : Cell {
 	}
 
 	//Called from cell mouth
-	public void TriggerEnter(Collider2D other) {
+	public void TriggerEnter(Collider other) {
 		if (other.gameObject.layer == 2) { //dont trigger other's mouth colliders, only on cells
 			return;
 		}
@@ -98,6 +98,8 @@ public class JawCell : Cell {
 		Cell prayCell = other.GetComponent<Cell>();
 
 		if (prayCell != null && prayCell.creature != creature) {
+
+			Debug.Log("Eating other");
 
 			Creature pray = prayCell.creature;
 			// spare mother
@@ -127,7 +129,7 @@ public class JawCell : Cell {
 	}
 
 	//Called from cell mouth
-	public void TriggerExit(Collider2D other) {
+	public void TriggerExit(Collider other) {
 		if (other.gameObject.layer == 2) { //don't trigger other's mouth colliders, only on cells
 			return;
 		}

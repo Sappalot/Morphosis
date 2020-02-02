@@ -401,7 +401,7 @@ public abstract class Cell : MonoBehaviour {
 
 	virtual public float springDamping {
 		get {
-			return 0.2f;
+			return 0.0f;
 		}
 	}
 
@@ -647,9 +647,9 @@ public abstract class Cell : MonoBehaviour {
 
 	public Vector2 velocity {
 		get {
-			Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
+			Rigidbody rb = gameObject.GetComponent<Rigidbody>();
 			if (rb != null) {
-				return gameObject.GetComponent<Rigidbody2D>().velocity;
+				return gameObject.GetComponent<Rigidbody>().velocity;
 			} else {
 				return Vector2.zero;
 			}
