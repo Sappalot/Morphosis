@@ -146,7 +146,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void RemoveLabelCanvas() {
-		Destroy(labelCanvas);
+		DestroyImmediate(labelCanvas);
 	}
 
 
@@ -732,21 +732,23 @@ public abstract class Cell : MonoBehaviour {
 
 	// On freeze
 	public void DisablePhysicsComponents() {
+		// Do we really need to destroy the spring, we are making rb kinematic
+
 		//My own 3 springs to others
 		if (northSpring != null) {
-			Destroy(northSpring);
+			DestroyImmediate(northSpring);
 		}
 		if (southEastSpring != null) {
-			Destroy(southEastSpring);
+			DestroyImmediate(southEastSpring);
 		}
 		if (southWestSpring != null) {
-			Destroy(southWestSpring);
+			DestroyImmediate(southWestSpring);
 		}
 
 		//My placenta springs
 		if (hasPlacentaSprings) {
 			foreach (SpringJoint placentaSpring in placentaSprings) {
-				Destroy(placentaSpring);
+				DestroyImmediate(placentaSpring);
 			}
 		}
 
@@ -768,20 +770,20 @@ public abstract class Cell : MonoBehaviour {
 		// Destroy collider
 		SphereCollider collider = gameObject.GetComponent<SphereCollider>();
 		if (collider != null) {
-			Destroy(collider);
+			DestroyImmediate(collider);
 		}
 		
 
 		//Destroy ALL hexagonal springs and placenta springs
 		SpringJoint[] springJoints = gameObject.GetComponents<SpringJoint>();
 		foreach (SpringJoint springJoint in springJoints) {
-			Destroy(springJoint);
+			DestroyImmediate(springJoint);
 		}
 		placentaSprings = new SpringJoint[0];
 
-		//Destroy the 
+		//DestroyImmediate the 
 		if (theRigidBody != null) {
-			Destroy(theRigidBody);
+			DestroyImmediate(theRigidBody);
 		}
 	}
 
@@ -926,21 +928,21 @@ public abstract class Cell : MonoBehaviour {
 			if (cellNeighbourDictionary[i].cell == cell) {
 				if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.north) {
 					if (northSpring != null) {
-						Destroy(northSpring);
+						DestroyImmediate(northSpring);
 						northSpring = null;
 						//northSpring.connectedBody = null;
 						//northSpring.enabled = false;
 					}
 				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.southWest) {
 					if (southWestSpring != null) {
-						Destroy(southWestSpring);
+						DestroyImmediate(southWestSpring);
 						southWestSpring = null;
 						//southWestSpring.connectedBody = null;
 						//southWestSpring.enabled = false;
 					}
 				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.southEast) {
 					if (southEastSpring != null) {
-						Destroy(southEastSpring);
+						DestroyImmediate(southEastSpring);
 						southEastSpring = null;
 						//southEastSpring.connectedBody = null;
 						//southEastSpring.enabled = false;
@@ -1042,16 +1044,16 @@ public abstract class Cell : MonoBehaviour {
 		// TODO: repair only the spings that was broken
 
 		if (northSpring == null) {
-			northSpring = CreateSpring();
+			northSpring = SpawnSpringComponent();
 		}
 		if (southWestSpring == null) {
-			southWestSpring = CreateSpring();
+			southWestSpring = SpawnSpringComponent();
 		}
 		if (southEastSpring == null) {
-			southEastSpring = CreateSpring();
+			southEastSpring = SpawnSpringComponent();
 		}
 	}
-	private SpringJoint CreateSpring() {
+	private SpringJoint SpawnSpringComponent() {
 		SpringJoint spring = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
 		spring.connectedBody = null;
 		spring.anchor = Vector3.zero;
@@ -1072,38 +1074,37 @@ public abstract class Cell : MonoBehaviour {
 		// Intra creatures
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
 			if (northSpring == null) {
-				northSpring = CreateSpring();
+				northSpring = SpawnSpringComponent();
 			}
 			northSpring.connectedBody = northNeighbour.cell.theRigidBody;
 		} else if (northSpring != null) {
-			Destroy(northSpring);
+			DestroyImmediate(northSpring);
 			northSpring = null;
 		}
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest)) {
 			if (southWestSpring == null) {
-				southWestSpring = CreateSpring();
+				southWestSpring = SpawnSpringComponent();
 			}
 			southWestSpring.connectedBody = southWestNeighbour.cell.theRigidBody;
 		} else if (southWestSpring != null) {
-			Destroy(southWestSpring);
+			DestroyImmediate(southWestSpring);
 			southWestSpring = null;
 		}
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast)) {
 			if (southEastSpring == null) {
-				southEastSpring = CreateSpring();
+				southEastSpring = SpawnSpringComponent();
 			}
 			southEastSpring.connectedBody = southEastNeighbour.cell.theRigidBody;
 		} else if (southEastSpring != null) {
-			Destroy(southEastSpring);
+			DestroyImmediate(southEastSpring);
 			southEastSpring = null;
 		}
 	}
 
 	//Phenotype
 	public void UpdatePlacentaSpringConnections(Creature creature) {
-		return; //  for now
 
 		// Here we connect origin cell to placenta of mother only
 
@@ -1112,7 +1113,7 @@ public abstract class Cell : MonoBehaviour {
 
 		if (placentaSprings != null) {
 			for (int i = 0; i < placentaSprings.Length; i++) {
-				Destroy(placentaSprings[i]);
+				DestroyImmediate(placentaSprings[i]);
 			}
 		}
 		placentaSprings = new SpringJoint[0];
@@ -1133,13 +1134,13 @@ public abstract class Cell : MonoBehaviour {
 
 		placentaSprings = new SpringJoint[placentaCells.Count];
 		for (int i = 0; i < placentaCells.Count; i++) {
-			placentaSprings[i] = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
+			placentaSprings[i] = SpawnSpringComponent();
 			placentaSprings[i].connectedBody = placentaCells[i].theRigidBody;
 			//placentaSprings[i].distance = 1f;
 			//placentaSprings[i].autoConfigureDistance = false; // Found ya! :)
 
-			//placentaSprings[i].frequency = (springFrequenzy + placentaCells[i].springFrequenzy) / 2f;
-			//placentaSprings[i].dampingRatio = (springDamping + placentaCells[i].springDamping) / 2f;
+			placentaSprings[i].spring = (springyness + placentaCells[i].springyness) / 2f;
+			placentaSprings[i].damper = (springDamping + placentaCells[i].springDamping) / 2f;
 		}
 	}
 
@@ -1514,7 +1515,7 @@ public abstract class Cell : MonoBehaviour {
 		//My placenta springs
 		if (placentaSprings != null) {
 			foreach (SpringJoint placentaSpring in placentaSprings) {
-				Destroy(placentaSpring);
+				DestroyImmediate(placentaSpring);
 			}
 		}
 		placentaSprings = new SpringJoint[0];
@@ -1554,7 +1555,9 @@ public abstract class Cell : MonoBehaviour {
 		ClearSignal();
 	}
 
-	virtual public void OnBorrowToWorld() { }
+	virtual public void OnBorrowToWorld() {
+
+	}
 
 	// Save
 	private CellData cellData = new CellData();

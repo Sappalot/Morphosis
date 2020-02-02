@@ -88,7 +88,7 @@ public class CellPool : MonoBehaviour {
 		cell.OnRecycleCell(); // should be done even if we are going to delete cell (because jaws need to free their prays)
 
 		if (!GlobalSettings.instance.pooling.cell) {
-			Destroy(cell.gameObject);
+			DestroyImmediate(cell.gameObject);
 			return;
 		}
 

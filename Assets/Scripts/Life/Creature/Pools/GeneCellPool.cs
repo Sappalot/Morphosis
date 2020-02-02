@@ -84,7 +84,7 @@ public class GeneCellPool : MonoBehaviour {
 	//Note: make sure there are no object out there with references to this returned cell
 	public void Recycle(Cell geneCell) {
 		if (!GlobalSettings.instance.pooling.geneCell) {
-			Destroy(geneCell.gameObject);
+			DestroyImmediate(geneCell.gameObject);
 			return;
 		}
 		geneCell.transform.parent = transform;

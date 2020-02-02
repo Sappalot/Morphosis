@@ -112,13 +112,11 @@ public class MuscleCell : Cell {
 	//long seldom = 0;
 	public override void UpdateSpringLengths() {
 
-		// dont care for now
-
 		//Intra creature
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.northEast)) {
 			SpringJoint spring = northEastNeighbour.cell.GetSpring(this);
 			if (spring != null) {
-				spring.minDistance = spring.maxDistance = radius + northEastNeighbour.cell.radius;
+				spring.minDistance = spring.maxDistance = this.radius + northEastNeighbour.cell.radius;
 				//spring.distance = this.radius + northEastNeighbour.cell.radius;
 			} else {
 				Debug.LogError("Spring missing north east");

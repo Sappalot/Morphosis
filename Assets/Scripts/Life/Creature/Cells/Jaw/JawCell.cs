@@ -99,8 +99,6 @@ public class JawCell : Cell {
 
 		if (prayCell != null && prayCell.creature != creature) {
 
-			Debug.Log("Eating other");
-
 			Creature pray = prayCell.creature;
 			// spare mother
 			if (!gene.jawCellCannibalizeMother && creature.HasMotherAlive() && creature.GetMotherAlive().id == pray.id) {
