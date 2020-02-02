@@ -34,9 +34,9 @@ public class MuscleCell : Cell {
 		//return (gene.muscleCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.muscleCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
 	}
 
-	override public float springFrequenzy {
+	override public float springyness {
 		get {
-			return 20f;
+			return 30f;
 		}
 	}
 
@@ -111,6 +111,8 @@ public class MuscleCell : Cell {
 
 	//long seldom = 0;
 	public override void UpdateSpringLengths() {
+
+		// dont care for now
 
 		//Intra creature
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.northEast)) {

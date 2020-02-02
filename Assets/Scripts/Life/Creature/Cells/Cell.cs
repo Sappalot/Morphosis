@@ -393,15 +393,15 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	virtual public float springFrequenzy {
+	virtual public float springyness {
 		get {
-			return 5f;
+			return 30f;
 		}
 	}
 
 	virtual public float springDamping {
 		get {
-			return 11f;
+			return 0.2f;
 		}
 	}
 
@@ -447,7 +447,7 @@ public abstract class Cell : MonoBehaviour {
 
 	public void UpdatePlacentaSpringLengths() {
 		foreach (SpringJoint placentaSpring in placentaSprings) {
-			//placentaSpring.distance = radius + placentaSpring.connectedBody.gameObject.GetComponent<Cell>().radius;
+			placentaSpring.minDistance = placentaSpring.maxDistance = radius + placentaSpring.connectedBody.gameObject.GetComponent<Cell>().radius;
 		}
 	}
 
@@ -511,45 +511,45 @@ public abstract class Cell : MonoBehaviour {
 
 
 	public void UpdateSpringFrequenzy() {
-		//if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
-		//	northSpring.frequency = (this.springFrequenzy + northNeighbour.cell.springFrequenzy) / 2f;
-		//	northSpring.dampingRatio = (this.springDamping + northNeighbour.cell.springDamping) / 2f;
-		//}
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
+			northSpring.spring = (this.springyness + northNeighbour.cell.springyness) / 2f;
+			northSpring.damper = (this.springDamping + northNeighbour.cell.springDamping) / 2f;
+		}
 
-		//if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest)) {
-		//	southWestSpring.frequency = (this.springFrequenzy + southWestNeighbour.cell.springFrequenzy) / 2f;
-		//	southWestSpring.dampingRatio = (this.springDamping + southWestNeighbour.cell.springDamping) / 2f;
-		//}
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest)) {
+			southWestSpring.spring = (this.springyness + southWestNeighbour.cell.springyness) / 2f;
+			southWestSpring.damper = (this.springDamping + southWestNeighbour.cell.springDamping) / 2f;
+		}
 
-		//if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast)) {
-		//	southEastSpring.frequency = (this.springFrequenzy + southEastNeighbour.cell.springFrequenzy) / 2f;
-		//	southEastSpring.dampingRatio = (this.springDamping + southEastNeighbour.cell.springDamping) / 2f;
-		//}
+		if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast)) {
+			southEastSpring.spring = (this.springyness + southEastNeighbour.cell.springyness) / 2f;
+			southEastSpring.damper = (this.springDamping + southEastNeighbour.cell.springDamping) / 2f;
+		}
 	}
 
 	public void UpdateSpringsBreakingForce() {
 		if (northSpring != null) {
 			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.north));
 			if (GetCellType() == CellTypeEnum.Muscle || (neighbourCell != null && neighbourCell.GetCellType() == CellTypeEnum.Muscle)) {
-				northSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForceMuscle;
+				northSpring.breakForce = float.PositiveInfinity; // GlobalSettings.instance.phenotype.springBreakingForceMuscle;
 			} else {
-				northSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
+				northSpring.breakForce = float.PositiveInfinity; //GlobalSettings.instance.phenotype.springBreakingForce;
 			}
 		}
 		if (southWestSpring != null) {
 			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.southWest));
 			if (GetCellType() == CellTypeEnum.Muscle || (neighbourCell != null && neighbourCell.GetCellType() == CellTypeEnum.Muscle)) {
-				southWestSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForceMuscle;
+				southWestSpring.breakForce = float.PositiveInfinity; //GlobalSettings.instance.phenotype.springBreakingForceMuscle;
 			} else {
-				southWestSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
+				southWestSpring.breakForce = float.PositiveInfinity; //GlobalSettings.instance.phenotype.springBreakingForce;
 			}
 		}
 		if (southEastSpring != null) {
 			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.southEast));
 			if (GetCellType() == CellTypeEnum.Muscle || (neighbourCell != null && neighbourCell.GetCellType() == CellTypeEnum.Muscle)) {
-				southEastSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForceMuscle;
+				southEastSpring.breakForce = float.PositiveInfinity; //GlobalSettings.instance.phenotype.springBreakingForceMuscle;
 			} else {
-				southEastSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
+				southEastSpring.breakForce = float.PositiveInfinity; //GlobalSettings.instance.phenotype.springBreakingForce;
 			}
 		}
 	}
@@ -926,17 +926,23 @@ public abstract class Cell : MonoBehaviour {
 			if (cellNeighbourDictionary[i].cell == cell) {
 				if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.north) {
 					if (northSpring != null) {
-						northSpring.connectedBody = null;
+						Destroy(northSpring);
+						northSpring = null;
+						//northSpring.connectedBody = null;
 						//northSpring.enabled = false;
 					}
 				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.southWest) {
 					if (southWestSpring != null) {
-						southWestSpring.connectedBody = null;
+						Destroy(southWestSpring);
+						southWestSpring = null;
+						//southWestSpring.connectedBody = null;
 						//southWestSpring.enabled = false;
 					}
 				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.southEast) {
 					if (southEastSpring != null) {
-						southEastSpring.connectedBody = null;
+						Destroy(southEastSpring);
+						southEastSpring = null;
+						//southEastSpring.connectedBody = null;
 						//southEastSpring.enabled = false;
 					}
 				}
@@ -1033,6 +1039,8 @@ public abstract class Cell : MonoBehaviour {
 	public void RepairBrokenSprings() {
 		return;
 
+		// TODO: repair only the spings that was broken
+
 		if (northSpring == null) {
 			northSpring = CreateSpring();
 		}
@@ -1045,47 +1053,58 @@ public abstract class Cell : MonoBehaviour {
 	}
 	private SpringJoint CreateSpring() {
 		SpringJoint spring = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
-		spring.enableCollision = false;
-		spring.autoConfigureConnectedAnchor = false;
-		//spring.autoConfigureDistance = false;
-		//spring.distance = 1f;
 		spring.connectedBody = null;
+		spring.anchor = Vector3.zero;
+		spring.autoConfigureConnectedAnchor = false;
+		spring.connectedAnchor = Vector3.zero;
+		spring.spring = 30f;
+		spring.damper = 0.2f;
+		spring.minDistance = spring.maxDistance = 1f;
+		spring.tolerance = 0.025f;
+		spring.breakForce = float.PositiveInfinity;
+		spring.breakTorque = float.PositiveInfinity;
+		spring.enableCollision = false;
+		spring.enablePreprocessing = false;
 		return spring;
 	}
 
 	public void UpdateSpringConnectionsIntra() {
-		return;
-
-		// WE CANT	UPDATE SPRING CONNECTIONS SINCE THE SPRINGS DOESN'T EXSIST
-
 		// Intra creatures
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
+			if (northSpring == null) {
+				northSpring = CreateSpring();
+			}
 			northSpring.connectedBody = northNeighbour.cell.theRigidBody;
-			//northSpring.enabled = true;
-		} else {
-			northSpring.connectedBody = null;
-			//northSpring.enabled = false;
+		} else if (northSpring != null) {
+			Destroy(northSpring);
+			northSpring = null;
 		}
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.southWest)) {
+			if (southWestSpring == null) {
+				southWestSpring = CreateSpring();
+			}
 			southWestSpring.connectedBody = southWestNeighbour.cell.theRigidBody;
-			//southWestSpring.enabled = true;
-		} else {
-			southWestSpring.connectedBody = null;
-			//southWestSpring.enabled = false;
+		} else if (southWestSpring != null) {
+			Destroy(southWestSpring);
+			southWestSpring = null;
 		}
 
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.southEast)) {
+			if (southEastSpring == null) {
+				southEastSpring = CreateSpring();
+			}
 			southEastSpring.connectedBody = southEastNeighbour.cell.theRigidBody;
-			//southEastSpring.enabled = true;
-		} else {
-			southEastSpring.connectedBody = null;
-			//southEastSpring.enabled = false;
+		} else if (southEastSpring != null) {
+			Destroy(southEastSpring);
+			southEastSpring = null;
 		}
 	}
 
 	//Phenotype
 	public void UpdatePlacentaSpringConnections(Creature creature) {
+		return; //  for now
+
 		// Here we connect origin cell to placenta of mother only
 
 		// We destroy these springs and when cell is recycled, which seems costy
@@ -1476,19 +1495,21 @@ public abstract class Cell : MonoBehaviour {
 		}
 		predators.Clear();
 
-		//My own 3 springs to others
-		if (northSpring != null) {
-			northSpring.connectedBody = null;
-			//northSpring.enabled = false;
-		}
-		if (southEastSpring != null) {
-			southEastSpring.connectedBody = null;
-			//southEastSpring.enabled = false;
-		}
-		if (southWestSpring != null) {
-			southWestSpring.connectedBody = null;
-			//southWestSpring.enabled = false;
-		}
+		// no need to destroy the unused springs
+		////My own 3 springs to others
+		//if (northSpring != null) {
+		
+		//	northSpring.connectedBody = null;
+		//	//northSpring.enabled = false;
+		//}
+		//if (southEastSpring != null) {
+		//	southEastSpring.connectedBody = null;
+		//	//southEastSpring.enabled = false;
+		//}
+		//if (southWestSpring != null) {
+		//	southWestSpring.connectedBody = null;
+		//	//southWestSpring.enabled = false;
+		//}
 
 		//My placenta springs
 		if (placentaSprings != null) {
@@ -1514,15 +1535,15 @@ public abstract class Cell : MonoBehaviour {
 
 		originPulseTick = 0;
 
-		if (northSpring != null) {
-			//northSpring.distance = 1f;
-		}
-		if (southWestSpring != null) {
-			//southWestSpring.distance = 1f;
-		}
-		if (southEastSpring != null) {
-			//southEastSpring.distance = 1f;
-		}
+		//if (northSpring != null) {
+		//	//northSpring.distance = 1f;
+		//}
+		//if (southWestSpring != null) {
+		//	//southWestSpring.distance = 1f;
+		//}
+		//if (southEastSpring != null) {
+		//	//southEastSpring.distance = 1f;
+		//}
 
 		effectFluxFromMotherAttached = 0f;
 		effectFluxToChildrenAttached = 0f;

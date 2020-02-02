@@ -66,7 +66,6 @@ public class Creature : MonoBehaviour {
 		phenotype.UpdateCellsFromGeneCells(this, GetOriginPosition(PhenoGenoEnum.Phenotype), GetOriginHeading(PhenoGenoEnum.Phenotype));
 		
 		phenotype.DisablePhysicsComponents();
-
 		name = sceneGraphName;
 	}
 
@@ -78,7 +77,6 @@ public class Creature : MonoBehaviour {
 		phenotype.SetAllCellStatesToDefault();
 		phenotype.cellsDiffersFromGeneCells = true;
 		bornTick = World.instance.worldTicks;
-
 		name = sceneGraphName;
 	}
 
