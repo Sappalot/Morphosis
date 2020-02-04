@@ -26,6 +26,9 @@ public abstract class Cell : MonoBehaviour {
 	public Rigidbody theRigidBody;
 
 	[HideInInspector]
+	public int hasBeenShownOneFrame;
+
+	[HideInInspector]
 	private Gene m_gene;
 
 	public Gene gene {
@@ -146,7 +149,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void RemoveLabelCanvas() {
-		DestroyImmediate(labelCanvas);
+		Destroy(labelCanvas);
 	}
 
 
@@ -395,7 +398,7 @@ public abstract class Cell : MonoBehaviour {
 
 	virtual public float springyness {
 		get {
-			return 30f;
+			return 500f;
 		}
 	}
 
@@ -531,9 +534,9 @@ public abstract class Cell : MonoBehaviour {
 		if (northSpring != null) {
 			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.north));
 			if (GetCellType() == CellTypeEnum.Muscle || (neighbourCell != null && neighbourCell.GetCellType() == CellTypeEnum.Muscle)) {
-				northSpring.breakForce = float.PositiveInfinity; // GlobalSettings.instance.phenotype.springBreakingForceMuscle;
+				northSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForceMuscle;
 			} else {
-				northSpring.breakForce = float.PositiveInfinity; //GlobalSettings.instance.phenotype.springBreakingForce;
+				northSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
 			}
 		}
 		if (southWestSpring != null) {
@@ -736,19 +739,19 @@ public abstract class Cell : MonoBehaviour {
 
 		//My own 3 springs to others
 		if (northSpring != null) {
-			DestroyImmediate(northSpring);
+			Destroy(northSpring);
 		}
 		if (southEastSpring != null) {
-			DestroyImmediate(southEastSpring);
+			Destroy(southEastSpring);
 		}
 		if (southWestSpring != null) {
-			DestroyImmediate(southWestSpring);
+			Destroy(southWestSpring);
 		}
 
 		//My placenta springs
 		if (hasPlacentaSprings) {
 			foreach (SpringJoint placentaSpring in placentaSprings) {
-				DestroyImmediate(placentaSpring);
+				Destroy(placentaSpring);
 			}
 		}
 
@@ -770,20 +773,20 @@ public abstract class Cell : MonoBehaviour {
 		// Destroy collider
 		SphereCollider collider = gameObject.GetComponent<SphereCollider>();
 		if (collider != null) {
-			DestroyImmediate(collider);
+			Destroy(collider);
 		}
 		
 
 		//Destroy ALL hexagonal springs and placenta springs
 		SpringJoint[] springJoints = gameObject.GetComponents<SpringJoint>();
 		foreach (SpringJoint springJoint in springJoints) {
-			DestroyImmediate(springJoint);
+			Destroy(springJoint);
 		}
 		placentaSprings = new SpringJoint[0];
 
-		//DestroyImmediate the 
+		//Destroy the 
 		if (theRigidBody != null) {
-			DestroyImmediate(theRigidBody);
+			Destroy(theRigidBody);
 		}
 	}
 
@@ -870,6 +873,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 
 		theRigidBody.AddForce(responceForce, ForceMode.Impulse);
+		//Debug.Log(responceForce);
 	}
 
 	//Applies forces to neighbour and returns reaction force to this
@@ -890,6 +894,9 @@ public abstract class Cell : MonoBehaviour {
 		float k1 = 0.00005f; //Works with RB mass 0.08
 		float k2 = 0.00003f;
 		float magnitude = k1 * diff + Mathf.Sign(diff) * k2 * diff * diff;
+		//if (magnitude < 0.0005f) {
+			//return Vector3.zero; // don't wake it up!! 
+		//}
 		Vector3 alphaForce = Vector3.Cross(alphaVector, new Vector3(0f, 0f, 1f)) * magnitude;
 		Vector3 betaForce = Vector3.Cross(betaVector, new Vector3(0f, 0f, -1f)) * magnitude;
 
@@ -928,21 +935,21 @@ public abstract class Cell : MonoBehaviour {
 			if (cellNeighbourDictionary[i].cell == cell) {
 				if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.north) {
 					if (northSpring != null) {
-						DestroyImmediate(northSpring);
+						Destroy(northSpring);
 						northSpring = null;
 						//northSpring.connectedBody = null;
 						//northSpring.enabled = false;
 					}
 				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.southWest) {
 					if (southWestSpring != null) {
-						DestroyImmediate(southWestSpring);
+						Destroy(southWestSpring);
 						southWestSpring = null;
 						//southWestSpring.connectedBody = null;
 						//southWestSpring.enabled = false;
 					}
 				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.southEast) {
 					if (southEastSpring != null) {
-						DestroyImmediate(southEastSpring);
+						Destroy(southEastSpring);
 						southEastSpring = null;
 						//southEastSpring.connectedBody = null;
 						//southEastSpring.enabled = false;
@@ -1034,7 +1041,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	void OnJointBreak2D(Joint2D brokenJoint) {
+	private void OnJointBreak(float breakForce) {
 		World.instance.life.KillCreatureByBreaking(creature, true);
 	}
 
@@ -1059,10 +1066,10 @@ public abstract class Cell : MonoBehaviour {
 		spring.anchor = Vector3.zero;
 		spring.autoConfigureConnectedAnchor = false;
 		spring.connectedAnchor = Vector3.zero;
-		spring.spring = 30f;
-		spring.damper = 0.2f;
+		spring.spring = 500f;
+		spring.damper = 0f;
 		spring.minDistance = spring.maxDistance = 1f;
-		spring.tolerance = 0.025f;
+		spring.tolerance = 0.05f;
 		spring.breakForce = float.PositiveInfinity;
 		spring.breakTorque = float.PositiveInfinity;
 		spring.enableCollision = false;
@@ -1072,13 +1079,25 @@ public abstract class Cell : MonoBehaviour {
 
 	public void UpdateSpringConnectionsIntra() {
 		// Intra creatures
+		bool hasMuscleTrouble = false;
+
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
 			if (northSpring == null) {
 				northSpring = SpawnSpringComponent();
 			}
+			if (northNeighbour.cell.GetCellType() == CellTypeEnum.Muscle || GetCellType() == CellTypeEnum.Muscle) {
+				GetComponent<SphereCollider>().enabled = false;
+				northNeighbour.cell.GetComponent<SphereCollider>().enabled = false;
+
+				GetComponent<SphereCollider>().enabled = true;
+				northNeighbour.cell.GetComponent<SphereCollider>().enabled = true;
+			}
+			hasBeenShownOneFrame = 0;
+			northNeighbour.cell.hasBeenShownOneFrame = 0;
+			//northSpring.minDistance = northSpring.maxDistance = radius + northNeighbour.cell.radius;
 			northSpring.connectedBody = northNeighbour.cell.theRigidBody;
 		} else if (northSpring != null) {
-			DestroyImmediate(northSpring);
+			Destroy(northSpring);
 			northSpring = null;
 		}
 
@@ -1086,9 +1105,19 @@ public abstract class Cell : MonoBehaviour {
 			if (southWestSpring == null) {
 				southWestSpring = SpawnSpringComponent();
 			}
+			if (southWestNeighbour.cell.GetCellType() == CellTypeEnum.Muscle || GetCellType() == CellTypeEnum.Muscle) {
+				GetComponent<SphereCollider>().enabled = false;
+				southWestNeighbour.cell.GetComponent<SphereCollider>().enabled = false;
+
+				GetComponent<SphereCollider>().enabled = true;
+				southWestNeighbour.cell.GetComponent<SphereCollider>().enabled = true;
+			}
+			hasBeenShownOneFrame = 0;
+			southWestNeighbour.cell.hasBeenShownOneFrame = 0;
+			//southWestSpring.minDistance = southWestSpring.maxDistance = radius + southWestNeighbour.cell.radius;
 			southWestSpring.connectedBody = southWestNeighbour.cell.theRigidBody;
 		} else if (southWestSpring != null) {
-			DestroyImmediate(southWestSpring);
+			Destroy(southWestSpring);
 			southWestSpring = null;
 		}
 
@@ -1096,11 +1125,22 @@ public abstract class Cell : MonoBehaviour {
 			if (southEastSpring == null) {
 				southEastSpring = SpawnSpringComponent();
 			}
+			if (southEastNeighbour.cell.GetCellType() == CellTypeEnum.Muscle || GetCellType() == CellTypeEnum.Muscle) {
+				GetComponent<SphereCollider>().enabled = false;
+				southEastNeighbour.cell.GetComponent<SphereCollider>().enabled = false;
+
+				GetComponent<SphereCollider>().enabled = true;
+				southEastNeighbour.cell.GetComponent<SphereCollider>().enabled = true;
+			}
+			hasBeenShownOneFrame = 0;
+			southEastNeighbour.cell.hasBeenShownOneFrame = 0;
+			//southEastSpring.minDistance = southEastSpring.maxDistance = radius + southEastNeighbour.cell.radius;
 			southEastSpring.connectedBody = southEastNeighbour.cell.theRigidBody;
 		} else if (southEastSpring != null) {
-			DestroyImmediate(southEastSpring);
+			Destroy(southEastSpring);
 			southEastSpring = null;
 		}
+
 	}
 
 	//Phenotype
@@ -1113,7 +1153,7 @@ public abstract class Cell : MonoBehaviour {
 
 		if (placentaSprings != null) {
 			for (int i = 0; i < placentaSprings.Length; i++) {
-				DestroyImmediate(placentaSprings[i]);
+				Destroy(placentaSprings[i]);
 			}
 		}
 		placentaSprings = new SpringJoint[0];
@@ -1399,8 +1439,6 @@ public abstract class Cell : MonoBehaviour {
 				}
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.ramSpeed) {
 				filledCircleSprite.color = Color.blue;
-
-
 			}
 
 		} else { // Genotype...
@@ -1496,26 +1534,25 @@ public abstract class Cell : MonoBehaviour {
 		}
 		predators.Clear();
 
-		// no need to destroy the unused springs
-		////My own 3 springs to others
-		//if (northSpring != null) {
-		
-		//	northSpring.connectedBody = null;
-		//	//northSpring.enabled = false;
-		//}
-		//if (southEastSpring != null) {
-		//	southEastSpring.connectedBody = null;
-		//	//southEastSpring.enabled = false;
-		//}
-		//if (southWestSpring != null) {
-		//	southWestSpring.connectedBody = null;
-		//	//southWestSpring.enabled = false;
-		//}
+		if (northSpring != null) {
+			Destroy(northSpring);
+			northSpring = null;
+		}
+
+		if (southWestSpring != null) {
+			Destroy(southWestSpring);
+			southWestSpring = null;
+		}
+
+		if (southEastSpring != null) {
+			Destroy(southEastSpring);
+			southEastSpring = null;
+		}
 
 		//My placenta springs
 		if (placentaSprings != null) {
 			foreach (SpringJoint placentaSpring in placentaSprings) {
-				DestroyImmediate(placentaSpring);
+				Destroy(placentaSpring);
 			}
 		}
 		placentaSprings = new SpringJoint[0];
@@ -1535,16 +1572,6 @@ public abstract class Cell : MonoBehaviour {
 		transform.localScale = new Vector3(1f, 1f, 1f);
 
 		originPulseTick = 0;
-
-		//if (northSpring != null) {
-		//	//northSpring.distance = 1f;
-		//}
-		//if (southWestSpring != null) {
-		//	//southWestSpring.distance = 1f;
-		//}
-		//if (southEastSpring != null) {
-		//	//southEastSpring.distance = 1f;
-		//}
 
 		effectFluxFromMotherAttached = 0f;
 		effectFluxToChildrenAttached = 0f;

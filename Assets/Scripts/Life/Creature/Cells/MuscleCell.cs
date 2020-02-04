@@ -36,7 +36,7 @@ public class MuscleCell : Cell {
 
 	override public float springyness {
 		get {
-			return 60f;
+			return 1000f;
 		}
 	}
 
@@ -64,7 +64,7 @@ public class MuscleCell : Cell {
 
 			bool isRadiusDirty = false;
 
-			if (isContracting && !creature.phenotype.IsSliding(worldTicks)) {
+			if (isContracting && !creature.phenotype.IsSliding(worldTicks) ) {
 				// Contracting
 				if (radius > minRadius) {
 					effectProductionInternalDown = GlobalSettings.instance.phenotype.muscleEffectCostRelaxing + contractionCostEffect;

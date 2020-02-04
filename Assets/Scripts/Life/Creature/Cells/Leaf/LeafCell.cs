@@ -35,7 +35,7 @@ public class LeafCell : Cell {
 
 	public override void OnBorrowToWorld() {
 		if (raycastHitArray == null) {
-			raycastHitArray = new RaycastHit2D[(int)GlobalSettings.instance.phenotype.leafCellSunMaxRange];
+			raycastHitArray = new RaycastHit[(int)GlobalSettings.instance.phenotype.leafCellSunMaxRange];
 		}
 		SetDefaultState();
 		base.OnBorrowToWorld();
@@ -68,15 +68,17 @@ public class LeafCell : Cell {
 				float rayRange = maxRange;
 
 				//RaycastHit2D[] hits = Physics2D.RaycastAll(start, direction, maxRange, 1);
-				int raycastHitCount = Physics2D.RaycastNonAlloc(start, direction, raycastHitArray, maxRange, 1);
+				//int raycastHitCount = Physics2D.RaycastNonAlloc(start, direction, raycastHitArray, maxRange, 1);
+				Ray ray = new Ray(start, direction);
+				int raycastHitCount = Physics.RaycastNonAlloc(ray, raycastHitArray, maxRange, 1);
 				//Store all entries --> exits
 				List<HitPoint> enterExit = new List<HitPoint>();
 
 				float transparentTravelDistance = 0f;
 
 				for (int index = 0; index < raycastHitCount; index++) {
-					RaycastHit2D hit = raycastHitArray[index];
-					RaycastHit2D previousHit = raycastHitArray[Mathf.Max(index - 1, 0)];
+					RaycastHit hit = raycastHitArray[index];
+					RaycastHit previousHit = raycastHitArray[Mathf.Max(index - 1, 0)];
 
 					if (index == 0) {
 						//first hitpoint
@@ -148,7 +150,7 @@ public class LeafCell : Cell {
 
 				if (raycastHitCount > 0 && rayEnergy >= 0f) {
 					//Last hit: cell, then air after it
-					RaycastHit2D hit = raycastHitArray[raycastHitCount - 1];
+					RaycastHit hit = raycastHitArray[raycastHitCount - 1];
 
 					enterExit.Add(new HitPoint(HitType.beginAir, enterExit[enterExit.Count - 1].distance + 1f));
 
@@ -234,11 +236,11 @@ public class LeafCell : Cell {
 		}
 	}
 
-	private float GetEnergyLoss(RaycastHit2D hit, float energyLossAir) {
+	private float GetEnergyLoss(RaycastHit hit, float energyLossAir) {
 		CollisionType type = GetCollisionType(hit);
 
 		if (type == CollisionType.ownCell || type == CollisionType.connectedViaClusterCell) {
-			return energyLossAir * 5f;
+			return energyLossAir * 15f; // 5
 			float transparencyAtHit = GetTransparencyOfHit(hit);
 			return Mathf.Lerp(energyLossAir * 10f * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.phenotype.leafCellCount), energyLossAir, transparencyAtHit);
 		} else if (type == CollisionType.othersCell) {
@@ -251,7 +253,7 @@ public class LeafCell : Cell {
 		}
 	}
 
-	private bool IsTransparentCell(RaycastHit2D hit) {
+	private bool IsTransparentCell(RaycastHit hit) {
 		CollisionType type = GetCollisionType(hit);
 
 		if (type == CollisionType.ownCell) {
@@ -263,7 +265,7 @@ public class LeafCell : Cell {
 		}
 	}
 
-	public float GetTransparencyOfHit(RaycastHit2D hit) {
+	public float GetTransparencyOfHit(RaycastHit hit) {
 		return 0; //Everything has same transpareance when it comes to my cells, //Everything has same transpareance when it comes to opponent cells
 		Cell hitCell = hit.collider.gameObject.GetComponent<Cell>();
 		if (hitCell != null) {
@@ -273,7 +275,7 @@ public class LeafCell : Cell {
 	}
 
 	//Opt. this array should contain enoug fields to store all hits
-	private RaycastHit2D[] raycastHitArray;
+	private RaycastHit[] raycastHitArray;
 
 
 	//energy far is allways negative
@@ -296,7 +298,7 @@ public class LeafCell : Cell {
 		otherObstacle,
 	}
 
-	private CollisionType GetCollisionType(RaycastHit2D hit) {
+	private CollisionType GetCollisionType(RaycastHit hit) {
 		if (hit.collider.gameObject.GetComponent<Cell>() != null) {
 			Creature hitCreature = hit.collider.gameObject.GetComponent<Cell>().creature; 
 			if (hitCreature == creature) {
@@ -314,7 +316,7 @@ public class LeafCell : Cell {
 		return CollisionType.otherObstacle;
 	}
 
-	private CellTypeEnum GetCollisionCellType(RaycastHit2D hit) {
+	private CellTypeEnum GetCollisionCellType(RaycastHit hit) {
 		if (hit.collider.gameObject.GetComponent<Cell>() != null) {
 			return hit.collider.gameObject.GetComponent<Cell>().GetCellType();
 		}
@@ -332,7 +334,7 @@ public class LeafCell : Cell {
 		}
 	}
 
-	private Color GetCollisionColor(RaycastHit2D hit) {
+	private Color GetCollisionColor(RaycastHit hit) {
 		return GetColorForCollisionType(GetCollisionType(hit));
 	}
 

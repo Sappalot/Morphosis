@@ -511,7 +511,8 @@ public class Phenotype : MonoBehaviour {
 				}
 
 				// Is the cell too far away from root? Does this ever happen???
-				if (Vector2.Distance(spawnPosition, originCell.position) > Creature.maxRadiusCircle) {
+				// todo don't restrict cells to grow in a hexagon around origin, but cap the number of cells instead
+				if (Vector2.Distance(spawnPosition, originCell.position) > Creature.maxRadiusCircle + 2f) {
 					Debug.Log("Building too far far away!!!!");
 				}
 
@@ -1649,7 +1650,7 @@ public class Phenotype : MonoBehaviour {
 		// We are applying force only if mussceles are set to contract
 		// Edges, let edge-wings apply proper forces to neighbouring cells, caused by muscle edges swiming through ether
 
-		//if (originCell.theRigidBody.IsAwake()) {
+		//if (originCell.theRigidBody.IsSleeping()) {
 			if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
 				edges.UpdatePhysics(creature, worldTick);
 			}
