@@ -36,7 +36,7 @@ public class MuscleCell : Cell {
 
 	override public float springyness {
 		get {
-			return 1000f;
+			return 100f; // 1000
 		}
 	}
 

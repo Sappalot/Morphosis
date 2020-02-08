@@ -698,7 +698,6 @@ public class Phenotype : MonoBehaviour {
 			UpdateNeighbourReferencesInterBody(creature);
 
 			//Springs
-			RepairBrokenSprings();
 			UpdateSpringsConnections();
 			UpdatePlacentaSpringConnections(creature);
 			foreach (Creature child in creature.GetAttachedChildrenAlive()) {
@@ -805,13 +804,6 @@ public class Phenotype : MonoBehaviour {
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
 			cell.UpdateGroups(motherId);
-		}
-	}
-
-	private void RepairBrokenSprings() {
-		for (int index = 0; index < cellList.Count; index++) {
-			Cell cell = cellList[index];
-			cell.RepairBrokenSprings();
 		}
 	}
 
@@ -1214,6 +1206,7 @@ public class Phenotype : MonoBehaviour {
 		Cell cell = null;
 
 		cell = Morphosis.instance.cellPool.Borrow(type);
+		
 
 		//haxzor workaround, may caus phisics to explode
 		//Cell is activated in Update instead of here

@@ -398,7 +398,7 @@ public abstract class Cell : MonoBehaviour {
 
 	virtual public float springyness {
 		get {
-			return 500f;
+			return 50f; // 500
 		}
 	}
 
@@ -542,17 +542,17 @@ public abstract class Cell : MonoBehaviour {
 		if (southWestSpring != null) {
 			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.southWest));
 			if (GetCellType() == CellTypeEnum.Muscle || (neighbourCell != null && neighbourCell.GetCellType() == CellTypeEnum.Muscle)) {
-				southWestSpring.breakForce = float.PositiveInfinity; //GlobalSettings.instance.phenotype.springBreakingForceMuscle;
+				southWestSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForceMuscle;
 			} else {
-				southWestSpring.breakForce = float.PositiveInfinity; //GlobalSettings.instance.phenotype.springBreakingForce;
+				southWestSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
 			}
 		}
 		if (southEastSpring != null) {
 			Cell neighbourCell = GetNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.southEast));
 			if (GetCellType() == CellTypeEnum.Muscle || (neighbourCell != null && neighbourCell.GetCellType() == CellTypeEnum.Muscle)) {
-				southEastSpring.breakForce = float.PositiveInfinity; //GlobalSettings.instance.phenotype.springBreakingForceMuscle;
+				southEastSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForceMuscle;
 			} else {
-				southEastSpring.breakForce = float.PositiveInfinity; //GlobalSettings.instance.phenotype.springBreakingForce;
+				southEastSpring.breakForce = GlobalSettings.instance.phenotype.springBreakingForce;
 			}
 		}
 	}
@@ -735,16 +735,19 @@ public abstract class Cell : MonoBehaviour {
 
 	// On freeze
 	public void DisablePhysicsComponents() {
-		// Do we really need to destroy the spring, we are making rb kinematic
+		// Do we really need to Destroy the spring, we are making rb kinematic
 
 		//My own 3 springs to others
 		if (northSpring != null) {
+			northSpring.spring = 0f;
 			Destroy(northSpring);
 		}
 		if (southEastSpring != null) {
+			southEastSpring.spring = 0f;
 			Destroy(southEastSpring);
 		}
 		if (southWestSpring != null) {
+			southWestSpring.spring = 0f;
 			Destroy(southWestSpring);
 		}
 
@@ -935,24 +938,24 @@ public abstract class Cell : MonoBehaviour {
 			if (cellNeighbourDictionary[i].cell == cell) {
 				if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.north) {
 					if (northSpring != null) {
+						northSpring.spring = 0f;
+						northSpring.connectedBody = null;
 						Destroy(northSpring);
 						northSpring = null;
-						//northSpring.connectedBody = null;
-						//northSpring.enabled = false;
 					}
 				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.southWest) {
 					if (southWestSpring != null) {
+						southWestSpring.spring = 0f;
+						southWestSpring.connectedBody = null;
 						Destroy(southWestSpring);
 						southWestSpring = null;
-						//southWestSpring.connectedBody = null;
-						//southWestSpring.enabled = false;
 					}
 				} else if (AngleUtil.CardinalIndexToCardinalEnum(i) == CardinalDirectionEnum.southEast) {
 					if (southEastSpring != null) {
+						southEastSpring.spring = 0f;
+						southEastSpring.connectedBody = null;
 						Destroy(southEastSpring);
 						southEastSpring = null;
-						//southEastSpring.connectedBody = null;
-						//southEastSpring.enabled = false;
 					}
 				}
 
@@ -1042,24 +1045,11 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	private void OnJointBreak(float breakForce) {
+		//Debug.Break();
+		//GlobalPanel.instance.SelectPausePhysics();
 		World.instance.life.KillCreatureByBreaking(creature, true);
 	}
 
-	public void RepairBrokenSprings() {
-		return;
-
-		// TODO: repair only the spings that was broken
-
-		if (northSpring == null) {
-			northSpring = SpawnSpringComponent();
-		}
-		if (southWestSpring == null) {
-			southWestSpring = SpawnSpringComponent();
-		}
-		if (southEastSpring == null) {
-			southEastSpring = SpawnSpringComponent();
-		}
-	}
 	private SpringJoint SpawnSpringComponent() {
 		SpringJoint spring = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
 		spring.connectedBody = null;
@@ -1079,8 +1069,6 @@ public abstract class Cell : MonoBehaviour {
 
 	public void UpdateSpringConnectionsIntra() {
 		// Intra creatures
-		bool hasMuscleTrouble = false;
-
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
 			if (northSpring == null) {
 				northSpring = SpawnSpringComponent();
@@ -1097,6 +1085,7 @@ public abstract class Cell : MonoBehaviour {
 			//northSpring.minDistance = northSpring.maxDistance = radius + northNeighbour.cell.radius;
 			northSpring.connectedBody = northNeighbour.cell.theRigidBody;
 		} else if (northSpring != null) {
+			northSpring.spring = 0f;
 			Destroy(northSpring);
 			northSpring = null;
 		}
@@ -1117,6 +1106,7 @@ public abstract class Cell : MonoBehaviour {
 			//southWestSpring.minDistance = southWestSpring.maxDistance = radius + southWestNeighbour.cell.radius;
 			southWestSpring.connectedBody = southWestNeighbour.cell.theRigidBody;
 		} else if (southWestSpring != null) {
+			southWestSpring.spring = 0f;
 			Destroy(southWestSpring);
 			southWestSpring = null;
 		}
@@ -1137,6 +1127,7 @@ public abstract class Cell : MonoBehaviour {
 			//southEastSpring.minDistance = southEastSpring.maxDistance = radius + southEastNeighbour.cell.radius;
 			southEastSpring.connectedBody = southEastNeighbour.cell.theRigidBody;
 		} else if (southEastSpring != null) {
+			southEastSpring.spring = 0f;
 			Destroy(southEastSpring);
 			southEastSpring = null;
 		}
@@ -1148,12 +1139,14 @@ public abstract class Cell : MonoBehaviour {
 
 		// Here we connect origin cell to placenta of mother only
 
-		// We destroy these springs and when cell is recycled, which seems costy
+		// We Destroy these springs and when cell is recycled, which seems costy
 		// Why not just create placenta springs as we need them and let them be??
 
 		if (placentaSprings != null) {
 			for (int i = 0; i < placentaSprings.Length; i++) {
+				placentaSprings[i].spring = 0f;
 				Destroy(placentaSprings[i]);
+				placentaSprings[i] = null;
 			}
 		}
 		placentaSprings = new SpringJoint[0];
@@ -1524,10 +1517,15 @@ public abstract class Cell : MonoBehaviour {
 		return false;
 	}
 
+	public int recycleQuaranteneCooldown;
+
 	//Phenotype only
 	virtual public void OnRecycleCell() {
+		recycleQuaranteneCooldown = 10;
+
 		//theRigidBody.simulated = true; //physics seem to have problem when borrowing cells and then enabling RB, it should be ok to enable it here since cell is disabled anyway
-		//theRigidBody.isKinematic = true; // Disabled anyway... we don't want cell to be bouncing about and consume cpu when in storage
+		theRigidBody.velocity = Vector3.zero;
+		theRigidBody.isKinematic = true; // Disabled anyway... we don't want cell to be bouncing about and consume cpu when in storage
 
 		foreach (JawCell predator in predators) {
 			predator.RemovePray(this); // make jaw forget about me as a pray of his
@@ -1535,16 +1533,19 @@ public abstract class Cell : MonoBehaviour {
 		predators.Clear();
 
 		if (northSpring != null) {
+			northSpring.spring = 0f;
 			Destroy(northSpring);
 			northSpring = null;
 		}
 
 		if (southWestSpring != null) {
+			southWestSpring.spring = 0f;
 			Destroy(southWestSpring);
 			southWestSpring = null;
 		}
 
 		if (southEastSpring != null) {
+			southEastSpring.spring = 0f;
 			Destroy(southEastSpring);
 			southEastSpring = null;
 		}
@@ -1552,6 +1553,7 @@ public abstract class Cell : MonoBehaviour {
 		//My placenta springs
 		if (placentaSprings != null) {
 			foreach (SpringJoint placentaSpring in placentaSprings) {
+				placentaSpring.spring = 0f;
 				Destroy(placentaSpring);
 			}
 		}
@@ -1583,7 +1585,10 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	virtual public void OnBorrowToWorld() {
-
+		if (theRigidBody != null) {
+			theRigidBody.isKinematic = false;
+			theRigidBody.velocity = Vector3.zero;
+		}
 	}
 
 	// Save

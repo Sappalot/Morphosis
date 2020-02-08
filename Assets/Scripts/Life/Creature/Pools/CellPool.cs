@@ -107,7 +107,8 @@ public class CellPool : MonoBehaviour {
 	}
 
 	private Cell PopCell(Queue<Cell> queue) {
-		if (queue.Count > 0) {
+		if (queue.Count > 0) { // && queue.Peek().recycleQuaranteneCooldown <= 0 && false
+
 			Cell cell = queue.Dequeue();
 			//FreePosition(cell.poolPosition);
 			cell.gameObject.SetActive(true); // Causes: Assertion failed: Invalid SortingGroup index set in Renderer
@@ -160,4 +161,40 @@ public class CellPool : MonoBehaviour {
 	private void FreePosition(int pos) {
 		vacantPositions[pos] = true;
 	}
+
+	private void Update() {
+		foreach(Cell c in storedEgg) {
+			c.recycleQuaranteneCooldown--;
+		}
+
+		foreach (Cell c in storedFungal) {
+			c.recycleQuaranteneCooldown--;
+		}
+
+		foreach (Cell c in storedJaw) {
+			c.recycleQuaranteneCooldown--;
+		}
+
+		foreach (Cell c in storedLeaf) {
+			c.recycleQuaranteneCooldown--;
+		}
+
+		foreach (Cell c in storedMuscle) {
+			c.recycleQuaranteneCooldown--;
+		}
+
+		foreach (Cell c in storedRoot) {
+			c.recycleQuaranteneCooldown--;
+		}
+
+		foreach (Cell c in storedShell) {
+			c.recycleQuaranteneCooldown--;
+		}
+
+		foreach (Cell c in storedVein) {
+			c.recycleQuaranteneCooldown--;
+		}
+	}
 }
+
+
