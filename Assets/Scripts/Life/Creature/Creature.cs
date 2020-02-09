@@ -7,9 +7,11 @@ using Boo.Lang.Runtime;
 // Holds information that does not fit into genes or body 
 public class Creature : MonoBehaviour {
 
-	public static int maxRadiusHexagon = 7; // used to limit blueprint. R = 7 ==> we can have can have 7 cells north of origin at most origin = 0, 1 = neighbour, .... cell 7 = perifery 
-	public static float maxRadiusCircle = maxRadiusHexagon + 0.5f; // used for culling
-	
+	public static int maxCellCount = 40;
+	public static int maxRadiusHexagon = 16; // used to limit blueprint. R = 16 ==> we can have can have 16 cells north of origin at most origin = 0, 1 = neighbour, .... cell 16 = perifery 
+	public static float maxRadiusCircle = maxRadiusHexagon + 0.5f; // used for culling and check so that we don't build too far away from origin 
+		
+
 	public Genotype genotype;
 	public Phenotype phenotype;
 

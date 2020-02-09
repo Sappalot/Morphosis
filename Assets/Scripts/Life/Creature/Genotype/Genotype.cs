@@ -324,17 +324,19 @@ public class Genotype : MonoBehaviour {
 
 			List<Cell> spawningFromCells = new List<Cell>();
 			Cell origin = SpawnGeneCell(creature, GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite);
-			origin.heading = 90f;
+			origin.heading = 90f; // North
 			spawningFromCells.Add(origin);
 
+			const int sanityLimit = 100;
+
 			List<Cell> nextSpawningFromCells = new List<Cell>();
-			for (int buildOrderIndex = 1; spawningFromCells.Count != 0 && buildOrderIndex < 50; buildOrderIndex++) {
-				//if (buildOrderIndex >= maxSize) {
-				//	break;
-				//}
+			for (int buildOrderIndex = 1; spawningFromCells.Count != 0 && buildOrderIndex < sanityLimit; buildOrderIndex++) {
 
 				for (int index = 0; index < spawningFromCells.Count; index++) {
 					Cell spawningFromCell = spawningFromCells[index];
+					spawningFromCell.failBlueprintNeighboursDueToAreaOrCount = false; // assume we will not be stopped
+					spawningFromCell.failBlueprintNeighboursDueToConcurentBuild = false; // assume we will not be stopped
+
 					for (int referenceCardinalIndex = 0; referenceCardinalIndex < 6; referenceCardinalIndex++) {
 						GeneReference geneReference = spawningFromCell.gene.GetFlippableReference(referenceCardinalIndex, spawningFromCell.flipSide);
 						if (geneReference != null) {
@@ -344,6 +346,7 @@ public class Genotype : MonoBehaviour {
 
 							//if (!CellMap.IsInsideHexagon(referenceCellMapPosition, Creature.maxRadiusHexagon)) {
 							if (!CellMap.IsInsideMaximumHexagon(referenceCellMapPosition)) {
+								spawningFromCell.failBlueprintNeighboursDueToAreaOrCount = true;
 								continue;
 							}
 
@@ -353,11 +356,18 @@ public class Genotype : MonoBehaviour {
 									//only time we spawn a cell if there is a vacant spot
 									Cell newCell = SpawnGeneCell(creature, referenceGene, referenceCellMapPosition, buildOrderIndex, referenceBindHeading, geneReference.flipSide);
 									nextSpawningFromCells.Add(newCell);
-									//geneCellList.Add(spawningFromCell); //Why was this line typed, Removed 2017-08-23??
+
 								} else {
 									Debug.Assert(residentCell.buildIndex <= buildOrderIndex, "Trying to spawn a cell at a location where a cell of lower build index is allready present.");
 									if (residentCell.buildIndex == buildOrderIndex) {
 										//trying to spawn a cell where there is one allready with the same buildOrderIndex, in fight over this place bothe cells will loose, so the resident will be removed
+										
+										//mark the cell that spawned the resident cell
+										geneCellMap.GetCell(geneCellMap.GetCellGridPositionUpBranch(residentCell.mapPosition)).failBlueprintNeighboursDueToConcurentBuild = true;
+										//...and the current cell
+										spawningFromCell.failBlueprintNeighboursDueToConcurentBuild = true;
+
+										// then remove the resident cell
 										Morphosis.instance.geneCellPool.Recycle(residentCell);
 										geneCellListIndexSorted.Remove(residentCell);
 										geneCellMap.RemoveCellAtGridPosition(residentCell.mapPosition);
@@ -372,10 +382,27 @@ public class Genotype : MonoBehaviour {
 						}
 					}
 				}
+
+				if (geneCellMap.cellCount > Creature.maxCellCount) {
+					//MarkeAllGeneCellsAsCanGrowNeighbours();
+
+					// We have more cells in the blueprint than max size, so REMOVE the last buildOrderIndex layer ALL TOGETHER and call it a creature
+					foreach (Cell tooMuch in nextSpawningFromCells) { // nextSpawningFromCells contains all cells in last layer added
+						//cell 'back' from cell, we are about to remove, could not build this cell, so its arrow will be coloured red 
+						geneCellMap.GetCell(geneCellMap.GetCellGridPositionUpBranch(tooMuch.mapPosition)).failBlueprintNeighboursDueToAreaOrCount = true;
+
+						Morphosis.instance.geneCellPool.Recycle(tooMuch);
+						geneCellListIndexSorted.Remove(tooMuch);
+						geneCellMap.RemoveCellAtGridPosition(tooMuch.mapPosition);
+					}
+
+					break; // Blueprint is done
+				}
+
 				spawningFromCells.Clear();
 				spawningFromCells.AddRange(nextSpawningFromCells);
 				nextSpawningFromCells.Clear();
-				if (buildOrderIndex == 99) {
+				if (buildOrderIndex == sanityLimit) {
 					throw new System.Exception("Creature generation going on for too long");
 				}
 			}
@@ -515,7 +542,17 @@ public class Genotype : MonoBehaviour {
 					geneCellListIndexSorted[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
 				}
 			} else {
-				geneCellListIndexSorted[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
+				if (geneCellListIndexSorted[index].failBlueprintNeighboursDueToAreaOrCount && !geneCellListIndexSorted[index].failBlueprintNeighboursDueToConcurentBuild) {
+					// We could not 'grow' one or more neighbours
+					geneCellListIndexSorted[index].SetTriangleColor(ColorScheme.instance.failBlueprintNeighboursDueToAreaOrCountArrow);
+				} else if (!geneCellListIndexSorted[index].failBlueprintNeighboursDueToAreaOrCount && geneCellListIndexSorted[index].failBlueprintNeighboursDueToConcurentBuild) {
+					geneCellListIndexSorted[index].SetTriangleColor(ColorScheme.instance.failBlueprintNeighboursDueToConcurentBuildArrow);
+				} else if (geneCellListIndexSorted[index].failBlueprintNeighboursDueToAreaOrCount && geneCellListIndexSorted[index].failBlueprintNeighboursDueToConcurentBuild) {
+					geneCellListIndexSorted[index].SetTriangleColor(ColorScheme.instance.failBlueprintNeighboursDueToAreaOrCountArrow * 0.5f + ColorScheme.instance.failBlueprintNeighboursDueToConcurentBuildArrow * 0.5f);
+				} else {
+					geneCellListIndexSorted[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
+				}
+				
 			}
 		}
 

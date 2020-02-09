@@ -46,6 +46,9 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color noMotherArrow;
 	public Color noMotherAttachedArrow;
 	public Color motherAttachedArrow;
+	public Color failBlueprintNeighboursDueToAreaOrCountArrow;
+	public Color failBlueprintNeighboursDueToConcurentBuildArrow;
+
 
 	public Color creatureLocked;
 	public Color creatureUnlocked;
