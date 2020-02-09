@@ -215,9 +215,13 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		// General -> Drag
 		public float normalDrag = 0.15f;
-		public float normalShellDrag = 0.15f;
-		public float normalLeafDrag = 0.15f;
+		public float normalDragSingleCell = 1f;
+		public float normalDragDoubleCell = 0.5f;
 		public float slideDrag = 0.05f;
+		public float slideDragSingleCell = 1f;
+
+		public float springFrequenzy = 5;
+		public float springFrequenzyMuscleCell = 20;
 
 		// General -> Teleport
 		public float telepokeImpulseStrength = 1f; // N / teleport tick | impulse applied every teleport tick

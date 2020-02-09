@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+// TODO: remove
 public class PidCircle : MonoBehaviour {
 
 	private bool m_isOn;
@@ -107,7 +108,6 @@ public class PidCircle : MonoBehaviour {
 		fpsErrorD = 0f;
 
 		UpdateCircle();
-		PhenotypePhysicsPanel.instance.UpdateSliderAndToggleValue(); //sets it to the fpsGoal of this class
 	}
 
 	// Load / Sava
@@ -138,6 +138,5 @@ public class PidCircle : MonoBehaviour {
 		fpsErrorD = pidCircleData.fpsErrorD;
 
 		UpdateCircle();
-		PhenotypePhysicsPanel.instance.UpdateSliderAndToggleValue();
 	}
 }

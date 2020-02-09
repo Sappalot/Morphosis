@@ -6,7 +6,7 @@ public class Terrain : MonoBehaviour {
 	
 	// Update is called once per frame
 	public void UpdatePhysics () {
-		pidCircle.UpdatePhysics();
+		//pidCircle.UpdatePhysics();
 	}
 
 	public void Restart() {

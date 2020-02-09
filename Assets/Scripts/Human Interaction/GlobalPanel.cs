@@ -103,7 +103,12 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public Toggle graphicsPeripheryToggle;
 	public Toggle graphicsEffectsToggle;
 	public Toggle graphicsMuscleForcesToggle;
+	public Toggle graphicsSkelletonBoneToggle;
 
+	public void OnChangedSkelletonBoneToggle() {
+		World.instance.life.MakeAllCreaturesDirty();
+		Freezer.instance.MakeAllCreaturesDirty();
+	}
 
 	// Sound
 	public Toggle soundCreatures;
@@ -191,8 +196,6 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 				particlePoolCellBleedCount.text = "Cell Bleed: " + ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellBleed) + " + " + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellBleed) + " = " + (ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellBleed) + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellBleed));
 				particlePoolCellScatterCount.text = "Cell Scatter: " + ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellScatter) + " + " + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellScatter) + " = " + (ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellScatter) + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellScatter));
 				particlePoolCellTeleportCount.text = "Cell Teleport: " + ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellTeleport) + " + " + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellTeleport) + " = " + (ParticlePool.instance.GetStoredParticlesCount(ParticleTypeEnum.cellTeleport) + ParticlePool.instance.GetLoanedParticlesCount(ParticleTypeEnum.cellTeleport));
-
-				PhenotypePhysicsPanel.instance.UpdateFpsSliderText();
 			}
 		}
 	}

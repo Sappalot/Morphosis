@@ -42,7 +42,7 @@ public class Edges : MonoBehaviour {
 			//if (tempEdge.isFin) {
 			tempEdge.UpdateNormal();
 			tempEdge.UpdateVelocity();
-			tempEdge.UpdateForce(creature, tempEdge.isFin && !(tempEdge.childCell.IsHibernating() && tempEdge.parentCell.IsHibernating()), worldTick);
+			tempEdge.UpdateForce(creature, tempEdge.isFin, worldTick);
 			//}
 		}
 		for (int index = 0; index < edgeList.Count; index++) {

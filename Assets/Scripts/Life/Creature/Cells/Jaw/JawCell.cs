@@ -24,37 +24,25 @@ public class JawCell : Cell {
 			return;
 		}
 		if (PhenotypePhysicsPanel.instance.functionJaw.isOn) {
-			if (IsHibernating()) {
-				mouth.gameObject.SetActive(false);
-				effectProductionPredPrayUp = 0f;
-				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellHibernateEffectCost;
-			} else {
-				mouth.gameObject.SetActive(true);
-				effectProductionInternalDown = GlobalSettings.instance.phenotype.jawCellEffectCost;
+			mouth.gameObject.SetActive(true);
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.jawCellEffectCost;
 
-				//Hack release pray
-				RemoveNullPrays(); //We need this one not to run into null refs once in a blue moon
-				CellPanel.instance.MakeDirty();
+			//Hack release pray
+			RemoveNullPrays(); //We need this one not to run into null refs once in a blue moon
+			CellPanel.instance.MakeDirty();
 
-				effectProductionPredPrayUp = eatEffect;
+			effectProductionPredPrayUp = eatEffect;
 
-				// We need to update per frame, not just when we enter trigger, as ram speed might change during stay in the "trigger zone"
-				foreach (Pray pray in prays.Values) {
-					pray.UpdateMetabolism(this);
-				}
+			// We need to update per frame, not just when we enter trigger, as ram speed might change during stay in the "trigger zone"
+			foreach (Pray pray in prays.Values) {
+				pray.UpdateMetabolism(this);
 			}
-
 			base.UpdateCellWork(deltaTicks, worldTicks);
 		} else {
 			mouth.gameObject.SetActive(false);
 			effectProductionPredPrayUp = 0f;
 			effectProductionInternalDown = 0f;
 		}
-	}
-
-	override public bool IsHibernating() {
-		return false;
-		//return (gene.jawCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.jawCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
 	}
 
 	private float eatEffect {
@@ -88,12 +76,6 @@ public class JawCell : Cell {
 		if (creature.phenotype.isGrabbed) { //dont eat others if i'm being dragged around of user (copy / move)
 			return;
 		}
-		if (IsHibernating()) {
-			return;
-		}
-		//if (phenoGeno == PhenoGenoEnum.Genotype) {
-		//	return;
-		//}
 
 		Cell prayCell = other.GetComponent<Cell>();
 

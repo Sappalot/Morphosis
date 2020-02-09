@@ -674,7 +674,7 @@ public class Creature : MonoBehaviour {
 
 			if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 				//phenotype.ShowShadow(false);
-				phenotype.UpdateOutline(this, CreatureSelectionPanel.instance.IsSelected(this), CreatureSelectionPanel.instance.IsSelectedCluster(this));
+				phenotype.UpdateTriangleOutlineAndBones(this, CreatureSelectionPanel.instance.IsSelected(this), CreatureSelectionPanel.instance.IsSelectedCluster(this));
 
 				//Show selected or not
 				phenotype.ShowCellsSelected(false);
@@ -684,7 +684,7 @@ public class Creature : MonoBehaviour {
 			} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 				//Show selected or not
 				//phenotype.ShowOutline(false);
-				genotype.UpdateOutline(this, CreatureSelectionPanel.instance.IsSelected(this));
+				genotype.UpdateOutlineTriangleAndBones(this, CreatureSelectionPanel.instance.IsSelected(this));
 				genotype.ShowGeneCellsSelected(false);
 				if (CreatureSelectionPanel.instance.soloSelected == this) {
 					genotype.ShowGeneCellsSelectedWithGene(GenePanel.instance.selectedGene, true);
@@ -715,7 +715,9 @@ public class Creature : MonoBehaviour {
 
 	//Returns true if creature grew
 	public void UpdatePhysics(ulong worldTicks) {
-		
+		//phenotype.UpdateSpringsFrequenze(); // While testing
+
+
 		//time
 		growTicks++;
 		if (growTicks >= GlobalSettings.instance.quality.growTickPeriod) {

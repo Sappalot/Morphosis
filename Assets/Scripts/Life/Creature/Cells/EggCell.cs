@@ -11,25 +11,16 @@ public class EggCell : Cell {
 
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
-			if (IsHibernating()) {
-				effectProductionInternalUp = 0f;
-				effectProductionInternalDown = GlobalSettings.instance.phenotype.cellHibernateEffectCost;
-			} else {
-				effectProductionInternalUp = 0f;
-				effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCellEffectCost;
-			}
+			effectProductionInternalUp = 0f;
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCellEffectCost;
+
+			// Fertilization is made in Creature.UpdateFertilize(...)
 
 			base.UpdateCellWork(deltaTicks, worldTicks);
 		} else {
 			effectProductionInternalUp = 0f;
 			effectProductionInternalDown = 0f;
 		}
-	}
-
-	// Are we going to let cell hibernate or not??
-	override public bool IsHibernating() {
-		return false;
-		//return (gene.eggCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.eggCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
 	}
 
 	public override CellTypeEnum GetCellType() {

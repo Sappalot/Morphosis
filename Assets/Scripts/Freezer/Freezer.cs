@@ -55,6 +55,12 @@ public class Freezer : MonoSingleton<Freezer> {
 		}));
 	}
 
+	public void MakeAllCreaturesDirty() {
+		for (int index = 0; index < creatures.Count; index++) {
+			creatures[index].MakeDirtyGraphics();
+		}
+	}
+
 	public IEnumerator KillAllCreatureCo(Action onDone) {
 		List<Creature> toKill = new List<Creature>(creatureList);
 		foreach (Creature creature in toKill) {

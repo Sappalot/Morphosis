@@ -9,15 +9,8 @@ public class Edge : MonoBehaviour {
 
 	public float mEnergyTransfer = 0.5f; //directional ?
 
-	private bool mIsFin = false;
 	private EdgeAttachment attachmentParent; // current
 	private EdgeAttachment attachmentChild; // next
-
-	//private float[] forceMagnitudeArray = new float[10];
-	//private int forceMagnitudeArrayPointer = 0;
-
-	//private Vector3[] forceArray = new Vector3[1];
-	//private int forceArrayPointer = 0;
 
 	public bool wasDoupletChecked;
 
@@ -31,10 +24,6 @@ public class Edge : MonoBehaviour {
 	private Vector3 normal; //used with wings
 	private Vector3 velocity; //used with wings
 	private Vector3 force; //used with wings
-
-	private Vector2 forceAverage;
-
-	private float strength;
 
 	//------
 	public Cell.ApexAngle apexAngle;
@@ -100,6 +89,7 @@ public class Edge : MonoBehaviour {
 		wasDoupletChecked = false;
 	}
 
+	private bool mIsFin = false;
 	public bool isFin { 
 		get {
 			if (apexAngle == Cell.ApexAngle.apex0) {
@@ -146,19 +136,6 @@ public class Edge : MonoBehaviour {
 		//TODO: If draw wings && inside frustum
 		if (GlobalPanel.instance.graphicsMuscleForcesToggle.isOn && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			if (frontCell != null && backCell != null) {
-
-				//float forceMagnitude = force.magnitude;
-				//forceMagnitudeArray[forceMagnitudeArrayPointer] = forceMagnitude;
-				//forceMagnitudeArrayPointer++;
-				//if (forceMagnitudeArrayPointer >= forceMagnitudeArray.Length) {
-				//	forceMagnitudeArrayPointer = 0;
-				//}
-
-				//float sum = 0f;
-				//for (int pos = 0; pos < forceMagnitudeArray.Length; pos++) {
-				//	sum += forceMagnitudeArray[pos];
-				//}
-				//float forceAverage = sum / forceMagnitudeArray.Length;
 
 				mainArrow.SetActive(true);
 				normalArrow.SetActive(true);
@@ -259,20 +236,6 @@ public class Edge : MonoBehaviour {
 		} else {
 			force = Vector3.zero;
 		}
-
-		////average
-		//forceArray[forceArrayPointer] = force;
-		//forceArrayPointer++;
-		//if (forceArrayPointer >= forceArray.Length) {
-		//	forceArrayPointer = 0;
-		//}
-
-		//Vector3 sum = Vector3.zero;
-		//for (int pos = 0; pos < forceArray.Length; pos++) {
-		//	sum += forceArray[pos];
-		//}
-		//forceAverage = sum / forceArray.Length;
-
 	}
 
 	//Apply current force as an impulse on cells

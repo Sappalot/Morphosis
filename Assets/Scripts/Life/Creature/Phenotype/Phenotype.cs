@@ -721,8 +721,7 @@ public class Phenotype : MonoBehaviour {
 			//Veins
 			veins.GenerateVeins(creature, cellMap);
 
-			//Debug
-			UpdateSpringsFrequenze(); //testing only
+			UpdateSpringsFrequenze();
 			UpdateSpringsBreakingForce();
 
 			//test with no muscel collider
@@ -972,6 +971,8 @@ public class Phenotype : MonoBehaviour {
 			cellMap.AddKilledTimeStamp(deleteCell.mapPosition, worldTicks);
 		}
 
+		SetCellDragNormal();
+
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 
 		CellPanel.instance.MakeDirty();
@@ -1154,7 +1155,7 @@ public class Phenotype : MonoBehaviour {
 		return kickTickStamp > 0 && worldTicks < kickTickStamp + slideDurationTicks;
 	}
 
-	private void SetCellDragNormal() {
+	public void SetCellDragNormal() {
 		foreach (Cell cell in cellList) {
 			cell.SetNormalDrag();
 		}
@@ -1245,9 +1246,9 @@ public class Phenotype : MonoBehaviour {
 		return cellList.Count;
 	}
 
-	private void UpdateSpringsFrequenze() {
+	public void UpdateSpringsFrequenze() {
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdateSpringFrequenzy();
+			cellList[index].UpdateSpringFrequenzyAndDampingratio();
 		}
 	}
 
@@ -1271,7 +1272,7 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public void UpdateOutline(Creature creature, bool isSelected, bool isClusterSelected) {
+	public void UpdateTriangleOutlineAndBones(Creature creature, bool isSelected, bool isClusterSelected) {
 		for (int index = 0; index < cellList.Count; index++) {
 			if (isSelected) {
 				cellList[index].ShowOutline(true);
@@ -1287,6 +1288,7 @@ public class Phenotype : MonoBehaviour {
 			cellList[index].ShowOnTop(false);
 		}
 
+		// update flip triangle
 		for (int index = 0; index < cellList.Count; index++) {
 			if (cellList[index].isOrigin) {
 				cellList[index].ShowTriangle(true);
@@ -1308,6 +1310,11 @@ public class Phenotype : MonoBehaviour {
 			} else {
 				cellList[index].ShowTriangle(false);
 			}
+		}
+
+		// skelleton bone
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].ShowSkelletonBone(!cellList[index].isOrigin && GlobalPanel.instance.graphicsSkelletonBoneToggle.isOn);
 		}
 	}
 
@@ -1644,10 +1651,13 @@ public class Phenotype : MonoBehaviour {
 		// Edges, let edge-wings apply proper forces to neighbouring cells, caused by muscle edges swiming through ether
 
 		if (originCell.theRigidBody.IsAwake()) {
-			if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
+			if (PhenotypePhysicsPanel.instance.waterReactiveForce.isOn) {
 				edges.UpdatePhysics(creature, worldTick);
 			}
-			UpdateRotation();
+			if (PhenotypePhysicsPanel.instance.hingeMomentum.isOn) {
+				UpdateRotation();
+			}
+			
 
 			Vector2 velocitySum = new Vector3();
 			for (int index = 0; index < cellList.Count; index++) {

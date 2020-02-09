@@ -487,7 +487,7 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-	public void UpdateOutline(Creature creature, bool isSelected) {
+	public void UpdateOutlineTriangleAndBones(Creature creature, bool isSelected) {
 		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
 			if (isSelected) {
 				geneCellListIndexSorted[index].ShowOutline(true);
@@ -518,7 +518,13 @@ public class Genotype : MonoBehaviour {
 				geneCellListIndexSorted[index].SetTriangleColor(ColorScheme.instance.noMotherAttachedArrow);
 			}
 		}
+
+		// skelleton bone
+		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
+			geneCellListIndexSorted[index].ShowSkelletonBone(false);
+		}
 	}
+
 	public void UpdateGraphics(bool isSelected) {
 		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
 			geneCellListIndexSorted[index].UpdateGraphics(isSelected);

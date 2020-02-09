@@ -12,6 +12,7 @@ public abstract class Cell : MonoBehaviour {
 	public SpriteRenderer filledCircleSprite; //cell type colour
 	public SpriteRenderer creatureSelectedSprite;
 	public SpriteRenderer shadowSprite;
+	public SpriteRenderer skelletonBone;
 	public Text label;
 	public Canvas labelCanvas;
 
@@ -393,11 +394,17 @@ public abstract class Cell : MonoBehaviour {
 
 	// Drag
 	virtual public void SetNormalDrag() {
-		theRigidBody.drag = GlobalSettings.instance.phenotype.normalDrag;
+		if (creature.phenotype.cellCount >= 3) {
+			theRigidBody.drag = GlobalSettings.instance.phenotype.normalDrag;
+		} else if (creature.phenotype.cellCount == 2) {
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.waterReactiveForce.isOn ? GlobalSettings.instance.phenotype.normalDragDoubleCell : 0f; // not really reactive force (from wings), but only drag
+		} else {
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.waterReactiveForce.isOn ? GlobalSettings.instance.phenotype.normalDragSingleCell : 0f; // not really reactive force (from wings), but only drag
+		}
 	}
 
-	virtual public void SetSlideDrag() {
-		theRigidBody.drag = GlobalSettings.instance.phenotype.slideDrag;
+	public void SetSlideDrag() {
+			theRigidBody.drag = 0f;
 	}
 	// ^ Drag ^
 
@@ -409,7 +416,7 @@ public abstract class Cell : MonoBehaviour {
 
 	virtual public float springFrequenzy {
 		get {
-			return 5f;
+			return GlobalSettings.instance.phenotype.springFrequenzy;
 		}
 	}
 
@@ -525,7 +532,7 @@ public abstract class Cell : MonoBehaviour {
 	virtual public void UpdateSpringLengths() { }
 
 
-	public void UpdateSpringFrequenzy() {
+	public void UpdateSpringFrequenzyAndDampingratio() {
 		if (HasOwnNeighbourCell(CardinalDirectionEnum.north)) {
 			northSpring.frequency = (this.springFrequenzy + northNeighbour.cell.springFrequenzy) / 2f;
 			northSpring.dampingRatio = (this.springDamping + northNeighbour.cell.springDamping) / 2f;
@@ -585,6 +592,10 @@ public abstract class Cell : MonoBehaviour {
 		for (int index = 0; index < transform.childCount; index++) {
 			transform.GetChild(index).gameObject.SetActive(show);
 		}
+	}
+
+	public void ShowSkelletonBone(bool show) {
+		skelletonBone.enabled = show;
 	}
 
 	public void ShowTriangle(bool show) {
@@ -1491,10 +1502,6 @@ public abstract class Cell : MonoBehaviour {
 				cellNeighbourDictionary[index].isAngleDirty = true;
 			}
 		}
-	}
-
-	virtual public bool IsHibernating() {
-		return false;
 	}
 
 	//Phenotype only

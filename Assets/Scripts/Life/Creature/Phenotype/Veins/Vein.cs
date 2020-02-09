@@ -40,11 +40,6 @@ public class Vein : MonoBehaviour {
 
 		isPlacentaVein = parentCell.creature.id != childCell.creature.id;
 
-		if (!PhenotypePhysicsPanel.instance.functionVein.isOn) {
-			effectType = EffectEnum.LowLow;
-			return;
-		}
-
 		if (!IsHighEfficiency(parentCell.GetCellType()) && !IsHighEfficiency(childCell.GetCellType())) {
 			effectType = EffectEnum.LowLow;
 		} else if ((!IsHighEfficiency(parentCell.GetCellType()) && IsHighEfficiency(childCell.GetCellType())) || (IsHighEfficiency(parentCell.GetCellType()) && !IsHighEfficiency(childCell.GetCellType()))) {

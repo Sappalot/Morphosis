@@ -29,14 +29,9 @@ public class MuscleCell : Cell {
 		masterAxoneDistance = creature.genotype.GetDistanceToClosestAxonGeneCellUpBranch(mapPosition);
 	}
 
-	override public bool IsHibernating() {
-		return false;
-		//return (gene.muscleCellHibernateWhenAttachedToMother && creature.IsAttachedToMotherAlive()) || (gene.muscleCellHibernateWhenAttachedToChild && creature.IsAttachedToChildAlive());
-	}
-
 	override public float springFrequenzy {
 		get {
-			return 20f;
+			return GlobalSettings.instance.phenotype.springFrequenzyMuscleCell;
 		}
 	}
 
@@ -48,16 +43,14 @@ public class MuscleCell : Cell {
 
 			bool isContracting = false;
 
-			if (!IsHibernating()) {
-				theRigidBody.WakeUp();
-				if (masterAxonGridPosition != null) {
-					Cell masterAxon = creature.phenotype.cellMap.GetCell(masterAxonGridPosition);
-					if (masterAxon != null) {
-						if (masterAxoneDistance != null) {
-							isContracting = masterAxon.IsAxonPulseContracting((int)masterAxoneDistance);
-						} else {
-							Debug.LogError("We have found a master axone, but failed to calculate the distance there from me!");
-						}
+			theRigidBody.WakeUp();
+			if (masterAxonGridPosition != null) {
+				Cell masterAxon = creature.phenotype.cellMap.GetCell(masterAxonGridPosition);
+				if (masterAxon != null) {
+					if (masterAxoneDistance != null) {
+						isContracting = masterAxon.IsAxonPulseContracting((int)masterAxoneDistance);
+					} else {
+						Debug.LogError("We have found a master axone, but failed to calculate the distance there from me!");
 					}
 				}
 			}

@@ -76,7 +76,7 @@ public class World : MonoSingleton<World> {
 		if (PhenotypePhysicsPanel.instance.teleport.isOn) {
 			Portals.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
 		}
-		if (PhenotypePhysicsPanel.instance.killFugitive.isOn) {
+		if (PhenotypePhysicsPanel.instance.killEscaping.isOn) {
 			TerrainPerimeter.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
 		}
 		
