@@ -70,6 +70,7 @@ public class World : MonoSingleton<World> {
 	}
 
 	public void UpdatePhysics() {
+
 		// test
 		life.UpdateStructure();
 		life.UpdatePhysics(worldTicks);

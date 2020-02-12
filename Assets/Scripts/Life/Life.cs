@@ -73,15 +73,8 @@ public class Life : MonoBehaviour {
 		}
 	}
 
-	public int cellAliveCount {
-		get {
-			int count = 0;
-			foreach (Creature c in creatures) {
-				count += c.cellCount;
-			}
-			return count;
-		}
-	}
+	public int cellAliveCount { get; private set; }
+	
 
 	public int GetCellAliveCount(CellTypeEnum type) {
 		int count = 0;
@@ -464,6 +457,11 @@ public class Life : MonoBehaviour {
 	private List<Creature> killCreatureList = new List<Creature>();
 
 	public void UpdatePhysics(ulong worldTicks) {
+		// Update cell alive count
+		cellAliveCount = 0;
+		foreach (Creature c in creatures) {
+			cellAliveCount += c.cellCount;
+		}
 
 		//Ticks 
 		phenotypePanelTicks++;

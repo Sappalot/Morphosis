@@ -207,6 +207,8 @@ public class LeafCell : Cell {
 			}
 			m_lowPassExposure /= exposureRecordMaxCapacity;
 
+			m_lowPassExposure *= GlobalSettings.instance.phenotype.leafCellSunexposureFactorAtPopulation.Evaluate(World.instance.life.cellAliveCount);
+
 			int attachedMotherCellCount = 0;
 			if (creature.IsAttachedToMotherAlive()) {
 				attachedMotherCellCount = creature.GetMotherAlive().cellCount;
@@ -229,13 +231,13 @@ public class LeafCell : Cell {
 		CollisionType type = GetCollisionType(hit);
 
 		if (type == CollisionType.ownCell || type == CollisionType.connectedViaClusterCell) {
-			return energyLossAir * 5f;
-			float transparencyAtHit = GetTransparencyOfHit(hit);
-			return Mathf.Lerp(energyLossAir * 10f * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.phenotype.leafCellCount), energyLossAir, transparencyAtHit);
+			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell;
+			//float transparencyAtHit = GetTransparencyOfHit(hit);
+			//return Mathf.Lerp(energyLossAir * 10f * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.phenotype.leafCellCount), energyLossAir, transparencyAtHit);
 		} else if (type == CollisionType.othersCell) {
-			return energyLossAir * 20f;
-			float transparencyAtHit = GetTransparencyOfHit(hit);
-			return Mathf.Lerp(energyLossAir * 20f * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.phenotype.leafCellCount), energyLossAir, transparencyAtHit);
+			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell;
+			//float transparencyAtHit = GetTransparencyOfHit(hit);
+			//return Mathf.Lerp(energyLossAir * 20f * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.phenotype.leafCellCount), energyLossAir, transparencyAtHit);
 		} else {
 			//Wall
 			return energyLossAir * 1000f; //J / m; 
