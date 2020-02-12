@@ -142,6 +142,16 @@ public class CellPool : MonoBehaviour {
 		return cell;
 	}
 
+	public void ClearPool() {
+		foreach (Queue<Cell> queue in storedQueues.Values) {
+			Cell[] array = queue.ToArray();
+			foreach (Cell c in array) {
+				Destroy(c.gameObject);
+			}
+			queue.Clear();
+		}
+	}
+
 	private int FirstVacantPosition() {
 		for (int pos = 0; pos < vacantPositions.Count; pos++) {
 			if (vacantPositions[pos]) {

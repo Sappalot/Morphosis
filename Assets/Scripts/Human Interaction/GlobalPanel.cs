@@ -204,6 +204,14 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		physicsUpdateCount++;
 	}
 
+	public void OnClearGeneCellPoolClicked() {
+		Morphosis.instance.geneCellPool.ClearPool();
+	}
+
+	public void OnClearCellPoolClicked() {
+		Morphosis.instance.cellPool.ClearPool();
+	}
+
 	public void OnRestartClicked() {
 		if (Morphosis.isInterferredByOtheActions()) { return; }
 		MouseAction.instance.actionState = MouseActionStateEnum.restartingWorld;

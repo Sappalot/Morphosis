@@ -142,9 +142,13 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float leafCellEffectCost = 1.0f; //W
 		public float leafCellSunMaxEffect = 4.0f; //W
 		public AnimationCurve leafCellSunEffectFactorAtBodySize; //leafCellEffectCost and leafCellSunMaxEffect will be multiplied by this value
+		public AnimationCurve leafCellSunexposureFactorAtPopulation; //exposure will be multiplied by this value
+
 		public float leafCellSunMaxRange = 25.0f; //m
-		public AnimationCurve leafCellSunLossFactorOwnCell;// Effect lost (W / m) own body penetrated : at phenotype size
-		public AnimationCurve leafCellSunLossFactorOtherCell; // Effect lost (W/ m) others body penetrated : at phenotype size
+
+		public float leafCellSunLossFactorOwnCell = 8f;// Effect lost (W / m) own body penetrated
+		public float leafCellSunLossFactorOtherCell = 20f; // Effect lost (W/ m) others body penetrated
+
 		public float leafCellDefaultExposure = 0.33f;
 
 		//Muscle Cell

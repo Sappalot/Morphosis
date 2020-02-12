@@ -129,4 +129,14 @@ public class GeneCellPool : MonoBehaviour {
 		return cell;
 	}
 
+	public void ClearPool() {
+		foreach (Queue <Cell> queue in storedQueues.Values) {
+			Cell[] array = queue.ToArray();
+			foreach(Cell c in array) {
+				Destroy(c.gameObject);
+			}
+			queue.Clear();
+		}
+	}
+
 }
