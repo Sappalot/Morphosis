@@ -28,6 +28,28 @@ public class LeafCell : Cell {
 		}
 	}
 
+	// Friction (Drag)
+	public override void SetFrictionNormal() {
+		if (creature.phenotype.cellCount >= 3) {
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.frictionWater.isOn ? GlobalSettings.instance.phenotype.frictionUnderNormalLeaf : 0f;
+		} else if (creature.phenotype.cellCount == 2) {
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.frictionWater.isOn ? GlobalSettings.instance.phenotype.frictionUnderNormal2CellsLeaf : 0f;
+		} else {
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.frictionWater.isOn ? GlobalSettings.instance.phenotype.frictionUnderNormal1CellLeaf : 0f;
+		}
+	}
+
+	public override void SetFrictionSliding() {
+		if (creature.phenotype.cellCount >= 3) {
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.frictionWater.isOn ? GlobalSettings.instance.phenotype.frictionUnderNormalLeaf * GlobalSettings.instance.phenotype.frictionUnderSlidingFactor : 0f;
+		} else if (creature.phenotype.cellCount == 2) {
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.frictionWater.isOn ? GlobalSettings.instance.phenotype.frictionUnderNormal2CellsLeaf * GlobalSettings.instance.phenotype.frictionUnderSlidingFactor : 0f;
+		} else {
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.frictionWater.isOn ? GlobalSettings.instance.phenotype.frictionUnderNormal1CellLeaf * GlobalSettings.instance.phenotype.frictionUnderSlidingFactor : 0f;
+		}
+	}
+	// ^ Friction (Drag) ^
+
 	public override void OnBorrowToWorld() {
 		if (raycastHitArray == null) {
 			raycastHitArray = new RaycastHit2D[(int)GlobalSettings.instance.phenotype.leafCellSunMaxRange];

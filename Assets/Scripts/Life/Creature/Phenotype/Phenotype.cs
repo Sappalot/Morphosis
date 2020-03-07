@@ -543,9 +543,9 @@ public class Phenotype : MonoBehaviour {
 
 		if (growCellCount > 0) {
 			if (IsSliding((float)worldTick)) {
-				SetCellDragSlide();
+				SetFrictionSliding();
 			} else {
-				SetCellDragNormal();
+				SetFrictionNormal();
 			}
 
 			failedToGrowBuds = 0; // Reset 'wait for a moment to grow if blocked' 
@@ -717,6 +717,9 @@ public class Phenotype : MonoBehaviour {
 				isAlive = false;
 				return false;
 			}
+
+			// Friction
+			SetFrictionNormal();
 
 			//Veins
 			veins.GenerateVeins(creature, cellMap);
@@ -971,7 +974,7 @@ public class Phenotype : MonoBehaviour {
 			cellMap.AddKilledTimeStamp(deleteCell.mapPosition, worldTicks);
 		}
 
-		SetCellDragNormal();
+		SetFrictionNormal();
 
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 
@@ -1155,15 +1158,15 @@ public class Phenotype : MonoBehaviour {
 		return kickTickStamp > 0 && worldTicks < kickTickStamp + slideDurationTicks;
 	}
 
-	public void SetCellDragNormal() {
+	public void SetFrictionNormal() {
 		foreach (Cell cell in cellList) {
-			cell.SetNormalDrag();
+			cell.SetFrictionNormal();
 		}
 	}
 
-	private void SetCellDragSlide() {
+	private void SetFrictionSliding() {
 		foreach (Cell cell in cellList) {
-			cell.SetSlideDrag();
+			cell.SetFrictionSliding();
 		}
 	}
 
@@ -1205,7 +1208,7 @@ public class Phenotype : MonoBehaviour {
 		cell.creature = creature;
 		cell.energy = spawnEnergy; 
 
-		cell.SetNormalDrag();
+		cell.SetFrictionNormal();
 
 		return cell;
 	}
@@ -1651,7 +1654,7 @@ public class Phenotype : MonoBehaviour {
 		// Edges, let edge-wings apply proper forces to neighbouring cells, caused by muscle edges swiming through ether
 
 		if (originCell.theRigidBody.IsAwake()) {
-			if (PhenotypePhysicsPanel.instance.waterReactiveForce.isOn) {
+			if (PhenotypePhysicsPanel.instance.frictionWater.isOn) {
 				edges.UpdatePhysics(creature, worldTick);
 			}
 			if (PhenotypePhysicsPanel.instance.hingeMomentum.isOn) {
@@ -1753,7 +1756,7 @@ public class Phenotype : MonoBehaviour {
 			ApplyDetatchKick();
 			ulong durationTicks = (ulong)(GlobalSettings.instance.phenotype.detatchSlideDurationTicks - GlobalSettings.instance.phenotype.detatchSlideDurationTicksRandomDiff + GlobalSettings.instance.phenotype.detatchSlideDurationTicksRandomDiff * Random.value + GlobalSettings.instance.phenotype.detatchSlideDurationTicksRandomDiff * Random.value);
 			foreach (Creature c in creature.creaturesInCluster) {
-				c.phenotype.SetCellDragSlide();
+				c.phenotype.SetFrictionSliding();
 				c.phenotype.kickTickStamp = worldTick;
 				c.phenotype.slideDurationTicks = durationTicks;
 				c.phenotype.originCell.originPulseTick = originCell.originPulseTick;
@@ -1763,7 +1766,7 @@ public class Phenotype : MonoBehaviour {
 
 	private void TryFinalizeDetatchmentSlide(Creature creature, ulong worldTick) {
 		if (kickTickStamp > 0 && worldTick > kickTickStamp + slideDurationTicks) {
-			SetCellDragNormal(); //make slow
+			SetFrictionNormal(); //make slow
 			kickTickStamp = 0;
 		}
 	}

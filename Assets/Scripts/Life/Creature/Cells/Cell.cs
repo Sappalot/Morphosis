@@ -395,21 +395,29 @@ public abstract class Cell : MonoBehaviour {
 		energy = GlobalSettings.instance.phenotype.cellDefaultEnergy;
 	}
 
-	// Drag
-	virtual public void SetNormalDrag() {
+	// Friction (Drag)
+	virtual public void SetFrictionNormal() {
+
 		if (creature.phenotype.cellCount >= 3) {
-			theRigidBody.drag = GlobalSettings.instance.phenotype.normalDrag;
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.frictionWater.isOn ? GlobalSettings.instance.phenotype.frictionUnderNormal : 0f;
 		} else if (creature.phenotype.cellCount == 2) {
-			theRigidBody.drag = PhenotypePhysicsPanel.instance.waterReactiveForce.isOn ? GlobalSettings.instance.phenotype.normalDragDoubleCell : 0f; // not really reactive force (from wings), but only drag
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.frictionWater.isOn ? GlobalSettings.instance.phenotype.frictionUnderNormal2Cells : 0f; // not really reactive force (from wings), but only drag
 		} else {
-			theRigidBody.drag = PhenotypePhysicsPanel.instance.waterReactiveForce.isOn ? GlobalSettings.instance.phenotype.normalDragSingleCell : 0f; // not really reactive force (from wings), but only drag
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.frictionWater.isOn ? GlobalSettings.instance.phenotype.frictionUnderNormal1Cell : 0f; // not really reactive force (from wings), but only drag
 		}
 	}
 
-	public void SetSlideDrag() {
-			theRigidBody.drag = 0f;
+	virtual public void SetFrictionSliding() {
+
+		if (creature.phenotype.cellCount >= 3) {
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.frictionWater.isOn ? GlobalSettings.instance.phenotype.frictionUnderNormal * GlobalSettings.instance.phenotype.frictionUnderSlidingFactor : 0f;
+		} else if (creature.phenotype.cellCount == 2) {
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.frictionWater.isOn ? GlobalSettings.instance.phenotype.frictionUnderNormal2Cells * GlobalSettings.instance.phenotype.frictionUnderSlidingFactor : 0f; // not really reactive force (from wings), but only drag
+		} else {
+			theRigidBody.drag = PhenotypePhysicsPanel.instance.frictionWater.isOn ? GlobalSettings.instance.phenotype.frictionUnderNormal1Cell * GlobalSettings.instance.phenotype.frictionUnderSlidingFactor : 0f; // not really reactive force (from wings), but only drag
+		}
 	}
-	// ^ Drag ^
+	// ^ Friction (Drag) ^
 
 	public bool hasPlacentaSprings {
 		get {
@@ -750,6 +758,7 @@ public abstract class Cell : MonoBehaviour {
 	public virtual void Setup(PhenoGenoEnum phenoGeno) {
 		this.phenoGeno = phenoGeno;
 		SetLabelEnabled(phenoGeno == PhenoGenoEnum.Genotype);
+
 		//if (phenoGeno == PhenoGenoEnum.Phenotype) {
 		//	Destroy(labelCanvas.gameObject);
 		//}

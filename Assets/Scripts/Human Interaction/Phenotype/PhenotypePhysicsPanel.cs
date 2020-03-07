@@ -10,7 +10,7 @@ public class PhenotypePhysicsPanel : MonoSingleton<PhenotypePhysicsPanel> {
 	public Toggle grow;
 	public Toggle detatch;
 	public Toggle flux;
-	public Toggle waterReactiveForce;
+	public Toggle frictionWater;
 	public Toggle hingeMomentum;
 
 	//Fuction: what cell is doing (and its production), Effect: its cost
@@ -21,7 +21,7 @@ public class PhenotypePhysicsPanel : MonoSingleton<PhenotypePhysicsPanel> {
 
 	public void OnChangedWaterReactiveForce() {
 		foreach (Creature c in World.instance.life.creatures) {
-			c.phenotype.SetCellDragNormal();
+			c.phenotype.SetFrictionNormal();
 		}
 	}
 

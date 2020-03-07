@@ -217,12 +217,17 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float detatchSlideDurationTicks = 10; // s
 		public float detatchSlideDurationTicksRandomDiff = 2; // s to make child locomotion come out of sync with mother
 
-		// General -> Drag
-		public float normalDrag = 0.15f;
-		public float normalDragSingleCell = 1f;
-		public float normalDragDoubleCell = 0.5f;
-		public float slideDrag = 0.05f;
-		public float slideDragSingleCell = 1f;
+		// General -> Friction (aka drag)
+		public float frictionUnderNormal = 0f;
+		public float frictionUnderNormal1Cell = 0.3f; // used to cancel rotation on twin
+		public float frictionUnderNormal2Cells = 0.1f; // used to slow down single cell
+
+		public float frictionUnderNormalLeaf = 0.5f;
+		public float frictionUnderNormal1CellLeaf = 0.8f; // used to cancel rotation on twin
+		public float frictionUnderNormal2CellsLeaf = 0.6f; // used to slow down single cell
+
+		public float frictionUnderSlidingFactor = 0f;
+
 
 		public float springFrequenzy = 5;
 		public float springFrequenzyMuscleCell = 20;
