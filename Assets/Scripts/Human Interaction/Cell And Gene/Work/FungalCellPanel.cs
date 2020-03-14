@@ -9,7 +9,7 @@ public class FungalCellPanel : ComponentPanel {
 				Debug.Log("Update CellPanel");
 			}
 
-			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.fungalCellEffectCost);
+			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.fungalCell.effectProductionDown);
 
 			isDirty = false; 
 		}

@@ -47,7 +47,7 @@ public class EggCellPanel : ComponentPanel {
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
 				fertilizeButton.gameObject.SetActive(false);
 			}
-			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.eggCellEffectCost);
+			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.eggCell.effectProductionDown);
 
 			fertilizeLogicBoxPanel.outputText = "Fertilize asexually";
 

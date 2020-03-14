@@ -9,7 +9,7 @@ public class RootCellPanel : ComponentPanel {
 				Debug.Log("Update CellPanel");
 			}
 
-			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.rootCellEffectCost);
+			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.rootCell.effectProductionDown);
 
 			isDirty = false; 
 		}

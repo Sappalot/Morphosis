@@ -22,14 +22,14 @@ public class Gene {
 	// ^ Muscle Cell ^
 
 	// Shell
-	public int shellCellArmorClass;
-	public int shellCellTransparancyClass;
+	//public int shellCellArmorClass;
+	//public int shellCellTransparancyClass;
 	// ^ Shell ^
 
 	public float armour {
 		get {
 			if (type == CellTypeEnum.Shell) {
-				return ShellCell.GetStrength(shellCellArmorClass);
+				return GlobalSettings.instance.phenotype.shellCell.armour;
 			} else {
 				return 1f;
 			}
@@ -124,8 +124,8 @@ public class Gene {
 		// ^ Jaw Cell ^
 
 		// Shell
-		shellCellArmorClass = 2;
-		shellCellTransparancyClass = 2;
+		//shellCellArmorClass = 2;
+		//shellCellTransparancyClass = 2;
 		// ^ Shell ^
 
 		// Build order
@@ -244,14 +244,14 @@ public class Gene {
 		// ^ Jaw ^
 
 		// Shell...
-		mut = Random.Range(0, 1000f + gs.mutation.shellCellArmorClassChange * strength);
-		if (mut < gs.mutation.shellCellArmorClassChange * strength) {
-			shellCellArmorClass = Mathf.Clamp(shellCellArmorClass - 2 + Random.Range(0, 5), 0, ShellCell.armourClassCount - 1);
-		}
-		mut = Random.Range(0, 1000f + gs.mutation.shellCellTransparancyClassChange * strength);
-		if (mut < gs.mutation.shellCellTransparancyClassChange * strength) {
-			shellCellTransparancyClass = Mathf.Clamp(shellCellTransparancyClass - 2 + Random.Range(0, 5), 0, ShellCell.transparencyClassCount - 1);
-		}
+		//mut = Random.Range(0, 1000f + gs.mutation.shellCellArmorClassChange * strength);
+		//if (mut < gs.mutation.shellCellArmorClassChange * strength) {
+		//	shellCellArmorClass = Mathf.Clamp(shellCellArmorClass - 2 + Random.Range(0, 5), 0, ShellCell.armourClassCount - 1);
+		//}
+		//mut = Random.Range(0, 1000f + gs.mutation.shellCellTransparancyClassChange * strength);
+		//if (mut < gs.mutation.shellCellTransparancyClassChange * strength) {
+		//	shellCellTransparancyClass = Mathf.Clamp(shellCellTransparancyClass - 2 + Random.Range(0, 5), 0, ShellCell.transparencyClassCount - 1);
+		//}
 		// ^ Shell ^
 
 		// Axone
@@ -296,15 +296,6 @@ public class Gene {
 		arrangements[0].Mutate(strength);
 		arrangements[1].Mutate(strength);
 		arrangements[2].Mutate(strength);
-	}
-
-	private void ScrambleMetabolism() {
-		if (type == CellTypeEnum.Shell) {
-			if (Random.Range(0, 3) == 0) {
-				shellCellArmorClass = Random.Range(0, ShellCell.armourClassCount);
-				shellCellTransparancyClass = Random.Range(0, ShellCell.transparencyClassCount);
-			}
-		}
 	}
 
 	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
@@ -353,8 +344,8 @@ public class Gene {
 		// Muscle
 
 		// Shell
-		geneData.shellCellArmourClass = shellCellArmorClass;
-		geneData.shellCellTransparancyClass = shellCellTransparancyClass;
+		//geneData.shellCellArmourClass = shellCellArmorClass;
+		//geneData.shellCellTransparancyClass = shellCellTransparancyClass;
 
 		// Axon
 		geneData.geneAxoneData = axon.UpdateData();
@@ -408,8 +399,8 @@ public class Gene {
 		// Muscle
 
 		// Shell
-		shellCellArmorClass = geneData.shellCellArmourClass;
-		shellCellTransparancyClass = geneData.shellCellTransparancyClass;
+		//shellCellArmorClass = geneData.shellCellArmourClass;
+		//shellCellTransparancyClass = geneData.shellCellTransparancyClass;
 
 		// Axon
 		axon.ApplyData(geneData.geneAxoneData);

@@ -27,15 +27,15 @@ public class RecordStrip {
 		RecordEnum.cellCountMuscle,
 		RecordEnum.cellCountRoot,
 		RecordEnum.cellCountShell,
-		RecordEnum.cellCountShellWood,
-		RecordEnum.cellCountShellMetal,
-		RecordEnum.cellCountShellGlass,
-		RecordEnum.cellCountShellDiamond,
 		RecordEnum.cellCountVein,
 		RecordEnum.creatureCount,
 		RecordEnum.creatureBirthsPerSecond,
 		RecordEnum.creatureDeathsPerSecond,
 		RecordEnum.health,
+		//RecordEnum.cellCountShellWood,
+		//RecordEnum.cellCountShellMetal,
+		//RecordEnum.cellCountShellGlass,
+		//RecordEnum.cellCountShellDiamond,
 	};
 
 	public void Init() {

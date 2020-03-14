@@ -21,12 +21,7 @@ public class ReferenceGraphics : MonoBehaviour {
 			geneReferenceImage.enabled = true;
 
 			// Should we move color to gene
-			if (value.gene.type == CellTypeEnum.Shell) {
-				geneReferenceImage.color = ShellCell.GetColor(value.gene.shellCellArmorClass, value.gene.shellCellTransparancyClass);
-			} else {
-				geneReferenceImage.color = ColorScheme.instance.ToColor(value.gene.type);
-			}
-			
+			geneReferenceImage.color = ColorScheme.instance.ToColor(value.gene.type);
 
 			flipBlackWhite.enabled = value.flipSide == FlipSideEnum.BlackWhite;
 

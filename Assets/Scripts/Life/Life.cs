@@ -74,7 +74,6 @@ public class Life : MonoBehaviour {
 	}
 
 	public int cellAliveCount { get; private set; }
-	
 
 	public int GetCellAliveCount(CellTypeEnum type) {
 		int count = 0;
@@ -84,14 +83,14 @@ public class Life : MonoBehaviour {
 		return count;
 	}
 
-	public int GetShellCellOfMaterialAliveCount(ShellCell.ShellMaterial material) {
+	//public int GetShellCellOfMaterialAliveCount(ShellCell.ShellMaterial material) {
 
-		int count = 0;
-		foreach (Creature c in creatures) {
-			count += c.phenotype.GetShellCellOfMaterialCount(material);
-		}
-		return count;
-	}
+	//	int count = 0;
+	//	foreach (Creature c in creatures) {
+	//		count += c.phenotype.GetShellCellOfMaterialCount(material);
+	//	}
+	//	return count;
+	//}
 
 	public List<Creature> creatures	{
 		get {

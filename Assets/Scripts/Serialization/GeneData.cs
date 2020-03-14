@@ -19,8 +19,8 @@ public class GeneData {
 
 	// Muscle
 
-	public int shellCellArmourClass;
-	public int shellCellTransparancyClass;
+	//public int shellCellArmourClass;
+	//public int shellCellTransparancyClass;
 
 	// Axone
 	public GeneAxonData geneAxoneData;

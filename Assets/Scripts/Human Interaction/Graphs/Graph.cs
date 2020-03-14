@@ -31,18 +31,18 @@ public class Graph : MonoBehaviour {
 			type == RecordEnum.cellCountVein) {
 			text.color = line.material.color = ColorScheme.instance.ToColor(cellType);
 		}
-		else if (type == RecordEnum.cellCountShellWood) {
-			text.color = line.material.color = ShellCell.GetColor(0, 0);
-		}
-		else if (type == RecordEnum.cellCountShellMetal) {
-			text.color = line.material.color = ShellCell.GetColor(3, 0);
-		}
-		else if (type == RecordEnum.cellCountShellGlass) {
-			text.color = line.material.color = ShellCell.GetColor(0, 3);
-		}
-		else if (type == RecordEnum.cellCountShellDiamond) {
-			text.color = line.material.color = ShellCell.GetColor(3, 3);
-		}
+		//else if (type == RecordEnum.cellCountShellWood) {
+		//	text.color = line.material.color = ShellCell.GetColor(0, 0);
+		//}
+		//else if (type == RecordEnum.cellCountShellMetal) {
+		//	text.color = line.material.color = ShellCell.GetColor(3, 0);
+		//}
+		//else if (type == RecordEnum.cellCountShellGlass) {
+		//	text.color = line.material.color = ShellCell.GetColor(0, 3);
+		//}
+		//else if (type == RecordEnum.cellCountShellDiamond) {
+		//	text.color = line.material.color = ShellCell.GetColor(3, 3);
+		//}
 		else {
 			text.color = line.material.color;
 		}

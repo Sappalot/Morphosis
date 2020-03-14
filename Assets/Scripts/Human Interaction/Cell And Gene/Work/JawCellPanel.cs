@@ -2,8 +2,6 @@
 using UnityEngine.UI;
 
 public class JawCellPanel : ComponentPanel {
-	public Text productionEffectText;
-
 	public Text prayCellCount;
 
 	public Text cannibalizeText;
@@ -71,7 +69,7 @@ public class JawCellPanel : ComponentPanel {
 
 			if (GetMode() == PhenoGenoEnum.Phenotype) {
 				if (CellPanel.instance.selectedCell != null) {
-					componentFooterPanel.SetProductionEffectText(selectedCell.effectProductionInternalUp, GlobalSettings.instance.phenotype.jawCellEffectCost);
+					componentFooterPanel.SetProductionEffectText(selectedCell.effectProductionPredPrayUp, GlobalSettings.instance.phenotype.jawCell.effectProductionDown);
 					prayCellCount.text = "Pray count: " + (CellPanel.instance.selectedCell as JawCell).prayCount;
 					cannibalizeKinToggle.interactable = false;
 					cannibalizeMotherToggle.interactable = false;
@@ -80,7 +78,7 @@ public class JawCellPanel : ComponentPanel {
 					cannibalizeChildrenToggle.interactable = false;
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
-				componentFooterPanel.SetProductionEffectText(string.Format("Production Effect: [pray count (0...6)] * {0:F2} - {1:F2} W <color=#808080ff>(@ normal pray armor)</color>", GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(20f) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor, GlobalSettings.instance.phenotype.jawCellEffectCost));
+				componentFooterPanel.SetProductionEffectText(string.Format("Production Effect: [pray count (0...6)] * {0:F2} - {1:F2} W <color=#808080ff>(@ normal pray armor)</color>", GlobalSettings.instance.phenotype.jawCell.effectProductionUpAtSpeed.Evaluate(20f) * GlobalSettings.instance.phenotype.jawCell.effectProductionUpKeepFactor, GlobalSettings.instance.phenotype.jawCell.effectProductionDown));
 				prayCellCount.text = "Pray Count: -";
 				cannibalizeKinToggle.interactable = IsUnlocked();
 				cannibalizeMotherToggle.interactable = IsUnlocked();

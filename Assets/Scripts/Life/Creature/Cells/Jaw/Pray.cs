@@ -13,10 +13,10 @@ public class Pray {
 
 	public void UpdateMetabolism(Cell predatorCell) {
 		ramSpeed = GetRamSpeed(predatorCell, cell);
-		float jawEatEffect = GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(Mathf.Max(0f, ramSpeed));
+		float jawEatEffect = GlobalSettings.instance.phenotype.jawCell.effectProductionUpAtSpeed.Evaluate(Mathf.Max(0f, ramSpeed));
 
 		prayEatenEffect = jawEatEffect / cell.armour;
-		predatorEatEffect = (jawEatEffect / cell.armour) * GlobalSettings.instance.phenotype.jawCellEatEarnFactor;
+		predatorEatEffect = (jawEatEffect / cell.armour) * GlobalSettings.instance.phenotype.jawCell.effectProductionUpKeepFactor;
 	}
 
 	//1.7 m/s (Delta Jaw 15) ramming as a rhino, 0.2 m/s ramming as a rabbit 

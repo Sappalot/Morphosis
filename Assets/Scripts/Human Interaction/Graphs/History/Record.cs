@@ -14,10 +14,10 @@ public class Record {
 	float cellCountMuscle;
 	float cellCountRoot;
 	float cellCountShell;
-	float cellCountShellWood;
-	float cellCountShellMetal;
-	float cellCountShellGlass;
-	float cellCountShellDiamond;
+	//float cellCountShellWood;
+	//float cellCountShellMetal;
+	//float cellCountShellGlass;
+	//float cellCountShellDiamond;
 	float cellCountVein;
 
 	float creatureCount;
@@ -51,10 +51,10 @@ public class Record {
 		cellCountMuscle = 0f;
 		cellCountRoot =   0f;
 		cellCountShell =  0f;
-		cellCountShellWood =    0f;
-		cellCountShellMetal =   0f;
-		cellCountShellGlass =   0f;
-		cellCountShellDiamond = 0f;
+		//cellCountShellWood =    0f;
+		//cellCountShellMetal =   0f;
+		//cellCountShellGlass =   0f;
+		//cellCountShellDiamond = 0f;
 		cellCountVein =   0f;
 
 		creatureCount =           0f;
@@ -114,18 +114,18 @@ public class Record {
 		if (type == RecordEnum.cellCountShell) {
 			return cellCountShell;
 		}
-		if (type == RecordEnum.cellCountShellWood) {
-			return cellCountShellWood;
-		}
-		if (type == RecordEnum.cellCountShellMetal) {
-			return cellCountShellMetal;
-		}
-		if (type == RecordEnum.cellCountShellGlass) {
-			return cellCountShellGlass;
-		}
-		if (type == RecordEnum.cellCountShellDiamond) {
-			return cellCountShellDiamond;
-		}
+		//if (type == RecordEnum.cellCountShellWood) {
+		//	return cellCountShellWood;
+		//}
+		//if (type == RecordEnum.cellCountShellMetal) {
+		//	return cellCountShellMetal;
+		//}
+		//if (type == RecordEnum.cellCountShellGlass) {
+		//	return cellCountShellGlass;
+		//}
+		//if (type == RecordEnum.cellCountShellDiamond) {
+		//	return cellCountShellDiamond;
+		//}
 		if (type == RecordEnum.cellCountVein) {
 			return cellCountVein;
 		}
@@ -178,18 +178,18 @@ public class Record {
 		if (type == RecordEnum.cellCountShell) {
 			cellCountShell = value;
 		}
-		if (type == RecordEnum.cellCountShellWood) {
-			cellCountShellWood = value;
-		}
-		if (type == RecordEnum.cellCountShellMetal) {
-			cellCountShellMetal = value;
-		}
-		if (type == RecordEnum.cellCountShellGlass) {
-			cellCountShellGlass = value;
-		}
-		if (type == RecordEnum.cellCountShellDiamond) {
-			cellCountShellDiamond = value;
-		}
+		//if (type == RecordEnum.cellCountShellWood) {
+		//	cellCountShellWood = value;
+		//}
+		//if (type == RecordEnum.cellCountShellMetal) {
+		//	cellCountShellMetal = value;
+		//}
+		//if (type == RecordEnum.cellCountShellGlass) {
+		//	cellCountShellGlass = value;
+		//}
+		//if (type == RecordEnum.cellCountShellDiamond) {
+		//	cellCountShellDiamond = value;
+		//}
 		if (type == RecordEnum.cellCountVein) {
 			cellCountVein = value;
 		}
@@ -221,10 +221,10 @@ public class Record {
 		recordData.cellCountMuscle = cellCountMuscle;
 		recordData.cellCountRoot =   cellCountRoot;
 		recordData.cellCountShell =  cellCountShell;
-		recordData.cellCountShellWood    = cellCountShellWood;
-		recordData.cellCountShellMetal   = cellCountShellMetal;
-		recordData.cellCountShellGlass   = cellCountShellGlass;
-		recordData.cellCountShellDiamond = cellCountShellDiamond;
+		//recordData.cellCountShellWood    = cellCountShellWood;
+		//recordData.cellCountShellMetal   = cellCountShellMetal;
+		//recordData.cellCountShellGlass   = cellCountShellGlass;
+		//recordData.cellCountShellDiamond = cellCountShellDiamond;
 		recordData.cellCountVein =   cellCountVein;
 
 		recordData.creatureCount =           creatureCount;
@@ -254,10 +254,10 @@ public class Record {
 		cellCountMuscle =       recordData.cellCountMuscle;
 		cellCountRoot =         recordData.cellCountRoot;
 		cellCountShell =        recordData.cellCountShell;
-		cellCountShellWood =    recordData.cellCountShellWood;
-		cellCountShellMetal =   recordData.cellCountShellMetal;
-		cellCountShellGlass =   recordData.cellCountShellGlass;
-		cellCountShellDiamond = recordData.cellCountShellDiamond;
+		//cellCountShellWood =    recordData.cellCountShellWood;
+		//cellCountShellMetal =   recordData.cellCountShellMetal;
+		//cellCountShellGlass =   recordData.cellCountShellGlass;
+		//cellCountShellDiamond = recordData.cellCountShellDiamond;
 		cellCountVein =         recordData.cellCountVein;
 
 		creatureCount =           recordData.creatureCount;

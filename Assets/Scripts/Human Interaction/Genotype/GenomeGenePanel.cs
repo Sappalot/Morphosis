@@ -59,11 +59,7 @@ public class GenomeGenePanel : MonoBehaviour {
 				referenceGraphics[cardinalIndex].reference = gene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
 			}
 
-			if (gene.type == CellTypeEnum.Shell) {
-				geneReferenceImage.color = ShellCell.GetColor(gene.shellCellArmorClass, gene.shellCellTransparancyClass);
-			} else {
-				geneReferenceImage.color = ColorScheme.instance.ToColor(gene.type);
-			}
+			geneReferenceImage.color = ColorScheme.instance.ToColor(gene.type);
 			flipBlackWhite.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.BlackWhite;
 			flipWhiteBlack.enabled = GenotypePanel.instance.viewedFlipSide == FlipSideEnum.WhiteBlack;
 			geneReferenceText.text = gene.index.ToString();

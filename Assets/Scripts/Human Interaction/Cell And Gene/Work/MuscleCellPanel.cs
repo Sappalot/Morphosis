@@ -16,7 +16,7 @@ public class MuscleCellPanel : ComponentPanel {
 					frequenzy.text = string.Format("Frequenzy: {0:F2} Hz", selectedCell.creature.phenotype.originCell.originPulseFequenzy);
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
-				componentFooterPanel.SetProductionEffectText(string.Format("Production Effect: -{0:F2} J per contraction", GlobalSettings.instance.phenotype.muscleCellEnergyCostPerContraction));
+				componentFooterPanel.SetProductionEffectText(string.Format("Production Effect: -{0:F2} W (- {1:F2} J per contraction)", GlobalSettings.instance.phenotype.muscleCell.effectProductionDown, GlobalSettings.instance.phenotype.muscleCell.energyProductionDownPerContraction));
 
 				frequenzy.text = string.Format("Frequenzy: -");
 			}

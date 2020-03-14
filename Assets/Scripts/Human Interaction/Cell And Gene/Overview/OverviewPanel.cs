@@ -177,7 +177,7 @@ public class OverviewPanel : MonoBehaviour {
 				footerPanel.SetProductionEffectText("Production Effect: todo [1.00...4.00] - [1.00...2.00] = [-1.00...3.00] W");
 			}
 
-			armourLabel.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedGene.armour, GlobalSettings.instance.phenotype.jawCellEatEffectAtSpeed.Evaluate(20f) / selectedGene.armour);
+			armourLabel.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedGene.armour, GlobalSettings.instance.phenotype.jawCell.effectProductionUpAtSpeed.Evaluate(20f) / selectedGene.armour);
 
 			healButton.gameObject.SetActive(mode == PhenoGenoEnum.Phenotype);
 			hurtButton.gameObject.SetActive(mode == PhenoGenoEnum.Phenotype);

@@ -9,9 +9,9 @@ public class VeinCellPanel : ComponentPanel {
 				Debug.Log("Update CellPanel");
 			}
 
-			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.veinCellEffectCost);
+			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.veinCell.effectProductionDown);
 
-			isDirty = false; 
+			isDirty = false;
 		}
 	}
 }

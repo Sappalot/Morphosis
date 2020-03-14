@@ -52,7 +52,7 @@ public class LeafCell : Cell {
 
 	public override void OnBorrowToWorld() {
 		if (raycastHitArray == null) {
-			raycastHitArray = new RaycastHit2D[(int)GlobalSettings.instance.phenotype.leafCellSunMaxRange];
+			raycastHitArray = new RaycastHit2D[(int)GlobalSettings.instance.phenotype.leafCell.sunRayMaxRange];
 		}
 		SetDefaultState();
 		base.OnBorrowToWorld();
@@ -60,16 +60,16 @@ public class LeafCell : Cell {
 
 	public override void SetDefaultState() {
 		base.SetDefaultState();
-		lowPassExposure = GlobalSettings.instance.phenotype.leafCellDefaultExposure;
+		lowPassExposure = GlobalSettings.instance.phenotype.leafCell.defaultExposure;
 	}
 
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		if (PhenotypePhysicsPanel.instance.functionLeaf.isOn) {
-			effectProductionInternalDown = GlobalSettings.instance.phenotype.leafCellEffectCost;
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.leafCell.effectProductionDown;
 			bool debugRender = PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure && CreatureSelectionPanel.instance.selectedCell == this;
 
 			float startEnergy = 2f; //matters only graphically during debug
-			float maxRange = GlobalSettings.instance.phenotype.leafCellSunMaxRange; // how many meters an unblocked light beam will travel
+			float maxRange = GlobalSettings.instance.phenotype.leafCell.sunRayMaxRange; // how many meters an unblocked light beam will travel
 			float energyLossAir = startEnergy / maxRange; //J / m (allways reaches max range if nothing blocks it)
 
 			Vector2 direction = GeometryUtil.GetVector(Random.Range(0f, 360f), 1f);
@@ -221,7 +221,6 @@ public class LeafCell : Cell {
 			if (exposureRecorCursor >= exposureRecordMaxCapacity) {
 				exposureRecorCursor = 0;
 			}
-			//exposureRecordCount = (int)Mathf.Min(exposureRecordMaxCapacity, exposureRecordCount + 1);
 
 			m_lowPassExposure = 0f;
 			for (int i = 0; i < exposureRecordMaxCapacity; i++) {
@@ -229,13 +228,13 @@ public class LeafCell : Cell {
 			}
 			m_lowPassExposure /= exposureRecordMaxCapacity;
 
-			m_lowPassExposure *= GlobalSettings.instance.phenotype.leafCellSunexposureFactorAtPopulation.Evaluate(World.instance.life.cellAliveCount);
+			m_lowPassExposure *= GlobalSettings.instance.phenotype.leafCell.exposureFactorAtPopulation.Evaluate(World.instance.life.cellAliveCount) * GlobalSettings.instance.phenotype.leafCell.exposureFactorAtBodySize.Evaluate(creature.cellCount);
 
-			int attachedMotherCellCount = 0;
+			int attachedMotherCellCount = 0; 
 			if (creature.IsAttachedToMotherAlive()) {
 				attachedMotherCellCount = creature.GetMotherAlive().cellCount;
 			}
-			effectProductionInternalUp = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCellSunMaxEffect * GlobalSettings.instance.phenotype.leafCellSunEffectFactorAtBodySize.Evaluate(creature.cellCount);
+			effectProductionInternalUp = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCell.effectProductionUpMax;
 
 			if (CellPanel.instance.selectedCell == this) {
 				CellPanel.instance.cellAndGenePanel.workPanel.leafPanel.MakeDirty();
@@ -245,7 +244,7 @@ public class LeafCell : Cell {
 		} else {
 			effectProductionInternalUp = 0f;
 			effectProductionInternalDown = 0f;
-			m_lowPassExposure = GlobalSettings.instance.phenotype.leafCellDefaultExposure;
+			m_lowPassExposure = GlobalSettings.instance.phenotype.leafCell.defaultExposure;
 		}
 	}
 
@@ -253,11 +252,11 @@ public class LeafCell : Cell {
 		CollisionType type = GetCollisionType(hit);
 
 		if (type == CollisionType.ownCell || type == CollisionType.connectedViaClusterCell) {
-			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell;
+			return energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOwnCell;
 			//float transparencyAtHit = GetTransparencyOfHit(hit);
 			//return Mathf.Lerp(energyLossAir * 10f * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.phenotype.leafCellCount), energyLossAir, transparencyAtHit);
 		} else if (type == CollisionType.othersCell) {
-			return energyLossAir * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell;
+			return energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOtherCell;
 			//float transparencyAtHit = GetTransparencyOfHit(hit);
 			//return Mathf.Lerp(energyLossAir * 20f * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.phenotype.leafCellCount), energyLossAir, transparencyAtHit);
 		} else {

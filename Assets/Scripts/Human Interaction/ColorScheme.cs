@@ -27,11 +27,12 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color muscle;
 	public Color root;
 	public Color shell;
-	public Gradient shellArmourOpaque;
-	public Gradient shellArmourTransparent;
-	public Gradient shellArmourOpaqueClear;
-	public Gradient shellArmourTransparentClear;
 	public Color vein;
+	//public Gradient shellArmourOpaque;
+	//public Gradient shellArmourTransparent;
+	//public Gradient shellArmourOpaqueClear;
+	//public Gradient shellArmourTransparentClear;
+
 
 	public Color isHurt;
 	public Color isSliding;

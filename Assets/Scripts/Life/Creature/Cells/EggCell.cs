@@ -12,7 +12,7 @@ public class EggCell : Cell {
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
 			effectProductionInternalUp = 0f;
-			effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCellEffectCost;
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCell.effectProductionDown;
 
 			// Fertilization is made in Creature.UpdateFertilize(...)
 

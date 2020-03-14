@@ -20,7 +20,7 @@ public class MuscleCell : Cell {
 	private new void Awake() {
 		shrinkageRadiusDiffConstant = Time.fixedDeltaTime * GlobalSettings.instance.quality.muscleCellTickPeriod * contractSpeed;
 		relaxRadiusDiffConstant = Time.fixedDeltaTime * GlobalSettings.instance.quality.muscleCellTickPeriod * contractSpeed;
-		contractionCostEffect = GlobalSettings.instance.phenotype.muscleCellEnergyCostPerContraction / ((medRadius - minRadius) / contractSpeed);
+		contractionCostEffect = GlobalSettings.instance.phenotype.muscleCell.energyProductionDownPerContraction / ((medRadius - minRadius) / contractSpeed);
 		base.Awake();
 	}
 
@@ -39,7 +39,7 @@ public class MuscleCell : Cell {
 		effectProductionInternalUp = 0f;
 
 		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
-			effectProductionInternalDown = GlobalSettings.instance.phenotype.muscleEffectCostRelaxing;
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.muscleCell.effectProductionDown;
 
 			bool isContracting = false;
 
@@ -60,7 +60,7 @@ public class MuscleCell : Cell {
 			if (isContracting && !creature.phenotype.IsSliding(worldTicks)) {
 				// Contracting
 				if (radius > minRadius) {
-					effectProductionInternalDown = GlobalSettings.instance.phenotype.muscleEffectCostRelaxing + contractionCostEffect;
+					effectProductionInternalDown = GlobalSettings.instance.phenotype.muscleCell.effectProductionDown + contractionCostEffect;
 					isRadiusDirty = true;
 				}
 				this.isContracting = true;

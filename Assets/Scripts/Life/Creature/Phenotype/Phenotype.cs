@@ -250,15 +250,15 @@ public class Phenotype : MonoBehaviour {
 		return count;
 	}
 
-	public int GetShellCellOfMaterialCount(ShellCell.ShellMaterial material) {
-		int count = 0;
-		foreach (Cell c in cellList) {
-			if (c.GetCellType() == CellTypeEnum.Shell && (c as ShellCell).material == material) {
-				count++;
-			}
-		}
-		return count;
-	}
+	//public int GetShellCellOfMaterialCount(ShellCell.ShellMaterial material) {
+	//	int count = 0;
+	//	foreach (Cell c in cellList) {
+	//		if (c.GetCellType() == CellTypeEnum.Shell && (c as ShellCell).material == material) {
+	//			count++;
+	//		}
+	//	}
+	//	return count;
+	//}
 
 	public float longestEdge {
 		get {

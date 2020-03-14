@@ -25,7 +25,7 @@ public class JawCell : Cell {
 		}
 		if (PhenotypePhysicsPanel.instance.functionJaw.isOn) {
 			mouth.gameObject.SetActive(true);
-			effectProductionInternalDown = GlobalSettings.instance.phenotype.jawCellEffectCost;
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.jawCell.effectProductionDown;
 
 			//Hack release pray
 			RemoveNullPrays(); //We need this one not to run into null refs once in a blue moon
