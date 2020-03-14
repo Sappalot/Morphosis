@@ -43,7 +43,6 @@ public class MuscleCell : Cell {
 
 			bool isContracting = false;
 
-			theRigidBody.WakeUp();
 			if (masterAxonGridPosition != null) {
 				Cell masterAxon = creature.phenotype.cellMap.GetCell(masterAxonGridPosition);
 				if (masterAxon != null) {
