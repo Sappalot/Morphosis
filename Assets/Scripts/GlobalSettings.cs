@@ -3,10 +3,17 @@ using UnityEngine;
 
 public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
+	public GUISkin popupSkin;
+
+	//To avoid warning "Unable to find style 'MiniToolbarPopup' in skin 'LightSkin' Layout"
+	private void OnGUI() {
+		GUI.skin = popupSkin;
+	}
+
 	[Serializable]
 	public class Mutation {
 		public float masterMutationStrength = 1f;
-		
+
 		public float cellTypeChange = 10f;
 
 		// ...Egg...
@@ -43,10 +50,10 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 		public float originEmbryoMaxSizeCompletenessChange = 50f;
 		public float originEmbryoMaxSizeCompletenessChangeMaxAmount = 0.2f; // % of full size 
-		
+
 		public float originGrowPriorityCellPersistenceChange = 10f;
 		public float originPersistToGrowBlockedPriorityCellPatienseChangeMaxAmount = 30f; //s
-		
+
 		public float originPulseTickPeriodChange = 10f;
 		public float originPulseTickPeriodChangeMaxAmount = 40f;
 
@@ -121,57 +128,97 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	//Metabolism
 	[Serializable]
 	public class Phenotype {
-		//Egg Cell
-		public float eggCellEffectCost = 0.2f; //W
 
-		//Fungal Cell
-		public float fungalCellEffectCost = 0f; // W
-		public float fungalCellStrengthFactor = 0.25f; // 1=> as easy as other cells, 0.5 => weak, 20 ==> strong
+		[Serializable]
+		public class EggCell {
+			[Tooltip("The cost of running this cell [W]")]
+			public float effectProductionDown = 0.15f;
+		}
+		public EggCell eggCell;
 
-		//Jaw Cell
-		public float jawCellEffectCost = 0.2f; //W
-		//public float jawCellEatEffect = 20f; //W raw eat effect, damaging pray. Only jawCellEatEffect * jawCellEatEffect will gain predator
-		public AnimationCurve jawCellEatEffectAtSpeed; // What is my eating effect depending on my speed towards pray cell
-		public float jawCellEatEarnFactor = 0.9f; // how big part of the total jawCellEatEffect that is gaining jaw cell J/J (rest is wasted)
-		
-		//public float jawCellMutualEatKindness = 0.2f; // How much we gain from eating others creature jaw (compared to normal cells, which are 1)
-													 // The other creature are loosing more than i gain, and vice versa ==> Both are losing, energy is being lost (when fighting) 
-													 // A factor of 1 means 2 jaw cells are not affecting each other, zero sum
+		[Serializable]
+		public class FungalCell {
+			[Tooltip("The cost of running this cell [W]")]
+			public float effectProductionDown = 0.15f;
+		}
+		[Tooltip("Up for grabs")]
+		public FungalCell fungalCell;
 
-		//Leaf Cell
-		public float leafCellEffectCost = 1.0f; //W
-		public float leafCellSunMaxEffect = 4.0f; //W
-		public AnimationCurve leafCellSunEffectFactorAtBodySize; //leafCellEffectCost and leafCellSunMaxEffect will be multiplied by this value
-		public AnimationCurve leafCellSunexposureFactorAtPopulation; //exposure will be multiplied by this value
+		[Serializable]
+		public class JawCell {
+			[Tooltip("The cost of running this cell [W]")]
+			public float effectProductionDown = 0.1f;
 
-		public float leafCellSunMaxRange = 25.0f; //m
+			[Tooltip("The jaws' eating effect [W] depending on my speed [m/s] towards pray cell. Pray cell is losing the same amount, which will show up under External effect")]
+			public AnimationCurve effectProductionUpAtSpeed;
 
-		public float leafCellSunLossFactorOwnCell = 8f;// Effect lost (W / m) own body penetrated
-		public float leafCellSunLossFactorOtherCell = 20f; // Effect lost (W/ m) others body penetrated
+			[Tooltip("How big part of effectProductionUp (the eating effect) that is gaining the cell [W/W] (the rest is wasted into thin air)")]
+			public float effectProductionUpKeepFactor = 0.85f;
+		}
+		public JawCell jawCell;
 
-		public float leafCellDefaultExposure = 0.33f;
+		[Serializable]
+		public class LeafCell {
+			[Tooltip("The cost of running this cell [W]")]
+			public float effectProductionDown = 5f;
 
-		//Muscle Cell
-		public float muscleEffectCostRelaxing = 0.05f;
-		public float muscleCellEnergyCostPerContraction = 2f; //J
-												  //           muscleCellEffect                     0.0 W
+			[Tooltip("Ths leafs' fotosyntesis effect which is gaining the cell [W], proportional to the exposure of it.'")]
+			public float effectProductionUpMax = 12f;
 
-		//Root cell
-		public float rootCellEffectCost = 0.5f; //W
-		public float rootCellEarthMaxEffect = 2.0f; //W
+			[Tooltip("Leaf exposure will be multiplied by a factor depending on number of cells in creatures' body. Few cells => low factor, so that algae can't clog up simulation")] public AnimationCurve exposureFactorAtBodySize;
+			public AnimationCurve exposureFactorAtPopulation;
+
+			[Tooltip("A sun beam hitting cell from this far [m] can contribute to its exposure. Or... Cell is searching this far [m] for open space.")]
+			public float sunRayMaxRange = 35.0f;
+
+			[Tooltip("Was 8. When ray is traveling away from cell it loses this much potential effect (effectProductionUpMax) for each meter it is penetrating own cells, measured in [W/m]. Other cells connected via cluster counts as own cells. This value affects the exposure, which in turn affects the productionUpEffect")]
+			public float sunRayEffectLossPerDistanceThroughOwnCell = 8f;
+
+			[Tooltip("Was 18. When ray is traveling away from cell it loses this much potential effect (effectProductionUpMax) for each meter it is penetrating other cells, measured in [W/m]. Other cells are all cells that are not connected to this one via cluser. This value affects the exposure, which in turn affects the productionUpEffect")]
+			public float sunRayEffectLossPerDistanceThroughOtherCell = 18f;
+
+			[Tooltip("A new born leaf cells' exposure will be set to this value")]
+			public float defaultExposure = 0.5f;
+		}
+		public LeafCell leafCell;
+
+		[Serializable]
+		public class MuscleCell {
+			[Tooltip("The cost of running this cell [W] This cost is there regardles if we are contracting or not")]
+			public float effectProductionDown = 0.05f;
+
+			[Tooltip("How much energy [J] we pay for each contraction. From this value an effect cost is calculated which is applied  together with the effectProductionDown when we contract the cell")]
+			public float energyProductionDownPerContraction = 0.05f;
+		}
+		public MuscleCell muscleCell;
+
+		[Serializable]
+		public class RootCell {
+			[Tooltip("The cost of running this cell [W]")]
+			public float effectProductionDown = 0.1f;
+		}
+		public RootCell rootCell;
+
+		[Serializable]
+		public class ShellCell {
+			[Tooltip("The cost of running this cell [W]")]
+			public float effectProductionDown = 0.1f;
+			public float armour = 10f;
+		}
+		public ShellCell shellCell;
 
 		//Shell Cell
-		public AnimationCurve shellCellEffectCostAtArmor;
-		public AnimationCurve shellCellEffectCostMultiplierAtTransparancy; //cheeper the more transparent (when armor class constant) beacuse blocking leaf more
-		public AnimationCurve shellCellStrengthAtArmor;
-		public AnimationCurve shellCellArmorAtNormalizedArmorClass; // sets how the values (strength & cost) are distributed over the buttons (along x-axis)
+		//public AnimationCurve shellCellEffectCostAtArmor;
+		//public AnimationCurve shellCellEffectCostMultiplierAtTransparancy; //cheeper the more transparent (when armor class constant) beacuse blocking leaf more
+		//public AnimationCurve shellCellStrengthAtArmor;
 
-		//           shellCellEffect =                    0.0 W
-		public float shellCellStrengthFactorDeprecated = 20f; // 1=> as easy as other cells, 0.5 => weak, 20 ==> strong
+		[Serializable]
+		public class VeinCell {
+			[Tooltip("The cost of running this cell [W]")]
+			public float effectProductionDown = 0.1f;
 
-		//Vein Cell
-		public float veinCellEffectCost = 0.1f; //W
-												//           veinCellEffect                       0.0 W
+		}
+		public VeinCell veinCell;
 
 		// Fin
 		[Range(0f, 1f)]
@@ -247,15 +294,15 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	[Serializable]
 	public class Quality {
 		// Life
-		public int eggCellTickPeriod =     50;
-		public int fungalCellTickPeriod =  50;
-		public int jawCellTickPeriod =     50;
+		public int eggCellTickPeriod = 50;
+		public int fungalCellTickPeriod = 50;
+		public int jawCellTickPeriod = 50;
 		public AnimationCurve leafCellTickPeriodAtSpeed; // Period length in ticks (0.1s) at certain speeds
-		public int leafCellTickPeriod =    50;
-		public int muscleCellTickPeriod =   5; // also used for veins
-		public int rootCellTickPeriod =    50;
-		public int shellCellTickPeriod =   50;
-		public int veinCellTickPeriod =    50;
+		public int leafCellTickPeriod = 50;
+		public int muscleCellTickPeriod = 5; // also used for veins
+		public int rootCellTickPeriod = 50;
+		public int shellCellTickPeriod = 50;
+		public int veinCellTickPeriod = 50;
 
 		public int growTickPeriod = 30; // Detatch attempt has same period as grow
 
@@ -276,11 +323,11 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	[Serializable]
 	public class Pooling {
 		public bool creature = true;
-		public bool cell =     true;
+		public bool cell = true;
 		public bool geneCell = true;
-		public bool vein =     true;
-		public bool edge =     true;
-		public bool effects =  true;
+		public bool vein = true;
+		public bool edge = true;
+		public bool effects = true;
 	}
 
 	public Pooling pooling;
