@@ -9,13 +9,30 @@ public class JawCell : Cell {
 	private bool deleteFlagged;
 
 	public override void Initialize(PhenoGenoEnum phenoGeno) {
+		base.Initialize(phenoGeno);
 		if (phenoGeno == PhenoGenoEnum.Genotype) { 
 			mouth.gameObject.SetActive(false);
 		}
-		base.Initialize(phenoGeno);
+	}
+
+	public override void OnBorrowToWorld() {
+		base.OnBorrowToWorld();
+		deleteFlagged = false;
+	}
+
+	public override void OnRecycleCell() {
+		base.OnRecycleCell();
+		deleteFlagged = true;
+
+		//Free all prays from me since i excist no more
+		foreach (Cell prayCell in prays.Keys) {
+			prayCell.RemovePredator(this);
+		}
+		prays.Clear();
 	}
 
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
+		base.UpdateCellWork(deltaTicks, worldTicks);
 		if (deleteFlagged) {
 			return;
 		}
@@ -33,7 +50,7 @@ public class JawCell : Cell {
 			foreach (Pray pray in prays.Values) {
 				pray.UpdateMetabolism(this);
 			}
-			base.UpdateCellWork(deltaTicks, worldTicks);
+			
 		} else {
 			mouth.gameObject.SetActive(false);
 			effectProductionPredPrayUp = 0f;
@@ -155,21 +172,9 @@ public class JawCell : Cell {
 		}
 	}
 
-	public override void OnRecycleCell() {
-		base.OnRecycleCell();
-		deleteFlagged = true;
 
-		//Free all prays from me since i excist no more
-		foreach (Cell prayCell in prays.Keys) {
-			prayCell.RemovePredator(this);
-		}
-		prays.Clear();
-	}
 
-	public override void OnBorrowToWorld() {
-		base.OnBorrowToWorld();
-		deleteFlagged = false;
-	}
+
 
 	//--------
 

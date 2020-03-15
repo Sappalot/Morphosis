@@ -13,9 +13,9 @@ public class ShellCell : Cell {
 	}
 
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
+		base.UpdateCellWork(deltaTicks, worldTicks);
 		effectProductionInternalDown = GlobalSettings.instance.phenotype.shellCell.effectProductionDown;
 		effectProductionInternalUp = 0f;
-		base.UpdateCellWork(deltaTicks, worldTicks);
 	}
 
 	public override float transparency {

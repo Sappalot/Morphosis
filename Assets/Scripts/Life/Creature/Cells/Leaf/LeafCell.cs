@@ -9,9 +9,16 @@ public class LeafCell : Cell {
 	private int exposureRecorCursor = 0;
 	//private int exposureRecordCount = 0;
 
-	public new void Awake() {
-		OnBorrowToWorld();
-		base.Init();
+	public override void OnBorrowToWorld() {
+		base.OnBorrowToWorld(); // will call Set Default state from base class back to leaf (since this cell is a leaf)
+		if (raycastHitArray == null) {
+			raycastHitArray = new RaycastHit2D[(int)GlobalSettings.instance.phenotype.leafCell.sunRayMaxRange];
+		}
+	}
+
+	public override void SetDefaultState() {
+		base.SetDefaultState();
+		lowPassExposure = GlobalSettings.instance.phenotype.leafCell.defaultExposure;
 	}
 
 	private float m_lowPassExposure;
@@ -50,19 +57,11 @@ public class LeafCell : Cell {
 	}
 	// ^ Friction (Drag) ^
 
-	public override void OnBorrowToWorld() {
-		if (raycastHitArray == null) {
-			raycastHitArray = new RaycastHit2D[(int)GlobalSettings.instance.phenotype.leafCell.sunRayMaxRange];
-		}
-		base.OnBorrowToWorld(); // will call Set Default state from base class back to leaf (since this cell is a leaf)
-	}
 
-	public override void SetDefaultState() {
-		base.SetDefaultState();
-		lowPassExposure = GlobalSettings.instance.phenotype.leafCell.defaultExposure;
-	}
 
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
+		base.UpdateCellWork(deltaTicks, worldTicks);
+
 		if (PhenotypePhysicsPanel.instance.functionLeaf.isOn) {
 			effectProductionInternalDown = GlobalSettings.instance.phenotype.leafCell.effectProductionDown;
 			bool debugRender = PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure && CreatureSelectionPanel.instance.selectedCell == this;
@@ -238,8 +237,6 @@ public class LeafCell : Cell {
 			if (CellPanel.instance.selectedCell == this) {
 				CellPanel.instance.cellAndGenePanel.workPanel.leafPanel.MakeDirty();
 			}
-		
-			base.UpdateCellWork(deltaTicks, worldTicks);
 		} else {
 			effectProductionInternalUp = 0f;
 			effectProductionInternalDown = 0f;

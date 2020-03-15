@@ -17,11 +17,28 @@ public class MuscleCell : Cell {
 	private static float relaxRadiusDiffConstant;
 	public static float contractionCostEffect { get; private set; }
 
-	private new void Awake() {
+	public override void Initialize(PhenoGenoEnum phenoGeno) {
+		base.Initialize(phenoGeno);
 		shrinkageRadiusDiffConstant = Time.fixedDeltaTime * GlobalSettings.instance.quality.muscleCellTickPeriod * contractSpeed;
 		relaxRadiusDiffConstant = Time.fixedDeltaTime * GlobalSettings.instance.quality.muscleCellTickPeriod * contractSpeed;
 		contractionCostEffect = GlobalSettings.instance.phenotype.muscleCell.energyProductionDownPerContraction / ((medRadius - minRadius) / contractSpeed);
-		base.Init();
+	}
+
+
+	public override void OnRecycleCell() {
+		base.OnRecycleCell();
+
+		SetDefaultState();
+		isContracting = false;
+		scaleIsDirty = true;
+		masterAxonGridPosition = null;
+		masterAxoneDistance = null;
+	}
+
+	public override void SetDefaultState() {
+		base.SetDefaultState();
+		radius = 0.5f;
+		scale.localScale = new Vector3(1f, 1f, 1f);
 	}
 
 	public void UpdateMasterAxon() {
@@ -36,6 +53,8 @@ public class MuscleCell : Cell {
 	}
 
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
+		base.UpdateCellWork(deltaTicks, worldTicks);
+
 		effectProductionInternalUp = 0f;
 
 		if (PhenotypePhysicsPanel.instance.functionMuscle.isOn) {
@@ -84,8 +103,6 @@ public class MuscleCell : Cell {
 				}
 				UpdateSpringLengths();
 			}
-
-			base.UpdateCellWork(deltaTicks, worldTicks);
 		} else {
 			effectProductionInternalDown = 0f;
 			isContracting = false;
@@ -182,20 +199,5 @@ public class MuscleCell : Cell {
 				}
 			}
 		}
-	}
-
-	public override void SetDefaultState() {
-		base.SetDefaultState();
-		radius = 0.5f;
-		scale.localScale = new Vector3(1f, 1f, 1f);
-	}
-
-	public override void OnRecycleCell() {
-		base.OnRecycleCell();
-		SetDefaultState();
-		isContracting = false;
-		scaleIsDirty = true;
-		masterAxonGridPosition = null;
-		masterAxoneDistance = null;
 	}
 }

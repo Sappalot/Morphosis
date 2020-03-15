@@ -142,6 +142,121 @@ public abstract class Cell : MonoBehaviour {
 
 	// ^ Axon ^
 
+	public virtual void Initialize(PhenoGenoEnum phenoGeno) {
+		this.phenoGeno = phenoGeno;
+		SetLabelEnabled(phenoGeno == PhenoGenoEnum.Genotype);
+
+		OnBorrowToWorld();
+
+		cellNeighbourDictionary.Add(0, northEastNeighbour);
+		cellNeighbourDictionary.Add(1, northNeighbour);
+		cellNeighbourDictionary.Add(2, northWestNeighbour);
+		cellNeighbourDictionary.Add(3, southWestNeighbour);
+		cellNeighbourDictionary.Add(4, southNeighbour);
+		cellNeighbourDictionary.Add(5, southEastNeighbour);
+
+		UpdateOutline(false);
+		if (buds != null) {
+			buds.Init();
+		}
+
+		// Sensors...
+		constantSensor = new ConstantSensor(SignalUnitEnum.ConstantSensor, this); // own component
+		axon = new Axon(SignalUnitEnum.Axon, this);
+		dendritesLogicBox = new LogicBox(SignalUnitEnum.DendritesLogicBox, this); // own component
+		energySensor = new EnergySensor(SignalUnitEnum.EnergySensor, this); // own component
+		effectSensor = new EffectSensor(SignalUnitEnum.EffectSensor, this); // own component
+		originDetatchLogicBox = new LogicBox(SignalUnitEnum.OriginDetatchLogicBox, this); // inside origin component
+		originSizeSensor = new SizeSensor(SignalUnitEnum.OriginSizeSensor, this); // inside origin component
+
+		// ^ Sensors ^
+	}
+
+	// called from:
+	//jaw cell.OnBorrowToWorld
+	virtual public void OnBorrowToWorld() {
+		if (theRigidBody == null) {
+			theRigidBody = GetComponent<Rigidbody2D>();
+		}
+		if (theRigidBody != null) {
+			theRigidBody.simulated = true;
+			theRigidBody.bodyType = RigidbodyType2D.Dynamic;
+		}
+		SetDefaultState(); // don't call this function on overridden OnBorrowToWorld
+	}
+
+	//Phenotype only
+	virtual public void OnRecycleCell() {
+		theRigidBody.simulated = true; //physics seem to have problem when borrowing cells and then enabling RB, it should be ok to enable it here since cell is disabled anyway
+
+		foreach (JawCell predator in predators) {
+			predator.RemovePray(this); // make jaw forget about me as a pray of his
+		}
+		predators.Clear();
+
+		//My own 3 springs to others
+		if (northSpring != null) {
+			northSpring.connectedBody = null;
+			northSpring.enabled = false;
+		}
+		if (southEastSpring != null) {
+			southEastSpring.connectedBody = null;
+			southEastSpring.enabled = false;
+		}
+		if (southWestSpring != null) {
+			southWestSpring.connectedBody = null;
+			southWestSpring.enabled = false;
+		}
+
+		//My placenta springs
+		if (placentaSprings != null) {
+			foreach (SpringJoint2D placentaSpring in placentaSprings) {
+				Destroy(placentaSpring);
+			}
+		}
+		placentaSprings = new SpringJoint2D[0];
+
+		ShowOnTop(false);
+
+		SetGene(null);
+		id = "trash";
+		predators.Clear();
+		isPlacenta = false;
+		groups = 0;
+
+		lastTime = 0;
+		buildIndex = 0;
+
+		radius = 0.5f;
+		transform.localScale = new Vector3(1f, 1f, 1f);
+
+		originPulseTick = 0;
+
+		if (northSpring != null) {
+			northSpring.distance = 1f;
+		}
+		if (southWestSpring != null) {
+			southWestSpring.distance = 1f;
+		}
+		if (southEastSpring != null) {
+			southEastSpring.distance = 1f;
+		}
+
+		effectFluxFromMotherAttached = 0f;
+		effectFluxToChildrenAttached = 0f;
+		effectFluxToSelf = 0f;
+		effectFluxFromSelf = 0f;
+
+		// signal
+		ClearSignal();
+
+		SetDefaultState(); // don't call this function on overridden OnRecycleCell
+	}
+
+	public virtual void SetDefaultState() {
+		energy = GlobalSettings.instance.phenotype.cellDefaultEnergy;
+	}
+
 	// Text ...
 
 	public void SetLabelEnabled(bool enabled) {
@@ -391,10 +506,6 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public virtual void SetDefaultState() {
-		energy = GlobalSettings.instance.phenotype.cellDefaultEnergy;
-	}
-
 	// Friction (Drag)
 	virtual public void SetFrictionNormal() {
 
@@ -537,8 +648,6 @@ public abstract class Cell : MonoBehaviour {
 			originPulseTick = 0;
 		}
 	}
-
-	//virtual public void UpdateRadius(ulong fixedTime) { }
 
 	virtual public void UpdateSpringLengths() { }
 
@@ -718,46 +827,6 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 		return cells;
-	}
-
-	public void Awake() {
-		Init();
-	}
-
-	public virtual void Init() {
-		theRigidBody = GetComponent<Rigidbody2D>();
-
-		SetDefaultState();
-
-		cellNeighbourDictionary.Add(0, northEastNeighbour);
-		cellNeighbourDictionary.Add(1, northNeighbour);
-		cellNeighbourDictionary.Add(2, northWestNeighbour);
-		cellNeighbourDictionary.Add(3, southWestNeighbour);
-		cellNeighbourDictionary.Add(4, southNeighbour);
-		cellNeighbourDictionary.Add(5, southEastNeighbour);
-
-		UpdateOutline(false);
-		if (buds != null) {
-			buds.Init();
-		}
-
-		// Sensors...
-		constantSensor = new ConstantSensor(SignalUnitEnum.ConstantSensor, this); // own component
-		axon = new Axon(SignalUnitEnum.Axon, this);
-		dendritesLogicBox = new LogicBox(SignalUnitEnum.DendritesLogicBox, this); // own component
-		energySensor = new EnergySensor(SignalUnitEnum.EnergySensor, this); // own component
-		effectSensor = new EffectSensor(SignalUnitEnum.EffectSensor, this); // own component
-		originDetatchLogicBox = new LogicBox(SignalUnitEnum.OriginDetatchLogicBox, this); // inside origin component
-		originSizeSensor = new SizeSensor(SignalUnitEnum.OriginSizeSensor, this); // inside origin component
-
-		// ^ Sensors ^
-	}
-
-	
-
-	public virtual void Initialize(PhenoGenoEnum phenoGeno) {
-		this.phenoGeno = phenoGeno;
-		SetLabelEnabled(phenoGeno == PhenoGenoEnum.Genotype);
 	}
 
 	public void RemoveCellNeighbours() {
@@ -1508,86 +1577,6 @@ public abstract class Cell : MonoBehaviour {
 				cellNeighbourDictionary[index].isAngleDirty = true;
 			}
 		}
-	}
-
-	//Phenotype only
-	virtual public void OnRecycleCell() {
-		theRigidBody.simulated = true; //physics seem to have problem when borrowing cells and then enabling RB, it should be ok to enable it here since cell is disabled anyway
-
-		foreach (JawCell predator in predators) {
-			predator.RemovePray(this); // make jaw forget about me as a pray of his
-		}
-		predators.Clear();
-
-		//My own 3 springs to others
-		if (northSpring != null) {
-			northSpring.connectedBody = null;
-			northSpring.enabled = false;
-		}
-		if (southEastSpring != null) {
-			southEastSpring.connectedBody = null;
-			southEastSpring.enabled = false;
-		}
-		if (southWestSpring != null) {
-			southWestSpring.connectedBody = null;
-			southWestSpring.enabled = false;
-		}
-
-		//My placenta springs
-		if (placentaSprings != null) {
-			foreach (SpringJoint2D placentaSpring in placentaSprings) {
-				Destroy(placentaSpring);
-			}
-		}
-		placentaSprings = new SpringJoint2D[0];
-
-		ShowOnTop(false);
-
-		SetGene(null);
-		id = "trash";
-		predators.Clear();
-		isPlacenta = false;
-		groups = 0;
-
-		lastTime = 0;
-		buildIndex = 0;
-
-		radius = 0.5f;
-		transform.localScale = new Vector3(1f, 1f, 1f);
-
-		originPulseTick = 0;
-
-		if (northSpring != null) {
-			northSpring.distance = 1f;
-		}
-		if (southWestSpring != null) {
-			southWestSpring.distance = 1f;
-		}
-		if (southEastSpring != null) {
-			southEastSpring.distance = 1f;
-		}
-
-		effectFluxFromMotherAttached = 0f;
-		effectFluxToChildrenAttached = 0f;
-		effectFluxToSelf = 0f;
-		effectFluxFromSelf = 0f;
-
-		// signal
-		ClearSignal();
-	}
-
-
-	// called from:
-	//jaw cell.OnBorrowToWorld
-	virtual public void OnBorrowToWorld() {
-		if (theRigidBody == null) {
-			theRigidBody = GetComponent<Rigidbody2D>();
-		}
-		if (theRigidBody != null) {
-			theRigidBody.simulated = true;
-			theRigidBody.bodyType = RigidbodyType2D.Dynamic;
-		}
-		SetDefaultState();
 	}
 
 	// Save

@@ -2,21 +2,21 @@
 
 public class EggCell : Cell {
 
-	private new void Awake() {
+	public override void Initialize(PhenoGenoEnum phenoGeno) {
+		base.Initialize(phenoGeno);
 		fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkLogicBoxA, this);
 		fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkSensorA, this);
 		fertilizeAttachmentSensor = new AttachmentSensor(SignalUnitEnum.WorkSensorB, this);
-		base.Awake();
 	}
 
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
+		base.UpdateCellWork(deltaTicks, worldTicks);
+
 		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
 			effectProductionInternalUp = 0f;
 			effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCell.effectProductionDown;
 
 			// Fertilization is made in Creature.UpdateFertilize(...)
-
-			base.UpdateCellWork(deltaTicks, worldTicks);
 		} else {
 			effectProductionInternalUp = 0f;
 			effectProductionInternalDown = 0f;
