@@ -1505,7 +1505,7 @@ public abstract class Cell : MonoBehaviour {
 				if (CreatureSelectionPanel.instance.IsSelected(creature)) {
 					SetLabelEnabled(true);
 					SetLabelText(gene.index.ToString());
-					SetLabelColor(new Color(1f - GetColor().r, 1f - GetColor().g, 1f - GetColor().b, 1f));
+					SetLabelColor(Color.black);
 					filledCircleSprite.color = GetColor();
 					SetCorrectLabelOrientation();
 				} else {
