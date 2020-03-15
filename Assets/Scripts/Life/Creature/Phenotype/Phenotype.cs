@@ -13,9 +13,16 @@ public class Phenotype : MonoBehaviour {
 	public Veins veins;
 
 	public int visualTelepoke { get; private set; }
-	public void Telepoke(Vector2 impulse) {
+	public void Telepoke(Creature creature, Vector2 impulse) {
 		visualTelepoke = GlobalSettings.instance.quality.portalTeleportTickPeriod;
 		AddImpulse(impulse);
+
+		// make crature slide as well
+		foreach (Creature c in creature.creaturesInCluster) {
+			c.phenotype.SetFrictionSliding();
+			c.phenotype.kickTickStamp = World.instance.worldTicks;
+			c.phenotype.slideDurationTicks = (ulong)GlobalSettings.instance.quality.portalTeleportTickPeriod;
+		}
 	}
 
 	private void AddImpulse(Vector2 impulse) {
@@ -522,6 +529,7 @@ public class Phenotype : MonoBehaviour {
 				newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
 				newCell.UpdateHeading(); // otation is needed in order to place subsequent cells right
 				newCell.UpdateFlipSide(); // Just graphics
+				
 				if (newCell.GetCellType() == CellTypeEnum.Muscle) {
 					((MuscleCell)newCell).UpdateMasterAxon();
 				}
@@ -542,7 +550,7 @@ public class Phenotype : MonoBehaviour {
 		} // ^ for each (geneCell in geneCellList) ^
 
 		if (growCellCount > 0) {
-			if (IsSliding((float)worldTick)) {
+			if (IsSliding(World.instance.worldTicks)) {
 				SetFrictionSliding();
 			} else {
 				SetFrictionNormal();
@@ -719,7 +727,11 @@ public class Phenotype : MonoBehaviour {
 			}
 
 			// Friction
-			SetFrictionNormal();
+			if (IsSliding(World.instance.worldTicks)) {
+				SetFrictionSliding();
+			} else {
+				SetFrictionNormal();
+			}
 
 			//Veins
 			veins.GenerateVeins(creature, cellMap);

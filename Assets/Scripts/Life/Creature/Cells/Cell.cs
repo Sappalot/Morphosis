@@ -755,16 +755,10 @@ public abstract class Cell : MonoBehaviour {
 
 	
 
-	public virtual void Setup(PhenoGenoEnum phenoGeno) {
+	public virtual void Initialize(PhenoGenoEnum phenoGeno) {
 		this.phenoGeno = phenoGeno;
 		SetLabelEnabled(phenoGeno == PhenoGenoEnum.Genotype);
-
-		//if (phenoGeno == PhenoGenoEnum.Phenotype) {
-		//	Destroy(labelCanvas.gameObject);
-		//}
 	}
-
-	
 
 	public void RemoveCellNeighbours() {
 		foreach (CellNeighbour neighbour in cellNeighbourDictionary.Values) {
@@ -796,8 +790,8 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void EnablePhysicsComponents() {
-		//theRigidBody.simulated = true;
-		//theRigidBody.bodyType = RigidbodyType2D.Dynamic;
+		theRigidBody.simulated = true;
+		theRigidBody.bodyType = RigidbodyType2D.Dynamic;
 	}
 
 	public void RemovePhysicsComponents() {
@@ -1582,14 +1576,18 @@ public abstract class Cell : MonoBehaviour {
 		ClearSignal();
 	}
 
-	virtual public void OnBorrowToWorld() { }
 
-	public  void Update() {
-
-	}
-
-	private void FixedUpdate() {
-
+	// called from:
+	//jaw cell.OnBorrowToWorld
+	virtual public void OnBorrowToWorld() {
+		if (theRigidBody == null) {
+			theRigidBody = GetComponent<Rigidbody2D>();
+		}
+		if (theRigidBody != null) {
+			theRigidBody.simulated = true;
+			theRigidBody.bodyType = RigidbodyType2D.Dynamic;
+		}
+		SetDefaultState();
 	}
 
 	// Save

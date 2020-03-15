@@ -6,6 +6,7 @@ public class OverviewPanel : MonoBehaviour {
 	public EnergyBar energyBar;
 	public Text effectLabel;
 	public Text armourLabel;
+	public Text transparencyLabel;
 
 	public Text effectFromNeighboursLabel; //kill me
 	public Text effectToNeighboursLabel; //kill me
@@ -178,6 +179,7 @@ public class OverviewPanel : MonoBehaviour {
 			}
 
 			armourLabel.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedGene.armour, GlobalSettings.instance.phenotype.jawCell.effectProductionUpAtSpeed.Evaluate(20f) / selectedGene.armour);
+			transparencyLabel.text = string.Format("Transparency: {0:F2}", selectedGene.transparancy);
 
 			healButton.gameObject.SetActive(mode == PhenoGenoEnum.Phenotype);
 			hurtButton.gameObject.SetActive(mode == PhenoGenoEnum.Phenotype);

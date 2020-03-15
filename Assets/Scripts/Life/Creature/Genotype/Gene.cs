@@ -36,6 +36,16 @@ public class Gene {
 		}
 	}
 
+	public float transparancy {
+		get {
+			if (type == CellTypeEnum.Shell) {
+				return GlobalSettings.instance.phenotype.shellCell.transparency;
+			} else {
+				return 0f;
+			}
+		}
+	}
+
 	public GeneAxon axon = new GeneAxon();
 
 	// Dendrites....

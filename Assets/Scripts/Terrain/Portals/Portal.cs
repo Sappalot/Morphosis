@@ -86,7 +86,7 @@ public class Portal : MonoBehaviour {
 		//// Move obstructing creatures
 		if (PhenotypePhysicsPanel.instance.telepoke.isOn) {
 			foreach (Creature pokeMe in shouldBeTelepoked) {
-				pokeMe.phenotype.Telepoke(telepokeDirection * GlobalSettings.instance.phenotype.telepokeImpulseStrength);
+				pokeMe.phenotype.Telepoke(pokeMe, telepokeDirection * GlobalSettings.instance.phenotype.telepokeImpulseStrength);
 			}
 		}
 

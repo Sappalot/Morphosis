@@ -18,6 +18,12 @@ public class ShellCell : Cell {
 		base.UpdateCellWork(deltaTicks, worldTicks);
 	}
 
+	public override float transparency {
+		get {
+			return GlobalSettings.instance.phenotype.shellCell.transparency;
+		}
+	}
+
 	// old transparent shell below
 
 	//public static int armourClassCount = 6;

@@ -54,8 +54,7 @@ public class LeafCell : Cell {
 		if (raycastHitArray == null) {
 			raycastHitArray = new RaycastHit2D[(int)GlobalSettings.instance.phenotype.leafCell.sunRayMaxRange];
 		}
-		SetDefaultState();
-		base.OnBorrowToWorld();
+		base.OnBorrowToWorld(); // will call Set Default state from base class back to leaf (since this cell is a leaf)
 	}
 
 	public override void SetDefaultState() {
@@ -252,13 +251,13 @@ public class LeafCell : Cell {
 		CollisionType type = GetCollisionType(hit);
 
 		if (type == CollisionType.ownCell || type == CollisionType.connectedViaClusterCell) {
-			return energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOwnCell;
-			//float transparencyAtHit = GetTransparencyOfHit(hit);
-			//return Mathf.Lerp(energyLossAir * 10f * GlobalSettings.instance.phenotype.leafCellSunLossFactorOwnCell.Evaluate(creature.phenotype.leafCellCount), energyLossAir, transparencyAtHit);
+			//return energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOwnCell;
+			float transparencyAtHit = GetTransparencyOfHit(hit);
+			return Mathf.Lerp(energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOwnCell, energyLossAir, transparencyAtHit);
 		} else if (type == CollisionType.othersCell) {
-			return energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOtherCell;
-			//float transparencyAtHit = GetTransparencyOfHit(hit);
-			//return Mathf.Lerp(energyLossAir * 20f * GlobalSettings.instance.phenotype.leafCellSunLossFactorOtherCell.Evaluate(creature.phenotype.leafCellCount), energyLossAir, transparencyAtHit);
+			//return energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOtherCell;
+			float transparencyAtHit = GetTransparencyOfHit(hit);
+			return Mathf.Lerp(energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOtherCell, energyLossAir, transparencyAtHit);
 		} else {
 			//Wall
 			return energyLossAir * 1000f; //J / m; 
@@ -278,7 +277,7 @@ public class LeafCell : Cell {
 	}
 
 	public float GetTransparencyOfHit(RaycastHit2D hit) {
-		return 0; //Everything has same transpareance when it comes to my cells, //Everything has same transpareance when it comes to opponent cells
+		//return 0; //Everything has same transpareance when it comes to my cells, //Everything has same transpareance when it comes to opponent cells
 		Cell hitCell = hit.collider.gameObject.GetComponent<Cell>();
 		if (hitCell != null) {
 			return hitCell.transparency;

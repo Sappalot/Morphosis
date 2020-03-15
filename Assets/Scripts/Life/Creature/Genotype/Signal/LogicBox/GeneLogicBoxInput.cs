@@ -65,7 +65,10 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 			valveMode = (valveMode == SignalValveModeEnum.Pass ? SignalValveModeEnum.Block : SignalValveModeEnum.Pass);
 		}
 
-		nerve.Mutate(strength, isOrigin);
+		// we wont change where we sample from if we are locked
+		if (lockness == LocknessEnum.Unlocked || lockness == LocknessEnum.SemiLocked) {
+			nerve.Mutate(strength, isOrigin);
+		}
 	}
 
 	// Save

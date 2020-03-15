@@ -204,6 +204,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 			[Tooltip("The cost of running this cell [W]")]
 			public float effectProductionDown = 0.1f;
 			public float armour = 10f;
+			public float transparency = 0f;
 		}
 		public ShellCell shellCell;
 

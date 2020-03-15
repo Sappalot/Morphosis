@@ -21,7 +21,7 @@ public class MuscleCell : Cell {
 		shrinkageRadiusDiffConstant = Time.fixedDeltaTime * GlobalSettings.instance.quality.muscleCellTickPeriod * contractSpeed;
 		relaxRadiusDiffConstant = Time.fixedDeltaTime * GlobalSettings.instance.quality.muscleCellTickPeriod * contractSpeed;
 		contractionCostEffect = GlobalSettings.instance.phenotype.muscleCell.energyProductionDownPerContraction / ((medRadius - minRadius) / contractSpeed);
-		base.Awake();
+		base.Init();
 	}
 
 	public void UpdateMasterAxon() {
@@ -59,6 +59,7 @@ public class MuscleCell : Cell {
 			if (isContracting && !creature.phenotype.IsSliding(worldTicks)) {
 				// Contracting
 				if (radius > minRadius) {
+					theRigidBody.WakeUp();
 					effectProductionInternalDown = GlobalSettings.instance.phenotype.muscleCell.effectProductionDown + contractionCostEffect;
 					isRadiusDirty = true;
 				}

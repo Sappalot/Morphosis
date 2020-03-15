@@ -8,15 +8,11 @@ public class JawCell : Cell {
 	public Dictionary<Cell, Pray> prays = new Dictionary<Cell, Pray>(); //Who am i eating on? Me gain? other lose?
 	private bool deleteFlagged;
 
-	public new void Awake() {
-		base.Init();
-	}
-
-	public override void Setup(PhenoGenoEnum phenoGeno) {
+	public override void Initialize(PhenoGenoEnum phenoGeno) {
 		if (phenoGeno == PhenoGenoEnum.Genotype) { 
 			mouth.gameObject.SetActive(false);
 		}
-		base.Setup(phenoGeno);
+		base.Initialize(phenoGeno);
 	}
 
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
@@ -173,7 +169,6 @@ public class JawCell : Cell {
 	public override void OnBorrowToWorld() {
 		base.OnBorrowToWorld();
 		deleteFlagged = false;
-		//base.OnRecycleCell(); //is this one really needed? should have been done when recycling allready
 	}
 
 	//--------
