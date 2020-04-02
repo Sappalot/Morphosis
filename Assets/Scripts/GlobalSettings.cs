@@ -204,6 +204,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 			[Tooltip("The cost of running this cell [W]")]
 			public float effectProductionDown = 0.1f;
 			public float armour = 10f;
+			public float armourAffectFactorOnNeighbour = 0.5f;
 			public float transparency = 0f;
 		}
 		public ShellCell shellCell;
@@ -298,8 +299,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public int eggCellTickPeriod = 50;
 		public int fungalCellTickPeriod = 50;
 		public int jawCellTickPeriod = 50;
-		public AnimationCurve leafCellTickPeriodAtSpeed; // Period length in ticks (0.1s) at certain speeds
-		public int leafCellTickPeriod = 50;
+		public int leafCellTickPeriod = 20;
 		public int muscleCellTickPeriod = 5; // also used for veins
 		public int rootCellTickPeriod = 50;
 		public int shellCellTickPeriod = 50;

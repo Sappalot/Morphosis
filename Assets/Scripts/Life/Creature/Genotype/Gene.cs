@@ -26,16 +26,6 @@ public class Gene {
 	//public int shellCellTransparancyClass;
 	// ^ Shell ^
 
-	public float armour {
-		get {
-			if (type == CellTypeEnum.Shell) {
-				return GlobalSettings.instance.phenotype.shellCell.armour;
-			} else {
-				return 1f;
-			}
-		}
-	}
-
 	public float transparancy {
 		get {
 			if (type == CellTypeEnum.Shell) {

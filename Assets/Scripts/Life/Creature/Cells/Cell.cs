@@ -494,9 +494,30 @@ public abstract class Cell : MonoBehaviour {
 	}
 	// ^---------------- EFFECT ---------------------------^
 
+	public bool isNeighbourToShell;
+
+	private float m_armour = 1f;
 	public virtual float armour {
 		get {
-			return gene.armour;
+			return m_armour;
+		}
+	}
+
+	public virtual void UpdateArmour() {
+		m_armour = 1;
+		if (GetCellType() == CellTypeEnum.Shell) {
+			m_armour = GlobalSettings.instance.phenotype.shellCell.armour;
+			isNeighbourToShell = false;
+		} else {
+			//foreach (CellNeighbour n in cellNeighbourDictionary.Values) {
+			//	if (n.cell != null && n.cell.GetCellType() == CellTypeEnum.Shell) {
+			//		m_armour = GlobalSettings.instance.phenotype.shellCell.armour * GlobalSettings.instance.phenotype.shellCell.armourAffectFactorOnNeighbour;
+			//		isNeighbourToShell = true;
+			//		return;
+			//	}
+			//}
+			isNeighbourToShell = false;
+			m_armour = 1f;
 		}
 	}
 
@@ -695,6 +716,8 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 	}
+
+
 
 	virtual public bool IsContracting() {
 		return false;
@@ -1321,7 +1344,9 @@ public abstract class Cell : MonoBehaviour {
 					openCircleSprite.color = ColorScheme.instance.isTelepoked;
 				} else if (creature.phenotype.IsSliding(World.instance.worldTicks)) {
 					openCircleSprite.color = ColorScheme.instance.isSliding;
-				} 
+				} else if (isNeighbourToShell) {
+					openCircleSprite.color = ColorScheme.instance.shell;
+				}
 				
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.energy) {
 				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(energyFullness);

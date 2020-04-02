@@ -211,6 +211,13 @@ public class Phenotype : MonoBehaviour {
 	private bool isDirty = true;
 	private bool areBudsDirty = true;
 
+
+	public void UpdateArmour() {
+		foreach (Cell cell in cellList) {
+			cell.UpdateArmour();
+		}
+	}
+
 	public void MakeBudsDirty() {
 		areBudsDirty = true;
 	}
@@ -747,6 +754,9 @@ public class Phenotype : MonoBehaviour {
 
 			// Signal
 			UpdateSignalConnections();
+
+			//Armour
+			UpdateArmour();
 
 			//Clean
 			connectionsDiffersFromCells = false;
@@ -1631,7 +1641,7 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		leafCellTick++;
-		if (leafCellTick >= (int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed)) {
+		if (leafCellTick >= (int)GlobalSettings.instance.quality.leafCellTickPeriod) {
 			leafCellTick = 0;
 		}
 
@@ -1699,7 +1709,7 @@ public class Phenotype : MonoBehaviour {
 			} else if (jawCellTick == 0 && cell.GetCellType() == CellTypeEnum.Jaw) {
 				cell.UpdateCellWork(GlobalSettings.instance.quality.jawCellTickPeriod, worldTick);
 			} else if (leafCellTick == 0 && cell.GetCellType() == CellTypeEnum.Leaf) {
-				cell.UpdateCellWork((int)GlobalSettings.instance.quality.leafCellTickPeriodAtSpeed.Evaluate(speed), worldTick);
+				cell.UpdateCellWork((int)GlobalSettings.instance.quality.leafCellTickPeriod, worldTick);
 			} else if (muscleAndFluxCellTick == 0 && cell.GetCellType() == CellTypeEnum.Muscle) {
 				cell.UpdateCellWork(GlobalSettings.instance.quality.muscleCellTickPeriod, worldTick);
 			} else if (rootCellTick == 0 && cell.GetCellType() == CellTypeEnum.Root) {

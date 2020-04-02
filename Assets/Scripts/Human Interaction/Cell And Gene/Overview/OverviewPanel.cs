@@ -144,6 +144,8 @@ public class OverviewPanel : MonoBehaviour {
 				connectedVeinsCountLabel.text = "Veins: " + selectedCell.creature.phenotype.NonPlacentaVeinsConnectedToCellCount(selectedCell) + (selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) > 0 ? (" + " + selectedCell.creature.phenotype.PlacentaVeinsConnectedToCellCount(selectedCell) + " children") : "");
 				eatingOnMeCountLabel.text = "Eating on me: " + selectedCell.predatorCount;
 
+				armourLabel.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedCell.armour, GlobalSettings.instance.phenotype.jawCell.effectProductionUpAtSpeed.Evaluate(20f) / selectedCell.armour);
+
 				footerPanel.SetProductionEffectText(selectedCell.EffectUp(true, false, false), selectedCell.EffectDown(true, false, false, false));
 
 				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
@@ -175,10 +177,12 @@ public class OverviewPanel : MonoBehaviour {
 				connectedVeinsCountLabel.text = "Veins: -";
 				eatingOnMeCountLabel.text = "Eating on me: -";
 
+				armourLabel.text = "Armour: - ==> Stress effect: - W";
+
 				footerPanel.SetProductionEffectText("Production Effect: todo [1.00...4.00] - [1.00...2.00] = [-1.00...3.00] W");
 			}
 
-			armourLabel.text = string.Format("Armour: {0:F2} ==> Stress effect: {1:F2} W", selectedGene.armour, GlobalSettings.instance.phenotype.jawCell.effectProductionUpAtSpeed.Evaluate(20f) / selectedGene.armour);
+			
 			transparencyLabel.text = string.Format("Transparency: {0:F2}", selectedGene.transparancy);
 
 			healButton.gameObject.SetActive(mode == PhenoGenoEnum.Phenotype);
