@@ -1,4 +1,7 @@
-﻿public class GeneLogicBox : GeneSignalUnit {
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+public class GeneLogicBox : GeneSignalUnit {
 	public static int rowCount = 3; // excluding, bottom input row
 	public static int columnCount = 6;
 	public static int rightmostFlank = columnCount;
@@ -7,10 +10,10 @@
 	// All possible Gates are spawned when this logicBox is created
 	// They are setup either in hard code (that is the locked gates) OR as they are loaded (loaded ones will not change locked gates)
 	// They might be set as used/unused along the way but never removed
-	private GeneLogicBoxGate gateRow0;
-	private GeneLogicBoxGate[] gateRow1 = new GeneLogicBoxGate[maxGatesPerRow];
-	private GeneLogicBoxGate[] gateRow2 = new GeneLogicBoxGate[maxGatesPerRow];
-	private GeneLogicBoxInput[] inputRow3 = new GeneLogicBoxInput[columnCount];
+	private GeneLogicBoxGate gateRow0; // just 1
+	private GeneLogicBoxGate[] gateRow1 = new GeneLogicBoxGate[maxGatesPerRow]; // Up to 3 (2 wide each)
+	private GeneLogicBoxGate[] gateRow2 = new GeneLogicBoxGate[maxGatesPerRow]; // Up to 3 (2 wide each) 
+	private GeneLogicBoxInput[] inputRow3 = new GeneLogicBoxInput[columnCount]; // 6 
 	private bool[,] lockedCellMatrix = new bool[rowCount, columnCount];
 
 	public GeneLogicBox(SignalUnitEnum signalUnit) {
@@ -31,29 +34,35 @@
 			inputRow3[i].nerve.inputUnit = signalUnit;
 			inputRow3[i].nerve.inputUnitSlot = signalUnitSlot;
 		}
+		UpdateConnections();
 	}
 
 	public void SetAllInputToBlocked() {
 		for (int i = 0; i < columnCount; i++) {
 			inputRow3[i].valveMode = SignalValveModeEnum.Block;
 		}
+		UpdateConnections();
 	}
 
 	public void SetInputToPass(int column) {
-			inputRow3[column].valveMode = SignalValveModeEnum.Pass;
+		inputRow3[column].valveMode = SignalValveModeEnum.Pass;
+		UpdateConnections();
 	}
 
 	public void SetInputLockness(int column, LocknessEnum lockness) {
 		inputRow3[column].lockness = lockness;
+		UpdateConnections();
 	}
 
 	public void SetCellToLocked(int row, int column) {
 		lockedCellMatrix[row, column] = true;
+		UpdateConnections();
 	}
 
 	public void ConnectInputTo(int column, SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
 		inputRow3[column].nerve.inputUnit = signalUnit;
 		inputRow3[column].nerve.inputUnitSlot = signalUnitSlot;
+		UpdateConnections();
 	}
 
 	public GeneLogicBoxGate GetGate(int row, int index) {
@@ -101,7 +110,7 @@
 		foreach (GeneLogicBoxGate gate2 in gateRow2) {
 			if (gate2.isUsed) {
 				gate2.isTransmittingSignal = false;
-				for (int column = gate2.GetColumnRightOfFlank(gate2.leftFlank); column <= gate2.GetColumnLeftOfFlank(gate2.rightFlank); column++) {
+				for (int column = GeneLogicBoxGate.GetColumnRightOfFlank(gate2.leftFlank); column <= GeneLogicBoxGate.GetColumnLeftOfFlank(gate2.rightFlank); column++) {
 					gate2.partsConnected.Add(inputRow3[column]);
 					if (inputRow3[column].isTransmittingSignal) {
 						gate2.isTransmittingSignal = true;
@@ -136,7 +145,7 @@
 		// look for input in row 3: connect to all that are not blocked by gates in row 2
 		foreach (GeneLogicBoxGate gate1 in gateRow1) {
 			if (gate1.isUsed) {
-				for (int column = gate1.GetColumnRightOfFlank(gate1.leftFlank); column <= gate1.GetColumnLeftOfFlank(gate1.rightFlank); column++) {
+				for (int column = GeneLogicBoxGate.GetColumnRightOfFlank(gate1.leftFlank); column <= GeneLogicBoxGate.GetColumnLeftOfFlank(gate1.rightFlank); column++) {
 					if (!IsCellOccupiedByGate(2, column)) {
 						gate1.partsConnected.Add(inputRow3[column]);
 						if (inputRow3[column].isTransmittingSignal) {
@@ -184,6 +193,7 @@
 		return AreSomeCellsOccupiedByGate(gate.row - 1, gate.leftFlank, gate.rightFlank);
 	}
 
+	// TODO : don't remove locked ones
 	public void RemoveAllGates() {
 		gateRow0.isUsed = false;
 		foreach (GeneLogicBoxGate g in gateRow1) {
@@ -192,6 +202,7 @@
 		foreach (GeneLogicBoxGate g in gateRow2) {
 			g.isUsed = false;
 		}
+		UpdateConnections();
 	}
 
 	public bool TryCreateGate(int row, LogicOperatorEnum operatorType) {
@@ -218,6 +229,8 @@
 				newGate.rightFlank = rightFlank;
 				newGate.lockness = isLocked ? LocknessEnum.Locked : LocknessEnum.Unlocked;
 				newGate.isUsed = true;
+
+				UpdateConnections();
 				return true;
 			}
 		}
@@ -298,6 +311,7 @@
 		for (int i = 0; i < columnCount; i++) {
 			inputRow3[i].Defaultify();
 		}
+		UpdateConnections();
 	}
 
 	public void Randomize() {
@@ -305,12 +319,140 @@
 	}
 
 	public void Mutate(float strength, bool isOrigin) {
-		// TODO mutate gates as well
+		// Extend flanks
+		foreach (GeneLogicBoxGate gate in gateRow1) {
+			if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateExtendFlank, strength) || true) {
+				gate.TryMoveLeftFlankLeft();
+			}
+			if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateExtendFlank, strength) || true) {
+				gate.TryMoveLeftFlankRight();
+			}
+			if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateExtendFlank, strength) || true) {
+				gate.TryMoveRightFlankLeft();
+			}
+			if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateExtendFlank, strength) || true) {
+				gate.TryMoveRightFlankRight();
+			}
+		}
+		foreach (GeneLogicBoxGate gate in gateRow2) {
+			if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateExtendFlank, strength) || true) {
+				gate.TryMoveLeftFlankLeft();
+			}
+			if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateExtendFlank, strength) || true) {
+				gate.TryMoveLeftFlankRight();
+			}
+			if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateExtendFlank, strength) || true) {
+				gate.TryMoveRightFlankLeft();
+			}
+			if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateExtendFlank, strength) || true) {
+				gate.TryMoveRightFlankRight();
+			}
+		}
+
+		// remove gate
+		if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateRemoveAdd, strength) || true) {
+			List<GeneLogicBoxGate> usedGates = GetUsedGates(false);
+			if (usedGates.Count == 0) {
+				return;
+			}
+
+			int rnd = Random.Range(0, usedGates.Count);
+			usedGates[rnd].isUsed = false;
+
+			UpdateConnections();
+		}
+
+		// add gate
+		if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateRemoveAdd, strength) || true) {
+			List<GateLocation> locations = new List<GateLocation>();
+			for (int row = 1; row < 3; row++) {
+				for (int column = 0; column < columnCount; column++) {
+					int vacantSpace = VacantCellCountRightOf(row, column);
+					Debug.Log("space: " + vacantSpace);
+					if (vacantSpace >= 2) {
+						locations.Add(new GateLocation(row, column, 2));
+					}
+					if (vacantSpace >= 3) {
+						locations.Add(new GateLocation(row, column, 3));
+					}
+					if (vacantSpace >= 4) {
+						locations.Add(new GateLocation(row, column, 4));
+					}
+					if (vacantSpace >= 5) {
+						locations.Add(new GateLocation(row, column, 5));
+					}
+					if (vacantSpace == 6) {
+						locations.Add(new GateLocation(row, column, 6));
+					}
+				}
+			}
+
+			if (locations.Count > 0) {
+				GateLocation location = locations[Random.Range(0, locations.Count)];
+				TryCreateGate(location.row, Random.Range(0, 2) == 0 ? LogicOperatorEnum.And : LogicOperatorEnum.Or, GeneLogicBoxGate.GetFlankLeftOfColumn(location.startColumn), GeneLogicBoxGate.GetFlankRightOfColumn(location.endColumn), false);
+			}
+		}
+
+		// change logic operation
+		if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateToggleLogicOperation, strength) || true) {
+			List<GeneLogicBoxGate> usedGates = GetUsedGates(true);
+			int rnd = Random.Range(0, usedGates.Count);
+			if (usedGates[rnd].operatorType == LogicOperatorEnum.And) {
+				usedGates[rnd].operatorType = LogicOperatorEnum.Or;
+			} else {
+				usedGates[rnd].operatorType = LogicOperatorEnum.And;
+			}
+		}
 
 		// valves
 		for (int i = 0; i < columnCount; i++) {
-			inputRow3[i].Mutate(strength, isOrigin);
+			if (inputRow3[i].Mutate(strength, isOrigin)) {
+				UpdateConnections();
+			}
 		}
+	}
+
+	// how many cells are vacant right of 
+	private int VacantCellCountRightOf(int row, int startColumn) {
+		int count = 0;
+		for (int c = startColumn; c < columnCount; c++) {
+			if (!IsCellOccupiedByGateOrLock(row, startColumn)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	private struct GateLocation {
+		public int row;
+		public int startColumn; // left most cell
+		public int width;
+
+		public int endColumn {
+			get {
+				return startColumn + width - 1;
+			}
+		}
+
+		public GateLocation(int row, int startColumn, int width) {
+			this.row = row;
+			this.startColumn = startColumn;
+			this.width = width;
+		}
+	}
+
+	private List<GeneLogicBoxGate> GetUsedGates(bool includeRow0) {
+		List<GeneLogicBoxGate> list = new List<GeneLogicBoxGate>();
+		if (includeRow0) {
+			list.Add(gateRow0);
+		}
+		foreach (GeneLogicBoxGate gate in gateRow1) {
+			list.Add(gate);
+		}
+		foreach (GeneLogicBoxGate gate in gateRow2) {
+			list.Add(gate);
+		}
+		return list;
 	}
 
 	// Save

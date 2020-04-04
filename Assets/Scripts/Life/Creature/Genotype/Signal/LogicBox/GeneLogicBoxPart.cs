@@ -15,19 +15,19 @@ public abstract class GeneLogicBoxPart {
 		}
 	}
 
-	public int GetColumnLeftOfFlank(int flank) {
+	public static int GetColumnLeftOfFlank(int flank) {
 		return flank - 1;
 	}
 
-	public int GetColumnRightOfFlank(int flank) {
+	public static int GetColumnRightOfFlank(int flank) {
 		return flank;
 	}
 
-	public int GetFlankLeftOfColumn(int column) {
+	public static int GetFlankLeftOfColumn(int column) {
 		return column;
 	}
 
-	public int GetFlankRightOfColumn(int column) {
+	public static int GetFlankRightOfColumn(int column) {
 		return column + 1;
 	}
 

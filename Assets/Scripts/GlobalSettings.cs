@@ -65,7 +65,10 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float nerveUnitAndSlotChange = 10f;
 
 		// logic box (works the same regardles if inside work panel or not)
-		public float logicBoxInputValveToggle = 10f;
+		public float logicBoxInputValveToggle = 10f; // chance per valve
+		public float logicBoxGateExtendFlank = 1f; // extend flank one step left/right. At mutation: for each logicBox -> for each gate -> for each flank -> for each direction... chances are this big that it will be extended 
+		public float logicBoxGateRemoveAdd = 5f; // remove presant gate. add a new one size 2 where there is room
+		public float logicBoxGateToggleLogicOperation = 5f;
 
 		// sensor (works the same regardles if inside work panel or not)
 		public float energySensorThresholdChange = 50f;

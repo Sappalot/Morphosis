@@ -13,14 +13,11 @@ public class Morphosis : MonoSingleton<Morphosis> {
 	public EdgePool edgePool;
 	public RelationArrows relationArrows;
 
-	
-
 	public static string savePath {
 		get {
 			return Application.persistentDataPath + "/";
 		}
 	}
-
 
 	private void Start () {
 		Debug.Log(Application.persistentDataPath);

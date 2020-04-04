@@ -56,19 +56,24 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 
 	}
 
-	public void Mutate(float strength, bool isOrigin) {
+	public bool Mutate(float strength, bool isOrigin) {
+		bool didMutate = false;
+
 		GlobalSettings gs = GlobalSettings.instance;
 		float rnd;
 
 		rnd = Random.Range(0, gs.mutation.logicBoxInputValveToggle * strength + 1000f);
 		if (rnd < gs.mutation.logicBoxInputValveToggle * strength) {
 			valveMode = (valveMode == SignalValveModeEnum.Pass ? SignalValveModeEnum.Block : SignalValveModeEnum.Pass);
+			didMutate = true;
 		}
 
 		// we wont change where we sample from if we are locked
-		if (lockness == LocknessEnum.Unlocked || lockness == LocknessEnum.SemiLocked) {
-			nerve.Mutate(strength, isOrigin);
+		if (lockness == LocknessEnum.Unlocked) {
+			didMutate |= nerve.Mutate(strength, isOrigin);
 		}
+
+		return didMutate;
 	}
 
 	// Save

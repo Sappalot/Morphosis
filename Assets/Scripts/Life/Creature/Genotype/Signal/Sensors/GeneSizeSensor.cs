@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+
+// TODO: Rename it growth sensor
 public class GeneSizeSensor : GeneSignalUnit {
 	public GeneSizeSensor(SignalUnitEnum signalUnit) {
 		this.signalUnit = signalUnit;

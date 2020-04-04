@@ -17,12 +17,17 @@ public class GeneNerve {
 
 	}
 
-	public void Mutate(float strength, bool isOrigin) {
+	public bool Mutate(float strength, bool isOrigin) {
+		bool didMutate = false;
+
+		// slot
 		float mut = Random.Range(0, 1000f + GlobalSettings.instance.mutation.nerveSlotChange * strength);
 		if (mut < GlobalSettings.instance.mutation.nerveSlotChange * strength) {
-			MutateSlot();
+			MutateSlot(); // slot will be limited depending on unit
+			didMutate = true;
 		}
 
+		// unit & slot
 		mut = Random.Range(0, 1000f + GlobalSettings.instance.mutation.nerveUnitAndSlotChange * strength);
 		if (mut < GlobalSettings.instance.mutation.nerveUnitAndSlotChange * strength) {
 			int unitRandom = Random.Range(1, isOrigin ? 15 : 17);
@@ -31,11 +36,13 @@ public class GeneNerve {
 			} if (unitRandom == 10 || unitRandom == 11) {
 				unitRandom = 12;
 			}
-
 			inputUnit = (SignalUnitEnum)unitRandom;
 
-			MutateSlot();
+			MutateSlot(); // newrves input slot needs to be limited to the available output slots (usualy 6)
+
+			didMutate |= true;
 		}
+		return didMutate;
 	}
 
 	private void MutateSlot() {

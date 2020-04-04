@@ -86,6 +86,10 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	}
 
 	public void OnClickedDelete() {
+		RemoveGate();
+	}
+
+	public void RemoveGate() {
 		if (affectedGeneLogicBoxGate != null && affectedGeneLogicBoxGate.row > 0) {
 			affectedGeneLogicBoxGate.isUsed = false;
 			motherPanel.UpdateConnections();
