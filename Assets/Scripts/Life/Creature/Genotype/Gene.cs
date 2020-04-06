@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Gene {
 	// Egg cell
 	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkLogicBoxA);
 	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkSensorA);
-	// AttachmentSensor needs no gene, since it has no settings
+	public GeneAttachmentSensor eggCellAttachmentSensor = new GeneAttachmentSensor(SignalUnitEnum.WorkSensorB);
 	// ^ Egg cell ^
 
 	// Jaw Cell
@@ -35,6 +36,8 @@ public class Gene {
 			}
 		}
 	}
+
+	public GeneConstantSensor constantSenesor = new GeneConstantSensor(SignalUnitEnum.ConstantSensor);
 
 	public GeneAxon axon = new GeneAxon();
 
@@ -96,6 +99,91 @@ public class Gene {
 	}
 
 	public readonly Arrangement[] arrangements = new Arrangement[3];
+
+	public GeneSignalUnit GetGeneSignalUnit(SignalUnitEnum signalUnitType) {
+		switch (signalUnitType) {
+			case SignalUnitEnum.Void:
+				return null;
+			case SignalUnitEnum.WorkHibernate: //unused
+				return null;
+			case SignalUnitEnum.WorkLogicBoxA:
+				if (type == CellTypeEnum.Egg) {
+					return eggCellFertilizeLogic;
+				}
+				return null;
+			case SignalUnitEnum.WorkLogicBoxB:
+				return null;
+			case SignalUnitEnum.WorkSensorA:
+				if (type == CellTypeEnum.Egg) {
+					return eggCellFertilizeEnergySensor;
+				}
+				return null;
+			case SignalUnitEnum.WorkSensorB:
+				if (type == CellTypeEnum.Egg) {
+					return eggCellAttachmentSensor;
+				}
+				return null;
+			case SignalUnitEnum.WorkSensorC:
+				break;
+			case SignalUnitEnum.WorkSensorD:
+				return null;
+			case SignalUnitEnum.ConstantSensor: // aka emitter
+				return constantSenesor;
+			case SignalUnitEnum.Axon:
+				return axon;
+			case SignalUnitEnum.FilterChange:
+				return null;
+			case SignalUnitEnum.FilterTrend:
+				return null;
+			case SignalUnitEnum.DendritesLogicBox:
+				return dendritesLogicBox;
+			case SignalUnitEnum.EnergySensor:
+				return energySensor;
+			case SignalUnitEnum.EffectSensor:
+				return effectSensor;
+			case SignalUnitEnum.OriginDetatchLogicBox:
+				if (isOrigin) {
+					return originDetatchLogicBox;
+				}
+				return null;
+			case SignalUnitEnum.OriginSizeSensor:
+				return originSizeSensor;
+		}
+		return null;
+	}
+
+	private void MarkAllGeneSignalUnitsAsUnusedInternal() {
+		foreach (SignalUnitEnum type in Enum.GetValues(typeof(SignalUnitEnum))) {
+			GeneSignalUnit unit = GetGeneSignalUnit(type);
+			if (unit != null) {
+				unit.isUsedInternal = false;
+			}
+		}
+	}
+
+	public void OnGeneChanged() {
+		MarkAllGeneSignalUnitsAsUnusedInternal();
+		GeneSignalUnit unit;
+		unit = GetGeneSignalUnit(SignalUnitEnum.WorkLogicBoxA);
+		if (unit != null) {
+			unit.MarkThisAndChildrenAsUsedInternal(this);
+		}
+
+		unit = GetGeneSignalUnit(SignalUnitEnum.WorkLogicBoxB);
+		if (unit != null) {
+			unit.MarkThisAndChildrenAsUsedInternal(this);
+		}
+
+		unit = GetGeneSignalUnit(SignalUnitEnum.Axon);
+		if (unit != null) {
+			unit.MarkThisAndChildrenAsUsedInternal(this);
+		}
+
+		unit = GetGeneSignalUnit(SignalUnitEnum.OriginDetatchLogicBox);
+		if (unit != null) {
+			unit.MarkThisAndChildrenAsUsedInternal(this);
+		}
+	}
 
 	public Gene(int index) {
 		this.index = index;
@@ -185,10 +273,12 @@ public class Gene {
 		originPulseTickPeriod = 80;
 		originEmbryoMaxSizeCompleteness = 0.5f;
 		originGrowPriorityCellPersistance = 20; //secounds
+
+		OnGeneChanged();
 	}
 
 	public void Randomize() {
-		type = (CellTypeEnum)Random.Range(0, 8);
+		type = (CellTypeEnum)UnityEngine.Random.Range(0, 8);
 		arrangements[0].Randomize();
 		arrangements[1].Randomize();
 		arrangements[2].Randomize();
@@ -201,13 +291,15 @@ public class Gene {
 
 		dendritesLogicBox.Randomize();
 		originDetatchLogicBox.Randomize();
+
+		OnGeneChanged();
 	}
 
 	public void Mutate(float strength) {
 		GlobalSettings gs = GlobalSettings.instance;
-		float mut = Random.Range(0, 1000f + gs.mutation.cellTypeChange * strength);
+		float mut = UnityEngine.Random.Range(0, 1000f + gs.mutation.cellTypeChange * strength);
 		if (mut < gs.mutation.cellTypeChange * strength) {
-			type = (CellTypeEnum)Random.Range(0, 8);
+			type = (CellTypeEnum)UnityEngine.Random.Range(0, 8);
 			//ScrambleMetabolism(); // not really a good idea to allways do this, todo make it occur occationaly
 		}
 
@@ -217,40 +309,40 @@ public class Gene {
 		// ^ Egg ^
 
 		// Jaw...
-		mut = Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeKinChange * strength);
+		mut = UnityEngine.Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeKinChange * strength);
 		if (mut < gs.mutation.jawCellCannibalizeKinChange * strength) {
 			jawCellCannibalizeKin = !jawCellCannibalizeKin;
 		}
 
-		mut = Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeMotherChange * strength);
+		mut = UnityEngine.Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeMotherChange * strength);
 		if (mut < gs.mutation.jawCellCannibalizeMotherChange * strength) {
 			jawCellCannibalizeMother = !jawCellCannibalizeMother;
 		}
 
-		mut = Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeFatherChange * strength);
+		mut = UnityEngine.Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeFatherChange * strength);
 		if (mut < gs.mutation.jawCellCannibalizeFatherChange * strength) {
 			jawCellCannibalizeFather = !jawCellCannibalizeFather;
 		}
 
-		mut = Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeSiblingsChange * strength);
+		mut = UnityEngine.Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeSiblingsChange * strength);
 		if (mut < gs.mutation.jawCellCannibalizeSiblingsChange * strength) {
 			jawCellCannibalizeSiblings = !jawCellCannibalizeSiblings;
 		}
 
-		mut = Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeChildrenChange * strength);
+		mut = UnityEngine.Random.Range(0, 1000f + gs.mutation.jawCellCannibalizeChildrenChange * strength);
 		if (mut < gs.mutation.jawCellCannibalizeChildrenChange * strength) {
 			jawCellCannibalizeChildren = !jawCellCannibalizeChildren;
 		}
 		// ^ Jaw ^
 
 		// Shell...
-		//mut = Random.Range(0, 1000f + gs.mutation.shellCellArmorClassChange * strength);
+		//mut = UnityEngine.Random.Range(0, 1000f + gs.mutation.shellCellArmorClassChange * strength);
 		//if (mut < gs.mutation.shellCellArmorClassChange * strength) {
-		//	shellCellArmorClass = Mathf.Clamp(shellCellArmorClass - 2 + Random.Range(0, 5), 0, ShellCell.armourClassCount - 1);
+		//	shellCellArmorClass = Mathf.Clamp(shellCellArmorClass - 2 + UnityEngine.Random.Range(0, 5), 0, ShellCell.armourClassCount - 1);
 		//}
-		//mut = Random.Range(0, 1000f + gs.mutation.shellCellTransparancyClassChange * strength);
+		//mut = UnityEngine.Random.Range(0, 1000f + gs.mutation.shellCellTransparancyClassChange * strength);
 		//if (mut < gs.mutation.shellCellTransparancyClassChange * strength) {
-		//	shellCellTransparancyClass = Mathf.Clamp(shellCellTransparancyClass - 2 + Random.Range(0, 5), 0, ShellCell.transparencyClassCount - 1);
+		//	shellCellTransparancyClass = Mathf.Clamp(shellCellTransparancyClass - 2 + UnityEngine.Random.Range(0, 5), 0, ShellCell.transparencyClassCount - 1);
 		//}
 		// ^ Shell ^
 
@@ -268,24 +360,24 @@ public class Gene {
 		originDetatchLogicBox.Mutate(strength, isOrigin);
 		originSizeSensor.Mutate(strength);
 
-		mut = Random.Range(0, 1000f + gs.mutation.originEmbryoMaxSizeCompletenessChange * strength);
+		mut = UnityEngine.Random.Range(0, 1000f + gs.mutation.originEmbryoMaxSizeCompletenessChange * strength);
 		if (mut < gs.mutation.originEmbryoMaxSizeCompletenessChange * strength) {
 			originEmbryoMaxSizeCompleteness = Mathf.Clamp(originEmbryoMaxSizeCompleteness + gs.mutation.originEmbryoMaxSizeCompletenessChangeMaxAmount * gs.mutation.RandomDistributedValue(), 0f, 1f);
 		}
 
-		mut = Random.Range(0, gs.mutation.originGrowPriorityCellPersistenceChange * strength + 1000f);
+		mut = UnityEngine.Random.Range(0, gs.mutation.originGrowPriorityCellPersistenceChange * strength + 1000f);
 		if (mut < gs.mutation.originGrowPriorityCellPersistenceChange * strength) {
 			originGrowPriorityCellPersistance = (int)Mathf.Clamp(originGrowPriorityCellPersistance + gs.mutation.originGrowPriorityCellPersistenceMaxAmount * gs.mutation.RandomDistributedValue(), 0f, 120f);
 		}
 
-		mut = Random.Range(0, 1000f + gs.mutation.originPulseTickPeriodChange * strength);
+		mut = UnityEngine.Random.Range(0, 1000f + gs.mutation.originPulseTickPeriodChange * strength);
 		if (mut < gs.mutation.originPulseTickPeriodChange * strength) {
 			originPulseTickPeriod = (int)Mathf.Clamp(originPulseTickPeriod + gs.mutation.originPulseTickPeriodChangeMaxAmount * gs.mutation.RandomDistributedValue(), 1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMax), 1f / (Time.fixedDeltaTime * GlobalSettings.instance.phenotype.originPulseFrequenzyMin));
 		}
 		// ^ Origin ^
 
 		// Build priority
-		mut = Random.Range(0, 1000f + gs.mutation.buildPriorityBiasChange * strength);
+		mut = UnityEngine.Random.Range(0, 1000f + gs.mutation.buildPriorityBiasChange * strength);
 		if (mut < gs.mutation.buildPriorityBiasChange * strength) {
 			buildPriorityBias = Mathf.Clamp(buildPriorityBias + gs.mutation.buildPriorityBiasChangeMaxAmount * gs.mutation.RandomDistributedValue(), GlobalSettings.instance.phenotype.buildPriorityBiasMin, GlobalSettings.instance.phenotype.buildPriorityBiasMax);
 			buildPriorityBias = Mathf.Round(buildPriorityBias * 10f) / 10f; // Round to closest tenth
@@ -296,6 +388,8 @@ public class Gene {
 		arrangements[0].Mutate(strength);
 		arrangements[1].Mutate(strength);
 		arrangements[2].Mutate(strength);
+
+		OnGeneChanged();
 	}
 
 	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
@@ -372,8 +466,6 @@ public class Gene {
 		geneData.arrangementData[1] = arrangements[1].UpdateData();
 		geneData.arrangementData[2] = arrangements[2].UpdateData();
 
-		
-
 		return geneData;
 	}
 
@@ -426,5 +518,7 @@ public class Gene {
 		arrangements[0].ApplyData(geneData.arrangementData[0]);
 		arrangements[1].ApplyData(geneData.arrangementData[1]);
 		arrangements[2].ApplyData(geneData.arrangementData[2]);
+
+		OnGeneChanged();
 	}
 }

@@ -189,6 +189,27 @@ public class GeneLogicBox : GeneSignalUnit {
 		}
 	}
 
+	public override void MarkThisAndChildrenAsUsedInternal(Gene gene) {
+		if (isUsedInternal) {
+			return;
+		}
+
+		isUsedInternal = true;
+
+		if (gene == null) {
+			return;
+		}
+		
+		foreach (GeneLogicBoxInput input3 in inputRow3) {
+			if (input3.valveMode == SignalValveModeEnum.Pass) {
+				GeneSignalUnit child = gene.GetGeneSignalUnit(input3.nerve.inputUnit);
+				if (child != null) {
+					child.MarkThisAndChildrenAsUsedInternal(gene);
+				}
+			}
+		}
+	}
+
 	public bool HasGateAbove(GeneLogicBoxGate gate) {
 		return AreSomeCellsOccupiedByGate(gate.row - 1, gate.leftFlank, gate.rightFlank);
 	}
@@ -368,7 +389,6 @@ public class GeneLogicBox : GeneSignalUnit {
 			for (int row = 1; row < 3; row++) {
 				for (int column = 0; column < columnCount; column++) {
 					int vacantSpace = VacantCellCountRightOf(row, column);
-					Debug.Log("space: " + vacantSpace);
 					if (vacantSpace >= 2) {
 						locations.Add(new GateLocation(row, column, 2));
 					}
@@ -422,6 +442,8 @@ public class GeneLogicBox : GeneSignalUnit {
 		}
 		return count;
 	}
+
+	
 
 	private struct GateLocation {
 		public int row;

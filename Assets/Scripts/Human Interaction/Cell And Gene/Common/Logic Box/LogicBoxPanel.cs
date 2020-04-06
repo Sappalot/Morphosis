@@ -155,10 +155,16 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 	public void OnClickedOutputButton() { // The arrow, processed late
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-			LogicBoxInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
-			AxonInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
+			if (affectedGeneLogicBox != null) {
+				LogicBoxInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
+				AxonInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
+				MouseAction.instance.actionState = MouseActionStateEnum.free;
 
-			MouseAction.instance.actionState = MouseActionStateEnum.free;
+				
+			} else {
+				Debug.Log("Can't connect a nerve to a ghost output");
+				// TODO: play error audio
+			}
 		}
 	}
 
@@ -199,6 +205,9 @@ public class LogicBoxPanel : SignalUnitPanel {
 			}
 
 			outputLabel.text = outputText;
+			if (affectedGeneLogicBox != null && !affectedGeneLogicBox.isUsedInternal) {
+				outputLabel.text = "UNUSED";
+			}
 			isDirty = false;
 		}
 	}

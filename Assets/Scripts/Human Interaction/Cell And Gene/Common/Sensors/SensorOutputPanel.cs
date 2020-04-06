@@ -8,12 +8,13 @@ public class SensorOutputPanel : MonoBehaviour {
 	public PhenoGenoEnum mode { get; set; }
 	private SignalUnitEnum signalUnit;
 	private SignalUnitSlotEnum signalUnitSlot;
-
+	private SensorPanel motherPanel;
 
 	public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot, SensorPanel motherPanel) {
 		this.mode = mode;
 		this.signalUnit = signalUnit;
 		this.signalUnitSlot = signalUnitSlot;
+		this.motherPanel = motherPanel;
 	}
 
 	[HideInInspector]
@@ -24,10 +25,15 @@ public class SensorOutputPanel : MonoBehaviour {
 
 	public void OnClicked() {
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-			LogicBoxInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
-			AxonInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
+			if (motherPanel != null) {
+				LogicBoxInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
+				AxonInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
+				MouseAction.instance.actionState = MouseActionStateEnum.free;
+			} else {
+				Debug.Log("Can't connect a nerve to a ghost output");
+				// TODO play aduio uh uh
+			}
 
-			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		}
 	}
 

@@ -46,7 +46,8 @@ public class Genotype : MonoBehaviour {
 	// ^ geneCellLists ^
 
 	[HideInInspector]
-	public bool geneCellsDiffersFromGenome = true; // Cell List and Cell Map needs to be updates
+	public bool geneCellsDiffersFromGenome = true; // Cell List and Cell Map needs to be updates, needs to be done as genes cause changes in cell structure
+
 	public bool isGrabbed { get; private set; }
 
 	private CellMap geneCellMap = new CellMap();
@@ -280,6 +281,7 @@ public class Genotype : MonoBehaviour {
 		genes[1].type = CellTypeEnum.Vein;
 		genes[2].type = CellTypeEnum.Leaf;
 		genes[3].type = CellTypeEnum.Muscle;
+
 	}
 
 	public void GenerateGenomeJellyfish() {
@@ -317,8 +319,9 @@ public class Genotype : MonoBehaviour {
 
 	public bool UpdateGeneCellsFromGenome(Creature creature, Vector2 position, float heading) { // heading 90 ==> origin is pointing north
 		if (geneCellsDiffersFromGenome) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
-				Debug.Log("Update Creature UpdateGeneCellsFromGenome");
+			Debug.Log("Update Creature UpdateGeneCellsFromGenome");
+			//if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+				
 
 			Clear();
 
@@ -418,6 +421,7 @@ public class Genotype : MonoBehaviour {
 			//geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
 			geneCellListIndexSorted.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex)); // only sorted here
 			//MakeGeneCellListPrioritySortedDirty();
+			
 			return true;
 		}
 		return false;

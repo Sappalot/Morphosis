@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class GeneAxon {
+public class GeneAxon : GeneSignalUnit {
 	private bool m_axonIsEnabled;
 	public bool axonIsEnabled {
 		get {
@@ -47,6 +47,35 @@ public class GeneAxon {
 	public void SetAllInputToBlocked() {
 		axonInputLeft.valveMode = SignalValveModeEnum.Block;
 		axonInputRight.valveMode = SignalValveModeEnum.Block;
+	}
+
+	public override void MarkThisAndChildrenAsUsedInternal(Gene gene) {
+		if (isUsedInternal) {
+			return;
+		}
+
+		isUsedInternal = true;
+		
+		if (gene == null) {
+			return;
+		}
+
+		if (!axonIsEnabled) {
+			return; // axone not in use, so we shouldn't mark any children
+		}
+		
+		if (axonInputLeft.valveMode == SignalValveModeEnum.Pass) {
+			GeneSignalUnit child = gene.GetGeneSignalUnit(axonInputLeft.nerve.inputUnit);
+			if (child != null) {
+				child.MarkThisAndChildrenAsUsedInternal(gene);
+			}
+		}
+		if (axonInputRight.valveMode == SignalValveModeEnum.Pass) {
+			GeneSignalUnit child = gene.GetGeneSignalUnit(axonInputRight.nerve.inputUnit);
+			if (child != null) {
+				child.MarkThisAndChildrenAsUsedInternal(gene);
+			}
+		}
 	}
 
 	public void Defaultify() {

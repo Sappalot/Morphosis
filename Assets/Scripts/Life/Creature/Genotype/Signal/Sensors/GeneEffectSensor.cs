@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
-public class GeneEffectSensor
-: GeneSignalUnit {
+public class GeneEffectSensor : GeneSignalUnit {
 	public GeneEffectSensor(SignalUnitEnum signalUnit) {
 		this.signalUnit = signalUnit;
 	}

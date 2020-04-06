@@ -76,8 +76,6 @@ public class GeneNerve {
 		}
 	}
 
-
-
 	// Save
 	private GeneNerveData geneNerveData = new GeneNerveData();
 	public GeneNerveData UpdateData() {
