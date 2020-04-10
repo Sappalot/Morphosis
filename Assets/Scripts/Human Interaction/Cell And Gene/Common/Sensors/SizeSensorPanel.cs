@@ -16,7 +16,7 @@ public class SizeSensorPanel : SensorPanel {
 		}
 
 		(affectedGeneSensor as GeneSizeSensor).sizeThreshold = sizeThresholdSlider.value;
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 
 	public void OnBlockedGrowthPatienseThresholdSliderMoved() {
@@ -25,7 +25,7 @@ public class SizeSensorPanel : SensorPanel {
 		}
 
 		(affectedGeneSensor as GeneSizeSensor).cantGrowMorePatienseThreshold = (int)cantGrowMoreTimeSlider.value;
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 
 	public override void Update() {

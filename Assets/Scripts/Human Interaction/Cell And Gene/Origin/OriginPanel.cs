@@ -42,7 +42,7 @@ public class OriginPanel : ComponentPanel {
 		}
 
 		GenePanel.instance.selectedGene.originPulseTickPeriod = Mathf.CeilToInt(1f / (Time.fixedDeltaTime * pulseFrequenzySlider.value));
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 	// ^pulse^
 
@@ -53,7 +53,7 @@ public class OriginPanel : ComponentPanel {
 		}
 
 		GenePanel.instance.selectedGene.originEmbryoMaxSizeCompleteness = embryoMaxSizeSlider.value;
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 	// ^embryo max size^
 
@@ -63,7 +63,7 @@ public class OriginPanel : ComponentPanel {
 		}
 
 		GenePanel.instance.selectedGene.originGrowPriorityCellPersistance = (int)growPriorityCellPersistanceSlider.value;
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 
 	public override List<IGeneInput> GetAllGeneInputs() {

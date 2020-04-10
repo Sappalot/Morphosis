@@ -17,11 +17,11 @@ public static class GenotypeUtil {
 		return combination;
 	}
 
-	public static Gene[] CombineGenomeFine(List<Gene[]> genomes) {
+	public static Gene[] CombineGenomeFine(List<Gene[]> genomes, IGenotypeDirtyfy genotypeDirtyfy) {
 		Gene[] combination = new Gene[Genotype.genomeLength];
 
 		for (int geneIndex = 0; geneIndex < Genotype.genomeLength; geneIndex++) {
-			combination[geneIndex] = new Gene(geneIndex);
+			combination[geneIndex] = new Gene(geneIndex, genotypeDirtyfy);
 			int sourceGenome = Random.Range(0, genomes.Count);
 			combination[geneIndex].type = genomes[sourceGenome][geneIndex].type;
 			for (int arrangementIndex = 0; arrangementIndex < 3; arrangementIndex++) {

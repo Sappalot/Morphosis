@@ -1,11 +1,11 @@
-﻿// Information on how to connect any of creatures outputs output to an input
+﻿// Information on how to connect any of creatures outputs to an input
 
 using UnityEngine;
 
 public class GeneNerve {
-	public SignalUnitEnum outputUnit = SignalUnitEnum.Void; // The output from me "the nerve" The GeneSensor that created this one
+	public SignalUnitEnum outputUnit = SignalUnitEnum.Void; // The output from me "the nerve" received as input by the GeneSensor that created this one
 	public SignalUnitSlotEnum outputUnitSlot; // The slot on that (above) unit
-	public SignalUnitEnum inputUnit = SignalUnitEnum.Void; // The input to me "the nerve" (Somebodey elses output)
+	public SignalUnitEnum inputUnit = SignalUnitEnum.Void; // The input to me "the nerve" sent from some singalUnits output
 	public SignalUnitSlotEnum inputUnitSlot; // The slot on that (above) unit
 
 	public void Defaultify() {

@@ -122,8 +122,8 @@ public class AxonPanel : SensorPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axon.axonIsEnabled = enabledToggle.isOn;
-		OnGenomeChanged(true);
+		GenePanel.instance.selectedGene.axon.isEnabled = enabledToggle.isOn;
+		OnGenomeChanged();
 	}
 
 	public void OnFromOriginOffsetSliderMoved() {
@@ -131,7 +131,7 @@ public class AxonPanel : SensorPanel {
 			return;
 		}
 		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromOriginOffset = fromOriginOffsetSlider.value;
-		OnGenomeChanged(true);
+		OnGenomeChanged();
 	}
 
 	public void OnToggleFromOriginPlus180TextChanged() {
@@ -139,7 +139,7 @@ public class AxonPanel : SensorPanel {
 			return;
 		}
 		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonIsFromOriginPlus180 = fromOriginPlus180Toggle.isOn;
-		OnGenomeChanged(true);
+		OnGenomeChanged();
 	}
 
 	public void OnFromMeOffsetSliderMoved() {
@@ -147,7 +147,7 @@ public class AxonPanel : SensorPanel {
 			return;
 		}
 		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromMeOffset = fromMeOffsetSlider.value;
-		OnGenomeChanged(true);
+		OnGenomeChanged();
 	}
 
 	public void OnRelaxContractSliderMoved() {
@@ -155,7 +155,7 @@ public class AxonPanel : SensorPanel {
 			return;
 		}
 		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonRelaxContract = relaxContractSlider.value;
-		OnGenomeChanged(true);
+		OnGenomeChanged();
 	}
 
 	public void OnToggleReverseChanged() {
@@ -163,7 +163,7 @@ public class AxonPanel : SensorPanel {
 			return;
 		}
 		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonIsReverse = reverseToggle.isOn;
-		OnGenomeChanged(true);
+		OnGenomeChanged();
 	}
 
 	public void OnDropdownCombination3Changed() {
@@ -171,7 +171,7 @@ public class AxonPanel : SensorPanel {
 			return;
 		}
 		selectedGene.axon.pulseProgram3 = dropdown3.value; // 0 = relax, 1 = A ....
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 
 	public void OnDropdownCombination2Changed() {
@@ -179,7 +179,7 @@ public class AxonPanel : SensorPanel {
 			return;
 		}
 		selectedGene.axon.pulseProgram2 = dropdown2.value; // 0 = relax, 1 = A ....
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 
 	public void OnDropdownCombination1Changed() {
@@ -187,7 +187,7 @@ public class AxonPanel : SensorPanel {
 			return;
 		}
 		selectedGene.axon.pulseProgram1 = dropdown1.value; // 0 = relax, 1 = A ....
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 
 	public void OnDropdownCombination0Changed() {
@@ -195,7 +195,7 @@ public class AxonPanel : SensorPanel {
 			return;
 		}
 		selectedGene.axon.pulseProgram0 = dropdown0.value; // 0 = relax, 1 = A ....
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 
 	public void MarkAsNewForge() {
@@ -256,7 +256,7 @@ public class AxonPanel : SensorPanel {
 			if (GenePanel.instance.selectedGene != null && CreatureSelectionPanel.instance.hasSoloSelected) {
 				
 
-				enabledToggle.isOn = GenePanel.instance.selectedGene.axon.axonIsEnabled;
+				enabledToggle.isOn = GenePanel.instance.selectedGene.axon.isEnabled;
 				if (GetMode() == PhenoGenoEnum.Genotype) {
 					fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromOriginOffset);
 					

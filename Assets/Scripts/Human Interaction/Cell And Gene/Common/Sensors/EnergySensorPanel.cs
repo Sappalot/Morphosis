@@ -21,7 +21,7 @@ public class EnergySensorPanel : SensorPanel {
 		}
 
 		(affectedGeneSensor as GeneEnergySensor).threshold = energyThresholdSlider.value;
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 
 	public void OnAreaRadiusSliderMoved() {
@@ -30,7 +30,7 @@ public class EnergySensorPanel : SensorPanel {
 		}
 
 		(affectedGeneSensor as GeneEnergySensor).areaRadius = (int)areaRadiusSlider.value;
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 
 	public override void Update() {

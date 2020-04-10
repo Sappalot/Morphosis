@@ -54,16 +54,16 @@ public class ShellCellPanel : ComponentPanel {
 	//}
 
 	public void SelectButton(ShellCellPanelButton button) {
-		if (GetMode() == PhenoGenoEnum.Genotype && IsUnlocked()) {
-			//GenePanel.instance.selectedGene.shellCellArmorClass = button.armorClass;
-			//GenePanel.instance.selectedGene.shellCellTransparancyClass = button.transparencyClass;
-			MakeDirty();
-			if (CreatureSelectionPanel.instance.hasSoloSelected) {
-				GenePanel.instance.MakeDirty();
-				CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
-			}
+		//if (GetMode() == PhenoGenoEnum.Genotype && IsUnlocked()) {
+		//	//GenePanel.instance.selectedGene.shellCellArmorClass = button.armorClass;
+		//	//GenePanel.instance.selectedGene.shellCellTransparancyClass = button.transparencyClass;
+		//	MakeDirty();
+		//	if (CreatureSelectionPanel.instance.hasSoloSelected) {
+		//		GenePanel.instance.MakeDirty();
+		//		CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
+		//	}
 
-			OnGenomeChanged(true);
-		}
+		//	OnGenomeChanged(true);
+		//}
 	}
 }

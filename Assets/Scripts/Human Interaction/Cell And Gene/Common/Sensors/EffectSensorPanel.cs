@@ -35,7 +35,7 @@ public class EffectSensorPanel : SensorPanel {
 
 		(affectedGeneSensor as GeneEffectSensor).effectMeassure = (EffectMeassureEnum)effectMeasuredDropdown.value;
 
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 
 	public void OnAreaRadiusSliderMoved() {
@@ -45,7 +45,7 @@ public class EffectSensorPanel : SensorPanel {
 
 		(affectedGeneSensor as GeneEffectSensor).usedAreaRadius = (int)areaRadiusSlider.value;
 
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 
 	public void OnEffectThresholdSliderMoved() {
@@ -55,7 +55,7 @@ public class EffectSensorPanel : SensorPanel {
 
 		(affectedGeneSensor as GeneEffectSensor).usedThreshold = effectThresholdSlider.value;
 
-		OnGenomeChanged(false);
+		OnGenomeChanged();
 	}
 
 

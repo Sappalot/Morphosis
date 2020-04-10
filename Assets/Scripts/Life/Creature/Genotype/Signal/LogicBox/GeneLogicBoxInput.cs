@@ -10,9 +10,6 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 		get {
 			return m_nerve;
 		}
-		set {
-			m_nerve = value;
-		}
 	}
 
 	private SignalValveModeEnum m_valveMode;
@@ -31,8 +28,8 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 		this.row = row;
 		leftFlank = GetFlankLeftOfColumn(column);
 		rightFlank = GetFlankRightOfColumn(column);
-		nerve.outputUnit = signalUnit;
-		nerve.outputUnitSlot = (SignalUnitSlotEnum)column;
+		nerve.outputUnit = signalUnit; // me
+		nerve.outputUnitSlot = (SignalUnitSlotEnum)column; // me
 	}
 
 	public int column {

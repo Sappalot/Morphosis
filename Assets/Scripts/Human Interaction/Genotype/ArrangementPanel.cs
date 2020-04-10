@@ -74,8 +74,8 @@ public class ArrangementPanel : MonoBehaviour {
 	public void OnClickEnabledToggle(bool value) {
 		if (CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome) {
 			bool wasChanged = arrangement.isEnabled != value; //To prevent dirtymarking when just setting startup value
-			arrangement.isEnabled = value;
 			if (wasChanged) {
+				arrangement.isEnabled = value;
 				MakeAllGenomeStuffDirty();
 			}
 		}
@@ -140,8 +140,8 @@ public class ArrangementPanel : MonoBehaviour {
 
 	public void OnTogglePairs(bool value) {
 		bool wasChanged = arrangement.isFlipPairsEnabled != value; //To prevent dirtymarking when just setting startup value
-		arrangement.isFlipPairsEnabled = value;
 		if (wasChanged) {
+			arrangement.isFlipPairsEnabled = value;
 			MakeAllGenomeStuffDirty();
 		}
 	}
@@ -189,7 +189,7 @@ public class ArrangementPanel : MonoBehaviour {
 		GenePanel.instance.cellAndGenePanel.buildPriorityPanel.MakeDirty(); // since change of genome might have an effect on wether same gena is expressed on several build index locations
 		GenomePanel.instance.MakeDirty();
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
+			//CreatureSelectionPanel.instance.soloSelected.genotype.isGeneCellPatternDirty = true;
 			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
 			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}

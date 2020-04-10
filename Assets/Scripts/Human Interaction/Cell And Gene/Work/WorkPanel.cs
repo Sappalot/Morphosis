@@ -65,7 +65,7 @@ public class WorkPanel : MonoBehaviour {
 		GenotypePanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.genotype.geneCellsDiffersFromGenome = true;
+			//CreatureSelectionPanel.instance.soloSelected.genotype.isGeneCellPatternDirty = true;
 			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
 			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}

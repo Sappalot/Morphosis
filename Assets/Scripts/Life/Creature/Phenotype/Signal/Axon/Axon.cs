@@ -43,7 +43,7 @@ public class Axon : SignalUnit {
 
 	public bool isEnabled {
 		get {
-			return hostCell.gene.axon.axonIsEnabled;
+			return hostCell.gene.axon.isEnabled;
 		}
 	}
 

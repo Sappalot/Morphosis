@@ -39,7 +39,7 @@ public class Gene {
 
 	public GeneConstantSensor constantSenesor = new GeneConstantSensor(SignalUnitEnum.ConstantSensor);
 
-	public GeneAxon axon = new GeneAxon();
+	public GeneAxon axon;
 
 	// Dendrites....
 	public GeneLogicBox dendritesLogicBox = new GeneLogicBox(SignalUnitEnum.DendritesLogicBox);
@@ -89,6 +89,7 @@ public class Gene {
 			} else {
 				m_type = value;
 			}
+			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
 		}
 	}
 	public int index;
@@ -152,7 +153,7 @@ public class Gene {
 		return null;
 	}
 
-	private void MarkAllGeneSignalUnitsAsUnusedInternal() {
+	public void PreUpdateInterGeneCell() {
 		foreach (SignalUnitEnum type in Enum.GetValues(typeof(SignalUnitEnum))) {
 			GeneSignalUnit unit = GetGeneSignalUnit(type);
 			if (unit != null) {
@@ -161,8 +162,7 @@ public class Gene {
 		}
 	}
 
-	public void OnGeneChanged() {
-		MarkAllGeneSignalUnitsAsUnusedInternal();
+	public void UpdateInterGeneCell() {
 		GeneSignalUnit unit;
 		unit = GetGeneSignalUnit(SignalUnitEnum.WorkLogicBoxA);
 		if (unit != null) {
@@ -175,7 +175,7 @@ public class Gene {
 		}
 
 		unit = GetGeneSignalUnit(SignalUnitEnum.Axon);
-		if (unit != null) {
+		if (unit != null && (unit as GeneAxon).isEnabled) {
 			unit.MarkThisAndChildrenAsUsedInternal(this);
 		}
 
@@ -185,11 +185,17 @@ public class Gene {
 		}
 	}
 
-	public Gene(int index) {
+	private IGenotypeDirtyfy genotypeDirtyfy;
+
+	public Gene(int index, IGenotypeDirtyfy genotypeDirtyfy) {
 		this.index = index;
-		arrangements[0] = new Arrangement(index);
-		arrangements[1] = new Arrangement(index);
-		arrangements[2] = new Arrangement(index);
+		this.genotypeDirtyfy = genotypeDirtyfy;
+
+		axon = new GeneAxon(this.genotypeDirtyfy);
+
+		arrangements[0] = new Arrangement(index, this.genotypeDirtyfy);
+		arrangements[1] = new Arrangement(index, this.genotypeDirtyfy);
+		arrangements[2] = new Arrangement(index, this.genotypeDirtyfy);
 
 		Defaultify();
 	}
@@ -273,8 +279,6 @@ public class Gene {
 		originPulseTickPeriod = 80;
 		originEmbryoMaxSizeCompleteness = 0.5f;
 		originGrowPriorityCellPersistance = 20; //secounds
-
-		OnGeneChanged();
 	}
 
 	public void Randomize() {
@@ -291,8 +295,6 @@ public class Gene {
 
 		dendritesLogicBox.Randomize();
 		originDetatchLogicBox.Randomize();
-
-		OnGeneChanged();
 	}
 
 	public void Mutate(float strength) {
@@ -388,8 +390,6 @@ public class Gene {
 		arrangements[0].Mutate(strength);
 		arrangements[1].Mutate(strength);
 		arrangements[2].Mutate(strength);
-
-		OnGeneChanged();
 	}
 
 	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
@@ -410,8 +410,8 @@ public class Gene {
 		return first;
 	}
 
-	public Gene GetClone() {
-		Gene clone = new Gene(index);
+	public Gene GetClone(IGenotypeDirtyfy genotypeDirtyfy) {
+		Gene clone = new Gene(index, genotypeDirtyfy);
 		clone.ApplyData(UpdateData());
 		return clone;
 	}
@@ -518,7 +518,5 @@ public class Gene {
 		arrangements[0].ApplyData(geneData.arrangementData[0]);
 		arrangements[1].ApplyData(geneData.arrangementData[1]);
 		arrangements[2].ApplyData(geneData.arrangementData[2]);
-
-		OnGeneChanged();
 	}
 }

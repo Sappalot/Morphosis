@@ -11,7 +11,6 @@ public class Creature : MonoBehaviour {
 	public static int maxRadiusHexagon = 16; // used to limit blueprint. R = 16 ==> we can have can have 16 cells north of origin at most origin = 0, 1 = neighbour, .... cell 16 = perifery 
 	public static float maxRadiusCircle = maxRadiusHexagon + 0.5f; // used for culling and check so that we don't build too far away from origin 
 		
-
 	public Genotype genotype;
 	public Phenotype phenotype;
 
@@ -461,12 +460,13 @@ public class Creature : MonoBehaviour {
 		return genotype.IsPartlyInside(area);
 	}
 
+
+	// any genome with only 1 cell grown
 	public void GenerateEmbryo(Gene[] genome, Vector3 position, float heading) {
-		genotype.GenomeSet(genome);
+		genotype.SetGenome(genome);
 		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading);
 		phenotype.InitiateEmbryo(this, position, heading);
 		isDirtyGraphics = true;
-		//EvoUpdate(); //To avoid occational flicker (shows genotype shortly)
 	}
 
 	public void GenerateSimple(Vector3 position, float heading) {
@@ -481,7 +481,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void GenerateMergling(List<Gene[]> genomes, Vector3 position, float heading) {
-		genotype.GenomeSet(GenotypeUtil.CombineGenomeFine(genomes));
+		genotype.SetGenome(GenotypeUtil.CombineGenomeFine(genomes, genotype));
 		UpdateCellsAndGeneCells(position, heading);
 	}
 
@@ -699,6 +699,11 @@ public class Creature : MonoBehaviour {
 	public void UpdateStructure() {
 		if (genotype.hasOriginCell && genotype.UpdateGeneCellsFromGenome(this, genotype.originCell.position, genotype.originCell.heading)) {
 			phenotype.cellsDiffersFromGeneCells = true;
+			isDirtyGraphics = true;
+		}
+
+		if (genotype.hasOriginCell && genotype.TryUpdateInterGeneCells()) {
+			
 			isDirtyGraphics = true;
 		}
 

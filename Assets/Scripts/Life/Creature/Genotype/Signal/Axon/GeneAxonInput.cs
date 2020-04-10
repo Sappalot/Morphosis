@@ -10,9 +10,6 @@ public class GeneAxonInput : IGeneInput {
 		get {
 			return m_nerve;
 		}
-		set {
-			m_nerve = value;
-		}
 	}
 
 	private SignalValveModeEnum m_valveMode;
@@ -48,7 +45,7 @@ public class GeneAxonInput : IGeneInput {
 			valveMode = (valveMode == SignalValveModeEnum.Pass ? SignalValveModeEnum.Block : SignalValveModeEnum.Pass);
 		}
 
-		nerve.Mutate(strength, isOrigin);
+		nerve.Mutate(strength, isOrigin); // never locked
 	}
 
 	// Save

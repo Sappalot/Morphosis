@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class Genotype : MonoBehaviour {
+public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 	public EggCell eggCellPrefab;
 	public FungalCell fungalCellPrefab;
 	public JawCell jawCellPrefab;
@@ -11,6 +11,18 @@ public class Genotype : MonoBehaviour {
 	public ShellCell shellCellPrefab;
 	public VeinCell veinCellPrefab;
 	public Transform geneCellsTransform;
+
+	private bool isGeneCellPatternDirty = true; // Cell List and Cell Map needs to be updates, needs to be done as genes cause changes in cell structure
+	private bool isInterGeneCellDirty = true;
+
+	public void MakePatternAndInterGeneCellDirty() {
+		isGeneCellPatternDirty = true;
+		isInterGeneCellDirty = true;
+	}
+
+	public void MakeInterGeneCellDirty() {
+		isInterGeneCellDirty = true;
+	}
 
 	public static int genomeLength = 21;
 	[HideInInspector]
@@ -32,8 +44,9 @@ public class Genotype : MonoBehaviour {
 		// This is the only place where the genes are made
 		// When we want to change the creature, we hchange its genes 
 		for (int index = 0; index < genomeLength; index++) {
-			genes[index] = new Gene(index);
+			genes[index] = new Gene(index, this);
 		}
+		int a = 1;
 	}
 
 	public void AddCellToGeneCellLists(Cell cell) {
@@ -44,9 +57,6 @@ public class Genotype : MonoBehaviour {
 		geneCellListIndexSorted.Clear();
 	}
 	// ^ geneCellLists ^
-
-	[HideInInspector]
-	public bool geneCellsDiffersFromGenome = true; // Cell List and Cell Map needs to be updates, needs to be done as genes cause changes in cell structure
 
 	public bool isGrabbed { get; private set; }
 
@@ -124,10 +134,10 @@ public class Genotype : MonoBehaviour {
 
 	public Cell GetClosestAxonGeneCellUpBranch(Vector2i position) {
 		Vector2i currentPosition = position;
-		
+
 		for (int rep = 0; rep < stepsToRootAtMost; rep++) {
 			Cell cellAtPosition = geneCellMap.GetCell(currentPosition);
-			if (cellAtPosition.isAxonEnabled) { 
+			if (cellAtPosition.isAxonEnabled) {
 				return cellAtPosition;
 			}
 			// there should be an axone at origin, since it is forced to be there
@@ -163,11 +173,12 @@ public class Genotype : MonoBehaviour {
 		return geneCellMap.GetCell(position);
 	}
 
-	//Hack
-	public Gene[] GetMutatedClone(float strength) {
+	// Hack
+	// The child needs to be the dirty one as anything happens to its genes
+	public Gene[] GetMutatedClone(IGenotypeDirtyfy genotypeDirtyfy, float strength) {
 		Gene[] temporary = new Gene[genomeLength];
 		for (int index = 0; index < genomeLength; index++) {
-			temporary[index] = genes[index].GetClone();
+			temporary[index] = genes[index].GetClone(genotypeDirtyfy);
 			temporary[index].Mutate(strength);
 		}
 		return temporary;
@@ -184,7 +195,7 @@ public class Genotype : MonoBehaviour {
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
 
-		geneCellsDiffersFromGenome = true;
+		MakePatternAndInterGeneCellDirty();
 	}
 
 	public void SetScrambled() {
@@ -202,7 +213,7 @@ public class Genotype : MonoBehaviour {
 			}
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		geneCellsDiffersFromGenome = true;
+		MakePatternAndInterGeneCellDirty();
 	}
 
 	public void Mutate(float strength) {
@@ -215,15 +226,15 @@ public class Genotype : MonoBehaviour {
 			}
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		geneCellsDiffersFromGenome = true;
+		MakePatternAndInterGeneCellDirty();
 	}
 
-	public void GenomeSet(Gene[] genome) {
+	public void SetGenome(Gene[] genome) {
 		for (int index = 0; index < genomeLength; index++) {
-			this.genes[index] = genome[index].GetClone();
+			this.genes[index] = genome[index].GetClone(this);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		geneCellsDiffersFromGenome = true;
+		MakePatternAndInterGeneCellDirty();
 	}
 
 	public void SetReferenceGenesFromReferenceGeneIndices() {
@@ -318,10 +329,10 @@ public class Genotype : MonoBehaviour {
 	}
 
 	public bool UpdateGeneCellsFromGenome(Creature creature, Vector2 position, float heading) { // heading 90 ==> origin is pointing north
-		if (geneCellsDiffersFromGenome) {
+		if (isGeneCellPatternDirty) {
 			Debug.Log("Update Creature UpdateGeneCellsFromGenome");
 			//if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
-				
+
 
 			Clear();
 
@@ -364,7 +375,7 @@ public class Genotype : MonoBehaviour {
 									Debug.Assert(residentCell.buildIndex <= buildOrderIndex, "Trying to spawn a cell at a location where a cell of lower build index is allready present.");
 									if (residentCell.buildIndex == buildOrderIndex) {
 										//trying to spawn a cell where there is one allready with the same buildOrderIndex, in fight over this place bothe cells will loose, so the resident will be removed
-										
+
 										//mark the cell that spawned the resident cell
 										geneCellMap.GetCell(geneCellMap.GetCellGridPositionUpBranch(residentCell.mapPosition)).failBlueprintNeighboursDueToConcurentBuild = true;
 										//...and the current cell
@@ -391,7 +402,7 @@ public class Genotype : MonoBehaviour {
 
 					// We have more cells in the blueprint than max size, so REMOVE the last buildOrderIndex layer ALL TOGETHER and call it a creature
 					foreach (Cell tooMuch in nextSpawningFromCells) { // nextSpawningFromCells contains all cells in last layer added
-						//cell 'back' from cell, we are about to remove, could not build this cell, so its arrow will be coloured red 
+																	  //cell 'back' from cell, we are about to remove, could not build this cell, so its arrow will be coloured red 
 						geneCellMap.GetCell(geneCellMap.GetCellGridPositionUpBranch(tooMuch.mapPosition)).failBlueprintNeighboursDueToAreaOrCount = true;
 
 						Morphosis.instance.geneCellPool.Recycle(tooMuch);
@@ -412,7 +423,7 @@ public class Genotype : MonoBehaviour {
 
 			TurnTo(heading); //is at 90 allready
 			MoveTo(position);
-			geneCellsDiffersFromGenome = false;
+			MakePatternAndInterGeneCellDirty();
 			creature.MakeDirtyGraphics();
 
 			// This is the only place where we add and remove GeneCells to geneCell List so we can safely sort it by priority here
@@ -420,12 +431,32 @@ public class Genotype : MonoBehaviour {
 			// We need to have it sorted in this way and never in any other way
 			//geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
 			geneCellListIndexSorted.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex)); // only sorted here
-			//MakeGeneCellListPrioritySortedDirty();
-			
+																									  //MakeGeneCellListPrioritySortedDirty();
+			isGeneCellPatternDirty = false;
 			return true;
 		}
 		return false;
 	}
+
+	public bool TryUpdateInterGeneCells() {
+		if (isInterGeneCellDirty) {
+			
+			foreach (Gene gene in genes) {
+				gene.PreUpdateInterGeneCell();
+			}
+
+			foreach (Gene gene in genes) {
+				gene.UpdateInterGeneCell();
+			}
+
+			isInterGeneCellDirty = false;
+			return true;
+		}
+		return false;
+	}
+	
+	
+
 
 	private Cell SpawnGeneCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide) {
 		Cell cell = Morphosis.instance.geneCellPool.Borrow(gene.type);
@@ -644,11 +675,11 @@ public class Genotype : MonoBehaviour {
 
 	public void ApplyData(GenotypeData genotypeData) {
 		for (int index = 0; index < genomeLength; index++) {
-			genes[index] = new Gene(index);
+			genes[index] = new Gene(index, this);
 			genes[index].ApplyData(genotypeData.geneData[index]);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		geneCellsDiffersFromGenome = true;
+		MakePatternAndInterGeneCellDirty();
 	}
 
 	// ^ Load / Save ^

@@ -1,17 +1,26 @@
 ﻿using UnityEngine;
 
 public class GeneAxon : GeneSignalUnit {
-	private bool m_axonIsEnabled;
-	public bool axonIsEnabled {
+	
+	// is it trying to affect muscles?
+	// it is able to handle and transmit signals even if disabled
+	private bool m_isEnabled;
+	public bool isEnabled {
 		get {
-			return m_axonIsEnabled || isOrigin;
+			return m_isEnabled || isOrigin;
 		}
 		set {
-			m_axonIsEnabled = value;
+			m_isEnabled = value;
 		}
 	}
 
 	public bool isOrigin;
+
+	private IGenotypeDirtyfy genotypeDirtyfy;
+
+	public GeneAxon(IGenotypeDirtyfy genotypeDirtyfy) {
+		this.genotypeDirtyfy = genotypeDirtyfy;
+	}
 
 	private GeneAxonPulse pulseA = new GeneAxonPulse();
 	private GeneAxonPulse pulseB = new GeneAxonPulse();
@@ -60,7 +69,7 @@ public class GeneAxon : GeneSignalUnit {
 			return;
 		}
 
-		if (!axonIsEnabled) {
+		if (!isEnabled) {
 			return; // axone not in use, so we shouldn't mark any children
 		}
 		
@@ -79,7 +88,7 @@ public class GeneAxon : GeneSignalUnit {
 	}
 
 	public void Defaultify() {
-		axonIsEnabled = false;
+		isEnabled = false;
 		ConnectAllInputInputTo(SignalUnitEnum.ConstantSensor, SignalUnitSlotEnum.outputLateA); // constant 0
 		SetAllInputToBlocked();
 
@@ -106,7 +115,7 @@ public class GeneAxon : GeneSignalUnit {
 
 		float mut = Random.Range(0, 1000f + gs.mutation.axonEnabledToggle * strength);
 		if (mut < gs.mutation.axonEnabledToggle * strength) {
-			axonIsEnabled = !axonIsEnabled; //toggle
+			isEnabled = !isEnabled; //toggle
 		}
 
 		pulseA.Mutate(strength);
@@ -121,7 +130,7 @@ public class GeneAxon : GeneSignalUnit {
 	// Save
 	private GeneAxonData data = new GeneAxonData();
 	public GeneAxonData UpdateData() {
-		data.axonIsEnabled = axonIsEnabled;
+		data.axonIsEnabled = isEnabled;
 
 		data.pulseDataA = pulseA.UpdateData();
 		data.pulseDataB = pulseB.UpdateData();
@@ -140,7 +149,7 @@ public class GeneAxon : GeneSignalUnit {
 
 	// Load
 	public void ApplyData(GeneAxonData axonData) {
-		axonIsEnabled = axonData.axonIsEnabled;
+		isEnabled = axonData.axonIsEnabled;
 
 		pulseA.ApplyData(axonData.pulseDataA);
 		pulseB.ApplyData(axonData.pulseDataB);
