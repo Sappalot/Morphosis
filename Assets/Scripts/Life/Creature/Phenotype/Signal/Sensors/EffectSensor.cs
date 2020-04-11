@@ -26,6 +26,10 @@ public class EffectSensor : SignalUnit {
 
 	public override void ComputeSignalOutput(int deltaTicks) {
 		if (signalUnit == SignalUnitEnum.EffectSensor) { // redundant check ? 
+			if (!hostCell.gene.effectSensor.isUsedInternal) {
+				return;
+			}
+
 			output[0] = hostCell.Effect((hostCell.gene.effectSensor as GeneEffectSensor).effectMeassure) >= (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;
 			output[1] = hostCell.Effect((hostCell.gene.effectSensor as GeneEffectSensor).effectMeassure) < (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;
 

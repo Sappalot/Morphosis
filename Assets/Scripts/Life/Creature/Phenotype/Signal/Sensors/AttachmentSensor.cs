@@ -14,13 +14,19 @@ public class AttachmentSensor : SignalUnit {
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {
-		// There are no settings on this sensor, so it doesn't matter which sensor this is, it should be reporting the same info
-		output[0] = hostCell.creature.IsAttachedToMotherAlive();
-		output[1] = !hostCell.creature.IsAttachedToMotherAlive();
-		output[2] = hostCell.creature.IsAttachedToChildAlive();
-		output[3] = !hostCell.creature.IsAttachedToChildAlive();
-		output[4] = false; // TODO: several children
-		output[5] = false; // TODO: several children
+		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkSensorB) {
+			if (!hostCell.gene.eggCellAttachmentSensor.isUsedInternal) {
+				return;
+			}
+			output[0] = hostCell.creature.IsAttachedToMotherAlive();
+			output[1] = !hostCell.creature.IsAttachedToMotherAlive();
+			output[2] = hostCell.creature.IsAttachedToChildAlive();
+			output[3] = !hostCell.creature.IsAttachedToChildAlive();
+			output[4] = false; // TODO: several children
+			output[5] = false; // TODO: several children
+		}
+
+
 	}
 
 	public override void Clear() {

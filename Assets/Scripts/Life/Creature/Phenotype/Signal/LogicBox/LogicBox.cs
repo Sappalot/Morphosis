@@ -39,6 +39,9 @@
 	}
 
 	private bool ThroughGates(GeneLogicBox geneLogicBox) {
+		if (!geneLogicBox.isUsedInternal) {
+			return false;
+		}
 		return HasSignalPostGate(geneLogicBox.GetGate(0, 0), hostCell);
 	}
 

@@ -27,7 +27,11 @@ public class EnergySensor : SignalUnit {
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {
-		if (signalUnit == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) {
+		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkSensorA) {
+			if (!hostCell.gene.eggCellFertilizeEnergySensor.isUsedInternal) {
+				return;
+			}
+
 			output[0] = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 			output[1] = hostCell.energy < (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 
@@ -42,6 +46,10 @@ public class EnergySensor : SignalUnit {
 			output[5] = creatureEnergy < (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 
 		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
+			if (!hostCell.gene.energySensor.isUsedInternal) {
+				return;
+			}
+
 			output[0] = hostCell.energy >= (hostCell.gene.energySensor as GeneEnergySensor).threshold;
 			output[1] = hostCell.energy < (hostCell.gene.energySensor as GeneEnergySensor).threshold;
 

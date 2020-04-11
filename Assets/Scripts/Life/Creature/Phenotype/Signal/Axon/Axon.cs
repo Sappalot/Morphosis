@@ -19,6 +19,10 @@ public class Axon : SignalUnit {
 
 	public override void ComputeSignalOutput(int deltaTicks) {
 		if (signalUnit == SignalUnitEnum.Axon) { // redundant check ? 
+			if (!hostCell.gene.axon.isUsedInternal) {
+				return;
+			}
+
 			outputEarly[0] = selectedProgram == 1; // a
 			outputEarly[1] = selectedProgram == 2; // b
 			outputEarly[2] = selectedProgram == 3;

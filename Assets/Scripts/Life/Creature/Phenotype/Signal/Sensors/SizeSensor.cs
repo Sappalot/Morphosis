@@ -15,6 +15,10 @@ public class SizeSensor : SignalUnit {
 
 	public override void ComputeSignalOutput(int deltaTicks) {
 		if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
+			if (!hostCell.gene.originSizeSensor.isUsedInternal) {
+				return;
+			}
+
 			output[0] = hostCell.creature.phenotype.cellCount >= hostCell.creature.CellCountAtCompleteness((hostCell.gene.originSizeSensor as GeneSizeSensor).sizeThreshold); // A
 			output[1] = hostCell.creature.phenotype.cellCount < hostCell.creature.CellCountAtCompleteness((hostCell.gene.originSizeSensor as GeneSizeSensor).sizeThreshold); // B
 			output[2] = hostCell.creature.canNotGrowMoreTicks == 0; // C
