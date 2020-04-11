@@ -1259,8 +1259,10 @@ public class Phenotype : MonoBehaviour {
 		KillAllCells(false); //Kill Cell (when origin) will set isAlive = false;
 		cellList.Clear();
 		cellMap.Clear();
-		detatchmentKick = null;
 		
+		detatchmentKick = null;
+		kickTickStamp = 0;
+
 		//Perifery edges
 		edges.OnRecycle();
 
