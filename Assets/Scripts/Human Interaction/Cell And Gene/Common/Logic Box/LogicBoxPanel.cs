@@ -192,8 +192,14 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 			if (mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null) {
 				if (affectedGeneLogicBox != null) {
-					outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-					outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputEarlyA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					if (affectedGeneLogicBox.isUsedInternal) {
+						outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+						outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputEarlyA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					} else {
+						outputImageLate.color = ColorScheme.instance.signalUnused;
+						outputImageEarly.color = ColorScheme.instance.signalUnused;
+					}
+
 				}
 			} else {
 				if (affectedGeneLogicBox != null && affectedGeneLogicBox.isUsedInternal) {

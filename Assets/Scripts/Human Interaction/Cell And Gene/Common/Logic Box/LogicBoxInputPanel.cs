@@ -145,7 +145,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 				lockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked);
 				semiLockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxInput.lockness == LocknessEnum.SemiLocked);
 			} else {
-				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve) {
+				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve || !motherPanel.affectedGeneLogicBox.isUsedInternal) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused;
 				} else if (runtimeOutput == LogicBoxInputEnum.VoidInput) { // should never happen
 					inputButtonImage.color = Color.magenta;
