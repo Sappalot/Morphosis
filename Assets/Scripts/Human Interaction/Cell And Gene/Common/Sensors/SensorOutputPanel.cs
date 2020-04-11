@@ -29,11 +29,24 @@ public class SensorOutputPanel : MonoBehaviour {
 				LogicBoxInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
 				AxonInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
 				MouseAction.instance.actionState = MouseActionStateEnum.free;
+
+				MarkAsNewForge();
+				GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
+				
 			} else {
 				Debug.Log("Can't connect a nerve to a ghost output");
 				// TODO play aduio uh uh
 			}
 
+		}
+	}
+
+	private void MarkAsNewForge() {
+		CreatureSelectionPanel.instance.MakeDirty();
+		GenomePanel.instance.MakeDirty();
+		if (CreatureSelectionPanel.instance.hasSoloSelected) {
+			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}
 	}
 
@@ -48,7 +61,18 @@ public class SensorOutputPanel : MonoBehaviour {
 					image.color = selectedCell.GetOutputFromUnit(signalUnit, signalUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
-				image.color = ColorScheme.instance.signalOff;
+				if (motherPanel == null) {
+					Debug.Log("motherPanel == null");
+				} else if (motherPanel.affectedGeneSensor == null) {
+					Debug.Log("motherPanel.affectedGeneSensor == null");
+				}
+
+				if (motherPanel.affectedGeneSensor.isUsedInternal) {
+					image.color = ColorScheme.instance.signalOff;
+				} else {
+					image.color = ColorScheme.instance.signalUnused;
+				}
+				
 			}
 
 			isDirty = false;

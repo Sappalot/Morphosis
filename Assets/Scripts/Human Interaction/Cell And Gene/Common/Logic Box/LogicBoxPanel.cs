@@ -107,6 +107,8 @@ public class LogicBoxPanel : SignalUnitPanel {
 		MakeDirty();
 	}
 
+	
+
 	public void MarkAsNewForge() {
 		CreatureSelectionPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();
@@ -135,7 +137,9 @@ public class LogicBoxPanel : SignalUnitPanel {
 	public override List<IGeneInput> GetAllGeneInputs() {
 		List<IGeneInput> arrows = new List<IGeneInput>();
 		for (int i = 0; i < inputRow3.Length; i++) {
-			arrows.Add(inputRow3[i].affectedGeneLogicBoxInput);
+			if (affectedGeneLogicBox.isUsedInternal) {
+				arrows.Add(inputRow3[i].affectedGeneLogicBoxInput);
+			}
 		}
 		return arrows;
 	}
@@ -160,7 +164,8 @@ public class LogicBoxPanel : SignalUnitPanel {
 				AxonInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
 				MouseAction.instance.actionState = MouseActionStateEnum.free;
 
-				
+				GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
+				MarkAsNewForge();
 			} else {
 				Debug.Log("Can't connect a nerve to a ghost output");
 				// TODO: play error audio
@@ -191,8 +196,13 @@ public class LogicBoxPanel : SignalUnitPanel {
 					outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputEarlyA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 			} else {
-				outputImageLate.color = ColorScheme.instance.signalOff;
-				outputImageEarly.color = ColorScheme.instance.signalOff;
+				if (affectedGeneLogicBox != null && affectedGeneLogicBox.isUsedInternal) {
+					outputImageLate.color = ColorScheme.instance.signalOff;
+					outputImageEarly.color = ColorScheme.instance.signalOff;
+				} else {
+					outputImageLate.color = ColorScheme.instance.signalUnused;
+					outputImageEarly.color = ColorScheme.instance.signalUnused;
+				}
 			}
 
 			// locked cells
@@ -205,9 +215,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 			}
 
 			outputLabel.text = outputText;
-			if (affectedGeneLogicBox != null && !affectedGeneLogicBox.isUsedInternal) {
-				outputLabel.text = "UNUSED";
-			}
+
 			isDirty = false;
 		}
 	}

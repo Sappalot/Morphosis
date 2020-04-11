@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Gene {
 	// Egg cell
-	public GeneLogicBox eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkLogicBoxA);
+	public GeneLogicBox eggCellFertilizeLogic;
 	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkSensorA);
 	public GeneAttachmentSensor eggCellAttachmentSensor = new GeneAttachmentSensor(SignalUnitEnum.WorkSensorB);
 	// ^ Egg cell ^
@@ -42,7 +42,7 @@ public class Gene {
 	public GeneAxon axon;
 
 	// Dendrites....
-	public GeneLogicBox dendritesLogicBox = new GeneLogicBox(SignalUnitEnum.DendritesLogicBox);
+	public GeneLogicBox dendritesLogicBox;
 	// ^ Dendrites ^
 
 	// Sensors...
@@ -51,7 +51,7 @@ public class Gene {
 	// ^ sensors ^
 
 	// Origin...
-	public GeneLogicBox originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox);
+	public GeneLogicBox originDetatchLogicBox;
 	public GeneSizeSensor originSizeSensor = new GeneSizeSensor(SignalUnitEnum.OriginSizeSensor);
 	public int originPulseTickPeriod;
 	public float originEmbryoMaxSizeCompleteness;
@@ -175,7 +175,7 @@ public class Gene {
 		}
 
 		unit = GetGeneSignalUnit(SignalUnitEnum.Axon);
-		if (unit != null && (unit as GeneAxon).isEnabled) {
+		if (unit != null && (unit as GeneAxon).isEnabled) { // axone is root if it is sending pulse to muscles
 			unit.MarkThisAndChildrenAsUsedInternal(this);
 		}
 
@@ -192,6 +192,9 @@ public class Gene {
 		this.genotypeDirtyfy = genotypeDirtyfy;
 
 		axon = new GeneAxon(this.genotypeDirtyfy);
+		eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkLogicBoxA, this.genotypeDirtyfy);
+		dendritesLogicBox = new GeneLogicBox(SignalUnitEnum.DendritesLogicBox, this.genotypeDirtyfy);
+		originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox, this.genotypeDirtyfy);
 
 		arrangements[0] = new Arrangement(index, this.genotypeDirtyfy);
 		arrangements[1] = new Arrangement(index, this.genotypeDirtyfy);

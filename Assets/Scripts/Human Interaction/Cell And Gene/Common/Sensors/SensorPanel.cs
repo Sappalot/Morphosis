@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public abstract class SensorPanel : SignalUnitPanel {
 	public SensorOutputPanel[] outputPanels;
 	public RectTransform settingsPanel; // Not all sensor panels use settings panel
-	protected bool isUsed = false;
+	protected bool isUsed = false; // is used in what sense??????
 
 	private void Awake() {
 		if (!isUsed && settingsPanel != null) {
@@ -14,6 +14,7 @@ public abstract class SensorPanel : SignalUnitPanel {
 		}
 	}
 
+	// merge with code in Gene unit enum = gives=> sensorUnit | now it is double coded
 	public GeneSignalUnit affectedGeneSensor {
 		get {
 			if (selectedGene != null) {
@@ -21,7 +22,20 @@ public abstract class SensorPanel : SignalUnitPanel {
 					if (signalUnit == SignalUnitEnum.WorkSensorA) {
 						return selectedGene.eggCellFertilizeEnergySensor;
 					}
+
+					if (signalUnit == SignalUnitEnum.WorkSensorB) {
+						return selectedGene.eggCellAttachmentSensor;
+					}
+
 					// Do we need attachment sensor? the thisn is it has no gene representation (holds no data)
+				}
+
+				if (signalUnit == SignalUnitEnum.ConstantSensor) {
+					return selectedGene.constantSenesor;
+				}
+
+				if (signalUnit == SignalUnitEnum.Axon) {
+					return selectedGene.axon;
 				}
 
 				// not a work sensor of any kind
@@ -36,6 +50,8 @@ public abstract class SensorPanel : SignalUnitPanel {
 				if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
 					return selectedGene.originSizeSensor;
 				}
+
+
 
 			}
 

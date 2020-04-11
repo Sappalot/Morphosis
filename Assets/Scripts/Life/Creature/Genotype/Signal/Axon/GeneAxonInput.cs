@@ -4,7 +4,7 @@ public class GeneAxonInput : IGeneInput {
 
 	// TODO make it so that nerve input can't be changed if locked
 	// TODO don't access nerve directly
-	public GeneNerve m_nerve = new GeneNerve();
+	public GeneNerve m_nerve;
 
 	public GeneNerve nerve {
 		get {
@@ -21,12 +21,17 @@ public class GeneAxonInput : IGeneInput {
 			if (lockness == LocknessEnum.Unlocked || lockness == LocknessEnum.SemiLocked) { 
 				m_valveMode = value;
 			}
+			genotypeDirtyfy.MakeInterGeneCellDirty();
 		}
 	}
 
 	public LocknessEnum lockness = LocknessEnum.Unlocked;// No need to save/load this one as it is hardcoded, set by gene (would be the same every time)
 
-	public GeneAxonInput(int column, SignalUnitEnum signalUnit) {
+	private IGenotypeDirtyfy genotypeDirtyfy;
+
+	public GeneAxonInput(int column, SignalUnitEnum signalUnit, IGenotypeDirtyfy genotypeDirtyfy) {
+		this.genotypeDirtyfy = genotypeDirtyfy;
+		m_nerve = new GeneNerve(genotypeDirtyfy);
 		nerve.outputUnit = signalUnit;
 		nerve.outputUnitSlot = (SignalUnitSlotEnum)column;
 	}
@@ -59,6 +64,8 @@ public class GeneAxonInput : IGeneInput {
 	// Load
 	public void ApplyData(GeneLogicBoxInputData geneLogicBoxInputData) {
 		valveMode = geneLogicBoxInputData.valveMode;
-		nerve.ApplyData(geneLogicBoxInputData.geneNerveData); 
+		nerve.ApplyData(geneLogicBoxInputData.geneNerveData);
+
+		genotypeDirtyfy.MakeInterGeneCellDirty();
 	}
 }

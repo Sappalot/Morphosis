@@ -11,6 +11,7 @@ public class GeneAxon : GeneSignalUnit {
 		}
 		set {
 			m_isEnabled = value;
+			genotypeDirtyfy.MakeInterGeneCellDirty();
 		}
 	}
 
@@ -20,6 +21,9 @@ public class GeneAxon : GeneSignalUnit {
 
 	public GeneAxon(IGenotypeDirtyfy genotypeDirtyfy) {
 		this.genotypeDirtyfy = genotypeDirtyfy;
+		axonInputLeft = new GeneAxonInput(0, SignalUnitEnum.Axon, this.genotypeDirtyfy); // left, A
+
+		axonInputRight = new GeneAxonInput(1, SignalUnitEnum.Axon, this.genotypeDirtyfy); // right, B
 	}
 
 	private GeneAxonPulse pulseA = new GeneAxonPulse();
@@ -33,8 +37,8 @@ public class GeneAxon : GeneSignalUnit {
 
 	public GeneAxonPulse[] pulses = new GeneAxonPulse[4];
 
-	public GeneAxonInput axonInputLeft = new GeneAxonInput(0, SignalUnitEnum.Axon); // left, A
-	public GeneAxonInput axonInputRight = new GeneAxonInput(1, SignalUnitEnum.Axon); // right, B
+	public GeneAxonInput axonInputLeft;
+	public GeneAxonInput axonInputRight;
 
 	public int pulseProgram3 = 3; //  
 	public int pulseProgram2 = 2; // ...
@@ -67,10 +71,6 @@ public class GeneAxon : GeneSignalUnit {
 		
 		if (gene == null) {
 			return;
-		}
-
-		if (!isEnabled) {
-			return; // axone not in use, so we shouldn't mark any children
 		}
 		
 		if (axonInputLeft.valveMode == SignalValveModeEnum.Pass) {

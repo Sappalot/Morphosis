@@ -16,7 +16,7 @@ public class GeneLogicBox : GeneSignalUnit {
 	private GeneLogicBoxInput[] inputRow3 = new GeneLogicBoxInput[columnCount]; // 6 
 	private bool[,] lockedCellMatrix = new bool[rowCount, columnCount];
 
-	public GeneLogicBox(SignalUnitEnum signalUnit) {
+	public GeneLogicBox(SignalUnitEnum signalUnit, IGenotypeDirtyfy genotypeDirtyfy) {
 		this.signalUnit = signalUnit;
 
 		gateRow0 = new GeneLogicBoxGate(this, 0);
@@ -25,7 +25,7 @@ public class GeneLogicBox : GeneSignalUnit {
 			gateRow2[g] = new GeneLogicBoxGate(this, 2);
 		}
 		for (int i = 0; i < columnCount; i++) {
-			inputRow3[i] = new GeneLogicBoxInput(3, i, signalUnit);
+			inputRow3[i] = new GeneLogicBoxInput(3, i, signalUnit, genotypeDirtyfy);
 		}
 	}
 

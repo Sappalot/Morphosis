@@ -5,16 +5,43 @@ using UnityEngine;
 public class GeneNerve {
 	public SignalUnitEnum outputUnit = SignalUnitEnum.Void; // The output from me "the nerve" received as input by the GeneSensor that created this one
 	public SignalUnitSlotEnum outputUnitSlot; // The slot on that (above) unit
-	public SignalUnitEnum inputUnit = SignalUnitEnum.Void; // The input to me "the nerve" sent from some singalUnits output
-	public SignalUnitSlotEnum inputUnitSlot; // The slot on that (above) unit
+
+	private SignalUnitEnum m_inputUnit = SignalUnitEnum.Void; // The input to me "the nerve" sent from some singalUnits output
+	public SignalUnitEnum inputUnit {
+		get {
+			return m_inputUnit;
+		}
+		set {
+			m_inputUnit = value;
+			genotypeDirtyfy.MakeInterGeneCellDirty();
+		}
+	}
+
+	private SignalUnitSlotEnum m_inputUnitSlot; // The slot on that (above) unit
+	public SignalUnitSlotEnum inputUnitSlot {
+		get {
+			return m_inputUnitSlot;
+		}
+		set {
+			m_inputUnitSlot = value;
+			genotypeDirtyfy.MakeInterGeneCellDirty();
+		}
+	}
+
+	private IGenotypeDirtyfy genotypeDirtyfy;
+	public GeneNerve(IGenotypeDirtyfy genotypeDirtyfy) {
+		this.genotypeDirtyfy = genotypeDirtyfy;
+	}
 
 	public void Defaultify() {
 		inputUnit = SignalUnitEnum.ConstantSensor;
 		inputUnitSlot = SignalUnitSlotEnum.outputLateA;
+		genotypeDirtyfy.MakeInterGeneCellDirty();
 	}
 
 	public void Randomize() {
 
+		genotypeDirtyfy.MakeInterGeneCellDirty();
 	}
 
 	public bool Mutate(float strength, bool isOrigin) {
@@ -23,7 +50,7 @@ public class GeneNerve {
 		// slot
 		float mut = Random.Range(0, 1000f + GlobalSettings.instance.mutation.nerveSlotChange * strength);
 		if (mut < GlobalSettings.instance.mutation.nerveSlotChange * strength) {
-			MutateSlot(); // slot will be limited depending on unit
+			RandomizeSlot(); // slot will be limited depending on unit
 			didMutate = true;
 		}
 
@@ -38,14 +65,15 @@ public class GeneNerve {
 			}
 			inputUnit = (SignalUnitEnum)unitRandom;
 
-			MutateSlot(); // newrves input slot needs to be limited to the available output slots (usualy 6)
+			RandomizeSlot(); // newrves input slot needs to be limited to the available output slots (usualy 6)
 
 			didMutate |= true;
 		}
+
 		return didMutate;
 	}
 
-	private void MutateSlot() {
+	private void RandomizeSlot() {
 		if (inputUnit == SignalUnitEnum.WorkLogicBoxA ||
 			inputUnit == SignalUnitEnum.WorkLogicBoxB ||
 			inputUnit == SignalUnitEnum.DendritesLogicBox ||
@@ -57,6 +85,8 @@ public class GeneNerve {
 		} else {
 			RandomizeSlot(5); // all of them
 		}
+
+		genotypeDirtyfy.MakeInterGeneCellDirty();
 	}
 
 	private void RandomizeSlot(int maxIndex) {
@@ -92,5 +122,7 @@ public class GeneNerve {
 		outputUnitSlot = geneNerveData.outputUnitSlot;
 		inputUnit = geneNerveData.inputUnit;
 		inputUnitSlot = geneNerveData.inputUnitSlot;
+
+		genotypeDirtyfy.MakeInterGeneCellDirty();
 	}
 }

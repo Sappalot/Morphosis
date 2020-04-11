@@ -30,19 +30,11 @@ public class AxonInputPanel : MonoBehaviour {
 		}
 	}
 
-	public GeneNerve GetGeneNerve() {
-		return affectedGeneAxonInput.nerve;
-	}
-
 	public void Initialize(PhenoGenoEnum mode, int column, AxonPanel motherPanel) {
 		this.mode = mode;
 		this.motherPanel = motherPanel;
 		this.column = column;
 		isUsed = true;
-	}
-
-	private PhenoGenoEnum GetMode() {
-		return mode;
 	}
 
 	public void MakeDirty() {
@@ -59,6 +51,7 @@ public class AxonInputPanel : MonoBehaviour {
 		motherPanel.MakeDirty();
 		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
+		GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
 		MakeDirty();
 	}
 
@@ -72,6 +65,7 @@ public class AxonInputPanel : MonoBehaviour {
 		motherPanel.MakeDirty();
 		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
+		GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
 		MakeDirty();
 	}
 

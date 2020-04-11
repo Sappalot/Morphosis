@@ -196,7 +196,8 @@ public class LogicBoxGatePanel : MonoBehaviour {
 
 				Color arrowColor = Color.black;
 				if (mode == PhenoGenoEnum.Genotype) {
-					arrowColor = connectedPart.isTransmittingSignal ? ColorScheme.instance.signalOff : ColorScheme.instance.signalUnused;
+					// render arrows off if entire logic box is off
+					arrowColor = (connectedPart.isTransmittingSignal && motherPanel.affectedGeneLogicBox.isUsedInternal) ? ColorScheme.instance.signalOff : ColorScheme.instance.signalUnused;
 				} else {
 					if (connectedPart.isTransmittingSignal) {
 						if (connectedPart is GeneLogicBoxGate) {

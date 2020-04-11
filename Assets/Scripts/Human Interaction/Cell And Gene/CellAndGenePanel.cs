@@ -94,12 +94,21 @@ public class CellAndGenePanel : MonoBehaviour {
 
 	public List<IGeneInput> GetAllGeneInputs() {
 		List<IGeneInput> inputList = new List<IGeneInput>();
+		
 		List<IGeneInput> inputs = workPanel.currentWorkPanel.GetAllGeneInputs();
 		if (inputs != null) {
 			inputList.AddRange(inputs);
 		}
-		inputList.AddRange(axonPanel.GetAllGeneInputs());
-		inputList.AddRange(dendritesLogicBoxPanel.GetAllGeneInputs());
+
+		inputs = axonPanel.GetAllGeneInputs();
+		if (inputs != null) {
+			inputList.AddRange(inputs);
+		}
+
+		inputs = dendritesLogicBoxPanel.GetAllGeneInputs();
+		if (inputs != null) {
+			inputList.AddRange(inputs);
+		}		
 
 		if (selectedGene.isOrigin) {
 			inputs = originPanel.GetAllGeneInputs();

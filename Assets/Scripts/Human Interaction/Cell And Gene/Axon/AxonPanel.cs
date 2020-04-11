@@ -112,6 +112,9 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public override List<IGeneInput> GetAllGeneInputs() {
+		if (!affectedGeneSensor.isUsedInternal) {
+			return null;
+		}
 		List<IGeneInput> arrows = new List<IGeneInput>();
 		arrows.Add(inputLeftPanel.affectedGeneAxonInput);
 		arrows.Add(inputRightPanel.affectedGeneAxonInput);
@@ -123,6 +126,7 @@ public class AxonPanel : SensorPanel {
 			return;
 		}
 		GenePanel.instance.selectedGene.axon.isEnabled = enabledToggle.isOn;
+		GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
 		OnGenomeChanged();
 	}
 
@@ -242,7 +246,6 @@ public class AxonPanel : SensorPanel {
 			reverseToggle.interactable = interractable;
 			// ^ Pulse ^
 
-
 			dropdown3.interactable = interractable;
 			dropdown2.interactable = interractable;
 			dropdown1.interactable = interractable;
@@ -259,14 +262,21 @@ public class AxonPanel : SensorPanel {
 				enabledToggle.isOn = GenePanel.instance.selectedGene.axon.isEnabled;
 				if (GetMode() == PhenoGenoEnum.Genotype) {
 					fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromOriginOffset);
-					
-					postInputBoxLeft.color = ColorScheme.instance.signalOff;
-					postInputBoxRight.color = ColorScheme.instance.signalOff;
 
-					combinationImage3.color = ColorScheme.instance.signalOff; // 11
-					combinationImage2.color = ColorScheme.instance.signalOff; // 10
-					combinationImage1.color = ColorScheme.instance.signalOff; // 01
-					combinationImage0.color = ColorScheme.instance.signalOff; // 00
+					Color color = Color.white;
+					if (GenePanel.instance.selectedGene.axon.isUsedInternal) {
+						color = ColorScheme.instance.signalOff;
+					} else {
+						color = ColorScheme.instance.signalUnused;
+					}
+
+					postInputBoxLeft.color = color;
+					postInputBoxRight.color = color;
+
+					combinationImage3.color = color; // 11
+					combinationImage2.color = color; // 10
+					combinationImage1.color = color; // 01
+					combinationImage0.color = color; // 00
 
 				} else if (GetMode() == PhenoGenoEnum.Phenotype) {
 

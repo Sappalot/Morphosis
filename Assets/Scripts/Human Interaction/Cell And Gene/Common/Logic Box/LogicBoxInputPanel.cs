@@ -61,6 +61,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		motherPanel.MakeDirty();
 		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
+		GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
 		MakeDirty();
 	}
 
@@ -72,8 +73,10 @@ public class LogicBoxInputPanel : MonoBehaviour {
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
+		
 		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
+		GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
 		MakeDirty();
 	}
 
@@ -128,8 +131,8 @@ public class LogicBoxInputPanel : MonoBehaviour {
 			passButton.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
 
 			if (mode == PhenoGenoEnum.Genotype) {
-				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
-					inputButtonImage.color = ColorScheme.instance.signalUnused;
+				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block || !motherPanel.affectedGeneLogicBox.isUsedInternal) {
+					inputButtonImage.color = ColorScheme.instance.signalUnused; // blocked or logic box not used (pretty if they are all of if not used)
 				} else if (affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
 					inputButtonImage.color = Color.magenta; // should never happen
 				} else {

@@ -4,7 +4,7 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 
 	// TODO make it so that nerve input can't be changed if locked
 	// TODO don't access nerve directly
-	public GeneNerve m_nerve = new GeneNerve();
+	public GeneNerve m_nerve;
 
 	public GeneNerve nerve {
 		get {
@@ -20,14 +20,20 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 		set {
 			if (lockness == LocknessEnum.Unlocked || lockness == LocknessEnum.SemiLocked) { 
 				m_valveMode = value;
+				genotypeDirtyfy.MakeInterGeneCellDirty();
 			}
 		}
 	}
 
-	public GeneLogicBoxInput(int row, int column, SignalUnitEnum signalUnit) {
+	private IGenotypeDirtyfy genotypeDirtyfy;
+
+	public GeneLogicBoxInput(int row, int column, SignalUnitEnum signalUnit, IGenotypeDirtyfy genotypeDirtyfy) {
 		this.row = row;
 		leftFlank = GetFlankLeftOfColumn(column);
 		rightFlank = GetFlankRightOfColumn(column);
+		this.genotypeDirtyfy = genotypeDirtyfy;
+
+		m_nerve = new GeneNerve(this.genotypeDirtyfy);
 		nerve.outputUnit = signalUnit; // me
 		nerve.outputUnitSlot = (SignalUnitSlotEnum)column; // me
 	}

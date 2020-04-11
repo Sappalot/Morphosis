@@ -185,11 +185,9 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	private void MakeAllGenomeStuffDirty() {
-		GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.MakeDirty();
-		GenePanel.instance.cellAndGenePanel.buildPriorityPanel.MakeDirty(); // since change of genome might have an effect on wether same gena is expressed on several build index locations
+		GenePanel.instance.cellAndGenePanel.MakeDirty(); // change of genome might have an effect on wether same gena is expressed on several build index locations
 		GenomePanel.instance.MakeDirty();
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			//CreatureSelectionPanel.instance.soloSelected.genotype.isGeneCellPatternDirty = true;
 			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
 			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}

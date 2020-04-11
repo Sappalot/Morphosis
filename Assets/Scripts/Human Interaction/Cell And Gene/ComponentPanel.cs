@@ -35,7 +35,6 @@ public abstract class ComponentPanel : MonoBehaviour {
 
 	public void OnGenomeChanged() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			//CreatureSelectionPanel.instance.soloSelected.genotype.isGeneCellPatternDirty = geneCellsDiffersFromGenome;
 			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
 			CreatureSelectionPanel.instance.soloSelected.generation = 1;
 		}
