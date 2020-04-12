@@ -2,22 +2,72 @@
 using UnityEngine;
 
 public class Gene {
-	// Egg cell
+	// Egg cell ...
 	public GeneLogicBox eggCellFertilizeLogic;
-	public GeneEnergySensor eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkSensorA);
-	public GeneAttachmentSensor eggCellAttachmentSensor = new GeneAttachmentSensor(SignalUnitEnum.WorkSensorB);
+	public GeneEnergySensor eggCellFertilizeEnergySensor;
+	public GeneAttachmentSensor eggCellAttachmentSensor;
 	// ^ Egg cell ^
 
-	// Jaw Cell
-	public bool jawCellCannibalizeKin;
-	public bool jawCellCannibalizeMother;
-	public bool jawCellCannibalizeFather;
-	public bool jawCellCannibalizeSiblings;
-	public bool jawCellCannibalizeChildren;
+	// Jaw Cell ...
+	private bool m_jawCellCannibalizeKin;
+	public bool jawCellCannibalizeKin { 
+		get {
+			return m_jawCellCannibalizeKin;
+		}
+		set {
+			m_jawCellCannibalizeKin = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	private bool m_jawCellCannibalizeMother;
+	public bool jawCellCannibalizeMother {
+		get {
+			return m_jawCellCannibalizeMother;
+		}
+		set {
+			m_jawCellCannibalizeMother = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	private bool m_jawCellCannibalizeFather;
+	public bool jawCellCannibalizeFather {
+		get {
+			return m_jawCellCannibalizeFather;
+		}
+		set {
+			m_jawCellCannibalizeFather = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	private bool m_jawCellCannibalizeSiblings;
+	public bool jawCellCannibalizeSiblings {
+		get {
+			return m_jawCellCannibalizeSiblings;
+		}
+		set {
+			m_jawCellCannibalizeSiblings = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+	private bool m_jawCellCannibalizeChildren;
+	public bool jawCellCannibalizeChildren {
+		get {
+			return m_jawCellCannibalizeChildren;
+		}
+		set {
+			m_jawCellCannibalizeChildren = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
 	// ^ Jaw Cell ^
 
 	// Leaf Cell
 	// ^ Leaf Cell ^
+
+
 
 	// Muscle Cell
 	// ^ Muscle Cell ^
@@ -37,7 +87,7 @@ public class Gene {
 		}
 	}
 
-	public GeneConstantSensor constantSenesor = new GeneConstantSensor(SignalUnitEnum.ConstantSensor);
+	public GeneConstantSensor constantSenesor;
 
 	public GeneAxon axon;
 
@@ -46,13 +96,13 @@ public class Gene {
 	// ^ Dendrites ^
 
 	// Sensors...
-	public GeneEnergySensor energySensor = new GeneEnergySensor(SignalUnitEnum.EnergySensor);
-	public GeneEffectSensor effectSensor = new GeneEffectSensor(SignalUnitEnum.EffectSensor);
+	public GeneEnergySensor energySensor;
+	public GeneEffectSensor effectSensor;
 	// ^ sensors ^
 
 	// Origin...
 	public GeneLogicBox originDetatchLogicBox;
-	public GeneSizeSensor originSizeSensor = new GeneSizeSensor(SignalUnitEnum.OriginSizeSensor);
+	public GeneSizeSensor originSizeSensor;
 	public int originPulseTickPeriod;
 	public float originEmbryoMaxSizeCompleteness;
 	public int originGrowPriorityCellPersistance;
@@ -89,7 +139,7 @@ public class Gene {
 			} else {
 				m_type = value;
 			}
-			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 	public int index;
@@ -191,10 +241,22 @@ public class Gene {
 		this.index = index;
 		this.genotypeDirtyfy = genotypeDirtyfy;
 
-		axon = new GeneAxon(this.genotypeDirtyfy);
+		// egg...
 		eggCellFertilizeLogic = new GeneLogicBox(SignalUnitEnum.WorkLogicBoxA, this.genotypeDirtyfy);
+		eggCellFertilizeEnergySensor = new GeneEnergySensor(SignalUnitEnum.WorkSensorA, this.genotypeDirtyfy);
+		eggCellAttachmentSensor = new GeneAttachmentSensor(SignalUnitEnum.WorkSensorB);
+		// ^egg^
+
+		constantSenesor = new GeneConstantSensor(SignalUnitEnum.ConstantSensor);
+
+		axon = new GeneAxon(this.genotypeDirtyfy);
+		
 		dendritesLogicBox = new GeneLogicBox(SignalUnitEnum.DendritesLogicBox, this.genotypeDirtyfy);
+		energySensor = new GeneEnergySensor(SignalUnitEnum.EnergySensor, this.genotypeDirtyfy);
+		effectSensor = new GeneEffectSensor(SignalUnitEnum.EffectSensor, this.genotypeDirtyfy);
+
 		originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox, this.genotypeDirtyfy);
+		originSizeSensor = new GeneSizeSensor(SignalUnitEnum.OriginSizeSensor, this.genotypeDirtyfy);
 
 		arrangements[0] = new Arrangement(index, this.genotypeDirtyfy);
 		arrangements[1] = new Arrangement(index, this.genotypeDirtyfy);

@@ -1,11 +1,66 @@
 ﻿using UnityEngine;
 
 public class GeneAxonPulse {
-	public float axonFromOriginOffset;
-	public bool axonIsFromOriginPlus180;
-	public float axonFromMeOffset;
-	public float axonRelaxContract;
-	public bool axonIsReverse;
+
+	private float m_axonFromOriginOffset;
+	public float axonFromOriginOffset { 
+		get {
+			return m_axonFromOriginOffset;
+		}
+		set {
+			m_axonFromOriginOffset = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	public bool m_axonIsFromOriginPlus180;
+	public bool axonIsFromOriginPlus180 {
+		get {
+			return m_axonIsFromOriginPlus180;
+		}
+		set {
+			m_axonIsFromOriginPlus180 = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	public float m_axonFromMeOffset;
+	public float axonFromMeOffset {
+		get {
+			return m_axonFromMeOffset;
+		}
+		set {
+			m_axonFromMeOffset = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	public float m_axonRelaxContract;
+	public float axonRelaxContract {
+		get {
+			return m_axonRelaxContract;
+		}
+		set {
+			m_axonRelaxContract = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	public bool m_axonIsReverse;
+	public bool axonIsReverse {
+		get {
+			return m_axonIsReverse;
+		}
+		set {
+			m_axonIsReverse = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	private IGenotypeDirtyfy genotypeDirtyfy;
+	public GeneAxonPulse(IGenotypeDirtyfy genotypeDirtyfy) {
+		this.genotypeDirtyfy = genotypeDirtyfy;
+	}
 
 	public void SetDefault() {
 		axonFromOriginOffset = 0f;
@@ -13,6 +68,8 @@ public class GeneAxonPulse {
 		axonFromMeOffset = 0f;
 		axonRelaxContract = 0f;
 		axonIsReverse = false;
+
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void Mutate(float strength) {
@@ -50,6 +107,7 @@ public class GeneAxonPulse {
 			axonIsReverse = !axonIsReverse; //toggle
 		}
 
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	// Save

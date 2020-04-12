@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public class PhenotypeData {
 	public List<CellData> cellDataList = new List<CellData>();
-	public bool differsFromGenotype;
+	public bool isCellPatternDirty;
 
 	public int fungalCellTick;
 	public int jawCellTick;

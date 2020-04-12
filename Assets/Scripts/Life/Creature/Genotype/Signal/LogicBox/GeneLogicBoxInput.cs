@@ -20,18 +20,16 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 		set {
 			if (lockness == LocknessEnum.Unlocked || lockness == LocknessEnum.SemiLocked) { 
 				m_valveMode = value;
-				genotypeDirtyfy.MakeInterGeneCellDirty();
+				genotypeDirtyfy.MakeGeneCellPatternDirty();
 			}
 		}
 	}
 
-	private IGenotypeDirtyfy genotypeDirtyfy;
-
 	public GeneLogicBoxInput(int row, int column, SignalUnitEnum signalUnit, IGenotypeDirtyfy genotypeDirtyfy) {
+		this.genotypeDirtyfy = genotypeDirtyfy;
 		this.row = row;
 		leftFlank = GetFlankLeftOfColumn(column);
 		rightFlank = GetFlankRightOfColumn(column);
-		this.genotypeDirtyfy = genotypeDirtyfy;
 
 		m_nerve = new GeneNerve(this.genotypeDirtyfy);
 		nerve.outputUnit = signalUnit; // me

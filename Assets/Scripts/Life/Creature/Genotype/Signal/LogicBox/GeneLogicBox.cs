@@ -16,16 +16,19 @@ public class GeneLogicBox : GeneSignalUnit {
 	private GeneLogicBoxInput[] inputRow3 = new GeneLogicBoxInput[columnCount]; // 6 
 	private bool[,] lockedCellMatrix = new bool[rowCount, columnCount];
 
+	private IGenotypeDirtyfy genotypeDirtyfy;
+
 	public GeneLogicBox(SignalUnitEnum signalUnit, IGenotypeDirtyfy genotypeDirtyfy) {
 		this.signalUnit = signalUnit;
+		this.genotypeDirtyfy = genotypeDirtyfy;
 
-		gateRow0 = new GeneLogicBoxGate(this, 0);
+		gateRow0 = new GeneLogicBoxGate(this, 0, this.genotypeDirtyfy);
 		for (int g = 0; g < maxGatesPerRow; g++) {
-			gateRow1[g] = new GeneLogicBoxGate(this, 1);
-			gateRow2[g] = new GeneLogicBoxGate(this, 2);
+			gateRow1[g] = new GeneLogicBoxGate(this, 1, this.genotypeDirtyfy);
+			gateRow2[g] = new GeneLogicBoxGate(this, 2, this.genotypeDirtyfy);
 		}
 		for (int i = 0; i < columnCount; i++) {
-			inputRow3[i] = new GeneLogicBoxInput(3, i, signalUnit, genotypeDirtyfy);
+			inputRow3[i] = new GeneLogicBoxInput(3, i, signalUnit, this.genotypeDirtyfy);
 		}
 	}
 
@@ -235,7 +238,7 @@ public class GeneLogicBox : GeneSignalUnit {
 					return true;
 				}
 			}
-		} 
+		}
 		return false;
 	}
 
@@ -251,6 +254,7 @@ public class GeneLogicBox : GeneSignalUnit {
 				newGate.lockness = isLocked ? LocknessEnum.Locked : LocknessEnum.Unlocked;
 				newGate.isUsed = true;
 
+				genotypeDirtyfy.MakeGeneCellPatternDirty();
 				UpdateConnections();
 				return true;
 			}

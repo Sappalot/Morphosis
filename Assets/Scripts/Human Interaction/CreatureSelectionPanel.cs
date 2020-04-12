@@ -674,7 +674,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 					creatureCopy.AddChildReference(childData);
 				}
 			}
-			creatureCopy.phenotype.connectionsDiffersFromCells = true;
+			creatureCopy.phenotype.MakeInterCellDirty();
 		}
 	}
 

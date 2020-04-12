@@ -63,8 +63,8 @@ public class Creature : MonoBehaviour {
 		
 		ClearMotherAndChildrenReferences();
 		//--
-		phenotype.cellsDiffersFromGeneCells = true;
-		phenotype.UpdateCellsFromGeneCells(this, GetOriginPosition(PhenoGenoEnum.Phenotype), GetOriginHeading(PhenoGenoEnum.Phenotype));
+		phenotype.MakeCellPaternDirty();
+		phenotype.TryUpdateCellPattern(this, GetOriginPosition(PhenoGenoEnum.Phenotype), GetOriginHeading(PhenoGenoEnum.Phenotype));
 		phenotype.DisablePhysicsComponents();
 		//--
 		
@@ -77,7 +77,7 @@ public class Creature : MonoBehaviour {
 		ClearMotherAndChildrenReferences(); // should not have any
 		phenotype.SetAllCellStatesToDefault();
 		phenotype.EnablePhysicsComponents();
-		phenotype.cellsDiffersFromGeneCells = true;
+		phenotype.MakeCellPaternDirty();
 		bornTick = World.instance.worldTicks;
 	}
 
@@ -464,7 +464,7 @@ public class Creature : MonoBehaviour {
 	// any genome with only 1 cell grown
 	public void GenerateEmbryo(Gene[] genome, Vector3 position, float heading) {
 		genotype.SetGenome(genome);
-		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading);
+		genotype.TryUpdateGeneCellPattern(this, position, heading);
 		phenotype.InitiateEmbryo(this, position, heading);
 		isDirtyGraphics = true;
 	}
@@ -492,8 +492,9 @@ public class Creature : MonoBehaviour {
 
 	private void UpdateCellsAndGeneCells(Vector2 position, float heading) {
 		//we need to update them allready in order to have originCell. Origin cell is needed for position and heading when updating
-		phenotype.cellsDiffersFromGeneCells = genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
-		phenotype.connectionsDiffersFromCells = phenotype.UpdateCellsFromGeneCells(this, position, heading);
+		genotype.TryUpdateGeneCellPattern(this, position, heading); // Generating genotype here caused Unity freeze ;/
+		phenotype.TryUpdateCellPattern(this, position, heading);
+		
 		isDirtyGraphics = true;
 		UpdateGraphics();
 	}
@@ -697,23 +698,17 @@ public class Creature : MonoBehaviour {
 	}
 
 	public void UpdateStructure() {
-		if (genotype.hasOriginCell && genotype.UpdateGeneCellsFromGenome(this, genotype.originCell.position, genotype.originCell.heading)) {
-			phenotype.cellsDiffersFromGeneCells = true;
-			isDirtyGraphics = true;
+		if (!genotype.hasOriginCell) {
+			return;
 		}
 
-		if (genotype.hasOriginCell && genotype.TryUpdateInterGeneCells()) {
-			
-			isDirtyGraphics = true;
-		}
+		isDirtyGraphics |= genotype.TryUpdateGeneCellPattern(this, genotype.originCell.position, genotype.originCell.heading);
 
-		if (genotype.hasOriginCell && phenotype.UpdateCellsFromGeneCells(this, genotype.originCell.position, genotype.originCell.heading)) {
-			phenotype.connectionsDiffersFromCells = true;
-			isDirtyGraphics = true;
-		}
-		if (genotype.hasOriginCell && phenotype.UpdateConnectionsFromCellsBody(this, HasMotherAlive() ? GetMotherAlive().id : "no mother")) {
-			isDirtyGraphics = true;
-		}
+		isDirtyGraphics |= genotype.TryUpdateInterGeneCells();
+
+		isDirtyGraphics |= phenotype.TryUpdateCellPattern(this, genotype.originCell.position, genotype.originCell.heading);
+
+		isDirtyGraphics |= phenotype.TryUpdateInterCells(this, HasMotherAlive() ? GetMotherAlive().id : "no mother");
 	}
 
 	public bool UpdateKillWeakCells(ulong worldTicks) {
@@ -871,7 +866,7 @@ public class Creature : MonoBehaviour {
 		genotype.ApplyData(creatureData.genotypeData);
 		Vector2 position = creatureData.genotypeData.originPosition;
 		float heading = creatureData.genotypeData.originHeading;
-		genotype.UpdateGeneCellsFromGenome(this, position, heading); // Generating genotype here caused Unity freeze ;/
+		genotype.TryUpdateGeneCellPattern(this, position, heading); // Generating genotype here caused Unity freeze ;/ (? still so 2020-04-12)
 
 		growTicks = creatureData.growTicks;
 		canNotGrowMoreTicks = creatureData.canNotGrowMoreTicks;
@@ -889,7 +884,7 @@ public class Creature : MonoBehaviour {
 		if (creatureData.motherData != null && creatureData.motherData.id != "") {
 			mother = new Mother();
 			mother.ApplyData(creatureData.motherData);
-			phenotype.connectionsDiffersFromCells = true;
+			phenotype.MakeInterCellDirty();
 		}
 	}
 

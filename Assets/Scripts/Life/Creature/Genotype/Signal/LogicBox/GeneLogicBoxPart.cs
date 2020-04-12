@@ -2,13 +2,45 @@
 
 // Gate and input
 public abstract class GeneLogicBoxPart {
-	public int row;
-	public int leftFlank;
-	public int rightFlank;
+	public int m_row;
+	public int row {
+		get {
+			return m_row;
+		}
+		set {
+			m_row = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+
+	public int m_leftFlank;
+	public int leftFlank {
+		get {
+			return m_leftFlank;
+		}
+		set {
+			m_leftFlank = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	public int m_rightFlank;
+	public int rightFlank {
+		get {
+			return m_rightFlank;
+		}
+		set {
+			m_rightFlank = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
 
 	public LocknessEnum lockness = LocknessEnum.Unlocked;// No need to save/load this one as it is hardcoded, set by gene (would be the same every time)
 	public bool isTransmittingSignal = false;
-	
+
+	public IGenotypeDirtyfy genotypeDirtyfy;
+
 	public int width {
 		get {
 			return rightFlank - leftFlank;

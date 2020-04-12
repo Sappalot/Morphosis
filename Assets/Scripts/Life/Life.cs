@@ -166,8 +166,8 @@ public class Life : MonoBehaviour {
 
 		// Not doing so will cause child to hang loke on a joint whit its mother
 		// It is mothers responsability to keep it "rigid ish"
-		mother.phenotype.connectionsDiffersFromCells = true;
-		child.phenotype.connectionsDiffersFromCells = true;
+		mother.phenotype.MakeInterCellDirty();
+		child.phenotype.MakeInterCellDirty();
 		UpdateStructure();
 
 		//Sometimes child origin is placed with spring too far from mother's placenta this update might fix this problem

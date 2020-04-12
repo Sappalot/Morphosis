@@ -12,6 +12,19 @@ public class Phenotype : MonoBehaviour {
 	public Edges edges; //AKA Wings
 	public Veins veins;
 
+	[HideInInspector]
+	private bool isCellPatternDirty = true;
+	public void MakeCellPaternDirty () {
+		isCellPatternDirty = true;
+	}
+
+	[HideInInspector]
+	public bool isInterCellDirty { get; private set; }
+	public void MakeInterCellDirty() {
+		isInterCellDirty = true;
+	}
+
+
 	public int visualTelepoke { get; private set; }
 	public void Telepoke(Creature creature, Vector2 impulse) {
 		visualTelepoke = GlobalSettings.instance.quality.portalTeleportTickPeriod;
@@ -191,16 +204,14 @@ public class Phenotype : MonoBehaviour {
 	public bool hasError = false; // just to be able to print error in history as an event
 
 	[HideInInspector]
-	public bool cellsDiffersFromGeneCells = true;
-	[HideInInspector]
-	public bool connectionsDiffersFromCells = true;
-	[HideInInspector]
 	public Dictionary<Cell, Vector2> detatchmentKick;
 
 	[HideInInspector]
 	public bool isGrabbed { get; private set; }
+
 	[HideInInspector]
 	public bool hasDirtyPosition = false;
+
 	[HideInInspector]
 	public List<Cell> cellList = new List<Cell>();
 
@@ -208,9 +219,8 @@ public class Phenotype : MonoBehaviour {
 	private Vector2 spawnPosition;
 	private float spawnHeading;
 	public CellMap cellMap = new CellMap(); //Containing only built cells
-	private bool isDirty = true;
+	private bool isDirtyCollider = true;
 	private bool areBudsDirty = true;
-
 
 	public void UpdateArmour() {
 		foreach (Cell cell in cellList) {
@@ -313,17 +323,20 @@ public class Phenotype : MonoBehaviour {
 		NoGrowthReason reason;
 		TryGrow(creature, false, true, 1, true, false, 0, true, true, out reason);
 
-		cellsDiffersFromGeneCells = false;
+		isCellPatternDirty = false;
 	}
 
-	public bool UpdateCellsFromGeneCells(Creature creature, Vector2 position, float heading) {
-		if (cellsDiffersFromGeneCells) {
+	public bool TryUpdateCellPattern(Creature creature, Vector2 position, float heading) {
+		if (isCellPatternDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Creature UpdateCellsFromGeneCells");
 			}
 			Setup(position, heading);
 			TryGrowFully(creature, true);
-			cellsDiffersFromGeneCells = false;
+
+			MakeCellPaternDirty();
+
+			isCellPatternDirty = false;
 			return true;
 		}
 		return false;
@@ -566,8 +579,8 @@ public class Phenotype : MonoBehaviour {
 			failedToGrowBuds = 0; // Reset 'wait for a moment to grow if blocked' 
 
 			PhenotypePanel.instance.MakeDirty();
-			MakeDirty();
-			connectionsDiffersFromCells = true;
+			MakeDirtyCollider();
+			isInterCellDirty = true;
 		}
 		return growCellCount;
 	}
@@ -622,8 +635,8 @@ public class Phenotype : MonoBehaviour {
 		return false;
 	}
 
-	public void MakeDirty() {
-		isDirty = true;
+	public void MakeDirtyCollider() {
+		isDirtyCollider = true;
 	}
 
 	public bool IsChildOriginLocation(Creature creature, Vector2i mapPosition) {
@@ -707,8 +720,8 @@ public class Phenotype : MonoBehaviour {
 	// Update groups
 	// Update wings
 	// Update Signal connections
-	public bool UpdateConnectionsFromCellsBody(Creature creature, string motherId) {
-		if (connectionsDiffersFromCells) {
+	public bool TryUpdateInterCells(Creature creature, string motherId) {
+		if (isInterCellDirty) {
 
 			UpdateNeighbourReferencesInterBody(creature);
 
@@ -758,8 +771,7 @@ public class Phenotype : MonoBehaviour {
 			//Armour
 			UpdateArmour();
 
-			//Clean
-			connectionsDiffersFromCells = false;
+			isInterCellDirty = false;
 			return true;
 		}
 		return false;
@@ -926,7 +938,7 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 
-		connectionsDiffersFromCells = true;
+		isInterCellDirty = true;
 	}
 
 	public void SetAllCellStatesToDefault() {
@@ -1001,7 +1013,7 @@ public class Phenotype : MonoBehaviour {
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 
 		CellPanel.instance.MakeDirty();
-		connectionsDiffersFromCells = true;
+		isInterCellDirty = true;
 
 		CreatureSelectionPanel.instance.MakeDirty();
 		CreatureSelectionPanel.instance.UpdateSelectionCluster();
@@ -1143,12 +1155,12 @@ public class Phenotype : MonoBehaviour {
 			//me
 			veins.Clear();
 			creature.SetAttachedToMotherAlive(false);
-			connectionsDiffersFromCells = true;
+			isInterCellDirty = true;
 			originCell.effectFluxFromMotherAttached = 0f;
 
 			//mother
 			creature.GetMotherAlive().phenotype.veins.Clear();
-			creature.GetMotherAlive().phenotype.connectionsDiffersFromCells = true;
+			creature.GetMotherAlive().phenotype.isInterCellDirty = true;
 			foreach (Cell cell in creature.GetMotherAlive().phenotype.cellList) {
 				cell.effectFluxToChildrenAttached = 0f;
 			}
@@ -1484,7 +1496,7 @@ public class Phenotype : MonoBehaviour {
 		}
 		set {
 			m_hasCollider = value;
-			isDirty = true;
+			isDirtyCollider = true;
 		}
 	}
 
@@ -1554,12 +1566,12 @@ public class Phenotype : MonoBehaviour {
 		}
 
 		// Warning:  So we are more restrictive with these updates now, make sure colliders are updated as they should
-		if (isDirty) {
+		if (isDirtyCollider) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
 				Debug.Log("Update Creature Phenotype");
 
 			SetCollider(hasCollider);
-			isDirty = false;
+			isDirtyCollider = false;
 		}
 
 		if (areBudsDirty) {
@@ -1829,7 +1841,7 @@ public class Phenotype : MonoBehaviour {
 			Cell cell = cellList[index];
 			phenotypeData.cellDataList.Add(cell.UpdateData());
 		}
-		phenotypeData.differsFromGenotype = cellsDiffersFromGeneCells;
+		phenotypeData.isCellPatternDirty = isCellPatternDirty;
 
 		phenotypeData.fungalCellTick = fungalCellTick;
 		phenotypeData.jawCellTick = jawCellTick;
@@ -1852,8 +1864,8 @@ public class Phenotype : MonoBehaviour {
 			Cell cell = InstantiateCell(creature.genotype.genes[cellData.geneIndex].type, cellData.mapPosition);
 			cell.ApplyData(cellData, creature);
 		}
-		cellsDiffersFromGeneCells = false; //This work is done
-		connectionsDiffersFromCells = true; //We need to connect mothers with children
+		isCellPatternDirty = false; //This work is done
+		isInterCellDirty = true; //We need to connect mothers with children
 
 		fungalCellTick = phenotypeData.fungalCellTick;
 		jawCellTick = phenotypeData.jawCellTick;

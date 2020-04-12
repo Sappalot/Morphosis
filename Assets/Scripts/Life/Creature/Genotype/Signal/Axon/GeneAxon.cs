@@ -11,7 +11,7 @@ public class GeneAxon : GeneSignalUnit {
 		}
 		set {
 			m_isEnabled = value;
-			genotypeDirtyfy.MakeInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -22,14 +22,18 @@ public class GeneAxon : GeneSignalUnit {
 	public GeneAxon(IGenotypeDirtyfy genotypeDirtyfy) {
 		this.genotypeDirtyfy = genotypeDirtyfy;
 		axonInputLeft = new GeneAxonInput(0, SignalUnitEnum.Axon, this.genotypeDirtyfy); // left, A
-
 		axonInputRight = new GeneAxonInput(1, SignalUnitEnum.Axon, this.genotypeDirtyfy); // right, B
+
+		pulseA = new GeneAxonPulse(this.genotypeDirtyfy);
+		pulseB = new GeneAxonPulse(this.genotypeDirtyfy);
+		pulseC = new GeneAxonPulse(this.genotypeDirtyfy);
+		pulseD = new GeneAxonPulse(this.genotypeDirtyfy);
 	}
 
-	private GeneAxonPulse pulseA = new GeneAxonPulse();
-	private GeneAxonPulse pulseB = new GeneAxonPulse();
-	private GeneAxonPulse pulseC = new GeneAxonPulse();
-	private GeneAxonPulse pulseD = new GeneAxonPulse();
+	private GeneAxonPulse pulseA;
+	private GeneAxonPulse pulseB;
+	private GeneAxonPulse pulseC;
+	private GeneAxonPulse pulseD;
 
 	public GeneAxonPulse GetPulse(int index) {
 		return pulses[index - 1]; // pulse A = 1
@@ -40,10 +44,49 @@ public class GeneAxon : GeneSignalUnit {
 	public GeneAxonInput axonInputLeft;
 	public GeneAxonInput axonInputRight;
 
-	public int pulseProgram3 = 3; //  
-	public int pulseProgram2 = 2; // ...
-	public int pulseProgram1 = 1; // 1 = A
-	public int pulseProgram0 = 0; // 0 == relaxed
+	private int m_pulseProgram3 = 3; //
+	public int pulseProgram3 {
+		get {
+			return m_pulseProgram3;
+		}
+		set {
+			m_pulseProgram3 = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	private int m_pulseProgram2 = 2; // ...
+	public int pulseProgram2 {
+		get {
+			return m_pulseProgram2;
+		}
+		set {
+			m_pulseProgram2 = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	private int m_pulseProgram1 = 1; // 1 = A
+	public int pulseProgram1 {
+		get {
+			return m_pulseProgram1;
+		}
+		set {
+			m_pulseProgram1 = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	private int m_pulseProgram0 = 0; // 0 == relaxed
+	public int pulseProgram0 {
+		get {
+			return m_pulseProgram0;
+		}
+		set {
+			m_pulseProgram0 = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
 
 	public void UpdateConnections() {
 		// what do we want to do here?????
@@ -55,11 +98,15 @@ public class GeneAxon : GeneSignalUnit {
 
 		axonInputRight.nerve.inputUnit = signalUnit;
 		axonInputRight.nerve.inputUnitSlot = signalUnitSlot;
+
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void SetAllInputToBlocked() {
 		axonInputLeft.valveMode = SignalValveModeEnum.Block;
 		axonInputRight.valveMode = SignalValveModeEnum.Block;
+
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public override void MarkThisAndChildrenAsUsedInternal(Gene gene) {
@@ -104,10 +151,14 @@ public class GeneAxon : GeneSignalUnit {
 
 		axonInputLeft.Defaultify();
 		axonInputRight.Defaultify();
+
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void Randomize() {
 		// TODO
+
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void Mutate(float strength, bool isOrigin) {
@@ -125,6 +176,8 @@ public class GeneAxon : GeneSignalUnit {
 
 		axonInputLeft.Mutate(strength, isOrigin);
 		axonInputRight.Mutate(strength, isOrigin);
+
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	// Save

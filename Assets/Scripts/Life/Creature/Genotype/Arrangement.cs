@@ -9,7 +9,7 @@ public class Arrangement {
 		}
 		set {
 			m_isEnabled = value;
-			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -20,7 +20,7 @@ public class Arrangement {
 		}
 		set {
 			m_referenceGeneIndex = value;
-			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -32,7 +32,7 @@ public class Arrangement {
 		set {
 			m_referenceGene = value;
 			referenceGeneIndex = m_referenceGene.index;
-			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -43,7 +43,7 @@ public class Arrangement {
 		}
 		set {
 			m_flipTypeSameOpposite = value;
-			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -55,7 +55,7 @@ public class Arrangement {
 		}
 		set {
 			m_flipTypeBlackWhiteToArrow = value;
-			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -66,7 +66,7 @@ public class Arrangement {
 		}
 		set {
 			m_isFlipPairsEnabled = value;
-			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -77,7 +77,7 @@ public class Arrangement {
 		}
 		set {
 			m_referenceSide = value;
-			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -89,7 +89,7 @@ public class Arrangement {
 		set {
 			m_type = value;
 			SnapToLegalValues();
-			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -101,7 +101,7 @@ public class Arrangement {
 		set {
 			m_referenceCount = value;
 			SnapToLegalValues();
-			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -113,7 +113,7 @@ public class Arrangement {
 		set {
 			m_arrowIndex = value;
 			SnapToLegalValues();
-			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -125,7 +125,7 @@ public class Arrangement {
 		set {
 			m_gap = value;
 			SnapToLegalValues();
-			genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -148,7 +148,7 @@ public class Arrangement {
 		gap = 0;
 		referenceSide = ArrangementReferenceSideEnum.Black; //SIDE
 
-		genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void Randomize() {
@@ -167,7 +167,7 @@ public class Arrangement {
 		gap = Random.Range(0, 5);
 		referenceSide = Random.Range(0, 2) == 0 ? ArrangementReferenceSideEnum.Black : ArrangementReferenceSideEnum.White;
 
-		genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void Mutate(float strength) {
@@ -361,7 +361,7 @@ public class Arrangement {
 
 		SnapToLegalValues();
 
-		genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void SetReferenceGeneFromReferenceGeneIndex(Gene[] genes) {
@@ -379,7 +379,7 @@ public class Arrangement {
 			m_type = ArrangementTypeEnum.Side;
 		}
 		SnapToLegalValues();
-		genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void IncreasRefCount() {
@@ -404,7 +404,7 @@ public class Arrangement {
 			}
 		}
 		SnapToLegalValues();
-		genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void DecreaseRefCount() {
@@ -427,7 +427,7 @@ public class Arrangement {
 			}
 		}
 		SnapToLegalValues();
-		genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void TurnArrowCounterClowkwise() {
@@ -439,7 +439,7 @@ public class Arrangement {
 			m_arrowIndex += 2;
 		}
 		m_arrowIndex = AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex);
-		genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void TurnArrowClowkwise() {
@@ -451,7 +451,7 @@ public class Arrangement {
 			m_arrowIndex -= 2;
 		}
 		m_arrowIndex = AngleUtil.ArrowIndexRawToArrowIndexSafe(m_arrowIndex);
-		genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void IncreaseGap() {
@@ -459,7 +459,7 @@ public class Arrangement {
 			m_gap++;
 		}
 		SnapToLegalValues();
-		genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void DecreseGap() {
@@ -467,7 +467,7 @@ public class Arrangement {
 			m_gap--;
 		}
 		SnapToLegalValues();
-		genotypeDirtyfy.MakePatternAndInterGeneCellDirty();
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	//reference location 0-5

@@ -41,7 +41,7 @@ public class Portal : MonoBehaviour {
 
 					if ((companion != travelLeader && !companion.IsPhenotypeCompletelyInside(departureRect)) ||
 						companion.phenotype.isGrabbed ||
-						companion.phenotype.connectionsDiffersFromCells) { // FOUND IT :D We need to be sure that everything is connected otherwise we might teleport away from our attached child (???)
+						companion.phenotype.isInterCellDirty) { // FOUND IT :D We need to be sure that everything is connected otherwise we might teleport away from our attached child (???)
 
 						clusterCouldTravel = false;
 						break;

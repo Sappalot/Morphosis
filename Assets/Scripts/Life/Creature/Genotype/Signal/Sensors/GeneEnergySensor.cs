@@ -1,12 +1,22 @@
 ﻿using UnityEngine;
 
 public class GeneEnergySensor : GeneSignalUnit {
-	public GeneEnergySensor(SignalUnitEnum signalUnit) {
+	public GeneEnergySensor(SignalUnitEnum signalUnit, IGenotypeDirtyfy genotypeDirtyfy) {
+		this.genotypeDirtyfy = genotypeDirtyfy;
 		this.signalUnit = signalUnit;
 		Defaultify();
 	}
 
-	public int areaRadius = 1; // m
+	private int m_areaRadius = 1; // m
+	public int areaRadius {
+		get {
+			return m_areaRadius;
+		}
+		set {
+			m_areaRadius = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
 
 	private float m_threshold = 50f;
 	public float threshold {
@@ -15,20 +25,26 @@ public class GeneEnergySensor : GeneSignalUnit {
 		}
 		set {
 			m_threshold = Mathf.Max(value, thresholdMin);
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 
 	} // joules, [0 .... 100]
 
-	public float thresholdMin = 0f; // hardcoded, no load save 
+	public float thresholdMin = 0f; // hardcoded, no load save , no change from user
+
+	private IGenotypeDirtyfy genotypeDirtyfy;
 
 	public void Defaultify() {
 		areaRadius = 1;
 		m_threshold = 50f;
 		thresholdMin = 0f;
+
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void Randomize() {
 
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void Mutate(float strength) {
@@ -44,6 +60,7 @@ public class GeneEnergySensor : GeneSignalUnit {
 		if (rnd < gs.mutation.energySensorThresholdChange * strength) {
 			threshold = Mathf.Clamp(threshold + gs.mutation.energySensorThresholdChangeMaxAmount * gs.mutation.RandomDistributedValue(), 0f, gs.phenotype.cellMaxEnergy);
 		}
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	// Save

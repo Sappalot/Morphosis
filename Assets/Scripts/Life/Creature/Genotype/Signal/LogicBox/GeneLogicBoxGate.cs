@@ -9,14 +9,14 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 		set {
 			if (lockness == LocknessEnum.Unlocked) {
 				m_operatorType = value;
+				genotypeDirtyfy.MakeGeneCellPatternDirty();
 			}
 		}
 	}
 
-
 	public List<GeneLogicBoxPart> partsConnected = new List<GeneLogicBoxPart>(); // store conections even if they are not used
 
-	private bool m_isUsed = false;	
+	private bool m_isUsed = false;
 	public bool isUsed { 
 		get {
 			return m_isUsed;
@@ -25,12 +25,14 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 			if (value || lockness == LocknessEnum.Unlocked) {
 				m_isUsed = value;
 				geneLogicBox.UpdateConnections();
+				genotypeDirtyfy.MakeGeneCellPatternDirty();
 			}
 		}
 	} // is taking place inside logic box (might be blocked, might not)
-	
+
 	private GeneLogicBox geneLogicBox;
-	public GeneLogicBoxGate(GeneLogicBox geneLogicBox, int row) {
+	public GeneLogicBoxGate(GeneLogicBox geneLogicBox, int row, IGenotypeDirtyfy genotypeDirtyfy) {
+		this.genotypeDirtyfy = genotypeDirtyfy;
 		this.geneLogicBox = geneLogicBox;
 		this.row = row;
 	}
@@ -53,6 +55,7 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 		if (row > 0 && leftFlank > 0 && !geneLogicBox.IsCellOccupiedByGateOrLock(row, GetColumnLeftOfFlank(leftFlank))) {
 			leftFlank--;
 			geneLogicBox.UpdateConnections();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 			return true;
 		}
 		return false;
@@ -69,11 +72,13 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 					rightFlank++;
 					leftFlank++;
 					geneLogicBox.UpdateConnections();
+					genotypeDirtyfy.MakeGeneCellPatternDirty();
 					return true;
 				}
 			} else {
 				leftFlank++;
 				geneLogicBox.UpdateConnections();
+				genotypeDirtyfy.MakeGeneCellPatternDirty();
 				return true;
 			}
 		}
@@ -88,6 +93,7 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 		if (row > 0 && rightFlank < GeneLogicBox.rightmostFlank && !geneLogicBox.IsCellOccupiedByGateOrLock(row, GetColumnRightOfFlank(rightFlank))) {
 			rightFlank++;
 			geneLogicBox.UpdateConnections();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 			return true;
 		}
 		return false;
@@ -104,11 +110,13 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 					leftFlank--;
 					rightFlank--;
 					geneLogicBox.UpdateConnections();
+					genotypeDirtyfy.MakeGeneCellPatternDirty();
 					return true;
 				}
 			} else {
 				rightFlank--;
 				geneLogicBox.UpdateConnections();
+				genotypeDirtyfy.MakeGeneCellPatternDirty();
 				return true;
 			}
 		}

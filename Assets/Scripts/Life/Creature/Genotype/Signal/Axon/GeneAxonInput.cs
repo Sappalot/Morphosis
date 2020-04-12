@@ -21,7 +21,7 @@ public class GeneAxonInput : IGeneInput {
 			if (lockness == LocknessEnum.Unlocked || lockness == LocknessEnum.SemiLocked) { 
 				m_valveMode = value;
 			}
-			genotypeDirtyfy.MakeInterGeneCellDirty();
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
@@ -66,6 +66,6 @@ public class GeneAxonInput : IGeneInput {
 		valveMode = geneLogicBoxInputData.valveMode;
 		nerve.ApplyData(geneLogicBoxInputData.geneNerveData);
 
-		genotypeDirtyfy.MakeInterGeneCellDirty();
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 }

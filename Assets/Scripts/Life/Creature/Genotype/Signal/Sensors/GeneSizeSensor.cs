@@ -3,20 +3,45 @@
 
 // TODO: Rename it growth sensor
 public class GeneSizeSensor : GeneSignalUnit {
-	public GeneSizeSensor(SignalUnitEnum signalUnit) {
+	public GeneSizeSensor(SignalUnitEnum signalUnit, IGenotypeDirtyfy genotypeDirtyfy) {
+		this.genotypeDirtyfy = genotypeDirtyfy;
 		this.signalUnit = signalUnit;
 	}
 
-	public float sizeThreshold = 0.5f; // 50% of full size
-	public int cantGrowMorePatienseThreshold = 10; // seconds of blocked growth
+	private float m_sizeThreshold = 0.5f; // 50% of full size
+	public float sizeThreshold {
+		get {
+			return m_sizeThreshold;
+		}
+		set {
+			m_sizeThreshold = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	private int m_cantGrowMorePatienseThreshold = 10; // seconds of blocked growth
+	public int cantGrowMorePatienseThreshold {
+		get {
+			return m_cantGrowMorePatienseThreshold;
+		}
+		set {
+			m_cantGrowMorePatienseThreshold = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	private IGenotypeDirtyfy genotypeDirtyfy;
 
 	public void Defaultify() {
 		sizeThreshold = 0.5f; // 50% of full size
 		cantGrowMorePatienseThreshold = 10; // seconds of blocked growth
+
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void Randomize() {
 
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	public void Mutate(float strength) {
@@ -32,6 +57,8 @@ public class GeneSizeSensor : GeneSignalUnit {
 		if (rnd < gs.mutation.sizeSensorCantGrowMorePatienseChange * strength) {
 			cantGrowMorePatienseThreshold = (int)Mathf.Clamp(cantGrowMorePatienseThreshold + gs.mutation.originGrowPriorityCellPersistenceMaxAmount * gs.mutation.RandomDistributedValue(), 0f, 120f);
 		}
+
+		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
 	// Save

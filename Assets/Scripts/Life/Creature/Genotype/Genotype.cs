@@ -13,16 +13,11 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 	public Transform geneCellsTransform;
 
 	private bool isGeneCellPatternDirty = true; // Cell List and Cell Map needs to be updates, needs to be done as genes cause changes in cell structure
-	private bool isInterGeneCellDirty = true;
-
-	public void MakePatternAndInterGeneCellDirty() {
+	public void MakeGeneCellPatternDirty() { // LAZY: Used even if only nerves are changed since we need to regenerate phenotype as anything is changed "new forge"
 		isGeneCellPatternDirty = true;
-		isInterGeneCellDirty = true;
 	}
 
-	public void MakeInterGeneCellDirty() {
-		isInterGeneCellDirty = true;
-	}
+	private bool isInterGeneCellDirty = true;
 
 	public static int genomeLength = 21;
 	[HideInInspector]
@@ -195,7 +190,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
 
-		MakePatternAndInterGeneCellDirty();
+		MakeGeneCellPatternDirty();
 	}
 
 	public void SetScrambled() {
@@ -213,7 +208,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 			}
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		MakePatternAndInterGeneCellDirty();
+		MakeGeneCellPatternDirty();
 	}
 
 	public void Mutate(float strength) {
@@ -226,7 +221,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 			}
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		MakePatternAndInterGeneCellDirty();
+		MakeGeneCellPatternDirty();
 	}
 
 	public void SetGenome(Gene[] genome) {
@@ -234,7 +229,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 			this.genes[index] = genome[index].GetClone(this);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		MakePatternAndInterGeneCellDirty();
+		MakeGeneCellPatternDirty();
 	}
 
 	public void SetReferenceGenesFromReferenceGeneIndices() {
@@ -328,11 +323,10 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 		genes[2].type = CellTypeEnum.Muscle;
 	}
 
-	public bool UpdateGeneCellsFromGenome(Creature creature, Vector2 position, float heading) { // heading 90 ==> origin is pointing north
+	public bool TryUpdateGeneCellPattern(Creature creature, Vector2 position, float heading) { // heading 90 ==> origin is pointing north
 		if (isGeneCellPatternDirty) {
 			Debug.Log("Update Creature UpdateGeneCellsFromGenome");
 			//if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
-
 
 			Clear();
 
@@ -423,7 +417,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 
 			TurnTo(heading); //is at 90 allready
 			MoveTo(position);
-			MakePatternAndInterGeneCellDirty();
+			
 			creature.MakeDirtyGraphics();
 
 			// This is the only place where we add and remove GeneCells to geneCell List so we can safely sort it by priority here
@@ -431,7 +425,10 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 			// We need to have it sorted in this way and never in any other way
 			//geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
 			geneCellListIndexSorted.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex)); // only sorted here
-																									  //MakeGeneCellListPrioritySortedDirty();
+
+			isInterGeneCellDirty = true;
+			creature.phenotype.MakeCellPaternDirty();
+
 			isGeneCellPatternDirty = false;
 			return true;
 		}
@@ -450,6 +447,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 			}
 
 			isInterGeneCellDirty = false;
+
 			return true;
 		}
 		return false;
@@ -679,7 +677,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 			genes[index].ApplyData(genotypeData.geneData[index]);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
-		MakePatternAndInterGeneCellDirty();
+		MakeGeneCellPatternDirty();
 	}
 
 	// ^ Load / Save ^
