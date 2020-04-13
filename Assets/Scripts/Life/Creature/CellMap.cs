@@ -9,6 +9,25 @@ using SerializerFree.Serializers;
 // Used by both genotype and phenotype
 
 public class CellMap {
+
+	// How the grid positions will be represented in the world:
+
+	//                v              v           v 
+
+	//-------       -------  0: 2 -------       -------       
+	//       ------- -1: 1 -------  1: 1 -------       -------
+	//------- -2: 1 -------  0: 1 -------       -------       
+	//       ------- -1: 0 -------  1: 0 -------       -------
+	//------- -2: 0 -------  0: 0 -------       -------       
+	//       ------- -1:-1 -------  1:-1 -------       -------
+	//------- -2:-1 -------  0:-1 -------       -------       
+	//       ------- -1:-2 -------  1:-2 -------       -------
+
+	//         ^              ^            ^
+
+
+	// Note: vector + and - can't be done like in a cartezian system
+
 	private Dictionary<GridPosition, Cell> grid = new Dictionary<GridPosition, Cell>();
 	private List<Vector2i> illegalPositions = new List<Vector2i>(); // cell position allready occupied with another cell of lower build order
 
@@ -66,9 +85,11 @@ public class CellMap {
 		return ManhexanDistanceFromOrigin(HexagonalMinus(positionB, positionA));
 	}
 
+
+	// Returns a vector with tail in origo and head at (A - B)
 	public static Vector2i HexagonalMinus(Vector2i vectorA, Vector2i vectorB) {
 		Vector2i transformed = vectorA - vectorB;
-		if (vectorA.x % 2 == 0 && vectorB.x % 2 == 1) {
+		if (Mathf.Abs(vectorA.x) % 2 == 0 && Mathf.Abs(vectorB.x) % 2 == 1) {
 			transformed.y--;
 		}
 		return transformed;
@@ -81,6 +102,8 @@ public class CellMap {
 		}
 		return transformed;
 	}
+
+
 
 	// Sweet name if i may say so myself :)
 	public static int ManhexanDistanceFromOrigin(Vector2i gridPosition) {
@@ -228,20 +251,6 @@ public class CellMap {
 	public static Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, CardinalDirectionEnum cardinalenum) {
 		return GetGridNeighbourGridPosition(gridPosition, AngleUtil.CardinalEnumToCardinalIndex(cardinalenum));
 	}
-
-	//                v              v           v 
-
-	//-------       -------  0: 2 -------       -------       
-	//       ------- -1: 1 -------  1: 1 -------       -------
-	//------- -2: 1 -------  0: 1 -------       -------       
-	//       ------- -1: 0 -------  1: 0 -------       -------
-	//------- -2: 0 -------  0: 0 -------       -------       
-	//       ------- -1:-1 -------  1:-1 -------       -------
-	//------- -2:-1 -------  0:-1 -------       -------       
-	//       ------- -1:-2 -------  1:-2 -------       -------
-	
-	//         ^              ^            ^
-
 
 	public static Vector2i GetGridNeighbourGridPosition(Vector2i gridPosition, int cardinalIndex) {
 		Vector2i neighbour = null;

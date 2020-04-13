@@ -454,9 +454,6 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 		}
 		return false;
 	}
-	
-	
-
 
 	private Cell SpawnGeneCell(Creature creature, Gene gene, Vector2i mapPosition, int buildOrderIndex, int bindHeading, FlipSideEnum flipSide) {
 		Cell cell = Morphosis.instance.geneCellPool.Borrow(gene.type);
@@ -478,7 +475,6 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 		geneCellMap.SetCell(mapPosition, cell);
 		AddCellToGeneCellLists(cell);
 		
-
 		return cell;
 	}
 

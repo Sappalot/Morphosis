@@ -30,14 +30,16 @@ public class LMBInWorld : MonoBehaviour {
 
 
 			if (!EventSystem.current.IsPointerOverGameObject() && !GraphPlotter.instance.IsMouseInside() && !AlternativeToolModePanel.instance.isOn) {
+				Vector2 pickPosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition);
+				Cell cellClicked = Morphosis.instance.GetCellAtPosition(pickPosition);
+
 				if (MouseAction.instance.actionState == MouseActionStateEnum.free) {
 					if (Input.GetKey(KeyCode.LeftShift)) {
 						return;
 					}
-					Vector2 pickPosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition);
-					Cell cell = Morphosis.instance.GetCellAtPosition(pickPosition); // or geneCell
 
-					if (cell == null) {
+
+					if (cellClicked == null) {
 						if (!Input.GetKey(KeyCode.LeftControl)) {
 							if (PhenotypePanel.instance.followToggle.isOn && CreatureSelectionPanel.instance.hasSoloSelected) {
 								World.instance.cameraController.TurnCameraStraightAtCameraUnlock(); // but don't remove lock
@@ -47,7 +49,7 @@ public class LMBInWorld : MonoBehaviour {
 						}
 						return;
 					}
-					Creature creature = cell.creature;
+					Creature creature = cellClicked.creature;
 
 					if (Input.GetKey(KeyCode.LeftControl)) {
 						if (creature.creation == CreatureCreationEnum.Frozen ||
@@ -65,13 +67,30 @@ public class LMBInWorld : MonoBehaviour {
 
 						}
 					} else {
-						CreatureSelectionPanel.instance.Select(creature, cell);
+						CreatureSelectionPanel.instance.Select(creature, cellClicked);
 						GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.MakeDirty();
 						GenomePanel.instance.MakeDirty();
 						GenomePanel.instance.MakeScrollDirty();
 						CreatureSelectionPanel.instance.soloSelected.MakeDirtyGraphics();
 
 						doubleClickCooldown = 0.4f; // for double click
+					}
+
+				} else if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput) {
+					// We have been pressing a signal input in the genotype panel and are about to assign an input to this nerve
+					if (AssignNerveInputPanel.instance.selectedRootCell == null) {
+						if (AssignNerveInputPanel.instance.TrySetNarrowedGeneCell(cellClicked)) {
+							Debug.Log("RootGeneCell narrowed down");
+						} else {
+							Debug.Log("You must select one of the Gene cells containing the selected gene!");
+						}
+					} else {
+						// click will select this geneCell as the one we want to listen to
+						if (AssignNerveInputPanel.instance.TrySetNerveInputExternally(cellClicked)) {
+							Debug.Log("(RootGeneCell was allready set) Source geneCell selected");
+						} else {
+							Debug.Log("You must select an extarnal gene cell as an input source!");
+						}
 					}
 
 				} else if ((MouseAction.instance.actionState == MouseActionStateEnum.moveCreatures || MouseAction.instance.actionState == MouseActionStateEnum.rotateCreatures)
