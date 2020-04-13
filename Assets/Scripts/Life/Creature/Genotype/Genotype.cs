@@ -325,8 +325,10 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 
 	public bool TryUpdateGeneCellPattern(Creature creature, Vector2 position, float heading) { // heading 90 ==> origin is pointing north
 		if (isGeneCellPatternDirty) {
-			Debug.Log("Update Creature UpdateGeneCellsFromGenome");
-			//if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+
+			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+				Debug.Log("Update Creature TryUpdateGeneCellPattern");
+			}
 
 			Clear();
 

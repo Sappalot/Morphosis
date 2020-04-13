@@ -13,9 +13,9 @@ public class Phenotype : MonoBehaviour {
 	public Veins veins;
 
 	[HideInInspector]
-	private bool isCellPatternDirty = true;
+	private bool isCellPatternDiffersFromGenomeDirty = true;
 	public void MakeCellPaternDirty () {
-		isCellPatternDirty = true;
+		isCellPatternDiffersFromGenomeDirty = true;
 	}
 
 	[HideInInspector]
@@ -323,20 +323,20 @@ public class Phenotype : MonoBehaviour {
 		NoGrowthReason reason;
 		TryGrow(creature, false, true, 1, true, false, 0, true, true, out reason);
 
-		isCellPatternDirty = false;
+		isCellPatternDiffersFromGenomeDirty = false;
 	}
 
-	public bool TryUpdateCellPattern(Creature creature, Vector2 position, float heading) {
-		if (isCellPatternDirty) {
+	public bool TryRegrowCellPattern(Creature creature, Vector2 position, float heading) {
+		if (isCellPatternDiffersFromGenomeDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update Creature UpdateCellsFromGeneCells");
+				Debug.Log("Update Creature TryUpdateCellPattern");
 			}
 			Setup(position, heading);
 			TryGrowFully(creature, true);
 
-			MakeCellPaternDirty();
+			MakeInterCellDirty();
 
-			isCellPatternDirty = false;
+			isCellPatternDiffersFromGenomeDirty = false;
 			return true;
 		}
 		return false;
@@ -580,7 +580,7 @@ public class Phenotype : MonoBehaviour {
 
 			PhenotypePanel.instance.MakeDirty();
 			MakeDirtyCollider();
-			isInterCellDirty = true;
+			MakeInterCellDirty();
 		}
 		return growCellCount;
 	}
@@ -720,6 +720,8 @@ public class Phenotype : MonoBehaviour {
 	// Update groups
 	// Update wings
 	// Update Signal connections
+	// 
+	// TODO: At the moment we are updating whole body every time a new cell is grown. This is probably costy. Just update the cells affected by the change made (dirtymark per cell)
 	public bool TryUpdateInterCells(Creature creature, string motherId) {
 		if (isInterCellDirty) {
 
@@ -938,7 +940,7 @@ public class Phenotype : MonoBehaviour {
 			}
 		}
 
-		isInterCellDirty = true;
+		MakeInterCellDirty();
 	}
 
 	public void SetAllCellStatesToDefault() {
@@ -1013,7 +1015,7 @@ public class Phenotype : MonoBehaviour {
 		PhenotypePanel.instance.MakeDirty(); // Update cell text with fewer cells
 
 		CellPanel.instance.MakeDirty();
-		isInterCellDirty = true;
+		MakeInterCellDirty();
 
 		CreatureSelectionPanel.instance.MakeDirty();
 		CreatureSelectionPanel.instance.UpdateSelectionCluster();
@@ -1155,12 +1157,12 @@ public class Phenotype : MonoBehaviour {
 			//me
 			veins.Clear();
 			creature.SetAttachedToMotherAlive(false);
-			isInterCellDirty = true;
+			MakeInterCellDirty();
 			originCell.effectFluxFromMotherAttached = 0f;
 
 			//mother
 			creature.GetMotherAlive().phenotype.veins.Clear();
-			creature.GetMotherAlive().phenotype.isInterCellDirty = true;
+			creature.GetMotherAlive().phenotype.MakeInterCellDirty();
 			foreach (Cell cell in creature.GetMotherAlive().phenotype.cellList) {
 				cell.effectFluxToChildrenAttached = 0f;
 			}
@@ -1841,7 +1843,7 @@ public class Phenotype : MonoBehaviour {
 			Cell cell = cellList[index];
 			phenotypeData.cellDataList.Add(cell.UpdateData());
 		}
-		phenotypeData.isCellPatternDirty = isCellPatternDirty;
+		phenotypeData.isCellPatternDirty = isCellPatternDiffersFromGenomeDirty;
 
 		phenotypeData.fungalCellTick = fungalCellTick;
 		phenotypeData.jawCellTick = jawCellTick;
@@ -1864,8 +1866,8 @@ public class Phenotype : MonoBehaviour {
 			Cell cell = InstantiateCell(creature.genotype.genes[cellData.geneIndex].type, cellData.mapPosition);
 			cell.ApplyData(cellData, creature);
 		}
-		isCellPatternDirty = false; //This work is done
-		isInterCellDirty = true; //We need to connect mothers with children
+		isCellPatternDiffersFromGenomeDirty = false; //This work is done
+		MakeInterCellDirty(); //We need to connect mothers with children
 
 		fungalCellTick = phenotypeData.fungalCellTick;
 		jawCellTick = phenotypeData.jawCellTick;

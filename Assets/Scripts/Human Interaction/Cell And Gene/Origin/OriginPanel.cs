@@ -106,6 +106,7 @@ public class OriginPanel : ComponentPanel {
 
 			} else {
 				embryoMaxSizeSlider.interactable = isOriginGenotypeSelected && IsUnlocked();
+				growPriorityCellPersistanceSlider.interactable = isOriginGenotypeSelected && IsUnlocked();
 
 				//pulse
 				pulseFrequenzySlider.interactable = isOriginGenotypeSelected && IsUnlocked();

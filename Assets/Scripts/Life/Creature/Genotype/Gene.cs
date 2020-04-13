@@ -103,9 +103,39 @@ public class Gene {
 	// Origin...
 	public GeneLogicBox originDetatchLogicBox;
 	public GeneSizeSensor originSizeSensor;
-	public int originPulseTickPeriod;
-	public float originEmbryoMaxSizeCompleteness;
-	public int originGrowPriorityCellPersistance;
+	public int m_originPulseTickPeriod;
+	public int originPulseTickPeriod {
+		get {
+			return m_originPulseTickPeriod;
+		}
+		set {
+			m_originPulseTickPeriod = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	public float m_originEmbryoMaxSizeCompleteness;
+	public float originEmbryoMaxSizeCompleteness {
+		get {
+			return m_originEmbryoMaxSizeCompleteness;
+		}
+		set {
+			m_originEmbryoMaxSizeCompleteness = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
+	public int m_originGrowPriorityCellPersistance;
+	public int originGrowPriorityCellPersistance {
+		get {
+			return m_originGrowPriorityCellPersistance;
+		}
+		set {
+			m_originGrowPriorityCellPersistance = value;
+			genotypeDirtyfy.MakeGeneCellPatternDirty();
+		}
+	}
+
 	// ^ origin ^
 
 	public float originPulsePeriod {

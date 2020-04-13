@@ -64,7 +64,7 @@ public class Creature : MonoBehaviour {
 		ClearMotherAndChildrenReferences();
 		//--
 		phenotype.MakeCellPaternDirty();
-		phenotype.TryUpdateCellPattern(this, GetOriginPosition(PhenoGenoEnum.Phenotype), GetOriginHeading(PhenoGenoEnum.Phenotype));
+		phenotype.TryRegrowCellPattern(this, GetOriginPosition(PhenoGenoEnum.Phenotype), GetOriginHeading(PhenoGenoEnum.Phenotype));
 		phenotype.DisablePhysicsComponents();
 		//--
 		
@@ -493,7 +493,7 @@ public class Creature : MonoBehaviour {
 	private void UpdateCellsAndGeneCells(Vector2 position, float heading) {
 		//we need to update them allready in order to have originCell. Origin cell is needed for position and heading when updating
 		genotype.TryUpdateGeneCellPattern(this, position, heading); // Generating genotype here caused Unity freeze ;/
-		phenotype.TryUpdateCellPattern(this, position, heading);
+		phenotype.TryRegrowCellPattern(this, position, heading);
 		
 		isDirtyGraphics = true;
 		UpdateGraphics();
@@ -706,9 +706,9 @@ public class Creature : MonoBehaviour {
 
 		isDirtyGraphics |= genotype.TryUpdateInterGeneCells();
 
-		isDirtyGraphics |= phenotype.TryUpdateCellPattern(this, genotype.originCell.position, genotype.originCell.heading);
+		isDirtyGraphics |= phenotype.TryRegrowCellPattern(this, genotype.originCell.position, genotype.originCell.heading); // Will regrow fully
 
-		isDirtyGraphics |= phenotype.TryUpdateInterCells(this, HasMotherAlive() ? GetMotherAlive().id : "no mother");
+		isDirtyGraphics |= phenotype.TryUpdateInterCells(this, HasMotherAlive() ? GetMotherAlive().id : "no mother"); // Oupate as soon 
 	}
 
 	public bool UpdateKillWeakCells(ulong worldTicks) {
