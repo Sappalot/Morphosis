@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 
 // TODO Generalize to just be an input panel for all units
-public class AxonInputPanel : MonoBehaviour {
+public class AxonInputPanel : MonoBehaviour, IInputPanel {
 	public Image blockButton;
 	public Image passButton;
 	public Image lockedOverlayImage;
@@ -18,6 +18,11 @@ public class AxonInputPanel : MonoBehaviour {
 	private bool isUsed = false;
 
 	private AxonPanel motherPanel;
+
+	public void MakeMotherPanelDirty() {
+		motherPanel.MakeDirty();
+	}
+
 	public GeneAxonInput affectedGeneAxonInput { 
 		get {
 			if (column == 0) {
@@ -70,39 +75,18 @@ public class AxonInputPanel : MonoBehaviour {
 	}
 
 	public void OnSetReferenceClicked() {
-		if (isUsed && IsUnlocked() && affectedGeneAxonInput.lockness == LocknessEnum.Unlocked && MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass) {
-			MouseAction.instance.actionState = MouseActionStateEnum.selectSignalOutput;
-			Debug.Assert(staticAffectedAxonInputPanel == null);
-			staticAffectedAxonInputPanel = this;
+		if (isUsed && IsUnlocked() && affectedGeneAxonInput.lockness == LocknessEnum.Unlocked && affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass) {
+			AssignNerveInputPanel.instance.TryStartNerveAssignation(this);
 			motherPanel.MakeDirty();
 		}
 	}
 
-	public static AxonInputPanel staticAffectedAxonInputPanel;
-	public static void TryAnswerSetReference(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
-		if (staticAffectedAxonInputPanel == null) {
-			return;
-		}
-
-		staticAffectedAxonInputPanel.affectedGeneAxonInput.nerve.inputUnit = inputUnit;
-		staticAffectedAxonInputPanel.affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
-		staticAffectedAxonInputPanel.motherPanel.MakeDirty();
-		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
-		staticAffectedAxonInputPanel = null;
+	public void TrySetNerveInputLocally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
+		affectedGeneAxonInput.nerve.inputUnit = inputUnit;
+		affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
 	}
 
 	private void Update() {
-		if (Input.GetKey(KeyCode.Escape)) {
-			if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && staticAffectedAxonInputPanel != null) {
-				Audio.instance.ActionAbort(1f);
-				MouseAction.instance.actionState = MouseActionStateEnum.free;
-				staticAffectedAxonInputPanel.MakeDirty();
-
-				staticAffectedAxonInputPanel = null;
-			}
-		}
-
 		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
 			return;
 		}
@@ -130,7 +114,7 @@ public class AxonInputPanel : MonoBehaviour {
 					inputButtonImage.color = ColorScheme.instance.signalOff; // we have a chance of an ON signal
 				}
 				// Color while choosing output
-				if (staticAffectedAxonInputPanel != null && staticAffectedAxonInputPanel.affectedGeneAxonInput == affectedGeneAxonInput) {
+				if (AssignNerveInputPanel.instance.IsThisThePanelBeingAssigned(this)) {
 					inputButtonImage.color = new Color(0f, 1f, 0f);
 				}
 				lockedOverlayImage.gameObject.SetActive(affectedGeneAxonInput.lockness == LocknessEnum.Locked);

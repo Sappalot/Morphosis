@@ -125,6 +125,11 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 	}
 
 	public void OnClickedBlackWhite() {
+		// TODO: make it work, doesn't work if clicked when assigning nerve input
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) {
+			return;
+		}
+
 		viewedFlipSide = FlipSideEnum.BlackWhite;
 		isDirty = true;
 		GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.MakeDirty();
@@ -132,6 +137,11 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 	}
 
 	public void OnClickedWhiteBlack() {
+		// TODO: make it work, doesn't work if clicked when assigning nerve input
+		if (MouseAction.instance.actionState != MouseActionStateEnum.free) {
+			return;
+		}
+
 		viewedFlipSide = FlipSideEnum.WhiteBlack;
 		isDirty = true;
 		GenePanel.instance.cellAndGenePanel.geneNeighboursPanel.MakeDirty();

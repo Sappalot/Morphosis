@@ -16,6 +16,7 @@ public class Audio : MonoSingleton<Audio> {
 	private Dictionary<AudioClip, AudioSource> audioSource = new Dictionary<AudioClip, AudioSource>();
 
 	public AudioClip actionAbort;
+	public AudioClip actionDenied;
 
 	void Awake() {
 		audioSource.Add(cellBirth, gameObject.AddComponent<AudioSource>());
@@ -35,6 +36,7 @@ public class Audio : MonoSingleton<Audio> {
 		}
 
 		audioSource.Add(actionAbort, gameObject.AddComponent<AudioSource>());
+		audioSource.Add(actionDenied, gameObject.AddComponent<AudioSource>());
 
 		foreach (KeyValuePair<AudioClip, AudioSource> pair in audioSource) {
 			pair.Value.clip = pair.Key;
@@ -75,6 +77,10 @@ public class Audio : MonoSingleton<Audio> {
 
 	public void ActionAbort(float volume) {
 		Play(actionAbort, volume);
+	}
+
+	public void ActionDenied(float volume) {
+		Play(actionDenied, volume);
 	}
 
 	private void Play(AudioClip clip, float volume) {

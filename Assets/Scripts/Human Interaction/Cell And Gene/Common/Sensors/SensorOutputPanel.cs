@@ -26,18 +26,18 @@ public class SensorOutputPanel : MonoBehaviour {
 	public void OnClicked() {
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			if (motherPanel != null) {
-				LogicBoxInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
-				AxonInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
-				MouseAction.instance.actionState = MouseActionStateEnum.free;
+				//LogicBoxInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
+				//AxonInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
+				//MouseAction.instance.actionState = MouseActionStateEnum.free;
 
-				MarkAsNewForge();
+				AssignNerveInputPanel.instance.TrySetNerveInputLocally(signalUnit, signalUnitSlot);
 				GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
-				
+				MarkAsNewForge();
+
 			} else {
 				Debug.Log("Can't connect a nerve to a ghost output");
-				// TODO play aduio uh uh
+				Audio.instance.ActionDenied(1f);
 			}
-
 		}
 	}
 

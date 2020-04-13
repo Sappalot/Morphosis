@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -163,15 +162,16 @@ public class LogicBoxPanel : SignalUnitPanel {
 	public void OnClickedOutputButton() { // The arrow, processed late
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			if (affectedGeneLogicBox != null) {
-				LogicBoxInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
-				AxonInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
-				MouseAction.instance.actionState = MouseActionStateEnum.free;
+				//LogicBoxInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
+				//AxonInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
+				//MouseAction.instance.actionState = MouseActionStateEnum.free;
 
+				AssignNerveInputPanel.instance.TrySetNerveInputLocally(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
 				GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
 				MarkAsNewForge();
 			} else {
 				Debug.Log("Can't connect a nerve to a ghost output");
-				// TODO: play error audio
+				Audio.instance.ActionDenied(1f);
 			}
 		}
 	}

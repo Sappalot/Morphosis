@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 
 // TODO Generalize to just be an input panel for all units
-public class LogicBoxInputPanel : MonoBehaviour {
+public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	public Image blockButton;
 	public Image passButton;
 	public Image lockedOverlayImage;
@@ -16,6 +16,10 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	private bool isDirty = false;
 	private bool ignoreSliderMoved = false;
 	private bool isUsed = false;
+
+	public void MakeMotherPanelDirty() {
+		motherPanel.MakeDirty();
+	}
 
 	private LogicBoxPanel motherPanel;
 	public GeneLogicBoxInput affectedGeneLogicBoxInput { 
@@ -81,38 +85,18 @@ public class LogicBoxInputPanel : MonoBehaviour {
 	}
 
 	public void OnSetReferenceClicked() {
-		if (isUsed && IsUnlocked() && affectedGeneLogicBoxInput.lockness == LocknessEnum.Unlocked && MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
-			MouseAction.instance.actionState = MouseActionStateEnum.selectSignalOutput;
-			Debug.Assert(staticAffectedGeneLogicBoxInputPanel == null);
-			staticAffectedGeneLogicBoxInputPanel = this;
+		if (isUsed && IsUnlocked() && affectedGeneLogicBoxInput.lockness == LocknessEnum.Unlocked && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
+			AssignNerveInputPanel.instance.TryStartNerveAssignation(this);
 			motherPanel.MakeDirty();
 		}
 	}
 
-	public static LogicBoxInputPanel staticAffectedGeneLogicBoxInputPanel;
-	public static void TryAnswerSetReference(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
-		if (staticAffectedGeneLogicBoxInputPanel == null) {
-			return;
-		}
-		staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
-		staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
-		staticAffectedGeneLogicBoxInputPanel.motherPanel.MakeDirty();
-		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
-		staticAffectedGeneLogicBoxInputPanel = null;
+	public void TrySetNerveInputLocally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
+		affectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
+		affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
 	}
 
 	private void Update() {
-		if (Input.GetKey(KeyCode.Escape)) {
-			if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && staticAffectedGeneLogicBoxInputPanel != null) {
-				Audio.instance.ActionAbort(1f);
-				MouseAction.instance.actionState = MouseActionStateEnum.free;
-				staticAffectedGeneLogicBoxInputPanel.MakeDirty();
-
-				staticAffectedGeneLogicBoxInputPanel = null;
-			}
-		}
-
 		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
 			return;
 		}
@@ -140,7 +124,7 @@ public class LogicBoxInputPanel : MonoBehaviour {
 					inputButtonImage.color = ColorScheme.instance.signalOff; // we have a chance of an ON signal
 				}
 				// Color while choosing output
-				if (staticAffectedGeneLogicBoxInputPanel != null && staticAffectedGeneLogicBoxInputPanel.affectedGeneLogicBoxInput == affectedGeneLogicBoxInput) {
+				if (AssignNerveInputPanel.instance.IsThisThePanelBeingAssigned(this)) {
 					inputButtonImage.color = new Color(0f, 1f, 0f);
 				}
 				lockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked);

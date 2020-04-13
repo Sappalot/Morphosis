@@ -35,7 +35,7 @@ public class LMBInWorld : MonoBehaviour {
 						return;
 					}
 					Vector2 pickPosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition);
-					Cell cell = Morphosis.instance.GetCellAtPosition(pickPosition);
+					Cell cell = Morphosis.instance.GetCellAtPosition(pickPosition); // or geneCell
 
 					if (cell == null) {
 						if (!Input.GetKey(KeyCode.LeftControl)) {
