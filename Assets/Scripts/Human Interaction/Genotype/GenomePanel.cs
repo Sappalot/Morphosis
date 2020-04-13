@@ -19,7 +19,6 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
 		isScrollDirty = true;
 	}
 
-
 	public Genotype genotype {
 		get {
 			return GenotypePanel.instance.selectedGenotype;

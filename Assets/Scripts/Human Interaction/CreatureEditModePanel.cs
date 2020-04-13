@@ -53,13 +53,13 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 
 	public void UpdateAllAccordingToEditMode() {
 		CreatureSelectionPanel.instance.SetCellAndGeneSelectionToOrigin();
-		foreach (Creature c in World.instance.life.creatures) {
-			c.BringCurrentGenoPhenoPositionAndRotationToOther();
-			c.MakeDirtyGraphics();
+		foreach (Creature creature in World.instance.life.creatures) {
+			creature.BringCurrentGenoPhenoPositionAndRotationToOther();
+			creature.MakeDirtyGraphics();
 		}
-		foreach (Creature c in Freezer.instance.creatures) {
-			c.BringCurrentGenoPhenoPositionAndRotationToOther();
-			c.MakeDirtyGraphics();
+		foreach (Creature creature in Freezer.instance.creatures) {
+			creature.BringCurrentGenoPhenoPositionAndRotationToOther();
+			creature.MakeDirtyGraphics();
 		}
 		isDirty = true;
 	}
@@ -69,7 +69,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update CreatureEditModePanel");
 			}
-				
+
 			phenotypeImage.color = (mode == PhenoGenoEnum.Phenotype) ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
 			genotypeImage.color = (mode == PhenoGenoEnum.Genotype) ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
 

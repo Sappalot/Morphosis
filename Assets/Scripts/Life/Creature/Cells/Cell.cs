@@ -321,10 +321,6 @@ public abstract class Cell : MonoBehaviour {
 
 	// ^ Buds ^
 
-
-
-
-
 	// we don't want blood to linger with host while he is going in the recycling
 	public void DetatchParticles() {
 		Particles[] attachedParticles = GetComponentsInChildren<Particles>();
@@ -921,6 +917,8 @@ public abstract class Cell : MonoBehaviour {
 				return index;
 			}
 		}
+
+		// Solved 2019 Autumn ... leave here until we are 100% sure
 		// Once in a blue moon we end up here without finding previous cell (when calling this one from edges.GetNextOwnPeripheryCell)
 		// This was due to a problem described and fixed in phenotype.TryGrow
 		// Todo keep all exception shit until we are confident that no more edge errors occur
@@ -1288,23 +1286,7 @@ public abstract class Cell : MonoBehaviour {
 		if (direction.y > 0f)
 			return 180f - angle;
 		return 180f + angle;
-
-		//return 180 + Mathf.Rad2Deg * Mathf.Atan2(direction.y, direction.x);
-
 	}
-
-	//public void SetEnabledAllGraphics(bool enabled) {
-	//	cellSelected.gameObject.SetActive(enabled); //transparent
-	//	triangleSprite.gameObject.SetActive(enabled);
-	//	openCircleSprite.gameObject.SetActive(enabled); //cell type colour
-	//	filledCircleSprite.gameObject.SetActive(enabled); //cell type colour
-	//	creatureSelectedSprite.gameObject.SetActive(enabled);
-	//	shadowSprite.gameObject.SetActive(enabled);
-
-	//	buds.gameObject.SetActive(enabled);
-
-	//	labelCanvas.gameObject.SetActive(enabled);
-	//}
 
 	// Update
 	private bool graphicsWasDisabled;
@@ -1312,12 +1294,6 @@ public abstract class Cell : MonoBehaviour {
 
 	//TODO: update cell graphics from here
 	public void UpdateGraphics(bool mayBeSelected) {
-		//if (!graphicsWasDisabled) {
-		//	DisableGraphics();
-		//	buds.DisableGraphics();
-		//	graphicsWasDisabled = true;
-		//}
-		//return;
 
 		// Selector spin
 		if (mayBeSelected) {
@@ -1779,7 +1755,4 @@ public abstract class Cell : MonoBehaviour {
 
 		return false;
 	}
-
-	
-
 }

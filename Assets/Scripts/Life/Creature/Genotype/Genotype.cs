@@ -429,7 +429,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 			geneCellListIndexSorted.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex)); // only sorted here
 
 			isInterGeneCellDirty = true;
-			creature.phenotype.MakeCellPaternDirty();
+			creature.phenotype.MakeCellPaternDifferentFromGenotypeDirty();
 
 			isGeneCellPatternDirty = false;
 			return true;

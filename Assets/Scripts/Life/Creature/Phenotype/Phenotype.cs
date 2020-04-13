@@ -13,9 +13,9 @@ public class Phenotype : MonoBehaviour {
 	public Veins veins;
 
 	[HideInInspector]
-	private bool isCellPatternDiffersFromGenomeDirty = true;
-	public void MakeCellPaternDirty () {
-		isCellPatternDiffersFromGenomeDirty = true;
+	private bool isCellPatternDiffererentFromGenomeDirty = true;
+	public void MakeCellPaternDifferentFromGenotypeDirty () {
+		isCellPatternDiffererentFromGenomeDirty = true;
 	}
 
 	[HideInInspector]
@@ -323,11 +323,11 @@ public class Phenotype : MonoBehaviour {
 		NoGrowthReason reason;
 		TryGrow(creature, false, true, 1, true, false, 0, true, true, out reason);
 
-		isCellPatternDiffersFromGenomeDirty = false;
+		isCellPatternDiffererentFromGenomeDirty = false;
 	}
 
 	public bool TryRegrowCellPattern(Creature creature, Vector2 position, float heading) {
-		if (isCellPatternDiffersFromGenomeDirty) {
+		if (isCellPatternDiffererentFromGenomeDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Creature TryUpdateCellPattern");
 			}
@@ -336,7 +336,7 @@ public class Phenotype : MonoBehaviour {
 
 			MakeInterCellDirty();
 
-			isCellPatternDiffersFromGenomeDirty = false;
+			isCellPatternDiffererentFromGenomeDirty = false;
 			return true;
 		}
 		return false;
@@ -1843,7 +1843,7 @@ public class Phenotype : MonoBehaviour {
 			Cell cell = cellList[index];
 			phenotypeData.cellDataList.Add(cell.UpdateData());
 		}
-		phenotypeData.isCellPatternDirty = isCellPatternDiffersFromGenomeDirty;
+		phenotypeData.isCellPatternDirty = isCellPatternDiffererentFromGenomeDirty;
 
 		phenotypeData.fungalCellTick = fungalCellTick;
 		phenotypeData.jawCellTick = jawCellTick;
@@ -1866,7 +1866,7 @@ public class Phenotype : MonoBehaviour {
 			Cell cell = InstantiateCell(creature.genotype.genes[cellData.geneIndex].type, cellData.mapPosition);
 			cell.ApplyData(cellData, creature);
 		}
-		isCellPatternDiffersFromGenomeDirty = false; //This work is done
+		isCellPatternDiffererentFromGenomeDirty = false; //This work is done
 		MakeInterCellDirty(); //We need to connect mothers with children
 
 		fungalCellTick = phenotypeData.fungalCellTick;

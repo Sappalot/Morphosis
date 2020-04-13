@@ -63,7 +63,7 @@ public class Creature : MonoBehaviour {
 		
 		ClearMotherAndChildrenReferences();
 		//--
-		phenotype.MakeCellPaternDirty();
+		phenotype.MakeCellPaternDifferentFromGenotypeDirty();
 		phenotype.TryRegrowCellPattern(this, GetOriginPosition(PhenoGenoEnum.Phenotype), GetOriginHeading(PhenoGenoEnum.Phenotype));
 		phenotype.DisablePhysicsComponents();
 		//--
@@ -77,7 +77,7 @@ public class Creature : MonoBehaviour {
 		ClearMotherAndChildrenReferences(); // should not have any
 		phenotype.SetAllCellStatesToDefault();
 		phenotype.EnablePhysicsComponents();
-		phenotype.MakeCellPaternDirty();
+		phenotype.MakeCellPaternDifferentFromGenotypeDirty();
 		bornTick = World.instance.worldTicks;
 	}
 
