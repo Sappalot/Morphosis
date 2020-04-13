@@ -116,8 +116,12 @@ public class AxonPanel : SensorPanel {
 			return null;
 		}
 		List<IGeneInput> arrows = new List<IGeneInput>();
-		arrows.Add(inputLeftPanel.affectedGeneAxonInput);
-		arrows.Add(inputRightPanel.affectedGeneAxonInput);
+		if (inputLeftPanel.affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass) {
+			arrows.Add(inputLeftPanel.affectedGeneAxonInput);
+		}
+		if (inputRightPanel.affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass) {
+			arrows.Add(inputRightPanel.affectedGeneAxonInput);
+		}
 		return arrows;
 	}
 

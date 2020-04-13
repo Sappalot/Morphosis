@@ -136,11 +136,14 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 	public override List<IGeneInput> GetAllGeneInputs() {
 		List<IGeneInput> arrows = new List<IGeneInput>();
-		for (int i = 0; i < inputRow3.Length; i++) {
-			if (affectedGeneLogicBox.isUsedInternal) {
-				arrows.Add(inputRow3[i].affectedGeneLogicBoxInput);
+		if (affectedGeneLogicBox.isUsedInternal) {
+			for (int i = 0; i < inputRow3.Length; i++) {
+				if (inputRow3[i].affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
+					arrows.Add(inputRow3[i].affectedGeneLogicBoxInput);
+				}
 			}
 		}
+
 		return arrows;
 	}
 

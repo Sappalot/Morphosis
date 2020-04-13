@@ -20,7 +20,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		this.mode = mode;
 	}
 
-	private bool isDirtyConnections = false;
+	private bool isDirtyConnections = true;
 	public void MakeDirtyConnections() {
 		isDirtyConnections = true;
 		MakeDirtySignal();
@@ -48,7 +48,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			arrowList.Clear();
 
 			foreach (IGeneInput geneInput in geneInputList) {
-				if (geneInput.nerve.inputUnit != SignalUnitEnum.Void && geneInput.valveMode == SignalValveModeEnum.Pass) {
+				if (geneInput.nerve.inputUnit != SignalUnitEnum.Void) {
 					HudSignalArrow arrow = hudSignalArrowPool.Borrow();
 					arrow.gameObject.SetActive(true);
 					
