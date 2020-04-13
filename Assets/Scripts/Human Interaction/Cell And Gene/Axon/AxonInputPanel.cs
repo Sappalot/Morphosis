@@ -72,33 +72,34 @@ public class AxonInputPanel : MonoBehaviour {
 	public void OnSetReferenceClicked() {
 		if (isUsed && IsUnlocked() && affectedGeneAxonInput.lockness == LocknessEnum.Unlocked && MouseAction.instance.actionState == MouseActionStateEnum.free && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype && affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass) {
 			MouseAction.instance.actionState = MouseActionStateEnum.selectSignalOutput;
-			Debug.Assert(staticAffectedGeneAxonInputPanel == null);
-			staticAffectedGeneAxonInputPanel = this;
+			Debug.Assert(staticAffectedAxonInputPanel == null);
+			staticAffectedAxonInputPanel = this;
 			motherPanel.MakeDirty();
 		}
 	}
 
-	public static AxonInputPanel staticAffectedGeneAxonInputPanel;
+	public static AxonInputPanel staticAffectedAxonInputPanel;
 	public static void TryAnswerSetReference(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
-		if (staticAffectedGeneAxonInputPanel == null) {
+		if (staticAffectedAxonInputPanel == null) {
 			return;
 		}
 
-		staticAffectedGeneAxonInputPanel.affectedGeneAxonInput.nerve.inputUnit = inputUnit;
-		staticAffectedGeneAxonInputPanel.affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
-		staticAffectedGeneAxonInputPanel.motherPanel.MakeDirty();
+		staticAffectedAxonInputPanel.affectedGeneAxonInput.nerve.inputUnit = inputUnit;
+		staticAffectedAxonInputPanel.affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
+		staticAffectedAxonInputPanel.motherPanel.MakeDirty();
 		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
-		staticAffectedGeneAxonInputPanel = null;
+		staticAffectedAxonInputPanel = null;
 	}
 
 	private void Update() {
 		if (Input.GetKey(KeyCode.Escape)) {
-			if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput) {
+			if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && staticAffectedAxonInputPanel != null) {
 				Audio.instance.ActionAbort(1f);
 				MouseAction.instance.actionState = MouseActionStateEnum.free;
-				staticAffectedGeneAxonInputPanel = null;
-				motherPanel.MakeDirty();
+				staticAffectedAxonInputPanel.MakeDirty();
+
+				staticAffectedAxonInputPanel = null;
 			}
 		}
 
@@ -129,7 +130,7 @@ public class AxonInputPanel : MonoBehaviour {
 					inputButtonImage.color = ColorScheme.instance.signalOff; // we have a chance of an ON signal
 				}
 				// Color while choosing output
-				if (staticAffectedGeneAxonInputPanel != null && staticAffectedGeneAxonInputPanel.affectedGeneAxonInput == affectedGeneAxonInput) {
+				if (staticAffectedAxonInputPanel != null && staticAffectedAxonInputPanel.affectedGeneAxonInput == affectedGeneAxonInput) {
 					inputButtonImage.color = new Color(0f, 1f, 0f);
 				}
 				lockedOverlayImage.gameObject.SetActive(affectedGeneAxonInput.lockness == LocknessEnum.Locked);

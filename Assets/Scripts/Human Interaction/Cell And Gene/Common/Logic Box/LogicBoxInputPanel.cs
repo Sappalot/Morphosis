@@ -104,11 +104,12 @@ public class LogicBoxInputPanel : MonoBehaviour {
 
 	private void Update() {
 		if (Input.GetKey(KeyCode.Escape)) {
-			if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput) {
+			if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && staticAffectedGeneLogicBoxInputPanel != null) {
 				Audio.instance.ActionAbort(1f);
 				MouseAction.instance.actionState = MouseActionStateEnum.free;
+				staticAffectedGeneLogicBoxInputPanel.MakeDirty();
+
 				staticAffectedGeneLogicBoxInputPanel = null;
-				motherPanel.MakeDirty();
 			}
 		}
 
