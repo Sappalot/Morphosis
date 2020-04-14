@@ -72,6 +72,16 @@ public class CellMap {
 	private static List<Vector2i> gridPositionsWithinRadius35 = new List<Vector2i>();
 	private static List<List<Vector2i>> gridPositionsWithinRadiusList = new List<List<Vector2i>>();
 
+
+	// if i am at key take me to value and call it a rotation
+	private static Dictionary<Vector2i, Vector2i> rotationMap0 = new Dictionary<Vector2i, Vector2i>(); // just for the symetry in code
+	private static Dictionary<Vector2i, Vector2i> rotationMap60 = new Dictionary<Vector2i, Vector2i>();
+	private static Dictionary<Vector2i, Vector2i> rotationMap120 = new Dictionary<Vector2i, Vector2i>();
+	private static Dictionary<Vector2i, Vector2i> rotationMap180 = new Dictionary<Vector2i, Vector2i>();
+	private static Dictionary<Vector2i, Vector2i> rotationMap240 = new Dictionary<Vector2i, Vector2i>();
+	private static Dictionary<Vector2i, Vector2i> rotationMap300 = new Dictionary<Vector2i, Vector2i>();
+	private static List<Dictionary<Vector2i, Vector2i>> rotationMaps = new List<Dictionary<Vector2i, Vector2i>>();
+
 	// hexaRadius = 0; just gridPosition Cell
 	public static bool IsInsideMaximumHexagon(Vector2i gridPosition) {
 		return ManhexanDistanceFromOrigin(gridPosition) <= Creature.maxRadiusHexagon;
@@ -103,6 +113,18 @@ public class CellMap {
 		return transformed;
 	}
 
+	// Rotate the vector counter clockwise (around its tail in origo) angle times 60 degrees. angle = 0 to 5
+	public static Vector2i HexagonalRotate(Vector2i vector, int angle) {
+		if (vector == new Vector2i()) {
+			return new Vector2i(); // rotating origo
+		}
+
+		return rotationMaps[angle][vector];
+	}
+
+	public static Vector2i HexagonalFlip(Vector2i vector) {
+		return new Vector2i(-vector.x, vector.y);
+	}
 
 
 	// Sweet name if i may say so myself :)
@@ -391,9 +413,10 @@ public class CellMap {
 		}
 	}
 
-	// Takes some time at startup save this shit
 	public static void Init() {
-		// Generate
+
+
+		// Generate radius tables
 		// takes just ~0.02 s ==> no need for this save load shit :/ , note to self: check time cost to generate first before creating some fancy solution!!!!!!!!!!!!!!!! 
 		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius0);
 		gridPositionsWithinRadiusList.Add(gridPositionsWithinRadius1);
@@ -449,5 +472,42 @@ public class CellMap {
 				}
 			}
 		}
+
+		// Generate rotation tables, NEAT! :)
+		rotationMaps.Add(rotationMap0);
+		rotationMaps.Add(rotationMap60);
+		rotationMaps.Add(rotationMap120);
+		rotationMaps.Add(rotationMap180);
+		rotationMaps.Add(rotationMap240);
+		rotationMaps.Add(rotationMap300);
+
+		const int rotationMapRadius = 6; // origo + this many locations
+		for (int rotationMapIndex = 0; rotationMapIndex < 6; rotationMapIndex++) { // the rotation map we are writing to
+			for (int segmentAngleIndex = 0; segmentAngleIndex < 6; segmentAngleIndex++) { // the segments we are reading from
+				Vector2i trunkPosition = GetGridNeighbourGridPosition(new Vector2i(), segmentAngleIndex);
+				for (int trunkIndex = 0; trunkIndex < rotationMapRadius; trunkIndex++) { // index of location as we are walking from center and out
+					Vector2i branchPosition = trunkPosition;
+					for (int branchIndex = 0; branchIndex < rotationMapRadius; branchIndex++) { // index of location as we are walking away from trunk diagonaaly out
+						rotationMaps[rotationMapIndex].Add(branchPosition, CoordinateAt((segmentAngleIndex + rotationMapIndex) % 6, trunkIndex, branchIndex));
+						branchPosition = GetGridNeighbourGridPosition(branchPosition, (segmentAngleIndex + 1) % 6); // if we are at 5 we should go 0
+					}
+					trunkPosition = GetGridNeighbourGridPosition(trunkPosition, segmentAngleIndex);
+				}
+			}
+		}
+	}
+
+	private static Vector2i CoordinateAt(int cardinalDirection, int trunkDistance, int branchDistance) {
+		// First anlong trunk
+		Vector2i trunkPosition = GetGridNeighbourGridPosition(new Vector2i(), cardinalDirection);
+		for (int trunkIndex = 0; trunkIndex < trunkDistance; trunkIndex++) { // index of location as we are walking from center and out
+			trunkPosition = GetGridNeighbourGridPosition(trunkPosition, cardinalDirection); // step on along trunk
+		}
+		// Then along branch
+		Vector2i branchPosition = trunkPosition;
+		for (int branchIndex = 0; branchIndex < branchDistance; branchIndex++) { // index of location as we are walking away from trunk diagonaaly out
+			branchPosition = GetGridNeighbourGridPosition(branchPosition, (cardinalDirection + 1) % 6); //step on along branch
+		}
+		return branchPosition;
 	}
 }

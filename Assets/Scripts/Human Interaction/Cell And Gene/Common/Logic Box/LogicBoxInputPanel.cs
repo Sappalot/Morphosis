@@ -96,6 +96,10 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 		affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
 	}
 
+	public void TrySetNerveInputExternally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, Vector2i nerveVectorLocal) {
+
+	}
+
 	private void Update() {
 		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
 			return;

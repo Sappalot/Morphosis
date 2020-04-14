@@ -86,6 +86,10 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 		affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
 	}
 
+	public void TrySetNerveInputExternally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, Vector2i nerveVectorLocal) {
+
+	}
+
 	private void Update() {
 		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
 			return;

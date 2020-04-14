@@ -85,6 +85,8 @@ public class LMBInWorld : MonoBehaviour {
 							Debug.Log("You must select one of the Gene cells containing the selected gene!");
 						}
 					} else {
+						// TODO: show nerves as we move mouse from cell to cell
+
 						// click will select this geneCell as the one we want to listen to
 						if (AssignNerveInputPanel.instance.TrySetNerveInputExternally(cellClicked)) {
 							Debug.Log("(RootGeneCell was allready set) Source geneCell selected");
@@ -135,7 +137,12 @@ public class LMBInWorld : MonoBehaviour {
 			mouseDown0 = false;
 		}
 
+		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && AssignNerveInputPanel.instance.selectedRootCell != null) {
+			Vector2 pickPosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition);
+			Cell cellClicked = Morphosis.instance.GetCellAtPosition(pickPosition);
 
+			//Debug.Log(cellClicked != null ? cellClicked.GetCellType() + ", " + cellClicked.mapPosition : "Void");
+		}
 	}
 
 	//TODO move to some util
