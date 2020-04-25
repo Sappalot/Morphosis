@@ -3,8 +3,6 @@ using UnityEngine;
 
 
 public class Veins : MonoBehaviour {
-	public Vein veinPrefab;
-
 	private List<Vein> veinList = new List<Vein>();
 
 	private bool HasVein(Cell cellA, Cell cellB) {
@@ -111,7 +109,7 @@ public class Veins : MonoBehaviour {
 		}
 	}
 
-	public void GenerateVeins(Creature creature, CellMap cellMap) {
+	public void Generate(Creature creature) {
 		Clear();
 
 		foreach (Cell cell in creature.phenotype.cellList) {

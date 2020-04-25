@@ -1157,7 +1157,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 	}
 
 	private IEnumerator UpdateIsVisible() {
-		bool show = hasSelection && MouseAction.instance.actionState == MouseActionStateEnum.free && !AlternativeToolModePanel.instance.isOn;
+		bool show = hasSelection && MouseAction.instance.actionState == MouseActionStateEnum.free || MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && !AlternativeToolModePanel.instance.isOn;
 		yield return 0;
 		showHideRoot.SetActive(show);
 	}

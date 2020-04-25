@@ -332,6 +332,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public bool vein = true;
 		public bool edge = true;
 		public bool effects = true;
+		public bool nerveArrow = true;
 	}
 
 	public Pooling pooling;

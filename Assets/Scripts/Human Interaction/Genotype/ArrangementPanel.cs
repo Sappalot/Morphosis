@@ -72,7 +72,7 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	public void OnClickEnabledToggle(bool value) {
-		if (CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome) {
+		if (CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome) {
 			bool wasChanged = arrangement.isEnabled != value; //To prevent dirtymarking when just setting startup value
 			if (wasChanged) {
 				arrangement.isEnabled = value;

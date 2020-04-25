@@ -43,7 +43,19 @@ public abstract class Cell : MonoBehaviour {
 	public FlipSideEnum flipSide;
 
 	[HideInInspector]
-	public Vector2i mapPosition = new Vector2i();
+	Vector2i m_mapPosition = new Vector2i();
+	public Vector2i mapPosition { 
+		get {
+			Vector2i v = new Vector2i();
+			v.x = m_mapPosition.x;
+			v.y = m_mapPosition.y;
+			return v;
+		}
+		set {
+			m_mapPosition.x = value.x;
+			m_mapPosition.y = value.y;
+		}
+	}
 
 	[HideInInspector]
 	public int buildIndex = 0; // The order in which geneCells were developed from origin (also read as steps from origin along gene arrows)
@@ -1076,6 +1088,7 @@ public abstract class Cell : MonoBehaviour {
 		return HasOwnNeighbourCell(AngleUtil.CardinalEnumToCardinalIndex(cardinalEnum));
 	}
 
+	// phenotype only
 	public bool HasNeighbourCell(int cardinalIndex) {
 		Cell neighbourCell = cellNeighbourDictionary[cardinalIndex % 6].cell;
 		return neighbourCell != null;

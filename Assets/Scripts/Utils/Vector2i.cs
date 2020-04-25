@@ -15,6 +15,12 @@ public class Vector2i {
 		this.y = y;
 	}
 
+	public static Vector2i zero {
+		get {
+			return new Vector2i();
+		}
+	}
+
 	public static Vector2i operator -(Vector2i a, Vector2i b) {
 		return new Vector2i(a.x - b.x, a.y - b.y);
 	}

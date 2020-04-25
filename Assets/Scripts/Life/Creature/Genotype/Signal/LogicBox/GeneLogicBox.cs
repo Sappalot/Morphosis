@@ -213,6 +213,21 @@ public class GeneLogicBox : GeneSignalUnit {
 		}
 	}
 
+	public override List<GeneNerve> GetExternalGeneNerves() {
+		if (!isUsedInternal) { // TODO: take isUsed from outside into account as well
+			return null;
+		}
+
+		List<GeneNerve> nerves = new List<GeneNerve>();
+		for (int i = 0; i < columnCount; i++) {
+			if (inputRow3[i].valveMode == SignalValveModeEnum.Pass && inputRow3[i].nerve.nerveVector != null) {
+				nerves.Add(inputRow3[i].nerve);
+			}
+		}
+
+		return nerves;
+	}
+
 	public bool HasGateAbove(GeneLogicBoxGate gate) {
 		return AreSomeCellsOccupiedByGate(gate.row - 1, gate.leftFlank, gate.rightFlank);
 	}

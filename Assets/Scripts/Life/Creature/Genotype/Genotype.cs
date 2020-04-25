@@ -17,6 +17,8 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 		isGeneCellPatternDirty = true;
 	}
 
+	public NerveArrows nerveArrows;
+
 	private bool isInterGeneCellDirty = true;
 
 	public static int genomeLength = 21;
@@ -55,7 +57,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 
 	public bool isGrabbed { get; private set; }
 
-	private CellMap geneCellMap = new CellMap();
+	public CellMap geneCellMap = new CellMap();
 
 	public bool hasGenes {
 		get {
@@ -448,6 +450,8 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 				gene.UpdateInterGeneCell();
 			}
 
+			nerveArrows.GenerateGenotype(this);
+
 			isInterGeneCellDirty = false;
 
 			return true;
@@ -598,6 +602,8 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 			geneCellListIndexSorted[index].UpdateGraphics(isSelected);
 			geneCellListIndexSorted[index].UpdateFlipSide();
 			geneCellListIndexSorted[index].UpdateBuds();
+
+			nerveArrows.UpdateGraphics();
 		}
 	}
 
@@ -626,6 +632,8 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 
 		transform.localPosition = Vector3.zero;
 		transform.localRotation = Quaternion.identity;
+
+		nerveArrows.OnRecycle();
 	}
 
 	public void MoveOriginToOrigo() {

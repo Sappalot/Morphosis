@@ -653,8 +653,6 @@ public class Creature : MonoBehaviour {
 				phenotype.UpdateGraphics(this);
 			}
 
-			//phenotype.SetCellLablesEnabled(isInsideFrustum && CreatureSelectionPanel.instance.IsSelected(this));
-
 		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			if (SpatialUtil.IsInsideFrustum(genotype.originCell.position)) {
 				isInsideFrustum = true;
@@ -667,6 +665,8 @@ public class Creature : MonoBehaviour {
 				phenotype.edges.UpdateGraphics(false); // must be removed
 			}
 		}
+
+
 
 		if (isDirtyGraphics) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)

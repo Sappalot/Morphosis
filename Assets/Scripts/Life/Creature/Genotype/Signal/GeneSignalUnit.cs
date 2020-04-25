@@ -1,4 +1,6 @@
-﻿public abstract class GeneSignalUnit {
+﻿using System.Collections.Generic;
+
+public abstract class GeneSignalUnit {
 	public SignalUnitEnum signalUnit;
 	public bool isLocked;
 
@@ -6,5 +8,10 @@
 
 	public virtual void MarkThisAndChildrenAsUsedInternal(Gene gene) {
 		isUsedInternal = true;
+	}
+
+	// returns all genes that stratches out of geneCell
+	public virtual List<GeneNerve> GetExternalGeneNerves() {
+		return null;
 	}
 }

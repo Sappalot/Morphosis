@@ -12,6 +12,8 @@ public class Phenotype : MonoBehaviour {
 	public Edges edges; //AKA Wings
 	public Veins veins;
 
+	public NerveArrows nerveArrows;
+
 	[HideInInspector]
 	private bool isCellPatternDiffererentFromGenomeDirty = true;
 	public void MakeCellPaternDifferentFromGenotypeDirty () {
@@ -756,7 +758,7 @@ public class Phenotype : MonoBehaviour {
 			}
 
 			//Veins
-			veins.GenerateVeins(creature, cellMap);
+			veins.Generate(creature);
 
 			UpdateSpringsFrequenze();
 			UpdateSpringsBreakingForce();
@@ -1155,13 +1157,13 @@ public class Phenotype : MonoBehaviour {
 			}
 
 			//me
-			veins.Clear();
+			veins.Clear(); // Is this really nessesary as we clear them uppon regeneration?
 			creature.SetAttachedToMotherAlive(false);
 			MakeInterCellDirty();
 			originCell.effectFluxFromMotherAttached = 0f;
 
 			//mother
-			creature.GetMotherAlive().phenotype.veins.Clear();
+			creature.GetMotherAlive().phenotype.veins.Clear(); // Is this really nessesary as we clear them uppon regeneration?
 			creature.GetMotherAlive().phenotype.MakeInterCellDirty();
 			foreach (Cell cell in creature.GetMotherAlive().phenotype.cellList) {
 				cell.effectFluxToChildrenAttached = 0f;
@@ -1281,6 +1283,8 @@ public class Phenotype : MonoBehaviour {
 		edges.OnRecycle();
 
 		veins.OnRecycle();
+
+		nerveArrows.OnRecycle();
 	}
 
 	public int GetCellCount() {
@@ -1561,7 +1565,10 @@ public class Phenotype : MonoBehaviour {
 		//TODO: Update cells flip triangles here
 		//Rotate cells
 
+		// TODO: don't nag on every frame -> every creature -> every edge/vein -> that they have to be disabled (disable them once and call the creatures edges non dirty instead) 
+		// Slightly faster framerate if disabling the 3 below
 		edges.UpdateGraphics(GlobalPanel.instance.graphicsPeripheryToggle.isOn && creature.isInsideFrustum && !(PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureSelectionPanel.instance.IsSelected(creature)) && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype);
+		// TODO: let veins the objects that move energy from cell to cell stay here, but move the graphical representation out of here as we are only showing a couple of creatures at a time there can be a global vein renderer with a pool
 		veins.UpdateGraphics(PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureSelectionPanel.instance.IsSelected(creature) && creature.isInsideFrustum && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype);
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(creature));

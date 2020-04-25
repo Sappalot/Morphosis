@@ -3,25 +3,10 @@
 using UnityEngine;
 
 public class GeneNerve {
-	public SignalUnitEnum outputUnit = SignalUnitEnum.Void; // The output from me "the nerve" received as input by the GeneSensor that created this one
+	public SignalUnitEnum outputUnit = SignalUnitEnum.Void; // The output from me "the nerve head" received as input by the GeneSensor that created this one
 	public SignalUnitSlotEnum outputUnitSlot; // The slot on that (above) unit
+
 	private SignalUnitEnum m_inputUnit = SignalUnitEnum.Void; // The input to me "the nerve" sent from some singalUnits output
-
-	// If other than (0, 0) we listen to a local output
-	// ...otherwise we try to listen to an output from another geneCell (phenotype cell)
-	// This vector is expressed in cell space so it is moved and turned as the GeneCell is relocated and turned
-	// Further it is defined by a cell flipped (black|white) meaning possitive x values will reach out to cells white side while negative will reach out to the black side
-	//    (black|white)
-	//     (left|right)
-	// (negative|positive)
-
-	// example: nerveVectorLocal = (2,2) is reaching out diagonaly in front of the cell to its white side (that is right side if turned black|white)
-
-	// nerveVectorLocal needs to be transformed to local space when set from worldspace
-	// nerveVectorLocal needs to be transformed to world space in order for us to know where we are listening 
-
-	public Vector2i nerveVectorLocal = new Vector2i();
-
 	public SignalUnitEnum inputUnit {
 		get {
 			return m_inputUnit;
@@ -43,7 +28,29 @@ public class GeneNerve {
 		}
 	}
 
+	//public enum State {
+	//	Resting, // normal state
+	//	BeingChanged,
+	//	BeingChangedTooLong,
+	//}
+	//public State state = State.Resting;
+
+	// If other than null we listen to a local output
+	// ...otherwise we try to listen to an output from another geneCell (phenotype cell)
+	// This vector is expressed in cell space so it is moved and turned as the GeneCell is relocated and turned
+	// Further it is defined by a cell flipped (black|white) meaning possitive x values will reach out to cells white side while negative will reach out to the black side
+	//    (black|white)
+	//     (left|right)
+	// (negative|positive)
+
+	// example: nerveVectorLocal = (2,2) is reaching out diagonaly in front of the cell to its white side (that is right side if turned black|white)
+
+	// nerveVectorLocal needs to be transformed to local space when set from worldspace
+	// nerveVectorLocal needs to be transformed to world space in order for us to know where we are listening 
+	public Vector2i nerveVector = null;
+
 	private IGenotypeDirtyfy genotypeDirtyfy;
+
 	public GeneNerve(IGenotypeDirtyfy genotypeDirtyfy) {
 		this.genotypeDirtyfy = genotypeDirtyfy;
 	}
@@ -128,6 +135,7 @@ public class GeneNerve {
 		geneNerveData.outputUnitSlot = outputUnitSlot;
 		geneNerveData.inputUnit = inputUnit;
 		geneNerveData.inputUnitSlot = inputUnitSlot;
+		geneNerveData.nerveVector = nerveVector;
 		return geneNerveData;
 	}
 
@@ -137,6 +145,7 @@ public class GeneNerve {
 		outputUnitSlot = geneNerveData.outputUnitSlot;
 		inputUnit = geneNerveData.inputUnit;
 		inputUnitSlot = geneNerveData.inputUnitSlot;
+		nerveVector = geneNerveData.nerveVector;
 
 		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}

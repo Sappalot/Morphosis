@@ -8,4 +8,5 @@ public class GeneNerveData {
 	public SignalUnitSlotEnum outputUnitSlot;
 	public SignalUnitEnum inputUnit;
 	public SignalUnitSlotEnum inputUnitSlot;
+	public Vector2i nerveVector;
 }

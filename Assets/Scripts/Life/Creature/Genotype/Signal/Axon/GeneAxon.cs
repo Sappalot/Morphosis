@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class GeneAxon : GeneSignalUnit {
 	
@@ -132,6 +133,23 @@ public class GeneAxon : GeneSignalUnit {
 				child.MarkThisAndChildrenAsUsedInternal(gene);
 			}
 		}
+	}
+
+	public override List<GeneNerve> GetExternalGeneNerves() {
+		if (!isUsedInternal) { // TODO: take isUsed from outside into account as well
+			return null;
+		}
+
+		List<GeneNerve> nerves = new List<GeneNerve>();
+		if (axonInputLeft.valveMode == SignalValveModeEnum.Pass && axonInputLeft.nerve.nerveVector != null) {
+			nerves.Add(axonInputLeft.nerve);
+		}
+
+		if (axonInputRight.valveMode == SignalValveModeEnum.Pass && axonInputRight.nerve.nerveVector != null) {
+			nerves.Add(axonInputRight.nerve);
+		}
+
+		return nerves;
 	}
 
 	public void Defaultify() {

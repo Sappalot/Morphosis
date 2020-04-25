@@ -58,7 +58,14 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					arrow.outputUnitSlot = geneInput.nerve.outputUnitSlot;
 
 					Vector2 head = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.outputUnit, geneInput.nerve.outputUnitSlot);
-					Vector2 tail = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.inputUnit, geneInput.nerve.inputUnitSlot);
+
+					Vector2 tail;
+					if (geneInput.nerve.nerveVector == null || geneInput.nerve.nerveVector == Vector2i.zero) { // Local 
+						tail = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.inputUnit, geneInput.nerve.inputUnitSlot);
+					} else { // External
+						tail = head + Vector2.down * 20f;
+					}
+
 					arrow.GetComponent<RectTransform>().localPosition = (head + tail) / 2f;
 					arrow.GetComponent<RectTransform>().sizeDelta = new Vector2(Vector2.Distance(head, tail), 10f);
 					arrow.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0f, 0f, Mathf.Rad2Deg * Mathf.Atan2(head.y - tail.y, head.x - tail.x));

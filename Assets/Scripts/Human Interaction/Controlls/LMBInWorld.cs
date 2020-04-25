@@ -78,8 +78,8 @@ public class LMBInWorld : MonoBehaviour {
 
 				} else if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput) {
 					// We have been pressing a signal input in the genotype panel and are about to assign an input to this nerve
-					if (AssignNerveInputPanel.instance.selectedRootCell == null) {
-						if (AssignNerveInputPanel.instance.TrySetNarrowedGeneCell(cellClicked)) {
+					if (AssignNerveInputPanel.instance.selectedRootCellMapPosition == null) {
+						if (AssignNerveInputPanel.instance.TrySetNarrowedGeneCellMapPosition(cellClicked.mapPosition)) {
 							Debug.Log("RootGeneCell narrowed down");
 						} else {
 							Debug.Log("You must select one of the Gene cells containing the selected gene!");
@@ -88,7 +88,7 @@ public class LMBInWorld : MonoBehaviour {
 						// TODO: show nerves as we move mouse from cell to cell
 
 						// click will select this geneCell as the one we want to listen to
-						if (AssignNerveInputPanel.instance.TrySetNerveInputExternally(cellClicked)) {
+						if (AssignNerveInputPanel.instance.TrySetNerveInputMapPositionExternally(cellClicked.mapPosition, false)) {
 							Debug.Log("(RootGeneCell was allready set) Source geneCell selected");
 						} else {
 							Debug.Log("You must select an extarnal gene cell as an input source!");
@@ -137,13 +137,29 @@ public class LMBInWorld : MonoBehaviour {
 			mouseDown0 = false;
 		}
 
-		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && AssignNerveInputPanel.instance.selectedRootCell != null) {
+		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && AssignNerveInputPanel.instance.selectedRootCellMapPosition != null) {
 			Vector2 pickPosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition);
-			Cell cellClicked = Morphosis.instance.GetCellAtPosition(pickPosition);
+			Cell newCellHover = Morphosis.instance.GetCellAtPosition(pickPosition);
+			if (newCellHover != null) {
+				if (newCellHover.mapPosition != cellHoverPosition) {
+					cellHoverPosition = newCellHover.mapPosition;
 
-			//Debug.Log(cellClicked != null ? cellClicked.GetCellType() + ", " + cellClicked.mapPosition : "Void");
+					//if (AssignNerveInputPanel.instance.narrowedGeneCell == null) {
+					//	Debug.Log("narrow = NULL");
+					//} else {
+					//	Debug.Log("narrow: " + AssignNerveInputPanel.instance.narrowedGeneCell + "         map position: " + AssignNerveInputPanel.instance.narrowedGeneCell);
+					//}
+					
+					AssignNerveInputPanel.instance.TrySetNerveInputMapPositionExternally(newCellHover.mapPosition, true);
+				}
+			} else {
+				AssignNerveInputPanel.instance.TrySetNerveInputMapPositionExternally(null, true);
+				cellHoverPosition = new Vector2i(666, 666);
+			}
 		}
 	}
+
+	private Vector2i cellHoverPosition;
 
 	//TODO move to some util
 	static bool TryFreezeCreature(Creature creature) {

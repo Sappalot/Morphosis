@@ -76,7 +76,7 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 
 	public void OnSetReferenceClicked() {
 		if (isUsed && IsUnlocked() && affectedGeneAxonInput.lockness == LocknessEnum.Unlocked && affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass) {
-			AssignNerveInputPanel.instance.TryStartNerveAssignation(this);
+			AssignNerveInputPanel.instance.TryStartNerveAssignation(this, affectedGeneAxonInput.nerve);
 			motherPanel.MakeDirty();
 		}
 	}
@@ -84,10 +84,28 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 	public void TrySetNerveInputLocally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
 		affectedGeneAxonInput.nerve.inputUnit = inputUnit;
 		affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
+		affectedGeneAxonInput.nerve.nerveVector = null;
+		//affectedGeneAxonInput.nerve.state = GeneNerve.State.Resting;
 	}
 
 	public void TrySetNerveInputExternally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, Vector2i nerveVectorLocal) {
+		affectedGeneAxonInput.nerve.inputUnit = inputUnit;
+		affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
+		affectedGeneAxonInput.nerve.nerveVector = nerveVectorLocal;
+		//affectedGeneAxonInput.nerve.state = GeneNerve.State.Resting;
+	}
 
+	public void TrySetNerve(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot, Vector2i nerveVector) {
+		affectedGeneAxonInput.nerve.inputUnit = inputUnit;
+		affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
+		affectedGeneAxonInput.nerve.outputUnit = outputUnit;
+		affectedGeneAxonInput.nerve.outputUnitSlot = outputUnitSlot;
+		affectedGeneAxonInput.nerve.nerveVector = nerveVector;
+	}
+
+	public void ShowNerveInputExternally(Vector2i nerveVectorLocal) {
+		affectedGeneAxonInput.nerve.inputUnit = SignalUnitEnum.Void;
+		affectedGeneAxonInput.nerve.nerveVector = nerveVectorLocal;
 	}
 
 	private void Update() {

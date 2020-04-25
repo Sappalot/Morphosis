@@ -12,6 +12,7 @@ public class Morphosis : MonoSingleton<Morphosis> {
 	public VeinPool veinPool;
 	public EdgePool edgePool;
 	public RelationArrows relationArrows;
+	public NerveArrowPool nerveArrowPool;
 
 	public static string savePath {
 		get {

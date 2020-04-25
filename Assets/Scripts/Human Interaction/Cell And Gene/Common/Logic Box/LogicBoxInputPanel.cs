@@ -86,7 +86,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 
 	public void OnSetReferenceClicked() {
 		if (isUsed && IsUnlocked() && affectedGeneLogicBoxInput.lockness == LocknessEnum.Unlocked && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
-			AssignNerveInputPanel.instance.TryStartNerveAssignation(this);
+			AssignNerveInputPanel.instance.TryStartNerveAssignation(this, affectedGeneLogicBoxInput.nerve);
 			motherPanel.MakeDirty();
 		}
 	}
@@ -94,10 +94,27 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	public void TrySetNerveInputLocally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
 		affectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
 		affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
+		affectedGeneLogicBoxInput.nerve.nerveVector = null;
 	}
 
 	public void TrySetNerveInputExternally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, Vector2i nerveVectorLocal) {
+		affectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
+		affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
+		affectedGeneLogicBoxInput.nerve.nerveVector = nerveVectorLocal;
+	}
 
+	public void TrySetNerve(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot, Vector2i nerveVector) {
+		affectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
+		affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
+		affectedGeneLogicBoxInput.nerve.outputUnit = outputUnit;
+		affectedGeneLogicBoxInput.nerve.outputUnitSlot = outputUnitSlot;
+		affectedGeneLogicBoxInput.nerve.nerveVector = nerveVector;
+	}
+
+	// Used to only display input vectors
+	public void ShowNerveInputExternally(Vector2i nerveVectorLocal) {
+		affectedGeneLogicBoxInput.nerve.inputUnit = SignalUnitEnum.Void;
+		affectedGeneLogicBoxInput.nerve.nerveVector = nerveVectorLocal;
 	}
 
 	private void Update() {

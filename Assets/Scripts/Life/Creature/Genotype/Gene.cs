@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Gene {
@@ -262,6 +263,26 @@ public class Gene {
 		unit = GetGeneSignalUnit(SignalUnitEnum.OriginDetatchLogicBox);
 		if (unit != null) {
 			unit.MarkThisAndChildrenAsUsedInternal(this);
+		}
+	}
+
+	public List<GeneNerve> GetExternalGeneNerves() {
+		List<GeneNerve> allGeneNerves = new List<GeneNerve>();
+		AddToGeneNerveList(SignalUnitEnum.WorkLogicBoxA, allGeneNerves);
+		AddToGeneNerveList(SignalUnitEnum.WorkLogicBoxB, allGeneNerves);
+		AddToGeneNerveList(SignalUnitEnum.Axon, allGeneNerves);
+		AddToGeneNerveList(SignalUnitEnum.DendritesLogicBox, allGeneNerves);
+		AddToGeneNerveList(SignalUnitEnum.OriginDetatchLogicBox, allGeneNerves);
+		return allGeneNerves;
+	}
+
+	private void AddToGeneNerveList(SignalUnitEnum unitEnum, List<GeneNerve> geneNerves) {
+		GeneSignalUnit unit = GetGeneSignalUnit(unitEnum);
+		if (unit != null) {
+			List<GeneNerve> foundGeneNerves = unit.GetExternalGeneNerves();
+			if (foundGeneNerves != null) {
+				geneNerves.AddRange(foundGeneNerves);
+			}
 		}
 	}
 

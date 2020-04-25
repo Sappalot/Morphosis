@@ -54,7 +54,7 @@ public class Vein : MonoBehaviour {
 	}
 
 	public void UpdateGraphics(bool show) {
-		//TODO: If draw wings && inside frustum
+		// TODO: If draw wings && inside frustum
 		if (show) {
 			if (frontCell != null && backCell != null) {
 				mainArrow.SetActive(true);
