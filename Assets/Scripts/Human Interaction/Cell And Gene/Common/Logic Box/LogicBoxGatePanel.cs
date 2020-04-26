@@ -41,16 +41,19 @@ public class LogicBoxGatePanel : MonoBehaviour {
 
 	[HideInInspector]
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
+	private CellAndGenePanel cellAndGenePanel;
+
 
 	private PhenoGenoEnum GetMode() {
 		return mode;
 	}
 
-	public void Initialize(PhenoGenoEnum mode, int row, int index, LogicBoxPanel motherPanel) {
+	public void Initialize(PhenoGenoEnum mode, int row, int index, LogicBoxPanel motherPanel, CellAndGenePanel cellAndGenePanel) {
 		this.mode = mode;
 		this.motherPanel = motherPanel;
 		this.row = row;
 		this.index = index;
+		this.cellAndGenePanel = cellAndGenePanel;
 	}
 
 	private bool isDirty = false;
@@ -233,9 +236,9 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	public Gene selectedGene {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
+				return cellAndGenePanel.cell != null ? cellAndGenePanel.gene : null;
 			} else {
-				return GenePanel.instance.selectedGene;
+				return cellAndGenePanel.gene;
 			}
 		}
 	}
@@ -243,7 +246,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	public Cell selectedCell {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell;
+				return cellAndGenePanel.cell;
 			} else {
 				return null; // there could be many cells selected for the same gene
 			}

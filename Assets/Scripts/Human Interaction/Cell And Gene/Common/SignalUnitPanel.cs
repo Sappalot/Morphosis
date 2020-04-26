@@ -79,8 +79,8 @@ public abstract class SignalUnitPanel : ComponentPanel {
 		return null;
 	}
 
-	public virtual void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
-		base.Initialize(mode);
+	public virtual void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, CellAndGenePanel cellAndGenePanel) {
+		base.Initialize(mode, cellAndGenePanel);
 		this.signalUnit = signalUnit;
 	}
 

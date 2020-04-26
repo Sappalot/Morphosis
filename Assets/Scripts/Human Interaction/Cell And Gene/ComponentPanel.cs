@@ -10,13 +10,18 @@ public abstract class ComponentPanel : MonoBehaviour {
 	protected bool ignoreHumanInput = false;
 	protected bool isDirty = false;
 	public ComponentFooterPanel componentFooterPanel;
+	
+
+	[HideInInspector]
+	public CellAndGenePanel cellAndGenePanel;
 
 	protected PhenoGenoEnum GetMode() {
 		return mode;
 	}
 
-	public virtual void Initialize(PhenoGenoEnum mode) {
+	public virtual void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
 		this.mode = mode;
+		this.cellAndGenePanel = cellAndGenePanel;
 	}
 
 	// not pretty :/ try to merge into one input
@@ -44,20 +49,16 @@ public abstract class ComponentPanel : MonoBehaviour {
 		MakeDirty();
 	}
 
-	public Gene selectedGene {
+	public Gene gene {
 		get {
-			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
-			} else {
-				return GenePanel.instance.selectedGene;
-			}
+			return cellAndGenePanel.gene;
 		}
 	}
 
 	public Cell selectedCell {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell;
+				return cellAndGenePanel.cell;
 			} else {
 				return null; // there could be many cells selected for the same gene
 			}

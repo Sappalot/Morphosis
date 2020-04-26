@@ -25,7 +25,7 @@ public class JawCellPanel : ComponentPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		selectedGene.jawCellCannibalizeKin = cannibalizeKinToggle.isOn;
+		gene.jawCellCannibalizeKin = cannibalizeKinToggle.isOn;
 		OnGenomeChanged();
 	}
 
@@ -33,7 +33,7 @@ public class JawCellPanel : ComponentPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		selectedGene.jawCellCannibalizeMother = cannibalizeMotherToggle.isOn;
+		gene.jawCellCannibalizeMother = cannibalizeMotherToggle.isOn;
 		OnGenomeChanged();
 	}
 
@@ -41,7 +41,7 @@ public class JawCellPanel : ComponentPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		selectedGene.jawCellCannibalizeFather = cannibalizeFatherToggle.isOn;
+		gene.jawCellCannibalizeFather = cannibalizeFatherToggle.isOn;
 		OnGenomeChanged();
 	}
 
@@ -49,7 +49,7 @@ public class JawCellPanel : ComponentPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		selectedGene.jawCellCannibalizeSiblings = cannibalizeSiblingsToggle.isOn;
+		gene.jawCellCannibalizeSiblings = cannibalizeSiblingsToggle.isOn;
 		OnGenomeChanged();
 	}
 
@@ -57,7 +57,7 @@ public class JawCellPanel : ComponentPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		selectedGene.jawCellCannibalizeChildren = cannibalizeChildrenToggle.isOn;
+		gene.jawCellCannibalizeChildren = cannibalizeChildrenToggle.isOn;
 		OnGenomeChanged();
 	}
 
@@ -68,9 +68,9 @@ public class JawCellPanel : ComponentPanel {
 			}
 
 			if (GetMode() == PhenoGenoEnum.Phenotype) {
-				if (CellPanel.instance.selectedCell != null) {
+				if (cellAndGenePanel.cell != null) {
 					componentFooterPanel.SetProductionEffectText(selectedCell.effectProductionPredPrayUp, GlobalSettings.instance.phenotype.jawCell.effectProductionDown);
-					prayCellCount.text = "Pray count: " + (CellPanel.instance.selectedCell as JawCell).prayCount;
+					prayCellCount.text = "Pray count: " + (cellAndGenePanel.cell as JawCell).prayCount;
 					cannibalizeKinToggle.interactable = false;
 					cannibalizeMotherToggle.interactable = false;
 					cannibalizeFatherToggle.interactable = false;
@@ -87,14 +87,14 @@ public class JawCellPanel : ComponentPanel {
 				cannibalizeChildrenToggle.interactable = IsUnlocked();
 			}
 
-			if (selectedGene != null) {
+			if (gene != null) {
 				ignoreHumanInput = true;
 
-				cannibalizeKinToggle.isOn = selectedGene.jawCellCannibalizeKin;
-				cannibalizeMotherToggle.isOn = selectedGene.jawCellCannibalizeMother;
-				cannibalizeFatherToggle.isOn = selectedGene.jawCellCannibalizeFather;
-				cannibalizeSiblingsToggle.isOn = selectedGene.jawCellCannibalizeSiblings;
-				cannibalizeChildrenToggle.isOn = selectedGene.jawCellCannibalizeChildren;
+				cannibalizeKinToggle.isOn = gene.jawCellCannibalizeKin;
+				cannibalizeMotherToggle.isOn = gene.jawCellCannibalizeMother;
+				cannibalizeFatherToggle.isOn = gene.jawCellCannibalizeFather;
+				cannibalizeSiblingsToggle.isOn = gene.jawCellCannibalizeSiblings;
+				cannibalizeChildrenToggle.isOn = gene.jawCellCannibalizeChildren;
 
 				ignoreHumanInput = false;
 			}

@@ -28,18 +28,22 @@ public class OverviewPanel : MonoBehaviour {
 
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 	private bool isDirty = true;
+
+	private CellAndGenePanel cellAndGenePanel;
+
 	public void MakeDirty() {
 		isDirty = true;
 	}
 
-	public void Initialize(PhenoGenoEnum mode) {
+	public void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
 		this.mode = mode;
+		this.cellAndGenePanel = cellAndGenePanel;
 		MakeDirty();
 	}
 
 	public void OnClickDelete() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected && mode == PhenoGenoEnum.Phenotype) {
-			World.instance.life.KillCellSafe(CellPanel.instance.selectedCell, World.instance.worldTicks);
+			World.instance.life.KillCellSafe(cellAndGenePanel.cell, World.instance.worldTicks);
 
 			CreatureSelectionPanel.instance.MakeDirty();
 			PhenotypePanel.instance.MakeDirty();
@@ -49,7 +53,7 @@ public class OverviewPanel : MonoBehaviour {
 
 	public void OnClickHeal() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected && mode == PhenoGenoEnum.Phenotype) {
-			CellPanel.instance.selectedCell.energy = Mathf.Min(CellPanel.instance.selectedCell.energy + 5f, GlobalSettings.instance.phenotype.cellMaxEnergy);
+			cellAndGenePanel.cell.energy = Mathf.Min(cellAndGenePanel.cell.energy + 5f, GlobalSettings.instance.phenotype.cellMaxEnergy);
 
 			PhenotypePanel.instance.MakeDirty();
 			MakeDirty();
@@ -58,7 +62,7 @@ public class OverviewPanel : MonoBehaviour {
 
 	public void OnClickHurt() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected && mode == PhenoGenoEnum.Phenotype) {
-			CellPanel.instance.selectedCell.energy -= 5f;
+			cellAndGenePanel.cell.energy -= 5f;
 
 			PhenotypePanel.instance.MakeDirty();
 			MakeDirty();
@@ -85,7 +89,7 @@ public class OverviewPanel : MonoBehaviour {
 			}
 
 			//Nothing to represent
-			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null) || !CreatureSelectionPanel.instance.hasSoloSelected) {
+			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && cellAndGenePanel.gene == null) || !CreatureSelectionPanel.instance.hasSoloSelected) {
 
 				//energyBar.isOn = false;
 				//if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
@@ -183,7 +187,7 @@ public class OverviewPanel : MonoBehaviour {
 			}
 
 			
-			transparencyLabel.text = string.Format("Transparency: {0:F2}", selectedGene.transparancy);
+			transparencyLabel.text = string.Format("Transparency: {0:F2}", cellAndGenePanel.gene.transparancy);
 
 			healButton.gameObject.SetActive(mode == PhenoGenoEnum.Phenotype);
 			hurtButton.gameObject.SetActive(mode == PhenoGenoEnum.Phenotype);
@@ -192,20 +196,10 @@ public class OverviewPanel : MonoBehaviour {
 		}
 	}
 
-	public Gene selectedGene {
-		get {
-			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
-			} else {
-				return GenePanel.instance.selectedGene;
-			}
-		}
-	}
-
 	public Cell selectedCell {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell;
+				return cellAndGenePanel.cell;
 			} else {
 				return null; // there could be many cells selected for the same gene
 			}

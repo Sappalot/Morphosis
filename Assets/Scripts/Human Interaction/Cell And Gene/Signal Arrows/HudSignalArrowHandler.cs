@@ -3,21 +3,24 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class HudSignalArrowHandler : MonoBehaviour {
-	public CellAndGenePanel cellAndGenePanel;
+	
 	public HudSignalArrowPool hudSignalArrowPool;
 
 	private List<HudSignalArrow> arrowList = new List<HudSignalArrow>();
 
 	[HideInInspector]
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
+	private CellAndGenePanel cellAndGenePanel;
+
 	protected bool ignoreSliderMoved = false;
 
 	protected PhenoGenoEnum GetMode() {
 		return mode;
 	}
 
-	public virtual void Initialize(PhenoGenoEnum mode) {
+	public virtual void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
 		this.mode = mode;
+		this.cellAndGenePanel = cellAndGenePanel;
 	}
 
 	private bool isDirtyConnections = true;
@@ -93,7 +96,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 	public Cell selectedCell {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell;
+				return cellAndGenePanel.cell;
 			} else {
 				return null; // there could be many cells selected for the same gene
 			}
@@ -103,9 +106,9 @@ public class HudSignalArrowHandler : MonoBehaviour {
 	public Gene selectedGene {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
+				return cellAndGenePanel.cell != null ? cellAndGenePanel.gene : null;
 			} else {
-				return GenePanel.instance.selectedGene;
+				return cellAndGenePanel.gene;
 			}
 		}
 	}

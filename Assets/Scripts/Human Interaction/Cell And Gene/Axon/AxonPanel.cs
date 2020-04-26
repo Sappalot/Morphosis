@@ -63,8 +63,8 @@ public class AxonPanel : SensorPanel {
 
 	//  ^ Switch ^
 
-	public override void Initialize(PhenoGenoEnum mode) {
-		base.Initialize(mode, SignalUnitEnum.Axon);
+	public override void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
+		base.Initialize(mode, SignalUnitEnum.Axon, cellAndGenePanel);
 
 		ignoreHumanInput = true;
 		fromOriginOffsetSlider.minValue = 0f;
@@ -76,8 +76,8 @@ public class AxonPanel : SensorPanel {
 		relaxContractSlider.minValue = -1f;
 		relaxContractSlider.maxValue = 1f;
 
-		inputLeftPanel.Initialize(mode, 0, this); // left
-		inputRightPanel.Initialize(mode, 1, this); // right
+		inputLeftPanel.Initialize(mode, 0, this, cellAndGenePanel); // left
+		inputRightPanel.Initialize(mode, 1, this, cellAndGenePanel); // right
 
 		dropdownBackgroundShow3.color = ColorScheme.instance.selectedChanged;
 		dropdownBackgroundList3.color = ColorScheme.instance.selectedChanged;
@@ -129,8 +129,8 @@ public class AxonPanel : SensorPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axon.isEnabled = enabledToggle.isOn;
-		GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
+		cellAndGenePanel.gene.axon.isEnabled = enabledToggle.isOn;
+		cellAndGenePanel.MakeDirty(); // arrows need to be updated
 		OnGenomeChanged();
 	}
 
@@ -138,7 +138,7 @@ public class AxonPanel : SensorPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromOriginOffset = fromOriginOffsetSlider.value;
+		cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromOriginOffset = fromOriginOffsetSlider.value;
 		OnGenomeChanged();
 	}
 
@@ -146,7 +146,7 @@ public class AxonPanel : SensorPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonIsFromOriginPlus180 = fromOriginPlus180Toggle.isOn;
+		cellAndGenePanel.gene.axon.GetPulse(pulseView).axonIsFromOriginPlus180 = fromOriginPlus180Toggle.isOn;
 		OnGenomeChanged();
 	}
 
@@ -154,7 +154,7 @@ public class AxonPanel : SensorPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromMeOffset = fromMeOffsetSlider.value;
+		cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromMeOffset = fromMeOffsetSlider.value;
 		OnGenomeChanged();
 	}
 
@@ -162,7 +162,7 @@ public class AxonPanel : SensorPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonRelaxContract = relaxContractSlider.value;
+		cellAndGenePanel.gene.axon.GetPulse(pulseView).axonRelaxContract = relaxContractSlider.value;
 		OnGenomeChanged();
 	}
 
@@ -170,7 +170,7 @@ public class AxonPanel : SensorPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonIsReverse = reverseToggle.isOn;
+		cellAndGenePanel.gene.axon.GetPulse(pulseView).axonIsReverse = reverseToggle.isOn;
 		OnGenomeChanged();
 	}
 
@@ -178,7 +178,7 @@ public class AxonPanel : SensorPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		selectedGene.axon.pulseProgram3 = dropdown3.value; // 0 = relax, 1 = A ....
+		gene.axon.pulseProgram3 = dropdown3.value; // 0 = relax, 1 = A ....
 		OnGenomeChanged();
 	}
 
@@ -186,7 +186,7 @@ public class AxonPanel : SensorPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		selectedGene.axon.pulseProgram2 = dropdown2.value; // 0 = relax, 1 = A ....
+		gene.axon.pulseProgram2 = dropdown2.value; // 0 = relax, 1 = A ....
 		OnGenomeChanged();
 	}
 
@@ -194,7 +194,7 @@ public class AxonPanel : SensorPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		selectedGene.axon.pulseProgram1 = dropdown1.value; // 0 = relax, 1 = A ....
+		gene.axon.pulseProgram1 = dropdown1.value; // 0 = relax, 1 = A ....
 		OnGenomeChanged();
 	}
 
@@ -202,7 +202,7 @@ public class AxonPanel : SensorPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		selectedGene.axon.pulseProgram0 = dropdown0.value; // 0 = relax, 1 = A ....
+		gene.axon.pulseProgram0 = dropdown0.value; // 0 = relax, 1 = A ....
 		OnGenomeChanged();
 	}
 
@@ -216,14 +216,14 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public void UpdateConnections() {
-		selectedGene.axon.UpdateConnections();
+		gene.axon.UpdateConnections();
 	}
 
 	public override void Update() {
 		if (isDirty) {
 			base.Update();
 			
-			if (selectedGene == null) {
+			if (gene == null) {
 				isDirty = false;
 				return;
 			}
@@ -255,20 +255,20 @@ public class AxonPanel : SensorPanel {
 			dropdown1.interactable = interractable;
 			dropdown0.interactable = interractable;
 
-			dropdown3.value = selectedGene.axon.pulseProgram3;
-			dropdown2.value = selectedGene.axon.pulseProgram2;
-			dropdown1.value = selectedGene.axon.pulseProgram1;
-			dropdown0.value = selectedGene.axon.pulseProgram0;
+			dropdown3.value = gene.axon.pulseProgram3;
+			dropdown2.value = gene.axon.pulseProgram2;
+			dropdown1.value = gene.axon.pulseProgram1;
+			dropdown0.value = gene.axon.pulseProgram0;
 
-			if (GenePanel.instance.selectedGene != null && CreatureSelectionPanel.instance.hasSoloSelected) {
+			if (cellAndGenePanel.gene != null && CreatureSelectionPanel.instance.hasSoloSelected) {
 				
 
-				enabledToggle.isOn = GenePanel.instance.selectedGene.axon.isEnabled;
+				enabledToggle.isOn = cellAndGenePanel.gene.axon.isEnabled;
 				if (GetMode() == PhenoGenoEnum.Genotype) {
-					fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromOriginOffset);
+					fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromOriginOffset);
 
 					Color color = Color.white;
-					if (GenePanel.instance.selectedGene.axon.isUsedInternal) {
+					if (cellAndGenePanel.gene.axon.isUsedInternal) {
 						color = ColorScheme.instance.signalOff;
 					} else {
 						color = ColorScheme.instance.signalUnused;
@@ -284,13 +284,13 @@ public class AxonPanel : SensorPanel {
 
 				} else if (GetMode() == PhenoGenoEnum.Phenotype) {
 
-					if (GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonIsFromOriginPlus180 && CellPanel.instance.selectedCell.flipSide == FlipSideEnum.WhiteBlack) {
-						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1} + 180°", GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromOriginOffset);
+					if (cellAndGenePanel.gene.axon.GetPulse(pulseView).axonIsFromOriginPlus180 && cellAndGenePanel.cell.flipSide == FlipSideEnum.WhiteBlack) {
+						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1} + 180°", cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromOriginOffset);
 					} else {
-						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromOriginOffset);
+						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromOriginOffset);
 					}
 
-					if (GenePanel.instance.selectedGene.axon.isUsedInternal) {
+					if (cellAndGenePanel.gene.axon.isUsedInternal) {
 						postInputBoxLeft.color = selectedCell.axon.HasSignalPostInputValve(inputLeftPanel.affectedGeneAxonInput) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						postInputBoxRight.color = selectedCell.axon.HasSignalPostInputValve(inputRightPanel.affectedGeneAxonInput) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 
@@ -308,17 +308,17 @@ public class AxonPanel : SensorPanel {
 						combinationImage0.color = ColorScheme.instance.signalUnused; // 00
 					}
 				}
-				fromOriginOffsetSlider.value = GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromOriginOffset;
+				fromOriginOffsetSlider.value = cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromOriginOffset;
 
-				fromOriginPlus180Toggle.isOn = GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonIsFromOriginPlus180;
+				fromOriginPlus180Toggle.isOn = cellAndGenePanel.gene.axon.GetPulse(pulseView).axonIsFromOriginPlus180;
 
-				fromMeOffsetSlider.value = GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromMeOffset;
-				fromMeOffsetText.text = string.Format("Offset me -> muscle: {0:F1}°/cell distance", GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonFromMeOffset);
+				fromMeOffsetSlider.value = cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromMeOffset;
+				fromMeOffsetText.text = string.Format("Offset me -> muscle: {0:F1}°/cell distance", cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromMeOffset);
 
-				relaxContractSlider.value = GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonRelaxContract;
-				relaxContractRelaxContractText.text = string.Format("Relax/Contract offset: {0:F2}", GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonRelaxContract);
+				relaxContractSlider.value = cellAndGenePanel.gene.axon.GetPulse(pulseView).axonRelaxContract;
+				relaxContractRelaxContractText.text = string.Format("Relax/Contract offset: {0:F2}", cellAndGenePanel.gene.axon.GetPulse(pulseView).axonRelaxContract);
 
-				reverseToggle.isOn = GenePanel.instance.selectedGene.axon.GetPulse(pulseView).axonIsReverse;
+				reverseToggle.isOn = cellAndGenePanel.gene.axon.GetPulse(pulseView).axonIsReverse;
 
 				// Output
 

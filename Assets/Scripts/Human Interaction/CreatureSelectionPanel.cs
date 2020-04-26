@@ -118,22 +118,13 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 		}
 	}
 
-	public Gene selectedGene {
-		get {
-			return GenePanel.instance.selectedGene;
-		}
-		set {
-			GenePanel.instance.selectedGene = value;
-		}
-	}
-
 	public int selectionCount {
 		get {
 			return selection.Count;
 		}
 	}
 
-	public bool hasSelection { 
+	public bool hasSelection {
 		get {
 			return selection.Count > 0;
 		}

@@ -11,6 +11,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	public Image inputButtonImage;
 	[HideInInspector]
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
+	private CellAndGenePanel cellAndGenePanel;
 
 	private int column;
 	private bool isDirty = false;
@@ -40,11 +41,12 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 		return affectedGeneLogicBoxInput.nerve;
 	}
 
-	public void Initialize(PhenoGenoEnum mode, int column, LogicBoxPanel motherPanel) {
+	public void Initialize(PhenoGenoEnum mode, int column, LogicBoxPanel motherPanel, CellAndGenePanel cellAndGenePanel) {
 		this.mode = mode;
 		this.motherPanel = motherPanel;
 		this.column = column;
 		isUsed = true;
+		this.cellAndGenePanel = cellAndGenePanel;
 	}
 
 	private PhenoGenoEnum GetMode() {
@@ -191,9 +193,9 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	private Gene selectedGene {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
+				return cellAndGenePanel.cell != null ? cellAndGenePanel.gene : null;
 			} else {
-				return GenePanel.instance.selectedGene;
+				return cellAndGenePanel.gene;
 			}
 		}
 	}
@@ -201,7 +203,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	private Cell selectedCell {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell;
+				return cellAndGenePanel.cell;
 			} else {
 				return null; // there could be many cells selected for the same gene
 			}

@@ -26,7 +26,8 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 	}
 
 	override public void Init() {
-		viewedFlipSide = FlipSideEnum.BlackWhite; 
+		viewedFlipSide = FlipSideEnum.BlackWhite;
+		
 		isDirty = true;
 	}
 

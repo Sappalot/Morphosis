@@ -36,7 +36,7 @@ public class SizeSensorPanel : SensorPanel {
 				Debug.Log("Update Size Sensor Panel");
 			}
 
-			if (CreatureSelectionPanel.instance.hasSoloSelected && selectedGene != null && affectedGeneSensor != null) {
+			if (CreatureSelectionPanel.instance.hasSoloSelected && gene != null && affectedGeneSensor != null) {
 				ignoreHumanInput = true;
 				sizeMoreThanSliderLabel.text = string.Format("A: Size ≥ {0:F0} % ({1:F0} cells or bigger)", (affectedGeneSensor as GeneSizeSensor).sizeThreshold * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness((affectedGeneSensor as GeneSizeSensor).sizeThreshold));
 				sizeLessThanSliderLabel.text = string.Format("B: Size < {0:F0} % ({1:F0} cells or smaller)", (affectedGeneSensor as GeneSizeSensor).sizeThreshold * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness((affectedGeneSensor as GeneSizeSensor).sizeThreshold) - 1);

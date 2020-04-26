@@ -13,7 +13,7 @@ public class LeafCellPanel : ComponentPanel {
 			}
 
 			if (GetMode() == PhenoGenoEnum.Phenotype) {
-				if (CellPanel.instance.selectedCell != null) {
+				if (cellAndGenePanel.cell != null) {
 					componentFooterPanel.SetProductionEffectText(selectedCell.effectProductionInternalUp, GlobalSettings.instance.phenotype.leafCell.effectProductionDown);
 
 					exposure.text = string.Format("Exposure: {0:F2}%", (selectedCell as LeafCell).lowPassExposure * 100f);
@@ -28,7 +28,7 @@ public class LeafCellPanel : ComponentPanel {
 				overPopulationFactor.text = "Over population factor: -";
 			}
 
-			if (selectedGene != null) {
+			if (gene != null) {
 				ignoreHumanInput = true;
 
 				ignoreHumanInput = false;

@@ -141,25 +141,22 @@ public class LMBInWorld : MonoBehaviour {
 			Vector2 pickPosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition);
 			Cell newCellHover = Morphosis.instance.GetCellAtPosition(pickPosition);
 			if (newCellHover != null) {
-				if (newCellHover.mapPosition != cellHoverPosition) {
-					cellHoverPosition = newCellHover.mapPosition;
-
-					//if (AssignNerveInputPanel.instance.narrowedGeneCell == null) {
-					//	Debug.Log("narrow = NULL");
-					//} else {
-					//	Debug.Log("narrow: " + AssignNerveInputPanel.instance.narrowedGeneCell + "         map position: " + AssignNerveInputPanel.instance.narrowedGeneCell);
-					//}
+				if (newCellHover.mapPosition != cellHoverMapPosition) {
+					cellHoverMapPosition = newCellHover.mapPosition;
 					
 					AssignNerveInputPanel.instance.TrySetNerveInputMapPositionExternally(newCellHover.mapPosition, true);
+
+					//GenePanel.instance.cellAndGenePanel.overrideGene = newCellHover.gene; // we can be sure this cell is a gene cell
+					//GenePanel.instance.MakeDirty();
 				}
 			} else {
 				AssignNerveInputPanel.instance.TrySetNerveInputMapPositionExternally(null, true);
-				cellHoverPosition = new Vector2i(666, 666);
+				cellHoverMapPosition = new Vector2i(666, 666);
 			}
 		}
 	}
 
-	private Vector2i cellHoverPosition;
+	private Vector2i cellHoverMapPosition;
 
 	//TODO move to some util
 	static bool TryFreezeCreature(Creature creature) {

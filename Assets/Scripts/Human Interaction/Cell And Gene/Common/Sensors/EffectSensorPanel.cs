@@ -22,8 +22,8 @@ public class EffectSensorPanel : SensorPanel {
 	public Image measureDropdownImageShow;
 	public Image measureDropdownImageList;
 
-	public override void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
-		base.Initialize(mode, signalUnit);
+	public override void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, CellAndGenePanel cellAndGenePanel) {
+		base.Initialize(mode, signalUnit, cellAndGenePanel);
 		measureDropdownImageShow.color = ColorScheme.instance.selectedChanged;
 		measureDropdownImageList.color = ColorScheme.instance.selectedChanged;
 	}
@@ -69,7 +69,7 @@ public class EffectSensorPanel : SensorPanel {
 
 			effectMeasuredDropdown.interactable = IsUnlocked();
 
-			if (selectedGene != null && affectedGeneSensor != null) {
+			if (gene != null && affectedGeneSensor != null) {
 				ignoreHumanInput = true;
 
 				effectMeasuredDropdown.value = (int)(affectedGeneSensor as GeneEffectSensor).effectMeassure;

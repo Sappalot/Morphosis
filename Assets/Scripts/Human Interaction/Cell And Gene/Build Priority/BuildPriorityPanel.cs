@@ -7,14 +7,18 @@ public class BuildPriorityPanel : MonoBehaviour {
 
 	public Text buildPriorityText;
 
-	[HideInInspector]
-	public PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
+	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
 
 	public Slider biasSlider;
 
 	private bool ignoreSliderMoved = false;
 
-	private void Awake() {
+	private CellAndGenePanel cellAndGenePanel;
+
+	public void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
+		this.mode = mode;
+		this.cellAndGenePanel = cellAndGenePanel;
+
 		ignoreSliderMoved = true;
 		biasSlider.minValue = GlobalSettings.instance.phenotype.buildPriorityBiasMin;
 		biasSlider.maxValue = GlobalSettings.instance.phenotype.buildPriorityBiasMax;
@@ -30,7 +34,7 @@ public class BuildPriorityPanel : MonoBehaviour {
 			return;
 		}
 
-		GenePanel.instance.selectedGene.buildPriorityBias = ToClosestTenth(biasSlider.value);
+		cellAndGenePanel.gene.buildPriorityBias = ToClosestTenth(biasSlider.value);
 		if (CreatureSelectionPanel.instance.hasSoloSelected) {
 			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
 			CreatureSelectionPanel.instance.soloSelected.generation = 1;
@@ -52,29 +56,29 @@ public class BuildPriorityPanel : MonoBehaviour {
 				Debug.Log("Update CellBuildPriorityPanel");
 			}
 
-			if (mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null) {
-				buildIndexText.text = string.Format("Build index: {0:F0}", CellPanel.instance.selectedCell.buildIndex);
-				buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", CellPanel.instance.selectedCell.gene.buildPriorityBias);
-				buildPriorityText.text = string.Format("Build priority: {0:F1}", CellPanel.instance.selectedCell.buildPriority);
+			if (mode == PhenoGenoEnum.Phenotype && cellAndGenePanel.cell != null) {
+				buildIndexText.text = string.Format("Build index: {0:F0}", cellAndGenePanel.cell.buildIndex);
+				buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", cellAndGenePanel.cell.gene.buildPriorityBias);
+				buildPriorityText.text = string.Format("Build priority: {0:F1}", cellAndGenePanel.cell.buildPriority);
 
 				biasSlider.interactable = false;
 
-				biasSlider.value = CellPanel.instance.selectedCell.gene.buildPriorityBias;
+				biasSlider.value = cellAndGenePanel.cell.gene.buildPriorityBias;
 
-			} else if (mode == PhenoGenoEnum.Genotype && GenePanel.instance.selectedGene != null && CreatureSelectionPanel.instance.hasSoloSelected) {
-				bool agreedBuildOrder = CreatureSelectionPanel.instance.soloSelected.genotype.HasAllOccurancesOfThisGeneSameBuildIndex(GenePanel.instance.selectedGene);
+			} else if (mode == PhenoGenoEnum.Genotype && cellAndGenePanel.gene != null && CreatureSelectionPanel.instance.hasSoloSelected) {
+				bool agreedBuildOrder = CreatureSelectionPanel.instance.soloSelected.genotype.HasAllOccurancesOfThisGeneSameBuildIndex(cellAndGenePanel.gene);
 				if (agreedBuildOrder) {
-					buildIndexText.text = string.Format("Build index: " + CellPanel.instance.selectedCell.buildIndex);
-					buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", GenePanel.instance.selectedGene.buildPriorityBias);
-					buildPriorityText.text = string.Format("Build priority: {0:F1}", CellPanel.instance.selectedCell.buildIndex + GenePanel.instance.selectedGene.buildPriorityBias);
+					buildIndexText.text = string.Format("Build index: " + cellAndGenePanel.cell.buildIndex);
+					buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", cellAndGenePanel.gene.buildPriorityBias);
+					buildPriorityText.text = string.Format("Build priority: {0:F1}", cellAndGenePanel.cell.buildIndex + cellAndGenePanel.gene.buildPriorityBias);
 				} else {
 					buildIndexText.text = string.Format("Build index: X");
-					buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", GenePanel.instance.selectedGene.buildPriorityBias);
-					buildPriorityText.text = CellPanel.instance.selectedCell.gene.buildPriorityBias >= 0 ? string.Format("Build priority: X + {0:F1}", CellPanel.instance.selectedCell.gene.buildPriorityBias) : string.Format("Build priority: X {0:F1}", CellPanel.instance.selectedCell.gene.buildPriorityBias);
+					buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", cellAndGenePanel.gene.buildPriorityBias);
+					buildPriorityText.text = cellAndGenePanel.cell.gene.buildPriorityBias >= 0 ? string.Format("Build priority: X + {0:F1}", cellAndGenePanel.cell.gene.buildPriorityBias) : string.Format("Build priority: X {0:F1}", cellAndGenePanel.cell.gene.buildPriorityBias);
 				}
 				biasSlider.interactable = CreatureSelectionPanel.instance.hasSoloSelectedThatCanChangeGenome;
 
-				biasSlider.value = GenePanel.instance.selectedGene.buildPriorityBias;
+				biasSlider.value = cellAndGenePanel.gene.buildPriorityBias;
 			}
 
 			ignoreSliderMoved = false;

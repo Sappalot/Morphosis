@@ -14,7 +14,11 @@ public class GeneNeighboursPanel : MonoBehaviour {
 	public ArrangementPanel arrangementPanelTemplate;
 	private ArrangementPanel[] arrangementPanels = new ArrangementPanel[3];
 
-	public void Initialize() {
+	private CellAndGenePanel cellAndGenePanel;
+
+	public void Initialize(CellAndGenePanel cellAndGenePanel) {
+		this.cellAndGenePanel = cellAndGenePanel;
+
 		RectTransform originalTransform = arrangementPanelTemplate.GetComponent<RectTransform>();
 
 		for (int index = 0; index < arrangementPanels.Length; index++) {
@@ -50,7 +54,7 @@ public class GeneNeighboursPanel : MonoBehaviour {
 				Debug.Log("Update GeneNeighbourPanel");
 
 			//Nothing to represent
-			if (GenePanel.instance.selectedGene == null) {
+			if (cellAndGenePanel.gene == null) {
 				for (int index = 0; index < arrangementPanels.Length; index++) {
 					if (arrangementPanels[index] != null) {
 						arrangementPanels[index].arrangement = null;
@@ -67,15 +71,15 @@ public class GeneNeighboursPanel : MonoBehaviour {
 
 			for (int index = 0; index < arrangementPanels.Length; index++) {
 				if (arrangementPanels[index] != null) {
-					arrangementPanels[index].arrangement = GenePanel.instance.selectedGene.arrangements[index];
+					arrangementPanels[index].arrangement = cellAndGenePanel.gene.arrangements[index];
 				}
 			}
 
 			//perifier
 			for (int cardinalIndex = 0; cardinalIndex < 6; cardinalIndex++) {
-				referenceGraphics[cardinalIndex].reference = GenePanel.instance.selectedGene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
+				referenceGraphics[cardinalIndex].reference = cellAndGenePanel.gene.GetFlippableReference(cardinalIndex, GenotypePanel.instance.viewedFlipSide);
 			}
-			centerReferenceGraphics.reference = new GeneReference(GenePanel.instance.selectedGene, GenotypePanel.instance.viewedFlipSide);
+			centerReferenceGraphics.reference = new GeneReference(cellAndGenePanel.gene, GenotypePanel.instance.viewedFlipSide);
 
 			isDirty = false;
 		}

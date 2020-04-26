@@ -32,15 +32,15 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 	public GeneLogicBox affectedGeneLogicBox {
 		get {
-			if (selectedGene == null) {
+			if (gene == null) {
 				return null;
 			}
-			if (selectedGene.type == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
-				return selectedGene.eggCellFertilizeLogic;
+			if (gene.type == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
+				return gene.eggCellFertilizeLogic;
 			} else if (signalUnit == SignalUnitEnum.DendritesLogicBox) {
-				return selectedGene.dendritesLogicBox;
+				return gene.dendritesLogicBox;
 			} else if (signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
-				return selectedGene.originDetatchLogicBox;
+				return gene.originDetatchLogicBox;
 			}
 
 
@@ -58,13 +58,13 @@ public class LogicBoxPanel : SignalUnitPanel {
 		affectedGeneLogicBox.UpdateConnections();
 	}
 
-	override public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
-		base.Initialize(mode, signalUnit);
+	override public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, CellAndGenePanel cellAndGenePanel) {
+		base.Initialize(mode, signalUnit, cellAndGenePanel);
 		gateTemplate.gameObject.SetActive(true);
 		gateRow0 = GameObject.Instantiate(gateTemplate, bodyPanel.transform);
 		gateRow0.transform.position = gateTemplate.transform.position + Vector3.right * 0f * cellWidth + Vector3.down * 0f * cellHeight;
 		gateRow0.transform.SetAsFirstSibling();
-		gateRow0.Initialize(mode, 0, 0, this);
+		gateRow0.Initialize(mode, 0, 0, this, cellAndGenePanel);
 
 		// create small gate pool
 		for (int row = 1; row < GeneLogicBox.rowCount; row++) {
@@ -73,7 +73,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 				gate.GetComponent<RectTransform>().sizeDelta = new Vector2(cellWidth, cellHeight);
 				gate.transform.position = gateTemplate.transform.position + Vector3.right * index * cellWidth + Vector3.down * row * cellHeight;
 				gate.transform.SetAsFirstSibling();
-				gate.Initialize(mode, row, index, this);
+				gate.Initialize(mode, row, index, this, cellAndGenePanel);
 				gate.gameObject.SetActive(true);
 
 				if (row == 1) {
@@ -87,7 +87,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 		// Initialize input boxes
 		for (int column = 0; column < GeneLogicBox.columnCount; column++) {
-			inputRow3[column].Initialize(mode, column, this);
+			inputRow3[column].Initialize(mode, column, this, cellAndGenePanel);
 		}
 
 		// Create locked overlays
@@ -193,7 +193,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 				inputRow3[i].MakeDirty();
 			}
 
-			if (mode == PhenoGenoEnum.Phenotype && CellPanel.instance.selectedCell != null) {
+			if (mode == PhenoGenoEnum.Phenotype && cellAndGenePanel.cell != null) {
 				if (affectedGeneLogicBox != null) {
 					if (affectedGeneLogicBox.isUsedInternal) {
 						outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
@@ -215,7 +215,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 			}
 
 			// locked cells
-			if (affectedGeneLogicBox != null && (mode == PhenoGenoEnum.Phenotype && selectedCell != null || mode == PhenoGenoEnum.Genotype && selectedGene != null)) {
+			if (affectedGeneLogicBox != null && (mode == PhenoGenoEnum.Phenotype && selectedCell != null || mode == PhenoGenoEnum.Genotype && gene != null)) {
 				for (int row = 1; row < GeneLogicBox.rowCount; row++) {
 					for (int column = 0; column < GeneLogicBox.columnCount; column++) {
 						lockedCells[row - 1, column].gameObject.SetActive(mode == PhenoGenoEnum.Genotype && affectedGeneLogicBox.IsCellOccupiedByLock(row, column));

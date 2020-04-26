@@ -11,7 +11,7 @@ public class MuscleCellPanel : ComponentPanel {
 			}
 
 			if (GetMode() == PhenoGenoEnum.Phenotype) {
-				if (CellPanel.instance.selectedCell != null) {
+				if (cellAndGenePanel.cell != null) {
 					componentFooterPanel.SetProductionEffectText(0f, selectedCell.effectProductionInternalDown);
 					frequenzy.text = string.Format("Frequenzy: {0:F2} Hz", selectedCell.creature.phenotype.originCell.originPulseFequenzy);
 				}
@@ -21,7 +21,7 @@ public class MuscleCellPanel : ComponentPanel {
 				frequenzy.text = string.Format("Frequenzy: -");
 			}
 
-			if (selectedGene != null) {
+			if (gene != null) {
 				ignoreHumanInput = true;
 
 				ignoreHumanInput = false;

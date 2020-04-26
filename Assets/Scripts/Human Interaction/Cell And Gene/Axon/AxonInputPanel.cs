@@ -19,6 +19,8 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 
 	private AxonPanel motherPanel;
 
+	public CellAndGenePanel cellAndGenePanel;
+
 	public void MakeMotherPanelDirty() {
 		motherPanel.MakeDirty();
 	}
@@ -26,20 +28,21 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 	public GeneAxonInput affectedGeneAxonInput { 
 		get {
 			if (column == 0) {
-				return selectedGene.axon.axonInputLeft;
+				return gene.axon.axonInputLeft;
 			} else if (column == 1) {
-				return selectedGene.axon.axonInputRight;
+				return gene.axon.axonInputRight;
 			}
 
 			return null;
 		}
 	}
 
-	public void Initialize(PhenoGenoEnum mode, int column, AxonPanel motherPanel) {
+	public void Initialize(PhenoGenoEnum mode, int column, AxonPanel motherPanel, CellAndGenePanel cellAndGenePanel) {
 		this.mode = mode;
 		this.motherPanel = motherPanel;
 		this.column = column;
 		isUsed = true;
+		this.cellAndGenePanel = cellAndGenePanel;
 	}
 
 	public void MakeDirty() {
@@ -119,7 +122,7 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 			}
 			ignoreSliderMoved = true;
 
-			if (selectedGene == null || affectedGeneAxonInput == null) {
+			if (gene == null || affectedGeneAxonInput == null) {
 				isDirty = false;
 				return;
 			}
@@ -179,20 +182,16 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 		}
 	}
 
-	private Gene selectedGene {
+	public Gene gene {
 		get {
-			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
-			} else {
-				return GenePanel.instance.selectedGene;
-			}
+			return cellAndGenePanel.gene;
 		}
 	}
 
 	private Cell selectedCell {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell;
+				return cellAndGenePanel.cell;
 			} else {
 				return null; // there could be many cells selected for the same gene
 			}

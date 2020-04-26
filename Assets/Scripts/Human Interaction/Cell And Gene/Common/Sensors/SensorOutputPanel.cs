@@ -5,16 +5,18 @@ public class SensorOutputPanel : MonoBehaviour {
 	public Image image;
 
 	[HideInInspector]
-	public PhenoGenoEnum mode { get; set; }
+	private PhenoGenoEnum mode { get; set; }
+	private CellAndGenePanel cellAndGenePanel;
 	private SignalUnitEnum signalUnit;
 	private SignalUnitSlotEnum signalUnitSlot;
 	private SensorPanel motherPanel;
 
-	public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot, SensorPanel motherPanel) {
+	public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot, SensorPanel motherPanel, CellAndGenePanel cellAndGenePanel) {
 		this.mode = mode;
 		this.signalUnit = signalUnit;
 		this.signalUnitSlot = signalUnitSlot;
 		this.motherPanel = motherPanel;
+		this.cellAndGenePanel = cellAndGenePanel;
 	}
 
 	[HideInInspector]
@@ -59,7 +61,7 @@ public class SensorOutputPanel : MonoBehaviour {
 			if (mode == PhenoGenoEnum.Phenotype) {
 				if (motherPanel == null || motherPanel.affectedGeneSensor == null || !motherPanel.affectedGeneSensor.isUsedInternal) {
 					image.color = ColorScheme.instance.signalUnused;
-				} else if (CellPanel.instance.selectedCell != null) {
+				} else if (cellAndGenePanel.cell != null) {
 					image.color = selectedCell.GetOutputFromUnit(signalUnit, signalUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
@@ -77,7 +79,7 @@ public class SensorOutputPanel : MonoBehaviour {
 	public Cell selectedCell {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell;
+				return cellAndGenePanel.cell;
 			} else {
 				return null; // there could be many cells selected for the same gene
 			}

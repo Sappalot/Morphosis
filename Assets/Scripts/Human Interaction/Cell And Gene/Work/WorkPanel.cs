@@ -22,8 +22,11 @@ public class WorkPanel : MonoBehaviour {
 	private bool isDirty = true;
 	private bool ignoreMenuChange;
 
-	public void Initialize(PhenoGenoEnum mode) {
+	private CellAndGenePanel cellAndGenePanel;
+
+	public void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
 		this.mode = mode;
+		this.cellAndGenePanel = cellAndGenePanel;
 
 		workPanels[0] = eggPanel;
 		workPanels[1] = fungalPanel;
@@ -34,7 +37,7 @@ public class WorkPanel : MonoBehaviour {
 		workPanels[6] = shellPanel;
 		workPanels[7] = veinPanel;
 		foreach (ComponentPanel m in workPanels) {
-			m.Initialize(mode);
+			m.Initialize(mode, cellAndGenePanel);
 		}
 
 		typeDropdownImageShow.color = ColorScheme.instance.selectedChanged;
@@ -44,8 +47,8 @@ public class WorkPanel : MonoBehaviour {
 	}
 
 	public void MakeDirty() {
-		if (selectedGene != null) {
-			workPanels[(int)selectedGene.type].MakeDirty(); // only the visible one
+		if (gene != null) {
+			workPanels[(int)gene.type].MakeDirty(); // only the visible one
 		}
 		isDirty = true;
 	}
@@ -59,7 +62,7 @@ public class WorkPanel : MonoBehaviour {
 			return;
 		}
 
-		selectedGene.type = (CellTypeEnum)typeDropdown.value; // keep values in order!!
+		gene.type = (CellTypeEnum)typeDropdown.value; // keep values in order!!
 
 		GenePanel.instance.MakeDirty();
 		GenotypePanel.instance.MakeDirty();
@@ -80,7 +83,7 @@ public class WorkPanel : MonoBehaviour {
 				Debug.Log("Update CellPanel");
 			}
 
-			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null)) {
+			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && gene == null)) {
 				// no menu
 				isDirty = false;
 				return;
@@ -89,17 +92,17 @@ public class WorkPanel : MonoBehaviour {
 			typeDropdown.interactable = IsUnlocked();
 
 			ignoreMenuChange = true;
-			typeDropdown.value = (int)selectedGene.type;
+			typeDropdown.value = (int)gene.type;
 			ignoreMenuChange = false;
 
-			eggPanel.gameObject.SetActive(selectedGene.type == CellTypeEnum.Egg);
-			fungalPanel.gameObject.SetActive(selectedGene.type == CellTypeEnum.Fungal);
-			jawPanel.gameObject.SetActive(selectedGene.type == CellTypeEnum.Jaw);
-			leafPanel.gameObject.SetActive(selectedGene.type == CellTypeEnum.Leaf);
-			musclePanel.gameObject.SetActive(selectedGene.type == CellTypeEnum.Muscle);
-			rootPanel.gameObject.SetActive(selectedGene.type == CellTypeEnum.Root);
-			shellPanel.gameObject.SetActive(selectedGene.type == CellTypeEnum.Shell);
-			veinPanel.gameObject.SetActive(selectedGene.type == CellTypeEnum.Vein);
+			eggPanel.gameObject.SetActive(gene.type == CellTypeEnum.Egg);
+			fungalPanel.gameObject.SetActive(gene.type == CellTypeEnum.Fungal);
+			jawPanel.gameObject.SetActive(gene.type == CellTypeEnum.Jaw);
+			leafPanel.gameObject.SetActive(gene.type == CellTypeEnum.Leaf);
+			musclePanel.gameObject.SetActive(gene.type == CellTypeEnum.Muscle);
+			rootPanel.gameObject.SetActive(gene.type == CellTypeEnum.Root);
+			shellPanel.gameObject.SetActive(gene.type == CellTypeEnum.Shell);
+			veinPanel.gameObject.SetActive(gene.type == CellTypeEnum.Vein);
 		}
 	}
 
@@ -129,24 +132,20 @@ public class WorkPanel : MonoBehaviour {
 	[HideInInspector]
 	public CellTypeEnum cellType {
 		get {
-			return selectedGene.type;
+			return gene.type;
 		}
 	}
 
-	public Gene selectedGene {
+	public Gene gene {
 		get {
-			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
-			} else {
-				return GenePanel.instance.selectedGene;
-			}
+			return cellAndGenePanel.gene;
 		}
 	}
 
 	public Cell selectedCell {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell;
+				return cellAndGenePanel.cell;
 			} else {
 				return null; // there could be many cells selected for the same gene
 			}

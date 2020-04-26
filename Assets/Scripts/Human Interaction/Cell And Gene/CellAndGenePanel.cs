@@ -18,42 +18,49 @@ public class CellAndGenePanel : MonoBehaviour {
 	public HudSignalArrowHandler hudSignalArrowHandler;
 
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
+	private bool isAuxiliary; // Only for genotype
+
 	private bool isDirty = true;
+
+	public void Initialize(PhenoGenoEnum mode, bool isAuxiliary) {
+		this.isAuxiliary = isAuxiliary;
+		Initialize(mode);
+	}
 
 	public void Initialize(PhenoGenoEnum mode) {
 		this.mode = mode;
 
-		overvirewPanel.Initialize(mode);
+		overvirewPanel.Initialize(mode, this);
 
-		workPanel.Initialize(mode);
+		workPanel.Initialize(mode, this);
 
-		constantSensorPanel.Initialize(mode, SignalUnitEnum.ConstantSensor);
+		constantSensorPanel.Initialize(mode, SignalUnitEnum.ConstantSensor, this);
 
-		axonPanel.Initialize(mode);
+		axonPanel.Initialize(mode, this);
 
 		// dendrites
-		dendritesLogicBoxPanel.Initialize(mode, SignalUnitEnum.DendritesLogicBox);
+		dendritesLogicBoxPanel.Initialize(mode, SignalUnitEnum.DendritesLogicBox, this);
 
 		// sensors
-		energySensorPanel.Initialize(mode, SignalUnitEnum.EnergySensor);
-		effectSensorPanel.Initialize(mode, SignalUnitEnum.EffectSensor);
+		energySensorPanel.Initialize(mode, SignalUnitEnum.EnergySensor, this);
+		effectSensorPanel.Initialize(mode, SignalUnitEnum.EffectSensor, this);
 
 		// origin
-		originPanel.Initialize(mode);
+		originPanel.Initialize(mode, this);
 
 		// build priority
-		buildPriorityPanel.mode = mode;
+		buildPriorityPanel.Initialize(mode, this);
 
 
 		if (mode == PhenoGenoEnum.Genotype) {
 			geneNeighboursPanel.gameObject.SetActive(true);
-			geneNeighboursPanel.Initialize();
+			geneNeighboursPanel.Initialize(this);
 		} else {
 			geneNeighboursPanel.gameObject.SetActive(false);
 		}
 		
 
-		hudSignalArrowHandler.Initialize(mode);
+		hudSignalArrowHandler.Initialize(mode, this);
 	}
 
 	public PhenoGenoEnum GetMode() {
@@ -63,7 +70,7 @@ public class CellAndGenePanel : MonoBehaviour {
 	public void MakeDirty() {
 		isDirty = true;
 
-		if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null)) {
+		if ((mode == PhenoGenoEnum.Phenotype && cell == null) || (mode == PhenoGenoEnum.Genotype && gene == null)) {
 			// no menu
 			isDirty = false;
 			return;
@@ -78,7 +85,7 @@ public class CellAndGenePanel : MonoBehaviour {
 		effectSensorPanel.MakeDirty();
 		buildPriorityPanel.MakeDirty();
 
-		if (selectedGene.isOrigin) {
+		if (gene.isOrigin) {
 			originPanel.MakeDirty();
 		} else {
 			buildPriorityPanel.MakeDirty();
@@ -110,7 +117,7 @@ public class CellAndGenePanel : MonoBehaviour {
 			inputList.AddRange(inputs);
 		}		
 
-		if (selectedGene.isOrigin) {
+		if (gene.isOrigin) {
 			inputs = originPanel.GetAllGeneInputs();
 			if (inputs != null) {
 				inputList.AddRange(inputs);
@@ -178,35 +185,40 @@ public class CellAndGenePanel : MonoBehaviour {
 				Debug.Log("Update GeneAndCellPanel");
 			}
 
-			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null)) {
+			if ((mode == PhenoGenoEnum.Phenotype && cell == null) || (mode == PhenoGenoEnum.Genotype && gene == null)) {
 				// no menu
 				isDirty = false;
 				return;
 			}
 
-			originPanel.gameObject.SetActive(selectedGene.isOrigin);
-			buildPriorityPanel.gameObject.SetActive(!selectedGene.isOrigin);
+			originPanel.gameObject.SetActive(gene.isOrigin);
+			buildPriorityPanel.gameObject.SetActive(!gene.isOrigin);
 
 			isDirty = false;
 		}
 	}
 
-	public Gene selectedGene {
+	public Gene gene {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
 				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
 			} else {
-				return GenePanel.instance.selectedGene;
+				if (!isAuxiliary) {
+					return GenePanel.instance.selectedGene;
+				} else {
+					return GeneAuxiliaryPanel.instance.viewedGene;
+				}
 			}
 		}
 	}
 
-	public Cell selectedCell {
+	public Cell cell {
 		get {
-			if (mode == PhenoGenoEnum.Phenotype) {
+			if (!isAuxiliary) {
 				return CellPanel.instance.selectedCell;
-			} else {
-				return null; // there could be many cells selected for the same gene
+			}
+			else {
+				return GeneAuxiliaryPanel.instance.viewedCell;
 			}
 		}
 	}

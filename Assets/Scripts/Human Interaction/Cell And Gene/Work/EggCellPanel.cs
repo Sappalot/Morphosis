@@ -9,14 +9,14 @@ public class EggCellPanel : ComponentPanel {
 	public EnergySensorPanel fertilizeEnergySensorPanel;
 	public AttachmentSensorPanel fertilizeAttachmentSensorPanel;
 
-	public override void Initialize(PhenoGenoEnum mode) {
-		fertilizeLogicBoxPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxA);
-		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA);
-		fertilizeAttachmentSensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorB);
+	public override void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
+		fertilizeLogicBoxPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxA, cellAndGenePanel);
+		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA, cellAndGenePanel);
+		fertilizeAttachmentSensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorB, cellAndGenePanel);
 
 		MakeDirty();
 
-		base.Initialize(mode);
+		base.Initialize(mode, cellAndGenePanel);
 	}
 
 	public override void MakeDirty() {
@@ -32,7 +32,7 @@ public class EggCellPanel : ComponentPanel {
 
 	public void OnClickFertilize() {
 		if (CreatureSelectionPanel.instance.hasSoloSelected && GetMode() == PhenoGenoEnum.Phenotype) {
-			World.instance.life.FertilizeCreature(CellPanel.instance.selectedCell, true, World.instance.worldTicks, true);
+			World.instance.life.FertilizeCreature(cellAndGenePanel.cell, true, World.instance.worldTicks, true);
 		}
 	}
 

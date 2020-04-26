@@ -35,6 +35,9 @@ public class Morphosis : MonoSingleton<Morphosis> {
 		FreezerData freezerData = Freezer.instance.LoadFreezerData();
 		ProgressBar.instance.ResetForStartup(freezerData.creatureList.Count);
 
+		GeneAuxiliaryPanel.instance.Initialize();
+		GeneAuxiliaryPanel.instance.gameObject.SetActive(false);
+
 		Restart(freezerData, () => {
 			ProgressBar.instance.gameObject.SetActive(false);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;

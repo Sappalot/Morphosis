@@ -17,38 +17,38 @@ public abstract class SensorPanel : SignalUnitPanel {
 	// merge with code in Gene unit enum = gives=> sensorUnit | now it is double coded
 	public GeneSignalUnit affectedGeneSensor {
 		get {
-			if (selectedGene != null) {
-				if (selectedGene.type == CellTypeEnum.Egg) {
+			if (gene != null) {
+				if (gene.type == CellTypeEnum.Egg) {
 					if (signalUnit == SignalUnitEnum.WorkSensorA) {
-						return selectedGene.eggCellFertilizeEnergySensor;
+						return gene.eggCellFertilizeEnergySensor;
 					}
 
 					if (signalUnit == SignalUnitEnum.WorkSensorB) {
-						return selectedGene.eggCellAttachmentSensor;
+						return gene.eggCellAttachmentSensor;
 					}
 
 					// Do we need attachment sensor? the thisn is it has no gene representation (holds no data)
 				}
 
 				if (signalUnit == SignalUnitEnum.ConstantSensor) {
-					return selectedGene.constantSenesor;
+					return gene.constantSenesor;
 				}
 
 				if (signalUnit == SignalUnitEnum.Axon) {
-					return selectedGene.axon;
+					return gene.axon;
 				}
 
 				// not a work sensor of any kind
 				if (signalUnit == SignalUnitEnum.EnergySensor) {
-					return selectedGene.energySensor;
+					return gene.energySensor;
 				}
 
 				if (signalUnit == SignalUnitEnum.EffectSensor) {
-					return selectedGene.effectSensor;
+					return gene.effectSensor;
 				}
 
 				if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
-					return selectedGene.originSizeSensor;
+					return gene.originSizeSensor;
 				}
 
 
@@ -59,8 +59,8 @@ public abstract class SensorPanel : SignalUnitPanel {
 		}
 	}
 
-	public override void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit) {
-		base.Initialize(mode, signalUnit);
+	public override void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, CellAndGenePanel cellAndGenePanel) {
+		base.Initialize(mode, signalUnit, cellAndGenePanel);
 		if (settingsPanel != null) {
 			settingsPanel.gameObject.SetActive(true); // Not all sensor panels use settings panel
 		}
@@ -68,7 +68,7 @@ public abstract class SensorPanel : SignalUnitPanel {
 		isUsed = true;
 
 		for (int i = 0; i < outputPanels.Length; i++) {
-			outputPanels[i].Initialize(mode, signalUnit, IndexToSignalUnitSlotEnum(i), this);
+			outputPanels[i].Initialize(mode, signalUnit, IndexToSignalUnitSlotEnum(i), this, cellAndGenePanel);
 		}
 	}
 
