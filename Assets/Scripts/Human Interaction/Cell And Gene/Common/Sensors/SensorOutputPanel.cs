@@ -32,7 +32,7 @@ public class SensorOutputPanel : MonoBehaviour {
 				//AxonInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
 				//MouseAction.instance.actionState = MouseActionStateEnum.free;
 
-				AssignNerveInputPanel.instance.TrySetNerveInputLocally(signalUnit, signalUnitSlot);
+				AssignNerveInputPanel.instance.TrySetNerveInput(signalUnit, signalUnitSlot);
 				GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
 				MarkAsNewForge();
 

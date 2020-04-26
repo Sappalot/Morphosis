@@ -130,7 +130,6 @@ public class CellAndGenePanel : MonoBehaviour {
 	public Vector3 TotalPanelOffset(SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
 		RectTransform outTransform = null;
 
-
 		if (signalUnit == SignalUnitEnum.WorkLogicBoxA) {
 			outTransform = workPanel.nerveLocationsPanel.logicBoxA.GetLocation(signalUnitSlot);
 		} else if (signalUnit == SignalUnitEnum.WorkLogicBoxB) {
@@ -201,7 +200,12 @@ public class CellAndGenePanel : MonoBehaviour {
 	public Gene gene {
 		get {
 			if (mode == PhenoGenoEnum.Phenotype) {
-				return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
+				
+				if (!isAuxiliary) {
+					return CellPanel.instance.selectedCell != null ? CellPanel.instance.selectedCell.gene : null;
+				} else {
+					return GeneAuxiliaryPanel.instance.viewedCell != null ? GeneAuxiliaryPanel.instance.viewedCell.gene : null;
+				}
 			} else {
 				if (!isAuxiliary) {
 					return GenePanel.instance.selectedGene;
@@ -216,8 +220,7 @@ public class CellAndGenePanel : MonoBehaviour {
 		get {
 			if (!isAuxiliary) {
 				return CellPanel.instance.selectedCell;
-			}
-			else {
+			} else {
 				return GeneAuxiliaryPanel.instance.viewedCell;
 			}
 		}

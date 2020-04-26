@@ -88,7 +88,7 @@ public class LMBInWorld : MonoBehaviour {
 						// TODO: show nerves as we move mouse from cell to cell
 
 						// click will select this geneCell as the one we want to listen to
-						if (AssignNerveInputPanel.instance.TrySetNerveInputMapPositionExternally(cellClicked.mapPosition, false)) {
+						if (AssignNerveInputPanel.instance.TrySetNerveInputMapPositionExternally(cellClicked.mapPosition)) {
 							Debug.Log("(RootGeneCell was allready set) Source geneCell selected");
 						} else {
 							Debug.Log("You must select an extarnal gene cell as an input source!");
@@ -137,20 +137,18 @@ public class LMBInWorld : MonoBehaviour {
 			mouseDown0 = false;
 		}
 
-		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && AssignNerveInputPanel.instance.selectedRootCellMapPosition != null) {
+		// siece updating if we are in the state to select output inside of gene
+		if (!AssignNerveInputPanel.instance.isInAuxternalGene && MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && AssignNerveInputPanel.instance.selectedRootCellMapPosition != null) {
 			Vector2 pickPosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition);
 			Cell newCellHover = Morphosis.instance.GetCellAtPosition(pickPosition);
 			if (newCellHover != null) {
 				if (newCellHover.mapPosition != cellHoverMapPosition) {
 					cellHoverMapPosition = newCellHover.mapPosition;
 					
-					AssignNerveInputPanel.instance.TrySetNerveInputMapPositionExternally(newCellHover.mapPosition, true);
-
-					//GenePanel.instance.cellAndGenePanel.overrideGene = newCellHover.gene; // we can be sure this cell is a gene cell
-					//GenePanel.instance.MakeDirty();
+					AssignNerveInputPanel.instance.ShowNerveInputMapPositionExternally(newCellHover.mapPosition);
 				}
 			} else {
-				AssignNerveInputPanel.instance.TrySetNerveInputMapPositionExternally(null, true);
+				AssignNerveInputPanel.instance.ShowNerveInputMapPositionExternally(null);
 				cellHoverMapPosition = new Vector2i(666, 666);
 			}
 		}

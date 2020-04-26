@@ -166,7 +166,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 				//AxonInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
 				//MouseAction.instance.actionState = MouseActionStateEnum.free;
 
-				AssignNerveInputPanel.instance.TrySetNerveInputLocally(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
+				AssignNerveInputPanel.instance.TrySetNerveInput(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
 				GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
 				MarkAsNewForge();
 			} else {
