@@ -43,6 +43,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 				return;
 			}
 
+			// Input internal and external (signal from other into one of my inputs)
 			List<IGeneInput> geneInputList = cellAndGenePanel.GetAllGeneInputs();
 
 			foreach (HudSignalArrow arrow in arrowList) {
@@ -63,10 +64,12 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					Vector2 head = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.outputUnit, geneInput.nerve.outputUnitSlot);
 
 					Vector2 tail;
-					if (geneInput.nerve.nerveVector == null || geneInput.nerve.nerveVector == Vector2i.zero) { // Local 
+					if (geneInput.nerve.nerveVector == null || geneInput.nerve.nerveVector == Vector2i.zero) {
+						// Local 
 						tail = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.inputUnit, geneInput.nerve.inputUnitSlot);
-					} else { // External
-						tail = head + Vector2.down * 20f;
+					} else { 
+						// External (short arrow, pointing up, with head at input )
+						tail = head + Vector2.down * 30f;
 					}
 
 					arrow.GetComponent<RectTransform>().localPosition = (head + tail) / 2f;
@@ -75,6 +78,10 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					arrowList.Add(arrow);
 				}
 			}
+
+			// Outputs External = signal from me affecting other geneCell from one of my outputs
+			// (short arrow, pointing up, with tail at one of my output)
+
 			isDirtyConnections = false;
 		}
 

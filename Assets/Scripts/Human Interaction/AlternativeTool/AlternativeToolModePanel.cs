@@ -68,11 +68,13 @@ public class AlternativeToolModePanel : MonoSingleton<AlternativeToolModePanel> 
 		Event e = Event.current;
 		if (e.alt) {
 			if (!isOn) {
-				showHide.SetActive(true);
-				isOn = true;
-				CreatureSelectionPanel.instance.MakeDirty();
-				PhenotypePanel.instance.MakeDirty();
-				GenotypePanel.instance.MakeDirty();
+				if (MouseAction.instance.actionState == MouseActionStateEnum.free) {
+					showHide.SetActive(true);
+					isOn = true;
+					CreatureSelectionPanel.instance.MakeDirty();
+					PhenotypePanel.instance.MakeDirty();
+					GenotypePanel.instance.MakeDirty();
+				}
 			}
 		} else {
 			if (isOn) {

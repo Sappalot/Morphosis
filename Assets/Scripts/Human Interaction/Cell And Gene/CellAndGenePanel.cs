@@ -18,7 +18,7 @@ public class CellAndGenePanel : MonoBehaviour {
 	public HudSignalArrowHandler hudSignalArrowHandler;
 
 	private PhenoGenoEnum mode = PhenoGenoEnum.Phenotype;
-	private bool isAuxiliary; // Only for genotype
+	public bool isAuxiliary { get; private set; } // Only for genotype
 
 	private bool isDirty = true;
 

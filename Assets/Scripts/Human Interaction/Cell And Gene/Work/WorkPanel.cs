@@ -153,6 +153,6 @@ public class WorkPanel : MonoBehaviour {
 	}
 
 	private bool IsUnlocked() {
-		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
+		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && !cellAndGenePanel.isAuxiliary;
 	}
 }

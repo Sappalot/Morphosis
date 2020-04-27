@@ -35,7 +35,7 @@ public abstract class ComponentPanel : MonoBehaviour {
 	}
 
 	public bool IsUnlocked() {
-		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome;
+		return CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && !cellAndGenePanel.isAuxiliary;
 	}
 
 	public void OnGenomeChanged() {
