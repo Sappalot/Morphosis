@@ -238,31 +238,32 @@ public class Gene {
 		foreach (SignalUnitEnum type in Enum.GetValues(typeof(SignalUnitEnum))) {
 			GeneSignalUnit unit = GetGeneSignalUnit(type);
 			if (unit != null) {
-				unit.isUsedInternal = false;
+				unit.isUsed = false;
 			}
 		}
 	}
 
-	public void UpdateInterGeneCell() {
-		GeneSignalUnit unit;
-		unit = GetGeneSignalUnit(SignalUnitEnum.WorkLogicBoxA);
-		if (unit != null) {
-			unit.MarkThisAndChildrenAsUsedInternal(this);
-		}
+	// Assume geneCellMap has been built now
+	public void UpdateInterGeneCell(Genotype genotype) {
+		foreach (Cell geneCell in genotype.GetGeneCellsWithGene(this)) {
+			// need to check all geneCells containing gene same gene but differs in location and heading
 
-		unit = GetGeneSignalUnit(SignalUnitEnum.WorkLogicBoxB);
-		if (unit != null) {
-			unit.MarkThisAndChildrenAsUsedInternal(this);
-		}
+			MarkThisAndChildrenAsUsedHelper(genotype, geneCell, SignalUnitEnum.WorkLogicBoxA);
+			MarkThisAndChildrenAsUsedHelper(genotype, geneCell, SignalUnitEnum.WorkLogicBoxB);
 
-		unit = GetGeneSignalUnit(SignalUnitEnum.Axon);
-		if (unit != null && (unit as GeneAxon).isEnabled) { // axone is root if it is sending pulse to muscles
-			unit.MarkThisAndChildrenAsUsedInternal(this);
-		}
+			GeneSignalUnit unit = GetGeneSignalUnit(SignalUnitEnum.Axon);
+			if (unit != null && (unit as GeneAxon).isEnabled) { // axone is root if it is sending pulse to muscles
+				unit.MarkThisAndChildrenAsUsed(genotype, geneCell, SignalUnitEnum.WorkLogicBoxB);
+			}
 
-		unit = GetGeneSignalUnit(SignalUnitEnum.OriginDetatchLogicBox);
+			MarkThisAndChildrenAsUsedHelper(genotype, geneCell, SignalUnitEnum.OriginDetatchLogicBox);
+		}
+	}
+
+	private void MarkThisAndChildrenAsUsedHelper(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
+		GeneSignalUnit unit = GetGeneSignalUnit(signalUnit);
 		if (unit != null) {
-			unit.MarkThisAndChildrenAsUsedInternal(this);
+			unit.MarkThisAndChildrenAsUsed(genotype, geneCell, signalUnit);
 		}
 	}
 

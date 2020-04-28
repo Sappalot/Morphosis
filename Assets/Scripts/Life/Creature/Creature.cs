@@ -549,7 +549,7 @@ public class Creature : MonoBehaviour {
 	}
 
 	public Cell GetGeneCellAtPosition(Vector2 position) {
-		return genotype.GetCellAtPosition(position);
+		return genotype.GetCellAtWorldPosition(position);
 	}
 
 	public void Grab(PhenoGenoEnum type) {

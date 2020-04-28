@@ -135,7 +135,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 	public override List<IGeneInput> GetAllGeneInputs() {
 		List<IGeneInput> arrows = new List<IGeneInput>();
-		if (affectedGeneLogicBox.isUsedInternal) {
+		if (affectedGeneLogicBox.isUsed) {
 			for (int i = 0; i < inputRow3.Length; i++) {
 				if (inputRow3[i].affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
 					arrows.Add(inputRow3[i].affectedGeneLogicBoxInput);
@@ -195,7 +195,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 			if (mode == PhenoGenoEnum.Phenotype && cellAndGenePanel.cell != null) {
 				if (affectedGeneLogicBox != null) {
-					if (affectedGeneLogicBox.isUsedInternal) {
+					if (affectedGeneLogicBox.isUsed) {
 						outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputEarlyA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 					} else {
@@ -205,7 +205,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 				}
 			} else {
-				if (affectedGeneLogicBox != null && affectedGeneLogicBox.isUsedInternal) {
+				if (affectedGeneLogicBox != null && affectedGeneLogicBox.isUsed) {
 					outputImageLate.color = ColorScheme.instance.signalOff;
 					outputImageEarly.color = ColorScheme.instance.signalOff;
 				} else {

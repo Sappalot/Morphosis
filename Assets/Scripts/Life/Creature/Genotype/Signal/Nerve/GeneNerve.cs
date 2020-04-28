@@ -1,5 +1,6 @@
 ﻿// Information on how to connect any of creatures outputs to an input
 
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class GeneNerve {
@@ -49,7 +50,50 @@ public class GeneNerve {
 	// nerveVectorLocal needs to be transformed to world space in order for us to know where we are listening 
 	public Vector2i nerveVector = null;
 
+	public bool isLocal {
+		get {
+			return nerveVector == null || nerveVector == Vector2i.zero;
+		}
+	}
+
 	private IGenotypeDirtyfy genotypeDirtyfy;
+
+	public static Cell GetGeneCellAtNerveTail(Cell headCell, GeneNerve geneNerve, Genotype genotype) {
+		if (geneNerve.isLocal) {
+			return null;
+		}
+
+		Vector2i nerveVector = geneNerve.nerveVector;
+
+
+		// flip vector horizontally only if cell flip side is (white|black) 
+		if (headCell.flipSide == FlipSideEnum.WhiteBlack) {
+			nerveVector = CellMap.HexagonalFlip(nerveVector);
+		}
+
+		// rotate
+		int rootDirection = headCell.bindCardinalIndex;
+		int turnToCreatureAngle = 0;
+		if (rootDirection == 0) { // ne
+			turnToCreatureAngle = 5; // +300
+		} else if (rootDirection == 1) { // n
+			turnToCreatureAngle = 0; // just fine
+		} else if (rootDirection == 2) { // nw
+			turnToCreatureAngle = 1; // +60
+		} else if (rootDirection == 3) { // sw
+			turnToCreatureAngle = 2; // +120
+		} else if (rootDirection == 4) { // s
+			turnToCreatureAngle = 3; // +180
+		} else if (rootDirection == 5) { // se
+			turnToCreatureAngle = 4; // +240
+		}
+		nerveVector = CellMap.HexagonalRotate(nerveVector, turnToCreatureAngle);
+
+		// move
+		nerveVector = CellMap.HexagonalPlus(headCell.mapPosition, nerveVector);
+
+		return genotype.GetCellAtMapPosition(nerveVector);
+	}
 
 	public GeneNerve(IGenotypeDirtyfy genotypeDirtyfy) {
 		this.genotypeDirtyfy = genotypeDirtyfy;

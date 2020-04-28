@@ -57,7 +57,9 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 
 	public bool isGrabbed { get; private set; }
 
-	public CellMap geneCellMap = new CellMap();
+	private CellMap geneCellMap = new CellMap();
+
+	
 
 	public bool hasGenes {
 		get {
@@ -65,7 +67,11 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 		}
 	}
 
-	public Cell GetCellAtPosition(Vector2 position) {
+	public Cell GetCellAtMapPosition(Vector2i mapPosition) {
+		return geneCellMap.GetCell(mapPosition);
+	}
+
+	public Cell GetCellAtWorldPosition(Vector2 position) {
 		if (IsInsideBoundingCircle(position)) {
 			foreach (Cell geneCell in geneCellListIndexSorted) {
 				if (GeometryUtil.IsPointInsideCircle(position, geneCell.position, geneCell.radius)) {
@@ -164,10 +170,6 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 		}
 		Debug.LogError("We should have been climbing all the way to the root by now!");
 		return null;
-	}
-
-	public Cell GetCellAtGridPosition(Vector2i position) {
-		return geneCellMap.GetCell(position);
 	}
 
 	// Hack
@@ -447,7 +449,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 			}
 
 			foreach (Gene gene in genes) {
-				gene.UpdateInterGeneCell();
+				gene.UpdateInterGeneCell(this);
 			}
 
 			nerveArrows.GenerateGenotype(this);

@@ -192,29 +192,39 @@ public class GeneLogicBox : GeneSignalUnit {
 		}
 	}
 
-	public override void MarkThisAndChildrenAsUsedInternal(Gene gene) {
-		if (isUsedInternal) {
-			return;
-		}
+	public override void MarkThisAndChildrenAsUsed(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
+		//if (isUsed) {
+		//	return;
+		//}
 
-		isUsedInternal = true;
+		isUsed = true;
 
-		if (gene == null) {
+		if (geneCell == null || geneCell.gene == null) {
 			return;
 		}
 		
 		foreach (GeneLogicBoxInput input3 in inputRow3) {
 			if (input3.valveMode == SignalValveModeEnum.Pass) {
-				GeneSignalUnit child = gene.GetGeneSignalUnit(input3.nerve.inputUnit);
-				if (child != null) {
-					child.MarkThisAndChildrenAsUsedInternal(gene);
+				if (input3.nerve.isLocal) {
+					GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(input3.nerve.inputUnit);
+					if (child != null) {
+						child.MarkThisAndChildrenAsUsed(genotype, geneCell, signalUnit);
+					}
+				} else {
+					Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, input3.nerve, genotype);
+					if (childCell != null) {
+						GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(input3.nerve.inputUnit);
+						if (child != null) {
+							child.MarkThisAndChildrenAsUsed(genotype, childCell, signalUnit);
+						}
+					}
 				}
 			}
 		}
 	}
 
 	public override List<GeneNerve> GetExternalGeneNerves() {
-		if (!isUsedInternal) { // TODO: take isUsed from outside into account as well
+		if (!isUsed) { // TODO: take isUsed from outside into account as well
 			return null;
 		}
 

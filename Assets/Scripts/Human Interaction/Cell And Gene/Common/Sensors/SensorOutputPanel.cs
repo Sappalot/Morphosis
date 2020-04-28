@@ -59,13 +59,13 @@ public class SensorOutputPanel : MonoBehaviour {
 			}
 
 			if (mode == PhenoGenoEnum.Phenotype) {
-				if (motherPanel == null || motherPanel.affectedGeneSensor == null || !motherPanel.affectedGeneSensor.isUsedInternal) {
+				if (motherPanel == null || motherPanel.affectedGeneSensor == null || !motherPanel.affectedGeneSensor.isUsed) {
 					image.color = ColorScheme.instance.signalUnused;
 				} else if (cellAndGenePanel.cell != null) {
 					image.color = selectedCell.GetOutputFromUnit(signalUnit, signalUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
-				if (motherPanel == null || motherPanel.affectedGeneSensor == null || !motherPanel.affectedGeneSensor.isUsedInternal) {
+				if (motherPanel == null || motherPanel.affectedGeneSensor == null || !motherPanel.affectedGeneSensor.isUsed) {
 					image.color = ColorScheme.instance.signalUnused;
 				} else {
 					image.color = ColorScheme.instance.signalOff;

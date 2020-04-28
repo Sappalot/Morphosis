@@ -112,7 +112,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public override List<IGeneInput> GetAllGeneInputs() {
-		if (!affectedGeneSensor.isUsedInternal) {
+		if (!affectedGeneSensor.isUsed) {
 			return null;
 		}
 		List<IGeneInput> arrows = new List<IGeneInput>();
@@ -268,7 +268,7 @@ public class AxonPanel : SensorPanel {
 					fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromOriginOffset);
 
 					Color color = Color.white;
-					if (cellAndGenePanel.gene.axon.isUsedInternal) {
+					if (cellAndGenePanel.gene.axon.isUsed) {
 						color = ColorScheme.instance.signalOff;
 					} else {
 						color = ColorScheme.instance.signalUnused;
@@ -290,7 +290,7 @@ public class AxonPanel : SensorPanel {
 						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromOriginOffset);
 					}
 
-					if (cellAndGenePanel.gene.axon.isUsedInternal) {
+					if (cellAndGenePanel.gene.axon.isUsed) {
 						postInputBoxLeft.color = selectedCell.axon.HasSignalPostInputValve(inputLeftPanel.affectedGeneAxonInput) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						postInputBoxRight.color = selectedCell.axon.HasSignalPostInputValve(inputRightPanel.affectedGeneAxonInput) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 

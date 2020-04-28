@@ -26,7 +26,7 @@ public class EffectSensor : SignalUnit {
 
 	public override void ComputeSignalOutput(int deltaTicks) {
 		if (signalUnit == SignalUnitEnum.EffectSensor) { // redundant check ? 
-			if (!hostCell.gene.effectSensor.isUsedInternal) {
+			if (!hostCell.gene.effectSensor.isUsed) {
 				return;
 			}
 

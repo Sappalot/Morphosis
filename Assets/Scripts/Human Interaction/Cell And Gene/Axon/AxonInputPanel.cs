@@ -131,7 +131,7 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 			passButton.color = affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
 
 			if (mode == PhenoGenoEnum.Genotype) {
-				if (affectedGeneAxonInput.valveMode == SignalValveModeEnum.Block || !motherPanel.affectedGeneSensor.isUsedInternal) {
+				if (affectedGeneAxonInput.valveMode == SignalValveModeEnum.Block || !motherPanel.affectedGeneSensor.isUsed) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused;
 				} else if (affectedGeneAxonInput.nerve.inputUnit == SignalUnitEnum.Void) {
 					inputButtonImage.color = Color.magenta; // should never happen
@@ -145,7 +145,7 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 				lockedOverlayImage.gameObject.SetActive(affectedGeneAxonInput.lockness == LocknessEnum.Locked);
 				semiLockedOverlayImage.gameObject.SetActive(affectedGeneAxonInput.lockness == LocknessEnum.SemiLocked);
 			} else {
-				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve || !motherPanel.affectedGeneSensor.isUsedInternal) {
+				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve || !motherPanel.affectedGeneSensor.isUsed) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused;
 				} else if (runtimeOutput == LogicBoxInputEnum.VoidInput) { // should never happen
 					inputButtonImage.color = Color.magenta;

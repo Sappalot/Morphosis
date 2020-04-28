@@ -303,7 +303,7 @@ public abstract class Cell : MonoBehaviour {
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			for (int worldCardinalIndex = 0; worldCardinalIndex < 6; worldCardinalIndex++) {
 				int localCardinalIndex = AngleUtil.CardinalIndexRawToSafe(bindCardinalIndex + worldCardinalIndex - 1);
-				Cell budCell = creature.genotype.GetCellAtGridPosition(CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
+				Cell budCell = creature.genotype.GetCellAtMapPosition(CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
 				bool show = !HasOwnNeighbourCell(localCardinalIndex) && budCell != null; // If it is an empty spot (or if it full but child origin or mother placenta)
 				//bool isMotherPlacenta = creature.phenotype.IsMotherPlacentaLocation(creature, CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
 				//bool isChildOrigin = creature.phenotype.IsChildOriginLocation(creature, CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));

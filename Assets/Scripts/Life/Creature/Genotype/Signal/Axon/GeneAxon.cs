@@ -110,33 +110,56 @@ public class GeneAxon : GeneSignalUnit {
 		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
-	public override void MarkThisAndChildrenAsUsedInternal(Gene gene) {
-		if (isUsedInternal) {
-			return;
-		}
+	public override void MarkThisAndChildrenAsUsed(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
+		//if (isUsed) {
+		//	return;
+		//}
 
-		isUsedInternal = true;
+		isUsed = true;
 		
-		if (gene == null) {
+		if (geneCell.gene == null) {
 			return;
 		}
 		
+		// mark children as well
 		if (axonInputLeft.valveMode == SignalValveModeEnum.Pass) {
-			GeneSignalUnit child = gene.GetGeneSignalUnit(axonInputLeft.nerve.inputUnit);
-			if (child != null) {
-				child.MarkThisAndChildrenAsUsedInternal(gene);
+			if (axonInputLeft.nerve.isLocal) {
+				// ask local unit where tail is "pointing"
+				GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(axonInputLeft.nerve.inputUnit);
+				if (child != null) {
+					child.MarkThisAndChildrenAsUsed(genotype, geneCell, signalUnit);
+				}
+			} else {
+				Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, axonInputLeft.nerve, genotype);
+				if (childCell != null) {
+					GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(axonInputLeft.nerve.inputUnit);
+					if (child != null) {
+						child.MarkThisAndChildrenAsUsed(genotype, childCell, signalUnit);
+					}
+				}
 			}
 		}
 		if (axonInputRight.valveMode == SignalValveModeEnum.Pass) {
-			GeneSignalUnit child = gene.GetGeneSignalUnit(axonInputRight.nerve.inputUnit);
-			if (child != null) {
-				child.MarkThisAndChildrenAsUsedInternal(gene);
+			if (axonInputRight.nerve.isLocal) {
+				// ask local unit where tail is "pointing"
+				GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(axonInputRight.nerve.inputUnit);
+				if (child != null) {
+					child.MarkThisAndChildrenAsUsed(genotype, geneCell, signalUnit);
+				}
+			} else {
+				Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, axonInputRight.nerve, genotype);
+				if (childCell != null) {
+					GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(axonInputRight.nerve.inputUnit);
+					if (child != null) {
+						child.MarkThisAndChildrenAsUsed(genotype, childCell, signalUnit);
+					}
+				}
 			}
 		}
 	}
 
 	public override List<GeneNerve> GetExternalGeneNerves() {
-		if (!isUsedInternal) { // TODO: take isUsed from outside into account as well
+		if (!isUsed) { // TODO: take isUsed from outside into account as well
 			return null;
 		}
 
