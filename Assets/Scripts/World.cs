@@ -22,7 +22,7 @@ public class World : MonoSingleton<World> {
 	private List<HistoryEvent> historyEvents = new List<HistoryEvent>();
 
 	public Ball ballPrefab;
-	public new void Init() {
+	public new void Initialize() {
 
 		//Instantiate test balls
 		//for (int y = 0; y < 45; y++) {
@@ -45,7 +45,7 @@ public class World : MonoSingleton<World> {
 		//World.instance.life.EvoFixedUpdate(fixedTime);
 
 		// test
-		history.Init();
+		history.Initialize();
 		//terrain.Init();
 		GraphPlotter.instance.history = history;
 	}

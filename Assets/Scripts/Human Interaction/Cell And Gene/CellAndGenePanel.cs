@@ -24,10 +24,6 @@ public class CellAndGenePanel : MonoBehaviour {
 
 	public void Initialize(PhenoGenoEnum mode, bool isAuxiliary) {
 		this.isAuxiliary = isAuxiliary;
-		Initialize(mode);
-	}
-
-	public void Initialize(PhenoGenoEnum mode) {
 		this.mode = mode;
 
 		overvirewPanel.Initialize(mode, this);
@@ -63,10 +59,6 @@ public class CellAndGenePanel : MonoBehaviour {
 		hudSignalArrowHandler.Initialize(mode, this);
 	}
 
-	public PhenoGenoEnum GetMode() {
-		return mode;
-	}
-
 	public void MakeDirty() {
 		isDirty = true;
 
@@ -85,11 +77,10 @@ public class CellAndGenePanel : MonoBehaviour {
 		effectSensorPanel.MakeDirty();
 		buildPriorityPanel.MakeDirty();
 
-		if (gene.isOrigin) {
-			originPanel.MakeDirty();
-		} else {
-			buildPriorityPanel.MakeDirty();
-		}
+		originPanel.isGhost = !gene.isOrigin;
+		originPanel.MakeDirty();
+
+
 
 		if (mode == PhenoGenoEnum.Genotype) {
 			geneNeighboursPanel.MakeDirty();
@@ -190,8 +181,8 @@ public class CellAndGenePanel : MonoBehaviour {
 				return;
 			}
 
-			originPanel.gameObject.SetActive(gene.isOrigin);
-			buildPriorityPanel.gameObject.SetActive(!gene.isOrigin);
+			//originPanel.gameObject.SetActive(gene.isOrigin);
+			//buildPriorityPanel.gameObject.SetActive(!gene.isOrigin);
 
 			isDirty = false;
 		}

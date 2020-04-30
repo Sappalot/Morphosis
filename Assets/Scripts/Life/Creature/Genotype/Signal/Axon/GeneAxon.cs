@@ -115,7 +115,7 @@ public class GeneAxon : GeneSignalUnit {
 		//	return;
 		//}
 
-		isUsed = true;
+		isRooted = true;
 		
 		if (geneCell.gene == null) {
 			return;
@@ -159,7 +159,7 @@ public class GeneAxon : GeneSignalUnit {
 	}
 
 	public override List<GeneNerve> GetExternalGeneNerves() {
-		if (!isUsed) { // TODO: take isUsed from outside into account as well
+		if (!isRooted) { // TODO: take isUsed from outside into account as well
 			return null;
 		}
 

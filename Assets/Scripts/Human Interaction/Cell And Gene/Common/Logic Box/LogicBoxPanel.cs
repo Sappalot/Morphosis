@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class LogicBoxPanel : SignalUnitPanel {
+
 	public Image outputImageLate;
 	public Image outputImageEarly;
 	public Transform bodyPanel;
@@ -42,7 +43,6 @@ public class LogicBoxPanel : SignalUnitPanel {
 			} else if (signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
 				return gene.originDetatchLogicBox;
 			}
-
 
 			return null;
 		}
@@ -118,7 +118,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 	}
 
 	public void OnClickedAddGateRow1() {
-		if (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && affectedGeneLogicBox.TryCreateGate(1, LogicOperatorEnum.And)) {
+		if (!isGhost && mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && affectedGeneLogicBox.TryCreateGate(1, LogicOperatorEnum.And)) {
 			UpdateConnections();
 			MarkAsNewForge();
 			MakeDirty();
@@ -126,7 +126,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 	}
 
 	public void OnClickedAddGateRow2() {
-		if (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && affectedGeneLogicBox.TryCreateGate(2, LogicOperatorEnum.And)) {
+		if (!isGhost && mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && affectedGeneLogicBox.TryCreateGate(2, LogicOperatorEnum.And)) {
 			UpdateConnections();
 			MarkAsNewForge();
 			MakeDirty();
@@ -135,7 +135,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 	public override List<IGeneInput> GetAllGeneInputs() {
 		List<IGeneInput> arrows = new List<IGeneInput>();
-		if (affectedGeneLogicBox.isUsed) {
+		if (affectedGeneLogicBox.isRooted) {
 			for (int i = 0; i < inputRow3.Length; i++) {
 				if (inputRow3[i].affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
 					arrows.Add(inputRow3[i].affectedGeneLogicBoxInput);
@@ -146,25 +146,9 @@ public class LogicBoxPanel : SignalUnitPanel {
 		return arrows;
 	}
 
-	private LogicBoxInputEnum RuntimeLogicBoxInputAfterValve(int inputColumn) {
-		if (inputRow3[inputColumn].affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
-			return LogicBoxInputEnum.BlockedByValve;
-		} else if (inputRow3[inputColumn].affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
-			return LogicBoxInputEnum.VoidInput;
-		} else {
-			if (selectedCell != null) {
-				return selectedCell.GetOutputFromUnit(inputRow3[inputColumn].affectedGeneLogicBoxInput.nerve.inputUnit, inputRow3[inputColumn].affectedGeneLogicBoxInput.nerve.inputUnitSlot) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
-			}
-		}
-		return LogicBoxInputEnum.Error;
-	}
-
 	public void OnClickedOutputButton() { // The arrow, processed late
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-			if (affectedGeneLogicBox != null) {
-				//LogicBoxInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
-				//AxonInputPanel.TryAnswerSetReference(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
-				//MouseAction.instance.actionState = MouseActionStateEnum.free;
+			if (affectedGeneLogicBox != null && !isGhost) {
 
 				AssignNerveInputPanel.instance.TrySetNerveInput(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
 				GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
@@ -182,20 +166,32 @@ public class LogicBoxPanel : SignalUnitPanel {
 				Debug.Log("Update Signal logic box");
 			}
 
+			// ...ghost...
+			gateRow0.isGhost = isGhost;
 			gateRow0.MakeDirty();
 			for (int i = 0; i < gatesRow1.Length; i++) {
+				gatesRow1[i].isGhost = isGhost;
 				gatesRow1[i].MakeDirty();
 			}
 			for (int i = 0; i < gatesRow2.Length; i++) {
+				gatesRow2[i].isGhost = isGhost;
 				gatesRow2[i].MakeDirty();
 			}
 			for (int i = 0; i < inputRow3.Length; i++) {
+				inputRow3[i].isGhost = isGhost;
 				inputRow3[i].MakeDirty();
 			}
 
+			if (isGhost) {
+				outputImageLate.color = ColorScheme.instance.signalGrayedOut;
+				outputImageEarly.color = ColorScheme.instance.signalGrayedOut;
+				return;
+			}
+			// ^ ghost ^
+
 			if (mode == PhenoGenoEnum.Phenotype && cellAndGenePanel.cell != null) {
 				if (affectedGeneLogicBox != null) {
-					if (affectedGeneLogicBox.isUsed) {
+					if (affectedGeneLogicBox.isRooted) {
 						outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputEarlyA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 					} else {
@@ -205,7 +201,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 				}
 			} else {
-				if (affectedGeneLogicBox != null && affectedGeneLogicBox.isUsed) {
+				if (affectedGeneLogicBox != null && affectedGeneLogicBox.isRooted) {
 					outputImageLate.color = ColorScheme.instance.signalOff;
 					outputImageEarly.color = ColorScheme.instance.signalOff;
 				} else {

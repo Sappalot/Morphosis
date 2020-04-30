@@ -66,6 +66,8 @@ public class AxonPanel : SensorPanel {
 	public override void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
 		base.Initialize(mode, SignalUnitEnum.Axon, cellAndGenePanel);
 
+		// enabled for all
+
 		ignoreHumanInput = true;
 		fromOriginOffsetSlider.minValue = 0f;
 		fromOriginOffsetSlider.maxValue = 360f;
@@ -112,7 +114,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public override List<IGeneInput> GetAllGeneInputs() {
-		if (!affectedGeneSensor.isUsed) {
+		if (!affectedGeneSensor.isRooted) {
 			return null;
 		}
 		List<IGeneInput> arrows = new List<IGeneInput>();
@@ -268,7 +270,7 @@ public class AxonPanel : SensorPanel {
 					fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromOriginOffset);
 
 					Color color = Color.white;
-					if (cellAndGenePanel.gene.axon.isUsed) {
+					if (cellAndGenePanel.gene.axon.isRooted) {
 						color = ColorScheme.instance.signalOff;
 					} else {
 						color = ColorScheme.instance.signalUnused;
@@ -290,7 +292,7 @@ public class AxonPanel : SensorPanel {
 						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromOriginOffset);
 					}
 
-					if (cellAndGenePanel.gene.axon.isUsed) {
+					if (cellAndGenePanel.gene.axon.isRooted) {
 						postInputBoxLeft.color = selectedCell.axon.HasSignalPostInputValve(inputLeftPanel.affectedGeneAxonInput) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						postInputBoxRight.color = selectedCell.axon.HasSignalPostInputValve(inputRightPanel.affectedGeneAxonInput) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 

@@ -16,8 +16,8 @@ public class GenePanel : MonoSingleton<GenePanel> {
 		}
 	}
 
-	override public void Init() {
-		cellAndGenePanel.Initialize(PhenoGenoEnum.Genotype);
+	public void Initialize() {
+		cellAndGenePanel.Initialize(PhenoGenoEnum.Genotype, false);
 		MakeDirty();
 	}
 

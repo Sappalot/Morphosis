@@ -19,7 +19,7 @@ public class Axon : SignalUnit {
 
 	public override void ComputeSignalOutput(int deltaTicks) {
 		if (signalUnit == SignalUnitEnum.Axon) { // redundant check ? 
-			if (!hostCell.gene.axon.isUsed) {
+			if (!hostCell.gene.axon.isRooted) {
 				return;
 			}
 

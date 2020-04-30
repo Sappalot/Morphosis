@@ -60,6 +60,20 @@ public class BuildPriorityPanel : MonoBehaviour {
 				buildIndexText.text = string.Format("Build index: {0:F0}", cellAndGenePanel.cell.buildIndex);
 				buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", cellAndGenePanel.cell.gene.buildPriorityBias);
 				buildPriorityText.text = string.Format("Build priority: {0:F1}", cellAndGenePanel.cell.buildPriority);
+				
+				if (cellAndGenePanel.cell.isOrigin) {
+					buildIndexText.text = string.Format("Build index: -");
+					buildPriorityBiasText.text = string.Format("Build priority bias: -");
+					buildPriorityText.text = string.Format("Build priority: -");
+
+					buildIndexText.color = ColorScheme.instance.grayedOut;
+					buildPriorityBiasText.color = ColorScheme.instance.grayedOut;
+					buildPriorityText.color = ColorScheme.instance.grayedOut;
+				} else {
+					buildIndexText.color = ColorScheme.instance.normalText;
+					buildPriorityBiasText.color = ColorScheme.instance.normalText;
+					buildPriorityText.color = ColorScheme.instance.normalText;
+				}
 
 				biasSlider.interactable = false;
 
@@ -76,7 +90,22 @@ public class BuildPriorityPanel : MonoBehaviour {
 					buildPriorityBiasText.text = string.Format("Build priority bias: {0:F1}", cellAndGenePanel.gene.buildPriorityBias);
 					buildPriorityText.text = cellAndGenePanel.cell.gene.buildPriorityBias >= 0 ? string.Format("Build priority: X + {0:F1}", cellAndGenePanel.cell.gene.buildPriorityBias) : string.Format("Build priority: X {0:F1}", cellAndGenePanel.cell.gene.buildPriorityBias);
 				}
-				biasSlider.interactable = CreatureSelectionPanel.instance.hasSoloSelectedThatCanChangeGenome;
+
+				if (cellAndGenePanel.cell.isOrigin) {
+					buildIndexText.text = string.Format("Build index: -");
+					buildPriorityBiasText.text = string.Format("Build priority bias: -");
+					buildPriorityText.text = string.Format("Build priority: -");
+
+					buildIndexText.color = ColorScheme.instance.grayedOut;
+					buildPriorityBiasText.color = ColorScheme.instance.grayedOut;
+					buildPriorityText.color = ColorScheme.instance.grayedOut;
+				} else {
+					buildIndexText.color = ColorScheme.instance.normalText;
+					buildPriorityBiasText.color = ColorScheme.instance.normalText;
+					buildPriorityText.color = ColorScheme.instance.normalText;
+				}
+
+				biasSlider.interactable = CreatureSelectionPanel.instance.hasSoloSelectedThatCanChangeGenome && !cellAndGenePanel.gene.isOrigin;
 
 				biasSlider.value = cellAndGenePanel.gene.buildPriorityBias;
 			}

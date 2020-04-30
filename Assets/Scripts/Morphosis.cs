@@ -26,7 +26,7 @@ public class Morphosis : MonoSingleton<Morphosis> {
 		CellMap.Init();
 
 		// Creature id's will be set from file
-		World.instance.Init(); // Just 1 world, lots of work keeping several instances at once
+		World.instance.Initialize(); // Just 1 world, lots of work keeping several instances at once
 
 		MouseAction.instance.actionState = MouseActionStateEnum.loadingFreezer;
 
@@ -34,6 +34,12 @@ public class Morphosis : MonoSingleton<Morphosis> {
 		ProgressBar.instance.heading.text = "Preparing Morphosis";
 		FreezerData freezerData = Freezer.instance.LoadFreezerData();
 		ProgressBar.instance.ResetForStartup(freezerData.creatureList.Count);
+
+		GenePanel.instance.Initialize();
+		GenePanel.instance.gameObject.SetActive(false);
+
+		CellPanel.instance.Initialize();
+		CellPanel.instance.gameObject.SetActive(false);
 
 		GeneAuxiliaryPanel.instance.Initialize();
 		GeneAuxiliaryPanel.instance.gameObject.SetActive(false);

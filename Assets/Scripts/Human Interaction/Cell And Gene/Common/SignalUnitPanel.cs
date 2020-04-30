@@ -4,6 +4,9 @@ using UnityEngine;
 // a panel that can change genotype and handles signals
 // Me <== (SensorPanel), LogicBoxPnel, AxonPanel
 public abstract class SignalUnitPanel : ComponentPanel {
+	[HideInInspector]
+	public bool isGhost = false;
+
 	public SignalLocations locations = new SignalLocations();
 	public GameObject componentHeaderPanel;
 

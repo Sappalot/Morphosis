@@ -2,9 +2,16 @@
 using UnityEngine.UI;
 
 public class LogicBoxGatePanel : MonoBehaviour {
+	[HideInInspector]
+	public bool isGhost;
+
 	public Text operatorTypeLabel;
 	public Image lockedOverlayImage;
 
+
+	public Image background;
+	public Image bigArrowUp;
+	public Image lockedOverlay;
 	public GameObject buttonOverlay;
 	public Image andButtonImage;
 	public Image orButtonImage;
@@ -63,11 +70,19 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	}
 
 	public void OnPointerEnterArea() {
+		if (isGhost) {
+			return;
+		}
+
 		isMouseHoverng = (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.allowedToChangeGenome && affectedGeneLogicBoxGate.lockness  == LocknessEnum.Unlocked);
 		MakeDirty();
 	}
 
 	public void OnPointerExitArea() {
+		if (isGhost) {
+			return;
+		}
+
 		isMouseHoverng = false;
 		MakeDirty();
 	}
@@ -145,6 +160,24 @@ public class LogicBoxGatePanel : MonoBehaviour {
 				return;
 			}
 
+			// ...ghost ...
+			GetComponent<Image>().enabled = !isGhost;
+			operatorTypeLabel.gameObject.SetActive(!isGhost);
+			background.gameObject.SetActive(!isGhost);
+			bigArrowUp.gameObject.SetActive(!isGhost);
+			lockedOverlay.gameObject.SetActive(!isGhost);
+			if (isGhost) {
+
+				buttonOverlay.SetActive(false);
+
+				foreach (Image i in inputArrows) {
+					i.gameObject.SetActive(false);
+				}
+
+				return;
+			}
+			// ^ ghost ^ 
+
 			if (affectedGeneLogicBoxGate != null) {
 				if (affectedGeneLogicBoxGate.GetTransmittingInputCount() <= 1) {
 					operatorTypeLabel.text = "'" + affectedGeneLogicBoxGate.operatorType.ToString().ToLower() + "'";
@@ -200,9 +233,9 @@ public class LogicBoxGatePanel : MonoBehaviour {
 				Color arrowColor = Color.black;
 				if (mode == PhenoGenoEnum.Genotype) {
 					// render arrows off if entire logic box is off
-					arrowColor = (connectedPart.isTransmittingSignal && motherPanel.affectedGeneLogicBox.isUsed) ? ColorScheme.instance.signalOff : ColorScheme.instance.signalUnused;
+					arrowColor = (connectedPart.isTransmittingSignal && motherPanel.affectedGeneLogicBox.isRooted) ? ColorScheme.instance.signalOff : ColorScheme.instance.signalUnused;
 				} else {
-					if (connectedPart.isTransmittingSignal && motherPanel.affectedGeneLogicBox.isUsed) {
+					if (connectedPart.isTransmittingSignal && motherPanel.affectedGeneLogicBox.isRooted) {
 						if (connectedPart is GeneLogicBoxGate) {
 							arrowColor = LogicBox.HasSignalPostGate((connectedPart as GeneLogicBoxGate), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						} else if (connectedPart is GeneLogicBoxInput) {

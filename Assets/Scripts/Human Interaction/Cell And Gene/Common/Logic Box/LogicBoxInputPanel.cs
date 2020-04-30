@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 // TODO Generalize to just be an input panel for all units
 public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
+	[HideInInspector]
+	public bool isGhost;
+
 	public Image blockButton;
 	public Image passButton;
 	public Image lockedOverlayImage;
@@ -16,7 +19,6 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	private int column;
 	private bool isDirty = false;
 	private bool ignoreSliderMoved = false;
-	private bool isUsed = false;
 
 	public void MakeMotherPanelDirty() {
 		motherPanel.MakeDirty();
@@ -45,7 +47,6 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 		this.mode = mode;
 		this.motherPanel = motherPanel;
 		this.column = column;
-		isUsed = true;
 		this.cellAndGenePanel = cellAndGenePanel;
 	}
 
@@ -87,7 +88,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	}
 
 	public void OnSetReferenceClicked() {
-		if (isUsed && IsUnlocked() && affectedGeneLogicBoxInput.lockness == LocknessEnum.Unlocked && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
+		if (!isGhost && IsUnlocked() && affectedGeneLogicBoxInput.lockness == LocknessEnum.Unlocked && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
 			AssignNerveInputPanel.instance.TryStartNerveAssignation(this, affectedGeneLogicBoxInput.nerve);
 			motherPanel.MakeDirty();
 		}
@@ -130,6 +131,19 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 			}
 			ignoreSliderMoved = true;
 
+			// ...ghost ...
+			
+			if (isGhost) {
+				blockButton.color = ColorScheme.instance.grayedOut;
+				passButton.color = ColorScheme.instance.grayedOut;
+				inputButtonImage.color = ColorScheme.instance.signalGrayedOut;
+				lockedOverlayImage.gameObject.SetActive(false);
+				semiLockedOverlayImage.gameObject.SetActive(false);
+				return;
+			}
+
+			// ^ ghost ^ 
+
 			if (selectedGene == null || affectedGeneLogicBoxInput == null) {
 				isDirty = false;
 				return;
@@ -139,7 +153,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 			passButton.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
 
 			if (mode == PhenoGenoEnum.Genotype) {
-				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block || !motherPanel.affectedGeneLogicBox.isUsed) {
+				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block || !motherPanel.affectedGeneLogicBox.isRooted) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused; // blocked or logic box not used (pretty if they are all of if not used)
 				} else if (affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
 					inputButtonImage.color = Color.magenta; // should never happen
@@ -153,7 +167,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 				lockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked);
 				semiLockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxInput.lockness == LocknessEnum.SemiLocked);
 			} else {
-				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve || !motherPanel.affectedGeneLogicBox.isUsed) {
+				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve || !motherPanel.affectedGeneLogicBox.isRooted) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused;
 				} else if (runtimeOutput == LogicBoxInputEnum.VoidInput) { // should never happen
 					inputButtonImage.color = Color.magenta;

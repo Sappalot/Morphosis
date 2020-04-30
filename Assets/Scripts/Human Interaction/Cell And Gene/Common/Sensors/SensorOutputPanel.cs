@@ -2,6 +2,9 @@
 using UnityEngine.UI;
 
 public class SensorOutputPanel : MonoBehaviour {
+	[HideInInspector]
+	public bool isGhost = false;
+
 	public Image image;
 
 	[HideInInspector]
@@ -27,11 +30,7 @@ public class SensorOutputPanel : MonoBehaviour {
 
 	public void OnClicked() {
 		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-			if (motherPanel != null) {
-				//LogicBoxInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
-				//AxonInputPanel.TryAnswerSetReference(signalUnit, signalUnitSlot);
-				//MouseAction.instance.actionState = MouseActionStateEnum.free;
-
+			if (!isGhost) {
 				AssignNerveInputPanel.instance.TrySetNerveInput(signalUnit, signalUnitSlot);
 				GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
 				MarkAsNewForge();
@@ -58,14 +57,19 @@ public class SensorOutputPanel : MonoBehaviour {
 				Debug.Log("Update Energy Sensor Panel");
 			}
 
+			if (isGhost) {
+				image.color = ColorScheme.instance.signalGrayedOut;
+				return;
+			}
+
 			if (mode == PhenoGenoEnum.Phenotype) {
-				if (motherPanel == null || motherPanel.affectedGeneSensor == null || !motherPanel.affectedGeneSensor.isUsed) {
+				if (motherPanel == null || motherPanel.affectedGeneSensor == null || !motherPanel.affectedGeneSensor.isRooted) {
 					image.color = ColorScheme.instance.signalUnused;
 				} else if (cellAndGenePanel.cell != null) {
 					image.color = selectedCell.GetOutputFromUnit(signalUnit, signalUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
-				if (motherPanel == null || motherPanel.affectedGeneSensor == null || !motherPanel.affectedGeneSensor.isUsed) {
+				if (motherPanel == null || motherPanel.affectedGeneSensor == null || !motherPanel.affectedGeneSensor.isRooted) {
 					image.color = ColorScheme.instance.signalUnused;
 				} else {
 					image.color = ColorScheme.instance.signalOff;

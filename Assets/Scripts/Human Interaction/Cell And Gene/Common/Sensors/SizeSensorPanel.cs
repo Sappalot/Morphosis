@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-// TODO: rename growth sensor panel
+// TODO: rename to growth sensor panel
 public class SizeSensorPanel : SensorPanel {
-	public Text sizeMoreThanSliderLabel;
-	public Text sizeLessThanSliderLabel;
+	public Text sizeMoreThanSliderLabel; // A
+	public Text sizeLessThanSliderLabel; // B
 	public Slider sizeThresholdSlider;
 
-	public Text cantGrowMoreTime;
+	public Text cantGrowMoreTime; // E
 	public Slider cantGrowMoreTimeSlider;
 
 	public void OnSizeThresholdSliderMoved() {
@@ -34,6 +34,10 @@ public class SizeSensorPanel : SensorPanel {
 
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Size Sensor Panel");
+			}
+
+			if (isGhost) {
+				return; // whole settings panel is allready gone, so we dont need to bother with stuff inside it
 			}
 
 			if (CreatureSelectionPanel.instance.hasSoloSelected && gene != null && affectedGeneSensor != null) {

@@ -22,7 +22,7 @@ public class History {
 
 	private RecordStrip[] strips;
 
-	public void Init() {
+	public void Initialize() {
 		strips = new RecordStrip[] {
 			level0,
 			level1,

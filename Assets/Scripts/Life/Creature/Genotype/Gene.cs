@@ -238,7 +238,7 @@ public class Gene {
 		foreach (SignalUnitEnum type in Enum.GetValues(typeof(SignalUnitEnum))) {
 			GeneSignalUnit unit = GetGeneSignalUnit(type);
 			if (unit != null) {
-				unit.isUsed = false;
+				unit.isRooted = false;
 			}
 		}
 	}

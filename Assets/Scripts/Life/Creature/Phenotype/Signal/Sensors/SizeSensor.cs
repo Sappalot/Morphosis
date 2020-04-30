@@ -15,7 +15,7 @@ public class SizeSensor : SignalUnit {
 
 	public override void ComputeSignalOutput(int deltaTicks) {
 		if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
-			if (!hostCell.gene.originSizeSensor.isUsed) {
+			if (!hostCell.gene.originSizeSensor.isRooted) {
 				return;
 			}
 

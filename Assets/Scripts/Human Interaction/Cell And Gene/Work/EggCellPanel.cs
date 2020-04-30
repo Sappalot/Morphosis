@@ -6,17 +6,41 @@ public class EggCellPanel : ComponentPanel {
 	public Button fertilizeButton;
 
 	public LogicBoxPanel fertilizeLogicBoxPanel;
+	public LogicBoxPanel dummyLogicBoxBPanel;
 	public EnergySensorPanel fertilizeEnergySensorPanel;
 	public AttachmentSensorPanel fertilizeAttachmentSensorPanel;
+	public SensorPanel dummySensorCPanel;
+	public SensorPanel dummySensorDPanel;
+
 
 	public override void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
+		base.Initialize(mode, cellAndGenePanel);
+
+		// logic box A
 		fertilizeLogicBoxPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxA, cellAndGenePanel);
+		fertilizeLogicBoxPanel.isGhost = false;
+
+		// logic box B
+		dummyLogicBoxBPanel.Initialize(mode, SignalUnitEnum.WorkLogicBoxB, cellAndGenePanel);
+		dummyLogicBoxBPanel.isGhost = true;
+
+		// sensor A
 		fertilizeEnergySensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorA, cellAndGenePanel);
+		fertilizeEnergySensorPanel.isGhost = false;
+
+		// sensor B
 		fertilizeAttachmentSensorPanel.Initialize(mode, SignalUnitEnum.WorkSensorB, cellAndGenePanel);
+		fertilizeAttachmentSensorPanel.isGhost = false;
+
+		// sensor C
+		dummySensorCPanel.Initialize(mode, SignalUnitEnum.WorkSensorC, cellAndGenePanel);
+		dummySensorCPanel.isGhost = true;
+
+		// sensor D
+		dummySensorDPanel.Initialize(mode, SignalUnitEnum.WorkSensorD, cellAndGenePanel);
+		dummySensorDPanel.isGhost = true;
 
 		MakeDirty();
-
-		base.Initialize(mode, cellAndGenePanel);
 	}
 
 	public override void MakeDirty() {

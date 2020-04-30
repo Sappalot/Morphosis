@@ -197,7 +197,7 @@ public class GeneLogicBox : GeneSignalUnit {
 		//	return;
 		//}
 
-		isUsed = true;
+		isRooted = true;
 
 		if (geneCell == null || geneCell.gene == null) {
 			return;
@@ -224,7 +224,7 @@ public class GeneLogicBox : GeneSignalUnit {
 	}
 
 	public override List<GeneNerve> GetExternalGeneNerves() {
-		if (!isUsed) { // TODO: take isUsed from outside into account as well
+		if (!isRooted) { // TODO: take isUsed from outside into account as well
 			return null;
 		}
 
