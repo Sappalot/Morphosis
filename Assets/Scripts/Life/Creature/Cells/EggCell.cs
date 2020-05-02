@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor.Profiling.Memory.Experimental;
+using UnityEngine;
 
 public class EggCell : Cell {
 
@@ -34,15 +35,16 @@ public class EggCell : Cell {
 		fertilizeAttachmentSensor.ComputeSignalOutput(deltaTicks);
 	}
 
-	public override bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
-		if (outputUnit == SignalUnitEnum.WorkLogicBoxA) {
-			return fertilizeLogicBox.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.WorkSensorA) {
-			return fertilizeEnergySensor.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.WorkSensorB) {
-			return fertilizeAttachmentSensor.GetOutput(outputUnitSlot);
+	public override SignalUnit GetSignalUnit(SignalUnitEnum signalUnit) {
+		if (signalUnit == SignalUnitEnum.WorkLogicBoxA) {
+			return fertilizeLogicBox;
+		} else if (signalUnit == SignalUnitEnum.WorkSensorA) {
+			return fertilizeEnergySensor;
+		} else if (signalUnit == SignalUnitEnum.WorkSensorB) {
+			return fertilizeAttachmentSensor;
 		}
-		return base.GetOutputFromUnit(outputUnit, outputUnitSlot); //Couldnt find output unith here in egg work, 
+
+		return base.GetSignalUnit(signalUnit);
 	}
 
 	// ^ Signal ^

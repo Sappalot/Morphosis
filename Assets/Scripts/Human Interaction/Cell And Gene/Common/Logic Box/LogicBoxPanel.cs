@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class LogicBoxPanel : SignalUnitPanel {
 
-	public Image outputImageLate;
 	public Image outputImageEarly;
 	public Transform bodyPanel;
 
@@ -146,27 +145,15 @@ public class LogicBoxPanel : SignalUnitPanel {
 		return arrows;
 	}
 
-	public void OnClickedOutputButton() { // The arrow, processed late
-		if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-			if (affectedGeneLogicBox != null && !isGhost) {
-
-				AssignNerveInputPanel.instance.TrySetNerveInput(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA);
-				GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
-				MarkAsNewForge();
-			} else {
-				Debug.Log("Can't connect a nerve to a ghost output");
-				Audio.instance.ActionDenied(1f);
-			}
-		}
-	}
-
-	private void Update() {
+	public override void Update() {
 		if (isDirty) {
+			base.Update();
+
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Signal logic box");
 			}
 
-			// ...ghost...
+			//...ghost...
 			gateRow0.isGhost = isGhost;
 			gateRow0.MakeDirty();
 			for (int i = 0; i < gatesRow1.Length; i++) {
@@ -183,7 +170,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 			}
 
 			if (isGhost) {
-				outputImageLate.color = ColorScheme.instance.signalGhost;
+				//outputImageLate.color = ColorScheme.instance.signalGhost;
 				outputImageEarly.color = ColorScheme.instance.signalGhost;
 				return;
 			}
@@ -192,20 +179,20 @@ public class LogicBoxPanel : SignalUnitPanel {
 			if (mode == PhenoGenoEnum.Phenotype && cellAndGenePanel.cell != null) {
 				if (affectedGeneLogicBox != null) {
 					if (affectedGeneLogicBox.isRooted) {
-						outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+						//outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputEarlyA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 					} else {
-						outputImageLate.color = ColorScheme.instance.signalUnused;
+						//outputImageLate.color = ColorScheme.instance.signalUnused;
 						outputImageEarly.color = ColorScheme.instance.signalUnused;
 					}
 
 				}
 			} else {
 				if (affectedGeneLogicBox != null && affectedGeneLogicBox.isRooted) {
-					outputImageLate.color = ColorScheme.instance.signalOff;
+					//outputImageLate.color = ColorScheme.instance.signalOff;
 					outputImageEarly.color = ColorScheme.instance.signalOff;
 				} else {
-					outputImageLate.color = ColorScheme.instance.signalUnused;
+					//outputImageLate.color = ColorScheme.instance.signalUnused;
 					outputImageEarly.color = ColorScheme.instance.signalUnused;
 				}
 			}

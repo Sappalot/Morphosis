@@ -176,25 +176,30 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public virtual bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
+	public bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
 		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for
-		if (outputUnit == SignalUnitEnum.ConstantSensor) {
-			return constantSensor.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.Axon) {
-			return axon.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.DendritesLogicBox) {
-			return dendritesLogicBox.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.EnergySensor) {
-			return energySensor.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.EffectSensor) {
-			return effectSensor.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.OriginDetatchLogicBox) {
-			return originDetatchLogicBox.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.OriginSizeSensor) {
-			return originSizeSensor.GetOutput(outputUnitSlot);
+		return GetSignalUnit(outputUnit).GetOutput(outputUnitSlot);
+	}
+
+	// overrides in each cell for work signalUnits
+	public virtual SignalUnit GetSignalUnit(SignalUnitEnum signalUnit) {
+		if (signalUnit == SignalUnitEnum.ConstantSensor) {
+			return constantSensor;
+		} else if (signalUnit == SignalUnitEnum.Axon) {
+			return axon;
+		} else if (signalUnit == SignalUnitEnum.DendritesLogicBox) {
+			return dendritesLogicBox;
+		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
+			return energySensor;
+		} else if (signalUnit == SignalUnitEnum.EffectSensor) {
+			return effectSensor;
+		} else if (signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
+			return originDetatchLogicBox;
+		} else if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
+			return originSizeSensor;
 		}
 
-		return false;
+		return null;
 	}
 
 	// ^ Signal ^

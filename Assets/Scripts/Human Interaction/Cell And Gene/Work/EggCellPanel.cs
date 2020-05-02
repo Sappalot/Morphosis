@@ -9,8 +9,8 @@ public class EggCellPanel : ComponentPanel {
 	public LogicBoxPanel dummyLogicBoxBPanel;
 	public EnergySensorPanel fertilizeEnergySensorPanel;
 	public AttachmentSensorPanel fertilizeAttachmentSensorPanel;
-	public SensorPanel dummySensorCPanel;
-	public SensorPanel dummySensorDPanel;
+	public SignalUnitPanel dummySensorCPanel;
+	public SignalUnitPanel dummySensorDPanel;
 
 
 	public override void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {

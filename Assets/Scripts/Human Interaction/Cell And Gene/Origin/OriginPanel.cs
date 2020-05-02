@@ -118,6 +118,8 @@ public class OriginPanel : ComponentPanel {
 				pulseFrequenzySliderText.color = ColorScheme.instance.grayedOut;
 
 				detatchLogicBoxPanel.outputText = "Detatch from mother";
+
+				isDirty = false;
 				return;
 			}
 			// ^ ghost ^

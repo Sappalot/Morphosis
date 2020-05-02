@@ -6,11 +6,11 @@ public class CellAndGenePanel : MonoBehaviour {
 
 	public OverviewPanel overvirewPanel;
 	public WorkPanel workPanel;
-	public SensorPanel constantSensorPanel;
+	public ConstantSensorPanel constantSensorPanel;
 	public AxonPanel axonPanel;
 	public LogicBoxPanel dendritesLogicBoxPanel;
-	public SensorPanel energySensorPanel;
-	public SensorPanel effectSensorPanel;
+	public EnergySensorPanel energySensorPanel;
+	public EffectSensorPanel effectSensorPanel;
 	public BuildPriorityPanel buildPriorityPanel;
 	public OriginPanel originPanel;
 	public GeneNeighboursPanel geneNeighboursPanel;

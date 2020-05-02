@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class AttachmentSensorPanel : SensorPanel {
+public class AttachmentSensorPanel : SignalUnitPanel {
 	public override void Update() {
 		if (isDirty) {
 			base.Update();

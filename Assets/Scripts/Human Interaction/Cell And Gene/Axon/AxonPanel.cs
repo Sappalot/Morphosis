@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AxonPanel : SensorPanel {
+public class AxonPanel : SignalUnitPanel {
 	public Toggle enabledToggle;
 
 	// view pulse
@@ -113,7 +113,7 @@ public class AxonPanel : SensorPanel {
 	}
 
 	public override List<IGeneInput> GetAllGeneInputs() {
-		if (!affectedGeneSensor.isRooted) {
+		if (!affectedGeneSignalUnit.isRooted) {
 			return null;
 		}
 		List<IGeneInput> arrows = new List<IGeneInput>();

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class EffectSensorPanel : SensorPanel {
+public class EffectSensorPanel : SignalUnitPanel {
 
 	public Text cellEffectMoreThanLabel;
 	public Text cellEffectLessThanLabel;
@@ -33,7 +33,7 @@ public class EffectSensorPanel : SensorPanel {
 			return;
 		}
 
-		(affectedGeneSensor as GeneEffectSensor).effectMeassure = (EffectMeassureEnum)effectMeasuredDropdown.value;
+		(affectedGeneSignalUnit as GeneEffectSensor).effectMeassure = (EffectMeassureEnum)effectMeasuredDropdown.value;
 
 		OnGenomeChanged();
 	}
@@ -43,7 +43,7 @@ public class EffectSensorPanel : SensorPanel {
 			return;
 		}
 
-		(affectedGeneSensor as GeneEffectSensor).usedAreaRadius = (int)areaRadiusSlider.value;
+		(affectedGeneSignalUnit as GeneEffectSensor).usedAreaRadius = (int)areaRadiusSlider.value;
 
 		OnGenomeChanged();
 	}
@@ -53,7 +53,7 @@ public class EffectSensorPanel : SensorPanel {
 			return;
 		}
 
-		(affectedGeneSensor as GeneEffectSensor).usedThreshold = effectThresholdSlider.value;
+		(affectedGeneSignalUnit as GeneEffectSensor).usedThreshold = effectThresholdSlider.value;
 
 		OnGenomeChanged();
 	}
@@ -69,26 +69,26 @@ public class EffectSensorPanel : SensorPanel {
 
 			effectMeasuredDropdown.interactable = IsUnlocked();
 
-			if (gene != null && affectedGeneSensor != null) {
+			if (gene != null && affectedGeneSignalUnit != null) {
 				ignoreHumanInput = true;
 
-				effectMeasuredDropdown.value = (int)(affectedGeneSensor as GeneEffectSensor).effectMeassure;
+				effectMeasuredDropdown.value = (int)(affectedGeneSignalUnit as GeneEffectSensor).effectMeassure;
 
-				cellEffectMoreThanLabel.text = string.Format("Cl. P ≥ {0:F1} W", (affectedGeneSensor as GeneEffectSensor).usedThreshold);
-				cellEffectLessThanLabel.text = string.Format("Cl. P < {0:F1} W", (affectedGeneSensor as GeneEffectSensor).usedThreshold);
+				cellEffectMoreThanLabel.text = string.Format("Cl. P ≥ {0:F1} W", (affectedGeneSignalUnit as GeneEffectSensor).usedThreshold);
+				cellEffectLessThanLabel.text = string.Format("Cl. P < {0:F1} W", (affectedGeneSignalUnit as GeneEffectSensor).usedThreshold);
 
-				areaEffectMoreThanLabel.text = string.Format("Hx. P ≥ {0:F1} W", (affectedGeneSensor as GeneEffectSensor).usedThreshold);
-				areaEffectLessThanLabel.text = string.Format("Hx. P < {0:F1} W", (affectedGeneSensor as GeneEffectSensor).usedThreshold);
+				areaEffectMoreThanLabel.text = string.Format("Hx. P ≥ {0:F1} W", (affectedGeneSignalUnit as GeneEffectSensor).usedThreshold);
+				areaEffectLessThanLabel.text = string.Format("Hx. P < {0:F1} W", (affectedGeneSignalUnit as GeneEffectSensor).usedThreshold);
 
-				creatureEffectMoreThanLabel.text = string.Format("Ct. P ≥ {0:F1} W", (affectedGeneSensor as GeneEffectSensor).usedThreshold);
-				creatureEffectLessThanLabel.text = string.Format("Ct. P < {0:F1} W", (affectedGeneSensor as GeneEffectSensor).usedThreshold);
+				creatureEffectMoreThanLabel.text = string.Format("Ct. P ≥ {0:F1} W", (affectedGeneSignalUnit as GeneEffectSensor).usedThreshold);
+				creatureEffectLessThanLabel.text = string.Format("Ct. P < {0:F1} W", (affectedGeneSignalUnit as GeneEffectSensor).usedThreshold);
 
-				areaRadiusSliderLabel.text = string.Format("Hexagon radius: {0:F0} m", (affectedGeneSensor as GeneEffectSensor).usedAreaRadius);
+				areaRadiusSliderLabel.text = string.Format("Hexagon radius: {0:F0} m", (affectedGeneSignalUnit as GeneEffectSensor).usedAreaRadius);
 
-				areaRadiusSlider.value = (affectedGeneSensor as GeneEffectSensor).usedAreaRadius;
+				areaRadiusSlider.value = (affectedGeneSignalUnit as GeneEffectSensor).usedAreaRadius;
 				areaRadiusSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
-				effectThresholdSlider.value = (affectedGeneSensor as GeneEffectSensor).usedThreshold;
+				effectThresholdSlider.value = (affectedGeneSignalUnit as GeneEffectSensor).usedThreshold;
 				effectThresholdSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
 				ignoreHumanInput = false;

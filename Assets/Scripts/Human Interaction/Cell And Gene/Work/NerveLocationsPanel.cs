@@ -3,8 +3,8 @@
 public class NerveLocationsPanel : MonoBehaviour {
 	public LogicBoxPanel logicBoxA;
 	public LogicBoxPanel logicBoxB;
-	public SensorPanel sensorA;
-	public SensorPanel sensorB;
-	public SensorPanel sensorC;
-	public SensorPanel sensorD;
+	public SignalUnitPanel sensorA;
+	public SignalUnitPanel sensorB;
+	public SignalUnitPanel sensorC;
+	public SignalUnitPanel sensorD;
 }

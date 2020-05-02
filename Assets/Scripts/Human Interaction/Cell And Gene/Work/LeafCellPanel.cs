@@ -8,10 +8,10 @@ public class LeafCellPanel : ComponentPanel {
 
 	public LogicBoxPanel dummyLogicBoxAPanel;
 	public LogicBoxPanel dummyLogicBoxBPanel;
-	public SensorPanel dummySensorAPanel;
-	public SensorPanel dummySensorBPanel;
-	public SensorPanel dummySensorCPanel;
-	public SensorPanel dummySensorDPanel;
+	public SignalUnitPanel dummySensorAPanel;
+	public SignalUnitPanel dummySensorBPanel;
+	public SignalUnitPanel dummySensorCPanel;
+	public SignalUnitPanel dummySensorDPanel;
 
 	public override void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
 		base.Initialize(mode, cellAndGenePanel);

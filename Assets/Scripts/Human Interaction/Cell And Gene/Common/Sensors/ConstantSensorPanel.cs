@@ -1,3 +1,3 @@
-﻿public class ConstantSensorPanel : SensorPanel {
+﻿public class ConstantSensorPanel : SignalUnitPanel {
 
 }

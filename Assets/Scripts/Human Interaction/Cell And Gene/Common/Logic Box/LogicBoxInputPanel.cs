@@ -59,7 +59,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	}
 
 	public void OnBlockClicked() {
-		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked || ignoreSliderMoved) {
+		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput == null || affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked || ignoreSliderMoved) {
 			return;
 		}
 		affectedGeneLogicBoxInput.valveMode = SignalValveModeEnum.Block;
@@ -73,7 +73,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	}
 
 	public void OnPassClicked() {
-		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked || ignoreSliderMoved) {
+		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput == null || affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked || ignoreSliderMoved) {
 			return;
 		}
 		affectedGeneLogicBoxInput.valveMode = SignalValveModeEnum.Pass;
