@@ -24,6 +24,11 @@ public abstract class ComponentPanel : MonoBehaviour {
 		this.cellAndGenePanel = cellAndGenePanel;
 	}
 
+	// new
+	
+
+
+	// old
 	// not pretty :/ try to merge into one input
 	public virtual List<IGeneInput> GetAllGeneInputs() {
 		return null;

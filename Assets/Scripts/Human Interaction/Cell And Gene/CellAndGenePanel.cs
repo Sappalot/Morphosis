@@ -90,6 +90,16 @@ public class CellAndGenePanel : MonoBehaviour {
 		hudSignalArrowHandler.MakeDirtySignal();
 	}
 
+	// new
+	public List<Nerve> GetAllNerves() {
+		List<Nerve> nerveList = new List<Nerve>();
+		
+
+
+		return nerveList;
+	}
+
+	// old
 	public List<IGeneInput> GetAllGeneInputs() {
 		List<IGeneInput> inputList = new List<IGeneInput>();
 		

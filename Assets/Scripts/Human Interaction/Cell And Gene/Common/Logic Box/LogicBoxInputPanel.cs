@@ -95,28 +95,28 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	}
 
 	public void TrySetNerveInputLocally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
-		affectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
-		affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
+		affectedGeneLogicBoxInput.nerve.tailUnitEnum = inputUnit;
+		affectedGeneLogicBoxInput.nerve.tailUnitSlotEnum = inputUnitSlot;
 		affectedGeneLogicBoxInput.nerve.nerveVector = null;
 	}
 
 	public void TrySetNerveInputExternally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, Vector2i nerveVectorLocal) {
-		affectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
-		affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
+		affectedGeneLogicBoxInput.nerve.tailUnitEnum = inputUnit;
+		affectedGeneLogicBoxInput.nerve.tailUnitSlotEnum = inputUnitSlot;
 		affectedGeneLogicBoxInput.nerve.nerveVector = nerveVectorLocal;
 	}
 
 	public void TrySetNerve(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot, Vector2i nerveVector) {
-		affectedGeneLogicBoxInput.nerve.inputUnit = inputUnit;
-		affectedGeneLogicBoxInput.nerve.inputUnitSlot = inputUnitSlot;
-		affectedGeneLogicBoxInput.nerve.outputUnit = outputUnit;
-		affectedGeneLogicBoxInput.nerve.outputUnitSlot = outputUnitSlot;
+		affectedGeneLogicBoxInput.nerve.tailUnitEnum = inputUnit;
+		affectedGeneLogicBoxInput.nerve.tailUnitSlotEnum = inputUnitSlot;
+		affectedGeneLogicBoxInput.nerve.headUnitEnum = outputUnit;
+		affectedGeneLogicBoxInput.nerve.headUnitSlotEnum = outputUnitSlot;
 		affectedGeneLogicBoxInput.nerve.nerveVector = nerveVector;
 	}
 
 	// Used to only display input vectors
 	public void ShowNerveInputExternally(Vector2i nerveVectorLocal) {
-		affectedGeneLogicBoxInput.nerve.inputUnit = SignalUnitEnum.Void;
+		affectedGeneLogicBoxInput.nerve.tailUnitEnum = SignalUnitEnum.Void;
 		affectedGeneLogicBoxInput.nerve.nerveVector = nerveVectorLocal;
 	}
 
@@ -155,7 +155,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 			if (mode == PhenoGenoEnum.Genotype) {
 				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block || !motherPanel.affectedGeneLogicBox.isRooted) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused; // blocked or logic box not used (pretty if they are all of if not used)
-				} else if (affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
+				} else if (affectedGeneLogicBoxInput.nerve.tailUnitEnum == SignalUnitEnum.Void) {
 					inputButtonImage.color = Color.magenta; // should never happen
 				} else {
 					inputButtonImage.color = ColorScheme.instance.signalOff; // we have a chance of an ON signal
@@ -192,11 +192,11 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 			if (affectedGeneLogicBoxInput != null) {
 				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
 					return LogicBoxInputEnum.BlockedByValve;
-				} else if (affectedGeneLogicBoxInput.nerve.inputUnit == SignalUnitEnum.Void) {
+				} else if (affectedGeneLogicBoxInput.nerve.tailUnitEnum == SignalUnitEnum.Void) {
 					return LogicBoxInputEnum.VoidInput;
 				} else {
 					if (selectedCell != null) {
-						return selectedCell.GetOutputFromUnit(affectedGeneLogicBoxInput.nerve.inputUnit, affectedGeneLogicBoxInput.nerve.inputUnitSlot) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
+						return selectedCell.GetOutputFromUnit(affectedGeneLogicBoxInput.nerve.tailUnitEnum, affectedGeneLogicBoxInput.nerve.tailUnitSlotEnum) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
 					}
 				}
 			}

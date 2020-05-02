@@ -1,4 +1,5 @@
-﻿using UnityEditor.Profiling.Memory.Experimental;
+﻿using System.Collections.Generic;
+using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
 
 public class EggCell : Cell {
@@ -20,10 +21,63 @@ public class EggCell : Cell {
 		fertilizeLogicBox.FeedSignal();
 	}
 
-	public override void UpdateSignalConnections() {
-		base.UpdateSignalConnections();
-		fertilizeLogicBox.UpdateSignalConnections();
-		fertilizeEnergySensor.UpdateSignalConnections();
+	public override void PreUpdateNervesGenotype() {
+		base.PreUpdateNervesGenotype();
+		fertilizeLogicBox.PreUpdateNervesGenotype();
+		//fertilizeEnergySensor.PreUpdateNervesGenotype();
+		//fertilizeAttachmentSensor.PreUpdateNervesGenotype();
+	}
+
+	public override void UpdateInputNervesGenotype(Genotype genotype) {
+		base.UpdateInputNervesGenotype(genotype);
+		fertilizeLogicBox.UpdateInputNervesGenotype(genotype);
+		//fertilizeEnergySensor.UpdateInputNervesGenotype();
+		//fertilizeAttachmentSensor.UpdateInputNervesGenotype();
+	}
+
+	public override void UpdateConnectionsNervesGenotype(Genotype genotype) {
+		base.UpdateConnectionsNervesGenotype(genotype);
+		fertilizeLogicBox.UpdateConnectionsNervesGenotype(genotype); // root
+
+	}
+
+	public override List<Nerve> GetAllNervesGenotype() {
+		List<Nerve> nerves = new List<Nerve>();
+		List<Nerve> baseNerves = base.GetAllNervesGenotype();
+		if (baseNerves != null) {
+			nerves.AddRange(baseNerves);
+		}
+		nerves.AddRange(fertilizeLogicBox.GetAllNervesGenotype());
+		// TODO: more of them
+		return nerves;
+	}
+
+	//--
+
+	public override void PreUpdateNervesPhenotype() {
+
+	}
+
+	public override void UpdateInputNervesPhenotype(Phenotype phenotype) {
+
+	}
+
+	public override void UpdateConnectionsNervesPhenotype(Phenotype phenotype) {
+
+	}
+
+	public override List<Nerve> GetAllNervesPhenotype() {
+		return null;
+	}
+
+	public override void UpdateNervesPhenotype() {
+		base.UpdateNervesPhenotype();
+
+		fertilizeLogicBox.ReachOutNervesPhenotype();
+
+
+		fertilizeEnergySensor.ReachOutNervesPhenotype();
+		fertilizeAttachmentSensor.ReachOutNervesPhenotype();
 	}
 
 	public override void ComputeSignalOutputs(int deltaTicks) {

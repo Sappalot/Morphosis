@@ -32,8 +32,8 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 		rightFlank = GetFlankRightOfColumn(column);
 
 		m_nerve = new GeneNerve(this.genotypeDirtyfy);
-		nerve.outputUnit = signalUnit; // me
-		nerve.outputUnitSlot = (SignalUnitSlotEnum)column; // me
+		nerve.headUnitEnum = signalUnit; // me
+		nerve.headUnitSlotEnum = (SignalUnitSlotEnum)column; // me
 	}
 
 	public int column {

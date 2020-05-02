@@ -34,8 +34,8 @@ public class GeneLogicBox : GeneSignalUnit {
 
 	public void ConnectAllInputInputTo(SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
 		for (int i = 0; i < columnCount; i++) {
-			inputRow3[i].nerve.inputUnit = signalUnit;
-			inputRow3[i].nerve.inputUnitSlot = signalUnitSlot;
+			inputRow3[i].nerve.tailUnitEnum = signalUnit;
+			inputRow3[i].nerve.tailUnitSlotEnum = signalUnitSlot;
 		}
 		UpdateConnections();
 	}
@@ -63,8 +63,8 @@ public class GeneLogicBox : GeneSignalUnit {
 	}
 
 	public void ConnectInputTo(int column, SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
-		inputRow3[column].nerve.inputUnit = signalUnit;
-		inputRow3[column].nerve.inputUnitSlot = signalUnitSlot;
+		inputRow3[column].nerve.tailUnitEnum = signalUnit;
+		inputRow3[column].nerve.tailUnitSlotEnum = signalUnitSlot;
 		UpdateConnections();
 	}
 
@@ -206,14 +206,14 @@ public class GeneLogicBox : GeneSignalUnit {
 		foreach (GeneLogicBoxInput input3 in inputRow3) {
 			if (input3.valveMode == SignalValveModeEnum.Pass) {
 				if (input3.nerve.isLocal) {
-					GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(input3.nerve.inputUnit);
+					GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(input3.nerve.tailUnitEnum);
 					if (child != null) {
 						child.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
 					}
 				} else {
 					Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, input3.nerve, genotype);
 					if (childCell != null) {
-						GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(input3.nerve.inputUnit);
+						GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(input3.nerve.tailUnitEnum);
 						if (child != null) {
 							child.MarkThisAndChildrenAsRooted(genotype, childCell, signalUnit);
 						}

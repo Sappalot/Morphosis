@@ -37,6 +37,28 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 		}
 	}
 
+	// ... Signal ...
+	private void UpdateNerves() {
+		// clear
+		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
+			geneCellListIndexSorted[index].PreUpdateNervesGenotype();
+		}
+
+		// reach out
+		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
+			geneCellListIndexSorted[index].UpdateInputNervesGenotype(this);
+		}
+
+		// root them
+		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
+			geneCellListIndexSorted[index].UpdateConnectionsNervesGenotype(this);
+		}
+
+		//
+	}
+
+	// ^ Signal ^
+
 	public void Initialize() {
 		// This is the only place where the genes are made
 		// When we want to change the creature, we hchange its genes 
@@ -446,16 +468,16 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 
 	public bool TryUpdateInterGeneCells() {
 		if (isInterGeneCellDirty) {
-			
-			// TODO: Update signal connection web, via GeneCells instead
+
+			UpdateNerves();
 
 			foreach (Gene gene in genes) {
 				gene.PreUpdateInterGeneCell();
 			}
 
-			foreach (Gene gene in genes) {
-				gene.UpdateInterGeneCell(this);
-			}
+			//foreach (Gene gene in genes) {
+			//	gene.UpdateInterGeneCell(this);
+			//}
 
 			nerveArrows.GenerateGenotype(this);
 

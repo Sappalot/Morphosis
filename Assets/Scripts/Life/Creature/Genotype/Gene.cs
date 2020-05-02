@@ -237,11 +237,12 @@ public class Gene {
 	}
 
 	// TODO: Move to web
+	// 
 	public void PreUpdateInterGeneCell() {
 		foreach (SignalUnitEnum type in Enum.GetValues(typeof(SignalUnitEnum))) {
 			GeneSignalUnit unit = GetGeneSignalUnit(type);
 			if (unit != null) {
-				unit.isRooted = false;
+				unit.isRooted = true; // just set to tru for now so everything seems rooted/ is visible
 			}
 		}
 	}

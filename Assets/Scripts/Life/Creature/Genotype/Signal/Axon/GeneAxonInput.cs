@@ -32,8 +32,8 @@ public class GeneAxonInput : IGeneInput {
 	public GeneAxonInput(int column, SignalUnitEnum signalUnit, IGenotypeDirtyfy genotypeDirtyfy) {
 		this.genotypeDirtyfy = genotypeDirtyfy;
 		m_nerve = new GeneNerve(genotypeDirtyfy);
-		nerve.outputUnit = signalUnit;
-		nerve.outputUnitSlot = (SignalUnitSlotEnum)column;
+		nerve.headUnitEnum = signalUnit;
+		nerve.headUnitSlotEnum = (SignalUnitSlotEnum)column;
 	}
 
 	public void Defaultify() {

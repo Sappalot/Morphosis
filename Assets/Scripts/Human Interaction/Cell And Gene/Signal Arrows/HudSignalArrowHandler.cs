@@ -43,31 +43,51 @@ public class HudSignalArrowHandler : MonoBehaviour {
 				return;
 			}
 
-			// Input internal and external (signal from other into one of my inputs)
-			List<IGeneInput> geneInputList = cellAndGenePanel.GetAllGeneInputs();
+			List<Nerve> nerveList = null;
+			
+			if (mode == PhenoGenoEnum.Genotype) {
+				List<Cell> geneCells = CreatureSelectionPanel.instance.soloSelected.genotype.GetGeneCellsWithGene(selectedGene);
+				if (geneCells.Count != 1) {
+					isDirtyConnections = false;
+					return;
+				}
+
+				nerveList = geneCells[0].GetAllNervesGenotype();
+			} else {
+				// phenotype
+				nerveList = selectedCell.GetAllNervesPhenotype();
+
+			}
+
+
+			if (nerveList == null) {
+				isDirtyConnections = false;
+				return;
+			}
+
 
 			foreach (HudSignalArrow arrow in arrowList) {
 				hudSignalArrowPool.Recycle(arrow);
 			}
 			arrowList.Clear();
 
-			foreach (IGeneInput geneInput in geneInputList) {
-				if (geneInput.nerve.inputUnit != SignalUnitEnum.Void) {
+			foreach (Nerve nerve in nerveList) {
+				if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeListensToTargetLocal || nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeListensToTargetExternal) {
 					HudSignalArrow arrow = hudSignalArrowPool.Borrow();
 					arrow.gameObject.SetActive(true);
-					
-					arrow.inputUnit = geneInput.nerve.inputUnit;
-					arrow.inputUnitSlot = geneInput.nerve.inputUnitSlot;
-					arrow.outputUnit = geneInput.nerve.outputUnit;
-					arrow.outputUnitSlot = geneInput.nerve.outputUnitSlot;
 
-					Vector2 head = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.outputUnit, geneInput.nerve.outputUnitSlot);
+					arrow.headUnit = nerve.headSignalUnitEnum;
+					arrow.headUnitSlot = nerve.headSignalUnitSlotEnum;
+					arrow.tailUnit = nerve.tailSignalUnitEnum;
+					arrow.tailUnitSlot = nerve.tailSignalUnitSlotEnum;
+
+					Vector2 head = cellAndGenePanel.TotalPanelOffset(nerve.headSignalUnitEnum, nerve.headSignalUnitSlotEnum);
 
 					Vector2 tail;
-					if (geneInput.nerve.nerveVector == null || geneInput.nerve.nerveVector == Vector2i.zero) {
+					if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeListensToTargetLocal) {
 						// Local 
-						tail = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.inputUnit, geneInput.nerve.inputUnitSlot);
-					} else { 
+						tail = cellAndGenePanel.TotalPanelOffset(nerve.tailSignalUnitEnum, nerve.tailSignalUnitSlotEnum);
+					} else {
 						// External (short arrow, pointing up, with head at input )
 						tail = head + Vector2.down * 30f;
 					}
@@ -79,10 +99,55 @@ public class HudSignalArrowHandler : MonoBehaviour {
 				}
 			}
 
+			
+
 			// Outputs External = signal from me affecting other geneCell from one of my outputs
 			// (short arrow, pointing up, with tail at one of my output)
 
 			isDirtyConnections = false;
+
+			// Old shit.....
+
+			//// Input internal and external (signal from other into one of my inputs)
+			//List<IGeneInput> geneInputList = cellAndGenePanel.GetAllGeneInputs();
+
+			//foreach (HudSignalArrow arrow in arrowList) {
+			//	hudSignalArrowPool.Recycle(arrow);
+			//}
+			//arrowList.Clear();
+
+			//foreach (IGeneInput geneInput in geneInputList) {
+			//	if (geneInput.nerve.inputUnitEnum != SignalUnitEnum.Void) {
+			//		HudSignalArrow arrow = hudSignalArrowPool.Borrow();
+			//		arrow.gameObject.SetActive(true);
+
+			//		arrow.inputUnit = geneInput.nerve.inputUnitEnum;
+			//		arrow.inputUnitSlot = geneInput.nerve.inputUnitSlotEnum;
+			//		arrow.outputUnit = geneInput.nerve.outputUnit;
+			//		arrow.outputUnitSlot = geneInput.nerve.outputUnitSlot;
+
+			//		Vector2 head = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.outputUnit, geneInput.nerve.outputUnitSlot);
+
+			//		Vector2 tail;
+			//		if (geneInput.nerve.nerveVector == null || geneInput.nerve.nerveVector == Vector2i.zero) {
+			//			// Local 
+			//			tail = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.inputUnitEnum, geneInput.nerve.inputUnitSlotEnum);
+			//		} else { 
+			//			// External (short arrow, pointing up, with head at input )
+			//			tail = head + Vector2.down * 30f;
+			//		}
+
+			//		arrow.GetComponent<RectTransform>().localPosition = (head + tail) / 2f;
+			//		arrow.GetComponent<RectTransform>().sizeDelta = new Vector2(Vector2.Distance(head, tail), 10f);
+			//		arrow.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0f, 0f, Mathf.Rad2Deg * Mathf.Atan2(head.y - tail.y, head.x - tail.x));
+			//		arrowList.Add(arrow);
+			//	}
+			//}
+
+			//// Outputs External = signal from me affecting other geneCell from one of my outputs
+			//// (short arrow, pointing up, with tail at one of my output)
+
+			//isDirtyConnections = false;
 		}
 
 		// Update signal TODO: update only when dirty, that is post signal update in creature
@@ -90,7 +155,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			foreach (HudSignalArrow arrow in arrowList) {
 				Color color = Color.black;
 				if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
-					color = selectedCell.GetOutputFromUnit(arrow.inputUnit, arrow.inputUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					color = selectedCell.GetOutputFromUnit(arrow.tailUnit, arrow.tailUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 				} else {
 					color = ColorScheme.instance.signalOff;
 				}

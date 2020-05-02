@@ -85,29 +85,29 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 	}
 
 	public void TrySetNerveInputLocally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
-		affectedGeneAxonInput.nerve.inputUnit = inputUnit;
-		affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
+		affectedGeneAxonInput.nerve.tailUnitEnum = inputUnit;
+		affectedGeneAxonInput.nerve.tailUnitSlotEnum = inputUnitSlot;
 		affectedGeneAxonInput.nerve.nerveVector = null;
 		//affectedGeneAxonInput.nerve.state = GeneNerve.State.Resting;
 	}
 
 	public void TrySetNerveInputExternally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, Vector2i nerveVectorLocal) {
-		affectedGeneAxonInput.nerve.inputUnit = inputUnit;
-		affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
+		affectedGeneAxonInput.nerve.tailUnitEnum = inputUnit;
+		affectedGeneAxonInput.nerve.tailUnitSlotEnum = inputUnitSlot;
 		affectedGeneAxonInput.nerve.nerveVector = nerveVectorLocal;
 		//affectedGeneAxonInput.nerve.state = GeneNerve.State.Resting;
 	}
 
 	public void TrySetNerve(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot, Vector2i nerveVector) {
-		affectedGeneAxonInput.nerve.inputUnit = inputUnit;
-		affectedGeneAxonInput.nerve.inputUnitSlot = inputUnitSlot;
-		affectedGeneAxonInput.nerve.outputUnit = outputUnit;
-		affectedGeneAxonInput.nerve.outputUnitSlot = outputUnitSlot;
+		affectedGeneAxonInput.nerve.tailUnitEnum = inputUnit;
+		affectedGeneAxonInput.nerve.tailUnitSlotEnum = inputUnitSlot;
+		affectedGeneAxonInput.nerve.headUnitEnum = outputUnit;
+		affectedGeneAxonInput.nerve.headUnitSlotEnum = outputUnitSlot;
 		affectedGeneAxonInput.nerve.nerveVector = nerveVector;
 	}
 
 	public void ShowNerveInputExternally(Vector2i nerveVectorLocal) {
-		affectedGeneAxonInput.nerve.inputUnit = SignalUnitEnum.Void;
+		affectedGeneAxonInput.nerve.tailUnitEnum = SignalUnitEnum.Void;
 		affectedGeneAxonInput.nerve.nerveVector = nerveVectorLocal;
 	}
 
@@ -133,7 +133,7 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 			if (mode == PhenoGenoEnum.Genotype) {
 				if (affectedGeneAxonInput.valveMode == SignalValveModeEnum.Block || !motherPanel.affectedGeneSignalUnit.isRooted) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused;
-				} else if (affectedGeneAxonInput.nerve.inputUnit == SignalUnitEnum.Void) {
+				} else if (affectedGeneAxonInput.nerve.tailUnitEnum == SignalUnitEnum.Void) {
 					inputButtonImage.color = Color.magenta; // should never happen
 				} else {
 					inputButtonImage.color = ColorScheme.instance.signalOff; // we have a chance of an ON signal
@@ -170,11 +170,11 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 			if (affectedGeneAxonInput != null) {
 				if (affectedGeneAxonInput.valveMode == SignalValveModeEnum.Block) {
 					return LogicBoxInputEnum.BlockedByValve;
-				} else if (affectedGeneAxonInput.nerve.inputUnit == SignalUnitEnum.Void) {
+				} else if (affectedGeneAxonInput.nerve.tailUnitEnum == SignalUnitEnum.Void) {
 					return LogicBoxInputEnum.VoidInput;
 				} else {
 					if (selectedCell != null) {
-						return selectedCell.GetOutputFromUnit(affectedGeneAxonInput.nerve.inputUnit, affectedGeneAxonInput.nerve.inputUnitSlot) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
+						return selectedCell.GetOutputFromUnit(affectedGeneAxonInput.nerve.tailUnitEnum, affectedGeneAxonInput.nerve.tailUnitSlotEnum) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
 					}
 				}
 			}

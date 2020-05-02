@@ -16,10 +16,29 @@ public class Phenotype : MonoBehaviour {
 
 
 	// ... Signal ...
-	private void UpdateSignalConnections() {
+	private void UpdateNerves() {
+		// reach out
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdateSignalConnections();
+			cellList[index].UpdateNervesPhenotype();
 		}
+
+		// root them
+		// clear
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].PreUpdateNervesPhenotype();
+		}
+
+		// reach out
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].UpdateInputNervesPhenotype(this);
+		}
+
+		// root them
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].UpdateConnectionsNervesPhenotype(this);
+		}
+
+
 	}
 
 	// ^ Signal ^
@@ -780,7 +799,7 @@ public class Phenotype : MonoBehaviour {
 			MakeBudsDirty();
 
 			// Signal
-			UpdateSignalConnections();
+			UpdateNerves();
 
 			//Armour
 			UpdateArmour();

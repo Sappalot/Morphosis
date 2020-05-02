@@ -10,21 +10,21 @@ public class EffectSensor : SignalUnit {
 	public float threshold;
 
 	public EffectSensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
-		base.signalUnit = signalUnit;
+		base.hostSignalUnitEnum = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
 		return output[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}
 
-	public override void UpdateSignalConnections() {
+	public override void ReachOutNervesPhenotype() {
+		base.ReachOutNervesPhenotype();
 		areaCells.Clear();
-
 		areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.effectSensor as GeneEffectSensor).usedAreaRadius);
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {
-		if (signalUnit == SignalUnitEnum.EffectSensor) { // redundant check ? 
+		if (hostSignalUnitEnum == SignalUnitEnum.EffectSensor) { // redundant check ? 
 			if (!hostCell.gene.effectSensor.isRooted) {
 				return;
 			}

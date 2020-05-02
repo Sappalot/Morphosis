@@ -10,24 +10,25 @@ public class EnergySensor : SignalUnit {
 	public float threshold;
 
 	public EnergySensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
-		this.signalUnit = signalUnit;
+		this.hostSignalUnitEnum = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
 		return output[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}
 
-	public override void UpdateSignalConnections() {
+	public override void ReachOutNervesPhenotype() {
+		base.ReachOutNervesPhenotype();
 		areaCells.Clear();
-		if (signalUnit == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) { // this is an energy sensor
+		if (hostSignalUnitEnum == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) { // this is an energy sensor
 			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).areaRadius);
-		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
+		} else if (hostSignalUnitEnum == SignalUnitEnum.EnergySensor) {
 			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.energySensor as GeneEnergySensor).areaRadius);
 		} 
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {
-		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkSensorA) {
+		if (hostCell.GetCellType() == CellTypeEnum.Egg && hostSignalUnitEnum == SignalUnitEnum.WorkSensorA) {
 			if (!hostCell.gene.eggCellFertilizeEnergySensor.isRooted) {
 				return;
 			}
@@ -45,7 +46,7 @@ public class EnergySensor : SignalUnit {
 			output[4] = creatureEnergy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 			output[5] = creatureEnergy < (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 
-		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
+		} else if (hostSignalUnitEnum == SignalUnitEnum.EnergySensor) {
 			if (!hostCell.gene.energySensor.isRooted) {
 				return;
 			}

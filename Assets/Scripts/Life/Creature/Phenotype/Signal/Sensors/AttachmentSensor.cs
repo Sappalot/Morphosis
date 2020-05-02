@@ -6,7 +6,7 @@ public class AttachmentSensor : SignalUnit {
 	private bool[] output = new bool[6]; // outputs 
 
 	public AttachmentSensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
-		this.signalUnit = signalUnit;
+		this.hostSignalUnitEnum = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
@@ -14,7 +14,7 @@ public class AttachmentSensor : SignalUnit {
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {
-		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkSensorB) {
+		if (hostCell.GetCellType() == CellTypeEnum.Egg && hostSignalUnitEnum == SignalUnitEnum.WorkSensorB) {
 			if (!hostCell.gene.eggCellAttachmentSensor.isRooted) {
 				return;
 			}

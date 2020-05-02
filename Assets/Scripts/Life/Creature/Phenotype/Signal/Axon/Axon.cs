@@ -2,31 +2,28 @@
 
 public class Axon : SignalUnit {
 	private bool[] outputLate = new bool[6];
-	private bool[] outputEarly = new bool[6]; 
+	private bool[] outputEarly = new bool[6];
+
+	
 
 	public Axon(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
-		this.signalUnit = signalUnit;
+		this.hostSignalUnitEnum = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
 		return outputLate[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}
 
-
-	public override void UpdateSignalConnections() {
-		// TODO: we are here since body has changed and signal nerves need to reconnect
-	}
-
 	public override void ComputeSignalOutput(int deltaTicks) {
-		if (signalUnit == SignalUnitEnum.Axon) { // redundant check ? 
+		if (hostSignalUnitEnum == SignalUnitEnum.Axon) { // redundant check ? 
 			if (!hostCell.gene.axon.isRooted) {
 				return;
 			}
 
 			outputEarly[0] = selectedProgram == 1; // a
 			outputEarly[1] = selectedProgram == 2; // b
-			outputEarly[2] = selectedProgram == 3;
-			outputEarly[3] = selectedProgram == 4;
+			outputEarly[2] = selectedProgram == 3; // c
+			outputEarly[3] = selectedProgram == 4; // d
 			outputEarly[4] = selectedProgram == 0; // relaxed
 			outputEarly[5] = false;
 		}
@@ -128,7 +125,7 @@ public class Axon : SignalUnit {
 
 	// get pulse ??
 	public bool HasSignalPostInputValve(IGeneInput input) {
-		return (input as IGeneInput).valveMode == SignalValveModeEnum.Pass && (input as IGeneInput).nerve.inputUnit != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as IGeneInput).nerve.inputUnit, (input as IGeneInput).nerve.inputUnitSlot);
+		return (input as IGeneInput).valveMode == SignalValveModeEnum.Pass && (input as IGeneInput).nerve.tailUnitEnum != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as IGeneInput).nerve.tailUnitEnum, (input as IGeneInput).nerve.tailUnitSlotEnum);
 	}
 
 	// Load Save

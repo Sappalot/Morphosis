@@ -4,27 +4,27 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class GeneNerve {
-	public SignalUnitEnum outputUnit = SignalUnitEnum.Void; // The output from me "the nerve head" received as input by the GeneSensor that created this one
-	public SignalUnitSlotEnum outputUnitSlot; // The slot on that (above) unit
+	public SignalUnitEnum headUnitEnum = SignalUnitEnum.Void; // attached to axon input OR logic box input
+	public SignalUnitSlotEnum headUnitSlotEnum;
 
-	private SignalUnitEnum m_inputUnit = SignalUnitEnum.Void; // The input to me "the nerve" sent from some singalUnits output
-	public SignalUnitEnum inputUnit {
+	private SignalUnitEnum m_tailUnitEnum = SignalUnitEnum.Void; // Attached to an output
+	public SignalUnitEnum tailUnitEnum {
 		get {
-			return m_inputUnit;
+			return m_tailUnitEnum;
 		}
 		set {
-			m_inputUnit = value;
+			m_tailUnitEnum = value;
 			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
 
-	private SignalUnitSlotEnum m_inputUnitSlot; // The slot on that (above) unit
-	public SignalUnitSlotEnum inputUnitSlot {
+	private SignalUnitSlotEnum m_tailUnitSlotEnum; // The slot on that (above) unit
+	public SignalUnitSlotEnum tailUnitSlotEnum {
 		get {
-			return m_inputUnitSlot;
+			return m_tailUnitSlotEnum;
 		}
 		set {
-			m_inputUnitSlot = value;
+			m_tailUnitSlotEnum = value;
 			genotypeDirtyfy.MakeGeneCellPatternDirty();
 		}
 	}
@@ -100,8 +100,8 @@ public class GeneNerve {
 	}
 
 	public void Defaultify() {
-		inputUnit = SignalUnitEnum.ConstantSensor;
-		inputUnitSlot = SignalUnitSlotEnum.outputLateA;
+		tailUnitEnum = SignalUnitEnum.ConstantSensor;
+		tailUnitSlotEnum = SignalUnitSlotEnum.outputLateA;
 		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
@@ -129,7 +129,7 @@ public class GeneNerve {
 			} if (unitRandom == 10 || unitRandom == 11) {
 				unitRandom = 12;
 			}
-			inputUnit = (SignalUnitEnum)unitRandom;
+			tailUnitEnum = (SignalUnitEnum)unitRandom;
 
 			RandomizeSlot(); // newrves input slot needs to be limited to the available output slots (usualy 6)
 
@@ -140,13 +140,13 @@ public class GeneNerve {
 	}
 
 	private void RandomizeSlot() {
-		if (inputUnit == SignalUnitEnum.WorkLogicBoxA ||
-			inputUnit == SignalUnitEnum.WorkLogicBoxB ||
-			inputUnit == SignalUnitEnum.DendritesLogicBox ||
-			inputUnit == SignalUnitEnum.OriginDetatchLogicBox) {
+		if (tailUnitEnum == SignalUnitEnum.WorkLogicBoxA ||
+			tailUnitEnum == SignalUnitEnum.WorkLogicBoxB ||
+			tailUnitEnum == SignalUnitEnum.DendritesLogicBox ||
+			tailUnitEnum == SignalUnitEnum.OriginDetatchLogicBox) {
 
-			inputUnitSlot = SignalUnitSlotEnum.outputLateA;
-		} else if (inputUnit == SignalUnitEnum.Axon) {
+			tailUnitSlotEnum = SignalUnitSlotEnum.outputLateA;
+		} else if (tailUnitEnum == SignalUnitEnum.Axon) {
 			RandomizeSlot(4);
 		} else {
 			RandomizeSlot(5); // all of them
@@ -158,37 +158,37 @@ public class GeneNerve {
 	private void RandomizeSlot(int maxIndex) {
 		int slotRandom = Random.Range(0, maxIndex + 1);
 		if (slotRandom == 0) {
-			inputUnitSlot = SignalUnitSlotEnum.outputLateA;
+			tailUnitSlotEnum = SignalUnitSlotEnum.outputLateA;
 		} else if (slotRandom == 1) {
-			inputUnitSlot = SignalUnitSlotEnum.outputLateB;
+			tailUnitSlotEnum = SignalUnitSlotEnum.outputLateB;
 		} else if (slotRandom == 2) {
-			inputUnitSlot = SignalUnitSlotEnum.outputLateC;
+			tailUnitSlotEnum = SignalUnitSlotEnum.outputLateC;
 		} else if (slotRandom == 3) {
-			inputUnitSlot = SignalUnitSlotEnum.outputLateD;
+			tailUnitSlotEnum = SignalUnitSlotEnum.outputLateD;
 		} else if (slotRandom == 4) {
-			inputUnitSlot = SignalUnitSlotEnum.outputLateE;
+			tailUnitSlotEnum = SignalUnitSlotEnum.outputLateE;
 		} else if (slotRandom == 5) {
-			inputUnitSlot = SignalUnitSlotEnum.outputLateF;
+			tailUnitSlotEnum = SignalUnitSlotEnum.outputLateF;
 		}
 	}
 
 	// Save
 	private GeneNerveData geneNerveData = new GeneNerveData();
 	public GeneNerveData UpdateData() {
-		geneNerveData.outputUnit = outputUnit;
-		geneNerveData.outputUnitSlot = outputUnitSlot;
-		geneNerveData.inputUnit = inputUnit;
-		geneNerveData.inputUnitSlot = inputUnitSlot;
+		geneNerveData.outputUnit = headUnitEnum;
+		geneNerveData.outputUnitSlot = headUnitSlotEnum;
+		geneNerveData.inputUnit = tailUnitEnum;
+		geneNerveData.inputUnitSlot = tailUnitSlotEnum;
 		geneNerveData.nerveVector = nerveVector;
 		return geneNerveData;
 	}
 
 	//Load
 	public void ApplyData(GeneNerveData geneNerveData) {
-		outputUnit = geneNerveData.outputUnit;
-		outputUnitSlot = geneNerveData.outputUnitSlot;
-		inputUnit = geneNerveData.inputUnit;
-		inputUnitSlot = geneNerveData.inputUnitSlot;
+		headUnitEnum = geneNerveData.outputUnit;
+		headUnitSlotEnum = geneNerveData.outputUnitSlot;
+		tailUnitEnum = geneNerveData.inputUnit;
+		tailUnitSlotEnum = geneNerveData.inputUnitSlot;
 		nerveVector = geneNerveData.nerveVector;
 
 		genotypeDirtyfy.MakeGeneCellPatternDirty();
