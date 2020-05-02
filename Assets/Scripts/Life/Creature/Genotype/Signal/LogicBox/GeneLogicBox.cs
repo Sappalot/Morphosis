@@ -192,7 +192,7 @@ public class GeneLogicBox : GeneSignalUnit {
 		}
 	}
 
-	public override void MarkThisAndChildrenAsUsed(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
+	public override void MarkThisAndChildrenAsRooted(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
 		//if (isUsed) {
 		//	return;
 		//}
@@ -208,14 +208,14 @@ public class GeneLogicBox : GeneSignalUnit {
 				if (input3.nerve.isLocal) {
 					GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(input3.nerve.inputUnit);
 					if (child != null) {
-						child.MarkThisAndChildrenAsUsed(genotype, geneCell, signalUnit);
+						child.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
 					}
 				} else {
 					Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, input3.nerve, genotype);
 					if (childCell != null) {
 						GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(input3.nerve.inputUnit);
 						if (child != null) {
-							child.MarkThisAndChildrenAsUsed(genotype, childCell, signalUnit);
+							child.MarkThisAndChildrenAsRooted(genotype, childCell, signalUnit);
 						}
 					}
 				}

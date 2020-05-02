@@ -182,6 +182,8 @@ public class Gene {
 
 	public readonly Arrangement[] arrangements = new Arrangement[3];
 
+	// ... Signal ...
+
 	public GeneSignalUnit GetGeneSignalUnit(SignalUnitEnum signalUnitType) {
 		switch (signalUnitType) {
 			case SignalUnitEnum.Void:
@@ -234,6 +236,7 @@ public class Gene {
 		return null;
 	}
 
+	// TODO: Move to web
 	public void PreUpdateInterGeneCell() {
 		foreach (SignalUnitEnum type in Enum.GetValues(typeof(SignalUnitEnum))) {
 			GeneSignalUnit unit = GetGeneSignalUnit(type);
@@ -243,27 +246,30 @@ public class Gene {
 		}
 	}
 
+	// TODO: Move to web
 	// Assume geneCellMap has been built now
 	public void UpdateInterGeneCell(Genotype genotype) {
 		foreach (Cell geneCell in genotype.GetGeneCellsWithGene(this)) {
 			// need to check all geneCells containing gene same gene but differs in location and heading
 
-			MarkThisAndChildrenAsUsedHelper(genotype, geneCell, SignalUnitEnum.WorkLogicBoxA);
-			MarkThisAndChildrenAsUsedHelper(genotype, geneCell, SignalUnitEnum.WorkLogicBoxB);
+			MarkThisAndChildrenAsRootedHelper(genotype, geneCell, SignalUnitEnum.WorkLogicBoxA);
+			MarkThisAndChildrenAsRootedHelper(genotype, geneCell, SignalUnitEnum.WorkLogicBoxB);
 
 			GeneSignalUnit unit = GetGeneSignalUnit(SignalUnitEnum.Axon);
 			if (unit != null && (unit as GeneAxon).isEnabled) { // axone is root if it is sending pulse to muscles
-				unit.MarkThisAndChildrenAsUsed(genotype, geneCell, SignalUnitEnum.WorkLogicBoxB);
+				unit.MarkThisAndChildrenAsRooted(genotype, geneCell, SignalUnitEnum.WorkLogicBoxB);
 			}
 
-			MarkThisAndChildrenAsUsedHelper(genotype, geneCell, SignalUnitEnum.OriginDetatchLogicBox);
+			MarkThisAndChildrenAsRootedHelper(genotype, geneCell, SignalUnitEnum.OriginDetatchLogicBox);
 		}
 	}
 
-	private void MarkThisAndChildrenAsUsedHelper(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
+	// ^ Signal ^ 
+
+	private void MarkThisAndChildrenAsRootedHelper(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
 		GeneSignalUnit unit = GetGeneSignalUnit(signalUnit);
 		if (unit != null) {
-			unit.MarkThisAndChildrenAsUsed(genotype, geneCell, signalUnit);
+			unit.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
 		}
 	}
 

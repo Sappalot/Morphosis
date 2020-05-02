@@ -115,6 +115,90 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public int originPulseTick = 0;
 
+	// .. Signal ...
+
+	// Genotype: the sensor connections in blueprint (prexfix: blueprint)
+	
+
+	// Phenotype: the physical sensor (prefix: -)
+	public ConstantSensor constantSensor;
+	public Axon axon;
+	public LogicBox dendritesLogicBox;
+	public EnergySensor energySensor;
+	public EffectSensor effectSensor;
+	public LogicBox originDetatchLogicBox;
+	public SizeSensor originSizeSensor;
+
+	public virtual void UpdateSignalConnections() {
+		dendritesLogicBox.UpdateSignalConnections();
+		energySensor.UpdateSignalConnections();
+		effectSensor.UpdateSignalConnections();
+		if (isOrigin) {
+			originDetatchLogicBox.UpdateSignalConnections();
+		}
+	}
+
+	virtual public void ClearSignal() {
+		constantSensor.Clear();
+		axon.Clear();
+		dendritesLogicBox.Clear();
+		energySensor.Clear();
+		effectSensor.Clear();
+		originDetatchLogicBox.Clear();
+		originSizeSensor.Clear();
+	}
+
+	// if processor: output early ==> output late
+	virtual public void FeedSignal() {
+		// Update cells common units here
+		// TODO: Check if anybodey is listening to output, feed only in that case
+		axon.FeedSignal();
+		dendritesLogicBox.FeedSignal();
+		if (isOrigin) {
+			originDetatchLogicBox.FeedSignal();
+			originDetatchLogicBox.FeedSignal();
+		}
+	}
+
+	// if sensor: Update to late directly from condition (check environment or body, even globally? moon, sun)
+	// if processor (logic box or filter): Update early from input (which is taken from sensors or other processors late)
+	virtual public void ComputeSignalOutputs(int deltaTicks) {
+		// Update cells common units here
+		// TODO: Check if anybodey is listening to output, update only in that case
+		constantSensor.ComputeSignalOutput(deltaTicks);
+		axon.ComputeSignalOutput(deltaTicks);
+		dendritesLogicBox.ComputeSignalOutput(deltaTicks);
+		energySensor.ComputeSignalOutput(deltaTicks);
+		effectSensor.ComputeSignalOutput(deltaTicks);
+		if (isOrigin) {
+			originDetatchLogicBox.ComputeSignalOutput(deltaTicks);
+			originSizeSensor.ComputeSignalOutput(deltaTicks);
+		}
+	}
+
+	public virtual bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
+		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for
+		if (outputUnit == SignalUnitEnum.ConstantSensor) {
+			return constantSensor.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.Axon) {
+			return axon.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.DendritesLogicBox) {
+			return dendritesLogicBox.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.EnergySensor) {
+			return energySensor.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.EffectSensor) {
+			return effectSensor.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.OriginDetatchLogicBox) {
+			return originDetatchLogicBox.GetOutput(outputUnitSlot);
+		} else if (outputUnit == SignalUnitEnum.OriginSizeSensor) {
+			return originSizeSensor.GetOutput(outputUnitSlot);
+		}
+
+		return false;
+	}
+
+	// ^ Signal ^
+
 	public float originPulsePeriod {
 		get {
 			Debug.Assert(isOrigin);
@@ -1691,81 +1775,5 @@ public abstract class Cell : MonoBehaviour {
 		this.creature = creature;
 	}
 
-	//----------Signal--------------------------------
-	// instantiated at Init()
-	public ConstantSensor constantSensor;
-	public Axon axon;
-	public LogicBox dendritesLogicBox;
-	public EnergySensor energySensor;
-	public EffectSensor effectSensor;
-	public LogicBox originDetatchLogicBox;
-	public SizeSensor originSizeSensor;
 
-	public virtual void UpdateSignalConnections() {
-		dendritesLogicBox.UpdateSignalConnections();
-		energySensor.UpdateSignalConnections();
-		effectSensor.UpdateSignalConnections();
-		if (isOrigin) {
-			originDetatchLogicBox.UpdateSignalConnections();
-		}
-	}
-
-	virtual public void ClearSignal() {
-		constantSensor.Clear();
-		axon.Clear();
-		dendritesLogicBox.Clear();
-		energySensor.Clear();
-		effectSensor.Clear();
-		originDetatchLogicBox.Clear();
-		originSizeSensor.Clear();
-	}
-
-	// if processor: output early ==> output late
-	virtual public void FeedSignal() {
-		// Update cells common units here
-		// TODO: Check if anybodey is listening to output, feed only in that case
-		axon.FeedSignal();
-		dendritesLogicBox.FeedSignal();
-		if (isOrigin) {
-			originDetatchLogicBox.FeedSignal();
-			originDetatchLogicBox.FeedSignal();
-		}
-	}
-
-	// if sensor: Update to late directly from condition (check environment or body, even globally? moon, sun)
-	// if processor (logic box or filter): Update early from input (which is taken from sensors or other processors late)
-	virtual public void ComputeSignalOutputs(int deltaTicks) {
-		// Update cells common units here
-		// TODO: Check if anybodey is listening to output, update only in that case
-		constantSensor.ComputeSignalOutput(deltaTicks);
-		axon.ComputeSignalOutput(deltaTicks);
-		dendritesLogicBox.ComputeSignalOutput(deltaTicks);
-		energySensor.ComputeSignalOutput(deltaTicks);
-		effectSensor.ComputeSignalOutput(deltaTicks);
-		if (isOrigin) {
-			originDetatchLogicBox.ComputeSignalOutput(deltaTicks);
-			originSizeSensor.ComputeSignalOutput(deltaTicks);
-		}
-	}
-
-	public virtual bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
-		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for
-		if (outputUnit == SignalUnitEnum.ConstantSensor) {
-			return constantSensor.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.Axon) {
-			return axon.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.DendritesLogicBox) {
-			return dendritesLogicBox.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.EnergySensor) {
-			return energySensor.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.EffectSensor) {
-			return effectSensor.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.OriginDetatchLogicBox) {
-			return originDetatchLogicBox.GetOutput(outputUnitSlot);
-		} else if (outputUnit == SignalUnitEnum.OriginSizeSensor) {
-			return originSizeSensor.GetOutput(outputUnitSlot);
-		}
-
-		return false;
-	}
 }

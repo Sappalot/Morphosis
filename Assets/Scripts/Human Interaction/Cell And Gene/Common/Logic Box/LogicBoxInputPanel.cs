@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-// TODO Generalize to just be an input panel for all units
+// TODO: Generalize to just be an input panel for all units, arn't they gonna be all the same?
 public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	[HideInInspector]
 	public bool isGhost;
@@ -136,7 +136,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 			if (isGhost) {
 				blockButton.color = ColorScheme.instance.grayedOut;
 				passButton.color = ColorScheme.instance.grayedOut;
-				inputButtonImage.color = ColorScheme.instance.signalGrayedOut;
+				inputButtonImage.color = ColorScheme.instance.signalGhost;
 				lockedOverlayImage.gameObject.SetActive(false);
 				semiLockedOverlayImage.gameObject.SetActive(false);
 				return;

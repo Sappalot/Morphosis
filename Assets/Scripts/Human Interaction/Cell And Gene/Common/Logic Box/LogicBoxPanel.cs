@@ -183,8 +183,8 @@ public class LogicBoxPanel : SignalUnitPanel {
 			}
 
 			if (isGhost) {
-				outputImageLate.color = ColorScheme.instance.signalGrayedOut;
-				outputImageEarly.color = ColorScheme.instance.signalGrayedOut;
+				outputImageLate.color = ColorScheme.instance.signalGhost;
+				outputImageEarly.color = ColorScheme.instance.signalGhost;
 				return;
 			}
 			// ^ ghost ^

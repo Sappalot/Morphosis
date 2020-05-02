@@ -57,15 +57,18 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 
 	public bool isGrabbed { get; private set; }
 
-	private CellMap geneCellMap = new CellMap();
-
-	
+	private CellMap geneCellMap = new CellMap(); // contains blueprint of final creature, all cells
 
 	public bool hasGenes {
 		get {
 			return geneCellListIndexSorted != null && geneCellListIndexSorted.Count > 0;
 		}
 	}
+
+	// ... Signal ...
+
+	// ^ Signal ^
+
 
 	public Cell GetCellAtMapPosition(Vector2i mapPosition) {
 		return geneCellMap.GetCell(mapPosition);
@@ -444,6 +447,8 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 	public bool TryUpdateInterGeneCells() {
 		if (isInterGeneCellDirty) {
 			
+			// TODO: Update signal connection web, via GeneCells instead
+
 			foreach (Gene gene in genes) {
 				gene.PreUpdateInterGeneCell();
 			}

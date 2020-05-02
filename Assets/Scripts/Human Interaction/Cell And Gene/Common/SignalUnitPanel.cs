@@ -2,13 +2,18 @@
 using UnityEngine;
 
 // a panel that can change genotype and handles signals
-// Me <== (SensorPanel), LogicBoxPnel, AxonPanel
+// Me <== (SensorPanel), LogicBoxPnel
+
+// TODO: move all panels now under SensorPanel under this one (since they all have output)
+
 public abstract class SignalUnitPanel : ComponentPanel {
 	[HideInInspector]
-	public bool isGhost = false;
+	public bool isGhost = false; // Can't be used for this gene/geneCell (will be grayed out)
 
 	public SignalLocations locations = new SignalLocations();
 	public GameObject componentHeaderPanel;
+
+	public SensorOutputPanel[] outputPanels; // TODO: Make LogixBoxPanel and AxonPanel use output panel (also make all output panel handle early and late (late = early foor leaf node sensors))
 
 	[HideInInspector]
 	public SignalUnitEnum signalUnit;

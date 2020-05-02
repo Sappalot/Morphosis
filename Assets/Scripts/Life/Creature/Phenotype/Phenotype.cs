@@ -14,6 +14,16 @@ public class Phenotype : MonoBehaviour {
 
 	public NerveArrows nerveArrows;
 
+
+	// ... Signal ...
+	private void UpdateSignalConnections() {
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].UpdateSignalConnections();
+		}
+	}
+
+	// ^ Signal ^
+
 	[HideInInspector]
 	private bool isCellPatternDiffererentFromGenomeDirty = true;
 	public void MakeCellPaternDifferentFromGenotypeDirty () {
@@ -1889,11 +1899,4 @@ public class Phenotype : MonoBehaviour {
 	}
 
 	// ^ Load / Save ^
-
-	// Signal
-	private void UpdateSignalConnections() {
-		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdateSignalConnections();
-		}
-	}
 }

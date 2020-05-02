@@ -110,10 +110,8 @@ public class GeneAxon : GeneSignalUnit {
 		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
-	public override void MarkThisAndChildrenAsUsed(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
-		//if (isUsed) {
-		//	return;
-		//}
+	public override void MarkThisAndChildrenAsRooted(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
+		// avoid looping forever
 
 		isRooted = true;
 		
@@ -124,17 +122,18 @@ public class GeneAxon : GeneSignalUnit {
 		// mark children as well
 		if (axonInputLeft.valveMode == SignalValveModeEnum.Pass) {
 			if (axonInputLeft.nerve.isLocal) {
-				// ask local unit where tail is "pointing"
+				// ask to which this genes  unit where tail is "pointing"
 				GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(axonInputLeft.nerve.inputUnit);
 				if (child != null) {
-					child.MarkThisAndChildrenAsUsed(genotype, geneCell, signalUnit);
+					child.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
 				}
 			} else {
+				// ask external unit where tail is pointing
 				Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, axonInputLeft.nerve, genotype);
 				if (childCell != null) {
 					GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(axonInputLeft.nerve.inputUnit);
 					if (child != null) {
-						child.MarkThisAndChildrenAsUsed(genotype, childCell, signalUnit);
+						child.MarkThisAndChildrenAsRooted(genotype, childCell, signalUnit);
 					}
 				}
 			}
@@ -144,14 +143,14 @@ public class GeneAxon : GeneSignalUnit {
 				// ask local unit where tail is "pointing"
 				GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(axonInputRight.nerve.inputUnit);
 				if (child != null) {
-					child.MarkThisAndChildrenAsUsed(genotype, geneCell, signalUnit);
+					child.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
 				}
 			} else {
 				Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, axonInputRight.nerve, genotype);
 				if (childCell != null) {
 					GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(axonInputRight.nerve.inputUnit);
 					if (child != null) {
-						child.MarkThisAndChildrenAsUsed(genotype, childCell, signalUnit);
+						child.MarkThisAndChildrenAsRooted(genotype, childCell, signalUnit);
 					}
 				}
 			}

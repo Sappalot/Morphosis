@@ -19,7 +19,7 @@ public class EnergySensor : SignalUnit {
 
 	public override void UpdateSignalConnections() {
 		areaCells.Clear();
-		if (signalUnit == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) {
+		if (signalUnit == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) { // this is an energy sensor
 			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).areaRadius);
 		} else if (signalUnit == SignalUnitEnum.EnergySensor) {
 			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.energySensor as GeneEnergySensor).areaRadius);

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-// TODO Generalize to just be an input panel for all units
+// TODO: Generalize to just be an input panel for all units, arn't they gonna be all the same?
 public class AxonInputPanel : MonoBehaviour, IInputPanel {
 	public Image blockButton;
 	public Image passButton;

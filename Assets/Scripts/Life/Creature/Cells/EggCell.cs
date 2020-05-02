@@ -2,32 +2,7 @@
 
 public class EggCell : Cell {
 
-	public override void Initialize(PhenoGenoEnum phenoGeno) {
-		base.Initialize(phenoGeno);
-		fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkLogicBoxA, this);
-		fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkSensorA, this);
-		fertilizeAttachmentSensor = new AttachmentSensor(SignalUnitEnum.WorkSensorB, this);
-	}
-
-	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
-		base.UpdateCellWork(deltaTicks, worldTicks);
-
-		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
-			effectProductionInternalUp = 0f;
-			effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCell.effectProductionDown;
-
-			// Fertilization is made in Creature.UpdateFertilize(...)
-		} else {
-			effectProductionInternalUp = 0f;
-			effectProductionInternalDown = 0f;
-		}
-	}
-
-	public override CellTypeEnum GetCellType() {
-		return CellTypeEnum.Egg;
-	}
-
-	// Signal
+	// ... Signal ...
 	public LogicBox fertilizeLogicBox;
 	public EnergySensor fertilizeEnergySensor;
 	public AttachmentSensor fertilizeAttachmentSensor;
@@ -53,10 +28,10 @@ public class EggCell : Cell {
 	public override void ComputeSignalOutputs(int deltaTicks) {
 		//TODO: Check with gene if anybody is listening to this output
 		base.ComputeSignalOutputs(deltaTicks);
-		
+
 		fertilizeLogicBox.ComputeSignalOutput(deltaTicks);
-		fertilizeEnergySensor.ComputeSignalOutput( deltaTicks);
-		fertilizeAttachmentSensor.ComputeSignalOutput( deltaTicks);
+		fertilizeEnergySensor.ComputeSignalOutput(deltaTicks);
+		fertilizeAttachmentSensor.ComputeSignalOutput(deltaTicks);
 	}
 
 	public override bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
@@ -68,5 +43,32 @@ public class EggCell : Cell {
 			return fertilizeAttachmentSensor.GetOutput(outputUnitSlot);
 		}
 		return base.GetOutputFromUnit(outputUnit, outputUnitSlot); //Couldnt find output unith here in egg work, 
+	}
+
+	// ^ Signal ^
+
+	public override void Initialize(PhenoGenoEnum phenoGeno) {
+		base.Initialize(phenoGeno);
+		fertilizeLogicBox = new LogicBox(SignalUnitEnum.WorkLogicBoxA, this);
+		fertilizeEnergySensor = new EnergySensor(SignalUnitEnum.WorkSensorA, this);
+		fertilizeAttachmentSensor = new AttachmentSensor(SignalUnitEnum.WorkSensorB, this);
+	}
+
+	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
+		base.UpdateCellWork(deltaTicks, worldTicks);
+
+		if (PhenotypePhysicsPanel.instance.functionEgg.isOn) {
+			effectProductionInternalUp = 0f;
+			effectProductionInternalDown = GlobalSettings.instance.phenotype.eggCell.effectProductionDown;
+
+			// Fertilization is made in Creature.UpdateFertilize(...)
+		} else {
+			effectProductionInternalUp = 0f;
+			effectProductionInternalDown = 0f;
+		}
+	}
+
+	public override CellTypeEnum GetCellType() {
+		return CellTypeEnum.Egg;
 	}
 }

@@ -8,11 +8,10 @@ public class AxonPanel : SensorPanel {
 	// view pulse
 	private int pulseView = 1; // 1 = A
 
-	public Image pulseViewAButtonImage;
+	public Image pulseViewAButtonImage; // the images on the buttons, the ones which can be selected
 	public Image pulseViewBButtonImage;
 	public Image pulseViewCButtonImage;
 	public Image pulseViewDButtonImage;
-
 
 	// ...Pulse...
 	public Text fromOriginOffsetText;

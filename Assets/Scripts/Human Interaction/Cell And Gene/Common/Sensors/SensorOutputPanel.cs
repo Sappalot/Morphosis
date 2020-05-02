@@ -58,7 +58,7 @@ public class SensorOutputPanel : MonoBehaviour {
 			}
 
 			if (isGhost) {
-				image.color = ColorScheme.instance.signalGrayedOut;
+				image.color = ColorScheme.instance.signalGhost;
 				return;
 			}
 

@@ -19,9 +19,8 @@ public class EffectSensor : SignalUnit {
 
 	public override void UpdateSignalConnections() {
 		areaCells.Clear();
-		if (signalUnit == SignalUnitEnum.EffectSensor) { // redundant check ? 
-			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.effectSensor as GeneEffectSensor).usedAreaRadius);
-		}
+
+		areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.effectSensor as GeneEffectSensor).usedAreaRadius);
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {
