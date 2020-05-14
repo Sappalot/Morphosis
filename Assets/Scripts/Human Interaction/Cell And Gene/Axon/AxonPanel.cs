@@ -113,7 +113,7 @@ public class AxonPanel : SignalUnitPanel {
 	}
 
 	public override List<IGeneInput> GetAllGeneInputs() {
-		if (!affectedGeneSignalUnit.isRooted) {
+		if (isAnyAffectedSignalUnitsRootedGenotype) {
 			return null;
 		}
 		List<IGeneInput> arrows = new List<IGeneInput>();
@@ -269,7 +269,7 @@ public class AxonPanel : SignalUnitPanel {
 					fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromOriginOffset);
 
 					Color color = Color.white;
-					if (cellAndGenePanel.gene.axon.isRooted) {
+					if (isAnyAffectedSignalUnitsRootedGenotype) {
 						color = ColorScheme.instance.signalOff;
 					} else {
 						color = ColorScheme.instance.signalUnused;
@@ -291,7 +291,7 @@ public class AxonPanel : SignalUnitPanel {
 						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromOriginOffset);
 					}
 
-					if (cellAndGenePanel.gene.axon.isRooted) {
+					if (isAnyAffectedSignalUnitsRootedGenotype) {
 						postInputBoxLeft.color = selectedCell.axon.HasSignalPostInputValve(inputLeftPanel.affectedGeneAxonInput) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						postInputBoxRight.color = selectedCell.axon.HasSignalPostInputValve(inputRightPanel.affectedGeneAxonInput) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 // a panel that can change genotype and handles signals
@@ -119,7 +120,6 @@ public abstract class SignalUnitPanel : ComponentPanel {
 		return SignalUnitSlotEnum.outputLateA; // error
 	}
 
-	// merge with code in Gene unit enum = gives=> sensorUnit | now it is double coded
 	public GeneSignalUnit affectedGeneSignalUnit {
 		get {
 			if (gene != null) {
@@ -128,6 +128,40 @@ public abstract class SignalUnitPanel : ComponentPanel {
 
 			return null;
 		}
+	}
+
+	public SignalUnit anyAffectedSignalUnitGenotype {
+		get {
+			Creature soloSelected = CreatureSelectionPanel.instance.soloSelected;
+			if (soloSelected == null) {
+				return null;
+			}
+			List<Cell> geneCell = soloSelected.genotype.GetGeneCellsWithGene(gene);
+			return geneCell[0].GetSignalUnit(signalUnit);
+
+		}
+	}
+
+	public List<SignalUnit> allAffectedSignalUnitsGenotype {
+		get {
+			Creature soloSelected = CreatureSelectionPanel.instance.soloSelected;
+			if (soloSelected == null) {
+				return null;
+			}
+			List<Cell> geneCells = soloSelected.genotype.GetGeneCellsWithGene(gene);
+			List<SignalUnit> signalUnits = new List<SignalUnit>();
+			foreach (Cell geneCell in geneCells) {
+				signalUnits.Add(geneCell.GetSignalUnit(signalUnit));
+			}
+			return signalUnits;
+		}
+	}
+
+	public bool isAnyAffectedSignalUnitsRootedGenotype {
+		get {
+			return allAffectedSignalUnitsGenotype.Exists(r => r.isRooted);
+		}
+		
 	}
 
 	public virtual void Update() {

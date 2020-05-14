@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -43,111 +44,94 @@ public class HudSignalArrowHandler : MonoBehaviour {
 				return;
 			}
 
-			List<Nerve> nerveList = null;
-			
-			if (mode == PhenoGenoEnum.Genotype) {
-				List<Cell> geneCells = CreatureSelectionPanel.instance.soloSelected.genotype.GetGeneCellsWithGene(selectedGene);
-				if (geneCells.Count != 1) {
-					isDirtyConnections = false;
-					return;
-				}
-
-				nerveList = geneCells[0].GetAllNervesGenotype();
-			} else {
-				// phenotype
-				nerveList = selectedCell.GetAllNervesPhenotype();
-
-			}
-
-
-			if (nerveList == null) {
-				isDirtyConnections = false;
-				return;
-			}
-
-
 			foreach (HudSignalArrow arrow in arrowList) {
 				hudSignalArrowPool.Recycle(arrow);
 			}
 			arrowList.Clear();
 
-			foreach (Nerve nerve in nerveList) {
-				if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeListensToTargetLocal || nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeListensToTargetExternal) {
-					HudSignalArrow arrow = hudSignalArrowPool.Borrow();
-					arrow.gameObject.SetActive(true);
+			Dictionary<Cell,List<Nerve>> cellNervesDictionary = new Dictionary<Cell, List<Nerve>>();
+			
+			if (mode == PhenoGenoEnum.Genotype) {
+				List<Cell> geneCells = CreatureSelectionPanel.instance.soloSelected.genotype.GetGeneCellsWithGene(selectedGene);
 
-					arrow.headUnit = nerve.headSignalUnitEnum;
-					arrow.headUnitSlot = nerve.headSignalUnitSlotEnum;
-					arrow.tailUnit = nerve.tailSignalUnitEnum;
-					arrow.tailUnitSlot = nerve.tailSignalUnitSlotEnum;
+				// merge gene cells
+				foreach (Cell geneCell in geneCells) {
+					cellNervesDictionary.Add(geneCell, geneCell.GetAllNervesGenotype(false));
+				}
+
+			} else {
+				// phenotype
+				// TODO: make phenotype work as well
+
+				isDirtyConnections = false;
+				return;
+			}
+
+		
+
+			if (cellNervesDictionary == null || cellNervesDictionary.Values.Count == 0) {
+				// nothing to draw.... done here... bye
+				isDirtyConnections = false;
+				return;
+			}
+
+			// inputs
+			foreach (Nerve nerve in cellNervesDictionary.Values.ToArray()[0]) {
+				//When it comes to input, they all look the same so we just pich the first one, which we are sure to have
+
+				
+				if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal ||
+					nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal ||
+					nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternalVoid) {
+
+					HudSignalArrow arrow = GetArrowLikeNerve(nerve);
 
 					Vector2 head = cellAndGenePanel.TotalPanelOffset(nerve.headSignalUnitEnum, nerve.headSignalUnitSlotEnum);
-
 					Vector2 tail;
-					if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeListensToTargetLocal) {
-						// Local 
+					if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal) {
+						// Local input
 						tail = cellAndGenePanel.TotalPanelOffset(nerve.tailSignalUnitEnum, nerve.tailSignalUnitSlotEnum);
 					} else {
-						// External (short arrow, pointing up, with head at input )
-						tail = head + Vector2.down * 30f;
+						// External input (short arrow, pointing up, with head at input )
+						tail = head + Vector2.down * 20f;
 					}
 
-					arrow.GetComponent<RectTransform>().localPosition = (head + tail) / 2f;
-					arrow.GetComponent<RectTransform>().sizeDelta = new Vector2(Vector2.Distance(head, tail), 10f);
-					arrow.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0f, 0f, Mathf.Rad2Deg * Mathf.Atan2(head.y - tail.y, head.x - tail.x));
+					SetArrowTransforms(arrow, head, tail);
 					arrowList.Add(arrow);
 				}
 			}
 
-			
+			// outputs
+			// merge list so that we have max one external nerve with tail at output
+			List<Nerve> mergedList = new List<Nerve>(); // only output_external
+			foreach (KeyValuePair<Cell, List<Nerve>> pair in cellNervesDictionary.ToList()) {
+				foreach (Nerve nerve in pair.Value) {
+					if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) {
+						if (mergedList.Find(n => n.tailSignalUnitEnum == nerve.tailSignalUnitEnum && n.tailSignalUnitSlotEnum == nerve.tailSignalUnitSlotEnum) == null) {
+							// max one of each
+							mergedList.Add(nerve);
+						}
+					}
+				}
+			}
 
-			// Outputs External = signal from me affecting other geneCell from one of my outputs
-			// (short arrow, pointing up, with tail at one of my output)
+			foreach (Nerve nerve in mergedList) {
+				if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) {
+					// no point to draw local arrow inputs as they are allready drawn (with the tail here from another input)
+
+					HudSignalArrow arrow = GetArrowLikeNerve(nerve);
+
+					Vector2 tail = cellAndGenePanel.TotalPanelOffset(nerve.tailSignalUnitEnum, nerve.tailSignalUnitSlotEnum);
+					// external output
+					Vector2 head = tail + Vector2.up * 20f;
+
+					SetArrowTransforms(arrow, head, tail);
+					arrowList.Add(arrow);
+				}
+
+			}
 
 			isDirtyConnections = false;
-
-			// Old shit.....
-
-			//// Input internal and external (signal from other into one of my inputs)
-			//List<IGeneInput> geneInputList = cellAndGenePanel.GetAllGeneInputs();
-
-			//foreach (HudSignalArrow arrow in arrowList) {
-			//	hudSignalArrowPool.Recycle(arrow);
-			//}
-			//arrowList.Clear();
-
-			//foreach (IGeneInput geneInput in geneInputList) {
-			//	if (geneInput.nerve.inputUnitEnum != SignalUnitEnum.Void) {
-			//		HudSignalArrow arrow = hudSignalArrowPool.Borrow();
-			//		arrow.gameObject.SetActive(true);
-
-			//		arrow.inputUnit = geneInput.nerve.inputUnitEnum;
-			//		arrow.inputUnitSlot = geneInput.nerve.inputUnitSlotEnum;
-			//		arrow.outputUnit = geneInput.nerve.outputUnit;
-			//		arrow.outputUnitSlot = geneInput.nerve.outputUnitSlot;
-
-			//		Vector2 head = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.outputUnit, geneInput.nerve.outputUnitSlot);
-
-			//		Vector2 tail;
-			//		if (geneInput.nerve.nerveVector == null || geneInput.nerve.nerveVector == Vector2i.zero) {
-			//			// Local 
-			//			tail = cellAndGenePanel.TotalPanelOffset(geneInput.nerve.inputUnitEnum, geneInput.nerve.inputUnitSlotEnum);
-			//		} else { 
-			//			// External (short arrow, pointing up, with head at input )
-			//			tail = head + Vector2.down * 30f;
-			//		}
-
-			//		arrow.GetComponent<RectTransform>().localPosition = (head + tail) / 2f;
-			//		arrow.GetComponent<RectTransform>().sizeDelta = new Vector2(Vector2.Distance(head, tail), 10f);
-			//		arrow.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0f, 0f, Mathf.Rad2Deg * Mathf.Atan2(head.y - tail.y, head.x - tail.x));
-			//		arrowList.Add(arrow);
-			//	}
-			//}
-
-			//// Outputs External = signal from me affecting other geneCell from one of my outputs
-			//// (short arrow, pointing up, with tail at one of my output)
-
-			//isDirtyConnections = false;
 		}
 
 		// Update signal TODO: update only when dirty, that is post signal update in creature
@@ -163,6 +147,24 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			}
 			isDirtySignal = false;
 		}
+	}
+
+	private HudSignalArrow GetArrowLikeNerve( Nerve nerve) {
+		HudSignalArrow arrow = hudSignalArrowPool.Borrow();
+		arrow.gameObject.SetActive(true);
+
+		arrow.headUnit = nerve.headSignalUnitEnum;
+		arrow.headUnitSlot = nerve.headSignalUnitSlotEnum;
+		arrow.tailUnit = nerve.tailSignalUnitEnum;
+		arrow.tailUnitSlot = nerve.tailSignalUnitSlotEnum;
+
+		return arrow;
+	}
+
+	private void SetArrowTransforms(HudSignalArrow arrow, Vector2 head, Vector2 tail) {
+		arrow.GetComponent<RectTransform>().localPosition = (head + tail) / 2f;
+		arrow.GetComponent<RectTransform>().sizeDelta = new Vector2(Vector2.Distance(head, tail), 10f);
+		arrow.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0f, 0f, Mathf.Rad2Deg * Mathf.Atan2(head.y - tail.y, head.x - tail.x));
 	}
 
 	public Cell selectedCell {

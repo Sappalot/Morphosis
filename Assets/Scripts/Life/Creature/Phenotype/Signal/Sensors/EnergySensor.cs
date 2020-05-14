@@ -10,7 +10,7 @@ public class EnergySensor : SignalUnit {
 	public float threshold;
 
 	public EnergySensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
-		this.hostSignalUnitEnum = signalUnit;
+		this.signalUnitEnum = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
@@ -20,18 +20,18 @@ public class EnergySensor : SignalUnit {
 	public override void ReachOutNervesPhenotype() {
 		base.ReachOutNervesPhenotype();
 		areaCells.Clear();
-		if (hostSignalUnitEnum == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) { // this is an energy sensor
+		if (signalUnitEnum == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) { // this is an energy sensor
 			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).areaRadius);
-		} else if (hostSignalUnitEnum == SignalUnitEnum.EnergySensor) {
+		} else if (signalUnitEnum == SignalUnitEnum.EnergySensor) {
 			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.energySensor as GeneEnergySensor).areaRadius);
 		} 
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {
-		if (hostCell.GetCellType() == CellTypeEnum.Egg && hostSignalUnitEnum == SignalUnitEnum.WorkSensorA) {
-			if (!hostCell.gene.eggCellFertilizeEnergySensor.isRooted) {
-				return;
-			}
+		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnitEnum == SignalUnitEnum.WorkSensorA) {
+			//if (!hostCell.gene.eggCellFertilizeEnergySensor.isRooted) {
+			//	return;
+			//}
 
 			output[0] = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 			output[1] = hostCell.energy < (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
@@ -46,10 +46,10 @@ public class EnergySensor : SignalUnit {
 			output[4] = creatureEnergy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 			output[5] = creatureEnergy < (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 
-		} else if (hostSignalUnitEnum == SignalUnitEnum.EnergySensor) {
-			if (!hostCell.gene.energySensor.isRooted) {
-				return;
-			}
+		} else if (signalUnitEnum == SignalUnitEnum.EnergySensor) {
+			//if (!hostCell.gene.energySensor.isRooted) {
+			//	return;
+			//}
 
 			output[0] = hostCell.energy >= (hostCell.gene.energySensor as GeneEnergySensor).threshold;
 			output[1] = hostCell.energy < (hostCell.gene.energySensor as GeneEnergySensor).threshold;

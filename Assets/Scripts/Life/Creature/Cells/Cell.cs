@@ -130,46 +130,88 @@ public abstract class Cell : MonoBehaviour {
 	public LogicBox originDetatchLogicBox;
 	public SizeSensor originSizeSensor;
 
+	// step 1. 
 	public virtual void PreUpdateNervesGenotype() {
 		// clear averything
-
-		//dendritesLogicBox.PreUpdateNervesGenotype();
-		//energySensor.PreUpdateNervesGenotype();
-		//effectSensor.PreUpdateNervesGenotype();
-		//if (isOrigin) {
-		//	originDetatchLogicBox.PreUpdateNervesGenotype();
-		//}
+		constantSensor.PreUpdateNervesGenotype();
+		axon.PreUpdateNervesGenotype();
+		dendritesLogicBox.PreUpdateNervesGenotype();
+		energySensor.PreUpdateNervesGenotype();
+		effectSensor.PreUpdateNervesGenotype();
+		if (isOrigin) {
+			originDetatchLogicBox.PreUpdateNervesGenotype();
+			originSizeSensor.PreUpdateNervesGenotype();
+		}
 	}
 
+	// step 2.
 	public virtual void UpdateInputNervesGenotype(Genotype genotype) {
 		// find all inputs
 
-		//dendritesLogicBox.UpdateInputNervesGenotype();
-		//energySensor.UpdateInputNervesGenotype();
-		//effectSensor.UpdateInputNervesGenotype();
-		//if (isOrigin) {
-		//	originDetatchLogicBox.UpdateInputNervesGenotype();
-		//}
+		//constant sensor, no input
+		axon.UpdateInputNervesGenotype(genotype);
+		dendritesLogicBox.UpdateInputNervesGenotype(genotype);
+		
+		//energySensor, no input
+		//effectSensor, no input
+		if (isOrigin) {
+			originDetatchLogicBox.UpdateInputNervesGenotype(genotype);
+		}
+		//originSizeSensor, no input
 	}
 
+	// step 3.
 	public virtual void UpdateConnectionsNervesGenotype(Genotype genotype) {
-		// rancg out and connect, as far as possible, from this gene cells rooted signal units
+		// reach out from roots
+		if (axon.isEnabled) { // axone is root if it is sending pulse to muscles (otherwise working as dendrite, that is potentially leading leaves to root)
+			axon.RootRecursivlyGenotype(genotype, null);
+		}
 
-		// dont go through genes but geneCells instead !!!!!!!!!!
-
-		//MarkThisAndChildrenAsRootedHelper(genotype, this, SignalUnitEnum.WorkLogicBoxA);
-		//MarkThisAndChildrenAsRootedHelper(genotype, this, SignalUnitEnum.WorkLogicBoxB);
-
-		//GeneSignalUnit unit = gene.GetGeneSignalUnit(SignalUnitEnum.Axon);
-		//if (unit != null && (unit as GeneAxon).isEnabled) { // axone is root if it is sending pulse to muscles
-		//	unit.MarkThisAndChildrenAsRooted(genotype, this, SignalUnitEnum.WorkLogicBoxB);
-		//}
+		if (isOrigin) {
+			originDetatchLogicBox.RootRecursivlyGenotype(genotype, null);
+		}
 
 		//MarkThisAndChildrenAsRootedHelper(genotype, this, SignalUnitEnum.OriginDetatchLogicBox);
 	}
 
-	public virtual List<Nerve> GetAllNervesGenotype() {
-		return null;
+	// step 4.
+	public virtual List<Nerve> GetAllNervesGenotype(bool includeUnused) {
+		List<Nerve> nerves = new List<Nerve>();
+
+		if (includeUnused || constantSensor.isRooted) {
+			nerves.AddRange(constantSensor.GetAllNervesGenotype());
+		}
+
+		if (includeUnused || axon.isRooted) {
+			nerves.AddRange(axon.GetAllNervesGenotype());
+		}
+
+		if (includeUnused || dendritesLogicBox.isRooted) {
+			nerves.AddRange(dendritesLogicBox.GetAllNervesGenotype());
+		}
+
+		if (includeUnused || dendritesLogicBox.isRooted) {
+			nerves.AddRange(dendritesLogicBox.GetAllNervesGenotype());
+		}
+
+		if (includeUnused || energySensor.isRooted) {
+			nerves.AddRange(energySensor.GetAllNervesGenotype());
+		}
+
+		if (includeUnused || effectSensor.isRooted) {
+			nerves.AddRange(effectSensor.GetAllNervesGenotype());
+		}
+
+		if (isOrigin) {
+			nerves.AddRange(originDetatchLogicBox.GetAllNervesGenotype());
+			if (includeUnused || originSizeSensor.isRooted) { // input from origin can be disabled leading to it not being rooted
+				nerves.AddRange(originSizeSensor.GetAllNervesGenotype());
+			}
+		}
+		//originSizeSensor;
+
+		// TODO: more of them
+		return nerves;
 	}
 
 	//--
@@ -225,12 +267,12 @@ public abstract class Cell : MonoBehaviour {
 		return null;
 	}
 
-	private void MarkThisAndChildrenAsRootedHelper(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
-		GeneSignalUnit unit = gene.GetGeneSignalUnit(signalUnit);
-		if (unit != null) {
-			unit.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
-		}
-	}
+	//private void MarkThisAndChildrenAsRootedHelper(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
+	//	GeneSignalUnit unit = gene.GetGeneSignalUnit(signalUnit);
+	//	if (unit != null) {
+	//		unit.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
+	//	}
+	//}
 
 
 

@@ -238,61 +238,61 @@ public class Gene {
 
 	// TODO: Move to web
 	// 
-	public void PreUpdateInterGeneCell() {
-		foreach (SignalUnitEnum type in Enum.GetValues(typeof(SignalUnitEnum))) {
-			GeneSignalUnit unit = GetGeneSignalUnit(type);
-			if (unit != null) {
-				unit.isRooted = true; // just set to tru for now so everything seems rooted/ is visible
-			}
-		}
-	}
+	//public void PreUpdateInterGeneCell() {
+	//	foreach (SignalUnitEnum type in Enum.GetValues(typeof(SignalUnitEnum))) {
+	//		GeneSignalUnit unit = GetGeneSignalUnit(type);
+	//		if (unit != null) {
+	//			unit.isRooted = true; // just set to tru for now so everything seems rooted/ is visible
+	//		}
+	//	}
+	//}
 
 	// TODO: Move to web
 	// Assume geneCellMap has been built now
-	public void UpdateInterGeneCell(Genotype genotype) {
-		foreach (Cell geneCell in genotype.GetGeneCellsWithGene(this)) {
-			// need to check all geneCells containing gene same gene but differs in location and heading
+	//public void UpdateInterGeneCell(Genotype genotype) {
+	//	foreach (Cell geneCell in genotype.GetGeneCellsWithGene(this)) {
+	//		// need to check all geneCells containing gene same gene but differs in location and heading
 
-			MarkThisAndChildrenAsRootedHelper(genotype, geneCell, SignalUnitEnum.WorkLogicBoxA);
-			MarkThisAndChildrenAsRootedHelper(genotype, geneCell, SignalUnitEnum.WorkLogicBoxB);
+	//		MarkThisAndChildrenAsRootedHelper(genotype, geneCell, SignalUnitEnum.WorkLogicBoxA);
+	//		MarkThisAndChildrenAsRootedHelper(genotype, geneCell, SignalUnitEnum.WorkLogicBoxB);
 
-			GeneSignalUnit unit = GetGeneSignalUnit(SignalUnitEnum.Axon);
-			if (unit != null && (unit as GeneAxon).isEnabled) { // axone is root if it is sending pulse to muscles
-				unit.MarkThisAndChildrenAsRooted(genotype, geneCell, SignalUnitEnum.WorkLogicBoxB);
-			}
+	//		GeneSignalUnit unit = GetGeneSignalUnit(SignalUnitEnum.Axon);
+	//		if (unit != null && (unit as GeneAxon).isEnabled) { // axone is root if it is sending pulse to muscles
+	//			unit.MarkThisAndChildrenAsRooted(genotype, geneCell, SignalUnitEnum.WorkLogicBoxB);
+	//		}
 
-			MarkThisAndChildrenAsRootedHelper(genotype, geneCell, SignalUnitEnum.OriginDetatchLogicBox);
-		}
-	}
+	//		MarkThisAndChildrenAsRootedHelper(genotype, geneCell, SignalUnitEnum.OriginDetatchLogicBox);
+	//	}
+	//}
 
 	// ^ Signal ^ 
 
-	private void MarkThisAndChildrenAsRootedHelper(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
-		GeneSignalUnit unit = GetGeneSignalUnit(signalUnit);
-		if (unit != null) {
-			unit.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
-		}
-	}
+	//private void MarkThisAndChildrenAsRootedHelper(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
+	//	GeneSignalUnit unit = GetGeneSignalUnit(signalUnit);
+	//	if (unit != null) {
+	//		unit.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
+	//	}
+	//}
 
-	public List<GeneNerve> GetExternalGeneNerves() {
-		List<GeneNerve> allGeneNerves = new List<GeneNerve>();
-		AddToGeneNerveList(SignalUnitEnum.WorkLogicBoxA, allGeneNerves);
-		AddToGeneNerveList(SignalUnitEnum.WorkLogicBoxB, allGeneNerves);
-		AddToGeneNerveList(SignalUnitEnum.Axon, allGeneNerves);
-		AddToGeneNerveList(SignalUnitEnum.DendritesLogicBox, allGeneNerves);
-		AddToGeneNerveList(SignalUnitEnum.OriginDetatchLogicBox, allGeneNerves);
-		return allGeneNerves;
-	}
+	//public List<GeneNerve> GetExternalGeneNerves() {
+	//	List<GeneNerve> allGeneNerves = new List<GeneNerve>();
+	//	AddToGeneNerveList(SignalUnitEnum.WorkLogicBoxA, allGeneNerves);
+	//	AddToGeneNerveList(SignalUnitEnum.WorkLogicBoxB, allGeneNerves);
+	//	AddToGeneNerveList(SignalUnitEnum.Axon, allGeneNerves);
+	//	AddToGeneNerveList(SignalUnitEnum.DendritesLogicBox, allGeneNerves);
+	//	AddToGeneNerveList(SignalUnitEnum.OriginDetatchLogicBox, allGeneNerves);
+	//	return allGeneNerves;
+	//}
 
-	private void AddToGeneNerveList(SignalUnitEnum unitEnum, List<GeneNerve> geneNerves) {
-		GeneSignalUnit unit = GetGeneSignalUnit(unitEnum);
-		if (unit != null) {
-			List<GeneNerve> foundGeneNerves = unit.GetExternalGeneNerves();
-			if (foundGeneNerves != null) {
-				geneNerves.AddRange(foundGeneNerves);
-			}
-		}
-	}
+	//private void AddToGeneNerveList(SignalUnitEnum unitEnum, List<GeneNerve> geneNerves) {
+	//	GeneSignalUnit unit = GetGeneSignalUnit(unitEnum);
+	//	if (unit != null) {
+	//		List<GeneNerve> foundGeneNerves = unit.GetExternalGeneNerves();
+	//		if (foundGeneNerves != null) {
+	//			geneNerves.AddRange(foundGeneNerves);
+	//		}
+	//	}
+	//}
 
 	private IGenotypeDirtyfy genotypeDirtyfy;
 

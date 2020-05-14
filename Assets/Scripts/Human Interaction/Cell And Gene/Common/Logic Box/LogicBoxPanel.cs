@@ -134,7 +134,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 	public override List<IGeneInput> GetAllGeneInputs() {
 		List<IGeneInput> arrows = new List<IGeneInput>();
-		if (affectedGeneLogicBox.isRooted) {
+		if (isAnyAffectedSignalUnitsRootedGenotype) {
 			for (int i = 0; i < inputRow3.Length; i++) {
 				if (inputRow3[i].affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
 					arrows.Add(inputRow3[i].affectedGeneLogicBoxInput);
@@ -178,17 +178,16 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 			if (mode == PhenoGenoEnum.Phenotype && cellAndGenePanel.cell != null) {
 				if (affectedGeneLogicBox != null) {
-					if (affectedGeneLogicBox.isRooted) {
-						//outputImageLate.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputLateA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-						outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputEarlyA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-					} else {
-						//outputImageLate.color = ColorScheme.instance.signalUnused;
-						outputImageEarly.color = ColorScheme.instance.signalUnused;
-					}
+					//if (affectedGeneLogicBox.isRooted) {
+					outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputEarlyA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					//} else {
+					//	//outputImageLate.color = ColorScheme.instance.signalUnused;
+					//	outputImageEarly.color = ColorScheme.instance.signalUnused;
+					//}
 
 				}
 			} else {
-				if (affectedGeneLogicBox != null && affectedGeneLogicBox.isRooted) {
+				if (affectedGeneLogicBox != null  && isAnyAffectedSignalUnitsRootedGenotype) {
 					//outputImageLate.color = ColorScheme.instance.signalOff;
 					outputImageEarly.color = ColorScheme.instance.signalOff;
 				} else {

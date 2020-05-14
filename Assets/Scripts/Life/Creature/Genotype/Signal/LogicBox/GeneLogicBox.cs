@@ -192,51 +192,52 @@ public class GeneLogicBox : GeneSignalUnit {
 		}
 	}
 
-	public override void MarkThisAndChildrenAsRooted(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
-		//if (isUsed) {
-		//	return;
-		//}
+	// remove
+	//public override void MarkThisAndChildrenAsRooted(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
+	//	//if (isUsed) {
+	//	//	return;
+	//	//}
 
-		isRooted = true;
+	//	isRooted = true;
 
-		if (geneCell == null || geneCell.gene == null) {
-			return;
-		}
+	//	if (geneCell == null || geneCell.gene == null) {
+	//		return;
+	//	}
 		
-		foreach (GeneLogicBoxInput input3 in inputRow3) {
-			if (input3.valveMode == SignalValveModeEnum.Pass) {
-				if (input3.nerve.isLocal) {
-					GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(input3.nerve.tailUnitEnum);
-					if (child != null) {
-						child.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
-					}
-				} else {
-					Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, input3.nerve, genotype);
-					if (childCell != null) {
-						GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(input3.nerve.tailUnitEnum);
-						if (child != null) {
-							child.MarkThisAndChildrenAsRooted(genotype, childCell, signalUnit);
-						}
-					}
-				}
-			}
-		}
-	}
+	//	foreach (GeneLogicBoxInput input3 in inputRow3) {
+	//		if (input3.valveMode == SignalValveModeEnum.Pass) {
+	//			if (input3.nerve.isLocal) {
+	//				GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(input3.nerve.tailUnitEnum);
+	//				if (child != null) {
+	//					child.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
+	//				}
+	//			} else {
+	//				Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, input3.nerve, genotype);
+	//				if (childCell != null) {
+	//					GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(input3.nerve.tailUnitEnum);
+	//					if (child != null) {
+	//						child.MarkThisAndChildrenAsRooted(genotype, childCell, signalUnit);
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 
-	public override List<GeneNerve> GetExternalGeneNerves() {
-		if (!isRooted) { // TODO: take isUsed from outside into account as well
-			return null;
-		}
+	//public override List<GeneNerve> GetExternalGeneNerves() {
+	//	if (!isRooted) { // TODO: take isUsed from outside into account as well
+	//		return null;
+	//	}
 
-		List<GeneNerve> nerves = new List<GeneNerve>();
-		for (int i = 0; i < columnCount; i++) {
-			if (inputRow3[i].valveMode == SignalValveModeEnum.Pass && inputRow3[i].nerve.nerveVector != null) {
-				nerves.Add(inputRow3[i].nerve);
-			}
-		}
+	//	List<GeneNerve> nerves = new List<GeneNerve>();
+	//	for (int i = 0; i < columnCount; i++) {
+	//		if (inputRow3[i].valveMode == SignalValveModeEnum.Pass && inputRow3[i].nerve.nerveVector != null) {
+	//			nerves.Add(inputRow3[i].nerve);
+	//		}
+	//	}
 
-		return nerves;
-	}
+	//	return nerves;
+	//}
 
 	public bool HasGateAbove(GeneLogicBoxGate gate) {
 		return AreSomeCellsOccupiedByGate(gate.row - 1, gate.leftFlank, gate.rightFlank);

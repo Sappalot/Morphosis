@@ -45,6 +45,11 @@ public class GeneAxon : GeneSignalUnit {
 	public GeneAxonInput axonInputLeft;
 	public GeneAxonInput axonInputRight;
 
+	public GeneAxonInput GetInput(int column) {
+		return column == 0 ? axonInputLeft : axonInputRight;
+
+	}
+
 	private int m_pulseProgram3 = 3; //
 	public int pulseProgram3 {
 		get {
@@ -110,69 +115,71 @@ public class GeneAxon : GeneSignalUnit {
 		genotypeDirtyfy.MakeGeneCellPatternDirty();
 	}
 
-	public override void MarkThisAndChildrenAsRooted(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
-		// avoid looping forever
+	// remove
+	//public override void MarkThisAndChildrenAsRooted(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
+	//	// avoid looping forever
 
-		isRooted = true;
+	//	isRooted = true;
 		
-		if (geneCell.gene == null) {
-			return;
-		}
+	//	if (geneCell.gene == null) {
+	//		return;
+	//	}
 		
-		// mark children as well
-		if (axonInputLeft.valveMode == SignalValveModeEnum.Pass) {
-			if (axonInputLeft.nerve.isLocal) {
-				// ask to which this genes  unit where tail is "pointing"
-				GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(axonInputLeft.nerve.tailUnitEnum);
-				if (child != null) {
-					child.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
-				}
-			} else {
-				// ask external unit where tail is pointing
-				Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, axonInputLeft.nerve, genotype);
-				if (childCell != null) {
-					GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(axonInputLeft.nerve.tailUnitEnum);
-					if (child != null) {
-						child.MarkThisAndChildrenAsRooted(genotype, childCell, signalUnit);
-					}
-				}
-			}
-		}
-		if (axonInputRight.valveMode == SignalValveModeEnum.Pass) {
-			if (axonInputRight.nerve.isLocal) {
-				// ask local unit where tail is "pointing"
-				GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(axonInputRight.nerve.tailUnitEnum);
-				if (child != null) {
-					child.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
-				}
-			} else {
-				Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, axonInputRight.nerve, genotype);
-				if (childCell != null) {
-					GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(axonInputRight.nerve.tailUnitEnum);
-					if (child != null) {
-						child.MarkThisAndChildrenAsRooted(genotype, childCell, signalUnit);
-					}
-				}
-			}
-		}
-	}
+	//	// mark children as well
+	//	if (axonInputLeft.valveMode == SignalValveModeEnum.Pass) {
+	//		if (axonInputLeft.nerve.isLocal) {
+	//			// ask to which this genes  unit where tail is "pointing"
+	//			GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(axonInputLeft.nerve.tailUnitEnum);
+	//			if (child != null) {
+	//				child.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
+	//			}
+	//		} else {
+	//			// ask external unit where tail is pointing
+	//			Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, axonInputLeft.nerve, genotype);
+	//			if (childCell != null) {
+	//				GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(axonInputLeft.nerve.tailUnitEnum);
+	//				if (child != null) {
+	//					child.MarkThisAndChildrenAsRooted(genotype, childCell, signalUnit);
+	//				}
+	//			}
+	//		}
+	//	}
+	//	if (axonInputRight.valveMode == SignalValveModeEnum.Pass) {
+	//		if (axonInputRight.nerve.isLocal) {
+	//			// ask local unit where tail is "pointing"
+	//			GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(axonInputRight.nerve.tailUnitEnum);
+	//			if (child != null) {
+	//				child.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
+	//			}
+	//		} else {
+	//			Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, axonInputRight.nerve, genotype);
+	//			if (childCell != null) {
+	//				GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(axonInputRight.nerve.tailUnitEnum);
+	//				if (child != null) {
+	//					child.MarkThisAndChildrenAsRooted(genotype, childCell, signalUnit);
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 
-	public override List<GeneNerve> GetExternalGeneNerves() {
-		if (!isRooted) { // TODO: take isUsed from outside into account as well
-			return null;
-		}
+	//remove
+	//public override List<GeneNerve> GetExternalGeneNerves() {
+	//	if (!isRooted) { // TODO: take isUsed from outside into account as well
+	//		return null;
+	//	}
 
-		List<GeneNerve> nerves = new List<GeneNerve>();
-		if (axonInputLeft.valveMode == SignalValveModeEnum.Pass && axonInputLeft.nerve.nerveVector != null) {
-			nerves.Add(axonInputLeft.nerve);
-		}
+	//	List<GeneNerve> nerves = new List<GeneNerve>();
+	//	if (axonInputLeft.valveMode == SignalValveModeEnum.Pass && axonInputLeft.nerve.nerveVector != null) {
+	//		nerves.Add(axonInputLeft.nerve);
+	//	}
 
-		if (axonInputRight.valveMode == SignalValveModeEnum.Pass && axonInputRight.nerve.nerveVector != null) {
-			nerves.Add(axonInputRight.nerve);
-		}
+	//	if (axonInputRight.valveMode == SignalValveModeEnum.Pass && axonInputRight.nerve.nerveVector != null) {
+	//		nerves.Add(axonInputRight.nerve);
+	//	}
 
-		return nerves;
-	}
+	//	return nerves;
+	//}
 
 	public void Defaultify() {
 		isEnabled = false;

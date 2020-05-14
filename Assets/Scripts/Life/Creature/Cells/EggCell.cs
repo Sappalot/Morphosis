@@ -24,31 +24,30 @@ public class EggCell : Cell {
 	public override void PreUpdateNervesGenotype() {
 		base.PreUpdateNervesGenotype();
 		fertilizeLogicBox.PreUpdateNervesGenotype();
-		//fertilizeEnergySensor.PreUpdateNervesGenotype();
-		//fertilizeAttachmentSensor.PreUpdateNervesGenotype();
+		fertilizeEnergySensor.PreUpdateNervesGenotype();
+		fertilizeAttachmentSensor.PreUpdateNervesGenotype();
 	}
 
 	public override void UpdateInputNervesGenotype(Genotype genotype) {
 		base.UpdateInputNervesGenotype(genotype);
 		fertilizeLogicBox.UpdateInputNervesGenotype(genotype);
-		//fertilizeEnergySensor.UpdateInputNervesGenotype();
-		//fertilizeAttachmentSensor.UpdateInputNervesGenotype();
+		//fertilizeEnergySensor, no input
+		//fertilizeAttachmentSensor, no input
 	}
 
 	public override void UpdateConnectionsNervesGenotype(Genotype genotype) {
 		base.UpdateConnectionsNervesGenotype(genotype);
-		fertilizeLogicBox.UpdateConnectionsNervesGenotype(genotype); // root
-
+		fertilizeLogicBox.RootRecursivlyGenotype(genotype, null); // root
 	}
 
-	public override List<Nerve> GetAllNervesGenotype() {
+	public override List<Nerve> GetAllNervesGenotype(bool includeUnused) {
 		List<Nerve> nerves = new List<Nerve>();
-		List<Nerve> baseNerves = base.GetAllNervesGenotype();
-		if (baseNerves != null) {
-			nerves.AddRange(baseNerves);
-		}
+		nerves.AddRange(base.GetAllNervesGenotype(includeUnused));
+
 		nerves.AddRange(fertilizeLogicBox.GetAllNervesGenotype());
-		// TODO: more of them
+		nerves.AddRange(fertilizeEnergySensor.GetAllNervesGenotype());
+		nerves.AddRange(fertilizeAttachmentSensor.GetAllNervesGenotype());
+
 		return nerves;
 	}
 

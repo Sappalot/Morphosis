@@ -1,13 +1,87 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Axon : SignalUnit {
 	private bool[] outputLate = new bool[6];
 	private bool[] outputEarly = new bool[6];
 
-	
+	private Nerve[] inputNerves = new Nerve[2]; // left, right
 
-	public Axon(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
-		this.hostSignalUnitEnum = signalUnit;
+	public Axon(SignalUnitEnum signalUnitEnum, Cell hostCell) : base(hostCell) {
+		this.signalUnitEnum = signalUnitEnum;
+		inputNerves[0] = new Nerve();
+		inputNerves[1] = new Nerve();
+	}
+
+	public override void UpdateInputNervesGenotype(Genotype genotype) {
+		GeneAxon geneAxon = (GeneAxon)hostCell.gene.GetGeneSignalUnit(signalUnitEnum);
+		for (int i = 0; i < 2; i++) {
+			if (geneAxon.GetInput(i).valveMode == SignalValveModeEnum.Pass) {
+				inputNerves[i].headCell = hostCell;
+				inputNerves[i].headSignalUnitEnum = signalUnitEnum;
+				inputNerves[i].headSignalUnitSlotEnum = SignalUnit.IndexToSignalInputSlotUnit(i);
+
+				GeneNerve geneNerve = geneAxon.GetInput(i).nerve;
+				inputNerves[i].tailSignalUnitEnum = geneNerve.tailUnitEnum;
+				inputNerves[i].tailSignalUnitSlotEnum = geneNerve.tailUnitSlotEnum;
+				if (geneNerve.isLocal) {
+					inputNerves[i].tailCell = hostCell;
+					inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeLocal;
+				} else {
+					inputNerves[i].nerveVector = geneNerve.nerveVector;
+					inputNerves[i].tailCell = GeneNerve.GetGeneCellAtNerveTail(hostCell, geneNerve, genotype);
+					if (inputNerves[i].tailCell != null) {
+						inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeExternal;
+					} else {
+						inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeExternalVoid;
+					}
+				}
+			} else {
+				// blocked input ==> void nerve
+				inputNerves[i].nerveStatusEnum = NerveStatusEnum.Void;
+			}
+		}
+	}
+
+	// Assume all input nerves are updated at this stage
+	public override void RootRecursivlyGenotype(Genotype genotype, Nerve nerve) {
+		bool wasAllreadyRooted = isRooted;
+		base.RootRecursivlyGenotype(genotype, nerve); // roots me!
+
+		if (wasAllreadyRooted) {
+			return;
+		}
+
+		// reach out through input nerves
+		for (int i = 0; i < 2; i++) {
+			if (inputNerves[i].nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal ) {
+				// ask to which this genes unit where tail is "pointing"
+				SignalUnit childSignalUnit = hostCell.GetSignalUnit(inputNerves[i].tailSignalUnitEnum);
+				if (childSignalUnit != null) {
+					childSignalUnit.RootRecursivlyGenotype(genotype, inputNerves[i]);
+				}
+			} else if (inputNerves[i].nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) {
+				// ask external unit where tail is pointing
+				Cell childCell = inputNerves[i].tailCell;
+				if (childCell != null) {
+					SignalUnit childSignalUnit = childCell.GetSignalUnit(inputNerves[i].tailSignalUnitEnum);
+					if (childSignalUnit != null) {
+						childSignalUnit.RootRecursivlyGenotype(genotype, inputNerves[i]);
+					}
+				}
+			}
+		}
+	}
+
+	public override List<Nerve> GetAllNervesGenotype() {
+		List<Nerve> nerves = new List<Nerve>();
+		foreach (Nerve n in inputNerves) {
+			if (n.nerveStatusEnum != NerveStatusEnum.Void) {
+				nerves.Add(n);
+			}
+		}
+		nerves.AddRange(base.GetAllNervesGenotype());
+		return nerves;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
@@ -15,8 +89,8 @@ public class Axon : SignalUnit {
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {
-		if (hostSignalUnitEnum == SignalUnitEnum.Axon) { // redundant check ? 
-			if (!hostCell.gene.axon.isRooted) {
+		if (signalUnitEnum == SignalUnitEnum.Axon) { // redundant check ? 
+			if (!isRooted) {
 				return;
 			}
 

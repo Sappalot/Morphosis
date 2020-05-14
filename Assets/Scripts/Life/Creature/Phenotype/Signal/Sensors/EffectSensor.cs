@@ -10,7 +10,7 @@ public class EffectSensor : SignalUnit {
 	public float threshold;
 
 	public EffectSensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
-		base.hostSignalUnitEnum = signalUnit;
+		base.signalUnitEnum = signalUnit;
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
@@ -24,10 +24,10 @@ public class EffectSensor : SignalUnit {
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {
-		if (hostSignalUnitEnum == SignalUnitEnum.EffectSensor) { // redundant check ? 
-			if (!hostCell.gene.effectSensor.isRooted) {
-				return;
-			}
+		if (signalUnitEnum == SignalUnitEnum.EffectSensor) { // redundant check ? 
+			//if (!hostCell.gene.effectSensor.isRooted) {
+			//	return;
+			//}
 
 			output[0] = hostCell.Effect((hostCell.gene.effectSensor as GeneEffectSensor).effectMeassure) >= (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;
 			output[1] = hostCell.Effect((hostCell.gene.effectSensor as GeneEffectSensor).effectMeassure) < (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;

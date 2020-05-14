@@ -153,7 +153,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 			passButton.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
 
 			if (mode == PhenoGenoEnum.Genotype) {
-				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block || !motherPanel.affectedGeneLogicBox.isRooted) {
+				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block || !motherPanel.isAnyAffectedSignalUnitsRootedGenotype) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused; // blocked or logic box not used (pretty if they are all of if not used)
 				} else if (affectedGeneLogicBoxInput.nerve.tailUnitEnum == SignalUnitEnum.Void) {
 					inputButtonImage.color = Color.magenta; // should never happen
@@ -167,7 +167,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 				lockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked);
 				semiLockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxInput.lockness == LocknessEnum.SemiLocked);
 			} else {
-				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve || !motherPanel.affectedGeneLogicBox.isRooted) {
+				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve /*|| !motherPanel.affectedGeneLogicBox.isRooted*/) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused;
 				} else if (runtimeOutput == LogicBoxInputEnum.VoidInput) { // should never happen
 					inputButtonImage.color = Color.magenta;

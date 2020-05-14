@@ -471,9 +471,9 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 
 			UpdateNerves();
 
-			foreach (Gene gene in genes) {
-				gene.PreUpdateInterGeneCell();
-			}
+			//foreach (Gene gene in genes) {
+			//	gene.PreUpdateInterGeneCell();
+			//}
 
 			//foreach (Gene gene in genes) {
 			//	gene.UpdateInterGeneCell(this);
