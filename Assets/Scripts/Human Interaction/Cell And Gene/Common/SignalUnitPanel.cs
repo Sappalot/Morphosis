@@ -17,21 +17,41 @@ public abstract class SignalUnitPanel : ComponentPanel {
 	public RectTransform settingsPanel; // Not all sensor panels use settings panel
 
 	[HideInInspector]
-	public SignalUnitEnum signalUnit;
+	public SignalUnitEnum signalUnitEnum;
 
-	public virtual void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, CellAndGenePanel cellAndGenePanel) {
+	public virtual void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnitEnum, CellAndGenePanel cellAndGenePanel) {
 		base.Initialize(mode, cellAndGenePanel);
-		this.signalUnit = signalUnit;
+		if (viewOutputPanel != null) {
+			viewOutputPanel.Initialize(mode, XputEnum.Output, signalUnitEnum);
+		}
+		
+
+		this.signalUnitEnum = signalUnitEnum;
 
 		if (settingsPanel != null) {
 			settingsPanel.gameObject.SetActive(true); // Not all sensor panels use settings panel
 		}
 
 		for (int i = 0; i < outputPanels.Length; i++) {
-			outputPanels[i].Initialize(mode, signalUnit, IndexToSignalUnitSlotEnum(i), this, cellAndGenePanel);
+			outputPanels[i].Initialize(mode, signalUnitEnum, IndexToSignalUnitSlotEnum(i), this, cellAndGenePanel);
 		}
 
 		MakeDirty();
+	}
+
+	public ViewXputPanel viewOutputPanel;
+	public ViewXputPanel viewInputPanel;
+
+	public override ViewXput? viewXput {
+		get {
+			if (viewOutputPanel != null && viewOutputPanel.isMouseHovering) {
+				return viewOutputPanel.xput;
+			}
+			if (viewInputPanel != null && viewInputPanel.isMouseHovering) {
+				return viewInputPanel.xput;
+			}
+			return null;
+		}
 	}
 
 	[Serializable]
@@ -123,7 +143,7 @@ public abstract class SignalUnitPanel : ComponentPanel {
 	public GeneSignalUnit affectedGeneSignalUnit {
 		get {
 			if (gene != null) {
-				return gene.GetGeneSignalUnit(signalUnit);
+				return gene.GetGeneSignalUnit(signalUnitEnum);
 			}
 
 			return null;
@@ -137,7 +157,7 @@ public abstract class SignalUnitPanel : ComponentPanel {
 				return null;
 			}
 			List<Cell> geneCell = soloSelected.genotype.GetGeneCellsWithGene(gene);
-			return geneCell[0].GetSignalUnit(signalUnit);
+			return geneCell[0].GetSignalUnit(signalUnitEnum);
 
 		}
 	}
@@ -151,7 +171,7 @@ public abstract class SignalUnitPanel : ComponentPanel {
 			List<Cell> geneCells = soloSelected.genotype.GetGeneCellsWithGene(gene);
 			List<SignalUnit> signalUnits = new List<SignalUnit>();
 			foreach (Cell geneCell in geneCells) {
-				signalUnits.Add(geneCell.GetSignalUnit(signalUnit));
+				signalUnits.Add(geneCell.GetSignalUnit(signalUnitEnum));
 			}
 			return signalUnits;
 		}
@@ -173,6 +193,16 @@ public abstract class SignalUnitPanel : ComponentPanel {
 			for (int i = 0; i < outputPanels.Length; i++) {
 				outputPanels[i].isGhost = isGhost;
 				outputPanels[i].MakeDirty();
+			}
+
+			if (viewOutputPanel != null) {
+				viewOutputPanel.isGhost = isGhost;
+				viewOutputPanel.MakeDirty();
+			}
+
+			if (viewInputPanel != null) {
+				viewInputPanel.isGhost = isGhost;
+				viewInputPanel.MakeDirty();
 			}
 
 			isDirty = false;

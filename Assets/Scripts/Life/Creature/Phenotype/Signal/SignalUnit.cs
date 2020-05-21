@@ -50,6 +50,14 @@ public abstract class SignalUnit {
 		return outputNerves;
 	}
 
+	public virtual List<Nerve> GetOutputNervesGenotype() {
+		return outputNerves;
+	}
+
+	public virtual List<Nerve> GetInputNervesGenotype() {
+		return null;
+	}
+
 	//--
 
 	public virtual void ReachOutNervesPhenotype() {

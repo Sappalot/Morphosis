@@ -64,6 +64,7 @@ public class AxonPanel : SignalUnitPanel {
 
 	public override void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
 		base.Initialize(mode, SignalUnitEnum.Axon, cellAndGenePanel);
+		viewInputPanel.Initialize(mode, XputEnum.Input, signalUnitEnum);
 
 		// enabled for all
 

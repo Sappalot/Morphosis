@@ -99,6 +99,43 @@ public class CellAndGenePanel : MonoBehaviour {
 		return nerveList;
 	}
 
+	public ViewXput? viewXput {
+		get {
+			if (workPanel.viewXput != null) {
+				return workPanel.viewXput;
+			}
+
+			if (constantSensorPanel.viewXput != null) {
+				return constantSensorPanel.viewXput;
+			}
+
+			if (axonPanel.viewXput != null) {
+				return axonPanel.viewXput;
+			}
+
+			if (dendritesLogicBoxPanel.viewXput != null) {
+				return dendritesLogicBoxPanel.viewXput;
+			}
+
+			if (energySensorPanel.viewXput != null) {
+				return energySensorPanel.viewXput;
+			}
+
+			//effectSensorPanel.MakeDirty();
+			//buildPriorityPanel.MakeDirty();
+
+
+			if (originPanel.viewXput != null) {
+				return originPanel.viewXput;
+			}
+
+			//hudSignalArrowHandler.MakeDirtyConnections();
+			//hudSignalArrowHandler.MakeDirtySignal();
+
+			return null;
+		}
+	}
+
 	// old
 	public List<IGeneInput> GetAllGeneInputs() {
 		List<IGeneInput> inputList = new List<IGeneInput>();

@@ -7,6 +7,8 @@ public class NerveArrow : MonoBehaviour {
 	public Cell geneCell; // could be cell or GeneCell
 	public Nerve nerve;
 
+	public bool isHighlited;
+
 	public void Setup(Cell geneCell, Nerve nerve) {
 		this.geneCell = geneCell;
 		this.nerve = nerve;
@@ -52,6 +54,11 @@ public class NerveArrow : MonoBehaviour {
 		} else {
 			mainArrow.GetComponent<LineRenderer>().startColor = new Color(ColorScheme.instance.signalOff.r, ColorScheme.instance.signalOff.g, ColorScheme.instance.signalOff.b, 0.5f);
 			mainArrow.GetComponent<LineRenderer>().endColor = new Color(ColorScheme.instance.signalOff.r, ColorScheme.instance.signalOff.g, ColorScheme.instance.signalOff.b, 0.5f);
+		}
+
+		if (isHighlited) {
+			mainArrow.GetComponent<LineRenderer>().startColor = new Color(1f, 0f, 1f, 0.8f);
+			mainArrow.GetComponent<LineRenderer>().endColor = new Color(1f, 0f, 1f, 0.8f);
 		}
 
 	}

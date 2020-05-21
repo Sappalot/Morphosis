@@ -24,8 +24,14 @@ public abstract class ComponentPanel : MonoBehaviour {
 		this.cellAndGenePanel = cellAndGenePanel;
 	}
 
+	public virtual ViewXput? viewXput {
+		get {
+			return null;
+		}
+	}
+
 	// new
-	
+
 
 
 	// old

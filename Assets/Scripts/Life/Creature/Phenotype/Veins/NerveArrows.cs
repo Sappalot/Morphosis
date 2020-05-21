@@ -19,6 +19,29 @@ public class NerveArrows : MonoBehaviour {
 	}
 
 	public void UpdateGraphics() {
+		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
+			return;
+		}
+
+		Genotype genotype = CreatureSelectionPanel.instance.soloSelected.genotype;
+		Gene selectedGene = GenePanel.instance.selectedGene;
+
+		// unhighlite all
+		for (int index = 0; index < nerveArrowList.Count; index++) {
+			nerveArrowList[index].isHighlited = false;
+		}
+
+		// highlite viewed
+		List<Nerve> nervesToHighlite = HudSignalArrowHandler.GetNervesToHighliteGenotype(genotype, selectedGene);
+		if (nervesToHighlite != null) {
+			for (int index = 0; index < nerveArrowList.Count; index++) {
+				NerveArrow nerveArrow = nerveArrowList[index];
+				if (nervesToHighlite.Find(n => Nerve.AreTwinNerves(nerveArrow.nerve, n, false)) != null) {
+					nerveArrow.isHighlited = true;
+				} 
+			}
+		}
+
 		for (int index = 0; index < nerveArrowList.Count; index++) {
 			nerveArrowList[index].UpdateGraphics();
 		}
@@ -28,8 +51,10 @@ public class NerveArrows : MonoBehaviour {
 		Clear();
 
 		foreach (Cell geneCell in genotype.geneCellListIndexSorted) {
-			List<Nerve> nerves = geneCell.GetAllNervesGenotype(false);
-			if (nerves != null) {
+			List<Nerve> nerves = geneCell.GetAllNervesGenotype();
+			if (nerves.Count > 0) {
+				
+
 				foreach (Nerve n in nerves) {
 					if (n.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternalVoid || n.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) {
 						NerveArrow nerveArrow = Morphosis.instance.nerveArrowPool.Borrow();
@@ -38,7 +63,6 @@ public class NerveArrows : MonoBehaviour {
 						nerveArrow.Setup(geneCell, n);
 						nerveArrowList.Add(nerveArrow);
 					}
-
 				}
 			}
 		}
@@ -47,4 +71,6 @@ public class NerveArrows : MonoBehaviour {
 	public void OnRecycle() {
 		Clear();
 	}
+
+
 }

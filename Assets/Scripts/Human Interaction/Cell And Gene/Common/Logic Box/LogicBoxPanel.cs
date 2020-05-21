@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class LogicBoxPanel : SignalUnitPanel {
-
 	public Image outputImageEarly;
 	public Transform bodyPanel;
 
@@ -35,11 +34,11 @@ public class LogicBoxPanel : SignalUnitPanel {
 			if (gene == null) {
 				return null;
 			}
-			if (gene.type == CellTypeEnum.Egg && signalUnit == SignalUnitEnum.WorkLogicBoxA) {
+			if (gene.type == CellTypeEnum.Egg && signalUnitEnum == SignalUnitEnum.WorkLogicBoxA) {
 				return gene.eggCellFertilizeLogic;
-			} else if (signalUnit == SignalUnitEnum.DendritesLogicBox) {
+			} else if (signalUnitEnum == SignalUnitEnum.DendritesLogicBox) {
 				return gene.dendritesLogicBox;
-			} else if (signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
+			} else if (signalUnitEnum == SignalUnitEnum.OriginDetatchLogicBox) {
 				return gene.originDetatchLogicBox;
 			}
 
@@ -57,8 +56,11 @@ public class LogicBoxPanel : SignalUnitPanel {
 		affectedGeneLogicBox.UpdateConnections();
 	}
 
-	override public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnit, CellAndGenePanel cellAndGenePanel) {
-		base.Initialize(mode, signalUnit, cellAndGenePanel);
+	override public void Initialize(PhenoGenoEnum mode, SignalUnitEnum signalUnitEnum, CellAndGenePanel cellAndGenePanel) {
+		base.Initialize(mode, signalUnitEnum, cellAndGenePanel);
+		//viewOutputPanel.Initialize(mode, XputEnum.Output, signalUnitEnum); // done by base
+		viewInputPanel.Initialize(mode, XputEnum.Input, signalUnitEnum);
+
 		gateTemplate.gameObject.SetActive(true);
 		gateRow0 = GameObject.Instantiate(gateTemplate, bodyPanel.transform);
 		gateRow0.transform.position = gateTemplate.transform.position + Vector3.right * 0f * cellWidth + Vector3.down * 0f * cellHeight;

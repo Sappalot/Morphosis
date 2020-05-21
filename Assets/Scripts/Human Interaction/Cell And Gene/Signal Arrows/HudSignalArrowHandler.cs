@@ -49,17 +49,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			}
 			arrowList.Clear();
 
-			Dictionary<Cell,List<Nerve>> cellNervesDictionary = new Dictionary<Cell, List<Nerve>>();
-			
-			if (mode == PhenoGenoEnum.Genotype) {
-				List<Cell> geneCells = CreatureSelectionPanel.instance.soloSelected.genotype.GetGeneCellsWithGene(selectedGene);
-
-				// merge gene cells
-				foreach (Cell geneCell in geneCells) {
-					cellNervesDictionary.Add(geneCell, geneCell.GetAllNervesGenotype(false));
-				}
-
-			} else {
+			if (mode == PhenoGenoEnum.Phenotype) {
 				// phenotype
 				// TODO: make phenotype work as well
 
@@ -67,20 +57,53 @@ public class HudSignalArrowHandler : MonoBehaviour {
 				return;
 			}
 
-		
+			Genotype genotype = CreatureSelectionPanel.instance.soloSelected.genotype;
+			List<Nerve> uniqueNerves = genotype.GetAllUniqueNervesGenotype(selectedGene);
 
-			if (cellNervesDictionary == null || cellNervesDictionary.Values.Count == 0) {
+			if (uniqueNerves.Count == 0) {
 				// nothing to draw.... done here... bye
 				isDirtyConnections = false;
 				return;
 			}
 
+			List<Nerve> nervesToHighlite = GetNervesToHighliteGenotype(genotype, selectedGene);
+
 			// inputs
-			foreach (Nerve nerve in cellNervesDictionary.Values.ToArray()[0]) {
+			foreach (Nerve nerve in uniqueNerves) {
 				//When it comes to input, they all look the same so we just pich the first one, which we are sure to have
 
-				
-				if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal ||
+				if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeLocal ||
+					nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) {
+
+					// We draw internal output arrows (from their tail side), though they have been drawn (from their head side) allready
+					// The reason for this is so that we can highlite them from the tail side as well
+
+					HudSignalArrow arrow = GetArrowLikeNerve(nerve);
+
+					Vector2 tail = cellAndGenePanel.TotalPanelOffset(nerve.tailSignalUnitEnum, nerve.tailSignalUnitSlotEnum);
+					// external output
+					Vector2 head;
+
+					if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeLocal) {
+						// Local input
+						head = cellAndGenePanel.TotalPanelOffset(nerve.headSignalUnitEnum, nerve.headSignalUnitSlotEnum);
+					} else {
+						// External input (short arrow, pointing up, with head at input )
+						head = tail + Vector2.up * 20f;
+					}
+
+					SetArrowTransforms(arrow, head, tail);
+					arrow.GetComponent<Image>().color = ColorScheme.instance.signalOff;
+
+					// Highlite
+					if (nervesToHighlite != null) {
+						if (nervesToHighlite.Find(n => Nerve.AreTwinNerves(n, nerve, true)) != null) {
+							HighliteArrow(arrow);
+						}
+					}
+
+					arrowList.Add(arrow);
+				} else if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal ||
 					nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal ||
 					nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternalVoid) {
 
@@ -88,6 +111,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 
 					Vector2 head = cellAndGenePanel.TotalPanelOffset(nerve.headSignalUnitEnum, nerve.headSignalUnitSlotEnum);
 					Vector2 tail;
+
 					if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal) {
 						// Local input
 						tail = cellAndGenePanel.TotalPanelOffset(nerve.tailSignalUnitEnum, nerve.tailSignalUnitSlotEnum);
@@ -97,56 +121,64 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					}
 
 					SetArrowTransforms(arrow, head, tail);
-					arrowList.Add(arrow);
-				}
-			}
+					arrow.GetComponent<Image>().color = ColorScheme.instance.signalOff;
 
-			// outputs
-			// merge list so that we have max one external nerve with tail at output
-			List<Nerve> mergedList = new List<Nerve>(); // only output_external
-			foreach (KeyValuePair<Cell, List<Nerve>> pair in cellNervesDictionary.ToList()) {
-				foreach (Nerve nerve in pair.Value) {
-					if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) {
-						if (mergedList.Find(n => n.tailSignalUnitEnum == nerve.tailSignalUnitEnum && n.tailSignalUnitSlotEnum == nerve.tailSignalUnitSlotEnum) == null) {
-							// max one of each
-							mergedList.Add(nerve);
+					// Highlite
+					if (nervesToHighlite != null) {
+						if (nervesToHighlite.Find(n => Nerve.AreTwinNerves(n, nerve, true)) != null) {
+							HighliteArrow(arrow);
 						}
 					}
-				}
-			}
 
-			foreach (Nerve nerve in mergedList) {
-				if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) {
-					// no point to draw local arrow inputs as they are allready drawn (with the tail here from another input)
-
-					HudSignalArrow arrow = GetArrowLikeNerve(nerve);
-
-					Vector2 tail = cellAndGenePanel.TotalPanelOffset(nerve.tailSignalUnitEnum, nerve.tailSignalUnitSlotEnum);
-					// external output
-					Vector2 head = tail + Vector2.up * 20f;
-
-					SetArrowTransforms(arrow, head, tail);
 					arrowList.Add(arrow);
 				}
-
 			}
 
 			isDirtyConnections = false;
 		}
 
-		// Update signal TODO: update only when dirty, that is post signal update in creature
-		if (isDirtySignal) {
-			foreach (HudSignalArrow arrow in arrowList) {
-				Color color = Color.black;
-				if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
-					color = selectedCell.GetOutputFromUnit(arrow.tailUnit, arrow.tailUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+		//// Update signal TODO: update only when dirty, that is post signal update in creature
+		//if (isDirtySignal) {
+		//	foreach (HudSignalArrow arrow in arrowList) {
+		//		Color color = Color.black;
+		//		if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
+		//			color = selectedCell.GetOutputFromUnit(arrow.tailUnit, arrow.tailUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+		//		} else {
+		//			color = ColorScheme.instance.signalOff;
+		//		}
+		//		arrow.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0.5f);
+		//	}
+		//	isDirtySignal = false;
+		//}
+	}
+
+	public static List<Nerve> GetNervesToHighliteGenotype(Genotype genotype, Gene selectedGene) {
+		ViewXput? viewXputNullable = GenePanel.instance.cellAndGenePanel.viewXput;
+		List<Nerve> nerveToHighlite = null;
+
+		if (viewXputNullable != null) {
+			ViewXput viewXput = ((ViewXput)viewXputNullable);
+			List<List<Nerve>> nerveTwinBundleList = genotype.GetNerveTwinBundles(selectedGene, viewXput.signalUnitEnum, viewXput.xputType);
+			if (nerveTwinBundleList.Count > 0) {
+				//for (int i = 0; i < nerveTwinBundleList.Count; i++) {
+				//	Debug.Log("twin bundle: " + i + ", length: " + nerveTwinBundleList[i].Count);
+				//}
+				int nerveTwinBundleIndex = viewXput.index == 0 ? -1 : (viewXput.index - 1) % nerveTwinBundleList.Count;
+				//Debug.Log("Index: " + (nerveTwinBundleIndex == -1 ? "EVERYTHING" : nerveTwinBundleIndex.ToString()));
+
+				nerveToHighlite = new List<Nerve>();
+				if (nerveTwinBundleIndex == -1) {
+					foreach (List<Nerve> nerveList in nerveTwinBundleList) {
+						foreach (Nerve nerve in nerveList) {
+							nerveToHighlite.Add(nerve);
+						}
+					}
 				} else {
-					color = ColorScheme.instance.signalOff;
+					nerveToHighlite = nerveTwinBundleList[nerveTwinBundleIndex]; // there should at leas be one on index 0
 				}
-				arrow.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0.5f);
 			}
-			isDirtySignal = false;
 		}
+		return nerveToHighlite;
 	}
 
 	private HudSignalArrow GetArrowLikeNerve( Nerve nerve) {
@@ -165,6 +197,11 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		arrow.GetComponent<RectTransform>().localPosition = (head + tail) / 2f;
 		arrow.GetComponent<RectTransform>().sizeDelta = new Vector2(Vector2.Distance(head, tail), 10f);
 		arrow.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0f, 0f, Mathf.Rad2Deg * Mathf.Atan2(head.y - tail.y, head.x - tail.x));
+	}
+
+	private void HighliteArrow(HudSignalArrow arrow) {
+		arrow.GetComponent<Image>().color = Color.magenta;
+		arrow.transform.SetAsLastSibling(); // transforming coordinate doesn't affect draw order 
 	}
 
 	public Cell selectedCell {

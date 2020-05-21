@@ -175,36 +175,36 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// step 4.
-	public virtual List<Nerve> GetAllNervesGenotype(bool includeUnused) {
+	public virtual List<Nerve> GetAllNervesGenotype() {
 		List<Nerve> nerves = new List<Nerve>();
 
-		if (includeUnused || constantSensor.isRooted) {
+		if (constantSensor.isRooted) {
 			nerves.AddRange(constantSensor.GetAllNervesGenotype());
 		}
 
-		if (includeUnused || axon.isRooted) {
+		if (axon.isRooted) {
 			nerves.AddRange(axon.GetAllNervesGenotype());
 		}
 
-		if (includeUnused || dendritesLogicBox.isRooted) {
+		if (dendritesLogicBox.isRooted) {
 			nerves.AddRange(dendritesLogicBox.GetAllNervesGenotype());
 		}
 
-		if (includeUnused || dendritesLogicBox.isRooted) {
+		if (dendritesLogicBox.isRooted) {
 			nerves.AddRange(dendritesLogicBox.GetAllNervesGenotype());
 		}
 
-		if (includeUnused || energySensor.isRooted) {
+		if (energySensor.isRooted) {
 			nerves.AddRange(energySensor.GetAllNervesGenotype());
 		}
 
-		if (includeUnused || effectSensor.isRooted) {
+		if (effectSensor.isRooted) {
 			nerves.AddRange(effectSensor.GetAllNervesGenotype());
 		}
 
 		if (isOrigin) {
 			nerves.AddRange(originDetatchLogicBox.GetAllNervesGenotype());
-			if (includeUnused || originSizeSensor.isRooted) { // input from origin can be disabled leading to it not being rooted
+			if (originSizeSensor.isRooted) { // input from origin can be disabled leading to it not being rooted
 				nerves.AddRange(originSizeSensor.GetAllNervesGenotype());
 			}
 		}

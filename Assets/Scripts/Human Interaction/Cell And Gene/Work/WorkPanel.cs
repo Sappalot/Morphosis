@@ -46,6 +46,15 @@ public class WorkPanel : MonoBehaviour {
 		MakeDirty();
 	}
 
+	public ViewXput? viewXput {
+		get {
+			if (gene != null) {
+				return workPanels[(int)gene.type].viewXput;
+			}
+			return null;
+		}
+	}
+
 	public void MakeDirty() {
 		if (gene != null) {
 			workPanels[(int)gene.type].MakeDirty(); // only the visible one

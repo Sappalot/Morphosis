@@ -27,12 +27,12 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	private LogicBoxPanel motherPanel;
 	public GeneLogicBoxInput affectedGeneLogicBoxInput { 
 		get {
-			if (selectedGene.type == CellTypeEnum.Egg && motherPanel.signalUnit == SignalUnitEnum.WorkLogicBoxA) {
+			if (selectedGene.type == CellTypeEnum.Egg && motherPanel.signalUnitEnum == SignalUnitEnum.WorkLogicBoxA) {
 				return selectedGene.eggCellFertilizeLogic.GetInput(column);
-			} else if (motherPanel.signalUnit == SignalUnitEnum.DendritesLogicBox) {
+			} else if (motherPanel.signalUnitEnum == SignalUnitEnum.DendritesLogicBox) {
 				return selectedGene.dendritesLogicBox.GetInput(column);
 			}
-			if (motherPanel.signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
+			if (motherPanel.signalUnitEnum == SignalUnitEnum.OriginDetatchLogicBox) {
 				return selectedGene.originDetatchLogicBox.GetInput(column);
 			}
 			return null;

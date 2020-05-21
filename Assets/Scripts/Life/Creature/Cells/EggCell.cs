@@ -40,9 +40,9 @@ public class EggCell : Cell {
 		fertilizeLogicBox.RootRecursivlyGenotype(genotype, null); // root
 	}
 
-	public override List<Nerve> GetAllNervesGenotype(bool includeUnused) {
+	public override List<Nerve> GetAllNervesGenotype() {
 		List<Nerve> nerves = new List<Nerve>();
-		nerves.AddRange(base.GetAllNervesGenotype(includeUnused));
+		nerves.AddRange(base.GetAllNervesGenotype());
 
 		nerves.AddRange(fertilizeLogicBox.GetAllNervesGenotype());
 		nerves.AddRange(fertilizeEnergySensor.GetAllNervesGenotype());

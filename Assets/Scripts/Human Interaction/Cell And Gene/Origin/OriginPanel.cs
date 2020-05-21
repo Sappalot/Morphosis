@@ -42,6 +42,20 @@ public class OriginPanel : ComponentPanel {
 		ignoreHumanInput = false;
 	}
 
+	public override ViewXput? viewXput {
+		get {
+			if (detatchLogicBoxPanel.viewXput != null) {
+				return detatchLogicBoxPanel.viewXput;
+			}
+
+			if (sizeSensorPanel.viewXput != null) {
+				return sizeSensorPanel.viewXput;
+			}
+
+			return null;
+		}
+	}
+
 	// ...pulse...
 	public void OnPulseFrequenzySliderMoved() { 
 		if (ignoreHumanInput || mode == PhenoGenoEnum.Phenotype) {

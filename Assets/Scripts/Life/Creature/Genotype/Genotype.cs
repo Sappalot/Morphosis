@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 	public EggCell eggCellPrefab;
@@ -555,6 +556,70 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 			}
 		}
 		return cells;
+	}
+
+	// if there are twins, only one of them will be returned (which one is arbitrary)
+	public List<Nerve> GetAllUniqueNervesGenotype(Gene gene) {
+		List<Cell> geneCells = GetGeneCellsWithGene(gene);
+		List<Nerve> uniqueNerves = new List<Nerve>();
+		foreach (Cell geneCell in geneCells) {
+			// all geneCells containing gene
+
+			List<Nerve> allGeneCellNerves = geneCell.GetAllNervesGenotype();
+			foreach (Nerve geneCellNerve in allGeneCellNerves) {
+				// for all used nerves in the geneCell
+
+				if (uniqueNerves.Find(n => Nerve.AreTwinNerves(n, geneCellNerve, true)) == null) {
+					// unique nerves does not contain a twin to geneCellNerve
+					uniqueNerves.Add(geneCellNerve);
+				}
+			}
+		}
+		return uniqueNerves;
+	}
+
+
+	// used to bundle up sets of neve twins together, who share the "same" properties (same everything, except the geneCell. Not the same geneCells, but the same genes inside them)
+	// don't get anything from unrooted signal units
+	public List<List<Nerve>> GetNerveTwinBundles(Gene gene, SignalUnitEnum signalUnitEnum, XputEnum xputEnum) {
+		Dictionary<string, List<Nerve>> nerveBundleDictionary = new Dictionary<string, List<Nerve>>();
+
+		List<Cell> geneCellsWithGene = GetGeneCellsWithGene(gene);
+		foreach (Cell geneCell in geneCellsWithGene) {
+			SignalUnit signalUnit = geneCell.GetSignalUnit(signalUnitEnum);
+			if (signalUnit == null) {
+				Debug.Log("null");
+			}
+
+			if (signalUnit.isRooted) {
+				if (xputEnum == XputEnum.Output) {
+					List<Nerve> outputNerves = signalUnit.GetOutputNervesGenotype();
+					foreach (Nerve nerve in outputNerves) {
+						List<Nerve> nerveTwinList;
+						if (nerveBundleDictionary.TryGetValue(nerve.ToTwinString(), out nerveTwinList)) {
+							nerveTwinList.Add(nerve);
+						} else {
+							nerveTwinList = new List<Nerve>();
+							nerveTwinList.Add(nerve);
+							nerveBundleDictionary.Add(nerve.ToTwinString(), nerveTwinList);
+						}
+					}
+				} else {
+					List<Nerve> inputNerves = signalUnit.GetInputNervesGenotype();
+					foreach (Nerve nerve in inputNerves) {
+						List<Nerve> nerveTwinList;
+						if (nerveBundleDictionary.TryGetValue(nerve.ToTwinString(), out nerveTwinList)) {
+							nerveTwinList.Add(nerve);
+						} else {
+							nerveTwinList = new List<Nerve>();
+							nerveTwinList.Add(nerve);
+							nerveBundleDictionary.Add(nerve.ToTwinString(), nerveTwinList);
+						}
+					}
+				}
+			}
+		}
+		return nerveBundleDictionary.Values.ToList();
 	}
 
 	public bool HasAllOccurancesOfThisGeneSameBuildIndex(Gene gene) {

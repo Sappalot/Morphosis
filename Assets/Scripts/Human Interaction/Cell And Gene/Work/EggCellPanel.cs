@@ -43,6 +43,24 @@ public class EggCellPanel : ComponentPanel {
 		MakeDirty();
 	}
 
+	public override ViewXput? viewXput {
+		get {
+			if (fertilizeLogicBoxPanel.viewXput != null) {
+				return fertilizeLogicBoxPanel.viewXput;
+			}
+
+			if (fertilizeEnergySensorPanel.viewXput != null) {
+				return fertilizeEnergySensorPanel.viewXput;
+			}
+
+			if (fertilizeAttachmentSensorPanel.viewXput != null) {
+				return fertilizeAttachmentSensorPanel.viewXput;
+			}
+
+			return null;
+		}
+	}
+
 	public override void MakeDirty() {
 		base.MakeDirty();
 		fertilizeLogicBoxPanel.MakeDirty();

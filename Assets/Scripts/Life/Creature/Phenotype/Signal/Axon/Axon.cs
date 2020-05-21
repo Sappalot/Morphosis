@@ -84,6 +84,16 @@ public class Axon : SignalUnit {
 		return nerves;
 	}
 
+	public override List<Nerve> GetInputNervesGenotype() {
+		List<Nerve> nerves = new List<Nerve>();
+		foreach (Nerve n in inputNerves) {
+			if (n.nerveStatusEnum != NerveStatusEnum.Void) {
+				nerves.Add(n);
+			}
+		}
+		return nerves;
+	}
+
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
 		return outputLate[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}

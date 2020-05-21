@@ -30,13 +30,13 @@ public class LogicBoxGatePanel : MonoBehaviour {
 				return null;
 			}
 
-			if (selectedGene.type == CellTypeEnum.Egg && motherPanel.signalUnit == SignalUnitEnum.WorkLogicBoxA) {
+			if (selectedGene.type == CellTypeEnum.Egg && motherPanel.signalUnitEnum == SignalUnitEnum.WorkLogicBoxA) {
 				return selectedGene.eggCellFertilizeLogic.GetGate(row, index);
-			} else if (motherPanel.signalUnit == SignalUnitEnum.DendritesLogicBox) {
+			} else if (motherPanel.signalUnitEnum == SignalUnitEnum.DendritesLogicBox) {
 				return selectedGene.dendritesLogicBox.GetGate(row, index);
 			}
 
-			if (motherPanel.signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
+			if (motherPanel.signalUnitEnum == SignalUnitEnum.OriginDetatchLogicBox) {
 				return selectedGene.originDetatchLogicBox.GetGate(row, index);
 			}
 
