@@ -38,6 +38,7 @@ public class NerveArrows : MonoBehaviour {
 				NerveArrow nerveArrow = nerveArrowList[index];
 				if (nervesToHighlite.Find(n => Nerve.AreTwinNerves(nerveArrow.nerve, n, false)) != null) {
 					nerveArrow.isHighlited = true;
+
 				} 
 			}
 		}
@@ -56,7 +57,7 @@ public class NerveArrows : MonoBehaviour {
 				
 
 				foreach (Nerve n in nerves) {
-					if (n.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternalVoid || n.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) {
+					if (/*n.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternalVoid || */ n.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) {
 						NerveArrow nerveArrow = Morphosis.instance.nerveArrowPool.Borrow();
 						nerveArrow.transform.parent = transform;
 						nerveArrow.transform.position = transform.position;

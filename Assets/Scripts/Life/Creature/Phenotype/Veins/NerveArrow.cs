@@ -46,7 +46,7 @@ public class NerveArrow : MonoBehaviour {
 		}
 		nerveVector = CellMap.HexagonalRotate(nerveVector, turnToCreatureAngle);
 
-		mainArrow.GetComponent<LineRenderer>().SetPosition(0, geneCell.transform.position + Quaternion.Euler(0, 0, (geneCell.creature.GetOriginHeading(PhenoGenoEnum.Genotype)) - 90f) * CellMap.ToModelSpacePosition(nerveVector)); // tail = back = end = 0 = slim
+		mainArrow.GetComponent<LineRenderer>().SetPosition(0, geneCell.transform.position + Quaternion.Euler(0, 0, (geneCell.creature.GetOriginHeading(PhenoGenoEnum.Genotype)) - 90f) * CellMap.ToModelSpacePosition(nerveVector) + (isHighlited ? 1f : 0f) * Vector3.back); // tail = back = end = 0 = slim
 
 		if (nerve.tailSignalUnitEnum == SignalUnitEnum.Void) {
 			mainArrow.GetComponent<LineRenderer>().startColor = new Color(0f, 1f, 0f, 0.8f);

@@ -30,11 +30,16 @@ public class Axon : SignalUnit {
 				} else {
 					inputNerves[i].nerveVector = geneNerve.nerveVector;
 					inputNerves[i].tailCell = GeneNerve.GetGeneCellAtNerveTail(hostCell, geneNerve, genotype);
-					if (inputNerves[i].tailCell != null) {
-						inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeExternal;
-					} else {
-						inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeExternalVoid;
-					}
+
+
+					inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeExternal;
+					//if (inputNerves[i].tailCell != null) {
+					//	inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeExternal;
+					//} else {
+					//	inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeExternalVoid;
+					//}
+
+
 				}
 			} else {
 				// blocked input ==> void nerve

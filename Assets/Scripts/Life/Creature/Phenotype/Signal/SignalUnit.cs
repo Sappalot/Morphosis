@@ -35,7 +35,7 @@ public abstract class SignalUnit {
 				outputNerve.nerveStatusEnum = NerveStatusEnum.Output_GenotypeExternal;
 			}
 			
-			Debug.Assert(nerve.nerveStatusEnum != NerveStatusEnum.Input_GenotypeExternalVoid, "This is strange, we were just contacted from a nerve with its head in the void.");
+			//Debug.Assert(nerve.nerveStatusEnum != NerveStatusEnum.Input_GenotypeExternalVoid, "This is strange, we were just contacted from a nerve with its head in the void.");
 			Debug.Assert(nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal || nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal, "This kind of nerve should not be able to contact me");
 
 			outputNerves.Add(outputNerve); // all nerves tails will be: this host call -> this signal unit enum -> may be different slots

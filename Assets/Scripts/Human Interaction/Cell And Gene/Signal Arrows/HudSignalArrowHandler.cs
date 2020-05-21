@@ -104,8 +104,8 @@ public class HudSignalArrowHandler : MonoBehaviour {
 
 					arrowList.Add(arrow);
 				} else if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal ||
-					nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal ||
-					nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternalVoid) {
+					nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal /* ||
+					nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternalVoid */) {
 
 					HudSignalArrow arrow = GetArrowLikeNerve(nerve);
 
