@@ -27,18 +27,23 @@ public class NerveArrows : MonoBehaviour {
 		Gene selectedGene = GenePanel.instance.selectedGene;
 
 		// unhighlite all
-		for (int index = 0; index < nerveArrowList.Count; index++) {
-			nerveArrowList[index].isHighlited = false;
+		foreach (NerveArrow nerveArrow in nerveArrowList) {
+			nerveArrow.highlitedEnum = NerveArrow.HighliteEnum.notHighlited;
 		}
 
 		// highlite viewed
 		List<Nerve> nervesToHighlite = HudSignalArrowHandler.GetNervesToHighliteGenotype(genotype, selectedGene);
+		bool shouldHighlitAllXput = HudSignalArrowHandler.IsNervesHighliteAllModeGenotype();
 		if (nervesToHighlite != null) {
 			for (int index = 0; index < nerveArrowList.Count; index++) {
 				NerveArrow nerveArrow = nerveArrowList[index];
-				if (nervesToHighlite.Find(n => Nerve.AreTwinNerves(nerveArrow.nerve, n, false)) != null) {
-					nerveArrow.isHighlited = true;
 
+				if (nervesToHighlite.Find(n => n == nerveArrow.nerve) != null) {
+					//if (shouldHighlitAllXput) {
+					//	nerveArrow.highlitedEnum = NerveArrow.HighliteEnum.highlitedArrow; // dont want circles when showing all, too messy
+					//} else {
+					nerveArrow.highlitedEnum = NerveArrow.HighliteEnum.highlitedArrowAndCircles;
+					//}
 				} 
 			}
 		}
@@ -51,21 +56,12 @@ public class NerveArrows : MonoBehaviour {
 	public void GenerateGenotype(Genotype genotype) {
 		Clear();
 
-		foreach (Cell geneCell in genotype.geneCellListIndexSorted) {
-			List<Nerve> nerves = geneCell.GetAllNervesGenotype();
-			if (nerves.Count > 0) {
-				
-
-				foreach (Nerve n in nerves) {
-					if (/*n.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternalVoid || */ n.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) {
-						NerveArrow nerveArrow = Morphosis.instance.nerveArrowPool.Borrow();
-						nerveArrow.transform.parent = transform;
-						nerveArrow.transform.position = transform.position;
-						nerveArrow.Setup(geneCell, n);
-						nerveArrowList.Add(nerveArrow);
-					}
-				}
-			}
+		foreach (Nerve nerve in genotype.GetAllExternalNervesGenotype()) {
+			NerveArrow nerveArrow = Morphosis.instance.nerveArrowPool.Borrow();
+			nerveArrow.transform.parent = transform;
+			nerveArrow.transform.position = transform.position;
+			nerveArrow.Setup(nerve);
+			nerveArrowList.Add(nerveArrow);
 		}
 	}
 

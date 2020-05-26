@@ -20,7 +20,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 
 	public NerveArrows nerveArrows;
 
-	private bool isInterGeneCellDirty = true;
+	public bool isInterGeneCellDirty { get; private set; }
 
 	public static int genomeLength = 21;
 	[HideInInspector]
@@ -61,6 +61,8 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 	// ^ Signal ^
 
 	public void Initialize() {
+		isInterGeneCellDirty = true;
+
 		// This is the only place where the genes are made
 		// When we want to change the creature, we hchange its genes 
 		for (int index = 0; index < genomeLength; index++) {
@@ -556,6 +558,22 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 			}
 		}
 		return cells;
+	}
+
+	public List<Nerve> GetAllNervesGenotype() {
+		List<Nerve> nerves = new List<Nerve>();
+		foreach (Cell geneCell in geneCellListIndexSorted) {
+			nerves.AddRange(geneCell.GetAllNervesGenotype());
+		}
+		return nerves;
+	}
+
+	public List<Nerve> GetAllExternalNervesGenotype() {
+		List<Nerve> nervesExternal = new List<Nerve>();
+		foreach (Cell geneCell in geneCellListIndexSorted) {
+			nervesExternal.AddRange(geneCell.GetAllExternalNervesGenotype());
+		}
+		return nervesExternal;
 	}
 
 	// if there are twins, only one of them will be returned (which one is arbitrary)

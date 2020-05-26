@@ -285,16 +285,16 @@ public class AssignNerveInputPanel : MonoSingleton<AssignNerveInputPanel> {
 
 	private void OnLeave() {
 		MouseAction.instance.actionState = MouseActionStateEnum.free;
-		affectedPanel.MakeMotherPanelDirty();
+		//affectedPanel.MakeMotherPanelDirty();
 		narrowedGeneCellMapPosition = null;
 		affectedPanel = null;
 		hidable.SetActive(false);
 		GeneAuxiliaryPanel.instance.gameObject.SetActive(false);
 		nerveVectorToSet = null;
 
-		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
+		//CreatureSelectionPanel.instance.soloSelected.genotype.MakeGeneCellPatternDirty();
 		GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
+		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 	}
 
 	public void OnAbortButtonClicked() {

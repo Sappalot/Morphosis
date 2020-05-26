@@ -1,4 +1,6 @@
-﻿public class Nerve {
+﻿using UnityEngine;
+
+public class Nerve {
 	public NerveStatusEnum nerveStatusEnum;
 
 	public Cell headCell;
@@ -10,6 +12,39 @@
 	public SignalUnitSlotEnum tailSignalUnitSlotEnum;
 
 	public Vector2i nerveVector; // vector in cell space, from head (0, 0) to tail (x, y)
+
+	// the owner of this nerve
+	public Cell hostCell {
+		get {
+			if (nerveStatusEnum == NerveStatusEnum.Void) {
+				Debug.Assert(false, "Can't find host cell on a void status nerve.");
+			} else if (nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal || nerveStatusEnum == NerveStatusEnum.Output_GenotypeLocal) {
+				return headCell; // any will do
+			} else if (nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) { // TODO: phenotype
+				return headCell;
+			} else if (nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) { // TODO: phenotype
+				return tailCell;
+			}
+
+			return null;
+		}
+	}
+
+	// the cell which is reffered to by the owner
+	public Cell referenceCell {
+		get {
+			if (nerveStatusEnum == NerveStatusEnum.Void) {
+				Debug.Assert(false, "Can't find reference cell on a void status nerve.");
+			} else if (nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal || nerveStatusEnum == NerveStatusEnum.Output_GenotypeLocal) {
+				return headCell; // any will do
+			} else if (nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) { // TODO: phenotype
+				return tailCell;
+			} else if (nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) { // TODO: phenotype
+				return headCell;
+			}
+			return null;
+		}
+	}
 
 	public Nerve() {
 		headCell = null;

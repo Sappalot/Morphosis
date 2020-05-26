@@ -214,6 +214,17 @@ public abstract class Cell : MonoBehaviour {
 		return nerves;
 	}
 
+	public List<Nerve> GetAllExternalNervesGenotype() {
+		List<Nerve> nerves = GetAllNervesGenotype();
+		List<Nerve> nervesExternal = new List<Nerve>();
+		foreach (Nerve nerve in nerves) {
+			if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal || nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) {
+				nervesExternal.Add(nerve);
+			}
+		}
+		return nervesExternal;
+	}
+
 	//--
 
 	public virtual void UpdateNervesPhenotype() {
