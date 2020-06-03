@@ -38,7 +38,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 	private void Update() {
 		// Update connections
 		if (isDirtyConnections) {
-			if (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.genotype.isInterGeneCellDirty) {
+			if (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.genotype.isInterGeneCellDirty) {
 				Debug.Log("Ooooops, not ready to refresh yet");
 				return; // Ooooops, not ready to refresh yet
 			}
@@ -49,9 +49,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 				return;
 			}
 
-			Debug.Log("Updating Hud Signal Arrow Handler");
-
-
+			//Debug.Log("Updating Hud Signal Arrow Handler");
 
 			foreach (HudSignalArrow arrow in arrowList) {
 				hudSignalArrowPool.Recycle(arrow);
@@ -81,6 +79,8 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			foreach (Nerve nerve in uniqueNerves) {
 				//When it comes to input, they all look the same so we just pick the first one, which we are sure to have
 
+				bool isNervesHighliteAllMode = IsNervesHighliteAllModeGenotype();
+
 				if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeLocal ||
 					nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) {
 
@@ -102,12 +102,21 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					}
 
 					SetArrowTransforms(arrow, head, tail);
-					arrow.GetComponent<Image>().color = Color.yellow; //ColorScheme.instance.signalOff;
+					arrow.GetComponent<Image>().color = ColorScheme.instance.signalOff;
+					ShowTextAtArrowHead(arrow, false);
+					ShowTextAtArrowTail(arrow, false);
 
 					// Highlite
 					if (nervesToHighlite != null) {
 						if (nervesToHighlite.Find(n => Nerve.AreTwinNerves(n, nerve, true)) != null) {
 							HighliteArrow(arrow);
+							if (!isNervesHighliteAllMode) {
+								ShowTextAtArrowHead(arrow, true);
+								ShowTextAtArrowTail(arrow, false);
+							} else {
+								ShowTextAtArrowHead(arrow, false);
+								ShowTextAtArrowTail(arrow, false);
+							}
 						}
 					}
 
@@ -124,8 +133,8 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					arrow.GetComponent<Image>().color = ColorScheme.instance.signalOff;
 
 					if (nerve.tailSignalUnitEnum == SignalUnitEnum.Void) {
-						arrow.GetComponent<Image>().color = new Color(0f, 1f, 0f, 1f);
-						tail = head + Vector2.down * 40f;
+						arrow.GetComponent<Image>().color = ColorScheme.instance.signalOff;
+						tail = head + Vector2.down * 20f;
 
 					} else if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal) {
 						// Local input
@@ -136,11 +145,20 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					}
 
 					SetArrowTransforms(arrow, head, tail);
+					ShowTextAtArrowHead(arrow, false);
+					ShowTextAtArrowTail(arrow, false);
 
 					// Highlite
 					if (nervesToHighlite != null) {
 						if (nervesToHighlite.Find(n => Nerve.AreTwinNerves(n, nerve, true)) != null) {
 							HighliteArrow(arrow);
+							if (!isNervesHighliteAllMode) {
+								ShowTextAtArrowHead(arrow, false);
+								ShowTextAtArrowTail(arrow, true);
+							} else {
+								ShowTextAtArrowHead(arrow, false);
+								ShowTextAtArrowTail(arrow, false);
+							}
 						}
 					}
 
@@ -224,9 +242,19 @@ public class HudSignalArrowHandler : MonoBehaviour {
 	}
 
 	private void HighliteArrow(HudSignalArrow arrow) {
-		arrow.GetComponent<Image>().color = Color.magenta;
+		arrow.GetComponent<Image>().color = ColorScheme.instance.signalViewed;
 		arrow.transform.SetAsLastSibling(); // transforming coordinate doesn't affect draw order 
 	}
+
+	// Used for inputs
+	private void ShowTextAtArrowHead(HudSignalArrow arrow, bool show) {
+		arrow.showHeadLabel = show;
+	}
+
+	private void ShowTextAtArrowTail(HudSignalArrow arrow, bool show) {
+		arrow.showTailLabel = show;
+	}
+
 
 	public Cell selectedCell {
 		get {

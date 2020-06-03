@@ -328,7 +328,13 @@ public abstract class Cell : MonoBehaviour {
 
 	public bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
 		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for
-		return GetSignalUnit(outputUnit).GetOutput(outputUnitSlot);
+		if (GetSignalUnit(outputUnit) == null) {
+			Debug.Log("Ooops! no outputting unit found");
+			return false;
+		} else {
+			return GetSignalUnit(outputUnit).GetOutput(outputUnitSlot);
+		}
+		
 	}
 
 	// overrides in each cell for work signalUnits

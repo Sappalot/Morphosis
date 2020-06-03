@@ -9,7 +9,7 @@ public class GeneAxonPulse {
 		}
 		set {
 			m_axonFromOriginOffset = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -20,7 +20,7 @@ public class GeneAxonPulse {
 		}
 		set {
 			m_axonIsFromOriginPlus180 = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -31,7 +31,7 @@ public class GeneAxonPulse {
 		}
 		set {
 			m_axonFromMeOffset = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -42,7 +42,7 @@ public class GeneAxonPulse {
 		}
 		set {
 			m_axonRelaxContract = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -53,7 +53,7 @@ public class GeneAxonPulse {
 		}
 		set {
 			m_axonIsReverse = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -69,7 +69,7 @@ public class GeneAxonPulse {
 		axonRelaxContract = 0f;
 		axonIsReverse = false;
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	public void Mutate(float strength) {
@@ -107,7 +107,7 @@ public class GeneAxonPulse {
 			axonIsReverse = !axonIsReverse; //toggle
 		}
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	// Save

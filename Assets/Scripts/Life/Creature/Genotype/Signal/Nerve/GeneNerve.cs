@@ -14,7 +14,7 @@ public class GeneNerve {
 		}
 		set {
 			m_tailUnitEnum = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeInterGeneCellAndForward();
 		}
 	}
 
@@ -25,7 +25,7 @@ public class GeneNerve {
 		}
 		set {
 			m_tailUnitSlotEnum = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeInterGeneCellAndForward();
 		}
 	}
 
@@ -102,12 +102,11 @@ public class GeneNerve {
 	public void Defaultify() {
 		tailUnitEnum = SignalUnitEnum.ConstantSensor;
 		tailUnitSlotEnum = SignalUnitSlotEnum.outputLateA;
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeInterGeneCellAndForward();
 	}
 
 	public void Randomize() {
-
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeInterGeneCellAndForward();
 	}
 
 	public bool Mutate(float strength, bool isOrigin) {
@@ -152,7 +151,7 @@ public class GeneNerve {
 			RandomizeSlot(5); // all of them
 		}
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeInterGeneCellAndForward();
 	}
 
 	private void RandomizeSlot(int maxIndex) {
@@ -191,6 +190,6 @@ public class GeneNerve {
 		tailUnitSlotEnum = geneNerveData.inputUnitSlot;
 		nerveVector = geneNerveData.nerveVector;
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeInterGeneCellAndForward();
 	}
 }

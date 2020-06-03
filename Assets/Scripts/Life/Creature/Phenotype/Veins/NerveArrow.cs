@@ -39,8 +39,8 @@ public class NerveArrow : MonoBehaviour {
 			mainArrow.GetComponent<LineRenderer>().startColor = ColorUtil.SetAlpha(ColorScheme.instance.signalOff, 0.5f);
 			mainArrow.GetComponent<LineRenderer>().endColor = ColorUtil.SetAlpha(ColorScheme.instance.signalOff, 0.5f);
 		} else {
-			mainArrow.GetComponent<LineRenderer>().startColor = new Color(1f, 0f, 1f, 0.8f);
-			mainArrow.GetComponent<LineRenderer>().endColor = new Color(1f, 0f, 1f, 0.8f);
+			mainArrow.GetComponent<LineRenderer>().startColor = ColorUtil.SetAlpha(ColorScheme.instance.signalViewed ,0.8f);
+			mainArrow.GetComponent<LineRenderer>().endColor = ColorUtil.SetAlpha(ColorScheme.instance.signalViewed, 0.8f);
 		}
 
 		if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) {
@@ -59,6 +59,7 @@ public class NerveArrow : MonoBehaviour {
 			tailCircle.SetActive(highlitedEnum == HighliteEnum.highlitedArrowAndCircles);
 			if (highlitedEnum == HighliteEnum.highlitedArrowAndCircles) {
 				tailCircle.transform.position = tailPosition;
+				tailCircle.GetComponent<SpriteRenderer>().color = ColorScheme.instance.signalViewed;
 			}
 		} else if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) {
 			if (nerve.tailSignalUnitEnum == SignalUnitEnum.Void) {
@@ -101,6 +102,7 @@ public class NerveArrow : MonoBehaviour {
 			headCircle.SetActive(highlitedEnum == HighliteEnum.highlitedArrowAndCircles);
 			if (highlitedEnum == HighliteEnum.highlitedArrowAndCircles) {
 				headCircle.transform.position = headPosition;
+				headCircle.GetComponent<SpriteRenderer>().color = ColorScheme.instance.signalViewed;
 			}
 
 			tailCircle.SetActive(false);

@@ -156,7 +156,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block || !motherPanel.isAnyAffectedSignalUnitsRootedGenotype) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused; // blocked or logic box not used (pretty if they are all of if not used)
 				} else if (affectedGeneLogicBoxInput.nerve.tailUnitEnum == SignalUnitEnum.Void) {
-					inputButtonImage.color = Color.magenta; // should never happen
+					inputButtonImage.color = Color.red; // should never happen
 				} else {
 					inputButtonImage.color = ColorScheme.instance.signalOff; // we have a chance of an ON signal
 				}
@@ -170,7 +170,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve /*|| !motherPanel.affectedGeneLogicBox.isRooted*/) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused;
 				} else if (runtimeOutput == LogicBoxInputEnum.VoidInput) { // should never happen
-					inputButtonImage.color = Color.magenta;
+					inputButtonImage.color = Color.red;
 				} else if (runtimeOutput == LogicBoxInputEnum.On) {
 					inputButtonImage.color = ColorScheme.instance.signalOn;
 				} else if (runtimeOutput == LogicBoxInputEnum.Off) {

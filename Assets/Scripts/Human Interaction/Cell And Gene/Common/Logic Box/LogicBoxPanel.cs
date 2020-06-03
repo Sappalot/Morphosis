@@ -189,7 +189,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 				}
 			} else {
-				if (affectedGeneLogicBox != null  && isAnyAffectedSignalUnitsRootedGenotype) {
+				if (affectedGeneLogicBox != null && isAnyAffectedSignalUnitsRootedGenotype) {
 					//outputImageLate.color = ColorScheme.instance.signalOff;
 					outputImageEarly.color = ColorScheme.instance.signalOff;
 				} else {

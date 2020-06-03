@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
+public class Genotype : MonoBehaviour {
 	public EggCell eggCellPrefab;
 	public FungalCell fungalCellPrefab;
 	public JawCell jawCellPrefab;
@@ -13,14 +13,19 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 	public VeinCell veinCellPrefab;
 	public Transform geneCellsTransform;
 
-	private bool isGeneCellPatternDirty = true; // Cell List and Cell Map needs to be updates, needs to be done as genes cause changes in cell structure
-	public void MakeGeneCellPatternDirty() { // LAZY: Used even if only nerves are changed since we need to regenerate phenotype as anything is changed "new forge"
+	//...when there has been changes to genome where geneCells are moved or replaced. Cell List and Cell Map needs to be updates
+	private bool isGeneCellPatternDirty = true;
+	public void MakeGeneCellPatternDirty() {
 		isGeneCellPatternDirty = true;
 	}
 
-	public NerveArrows nerveArrows;
-
+	//... when geneCellPattern need not be changes but nerves need to be updated
 	public bool isInterGeneCellDirty { get; private set; }
+	public void MakeInterGeneCellDirty() {
+		isInterGeneCellDirty = true;
+	}
+
+	public NerveArrows nerveArrows;
 
 	public static int genomeLength = 21;
 	[HideInInspector]
@@ -60,13 +65,13 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 
 	// ^ Signal ^
 
-	public void Initialize() {
-		isInterGeneCellDirty = true;
+	public void Initialize(IGenotypeDirtyfy genotypeDirtyfy) {
+		MakeInterGeneCellDirty();
 
 		// This is the only place where the genes are made
 		// When we want to change the creature, we hchange its genes 
 		for (int index = 0; index < genomeLength; index++) {
-			genes[index] = new Gene(index, this);
+			genes[index] = new Gene(index, genotypeDirtyfy);
 		}
 		int a = 1;
 	}
@@ -256,9 +261,9 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 		MakeGeneCellPatternDirty();
 	}
 
-	public void SetGenome(Gene[] genome) {
+	public void SetGenome(Gene[] genome, IGenotypeDirtyfy genotypeDirtyfy) {
 		for (int index = 0; index < genomeLength; index++) {
-			this.genes[index] = genome[index].GetClone(this);
+			this.genes[index] = genome[index].GetClone(genotypeDirtyfy);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();
 		MakeGeneCellPatternDirty();
@@ -357,6 +362,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 
 	public bool TryUpdateGeneCellPattern(Creature creature, Vector2 position, float heading) { // heading 90 ==> origin is pointing north
 		if (isGeneCellPatternDirty) {
+			Debug.Log("TryUpdateGeneCellPattern");
 
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Creature TryUpdateGeneCellPattern");
@@ -460,7 +466,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 			//geneCellList.Sort((emp1, emp2) => emp1.buildPriority.CompareTo(emp2.buildPriority));
 			geneCellListIndexSorted.Sort((emp1, emp2) => emp1.buildIndex.CompareTo(emp2.buildIndex)); // only sorted here
 
-			isInterGeneCellDirty = true;
+			MakeInterGeneCellDirty();
 			creature.phenotype.MakeCellPaternDifferentFromGenotypeDirty();
 
 			isGeneCellPatternDirty = false;
@@ -471,6 +477,7 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 
 	public bool TryUpdateInterGeneCells() {
 		if (isInterGeneCellDirty) {
+			Debug.Log("TryUpdateInterGeneCells ... nerves");
 
 			UpdateNerves();
 
@@ -789,9 +796,9 @@ public class Genotype : MonoBehaviour, IGenotypeDirtyfy {
 		return genotypeData;
 	}
 
-	public void ApplyData(GenotypeData genotypeData) {
+	public void ApplyData(GenotypeData genotypeData, IGenotypeDirtyfy genotypeDirtyfy) {
 		for (int index = 0; index < genomeLength; index++) {
-			genes[index] = new Gene(index, this);
+			genes[index] = new Gene(index, genotypeDirtyfy);
 			genes[index].ApplyData(genotypeData.geneData[index]);
 		}
 		SetReferenceGenesFromReferenceGeneIndices();

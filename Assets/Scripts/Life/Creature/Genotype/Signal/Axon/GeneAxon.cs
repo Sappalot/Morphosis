@@ -12,7 +12,7 @@ public class GeneAxon : GeneSignalUnit {
 		}
 		set {
 			m_isEnabled = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeInterGeneCellAndForward();
 		}
 	}
 
@@ -57,7 +57,7 @@ public class GeneAxon : GeneSignalUnit {
 		}
 		set {
 			m_pulseProgram3 = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -68,7 +68,7 @@ public class GeneAxon : GeneSignalUnit {
 		}
 		set {
 			m_pulseProgram2 = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -79,7 +79,7 @@ public class GeneAxon : GeneSignalUnit {
 		}
 		set {
 			m_pulseProgram1 = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -90,7 +90,7 @@ public class GeneAxon : GeneSignalUnit {
 		}
 		set {
 			m_pulseProgram0 = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -105,14 +105,14 @@ public class GeneAxon : GeneSignalUnit {
 		axonInputRight.nerve.tailUnitEnum = signalUnit;
 		axonInputRight.nerve.tailUnitSlotEnum = signalUnitSlot;
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	public void SetAllInputToBlocked() {
 		axonInputLeft.valveMode = SignalValveModeEnum.Block;
 		axonInputRight.valveMode = SignalValveModeEnum.Block;
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	// remove
@@ -199,13 +199,13 @@ public class GeneAxon : GeneSignalUnit {
 		axonInputLeft.Defaultify();
 		axonInputRight.Defaultify();
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	public void Randomize() {
 		// TODO
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	public void Mutate(float strength, bool isOrigin) {
@@ -224,7 +224,7 @@ public class GeneAxon : GeneSignalUnit {
 		axonInputLeft.Mutate(strength, isOrigin);
 		axonInputRight.Mutate(strength, isOrigin);
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	// Save

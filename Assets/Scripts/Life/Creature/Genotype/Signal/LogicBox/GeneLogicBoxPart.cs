@@ -9,7 +9,7 @@ public abstract class GeneLogicBoxPart {
 		}
 		set {
 			m_row = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -21,7 +21,7 @@ public abstract class GeneLogicBoxPart {
 		}
 		set {
 			m_leftFlank = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -32,7 +32,7 @@ public abstract class GeneLogicBoxPart {
 		}
 		set {
 			m_rightFlank = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 

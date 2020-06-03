@@ -15,7 +15,7 @@ public class GeneSizeSensor : GeneSignalUnit {
 		}
 		set {
 			m_sizeThreshold = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -26,7 +26,7 @@ public class GeneSizeSensor : GeneSignalUnit {
 		}
 		set {
 			m_cantGrowMorePatienseThreshold = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -36,12 +36,12 @@ public class GeneSizeSensor : GeneSignalUnit {
 		sizeThreshold = 0.5f; // 50% of full size
 		cantGrowMorePatienseThreshold = 10; // seconds of blocked growth
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	public void Randomize() {
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	public void Mutate(float strength) {
@@ -58,7 +58,7 @@ public class GeneSizeSensor : GeneSignalUnit {
 			cantGrowMorePatienseThreshold = (int)Mathf.Clamp(cantGrowMorePatienseThreshold + gs.mutation.originGrowPriorityCellPersistenceMaxAmount * gs.mutation.RandomDistributedValue(), 0f, 120f);
 		}
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	// Save

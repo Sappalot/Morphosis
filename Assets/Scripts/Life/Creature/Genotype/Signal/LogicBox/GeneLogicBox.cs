@@ -280,7 +280,7 @@ public class GeneLogicBox : GeneSignalUnit {
 				newGate.lockness = isLocked ? LocknessEnum.Locked : LocknessEnum.Unlocked;
 				newGate.isUsed = true;
 
-				genotypeDirtyfy.MakeGeneCellPatternDirty();
+				genotypeDirtyfy.ReforgeCellPatternAndForward();
 				UpdateConnections();
 				return true;
 			}

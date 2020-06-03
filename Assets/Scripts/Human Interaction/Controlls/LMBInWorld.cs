@@ -151,13 +151,14 @@ public class LMBInWorld : MonoBehaviour {
 					AssignNerveInputPanel.instance.ShowNerveInputMapPositionExternally(newCellHover.mapPosition);
 				}
 			} else {
-				AssignNerveInputPanel.instance.ShowNerveInputMapPositionExternally(null);
-				cellHoverMapPosition = new Vector2i(666, 666);
+				//AssignNerveInputPanel.instance.ShowNerveInputMapPositionExternally(null);
+				//cellHoverMapPosition = new Vector2i(666, 666);
 			}
 		}
 	}
 
 	private Vector2i cellHoverMapPosition;
+
 
 	//TODO move to some util
 	static bool TryFreezeCreature(Creature creature) {

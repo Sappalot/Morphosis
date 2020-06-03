@@ -13,7 +13,7 @@ public class GeneEffectSensor : GeneSignalUnit {
 		}
 		set {
 			m_effectMeassure = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -24,7 +24,7 @@ public class GeneEffectSensor : GeneSignalUnit {
 		}
 		set {
 			m_areaRadiusTotal = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 	private float m_effectThresholdTotal;
@@ -34,7 +34,7 @@ public class GeneEffectSensor : GeneSignalUnit {
 		}
 		set {
 			m_effectThresholdTotal = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -45,7 +45,7 @@ public class GeneEffectSensor : GeneSignalUnit {
 		}
 		set {
 			m_areaRadiusProduction = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 	private float m_effectThresholdProduction;
@@ -55,7 +55,7 @@ public class GeneEffectSensor : GeneSignalUnit {
 		}
 		set {
 			m_effectThresholdProduction = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -66,7 +66,7 @@ public class GeneEffectSensor : GeneSignalUnit {
 		}
 		set {
 			m_areaRadiusExternal = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 	private float m_effectThresholdExternal; // hurt by jaw
@@ -76,7 +76,7 @@ public class GeneEffectSensor : GeneSignalUnit {
 		}
 		set {
 			m_effectThresholdExternal = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -87,7 +87,7 @@ public class GeneEffectSensor : GeneSignalUnit {
 		}
 		set {
 			m_areaRadiusFlux = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 	private float m_effectThresholdFlux;
@@ -97,7 +97,7 @@ public class GeneEffectSensor : GeneSignalUnit {
 		}
 		set {
 			m_effectThresholdFlux = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -182,12 +182,12 @@ public class GeneEffectSensor : GeneSignalUnit {
 		areaRadiusExternal = 1;
 		effectThresholdExternal = 0f; // hurt by jaw
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	public void Randomize() {
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	public void Mutate(float strength) {
@@ -235,7 +235,7 @@ public class GeneEffectSensor : GeneSignalUnit {
 			effectThresholdExternal = Mathf.Clamp(effectThresholdExternal + gs.mutation.effectSensorThresholdChangeMaxAmount * gs.mutation.RandomDistributedValue(), -GlobalSettings.instance.mutation.effectSensorThresholdMax, GlobalSettings.instance.mutation.effectSensorThresholdMax);
 		}
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	// Save

@@ -9,7 +9,7 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 		set {
 			if (lockness == LocknessEnum.Unlocked) {
 				m_operatorType = value;
-				genotypeDirtyfy.MakeGeneCellPatternDirty();
+				genotypeDirtyfy.ReforgeCellPatternAndForward();
 			}
 		}
 	}
@@ -25,7 +25,7 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 			if (value || lockness == LocknessEnum.Unlocked) {
 				m_isUsed = value;
 				geneLogicBox.UpdateConnections();
-				genotypeDirtyfy.MakeGeneCellPatternDirty();
+				genotypeDirtyfy.ReforgeCellPatternAndForward();
 			}
 		}
 	} // is taking place inside logic box (might be blocked, might not)
@@ -55,7 +55,7 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 		if (row > 0 && leftFlank > 0 && !geneLogicBox.IsCellOccupiedByGateOrLock(row, GetColumnLeftOfFlank(leftFlank))) {
 			leftFlank--;
 			geneLogicBox.UpdateConnections();
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 			return true;
 		}
 		return false;
@@ -72,13 +72,13 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 					rightFlank++;
 					leftFlank++;
 					geneLogicBox.UpdateConnections();
-					genotypeDirtyfy.MakeGeneCellPatternDirty();
+					genotypeDirtyfy.ReforgeCellPatternAndForward();
 					return true;
 				}
 			} else {
 				leftFlank++;
 				geneLogicBox.UpdateConnections();
-				genotypeDirtyfy.MakeGeneCellPatternDirty();
+				genotypeDirtyfy.ReforgeCellPatternAndForward();
 				return true;
 			}
 		}
@@ -93,7 +93,7 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 		if (row > 0 && rightFlank < GeneLogicBox.rightmostFlank && !geneLogicBox.IsCellOccupiedByGateOrLock(row, GetColumnRightOfFlank(rightFlank))) {
 			rightFlank++;
 			geneLogicBox.UpdateConnections();
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 			return true;
 		}
 		return false;
@@ -110,13 +110,13 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 					leftFlank--;
 					rightFlank--;
 					geneLogicBox.UpdateConnections();
-					genotypeDirtyfy.MakeGeneCellPatternDirty();
+					genotypeDirtyfy.ReforgeCellPatternAndForward();
 					return true;
 				}
 			} else {
 				rightFlank--;
 				geneLogicBox.UpdateConnections();
-				genotypeDirtyfy.MakeGeneCellPatternDirty();
+				genotypeDirtyfy.ReforgeCellPatternAndForward();
 				return true;
 			}
 		}

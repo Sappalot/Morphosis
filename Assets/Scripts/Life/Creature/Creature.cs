@@ -5,7 +5,7 @@ using Boo.Lang.Runtime;
 
 // The container of genotype(genes) and phenotype(body)
 // Holds information that does not fit into genes or body 
-public class Creature : MonoBehaviour {
+public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 
 	public static int maxCellCount = 40;
 	public static int maxRadiusHexagon = 16; // used to limit blueprint. R = 16 ==> we can have can have 16 cells north of origin at most origin = 0, 1 = neighbour, .... cell 16 = perifery 
@@ -42,7 +42,7 @@ public class Creature : MonoBehaviour {
 	public int canNotGrowMoreTicks { get; private set; } // blocked by myself, child/mother/other creature, or terrain(?)
 
 	public void Initialize() {
-		genotype.Initialize();
+		genotype.Initialize(this);
 	}
 
 	public string sceneGraphName {
@@ -53,6 +53,39 @@ public class Creature : MonoBehaviour {
 				return "Creature " + id;
 			}
 		}
+	}
+
+	private void ReforgeBase() {
+		bornTick = World.instance.worldTicks; // born now
+		creation = CreatureCreationEnum.Forged;
+		generation = 1;
+		detatch = false;
+		growTicks = 0;
+		canNotGrowMoreTicks = 0;
+
+		Debug.Assert(mother == null, "Trying to reforge creature with mother");
+		Debug.Assert(children.Count == 0, "Trying to reforge creature with children");
+		// TODO: Change name of spieces
+		// TODO: Change name of individual
+	}
+
+	//  regenerate new geneCell pattern from new genome, regenterate new nerves, regrow cellStructure according to old genome, update inter cell stuff
+	public void ReforgeGeneCellPatternAndForward() {
+		ReforgeBase();
+		genotype.MakeGeneCellPatternDirty(); // will make Everything else dirty
+	}
+
+	// regenerate new nerves, regrow cellStructure according to old genome, update inter cell stuff
+	public void ReforgeInterGeneCellAndForward() {
+		ReforgeBase();
+		genotype.MakeInterGeneCellDirty();
+		phenotype.MakeCellPaternDifferentFromGenotypeDirty();
+	}
+
+	// regrow cellStructure according to old genome, update inter cell stuff
+	public void ReforgeCellPatternAndForward() {
+		ReforgeBase();
+		phenotype.MakeCellPaternDifferentFromGenotypeDirty(); // force regrowth
 	}
 
 	public void OnFreeze() {
@@ -462,8 +495,8 @@ public class Creature : MonoBehaviour {
 
 
 	// any genome with only 1 cell grown
-	public void GenerateEmbryo(Gene[] genome, Vector3 position, float heading) {
-		genotype.SetGenome(genome);
+	public void GenerateEmbryo(Gene[] genome, Vector3 position, float heading, IGenotypeDirtyfy genotypeDirtyfy) {
+		genotype.SetGenome(genome, genotypeDirtyfy);
 		genotype.TryUpdateGeneCellPattern(this, position, heading);
 		phenotype.InitiateEmbryo(this, position, heading);
 		isDirtyGraphics = true;
@@ -480,8 +513,8 @@ public class Creature : MonoBehaviour {
 		UpdateCellsAndGeneCells(position, heading);
 	}
 
-	public void GenerateMergling(List<Gene[]> genomes, Vector3 position, float heading) {
-		genotype.SetGenome(GenotypeUtil.CombineGenomeFine(genomes, genotype));
+	public void GenerateMergling(List<Gene[]> genomes, Vector3 position, float heading, IGenotypeDirtyfy genotypeDirtyfy) {
+		genotype.SetGenome(GenotypeUtil.CombineGenomeFine(genomes, genotypeDirtyfy), genotypeDirtyfy);
 		UpdateCellsAndGeneCells(position, heading);
 	}
 
@@ -863,7 +896,7 @@ public class Creature : MonoBehaviour {
 		bornTick = creatureData.bornTick;
 		deadTick = creatureData.deadTick;
 
-		genotype.ApplyData(creatureData.genotypeData);
+		genotype.ApplyData(creatureData.genotypeData, this);
 		Vector2 position = creatureData.genotypeData.originPosition;
 		float heading = creatureData.genotypeData.originHeading;
 		genotype.TryUpdateGeneCellPattern(this, position, heading); // Generating genotype here caused Unity freeze ;/ (? still so 2020-04-12)

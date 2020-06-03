@@ -14,7 +14,6 @@ public class Phenotype : MonoBehaviour {
 
 	public NerveArrows nerveArrows;
 
-
 	// ... Signal ...
 	private void UpdateNerves() {
 		// reach out
@@ -46,7 +45,7 @@ public class Phenotype : MonoBehaviour {
 	[HideInInspector]
 	private bool isCellPatternDiffererentFromGenomeDirty = true;
 	public void MakeCellPaternDifferentFromGenotypeDirty () {
-		isCellPatternDiffererentFromGenomeDirty = true;
+		isCellPatternDiffererentFromGenomeDirty = true; // Will regrow creature from genotype, as far as possible (might be stuff in the way)
 	}
 
 	[HideInInspector]
@@ -359,6 +358,8 @@ public class Phenotype : MonoBehaviour {
 
 	public bool TryRegrowCellPattern(Creature creature, Vector2 position, float heading) {
 		if (isCellPatternDiffererentFromGenomeDirty) {
+			Debug.Log("Update Creature TryUpdateCellPattern");
+
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Creature TryUpdateCellPattern");
 			}
@@ -755,6 +756,7 @@ public class Phenotype : MonoBehaviour {
 	// TODO: At the moment we are updating whole body every time a new cell is grown. This is probably costy. Just update the cells affected by the change made (dirtymark per cell)
 	public bool TryUpdateInterCells(Creature creature, string motherId) {
 		if (isInterCellDirty) {
+			Debug.Log("TryUpdateInterCells");
 
 			UpdateNeighbourReferencesInterBody(creature);
 

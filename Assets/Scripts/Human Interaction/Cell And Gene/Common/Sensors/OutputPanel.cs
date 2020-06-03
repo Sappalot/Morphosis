@@ -57,6 +57,10 @@ public class OutputPanel : MonoBehaviour {
 				Debug.Log("Update Output Panel");
 			}
 
+			if (!CreatureSelectionPanel.instance.hasSoloSelected) {
+				return;
+			}
+
 			if (isGhost) {
 				image.color = ColorScheme.instance.signalGhost;
 				return;

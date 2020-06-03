@@ -147,7 +147,7 @@ public class Life : MonoBehaviour {
 		//.GetMutatedClone(0.2f)
 
 		
-		child.GenerateEmbryo(mother.genotype.GetMutatedClone(child.genotype, GlobalSettings.instance.mutation.masterMutationStrength), eggCell.position, eggCell.heading); //Mutation Hack
+		child.GenerateEmbryo(mother.genotype.GetMutatedClone(child, GlobalSettings.instance.mutation.masterMutationStrength), eggCell.position, eggCell.heading, child); //Mutation Hack
 		child.phenotype.originCell.energy = eggEnergy;
 		child.phenotype.originCell.originPulseTick = mother.phenotype.originCell.originPulseTick; // make them swim locomote, should be 0 for both allready...
 		child.phenotype.muscleAndFluxCellTick = mother.phenotype.muscleAndFluxCellTick; // to make veins pump energy into child without jerkyness they need to be synced
@@ -356,7 +356,7 @@ public class Life : MonoBehaviour {
 	public Creature SpawnCreatureMergling(List<Gene[]> genomes, Vector3 position, float heading, ulong bornTick) {
 		Creature creature = InstantiateCreature();
 		creature.bornTick = bornTick;
-		creature.GenerateMergling(genomes, position, heading);
+		creature.GenerateMergling(genomes, position, heading, creature);
 		creature.creation = CreatureCreationEnum.Forged;
 		creature.generation = 1;
 

@@ -17,7 +17,7 @@ public class Gene {
 		}
 		set {
 			m_jawCellCannibalizeKin = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -28,7 +28,7 @@ public class Gene {
 		}
 		set {
 			m_jawCellCannibalizeMother = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -39,7 +39,7 @@ public class Gene {
 		}
 		set {
 			m_jawCellCannibalizeFather = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -50,7 +50,7 @@ public class Gene {
 		}
 		set {
 			m_jawCellCannibalizeSiblings = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 	private bool m_jawCellCannibalizeChildren;
@@ -60,7 +60,7 @@ public class Gene {
 		}
 		set {
 			m_jawCellCannibalizeChildren = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 	// ^ Jaw Cell ^
@@ -111,7 +111,7 @@ public class Gene {
 		}
 		set {
 			m_originPulseTickPeriod = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -122,7 +122,7 @@ public class Gene {
 		}
 		set {
 			m_originEmbryoMaxSizeCompleteness = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -133,7 +133,7 @@ public class Gene {
 		}
 		set {
 			m_originGrowPriorityCellPersistance = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -170,7 +170,7 @@ public class Gene {
 			} else {
 				m_type = value;
 			}
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeGeneCellPatternAndForward();
 		}
 	}
 	public int index;

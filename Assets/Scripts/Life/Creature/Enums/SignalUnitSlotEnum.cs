@@ -28,4 +28,6 @@ public enum SignalUnitSlotEnum {
 
 	outputEarlyF,
 	outputLateF,
+
+	Void,
 }

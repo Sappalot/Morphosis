@@ -121,7 +121,10 @@ public class CellAndGenePanel : MonoBehaviour {
 				return energySensorPanel.viewXput;
 			}
 
-			//effectSensorPanel.MakeDirty();
+			if (effectSensorPanel.viewXput != null) {
+				return effectSensorPanel.viewXput;
+			}
+
 			//buildPriorityPanel.MakeDirty();
 
 

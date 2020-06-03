@@ -14,7 +14,7 @@ public class GeneEnergySensor : GeneSignalUnit {
 		}
 		set {
 			m_areaRadius = value;
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 
@@ -25,7 +25,7 @@ public class GeneEnergySensor : GeneSignalUnit {
 		}
 		set {
 			m_threshold = Mathf.Max(value, thresholdMin);
-			genotypeDirtyfy.MakeGeneCellPatternDirty();
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 
 	} // joules, [0 .... 100]
@@ -39,12 +39,12 @@ public class GeneEnergySensor : GeneSignalUnit {
 		m_threshold = 50f;
 		thresholdMin = 0f;
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	public void Randomize() {
 
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	public void Mutate(float strength) {
@@ -60,7 +60,7 @@ public class GeneEnergySensor : GeneSignalUnit {
 		if (rnd < gs.mutation.energySensorThresholdChange * strength) {
 			threshold = Mathf.Clamp(threshold + gs.mutation.energySensorThresholdChangeMaxAmount * gs.mutation.RandomDistributedValue(), 0f, gs.phenotype.cellMaxEnergy);
 		}
-		genotypeDirtyfy.MakeGeneCellPatternDirty();
+		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	// Save
