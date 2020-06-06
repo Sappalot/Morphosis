@@ -44,23 +44,33 @@ public abstract class SignalUnit {
 	}
 
 	// 4. Has to be found first, using methods above
-	public virtual List<Nerve> GetAllNervesGenotype() {
+	public virtual List<Nerve> GetAllNervesGenotypePhenotype() {
 		// Signal Units overriding this function (the ones with input as well: logicBox & Axon) need to call this one in order to get output as well
 		return outputNerves;
 	}
 
-	public virtual List<Nerve> GetOutputNervesGenotype() {
+	public virtual List<Nerve> GetOutputNervesGenotypePhenotype() {
 		return outputNerves;
 	}
 
-	public virtual List<Nerve> GetInputNervesGenotype() {
+	public virtual List<Nerve> GetInputNervesGenotypePhenotype() {
 		return null;
 	}
 
 	//--
 
-	public virtual void UpdateAreaTablesPhenotype() {
-		// TODO: update newrve connections signals
+	public virtual void UpdateAreaTablesPhenotype() {}
+
+	public virtual void CloneNervesFromGenotypeToPhenotype(Cell geneCell, Phenotype phenotype) {
+		// clone output
+		List<Nerve> outputNervesGenotype = geneCell.GetSignalUnit(signalUnitEnum).outputNerves;
+
+		foreach (Nerve genotypeNerve in outputNervesGenotype) {
+			Nerve phenotypeNerve = new Nerve(genotypeNerve);
+			phenotypeNerve.headCell = phenotype.GetCellAtMapPosition(genotypeNerve.headCell.mapPosition);
+			phenotypeNerve.tailCell = hostCell;
+			outputNerves.Add(phenotypeNerve);
+		}
 	}
 
 

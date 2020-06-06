@@ -40,13 +40,13 @@ public class EggCell : Cell {
 		fertilizeLogicBox.RootRecursivlyGenotype(genotype, null); // root
 	}
 
-	public override List<Nerve> GetAllNervesGenotype() {
+	public override List<Nerve> GetAllNervesGenotypePhenotype() {
 		List<Nerve> nerves = new List<Nerve>();
-		nerves.AddRange(base.GetAllNervesGenotype());
+		nerves.AddRange(base.GetAllNervesGenotypePhenotype());
 
-		nerves.AddRange(fertilizeLogicBox.GetAllNervesGenotype());
-		nerves.AddRange(fertilizeEnergySensor.GetAllNervesGenotype());
-		nerves.AddRange(fertilizeAttachmentSensor.GetAllNervesGenotype());
+		nerves.AddRange(fertilizeLogicBox.GetAllNervesGenotypePhenotype());
+		nerves.AddRange(fertilizeEnergySensor.GetAllNervesGenotypePhenotype());
+		nerves.AddRange(fertilizeAttachmentSensor.GetAllNervesGenotypePhenotype());
 
 		return nerves;
 	}
@@ -57,8 +57,20 @@ public class EggCell : Cell {
 
 	}
 
-	public override void CloneNervesFromGenotypeToPhenotype(Phenotype phenotype) {
+	public override void CloneNervesFromGenotypeToPhenotype(Cell geneCell, Phenotype phenotype) {
+		base.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
 
+		if (((EggCell)geneCell).fertilizeLogicBox.rootnessEnum == RootnessEnum.Rooted) {
+			fertilizeLogicBox.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
+		}
+
+		if (((EggCell)geneCell).fertilizeEnergySensor.rootnessEnum == RootnessEnum.Rooted) {
+			fertilizeEnergySensor.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
+		}
+
+		if (((EggCell)geneCell).fertilizeAttachmentSensor.rootnessEnum == RootnessEnum.Rooted) {
+			fertilizeAttachmentSensor.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
+		}
 	}
 
 	public override void UpdateConnectionsNervesPhenotype(Phenotype phenotype) {
@@ -70,10 +82,6 @@ public class EggCell : Cell {
 		fertilizeLogicBox.rootnessEnum = ((EggCell)geneCell).fertilizeLogicBox.rootnessEnum;
 		fertilizeEnergySensor.rootnessEnum = ((EggCell)geneCell).fertilizeEnergySensor.rootnessEnum;
 		fertilizeAttachmentSensor.rootnessEnum = ((EggCell)geneCell).fertilizeAttachmentSensor.rootnessEnum;
-	}
-
-	public override List<Nerve> GetAllNervesPhenotype() {
-		return null;
 	}
 
 	public override void UpdateSensorAreaTablesPhenotype() {

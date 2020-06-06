@@ -18,7 +18,6 @@ public class EnergySensor : SignalUnit {
 	}
 
 	public override void UpdateAreaTablesPhenotype() {
-		base.UpdateAreaTablesPhenotype();
 		areaCells.Clear();
 		if (signalUnitEnum == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) { // this is an energy sensor
 			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).areaRadius);

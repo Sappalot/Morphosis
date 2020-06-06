@@ -55,13 +55,13 @@ public class HudSignalArrow : MonoBehaviour {
 			headLabel.gameObject.SetActive(showHeadLabel);
 			headBackground.gameObject.SetActive(showHeadLabel);
 			if (showHeadLabel) {
-				headLabel.text = headUnit.ToString() + ", " + headUnitSlot.ToString();
+				headLabel.text = "To: " + headUnit.ToString() + ", " + headUnitSlot.ToString();
 			}
 
 			tailLabel.gameObject.SetActive(showTailLabel);
 			tailBackground.gameObject.SetActive(showTailLabel);
 			if (showTailLabel) {
-				tailLabel.text = tailUnit.ToString() + ", " + tailUnitSlot.ToString();
+				tailLabel.text = "From: " + tailUnit.ToString() + ", " + tailUnitSlot.ToString();
 			}
 
 			isDirty = false;

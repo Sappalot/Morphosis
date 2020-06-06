@@ -37,6 +37,24 @@ public class HudSignalArrowHandler : MonoBehaviour {
 
 	private void Update() {
 		// Update connections
+
+		List<Nerve> uniqueNerves = null;
+		List<Nerve> nervesToHighlite = null;
+		bool isNervesHighliteAllMode = false;
+		if (isDirtyConnections || isDirtySignal) {
+			if (mode == PhenoGenoEnum.Genotype) {
+				Genotype genotype = CreatureSelectionPanel.instance.soloSelected.genotype;
+				uniqueNerves = genotype.GetAllUniqueNervesGenotype(selectedGene);
+				nervesToHighlite = GetNervesToHighliteGenotype(genotype, selectedGene);
+				isNervesHighliteAllMode = IsNervesHighliteAllModeGenotype();
+			} else /*Phenotype*/{
+				uniqueNerves = selectedCell.GetAllNervesGenotypePhenotype();
+				nervesToHighlite = GetNervesToHighlitePhenotype(selectedCell);
+				isNervesHighliteAllMode = IsNervesHighliteAllModePhenotype();
+			}
+		}
+
+
 		if (isDirtyConnections) {
 			if (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.genotype.isInterGeneCellDirty) {
 				Debug.Log("Ooooops, not ready to refresh yet");
@@ -56,30 +74,15 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			}
 			arrowList.Clear();
 
-			if (mode == PhenoGenoEnum.Phenotype) {
-				// phenotype
-				// TODO: make phenotype work as well
-
-				isDirtyConnections = false;
-				return;
-			}
-
-			Genotype genotype = CreatureSelectionPanel.instance.soloSelected.genotype;
-			List<Nerve> uniqueNerves = genotype.GetAllUniqueNervesGenotype(selectedGene);
-
-			if (uniqueNerves.Count == 0) {
+			if (uniqueNerves == null || uniqueNerves.Count == 0) {
 				// nothing to draw.... done here... bye
 				isDirtyConnections = false;
 				return;
 			}
 
-			List<Nerve> nervesToHighlite = GetNervesToHighliteGenotype(genotype, selectedGene);
-
 			// inputs
 			foreach (Nerve nerve in uniqueNerves) {
 				//When it comes to input, they all look the same so we just pick the first one, which we are sure to have
-
-				bool isNervesHighliteAllMode = IsNervesHighliteAllModeGenotype();
 
 				if (nerve.nerveStatusEnum == NerveStatusEnum.OutputLocal ||
 					nerve.nerveStatusEnum == NerveStatusEnum.OutputExternal) {
@@ -122,8 +125,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 
 					arrowList.Add(arrow);
 				} else if (nerve.nerveStatusEnum == NerveStatusEnum.InputLocal ||
-					nerve.nerveStatusEnum == NerveStatusEnum.InputExternal /* ||
-					nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternalVoid */) {
+					nerve.nerveStatusEnum == NerveStatusEnum.InputExternal) {
 
 					HudSignalArrow arrow = GetArrowLikeNerve(nerve);
 
@@ -165,27 +167,27 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					arrowList.Add(arrow);
 				}
 			}
-
 			isDirtyConnections = false;
 		}
 
-		//// Update signal TODO: update only when dirty, that is post signal update in creature
-		//if (isDirtySignal) {
-		//	foreach (HudSignalArrow arrow in arrowList) {
-		//		Color color = Color.black;
-		//		if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
-		//			color = selectedCell.GetOutputFromUnit(arrow.tailUnit, arrow.tailUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-		//		} else {
-		//			color = ColorScheme.instance.signalOff;
-		//		}
-		//		arrow.GetComponent<Image>().color = new Color(color.r, color.g, color.b, 0.5f);
-		//	}
-		//	isDirtySignal = false;
-		//}
+		// Update signal TODO: update only when dirty, that is post signal update in creature
+		if (isDirtySignal && nervesToHighlite == null) {
+			foreach (HudSignalArrow arrow in arrowList) {
+				Color color = Color.black;
+				if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
+					color = selectedCell.GetOutputFromUnit(arrow.tailUnit, arrow.tailUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+				} else {
+					color = ColorScheme.instance.signalOff;
+				}
+				arrow.GetComponent<Image>().color = ColorUtil.SetAlpha(color, 0.5f);
+			}
+			isDirtySignal = false;
+		}
 	}
 
 	public static List<Nerve> GetNervesToHighliteGenotype(Genotype genotype, Gene selectedGene) {
 		ViewXput? viewXputNullable = GenePanel.instance.cellAndGenePanel.viewXput;
+
 		List<Nerve> nerveToHighlite = null;
 
 		if (viewXputNullable != null) {
@@ -213,8 +215,48 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		return nerveToHighlite;
 	}
 
+	public static List<Nerve> GetNervesToHighlitePhenotype(Cell selectedCell) {
+		ViewXput? viewXputNullable = CellPanel.instance.cellAndGenePanel.viewXput;
+
+		List<Nerve> nerveToHighlite = null;
+
+		if (viewXputNullable != null) {
+			ViewXput viewXput = ((ViewXput)viewXputNullable);
+
+			List<Nerve> nerveInSignalUnit = null;
+			if (viewXput.xputType == XputEnum.Input) {
+				nerveInSignalUnit = selectedCell.GetSignalUnit(viewXput.signalUnitEnum).GetInputNervesGenotypePhenotype();
+			} else /* Output */ {
+				nerveInSignalUnit = selectedCell.GetSignalUnit(viewXput.signalUnitEnum).GetOutputNervesGenotypePhenotype();
+			}
+
+			int nerveTwinBundleIndex = viewXput.index == 0 ? -1 : (viewXput.index - 1) % nerveInSignalUnit.Count;
+
+			nerveToHighlite = new List<Nerve>();
+			if (nerveTwinBundleIndex == -1) {
+				foreach (Nerve nerve in nerveInSignalUnit) {
+					nerveToHighlite.Add(nerve);
+				}
+			} else {
+				nerveToHighlite.Add(nerveInSignalUnit[nerveTwinBundleIndex]); // there should at least be one on index 0
+			}
+
+		}
+		return nerveToHighlite;
+	}
+
 	public static bool IsNervesHighliteAllModeGenotype() {
 		ViewXput? viewXputNullable = GenePanel.instance.cellAndGenePanel.viewXput;
+		if (viewXputNullable != null) {
+			ViewXput viewXput = ((ViewXput)viewXputNullable);
+			return viewXput.index == 0;
+		}
+		return false;
+
+	}
+
+	public static bool IsNervesHighliteAllModePhenotype() {
+		ViewXput? viewXputNullable = CellPanel.instance.cellAndGenePanel.viewXput;
 		if (viewXputNullable != null) {
 			ViewXput viewXput = ((ViewXput)viewXputNullable);
 			return viewXput.index == 0;

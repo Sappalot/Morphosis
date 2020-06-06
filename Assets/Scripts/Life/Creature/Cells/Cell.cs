@@ -175,47 +175,45 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// step 4.
-	public virtual List<Nerve> GetAllNervesGenotype() {
+	public virtual List<Nerve> GetAllNervesGenotypePhenotype() {
 		List<Nerve> nerves = new List<Nerve>();
 
-		if (constantSensor.rootnessEnum == RootnessEnum.Rooted) {
-			nerves.AddRange(constantSensor.GetAllNervesGenotype());
+		if (constantSensor.rootnessEnum != RootnessEnum.Unrooted) {
+			nerves.AddRange(constantSensor.GetAllNervesGenotypePhenotype());
 		}
 
-		if (axon.rootnessEnum == RootnessEnum.Rooted) {
-			nerves.AddRange(axon.GetAllNervesGenotype());
+		if (axon.rootnessEnum != RootnessEnum.Unrooted) {
+			nerves.AddRange(axon.GetAllNervesGenotypePhenotype());
 		}
 
-		if (dendritesLogicBox.rootnessEnum == RootnessEnum.Rooted) {
-			nerves.AddRange(dendritesLogicBox.GetAllNervesGenotype());
+		if (dendritesLogicBox.rootnessEnum != RootnessEnum.Unrooted) {
+			nerves.AddRange(dendritesLogicBox.GetAllNervesGenotypePhenotype());
 		}
 
-		if (dendritesLogicBox.rootnessEnum == RootnessEnum.Rooted) {
-			nerves.AddRange(dendritesLogicBox.GetAllNervesGenotype());
+		if (dendritesLogicBox.rootnessEnum != RootnessEnum.Unrooted) {
+			nerves.AddRange(dendritesLogicBox.GetAllNervesGenotypePhenotype());
 		}
 
-		if (energySensor.rootnessEnum == RootnessEnum.Rooted) {
-			nerves.AddRange(energySensor.GetAllNervesGenotype());
+		if (energySensor.rootnessEnum != RootnessEnum.Unrooted) {
+			nerves.AddRange(energySensor.GetAllNervesGenotypePhenotype());
 		}
 
-		if (effectSensor.rootnessEnum == RootnessEnum.Rooted) {
-			nerves.AddRange(effectSensor.GetAllNervesGenotype());
+		if (effectSensor.rootnessEnum != RootnessEnum.Unrooted) {
+			nerves.AddRange(effectSensor.GetAllNervesGenotypePhenotype());
 		}
 
 		if (isOrigin) {
-			nerves.AddRange(originDetatchLogicBox.GetAllNervesGenotype());
-			if (originSizeSensor.rootnessEnum == RootnessEnum.Rooted) { // input from origin can be disabled leading to it not being rooted
-				nerves.AddRange(originSizeSensor.GetAllNervesGenotype());
+			nerves.AddRange(originDetatchLogicBox.GetAllNervesGenotypePhenotype());
+			if (originSizeSensor.rootnessEnum != RootnessEnum.Unrooted) { // input from origin can be disabled leading to it not being rooted
+				nerves.AddRange(originSizeSensor.GetAllNervesGenotypePhenotype());
 			}
 		}
-		//originSizeSensor;
 
-		// TODO: more of them
 		return nerves;
 	}
 
-	public List<Nerve> GetAllExternalNervesGenotype() {
-		List<Nerve> nerves = GetAllNervesGenotype();
+	public List<Nerve> GetAllExternalNervesGenotypePhenotype() {
+		List<Nerve> nerves = GetAllNervesGenotypePhenotype();
 		List<Nerve> nervesExternal = new List<Nerve>();
 		foreach (Nerve nerve in nerves) {
 			if (nerve.nerveStatusEnum == NerveStatusEnum.OutputExternal || nerve.nerveStatusEnum == NerveStatusEnum.InputExternal) {
@@ -242,8 +240,35 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// Step 2.
-	public virtual void CloneNervesFromGenotypeToPhenotype(Phenotype genotype) {
+	public virtual void CloneNervesFromGenotypeToPhenotype(Cell geneCell, Phenotype phenotype) {
+		if (geneCell.constantSensor.rootnessEnum == RootnessEnum.Rooted) {
+			constantSensor.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
+		}
 
+		if (geneCell.axon.rootnessEnum == RootnessEnum.Rooted) {
+			axon.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
+		}
+
+		if (geneCell.dendritesLogicBox.rootnessEnum == RootnessEnum.Rooted) {
+			dendritesLogicBox.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
+		}
+
+		if (geneCell.energySensor.rootnessEnum == RootnessEnum.Rooted) {
+			energySensor.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
+		}
+
+		if (geneCell.effectSensor.rootnessEnum == RootnessEnum.Rooted) {
+			effectSensor.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
+		}
+
+		if (isOrigin) {
+			if (geneCell.originDetatchLogicBox.rootnessEnum == RootnessEnum.Rooted) {
+				originDetatchLogicBox.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
+			}
+			if (geneCell.originSizeSensor.rootnessEnum == RootnessEnum.Rooted) {
+				originSizeSensor.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
+			}
+		}
 	}
 
 	// Sterp 3.
@@ -253,29 +278,25 @@ public abstract class Cell : MonoBehaviour {
 
 	// Step 4.
 	public virtual void UpdateRootable(Cell geneCell) {
-		//constantSensor.rootnessEnum = geneCell.constantSensor.rootnessEnum;
-		//axon.rootnessEnum = geneCell.axon.rootnessEnum;
-		//dendritesLogicBox.rootnessEnum = geneCell.dendritesLogicBox.rootnessEnum;
-		//energySensor.rootnessEnum = geneCell.energySensor.rootnessEnum;
-		//effectSensor.rootnessEnum = geneCell.effectSensor.rootnessEnum;
-		//if (isOrigin) { 
-		//	originDetatchLogicBox.rootnessEnum = geneCell.originDetatchLogicBox.rootnessEnum;
-		//	originSizeSensor.rootnessEnum = geneCell.originSizeSensor.rootnessEnum;
-		//}
-
-		constantSensor.rootnessEnum =		(geneCell.constantSensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
-		axon.rootnessEnum =					(geneCell.axon.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
-		dendritesLogicBox.rootnessEnum =	(geneCell.dendritesLogicBox.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
-		energySensor.rootnessEnum =			(geneCell.energySensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
-		effectSensor.rootnessEnum =			(geneCell.effectSensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		constantSensor.rootnessEnum = geneCell.constantSensor.rootnessEnum;
+		axon.rootnessEnum = geneCell.axon.rootnessEnum;
+		dendritesLogicBox.rootnessEnum = geneCell.dendritesLogicBox.rootnessEnum;
+		energySensor.rootnessEnum = geneCell.energySensor.rootnessEnum;
+		effectSensor.rootnessEnum = geneCell.effectSensor.rootnessEnum;
 		if (isOrigin) {
-			originDetatchLogicBox.rootnessEnum =	(geneCell.originDetatchLogicBox.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
-			originSizeSensor.rootnessEnum =			(geneCell.originSizeSensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+			originDetatchLogicBox.rootnessEnum = geneCell.originDetatchLogicBox.rootnessEnum;
+			originSizeSensor.rootnessEnum = geneCell.originSizeSensor.rootnessEnum;
 		}
-	}
 
-	public virtual List<Nerve> GetAllNervesPhenotype() {
-		return null;
+		//constantSensor.rootnessEnum =		(geneCell.constantSensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		//axon.rootnessEnum =					(geneCell.axon.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		//dendritesLogicBox.rootnessEnum =	(geneCell.dendritesLogicBox.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		//energySensor.rootnessEnum =			(geneCell.energySensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		//effectSensor.rootnessEnum =			(geneCell.effectSensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		//if (isOrigin) {
+		//	originDetatchLogicBox.rootnessEnum =	(geneCell.originDetatchLogicBox.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		//	originSizeSensor.rootnessEnum =			(geneCell.originSizeSensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		//}
 	}
 
 	virtual public void ClearSignal() {

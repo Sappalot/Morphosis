@@ -18,7 +18,6 @@ public class EffectSensor : SignalUnit {
 	}
 
 	public override void UpdateAreaTablesPhenotype() {
-		base.UpdateAreaTablesPhenotype();
 		areaCells.Clear();
 		areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.effectSensor as GeneEffectSensor).usedAreaRadius);
 	}

@@ -568,7 +568,7 @@ public class Genotype : MonoBehaviour {
 	public List<Nerve> GetAllNervesGenotype() {
 		List<Nerve> nerves = new List<Nerve>();
 		foreach (Cell geneCell in geneCellListIndexSorted) {
-			nerves.AddRange(geneCell.GetAllNervesGenotype());
+			nerves.AddRange(geneCell.GetAllNervesGenotypePhenotype());
 		}
 		return nerves;
 	}
@@ -576,7 +576,7 @@ public class Genotype : MonoBehaviour {
 	public List<Nerve> GetAllExternalNervesGenotype() {
 		List<Nerve> nervesExternal = new List<Nerve>();
 		foreach (Cell geneCell in geneCellListIndexSorted) {
-			nervesExternal.AddRange(geneCell.GetAllExternalNervesGenotype());
+			nervesExternal.AddRange(geneCell.GetAllExternalNervesGenotypePhenotype());
 		}
 		return nervesExternal;
 	}
@@ -588,7 +588,7 @@ public class Genotype : MonoBehaviour {
 		foreach (Cell geneCell in geneCells) {
 			// all geneCells containing gene
 
-			List<Nerve> allGeneCellNerves = geneCell.GetAllNervesGenotype();
+			List<Nerve> allGeneCellNerves = geneCell.GetAllNervesGenotypePhenotype();
 			foreach (Nerve geneCellNerve in allGeneCellNerves) {
 				// for all used nerves in the geneCell
 
@@ -616,7 +616,7 @@ public class Genotype : MonoBehaviour {
 
 			if (signalUnit.rootnessEnum == RootnessEnum.Rooted) {
 				if (xputEnum == XputEnum.Output) {
-					List<Nerve> outputNerves = signalUnit.GetOutputNervesGenotype();
+					List<Nerve> outputNerves = signalUnit.GetOutputNervesGenotypePhenotype();
 					foreach (Nerve nerve in outputNerves) {
 						List<Nerve> nerveTwinList;
 						if (nerveBundleDictionary.TryGetValue(nerve.ToTwinString(), out nerveTwinList)) {
@@ -628,7 +628,7 @@ public class Genotype : MonoBehaviour {
 						}
 					}
 				} else {
-					List<Nerve> inputNerves = signalUnit.GetInputNervesGenotype();
+					List<Nerve> inputNerves = signalUnit.GetInputNervesGenotypePhenotype();
 					foreach (Nerve nerve in inputNerves) {
 						List<Nerve> nerveTwinList;
 						if (nerveBundleDictionary.TryGetValue(nerve.ToTwinString(), out nerveTwinList)) {

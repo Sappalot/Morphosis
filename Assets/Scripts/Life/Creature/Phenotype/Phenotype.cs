@@ -28,7 +28,7 @@ public class Phenotype : MonoBehaviour {
 
 		// clone genotype ==> phenotype
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].CloneNervesFromGenotypeToPhenotype(this);
+			cellList[index].CloneNervesFromGenotypeToPhenotype(genotype.GetCellAtMapPosition(cellList[index].mapPosition), this);
 		}
 
 		// root them

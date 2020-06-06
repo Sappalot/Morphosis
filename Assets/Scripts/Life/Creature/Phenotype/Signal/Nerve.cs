@@ -57,6 +57,10 @@ public class Nerve {
 	}
 
 	public Nerve(Nerve other) {
+		Set(other);
+	}
+
+	public void Set(Nerve other) {
 		nerveStatusEnum = other.nerveStatusEnum;
 
 		headCell = other.headCell;

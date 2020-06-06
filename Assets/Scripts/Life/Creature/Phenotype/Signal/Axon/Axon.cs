@@ -78,18 +78,18 @@ public class Axon : SignalUnit {
 		}
 	}
 
-	public override List<Nerve> GetAllNervesGenotype() {
+	public override List<Nerve> GetAllNervesGenotypePhenotype() {
 		List<Nerve> nerves = new List<Nerve>();
 		foreach (Nerve n in inputNerves) {
 			if (n.nerveStatusEnum != NerveStatusEnum.Void) {
 				nerves.Add(n);
 			}
 		}
-		nerves.AddRange(base.GetAllNervesGenotype());
+		nerves.AddRange(base.GetAllNervesGenotypePhenotype());
 		return nerves;
 	}
 
-	public override List<Nerve> GetInputNervesGenotype() {
+	public override List<Nerve> GetInputNervesGenotypePhenotype() {
 		List<Nerve> nerves = new List<Nerve>();
 		foreach (Nerve n in inputNerves) {
 			if (n.nerveStatusEnum != NerveStatusEnum.Void) {
@@ -98,6 +98,27 @@ public class Axon : SignalUnit {
 		}
 		return nerves;
 	}
+
+	public override void CloneNervesFromGenotypeToPhenotype(Cell geneCell, Phenotype phenotype) {
+		base.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
+		// output in base ^
+
+		// input only
+		Nerve[] inputNervesGenotype = ((Axon)geneCell.GetSignalUnit(signalUnitEnum)).inputNerves;
+
+		for (int i = 0; i < inputNerves.Length; i++) {
+			inputNerves[i].Set(inputNervesGenotype[i]);
+			inputNerves[i].headCell = hostCell;
+
+			if (inputNervesGenotype[i].tailCell != null) {
+				inputNerves[i].tailCell = phenotype.GetCellAtMapPosition(inputNervesGenotype[i].tailCell.mapPosition);
+			} else {
+				inputNerves[i].tailCell = null;
+			}
+		}
+	}
+
+	// ...live...
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
 		return outputLate[SignalUnitSlotOutputToIndex(signalUnitSlot)];
