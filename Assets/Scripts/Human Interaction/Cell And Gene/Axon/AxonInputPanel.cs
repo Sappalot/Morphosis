@@ -68,8 +68,9 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 		}
 		affectedGeneAxonInput.valveMode = SignalValveModeEnum.Pass;
 		motherPanel.MarkAsNewForge();
-		//motherPanel.UpdateConnections();
+		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
+
 		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
@@ -144,8 +145,10 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 				lockedOverlayImage.gameObject.SetActive(affectedGeneAxonInput.lockness == LocknessEnum.Locked);
 				semiLockedOverlayImage.gameObject.SetActive(affectedGeneAxonInput.lockness == LocknessEnum.SemiLocked);
 			} else {
-				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve /*|| !motherPanel.affectedGeneSignalUnit.isRooted*/) {
+				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve || motherPanel.affectedSignalUnit.rootnessEnum == RootnessEnum.Unrooted) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused;
+				} else if (motherPanel.affectedSignalUnit.rootnessEnum == RootnessEnum.Rootable) {
+					inputButtonImage.color = ColorScheme.instance.signalRootable;
 				} else if (runtimeOutput == LogicBoxInputEnum.VoidInput) { // should never happen
 					inputButtonImage.color = Color.red;
 				} else if (runtimeOutput == LogicBoxInputEnum.On) {

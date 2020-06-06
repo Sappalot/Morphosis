@@ -98,8 +98,6 @@ public class Genotype : MonoBehaviour {
 	// ... Signal ...
 
 	// ^ Signal ^
-
-
 	public Cell GetCellAtMapPosition(Vector2i mapPosition) {
 		return geneCellMap.GetCell(mapPosition);
 	}
@@ -616,7 +614,7 @@ public class Genotype : MonoBehaviour {
 				Debug.Log("null");
 			}
 
-			if (signalUnit.isRooted) {
+			if (signalUnit.rootnessEnum == RootnessEnum.Rooted) {
 				if (xputEnum == XputEnum.Output) {
 					List<Nerve> outputNerves = signalUnit.GetOutputNervesGenotype();
 					foreach (Nerve nerve in outputNerves) {

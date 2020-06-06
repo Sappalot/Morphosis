@@ -81,8 +81,8 @@ public class HudSignalArrowHandler : MonoBehaviour {
 
 				bool isNervesHighliteAllMode = IsNervesHighliteAllModeGenotype();
 
-				if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeLocal ||
-					nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) {
+				if (nerve.nerveStatusEnum == NerveStatusEnum.OutputLocal ||
+					nerve.nerveStatusEnum == NerveStatusEnum.OutputExternal) {
 
 					// We draw internal output arrows (from their tail side), though they have been drawn (from their head side) allready
 					// The reason for this is so that we can highlite them from the tail side as well
@@ -93,7 +93,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					// external output
 					Vector2 head;
 
-					if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeLocal) {
+					if (nerve.nerveStatusEnum == NerveStatusEnum.OutputLocal) {
 						// Local input
 						head = cellAndGenePanel.TotalPanelOffset(nerve.headSignalUnitEnum, nerve.headSignalUnitSlotEnum);
 					} else {
@@ -121,8 +121,8 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					}
 
 					arrowList.Add(arrow);
-				} else if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal ||
-					nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal /* ||
+				} else if (nerve.nerveStatusEnum == NerveStatusEnum.InputLocal ||
+					nerve.nerveStatusEnum == NerveStatusEnum.InputExternal /* ||
 					nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternalVoid */) {
 
 					HudSignalArrow arrow = GetArrowLikeNerve(nerve);
@@ -136,7 +136,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 						arrow.GetComponent<Image>().color = ColorScheme.instance.signalOff;
 						tail = head + Vector2.down * 20f;
 
-					} else if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal) {
+					} else if (nerve.nerveStatusEnum == NerveStatusEnum.InputLocal) {
 						// Local input
 						tail = cellAndGenePanel.TotalPanelOffset(nerve.tailSignalUnitEnum, nerve.tailSignalUnitSlotEnum);
 					} else {

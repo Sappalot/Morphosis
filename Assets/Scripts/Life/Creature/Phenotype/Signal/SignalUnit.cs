@@ -8,12 +8,12 @@ public abstract class SignalUnit {
 
 	protected List<Nerve> outputNerves = new List<Nerve>(); // there might be many, per slot even
 
-	public bool isRooted;
+	public RootnessEnum rootnessEnum;
 
 	// 1.
 	public void PreUpdateNervesGenotype() {
 		outputNerves.Clear();
-		isRooted = false;
+		rootnessEnum = RootnessEnum.Unrooted;
 	}
 
 	// 2
@@ -29,19 +29,18 @@ public abstract class SignalUnit {
 			// Output nerve is the same as the input but, status is changed, do we need to change the vector as well??
 			Nerve outputNerve = new Nerve(nerve);
 
-			if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal) {
-				outputNerve.nerveStatusEnum = NerveStatusEnum.Output_GenotypeLocal;
-			} else if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) {
-				outputNerve.nerveStatusEnum = NerveStatusEnum.Output_GenotypeExternal;
+			if (nerve.nerveStatusEnum == NerveStatusEnum.InputLocal) {
+				outputNerve.nerveStatusEnum = NerveStatusEnum.OutputLocal;
+			} else if (nerve.nerveStatusEnum == NerveStatusEnum.InputExternal) {
+				outputNerve.nerveStatusEnum = NerveStatusEnum.OutputExternal;
 			}
 			
-			//Debug.Assert(nerve.nerveStatusEnum != NerveStatusEnum.Input_GenotypeExternalVoid, "This is strange, we were just contacted from a nerve with its head in the void.");
-			Debug.Assert(nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal || nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal, "This kind of nerve should not be able to contact me");
+			Debug.Assert(nerve.nerveStatusEnum == NerveStatusEnum.InputLocal || nerve.nerveStatusEnum == NerveStatusEnum.InputExternal, "This kind of nerve should not be able to contact me");
 
 			outputNerves.Add(outputNerve); // all nerves tails will be: this host call -> this signal unit enum -> may be different slots
 		}
 
-		isRooted = true;
+		rootnessEnum = RootnessEnum.Rooted;
 	}
 
 	// 4. Has to be found first, using methods above
@@ -60,7 +59,7 @@ public abstract class SignalUnit {
 
 	//--
 
-	public virtual void ReachOutNervesPhenotype() {
+	public virtual void UpdateAreaTablesPhenotype() {
 		// TODO: update newrve connections signals
 	}
 

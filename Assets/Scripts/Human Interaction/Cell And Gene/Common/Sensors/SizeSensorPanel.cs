@@ -40,7 +40,7 @@ public class SizeSensorPanel : SignalUnitPanel {
 				return; // whole settings panel is allready gone, so we dont need to bother with stuff inside it
 			}
 
-			if (CreatureSelectionPanel.instance.hasSoloSelected && gene != null && affectedGeneSignalUnit != null) {
+			if (CreatureSelectionPanel.instance.hasSoloSelected && selectedGene != null && affectedGeneSignalUnit != null) {
 				ignoreHumanInput = true;
 				sizeMoreThanSliderLabel.text = string.Format("A: Size ≥ {0:F0} % ({1:F0} cells or bigger)", (affectedGeneSignalUnit as GeneSizeSensor).sizeThreshold * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness((affectedGeneSignalUnit as GeneSizeSensor).sizeThreshold));
 				sizeLessThanSliderLabel.text = string.Format("B: Size < {0:F0} % ({1:F0} cells or smaller)", (affectedGeneSignalUnit as GeneSizeSensor).sizeThreshold * 100f, CreatureSelectionPanel.instance.soloSelected.CellCountAtCompleteness((affectedGeneSignalUnit as GeneSizeSensor).sizeThreshold) - 1);

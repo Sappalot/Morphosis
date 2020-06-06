@@ -69,7 +69,7 @@ public class EffectSensorPanel : SignalUnitPanel {
 
 			effectMeasuredDropdown.interactable = IsUnlocked();
 
-			if (gene != null && affectedGeneSignalUnit != null) {
+			if (selectedGene != null && affectedGeneSignalUnit != null) {
 				ignoreHumanInput = true;
 
 				effectMeasuredDropdown.value = (int)(affectedGeneSignalUnit as GeneEffectSensor).effectMeassure;

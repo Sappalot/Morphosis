@@ -50,7 +50,7 @@ public class ShellCellPanel : ComponentPanel {
 				Debug.Log("Update ShellCellPanel");
 			}
 
-			if (gene != null) {
+			if (selectedGene != null) {
 				componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.shellCell.effectProductionDown);
 
 			}

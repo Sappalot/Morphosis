@@ -43,7 +43,7 @@ public class NerveArrow : MonoBehaviour {
 			mainArrow.GetComponent<LineRenderer>().endColor = ColorUtil.SetAlpha(ColorScheme.instance.signalViewed, 0.8f);
 		}
 
-		if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) {
+		if (nerve.nerveStatusEnum == NerveStatusEnum.OutputExternal) {
 			Debug.Assert(nerve.referenceCell != null, "We should allways have a reference cell in the nerve, when it is an external output, who else would be the one listening to nerves voice?");
 
 			Vector3 headPosition = nerve.referenceCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
@@ -61,7 +61,7 @@ public class NerveArrow : MonoBehaviour {
 				tailCircle.transform.position = tailPosition;
 				tailCircle.GetComponent<SpriteRenderer>().color = ColorScheme.instance.signalViewed;
 			}
-		} else if (nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) {
+		} else if (nerve.nerveStatusEnum == NerveStatusEnum.InputExternal) {
 			if (nerve.tailSignalUnitEnum == SignalUnitEnum.Void) {
 				mainArrow.GetComponent<LineRenderer>().startColor = new Color(0f, 1f, 0f, 1f);
 				mainArrow.GetComponent<LineRenderer>().endColor = new Color(0f, 1f, 0f, 1f);

@@ -62,7 +62,7 @@ public class JawCellPanel : ComponentPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		gene.jawCellCannibalizeKin = cannibalizeKinToggle.isOn;
+		selectedGene.jawCellCannibalizeKin = cannibalizeKinToggle.isOn;
 		OnGenomeChanged();
 	}
 
@@ -70,7 +70,7 @@ public class JawCellPanel : ComponentPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		gene.jawCellCannibalizeMother = cannibalizeMotherToggle.isOn;
+		selectedGene.jawCellCannibalizeMother = cannibalizeMotherToggle.isOn;
 		OnGenomeChanged();
 	}
 
@@ -78,7 +78,7 @@ public class JawCellPanel : ComponentPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		gene.jawCellCannibalizeFather = cannibalizeFatherToggle.isOn;
+		selectedGene.jawCellCannibalizeFather = cannibalizeFatherToggle.isOn;
 		OnGenomeChanged();
 	}
 
@@ -86,7 +86,7 @@ public class JawCellPanel : ComponentPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		gene.jawCellCannibalizeSiblings = cannibalizeSiblingsToggle.isOn;
+		selectedGene.jawCellCannibalizeSiblings = cannibalizeSiblingsToggle.isOn;
 		OnGenomeChanged();
 	}
 
@@ -94,7 +94,7 @@ public class JawCellPanel : ComponentPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		gene.jawCellCannibalizeChildren = cannibalizeChildrenToggle.isOn;
+		selectedGene.jawCellCannibalizeChildren = cannibalizeChildrenToggle.isOn;
 		OnGenomeChanged();
 	}
 
@@ -124,14 +124,14 @@ public class JawCellPanel : ComponentPanel {
 				cannibalizeChildrenToggle.interactable = IsUnlocked();
 			}
 
-			if (gene != null) {
+			if (selectedGene != null) {
 				ignoreHumanInput = true;
 
-				cannibalizeKinToggle.isOn = gene.jawCellCannibalizeKin;
-				cannibalizeMotherToggle.isOn = gene.jawCellCannibalizeMother;
-				cannibalizeFatherToggle.isOn = gene.jawCellCannibalizeFather;
-				cannibalizeSiblingsToggle.isOn = gene.jawCellCannibalizeSiblings;
-				cannibalizeChildrenToggle.isOn = gene.jawCellCannibalizeChildren;
+				cannibalizeKinToggle.isOn = selectedGene.jawCellCannibalizeKin;
+				cannibalizeMotherToggle.isOn = selectedGene.jawCellCannibalizeMother;
+				cannibalizeFatherToggle.isOn = selectedGene.jawCellCannibalizeFather;
+				cannibalizeSiblingsToggle.isOn = selectedGene.jawCellCannibalizeSiblings;
+				cannibalizeChildrenToggle.isOn = selectedGene.jawCellCannibalizeChildren;
 
 				ignoreHumanInput = false;
 			}

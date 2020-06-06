@@ -17,8 +17,8 @@ public class EnergySensor : SignalUnit {
 		return output[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}
 
-	public override void ReachOutNervesPhenotype() {
-		base.ReachOutNervesPhenotype();
+	public override void UpdateAreaTablesPhenotype() {
+		base.UpdateAreaTablesPhenotype();
 		areaCells.Clear();
 		if (signalUnitEnum == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) { // this is an energy sensor
 			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).areaRadius);

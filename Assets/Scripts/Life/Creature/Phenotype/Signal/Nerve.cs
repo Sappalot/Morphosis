@@ -18,11 +18,11 @@ public class Nerve {
 		get {
 			if (nerveStatusEnum == NerveStatusEnum.Void) {
 				Debug.Assert(false, "Can't find host cell on a void status nerve.");
-			} else if (nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal || nerveStatusEnum == NerveStatusEnum.Output_GenotypeLocal) {
+			} else if (nerveStatusEnum == NerveStatusEnum.InputLocal || nerveStatusEnum == NerveStatusEnum.OutputLocal) {
 				return headCell; // any will do
-			} else if (nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) { // TODO: phenotype
+			} else if (nerveStatusEnum == NerveStatusEnum.InputExternal) { // TODO: phenotype
 				return headCell;
-			} else if (nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) { // TODO: phenotype
+			} else if (nerveStatusEnum == NerveStatusEnum.OutputExternal) { // TODO: phenotype
 				return tailCell;
 			}
 
@@ -35,11 +35,11 @@ public class Nerve {
 		get {
 			if (nerveStatusEnum == NerveStatusEnum.Void) {
 				Debug.Assert(false, "Can't find reference cell on a void status nerve.");
-			} else if (nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal || nerveStatusEnum == NerveStatusEnum.Output_GenotypeLocal) {
+			} else if (nerveStatusEnum == NerveStatusEnum.InputLocal || nerveStatusEnum == NerveStatusEnum.OutputLocal) {
 				return headCell; // any will do
-			} else if (nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) { // TODO: phenotype
+			} else if (nerveStatusEnum == NerveStatusEnum.InputExternal) { // TODO: phenotype
 				return tailCell;
-			} else if (nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal) { // TODO: phenotype
+			} else if (nerveStatusEnum == NerveStatusEnum.OutputExternal) { // TODO: phenotype
 				return headCell;
 			}
 			return null;
@@ -57,6 +57,8 @@ public class Nerve {
 	}
 
 	public Nerve(Nerve other) {
+		nerveStatusEnum = other.nerveStatusEnum;
+
 		headCell = other.headCell;
 		headSignalUnitEnum = other.headSignalUnitEnum;
 		headSignalUnitSlotEnum = other.headSignalUnitSlotEnum;
@@ -64,6 +66,8 @@ public class Nerve {
 		tailCell = other.tailCell;
 		tailSignalUnitEnum = other.tailSignalUnitEnum;
 		tailSignalUnitSlotEnum = other.tailSignalUnitSlotEnum;
+
+		nerveVector = other.nerveVector;
 	}
 
 	public static bool AreTwinNerves(Nerve nerveA, Nerve nerveB, bool careAboutStatus) {

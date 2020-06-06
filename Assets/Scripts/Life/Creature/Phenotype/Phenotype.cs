@@ -15,21 +15,20 @@ public class Phenotype : MonoBehaviour {
 	public NerveArrows nerveArrows;
 
 	// ... Signal ...
-	private void UpdateNerves() {
-		// reach out
+	private void UpdateSignal(Genotype genotype) {
+		// area tables
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdateNervesPhenotype();
+			cellList[index].UpdateSensorAreaTablesPhenotype();
 		}
 
-		// root them
 		// clear
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].PreUpdateNervesPhenotype();
 		}
 
-		// reach out
+		// clone genotype ==> phenotype
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdateInputNervesPhenotype(this);
+			cellList[index].CloneNervesFromGenotypeToPhenotype(this);
 		}
 
 		// root them
@@ -37,6 +36,9 @@ public class Phenotype : MonoBehaviour {
 			cellList[index].UpdateConnectionsNervesPhenotype(this);
 		}
 
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].UpdateRootable(genotype.GetCellAtMapPosition(cellList[index].mapPosition));
+		}
 
 	}
 
@@ -801,7 +803,7 @@ public class Phenotype : MonoBehaviour {
 			MakeBudsDirty();
 
 			// Signal
-			UpdateNerves();
+			UpdateSignal(creature.genotype);
 
 			//Armour
 			UpdateArmour();
@@ -1500,6 +1502,10 @@ public class Phenotype : MonoBehaviour {
 			cell.heading = heading;
 			cell.SetTringleHeadingAngle(heading);
 		}
+	}
+
+	public Cell GetCellAtMapPosition(Vector2i mapPosition) {
+		return cellMap.GetCell(mapPosition);
 	}
 
 	public Cell GetCellAtPosition(Vector2 position) {

@@ -180,7 +180,7 @@ public class AxonPanel : SignalUnitPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		gene.axon.pulseProgram3 = dropdown3.value; // 0 = relax, 1 = A ....
+		selectedGene.axon.pulseProgram3 = dropdown3.value; // 0 = relax, 1 = A ....
 		OnGenomeChanged();
 	}
 
@@ -188,7 +188,7 @@ public class AxonPanel : SignalUnitPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		gene.axon.pulseProgram2 = dropdown2.value; // 0 = relax, 1 = A ....
+		selectedGene.axon.pulseProgram2 = dropdown2.value; // 0 = relax, 1 = A ....
 		OnGenomeChanged();
 	}
 
@@ -196,7 +196,7 @@ public class AxonPanel : SignalUnitPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		gene.axon.pulseProgram1 = dropdown1.value; // 0 = relax, 1 = A ....
+		selectedGene.axon.pulseProgram1 = dropdown1.value; // 0 = relax, 1 = A ....
 		OnGenomeChanged();
 	}
 
@@ -204,7 +204,7 @@ public class AxonPanel : SignalUnitPanel {
 		if (ignoreHumanInput) {
 			return;
 		}
-		gene.axon.pulseProgram0 = dropdown0.value; // 0 = relax, 1 = A ....
+		selectedGene.axon.pulseProgram0 = dropdown0.value; // 0 = relax, 1 = A ....
 		OnGenomeChanged();
 	}
 
@@ -218,14 +218,14 @@ public class AxonPanel : SignalUnitPanel {
 	}
 
 	public void UpdateConnections() {
-		gene.axon.UpdateConnections();
+		selectedGene.axon.UpdateConnections();
 	}
 
 	public override void Update() {
 		if (isDirty) {
 			base.Update();
 			
-			if (gene == null) {
+			if (selectedGene == null) {
 				isDirty = false;
 				return;
 			}
@@ -257,10 +257,10 @@ public class AxonPanel : SignalUnitPanel {
 			dropdown1.interactable = interractable;
 			dropdown0.interactable = interractable;
 
-			dropdown3.value = gene.axon.pulseProgram3;
-			dropdown2.value = gene.axon.pulseProgram2;
-			dropdown1.value = gene.axon.pulseProgram1;
-			dropdown0.value = gene.axon.pulseProgram0;
+			dropdown3.value = selectedGene.axon.pulseProgram3;
+			dropdown2.value = selectedGene.axon.pulseProgram2;
+			dropdown1.value = selectedGene.axon.pulseProgram1;
+			dropdown0.value = selectedGene.axon.pulseProgram0;
 
 			if (cellAndGenePanel.gene != null && CreatureSelectionPanel.instance.hasSoloSelected) {
 				
@@ -292,7 +292,7 @@ public class AxonPanel : SignalUnitPanel {
 						fromOriginOffsetText.text = string.Format("Offset origin -> me: {0:F1}°", cellAndGenePanel.gene.axon.GetPulse(pulseView).axonFromOriginOffset);
 					}
 
-					if (isAnyAffectedSignalUnitsRootedGenotype) {
+					if (affectedSignalUnit.rootnessEnum == RootnessEnum.Rooted) {
 						postInputBoxLeft.color = selectedCell.axon.HasSignalPostInputValve(inputLeftPanel.affectedGeneAxonInput) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						postInputBoxRight.color = selectedCell.axon.HasSignalPostInputValve(inputRightPanel.affectedGeneAxonInput) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 
@@ -300,7 +300,15 @@ public class AxonPanel : SignalUnitPanel {
 						combinationImage2.color = selectedCell.axon.HasSignalAtCombination(2) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						combinationImage1.color = selectedCell.axon.HasSignalAtCombination(1) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 						combinationImage0.color = selectedCell.axon.HasSignalAtCombination(0) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-					} else {
+					} else if (affectedSignalUnit.rootnessEnum == RootnessEnum.Rootable) {
+						postInputBoxLeft.color = ColorScheme.instance.signalRootable;
+						postInputBoxRight.color = ColorScheme.instance.signalRootable;
+
+						combinationImage3.color = ColorScheme.instance.signalRootable; // 11
+						combinationImage2.color = ColorScheme.instance.signalRootable; // 10
+						combinationImage1.color = ColorScheme.instance.signalRootable; // 01
+						combinationImage0.color = ColorScheme.instance.signalRootable; // 00
+					} else /*Unrooted*/ {
 						postInputBoxLeft.color = ColorScheme.instance.signalUnused;
 						postInputBoxRight.color = ColorScheme.instance.signalUnused;
 

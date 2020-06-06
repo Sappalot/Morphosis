@@ -41,7 +41,7 @@ public class EnergySensorPanel : SignalUnitPanel {
 				Debug.Log("Update Energy Sensor Panel");
 			}
 
-			if (gene != null && affectedGeneSignalUnit != null) {
+			if (selectedGene != null && affectedGeneSignalUnit != null) {
 				ignoreHumanInput = true;
 
 				cellEnergyMoreThanLabel.text = string.Format("Cl. E ≥ {0:F0} J", (affectedGeneSignalUnit as GeneEnergySensor).threshold);

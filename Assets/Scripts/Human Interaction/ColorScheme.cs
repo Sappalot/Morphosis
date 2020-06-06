@@ -62,6 +62,7 @@ public class ColorScheme : MonoSingleton<ColorScheme> {
 	public Color signalGhost;
 	public Color signalUnused;
 	public Color signalViewed;
+	public Color signalRootable; //... but not rooted
 
 	public Color grayedOut;
 	public Color normalText;

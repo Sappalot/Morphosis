@@ -67,10 +67,14 @@ public class OutputPanel : MonoBehaviour {
 			}
 
 			if (mode == PhenoGenoEnum.Phenotype) {
-				if (motherPanel == null || motherPanel.affectedGeneSignalUnit == null /* || !motherPanel.affectedGeneSignalUnit.isRooted*/) {
-					image.color = ColorScheme.instance.signalUnused;
-				} else if (cellAndGenePanel.cell != null) {
+				if (motherPanel == null || motherPanel.affectedSignalUnit == null || cellAndGenePanel.cell == null) {
+					image.color = Color.red;
+				} else if (motherPanel.affectedSignalUnit.rootnessEnum == RootnessEnum.Rooted) {
 					image.color = selectedCell.GetOutputFromUnit(signalUnit, signalUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+				} else if (motherPanel.affectedSignalUnit.rootnessEnum == RootnessEnum.Rootable) {
+					image.color = ColorScheme.instance.signalRootable;
+				} else if (motherPanel.affectedSignalUnit.rootnessEnum == RootnessEnum.Unrooted) {
+					image.color = ColorScheme.instance.signalUnused;
 				}
 			} else if (mode == PhenoGenoEnum.Genotype) {
 				if (motherPanel == null || motherPanel.affectedGeneSignalUnit == null || !motherPanel.isAnyAffectedSignalUnitsRootedGenotype) {

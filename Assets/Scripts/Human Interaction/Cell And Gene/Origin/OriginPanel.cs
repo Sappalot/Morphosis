@@ -62,7 +62,7 @@ public class OriginPanel : ComponentPanel {
 			return;
 		}
 
-		gene.originPulseTickPeriod = Mathf.CeilToInt(1f / (Time.fixedDeltaTime * pulseFrequenzySlider.value));
+		selectedGene.originPulseTickPeriod = Mathf.CeilToInt(1f / (Time.fixedDeltaTime * pulseFrequenzySlider.value));
 		OnGenomeChanged();
 	}
 	// ^pulse^
@@ -73,7 +73,7 @@ public class OriginPanel : ComponentPanel {
 			return;
 		}
 
-		gene.originEmbryoMaxSizeCompleteness = embryoMaxSizeSlider.value;
+		selectedGene.originEmbryoMaxSizeCompleteness = embryoMaxSizeSlider.value;
 		OnGenomeChanged();
 	}
 	// ^embryo max size^

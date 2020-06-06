@@ -26,14 +26,14 @@ public class LogicBox : SignalUnit {
 				inputNerves[i].tailSignalUnitSlotEnum = geneNerve.tailUnitSlotEnum;
 				if (geneNerve.isLocal) {
 					inputNerves[i].tailCell = hostCell;
-					inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeLocal;
+					inputNerves[i].nerveStatusEnum = NerveStatusEnum.InputLocal;
 				} else {
 					inputNerves[i].nerveVector = geneNerve.nerveVector;
 					inputNerves[i].tailCell = GeneNerve.GetGeneCellAtNerveTail(hostCell, geneNerve, genotype);
 
 
 
-					inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeExternal;
+					inputNerves[i].nerveStatusEnum = NerveStatusEnum.InputExternal;
 					//if (inputNerves[i].tailCell != null) {
 					//	inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeExternal;
 					//} else {
@@ -49,7 +49,7 @@ public class LogicBox : SignalUnit {
 
 	// Assume all input nerves are updated at this stage
 	public override void RootRecursivlyGenotype(Genotype genotype, Nerve nerve) {
-		bool wasAllreadyRooted = isRooted;
+		bool wasAllreadyRooted = rootnessEnum == RootnessEnum.Rooted;
 		base.RootRecursivlyGenotype(genotype, nerve); // roots me!
 
 		if (wasAllreadyRooted) {
@@ -58,13 +58,13 @@ public class LogicBox : SignalUnit {
 
 		// reach out through input nerves
 		for (int i = 0; i < GeneLogicBox.columnCount; i++) {
-			if (inputNerves[i].nerveStatusEnum == NerveStatusEnum.Input_GenotypeLocal) {
+			if (inputNerves[i].nerveStatusEnum == NerveStatusEnum.InputLocal) {
 				// ask to which this genes unit where tail is "pointing"
 				SignalUnit childSignalUnit = hostCell.GetSignalUnit(inputNerves[i].tailSignalUnitEnum);
 				if (childSignalUnit != null) {
 					childSignalUnit.RootRecursivlyGenotype(genotype, inputNerves[i]);
 				}
-			} else if (inputNerves[i].nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) {
+			} else if (inputNerves[i].nerveStatusEnum == NerveStatusEnum.InputExternal) {
 				// ask external unit where tail is pointing
 				Cell childCell = inputNerves[i].tailCell;
 				if (childCell != null) {
@@ -127,7 +127,7 @@ public class LogicBox : SignalUnit {
 	}
 
 	private bool ThroughGates(GeneLogicBox geneLogicBox) {
-		if (!isRooted) {
+		if (rootnessEnum == RootnessEnum.Rooted) {
 			return false;
 		}
 		return HasSignalPostGate(geneLogicBox.GetGate(0, 0), hostCell);

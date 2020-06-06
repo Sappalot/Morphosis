@@ -58,13 +58,13 @@ public class MuscleCellPanel : ComponentPanel {
 				frequenzy.text = string.Format("Frequenzy: -");
 			}
 
-			if (gene != null) {
+			if (selectedGene != null) {
 				ignoreHumanInput = true;
 
 				ignoreHumanInput = false;
 			}
 
-			isDirty = false; 
+			isDirty = false;
 		}
 	}
 }

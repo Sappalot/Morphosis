@@ -167,8 +167,11 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 				lockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked);
 				semiLockedOverlayImage.gameObject.SetActive(affectedGeneLogicBoxInput.lockness == LocknessEnum.SemiLocked);
 			} else {
-				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve /*|| !motherPanel.affectedGeneLogicBox.isRooted*/) {
+
+				if (runtimeOutput == LogicBoxInputEnum.BlockedByValve || motherPanel.affectedSignalUnit.rootnessEnum == RootnessEnum.Unrooted) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused;
+				} else if (motherPanel.affectedSignalUnit.rootnessEnum == RootnessEnum.Rootable) {
+					inputButtonImage.color = ColorScheme.instance.signalRootable;
 				} else if (runtimeOutput == LogicBoxInputEnum.VoidInput) { // should never happen
 					inputButtonImage.color = Color.red;
 				} else if (runtimeOutput == LogicBoxInputEnum.On) {

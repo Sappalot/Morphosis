@@ -235,11 +235,17 @@ public class LogicBoxGatePanel : MonoBehaviour {
 					// render arrows off if entire logic box is off
 					arrowColor = (connectedPart.isTransmittingSignal && motherPanel.isAnyAffectedSignalUnitsRootedGenotype) ? ColorScheme.instance.signalOff : ColorScheme.instance.signalUnused;
 				} else {
-					if (connectedPart.isTransmittingSignal /*&& motherPanel.affectedGeneLogicBox.isRooted*/) {
-						if (connectedPart is GeneLogicBoxGate) {
-							arrowColor = LogicBox.HasSignalPostGate((connectedPart as GeneLogicBoxGate), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-						} else if (connectedPart is GeneLogicBoxInput) {
-							arrowColor = LogicBox.HasSignalPostInputValve((connectedPart as GeneLogicBoxInput), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					if (connectedPart.isTransmittingSignal) {
+						if (motherPanel.affectedSignalUnit.rootnessEnum == RootnessEnum.Rooted) {
+							if (connectedPart is GeneLogicBoxGate) {
+								arrowColor = LogicBox.HasSignalPostGate((connectedPart as GeneLogicBoxGate), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+							} else if (connectedPart is GeneLogicBoxInput) {
+								arrowColor = LogicBox.HasSignalPostInputValve((connectedPart as GeneLogicBoxInput), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+							}
+						} else if (motherPanel.affectedSignalUnit.rootnessEnum == RootnessEnum.Rootable) {
+							arrowColor = ColorScheme.instance.signalRootable;
+						} else /*Unrooted*/ {
+							arrowColor = ColorScheme.instance.signalUnused;
 						}
 					} else {
 						arrowColor = ColorScheme.instance.signalUnused;

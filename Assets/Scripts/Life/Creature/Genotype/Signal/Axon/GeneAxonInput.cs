@@ -20,8 +20,8 @@ public class GeneAxonInput : IGeneInput {
 		set {
 			if (lockness == LocknessEnum.Unlocked || lockness == LocknessEnum.SemiLocked) { 
 				m_valveMode = value;
+				genotypeDirtyfy.ReforgeInterGeneCellAndForward();
 			}
-			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
 

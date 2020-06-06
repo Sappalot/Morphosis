@@ -31,15 +31,15 @@ public class LogicBoxPanel : SignalUnitPanel {
 
 	public GeneLogicBox affectedGeneLogicBox {
 		get {
-			if (gene == null) {
+			if (selectedGene == null) {
 				return null;
 			}
-			if (gene.type == CellTypeEnum.Egg && signalUnitEnum == SignalUnitEnum.WorkLogicBoxA) {
-				return gene.eggCellFertilizeLogic;
+			if (selectedGene.type == CellTypeEnum.Egg && signalUnitEnum == SignalUnitEnum.WorkLogicBoxA) {
+				return selectedGene.eggCellFertilizeLogic;
 			} else if (signalUnitEnum == SignalUnitEnum.DendritesLogicBox) {
-				return gene.dendritesLogicBox;
+				return selectedGene.dendritesLogicBox;
 			} else if (signalUnitEnum == SignalUnitEnum.OriginDetatchLogicBox) {
-				return gene.originDetatchLogicBox;
+				return selectedGene.originDetatchLogicBox;
 			}
 
 			return null;
@@ -178,28 +178,24 @@ public class LogicBoxPanel : SignalUnitPanel {
 			}
 			// ^ ghost ^
 
-			if (mode == PhenoGenoEnum.Phenotype && cellAndGenePanel.cell != null) {
-				if (affectedGeneLogicBox != null) {
-					//if (affectedGeneLogicBox.isRooted) {
+			if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
+				if (affectedGeneLogicBox == null || affectedSignalUnit == null|| affectedSignalUnit.rootnessEnum == RootnessEnum.Unrooted) {
+					outputImageEarly.color = ColorScheme.instance.signalUnused;
+				} else if (affectedSignalUnit.rootnessEnum == RootnessEnum.Rootable) {
+					outputImageEarly.color = ColorScheme.instance.signalRootable;
+				} else /*Rooted*/ {
 					outputImageEarly.color = selectedCell.GetOutputFromUnit(affectedGeneLogicBox.signalUnit, SignalUnitSlotEnum.outputEarlyA) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-					//} else {
-					//	//outputImageLate.color = ColorScheme.instance.signalUnused;
-					//	outputImageEarly.color = ColorScheme.instance.signalUnused;
-					//}
-
 				}
 			} else {
 				if (affectedGeneLogicBox != null && isAnyAffectedSignalUnitsRootedGenotype) {
-					//outputImageLate.color = ColorScheme.instance.signalOff;
 					outputImageEarly.color = ColorScheme.instance.signalOff;
 				} else {
-					//outputImageLate.color = ColorScheme.instance.signalUnused;
 					outputImageEarly.color = ColorScheme.instance.signalUnused;
 				}
 			}
 
 			// locked cells
-			if (affectedGeneLogicBox != null && (mode == PhenoGenoEnum.Phenotype && selectedCell != null || mode == PhenoGenoEnum.Genotype && gene != null)) {
+			if (affectedGeneLogicBox != null && (mode == PhenoGenoEnum.Phenotype && selectedCell != null || mode == PhenoGenoEnum.Genotype && selectedGene != null)) {
 				for (int row = 1; row < GeneLogicBox.rowCount; row++) {
 					for (int column = 0; column < GeneLogicBox.columnCount; column++) {
 						lockedCells[row - 1, column].gameObject.SetActive(mode == PhenoGenoEnum.Genotype && affectedGeneLogicBox.IsCellOccupiedByLock(row, column));

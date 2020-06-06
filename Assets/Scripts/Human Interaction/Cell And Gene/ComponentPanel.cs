@@ -60,7 +60,7 @@ public abstract class ComponentPanel : MonoBehaviour {
 		MakeDirty();
 	}
 
-	public Gene gene {
+	public Gene selectedGene {
 		get {
 			return cellAndGenePanel.gene;
 		}

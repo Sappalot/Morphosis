@@ -178,33 +178,33 @@ public abstract class Cell : MonoBehaviour {
 	public virtual List<Nerve> GetAllNervesGenotype() {
 		List<Nerve> nerves = new List<Nerve>();
 
-		if (constantSensor.isRooted) {
+		if (constantSensor.rootnessEnum == RootnessEnum.Rooted) {
 			nerves.AddRange(constantSensor.GetAllNervesGenotype());
 		}
 
-		if (axon.isRooted) {
+		if (axon.rootnessEnum == RootnessEnum.Rooted) {
 			nerves.AddRange(axon.GetAllNervesGenotype());
 		}
 
-		if (dendritesLogicBox.isRooted) {
+		if (dendritesLogicBox.rootnessEnum == RootnessEnum.Rooted) {
 			nerves.AddRange(dendritesLogicBox.GetAllNervesGenotype());
 		}
 
-		if (dendritesLogicBox.isRooted) {
+		if (dendritesLogicBox.rootnessEnum == RootnessEnum.Rooted) {
 			nerves.AddRange(dendritesLogicBox.GetAllNervesGenotype());
 		}
 
-		if (energySensor.isRooted) {
+		if (energySensor.rootnessEnum == RootnessEnum.Rooted) {
 			nerves.AddRange(energySensor.GetAllNervesGenotype());
 		}
 
-		if (effectSensor.isRooted) {
+		if (effectSensor.rootnessEnum == RootnessEnum.Rooted) {
 			nerves.AddRange(effectSensor.GetAllNervesGenotype());
 		}
 
 		if (isOrigin) {
 			nerves.AddRange(originDetatchLogicBox.GetAllNervesGenotype());
-			if (originSizeSensor.isRooted) { // input from origin can be disabled leading to it not being rooted
+			if (originSizeSensor.rootnessEnum == RootnessEnum.Rooted) { // input from origin can be disabled leading to it not being rooted
 				nerves.AddRange(originSizeSensor.GetAllNervesGenotype());
 			}
 		}
@@ -218,7 +218,7 @@ public abstract class Cell : MonoBehaviour {
 		List<Nerve> nerves = GetAllNervesGenotype();
 		List<Nerve> nervesExternal = new List<Nerve>();
 		foreach (Nerve nerve in nerves) {
-			if (nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal || nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal) {
+			if (nerve.nerveStatusEnum == NerveStatusEnum.OutputExternal || nerve.nerveStatusEnum == NerveStatusEnum.InputExternal) {
 				nervesExternal.Add(nerve);
 			}
 		}
@@ -227,66 +227,56 @@ public abstract class Cell : MonoBehaviour {
 
 	//--
 
-	public virtual void UpdateNervesPhenotype() {
-		dendritesLogicBox.ReachOutNervesPhenotype();
-		energySensor.ReachOutNervesPhenotype();
-		effectSensor.ReachOutNervesPhenotype();
+	public virtual void UpdateSensorAreaTablesPhenotype() {
+		dendritesLogicBox.UpdateAreaTablesPhenotype();
+		energySensor.UpdateAreaTablesPhenotype();
+		effectSensor.UpdateAreaTablesPhenotype();
 		if (isOrigin) {
-			originDetatchLogicBox.ReachOutNervesPhenotype();
+			originDetatchLogicBox.UpdateAreaTablesPhenotype();
 		}
 	}
 
+	// Step 1.
 	public virtual void PreUpdateNervesPhenotype() {
-		// clear averything
-
-		//dendritesLogicBox.PreUpdateNervesGenotype();
-		//energySensor.PreUpdateNervesGenotype();
-		//effectSensor.PreUpdateNervesGenotype();
-		//if (isOrigin) {
-		//	originDetatchLogicBox.PreUpdateNervesGenotype();
-		//}
+		PreUpdateNervesGenotype(); // they are the same
 	}
 
-	public virtual void UpdateInputNervesPhenotype(Phenotype genotype) {
-		// find all inputs
+	// Step 2.
+	public virtual void CloneNervesFromGenotypeToPhenotype(Phenotype genotype) {
 
-		//dendritesLogicBox.UpdateInputNervesGenotype();
-		//energySensor.UpdateInputNervesGenotype();
-		//effectSensor.UpdateInputNervesGenotype();
-		//if (isOrigin) {
-		//	originDetatchLogicBox.UpdateInputNervesGenotype();
-		//}
 	}
 
+	// Sterp 3.
 	public virtual void UpdateConnectionsNervesPhenotype(Phenotype genotype) {
-		// rancg out and connect, as far as possible, from this gene cells rooted signal units
 
-		// dont go through genes but geneCells instead !!!!!!!!!!
+	}
 
-		//MarkThisAndChildrenAsRootedHelper(genotype, this, SignalUnitEnum.WorkLogicBoxA);
-		//MarkThisAndChildrenAsRootedHelper(genotype, this, SignalUnitEnum.WorkLogicBoxB);
-
-		//GeneSignalUnit unit = gene.GetGeneSignalUnit(SignalUnitEnum.Axon);
-		//if (unit != null && (unit as GeneAxon).isEnabled) { // axone is root if it is sending pulse to muscles
-		//	unit.MarkThisAndChildrenAsRooted(genotype, this, SignalUnitEnum.WorkLogicBoxB);
+	// Step 4.
+	public virtual void UpdateRootable(Cell geneCell) {
+		//constantSensor.rootnessEnum = geneCell.constantSensor.rootnessEnum;
+		//axon.rootnessEnum = geneCell.axon.rootnessEnum;
+		//dendritesLogicBox.rootnessEnum = geneCell.dendritesLogicBox.rootnessEnum;
+		//energySensor.rootnessEnum = geneCell.energySensor.rootnessEnum;
+		//effectSensor.rootnessEnum = geneCell.effectSensor.rootnessEnum;
+		//if (isOrigin) { 
+		//	originDetatchLogicBox.rootnessEnum = geneCell.originDetatchLogicBox.rootnessEnum;
+		//	originSizeSensor.rootnessEnum = geneCell.originSizeSensor.rootnessEnum;
 		//}
 
-		//MarkThisAndChildrenAsRootedHelper(genotype, this, SignalUnitEnum.OriginDetatchLogicBox);
+		constantSensor.rootnessEnum =		(geneCell.constantSensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		axon.rootnessEnum =					(geneCell.axon.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		dendritesLogicBox.rootnessEnum =	(geneCell.dendritesLogicBox.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		energySensor.rootnessEnum =			(geneCell.energySensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		effectSensor.rootnessEnum =			(geneCell.effectSensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		if (isOrigin) {
+			originDetatchLogicBox.rootnessEnum =	(geneCell.originDetatchLogicBox.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+			originSizeSensor.rootnessEnum =			(geneCell.originSizeSensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
+		}
 	}
 
 	public virtual List<Nerve> GetAllNervesPhenotype() {
 		return null;
 	}
-
-	//private void MarkThisAndChildrenAsRootedHelper(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
-	//	GeneSignalUnit unit = gene.GetGeneSignalUnit(signalUnit);
-	//	if (unit != null) {
-	//		unit.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
-	//	}
-	//}
-
-
-
 
 	virtual public void ClearSignal() {
 		constantSensor.Clear();

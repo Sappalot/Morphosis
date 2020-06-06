@@ -17,8 +17,8 @@ public class EffectSensor : SignalUnit {
 		return output[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}
 
-	public override void ReachOutNervesPhenotype() {
-		base.ReachOutNervesPhenotype();
+	public override void UpdateAreaTablesPhenotype() {
+		base.UpdateAreaTablesPhenotype();
 		areaCells.Clear();
 		areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.effectSensor as GeneEffectSensor).usedAreaRadius);
 	}

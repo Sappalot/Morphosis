@@ -57,7 +57,7 @@ public class EggCell : Cell {
 
 	}
 
-	public override void UpdateInputNervesPhenotype(Phenotype phenotype) {
+	public override void CloneNervesFromGenotypeToPhenotype(Phenotype phenotype) {
 
 	}
 
@@ -65,18 +65,25 @@ public class EggCell : Cell {
 
 	}
 
+	public override void UpdateRootable(Cell geneCell) {
+		base.UpdateRootable(geneCell);
+		fertilizeLogicBox.rootnessEnum = ((EggCell)geneCell).fertilizeLogicBox.rootnessEnum;
+		fertilizeEnergySensor.rootnessEnum = ((EggCell)geneCell).fertilizeEnergySensor.rootnessEnum;
+		fertilizeAttachmentSensor.rootnessEnum = ((EggCell)geneCell).fertilizeAttachmentSensor.rootnessEnum;
+	}
+
 	public override List<Nerve> GetAllNervesPhenotype() {
 		return null;
 	}
 
-	public override void UpdateNervesPhenotype() {
-		base.UpdateNervesPhenotype();
+	public override void UpdateSensorAreaTablesPhenotype() {
+		base.UpdateSensorAreaTablesPhenotype();
 
-		fertilizeLogicBox.ReachOutNervesPhenotype();
+		fertilizeLogicBox.UpdateAreaTablesPhenotype();
 
 
-		fertilizeEnergySensor.ReachOutNervesPhenotype();
-		fertilizeAttachmentSensor.ReachOutNervesPhenotype();
+		fertilizeEnergySensor.UpdateAreaTablesPhenotype();
+		fertilizeAttachmentSensor.UpdateAreaTablesPhenotype();
 	}
 
 	public override void ComputeSignalOutputs(int deltaTicks) {

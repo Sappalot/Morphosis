@@ -140,10 +140,20 @@ public abstract class SignalUnitPanel : ComponentPanel {
 		return SignalUnitSlotEnum.outputLateA; // error
 	}
 
+	public SignalUnit affectedSignalUnit {
+		get {
+			if (selectedCell != null) {
+				return selectedCell.GetSignalUnit(signalUnitEnum);
+			}
+
+			return null;
+		}
+	}
+
 	public GeneSignalUnit affectedGeneSignalUnit {
 		get {
-			if (gene != null) {
-				return gene.GetGeneSignalUnit(signalUnitEnum);
+			if (selectedGene != null) {
+				return selectedGene.GetGeneSignalUnit(signalUnitEnum);
 			}
 
 			return null;
@@ -156,7 +166,7 @@ public abstract class SignalUnitPanel : ComponentPanel {
 			if (soloSelected == null) {
 				return null;
 			}
-			List<Cell> geneCell = soloSelected.genotype.GetGeneCellsWithGene(gene);
+			List<Cell> geneCell = soloSelected.genotype.GetGeneCellsWithGene(selectedGene);
 			return geneCell[0].GetSignalUnit(signalUnitEnum);
 
 		}
@@ -168,7 +178,7 @@ public abstract class SignalUnitPanel : ComponentPanel {
 			if (soloSelected == null) {
 				return null;
 			}
-			List<Cell> geneCells = soloSelected.genotype.GetGeneCellsWithGene(gene);
+			List<Cell> geneCells = soloSelected.genotype.GetGeneCellsWithGene(selectedGene);
 			List<SignalUnit> signalUnits = new List<SignalUnit>();
 			foreach (Cell geneCell in geneCells) {
 				signalUnits.Add(geneCell.GetSignalUnit(signalUnitEnum));
@@ -179,7 +189,7 @@ public abstract class SignalUnitPanel : ComponentPanel {
 
 	public bool isAnyAffectedSignalUnitsRootedGenotype {
 		get {
-			return allAffectedSignalUnitsGenotype.Exists(r => r.isRooted);
+			return allAffectedSignalUnitsGenotype.Exists(r => r.rootnessEnum == RootnessEnum.Rooted);
 		}
 		
 	}

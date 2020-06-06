@@ -65,7 +65,7 @@ public class LeafCellPanel : ComponentPanel {
 				overPopulationFactor.text = "Over population factor: -";
 			}
 
-			if (gene != null) {
+			if (selectedGene != null) {
 				ignoreHumanInput = true;
 
 				ignoreHumanInput = false;
