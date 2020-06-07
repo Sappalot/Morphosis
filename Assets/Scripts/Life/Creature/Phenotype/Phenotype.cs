@@ -42,6 +42,14 @@ public class Phenotype : MonoBehaviour {
 
 	}
 
+	public List<Nerve> GetAllExternalNerves() {
+		List<Nerve> nervesExternal = new List<Nerve>();
+		foreach (Cell cell in cellList) {
+			nervesExternal.AddRange(cell.GetAllExternalNervesGenotypePhenotype());
+		}
+		return nervesExternal;
+	}
+
 	// ^ Signal ^
 
 	[HideInInspector]
@@ -804,6 +812,8 @@ public class Phenotype : MonoBehaviour {
 
 			// Signal
 			UpdateBrain(creature.genotype);
+
+			nerveArrows.GeneratePhenotype(this);
 
 			//Armour
 			UpdateArmour();
@@ -1599,17 +1609,22 @@ public class Phenotype : MonoBehaviour {
 
 	// Update
 	public void UpdateGraphics(Creature creature) {
+		bool isSelected = CreatureSelectionPanel.instance.IsSelected(creature);
+
 		//TODO: Update cells flip triangles here
 		//Rotate cells
 
+
 		// TODO: don't nag on every frame -> every creature -> every edge/vein -> that they have to be disabled (disable them once and call the creatures edges non dirty instead) 
 		// Slightly faster framerate if disabling the 3 below
-		edges.UpdateGraphics(GlobalPanel.instance.graphicsPeripheryToggle.isOn && creature.isInsideFrustum && !(PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureSelectionPanel.instance.IsSelected(creature)) && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype);
+		edges.UpdateGraphics(GlobalPanel.instance.graphicsPeripheryToggle.isOn && creature.isInsideFrustum && !(PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && isSelected) && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype);
 		// TODO: let veins the objects that move energy from cell to cell stay here, but move the graphical representation out of here as we are only showing a couple of creatures at a time there can be a global vein renderer with a pool
-		veins.UpdateGraphics(PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureSelectionPanel.instance.IsSelected(creature) && creature.isInsideFrustum && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype);
+		veins.UpdateGraphics(PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && isSelected && creature.isInsideFrustum && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype);
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdateGraphics(CreatureSelectionPanel.instance.IsSelected(creature));
+			cellList[index].UpdateGraphics(isSelected);
 		}
+
+		nerveArrows.UpdateGraphics(isSelected);
 
 		// Warning:  So we are more restrictive with these updates now, make sure colliders are updated as they should
 		if (isDirtyCollider) {

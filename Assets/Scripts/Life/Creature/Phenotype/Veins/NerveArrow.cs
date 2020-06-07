@@ -44,13 +44,23 @@ public class NerveArrow : MonoBehaviour {
 		}
 
 		if (nerve.nerveStatusEnum == NerveStatusEnum.OutputExternal) {
-			Debug.Assert(nerve.referenceCell != null, "We should allways have a reference cell in the nerve, when it is an external output, who else would be the one listening to nerves voice?");
+			//Debug.Assert(nerve.nonHostCell != null, "We should allways have a reference cell in the nerve, when it is an external output, who else would be the one listening to nerves voice?");
 
-			Vector3 headPosition = nerve.referenceCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
+			Vector3 headPosition;
+			Vector3 tailPosition;
+
+			if (nerve.nonHostCell != null) {
+				headPosition = nerve.nonHostCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
+				// We don't use a nerve vector on output
+				tailPosition = nerve.hostCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
+			} else {
+				headPosition = nerve.hostCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
+				
+				// We don't use a nerve vector on output
+				tailPosition = nerve.hostCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
+			}
+
 			mainArrow.GetComponent<LineRenderer>().SetPosition(1, headPosition);  // head = front = start = 1 = narrow
-
-			// Wwe don't use a nerve vector on output
-			Vector3 tailPosition = nerve.hostCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
 			mainArrow.GetComponent<LineRenderer>().SetPosition(0, tailPosition); // tail = back = end = 0 = slim
 
 			// Circles
@@ -70,7 +80,7 @@ public class NerveArrow : MonoBehaviour {
 			Vector3 headPosition = nerve.hostCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
 			mainArrow.GetComponent<LineRenderer>().SetPosition(1, headPosition);  // head = front = start = 1 = narrow
 
-			Vector2i nerveVector = nerve.nerveVector;
+			Vector2i nerveVector = nerve.toTailVector;
 
 			// flip vector horizontally only if cell flip side is (white|black) 
 			if (nerve.hostCell.flipSide == FlipSideEnum.WhiteBlack) {

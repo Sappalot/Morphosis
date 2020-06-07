@@ -7,6 +7,8 @@ using UnityEngine;
 // Nerves in genotype phenotype should work just fine even without this graphical layer
 
 public class NerveArrows : MonoBehaviour {
+	public Transform arrowContainer;
+
 	public PhenoGenoEnum phenoGeno; // set in inspector
 
 	private List<NerveArrow> nerveArrowList = new List<NerveArrow>();
@@ -18,33 +20,44 @@ public class NerveArrows : MonoBehaviour {
 		nerveArrowList.Clear();
 	}
 
-	public void UpdateGraphics() {
-		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
+	public void UpdateGraphics(bool isSelected) {
+		arrowContainer.gameObject.SetActive(isSelected);
+		if (!isSelected) {
 			return;
 		}
 
-		Genotype genotype = CreatureSelectionPanel.instance.soloSelected.genotype;
-		Gene selectedGene = GenePanel.instance.selectedGene;
+		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
+			return;
+		}
 
 		// unhighlite all
 		foreach (NerveArrow nerveArrow in nerveArrowList) {
 			nerveArrow.highlitedEnum = NerveArrow.HighliteEnum.notHighlited;
 		}
 
+
+
 		// highlite viewed
-		List<Nerve> nervesToHighlite = HudSignalArrowHandler.GetNervesToHighliteGenotype(genotype, selectedGene);
-		bool shouldHighlitAllXput = HudSignalArrowHandler.IsNervesHighliteAllModeGenotype();
+		List<Nerve> nervesToHighlite = null;
+		bool shouldHighlitAllXput = false;
+		if (phenoGeno == PhenoGenoEnum.Genotype) {
+			Gene selectedGene = GenePanel.instance.selectedGene;
+			Genotype genotype = CreatureSelectionPanel.instance.soloSelected.genotype;
+			nervesToHighlite = HudSignalArrowHandler.GetNervesToHighliteGenotype(genotype, selectedGene);
+			shouldHighlitAllXput = HudSignalArrowHandler.IsNervesHighliteAllModeGenotype();
+		} else {
+			Cell selectedCell = CellPanel.instance.selectedCell;
+			nervesToHighlite = HudSignalArrowHandler.GetNervesToHighlitePhenotype(selectedCell);
+			shouldHighlitAllXput = HudSignalArrowHandler.IsNervesHighliteAllModePhenotype();
+		}
+
 		if (nervesToHighlite != null) {
 			for (int index = 0; index < nerveArrowList.Count; index++) {
 				NerveArrow nerveArrow = nerveArrowList[index];
 
 				if (nervesToHighlite.Find(n => n == nerveArrow.nerve) != null) {
-					//if (shouldHighlitAllXput) {
-					//	nerveArrow.highlitedEnum = NerveArrow.HighliteEnum.highlitedArrow; // dont want circles when showing all, too messy
-					//} else {
 					nerveArrow.highlitedEnum = NerveArrow.HighliteEnum.highlitedArrowAndCircles;
-					//}
-				} 
+				}
 			}
 		}
 
@@ -56,9 +69,21 @@ public class NerveArrows : MonoBehaviour {
 	public void GenerateGenotype(Genotype genotype) {
 		Clear();
 
-		foreach (Nerve nerve in genotype.GetAllExternalNervesGenotype()) {
+		foreach (Nerve nerve in genotype.GetAllExternalNerves()) {
 			NerveArrow nerveArrow = Morphosis.instance.nerveArrowPool.Borrow();
-			nerveArrow.transform.parent = transform;
+			nerveArrow.transform.parent = arrowContainer;
+			nerveArrow.transform.position = transform.position;
+			nerveArrow.Setup(nerve);
+			nerveArrowList.Add(nerveArrow);
+		}
+	}
+
+	public void GeneratePhenotype(Phenotype phenotype) {
+		Clear();
+
+		foreach (Nerve nerve in phenotype.GetAllExternalNerves()) {
+			NerveArrow nerveArrow = Morphosis.instance.nerveArrowPool.Borrow();
+			nerveArrow.transform.parent = arrowContainer;
 			nerveArrow.transform.position = transform.position;
 			nerveArrow.Setup(nerve);
 			nerveArrowList.Add(nerveArrow);

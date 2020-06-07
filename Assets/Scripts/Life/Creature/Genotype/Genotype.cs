@@ -563,7 +563,7 @@ public class Genotype : MonoBehaviour {
 		return cells;
 	}
 
-	public List<Nerve> GetAllNervesGenotype() {
+	public List<Nerve> GetAllNerves() {
 		List<Nerve> nerves = new List<Nerve>();
 		foreach (Cell geneCell in geneCellListIndexSorted) {
 			nerves.AddRange(geneCell.GetAllNervesGenotypePhenotype());
@@ -571,7 +571,7 @@ public class Genotype : MonoBehaviour {
 		return nerves;
 	}
 
-	public List<Nerve> GetAllExternalNervesGenotype() {
+	public List<Nerve> GetAllExternalNerves() {
 		List<Nerve> nervesExternal = new List<Nerve>();
 		foreach (Cell geneCell in geneCellListIndexSorted) {
 			nervesExternal.AddRange(geneCell.GetAllExternalNervesGenotypePhenotype());
@@ -580,7 +580,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	// if there are twins, only one of them will be returned (which one is arbitrary)
-	public List<Nerve> GetAllUniqueNervesGenotype(Gene gene) {
+	public List<Nerve> GetAllUniqueNerves(Gene gene) {
 		List<Cell> geneCells = GetGeneCellsWithGene(gene);
 		List<Nerve> uniqueNerves = new List<Nerve>();
 		foreach (Cell geneCell in geneCells) {
@@ -718,7 +718,7 @@ public class Genotype : MonoBehaviour {
 			geneCellListIndexSorted[index].UpdateFlipSide();
 			geneCellListIndexSorted[index].UpdateBuds();
 
-			nerveArrows.UpdateGraphics();
+			nerveArrows.UpdateGraphics(isSelected);
 		}
 	}
 

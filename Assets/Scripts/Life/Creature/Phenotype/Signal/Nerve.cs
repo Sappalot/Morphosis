@@ -11,7 +11,7 @@ public class Nerve {
 	public SignalUnitEnum tailSignalUnitEnum;
 	public SignalUnitSlotEnum tailSignalUnitSlotEnum;
 
-	public Vector2i nerveVector; // vector in cell space, from head (0, 0) to tail (x, y)
+	public Vector2i toTailVector; // Assume head is pointing to me: vector in cell space, from head (0, 0) to tail (x, y)
 
 	// the owner of this nerve
 	public Cell hostCell {
@@ -31,7 +31,7 @@ public class Nerve {
 	}
 
 	// the cell which is reffered to by the owner
-	public Cell referenceCell {
+	public Cell nonHostCell {
 		get {
 			if (nerveStatusEnum == NerveStatusEnum.Void) {
 				Debug.Assert(false, "Can't find reference cell on a void status nerve.");
@@ -71,7 +71,7 @@ public class Nerve {
 		tailSignalUnitEnum = other.tailSignalUnitEnum;
 		tailSignalUnitSlotEnum = other.tailSignalUnitSlotEnum;
 
-		nerveVector = other.nerveVector;
+		toTailVector = other.toTailVector;
 	}
 
 	public static bool AreTwinNerves(Nerve nerveA, Nerve nerveB, bool careAboutStatus) {

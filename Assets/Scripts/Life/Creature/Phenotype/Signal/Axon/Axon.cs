@@ -28,7 +28,7 @@ public class Axon : SignalUnit {
 					inputNerves[i].tailCell = hostCell;
 					inputNerves[i].nerveStatusEnum = NerveStatusEnum.InputLocal;
 				} else {
-					inputNerves[i].nerveVector = geneNerve.nerveVector;
+					inputNerves[i].toTailVector = geneNerve.nerveVector;
 					inputNerves[i].tailCell = GeneNerve.GetGeneCellAtNerveTail(hostCell, geneNerve, genotype);
 
 

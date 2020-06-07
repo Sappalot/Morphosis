@@ -37,6 +37,9 @@ public class HudSignalArrowHandler : MonoBehaviour {
 
 	private void Update() {
 		// Update connections
+		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
+			return;
+		}
 
 		List<Nerve> uniqueNerves = null;
 		List<Nerve> nervesToHighlite = null;
@@ -44,7 +47,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		if (isDirtyConnections || isDirtySignal) {
 			if (mode == PhenoGenoEnum.Genotype) {
 				Genotype genotype = CreatureSelectionPanel.instance.soloSelected.genotype;
-				uniqueNerves = genotype.GetAllUniqueNervesGenotype(selectedGene);
+				uniqueNerves = genotype.GetAllUniqueNerves(selectedGene);
 				nervesToHighlite = GetNervesToHighliteGenotype(genotype, selectedGene);
 				isNervesHighliteAllMode = IsNervesHighliteAllModeGenotype();
 			} else /*Phenotype*/{
@@ -56,7 +59,8 @@ public class HudSignalArrowHandler : MonoBehaviour {
 
 
 		if (isDirtyConnections) {
-			if (mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.hasSoloSelected && CreatureSelectionPanel.instance.soloSelected.genotype.isInterGeneCellDirty) {
+			if ((mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.genotype.isInterGeneCellDirty) ||
+				(mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.soloSelected.phenotype.isInterCellDirty)) {
 				Debug.Log("Ooooops, not ready to refresh yet");
 				return; // Ooooops, not ready to refresh yet
 			}
@@ -178,23 +182,23 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			isDirtyConnections = false;
 		}
 
-		//// Update signal TODO: update only when dirty, that is post signal update in creature
-		//if (isDirtySignal && nervesToHighlite == null) {
-		//	foreach (HudSignalArrow arrow in arrowList) {
-		//		Color color = Color.black;
-		//		if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
-		//			if (selectedCell.GetSignalUnit(arrow.tailUnit).rootnessEnum == RootnessEnum.Rootable || selectedCell.GetSignalUnit(arrow.headUnit).rootnessEnum == RootnessEnum.Rootable) {
-		//				color = ColorScheme.instance.signalRootable;
-		//			} else /* Rooted */{
-		//				color = selectedCell.GetOutputFromUnit(arrow.tailUnit, arrow.tailUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
-		//			}
-		//		} else {
-		//			color = ColorScheme.instance.signalOff;
-		//		}
-		//		arrow.GetComponent<Image>().color = ColorUtil.SetAlpha(color, 0.5f);
-		//	}
-		//	isDirtySignal = false;
-		//}
+		// Update signal TODO: update only when dirty, that is post signal update in creature
+		if (isDirtySignal && nervesToHighlite == null) {
+			foreach (HudSignalArrow arrow in arrowList) {
+				Color color = Color.black;
+				if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
+					if (selectedCell.GetSignalUnit(arrow.tailUnit).rootnessEnum == RootnessEnum.Rootable || selectedCell.GetSignalUnit(arrow.headUnit).rootnessEnum == RootnessEnum.Rootable) {
+						color = ColorScheme.instance.signalRootable;
+					} else /* Rooted */{
+						color = selectedCell.GetOutputFromUnit(arrow.tailUnit, arrow.tailUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+					}
+				} else {
+					color = ColorScheme.instance.signalOff;
+				}
+				arrow.GetComponent<Image>().color = ColorUtil.SetAlpha(color, 0.5f);
+			}
+			isDirtySignal = false;
+		}
 	}
 
 	public static List<Nerve> GetNervesToHighliteGenotype(Genotype genotype, Gene selectedGene) {
