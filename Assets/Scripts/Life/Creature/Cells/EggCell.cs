@@ -35,9 +35,9 @@ public class EggCell : Cell {
 		//fertilizeAttachmentSensor, no input
 	}
 
-	public override void UpdateConnectionsNervesGenotype(Genotype genotype) {
-		base.UpdateConnectionsNervesGenotype(genotype);
-		fertilizeLogicBox.RootRecursivlyGenotype(genotype, null); // root
+	public override void UpdateConnectionsNervesGenotypePhenotype() {
+		base.UpdateConnectionsNervesGenotypePhenotype();
+		fertilizeLogicBox.RootRecursivlyGenotypePhenotype(null); // root
 	}
 
 	public override List<Nerve> GetAllNervesGenotypePhenotype() {

@@ -44,7 +44,7 @@ public class Genotype : MonoBehaviour {
 	}
 
 	// ... Signal ...
-	private void UpdateNerves() {
+	private void UpdateBrain() {
 		// clear
 		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
 			geneCellListIndexSorted[index].PreUpdateNervesGenotype();
@@ -57,10 +57,8 @@ public class Genotype : MonoBehaviour {
 
 		// root them
 		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
-			geneCellListIndexSorted[index].UpdateConnectionsNervesGenotype(this);
+			geneCellListIndexSorted[index].UpdateConnectionsNervesGenotypePhenotype();
 		}
-
-		//
 	}
 
 	// ^ Signal ^
@@ -477,7 +475,7 @@ public class Genotype : MonoBehaviour {
 		if (isInterGeneCellDirty) {
 			Debug.Log("TryUpdateInterGeneCells ... nerves");
 
-			UpdateNerves();
+			UpdateBrain();
 
 			//foreach (Gene gene in genes) {
 			//	gene.PreUpdateInterGeneCell();

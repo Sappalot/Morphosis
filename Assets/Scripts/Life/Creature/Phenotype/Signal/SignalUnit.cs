@@ -20,7 +20,7 @@ public abstract class SignalUnit {
 	public virtual void UpdateInputNervesGenotype(Genotype genotype) { }
 
 	// 3
-	public virtual void RootRecursivlyGenotype(Genotype genotype, Nerve nerve) {
+	public virtual void RootRecursivlyGenotypePhenotype(Nerve nerve) {
 		// store output nerve from mother (nerve's head) to me (nerve's tail)
 		// we need to do this even if this signalUnit is allready marked as root
 		// the same nerve will not be added twice

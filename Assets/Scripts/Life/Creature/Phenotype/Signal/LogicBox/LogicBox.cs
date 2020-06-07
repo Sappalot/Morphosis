@@ -48,9 +48,9 @@ public class LogicBox : SignalUnit {
 	}
 
 	// Assume all input nerves are updated at this stage
-	public override void RootRecursivlyGenotype(Genotype genotype, Nerve nerve) {
+	public override void RootRecursivlyGenotypePhenotype(Nerve nerve) {
 		bool wasAllreadyRooted = rootnessEnum == RootnessEnum.Rooted;
-		base.RootRecursivlyGenotype(genotype, nerve); // roots me!
+		base.RootRecursivlyGenotypePhenotype(nerve); // roots me!
 
 		if (wasAllreadyRooted) {
 			return;
@@ -62,7 +62,7 @@ public class LogicBox : SignalUnit {
 				// ask to which this genes unit where tail is "pointing"
 				SignalUnit childSignalUnit = hostCell.GetSignalUnit(inputNerves[i].tailSignalUnitEnum);
 				if (childSignalUnit != null) {
-					childSignalUnit.RootRecursivlyGenotype(genotype, inputNerves[i]);
+					childSignalUnit.RootRecursivlyGenotypePhenotype(inputNerves[i]);
 				}
 			} else if (inputNerves[i].nerveStatusEnum == NerveStatusEnum.InputExternal) {
 				// ask external unit where tail is pointing
@@ -70,7 +70,7 @@ public class LogicBox : SignalUnit {
 				if (childCell != null) {
 					SignalUnit childSignalUnit = childCell.GetSignalUnit(inputNerves[i].tailSignalUnitEnum);
 					if (childSignalUnit != null) {
-						childSignalUnit.RootRecursivlyGenotype(genotype, inputNerves[i]);
+						childSignalUnit.RootRecursivlyGenotypePhenotype(inputNerves[i]);
 					}
 				}
 			}

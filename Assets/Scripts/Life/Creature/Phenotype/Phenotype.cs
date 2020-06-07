@@ -15,7 +15,7 @@ public class Phenotype : MonoBehaviour {
 	public NerveArrows nerveArrows;
 
 	// ... Signal ...
-	private void UpdateSignal(Genotype genotype) {
+	private void UpdateBrain(Genotype genotype) {
 		// area tables
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].UpdateSensorAreaTablesPhenotype();
@@ -803,7 +803,7 @@ public class Phenotype : MonoBehaviour {
 			MakeBudsDirty();
 
 			// Signal
-			UpdateSignal(creature.genotype);
+			UpdateBrain(creature.genotype);
 
 			//Armour
 			UpdateArmour();
