@@ -6,7 +6,7 @@ public class GeneAxonInput : IGeneInput {
 	// TODO don't access nerve directly
 	public GeneNerve m_nerve;
 
-	public GeneNerve nerve {
+	public GeneNerve geneNerve {
 		get {
 			return m_nerve;
 		}
@@ -32,13 +32,13 @@ public class GeneAxonInput : IGeneInput {
 	public GeneAxonInput(int column, SignalUnitEnum signalUnit, IGenotypeDirtyfy genotypeDirtyfy) {
 		this.genotypeDirtyfy = genotypeDirtyfy;
 		m_nerve = new GeneNerve(genotypeDirtyfy);
-		nerve.headUnitEnum = signalUnit;
-		nerve.headUnitSlotEnum = (SignalUnitSlotEnum)column;
+		geneNerve.headUnitEnum = signalUnit;
+		geneNerve.headUnitSlotEnum = (SignalUnitSlotEnum)column;
 	}
 
 	public void Defaultify() {
 		valveMode = SignalValveModeEnum.Block;
-		nerve.Defaultify();
+		geneNerve.Defaultify();
 	}
 
 	public void Mutate(float strength, bool isOrigin) {
@@ -50,21 +50,21 @@ public class GeneAxonInput : IGeneInput {
 			valveMode = (valveMode == SignalValveModeEnum.Pass ? SignalValveModeEnum.Block : SignalValveModeEnum.Pass);
 		}
 
-		nerve.Mutate(strength, isOrigin); // never locked
+		geneNerve.Mutate(strength, isOrigin); // never locked
 	}
 
 	// Save
 	private GeneLogicBoxInputData geneLogicBoxInputData = new GeneLogicBoxInputData();
 	public GeneLogicBoxInputData UpdateData() {
 		geneLogicBoxInputData.valveMode = valveMode;
-		geneLogicBoxInputData.geneNerveData = nerve.UpdateData();
+		geneLogicBoxInputData.geneNerveData = geneNerve.UpdateData();
 		return geneLogicBoxInputData;
 	}
 
 	// Load
 	public void ApplyData(GeneLogicBoxInputData geneLogicBoxInputData) {
 		valveMode = geneLogicBoxInputData.valveMode;
-		nerve.ApplyData(geneLogicBoxInputData.geneNerveData);
+		geneNerve.ApplyData(geneLogicBoxInputData.geneNerveData);
 
 		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}

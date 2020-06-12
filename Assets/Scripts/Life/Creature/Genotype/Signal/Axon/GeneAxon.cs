@@ -99,11 +99,11 @@ public class GeneAxon : GeneSignalUnit {
 	}
 
 	public void ConnectAllInputInputTo(SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
-		axonInputLeft.nerve.tailUnitEnum = signalUnit;
-		axonInputLeft.nerve.tailUnitSlotEnum = signalUnitSlot;
+		axonInputLeft.geneNerve.tailUnitEnum = signalUnit;
+		axonInputLeft.geneNerve.tailUnitSlotEnum = signalUnitSlot;
 
-		axonInputRight.nerve.tailUnitEnum = signalUnit;
-		axonInputRight.nerve.tailUnitSlotEnum = signalUnitSlot;
+		axonInputRight.geneNerve.tailUnitEnum = signalUnit;
+		axonInputRight.geneNerve.tailUnitSlotEnum = signalUnitSlot;
 
 		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}

@@ -161,14 +161,14 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// step 3.
-	public virtual void UpdateConnectionsNervesGenotypePhenotype() {
+	public virtual void UpdateConnectionsNervesGenotypePhenotype(bool addOutputNere) {
 		// reach out from roots
 		if (axon.isEnabled) { // axone is root if it is sending pulse to muscles (otherwise working as dendrite, that is potentially leading leaves to root)
-			axon.RootRecursivlyGenotypePhenotype(null);
+			axon.RootRecursivlyGenotypePhenotype(null, addOutputNere);
 		}
 
 		if (isOrigin) {
-			originDetatchLogicBox.RootRecursivlyGenotypePhenotype(null);
+			originDetatchLogicBox.RootRecursivlyGenotypePhenotype(null, addOutputNere);
 		}
 	}
 
@@ -269,17 +269,9 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	// Sterp 3.
-	public virtual void UpdateConnectionsNervesPhenotype(Phenotype genotype) {
-		// reach out from roots
-		if (axon.isEnabled) { // axone is root if it is sending pulse to muscles (otherwise working as dendrite, that is potentially leading leaves to root)
-			axon.RootRecursivlyGenotypePhenotype(null);
-		}
+	// Step 3.
+	//UpdateConnectionsNervesGenotypePhenotype() {
 
-		if (isOrigin) {
-			originDetatchLogicBox.RootRecursivlyGenotypePhenotype(null);
-		}
-	}
 
 	// Step 4.
 	public virtual void UpdateRootable(Cell geneCell) {
@@ -1896,6 +1888,9 @@ public abstract class Cell : MonoBehaviour {
 		}
 		// Leaf ^
 
+		//Axon
+		cellData.axonData = axon.UpdateData();
+
 		// Dendrites
 		cellData.dendritesLogicBoxData = dendritesLogicBox.UpdateData();
 
@@ -1948,6 +1943,9 @@ public abstract class Cell : MonoBehaviour {
 
 		// Constant
 		constantSensor.ApplyData(cellData.constantSensorData);
+
+		// Axon
+		axon.ApplyData(cellData.axonData);
 
 		// Dendrites
 		dendritesLogicBox.ApplyData(cellData.dendritesLogicBoxData);

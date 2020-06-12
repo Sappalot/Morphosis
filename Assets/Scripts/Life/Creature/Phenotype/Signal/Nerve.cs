@@ -3,7 +3,21 @@
 public class Nerve {
 	public NerveStatusEnum nerveStatusEnum;
 
-	public Cell headCell;
+	public Cell headCellLost { get; private set; }
+
+	private Cell m_headCell;
+	public Cell headCell { 
+		get {
+			return m_headCell;
+		}
+		set {
+			m_headCell = value;
+			if (m_headCell != null) {
+				headCellLost = m_headCell;
+			}
+		}
+	}
+
 	public SignalUnitEnum headSignalUnitEnum;
 	public SignalUnitSlotEnum headSignalUnitSlotEnum;
 
@@ -12,6 +26,14 @@ public class Nerve {
 	public SignalUnitSlotEnum tailSignalUnitSlotEnum;
 
 	public Vector2i toTailVector; // Assume head is pointing to me: vector in cell space, from head (0, 0) to tail (x, y)
+
+	
+
+	public Vector2i toHeadVector {
+		get {
+			return CellMap.HexagonalMinus(new Vector2i(), toTailVector);
+		}
+	}
 
 	// the owner of this nerve
 	public Cell hostCell {
@@ -72,6 +94,33 @@ public class Nerve {
 		tailSignalUnitSlotEnum = other.tailSignalUnitSlotEnum;
 
 		toTailVector = other.toTailVector;
+	}
+
+	public bool IsOn {
+		get {
+			if (tailCell != null) {
+				return tailCell.GetOutputFromUnit(tailSignalUnitEnum, tailSignalUnitSlotEnum);
+			}
+			return false;
+		}
+	}
+
+	public bool isRootable {
+		get {
+			if (tailCell == null) {
+				return false;
+			}
+			if (tailCell.GetSignalUnit(tailSignalUnitEnum) == null) {
+				return false;
+			}
+			if (headCell == null) {
+				return true;
+			}
+			if (headCell.GetSignalUnit(headSignalUnitEnum) == null) {
+				return true; //?
+			}
+			return tailCell.GetSignalUnit(tailSignalUnitEnum).rootnessEnum == RootnessEnum.Rootable || headCell == null || headCell.GetSignalUnit(headSignalUnitEnum).rootnessEnum == RootnessEnum.Rootable;
+		}
 	}
 
 	public static bool AreTwinNerves(Nerve nerveA, Nerve nerveB, bool careAboutStatus) {

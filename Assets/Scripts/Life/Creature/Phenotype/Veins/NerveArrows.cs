@@ -12,6 +12,11 @@ public class NerveArrows : MonoBehaviour {
 	public PhenoGenoEnum phenoGeno; // set in inspector
 
 	private List<NerveArrow> nerveArrowList = new List<NerveArrow>();
+	private PhenoGenoEnum phenoGenoMode;
+
+	public void Show(bool show) {
+		arrowContainer.gameObject.SetActive(show);
+	}
 
 	public void Clear() {
 		for (int index = 0; index < nerveArrowList.Count; index++) {
@@ -26,16 +31,14 @@ public class NerveArrows : MonoBehaviour {
 			return;
 		}
 
-		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
-			return;
-		}
+		//if (!CreatureSelectionPanel.instance.hasSoloSelected) {
+		//	return;
+		//}
 
 		// unhighlite all
 		foreach (NerveArrow nerveArrow in nerveArrowList) {
 			nerveArrow.highlitedEnum = NerveArrow.HighliteEnum.notHighlited;
 		}
-
-
 
 		// highlite viewed
 		List<Nerve> nervesToHighlite = null;
@@ -67,25 +70,29 @@ public class NerveArrows : MonoBehaviour {
 	}
 
 	public void GenerateGenotype(Genotype genotype) {
+		phenoGenoMode = PhenoGenoEnum.Genotype;
+
 		Clear();
 
 		foreach (Nerve nerve in genotype.GetAllExternalNerves()) {
 			NerveArrow nerveArrow = Morphosis.instance.nerveArrowPool.Borrow();
 			nerveArrow.transform.parent = arrowContainer;
 			nerveArrow.transform.position = transform.position;
-			nerveArrow.Setup(nerve);
+			nerveArrow.Setup(phenoGenoMode, nerve);
 			nerveArrowList.Add(nerveArrow);
 		}
 	}
 
 	public void GeneratePhenotype(Phenotype phenotype) {
+		phenoGenoMode = PhenoGenoEnum.Phenotype;
+
 		Clear();
 
 		foreach (Nerve nerve in phenotype.GetAllExternalNerves()) {
 			NerveArrow nerveArrow = Morphosis.instance.nerveArrowPool.Borrow();
 			nerveArrow.transform.parent = arrowContainer;
 			nerveArrow.transform.position = transform.position;
-			nerveArrow.Setup(nerve);
+			nerveArrow.Setup(phenoGenoMode, nerve);
 			nerveArrowList.Add(nerveArrow);
 		}
 	}

@@ -20,12 +20,17 @@ public abstract class SignalUnit {
 	public virtual void UpdateInputNervesGenotype(Genotype genotype) { }
 
 	// 3
-	public virtual void RootRecursivlyGenotypePhenotype(Nerve nerve) {
-		// store output nerve from mother (nerve's head) to me (nerve's tail)
-		// we need to do this even if this signalUnit is allready marked as root
-		// the same nerve will not be added twice
+	public virtual void RootRecursivlyGenotypePhenotype(Nerve nerve, bool addOutputNere) {
+		// store output nerve from mother calling me (nerve's head) to me (nerve's tail)
+		// we need to do this even if this signalUnit is allready marked as root, because maybee somebodey else ask me this time
+		// If the same one is calling me we need to refuse this guy
+		
 
-		if (nerve != null) {
+		//if (rootnessEnum == RootnessEnum.Rooted) {
+		//	return;
+		//}
+
+		if (nerve != null && addOutputNere) {
 			// Output nerve is the same as the input but, status is changed, do we need to change the vector as well??
 			Nerve outputNerve = new Nerve(nerve);
 
@@ -37,7 +42,10 @@ public abstract class SignalUnit {
 			
 			Debug.Assert(nerve.nerveStatusEnum == NerveStatusEnum.InputLocal || nerve.nerveStatusEnum == NerveStatusEnum.InputExternal, "This kind of nerve should not be able to contact me");
 
-			outputNerves.Add(outputNerve); // all nerves tails will be: this host call -> this signal unit enum -> may be different slots
+			// dont add the same one twice
+			if (outputNerves.Find(n => Nerve.AreTwinNerves(n, nerve, true)) == null) {
+				outputNerves.Add(outputNerve); // all nerves tails will be: this host call -> this signal unit enum -> may be different slots
+			}
 		}
 
 		rootnessEnum = RootnessEnum.Rooted;

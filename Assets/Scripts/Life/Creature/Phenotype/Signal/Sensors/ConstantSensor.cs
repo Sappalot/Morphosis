@@ -5,8 +5,6 @@ using UnityEngine;
 public class ConstantSensor : SignalUnit {
 	private bool[] output = new bool[6]; // outputs 
 
-
-
 	public ConstantSensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
 		this.signalUnitEnum = signalUnit;
 	}

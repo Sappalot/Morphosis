@@ -40,7 +40,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	}
 
 	public GeneNerve GetGeneNerve() {
-		return affectedGeneLogicBoxInput.nerve;
+		return affectedGeneLogicBoxInput.geneNerve;
 	}
 
 	public void Initialize(PhenoGenoEnum mode, int column, LogicBoxPanel motherPanel, CellAndGenePanel cellAndGenePanel) {
@@ -89,35 +89,35 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 
 	public void OnSetReferenceClicked() {
 		if (!isGhost && IsUnlocked() && affectedGeneLogicBoxInput.lockness == LocknessEnum.Unlocked && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
-			AssignNerveInputPanel.instance.TryStartNerveAssignation(this, affectedGeneLogicBoxInput.nerve);
+			AssignNerveInputPanel.instance.TryStartNerveAssignation(this, affectedGeneLogicBoxInput.geneNerve);
 			motherPanel.MakeDirty();
 		}
 	}
 
 	public void TrySetNerveInputLocally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot) {
-		affectedGeneLogicBoxInput.nerve.tailUnitEnum = inputUnit;
-		affectedGeneLogicBoxInput.nerve.tailUnitSlotEnum = inputUnitSlot;
-		affectedGeneLogicBoxInput.nerve.nerveVector = null;
+		affectedGeneLogicBoxInput.geneNerve.tailUnitEnum = inputUnit;
+		affectedGeneLogicBoxInput.geneNerve.tailUnitSlotEnum = inputUnitSlot;
+		affectedGeneLogicBoxInput.geneNerve.nerveVector = null;
 	}
 
 	public void TrySetNerveInputExternally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, Vector2i nerveVectorLocal) {
-		affectedGeneLogicBoxInput.nerve.tailUnitEnum = inputUnit;
-		affectedGeneLogicBoxInput.nerve.tailUnitSlotEnum = inputUnitSlot;
-		affectedGeneLogicBoxInput.nerve.nerveVector = nerveVectorLocal;
+		affectedGeneLogicBoxInput.geneNerve.tailUnitEnum = inputUnit;
+		affectedGeneLogicBoxInput.geneNerve.tailUnitSlotEnum = inputUnitSlot;
+		affectedGeneLogicBoxInput.geneNerve.nerveVector = nerveVectorLocal;
 	}
 
 	public void TrySetNerve(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot, Vector2i nerveVector) {
-		affectedGeneLogicBoxInput.nerve.tailUnitEnum = inputUnit;
-		affectedGeneLogicBoxInput.nerve.tailUnitSlotEnum = inputUnitSlot;
-		affectedGeneLogicBoxInput.nerve.headUnitEnum = outputUnit;
-		affectedGeneLogicBoxInput.nerve.headUnitSlotEnum = outputUnitSlot;
-		affectedGeneLogicBoxInput.nerve.nerveVector = nerveVector;
+		affectedGeneLogicBoxInput.geneNerve.tailUnitEnum = inputUnit;
+		affectedGeneLogicBoxInput.geneNerve.tailUnitSlotEnum = inputUnitSlot;
+		affectedGeneLogicBoxInput.geneNerve.headUnitEnum = outputUnit;
+		affectedGeneLogicBoxInput.geneNerve.headUnitSlotEnum = outputUnitSlot;
+		affectedGeneLogicBoxInput.geneNerve.nerveVector = nerveVector;
 	}
 
 	// Used to only display input vectors
 	public void ShowNerveInputExternally(Vector2i nerveVectorLocal) {
-		affectedGeneLogicBoxInput.nerve.tailUnitEnum = SignalUnitEnum.Void;
-		affectedGeneLogicBoxInput.nerve.nerveVector = nerveVectorLocal;
+		affectedGeneLogicBoxInput.geneNerve.tailUnitEnum = SignalUnitEnum.Void;
+		affectedGeneLogicBoxInput.geneNerve.nerveVector = nerveVectorLocal;
 	}
 
 	private void Update() {
@@ -155,7 +155,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 			if (mode == PhenoGenoEnum.Genotype) {
 				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block || !motherPanel.isAnyAffectedSignalUnitsRootedGenotype) {
 					inputButtonImage.color = ColorScheme.instance.signalUnused; // blocked or logic box not used (pretty if they are all of if not used)
-				} else if (affectedGeneLogicBoxInput.nerve.tailUnitEnum == SignalUnitEnum.Void) {
+				} else if (affectedGeneLogicBoxInput.geneNerve.tailUnitEnum == SignalUnitEnum.Void) {
 					inputButtonImage.color = Color.red; // should never happen
 				} else {
 					inputButtonImage.color = ColorScheme.instance.signalOff; // we have a chance of an ON signal
@@ -193,15 +193,21 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	private LogicBoxInputEnum runtimeOutput {
 		get {
 			if (affectedGeneLogicBoxInput != null) {
+				Nerve inputNerve = ((LogicBox)motherPanel.affectedSignalUnit).inputNerves[column];
+
 				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block) {
 					return LogicBoxInputEnum.BlockedByValve;
-				} else if (affectedGeneLogicBoxInput.nerve.tailUnitEnum == SignalUnitEnum.Void) {
+				} else if (inputNerve.tailSignalUnitEnum == SignalUnitEnum.Void) {
 					return LogicBoxInputEnum.VoidInput;
+				} else if (inputNerve.tailCell == null) {
+					return LogicBoxInputEnum.Off;
+				} else if (inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
+					return LogicBoxInputEnum.On;
 				} else {
-					if (selectedCell != null) {
-						return selectedCell.GetOutputFromUnit(affectedGeneLogicBoxInput.nerve.tailUnitEnum, affectedGeneLogicBoxInput.nerve.tailUnitSlotEnum) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
-					}
+					return LogicBoxInputEnum.Off;
 				}
+				//return selectedCell.GetOutputFromUnit(affectedGeneLogicBoxInput.geneNerve.tailUnitEnum, affectedGeneLogicBoxInput.geneNerve.tailUnitSlotEnum) ? LogicBoxInputEnum.On : LogicBoxInputEnum.Off;
+				
 			}
 			return LogicBoxInputEnum.Error;
 		}

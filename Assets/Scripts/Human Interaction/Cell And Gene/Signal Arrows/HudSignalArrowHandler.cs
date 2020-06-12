@@ -35,6 +35,8 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		isDirtySignal = true;
 	}
 
+	private readonly float externalArrowLength = 30f;
+
 	private void Update() {
 		// Update connections
 		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
@@ -84,6 +86,8 @@ public class HudSignalArrowHandler : MonoBehaviour {
 				return;
 			}
 
+			Dictionary<string, List<HudSignalArrow>> outputArrowDictionary = new Dictionary<string, List<HudSignalArrow>>();
+
 			// inputs
 			foreach (Nerve nerve in uniqueNerves) {
 				//When it comes to input, they all look the same so we just pick the first one, which we are sure to have
@@ -105,7 +109,20 @@ public class HudSignalArrowHandler : MonoBehaviour {
 						head = cellAndGenePanel.TotalPanelOffset(nerve.headSignalUnitEnum, nerve.headSignalUnitSlotEnum);
 					} else {
 						// External input (short arrow, pointing up, with head at input )
-						head = tail + Vector2.up * 20f;
+						head = tail + Vector2.up * externalArrowLength;
+
+						arrow.headPosition = head;
+						arrow.tailPosition = tail;
+					
+						// Store potentialy overlapping output arrows, so that we can spread them out later
+						List<HudSignalArrow> outputSlotArrowList;
+						if (outputArrowDictionary.TryGetValue(arrow.ToTailString(), out outputSlotArrowList)) {
+							outputSlotArrowList.Add(arrow);
+						} else {
+							outputSlotArrowList = new List<HudSignalArrow>();
+							outputSlotArrowList.Add(arrow);
+							outputArrowDictionary.Add(arrow.ToTailString(), outputSlotArrowList);
+						}
 					}
 
 					SetArrowTransforms(arrow, head, tail);
@@ -118,8 +135,8 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					ShowTextAtArrowTail(arrow, false);
 
 					// Highlite
-					if (nervesToHighlite != null) {
-						if (nervesToHighlite.Find(n => Nerve.AreTwinNerves(n, nerve, true)) != null) {
+					if (nervesToHighlite != null ) {
+						if (nervesToHighlite.Find(n => n == nerve) != null) { // Nerve.AreTwinNerves(n, nerve, true)) != null
 							HighliteArrow(arrow);
 							if (!isNervesHighliteAllMode) {
 								ShowTextAtArrowHead(arrow, true);
@@ -148,7 +165,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 
 					if (nerve.tailSignalUnitEnum == SignalUnitEnum.Void) {
 						arrow.GetComponent<Image>().color = ColorScheme.instance.signalOff;
-						tail = head + Vector2.down * 20f;
+						tail = head + Vector2.down * externalArrowLength;
 
 					} else if (nerve.nerveStatusEnum == NerveStatusEnum.InputLocal) {
 						// Local input
@@ -179,6 +196,19 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					arrowList.Add(arrow);
 				}
 			}
+
+			float outputButtonWidth = 40f;
+
+			// spread out output arrows to make it look pretty
+			foreach (List<HudSignalArrow> arrowList in outputArrowDictionary.Values) {
+				for (int i = 0; i < arrowList.Count; i++) {
+					HudSignalArrow arrow = arrowList[i];
+					float step = outputButtonWidth / (1 + arrowList.Count);
+					float x = -outputButtonWidth * 0.5f + step * (i + 1);
+					SetArrowTransforms(arrow, arrow.headPosition + Vector2.right * x, arrow.tailPosition + Vector2.right * x);
+				}
+			}
+
 			isDirtyConnections = false;
 		}
 
@@ -186,11 +216,11 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		if (isDirtySignal && nervesToHighlite == null) {
 			foreach (HudSignalArrow arrow in arrowList) {
 				Color color = Color.black;
-				if (mode == PhenoGenoEnum.Phenotype && selectedCell != null) {
-					if (selectedCell.GetSignalUnit(arrow.tailUnit).rootnessEnum == RootnessEnum.Rootable || selectedCell.GetSignalUnit(arrow.headUnit).rootnessEnum == RootnessEnum.Rootable) {
+				if (mode == PhenoGenoEnum.Phenotype && arrow.tailCell != null) {
+					if (arrow.tailCell.GetSignalUnit(arrow.tailUnit).rootnessEnum == RootnessEnum.Rootable || arrow.headCell == null || arrow.headCell.GetSignalUnit(arrow.headUnit).rootnessEnum == RootnessEnum.Rootable) {
 						color = ColorScheme.instance.signalRootable;
 					} else /* Rooted */{
-						color = selectedCell.GetOutputFromUnit(arrow.tailUnit, arrow.tailUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+						color = arrow.tailCell.GetOutputFromUnit(arrow.tailUnit, arrow.tailUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 					}
 				} else {
 					color = ColorScheme.instance.signalOff;
@@ -246,17 +276,18 @@ public class HudSignalArrowHandler : MonoBehaviour {
 				nerveInSignalUnit = selectedCell.GetSignalUnit(viewXput.signalUnitEnum).GetOutputNervesGenotypePhenotype();
 			}
 
-			int nerveTwinBundleIndex = viewXput.index == 0 ? -1 : (viewXput.index - 1) % nerveInSignalUnit.Count;
+			if (nerveInSignalUnit.Count > 0) {
+				int index = viewXput.index == 0 ? -1 : (viewXput.index - 1) % nerveInSignalUnit.Count;
 
-			nerveToHighlite = new List<Nerve>();
-			if (nerveTwinBundleIndex == -1) {
-				foreach (Nerve nerve in nerveInSignalUnit) {
-					nerveToHighlite.Add(nerve);
+				nerveToHighlite = new List<Nerve>();
+				if (index == -1) {
+					foreach (Nerve nerve in nerveInSignalUnit) {
+						nerveToHighlite.Add(nerve);
+					}
+				} else {
+					nerveToHighlite.Add(nerveInSignalUnit[index]); // there should at least be one on index 0
 				}
-			} else {
-				nerveToHighlite.Add(nerveInSignalUnit[nerveTwinBundleIndex]); // there should at least be one on index 0
 			}
-
 		}
 		return nerveToHighlite;
 	}
@@ -281,7 +312,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 
 	}
 
-	private HudSignalArrow GetArrowLikeNerve( Nerve nerve) {
+	private HudSignalArrow GetArrowLikeNerve(Nerve nerve) {
 		HudSignalArrow arrow = hudSignalArrowPool.Borrow();
 		arrow.gameObject.SetActive(true);
 
@@ -289,6 +320,10 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		arrow.headUnitSlot = nerve.headSignalUnitSlotEnum;
 		arrow.tailUnit = nerve.tailSignalUnitEnum;
 		arrow.tailUnitSlot = nerve.tailSignalUnitSlotEnum;
+
+		arrow.headCell = nerve.headCell;
+		arrow.tailCell = nerve.tailCell;
+
 
 		return arrow;
 	}

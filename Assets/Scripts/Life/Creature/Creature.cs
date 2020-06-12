@@ -686,6 +686,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 				phenotype.UpdateGraphics(this);
 			}
 
+			//phenotype.UpdateGraphics(this);
 		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
 			if (SpatialUtil.IsInsideFrustum(genotype.originCell.position)) {
 				isInsideFrustum = true;

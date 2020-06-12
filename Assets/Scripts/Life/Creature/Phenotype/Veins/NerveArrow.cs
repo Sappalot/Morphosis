@@ -9,6 +9,8 @@ public class NerveArrow : MonoBehaviour {
 	[HideInInspector]
 	public Nerve nerve;
 
+	private PhenoGenoEnum phenoGenoMode;
+
 	public enum HighliteEnum {
 		notHighlited,
 		highlitedArrow,
@@ -24,7 +26,7 @@ public class NerveArrow : MonoBehaviour {
 	}
 
 
-	public void Setup(Nerve nerve) {
+	public void Setup(PhenoGenoEnum phenoGenoMode, Nerve nerve) {
 		this.nerve = nerve;
 	}
 
@@ -36,11 +38,15 @@ public class NerveArrow : MonoBehaviour {
 		mainArrow.SetActive(true);
 
 		if (!isHighlited) {
-			mainArrow.GetComponent<LineRenderer>().startColor = ColorUtil.SetAlpha(ColorScheme.instance.signalOff, 0.5f);
-			mainArrow.GetComponent<LineRenderer>().endColor = ColorUtil.SetAlpha(ColorScheme.instance.signalOff, 0.5f);
+			if (nerve.isRootable) {
+				SetArrowColor(ColorUtil.SetAlpha(ColorScheme.instance.signalRootable, 0.5f));
+			} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && nerve.IsOn) {
+				SetArrowColor(ColorUtil.SetAlpha(ColorScheme.instance.signalOn, 0.5f));
+			} else {
+				SetArrowColor(ColorUtil.SetAlpha(ColorScheme.instance.signalOff, 0.5f));
+			}
 		} else {
-			mainArrow.GetComponent<LineRenderer>().startColor = ColorUtil.SetAlpha(ColorScheme.instance.signalViewed ,0.8f);
-			mainArrow.GetComponent<LineRenderer>().endColor = ColorUtil.SetAlpha(ColorScheme.instance.signalViewed, 0.8f);
+			SetArrowColor(ColorUtil.SetAlpha(ColorScheme.instance.signalViewed, 0.8f));
 		}
 
 		if (nerve.nerveStatusEnum == NerveStatusEnum.OutputExternal) {
@@ -49,15 +55,41 @@ public class NerveArrow : MonoBehaviour {
 			Vector3 headPosition;
 			Vector3 tailPosition;
 
-			if (nerve.nonHostCell != null) {
+			if (nerve.headCell != null) {
 				headPosition = nerve.nonHostCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
 				// We don't use a nerve vector on output
 				tailPosition = nerve.hostCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
 			} else {
-				headPosition = nerve.hostCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
-				
-				// We don't use a nerve vector on output
-				tailPosition = nerve.hostCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
+				// We are missing a cellTo reach out head to and since we are missing it we can't reach out using nerve.vector either
+
+				tailPosition = nerve.tailCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
+
+				Vector2i nerveVector = nerve.toHeadVector;
+
+				// flip vector horizontally only if cell flip side is (white|black) 
+				if (nerve.headCellLost.flipSide == FlipSideEnum.WhiteBlack) {
+					nerveVector = CellMap.HexagonalFlip(nerveVector);
+				}
+
+				// rotate
+				int rootDirection = nerve.headCellLost.bindCardinalIndex;
+				int turnToCreatureAngle = 0;
+				if (rootDirection == 0) { // ne
+					turnToCreatureAngle = 5; // +300
+				} else if (rootDirection == 1) { // n
+					turnToCreatureAngle = 0; // just fine
+				} else if (rootDirection == 2) { // nw
+					turnToCreatureAngle = 1; // +60
+				} else if (rootDirection == 3) { // sw
+					turnToCreatureAngle = 2; // +120
+				} else if (rootDirection == 4) { // s
+					turnToCreatureAngle = 3; // +180
+				} else if (rootDirection == 5) { // se
+					turnToCreatureAngle = 4; // +240
+				}
+				nerveVector = CellMap.HexagonalRotate(nerveVector, turnToCreatureAngle);
+
+				headPosition = tailPosition + Quaternion.Euler(0, 0, (nerve.headCellLost.creature.GetOriginHeading(phenoGenoMode)) - 90f) * CellMap.ToModelSpacePosition(nerveVector) + (isHighlited ? 1f : 0f) * Vector3.back;
 			}
 
 			mainArrow.GetComponent<LineRenderer>().SetPosition(1, headPosition);  // head = front = start = 1 = narrow
@@ -73,39 +105,46 @@ public class NerveArrow : MonoBehaviour {
 			}
 		} else if (nerve.nerveStatusEnum == NerveStatusEnum.InputExternal) {
 			if (nerve.tailSignalUnitEnum == SignalUnitEnum.Void) {
-				mainArrow.GetComponent<LineRenderer>().startColor = new Color(0f, 1f, 0f, 1f);
-				mainArrow.GetComponent<LineRenderer>().endColor = new Color(0f, 1f, 0f, 1f);
+				SetArrowColor(ColorUtil.SetAlpha(Color.green, 1f));
 			}
 
 			Vector3 headPosition = nerve.hostCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
-			mainArrow.GetComponent<LineRenderer>().SetPosition(1, headPosition);  // head = front = start = 1 = narrow
+			Vector3 tailPosition = Vector3.zero;
 
-			Vector2i nerveVector = nerve.toTailVector;
+			if (nerve.tailCell == null) {
+				// We are missing tailCell so we are reaching out tail into the void using toTailVector
 
-			// flip vector horizontally only if cell flip side is (white|black) 
-			if (nerve.hostCell.flipSide == FlipSideEnum.WhiteBlack) {
-				nerveVector = CellMap.HexagonalFlip(nerveVector);
+				Vector2i nerveVector = nerve.toTailVector;
+
+				// flip vector horizontally only if cell flip side is (white|black) 
+				if (nerve.hostCell.flipSide == FlipSideEnum.WhiteBlack) {
+					nerveVector = CellMap.HexagonalFlip(nerveVector);
+				}
+
+				// rotate
+				int rootDirection = nerve.hostCell.bindCardinalIndex;
+				int turnToCreatureAngle = 0;
+				if (rootDirection == 0) { // ne
+					turnToCreatureAngle = 5; // +300
+				} else if (rootDirection == 1) { // n
+					turnToCreatureAngle = 0; // just fine
+				} else if (rootDirection == 2) { // nw
+					turnToCreatureAngle = 1; // +60
+				} else if (rootDirection == 3) { // sw
+					turnToCreatureAngle = 2; // +120
+				} else if (rootDirection == 4) { // s
+					turnToCreatureAngle = 3; // +180
+				} else if (rootDirection == 5) { // se
+					turnToCreatureAngle = 4; // +240
+				}
+				nerveVector = CellMap.HexagonalRotate(nerveVector, turnToCreatureAngle);
+
+				tailPosition = headPosition + Quaternion.Euler(0, 0, (nerve.hostCell.creature.GetOriginHeading(phenoGenoMode)) - 90f) * CellMap.ToModelSpacePosition(nerveVector) + (isHighlited ? 1f : 0f) * Vector3.back;
+			} else /* tailCell != null */ {
+				tailPosition = nerve.tailCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
 			}
 
-			// rotate
-			int rootDirection = nerve.hostCell.bindCardinalIndex;
-			int turnToCreatureAngle = 0;
-			if (rootDirection == 0) { // ne
-				turnToCreatureAngle = 5; // +300
-			} else if (rootDirection == 1) { // n
-				turnToCreatureAngle = 0; // just fine
-			} else if (rootDirection == 2) { // nw
-				turnToCreatureAngle = 1; // +60
-			} else if (rootDirection == 3) { // sw
-				turnToCreatureAngle = 2; // +120
-			} else if (rootDirection == 4) { // s
-				turnToCreatureAngle = 3; // +180
-			} else if (rootDirection == 5) { // se
-				turnToCreatureAngle = 4; // +240
-			}
-			nerveVector = CellMap.HexagonalRotate(nerveVector, turnToCreatureAngle);
-
-			Vector3 tailPosition = headPosition + Quaternion.Euler(0, 0, (nerve.hostCell.creature.GetOriginHeading(PhenoGenoEnum.Genotype)) - 90f) * CellMap.ToModelSpacePosition(nerveVector) + (isHighlited ? 1f : 0f) * Vector3.back;
+			mainArrow.GetComponent<LineRenderer>().SetPosition(1, headPosition);  // head = front = start = 1 = narrow			
 			mainArrow.GetComponent<LineRenderer>().SetPosition(0, tailPosition); // tail = back = end = 0 = slim
 
 			// Circles
@@ -119,6 +158,10 @@ public class NerveArrow : MonoBehaviour {
 		}
 	}
 
+	private void SetArrowColor(Color color) {
+		mainArrow.GetComponent<LineRenderer>().startColor = color;
+		mainArrow.GetComponent<LineRenderer>().endColor = color;
+	}
 
 	public void OnRecycle() {
 		mainArrow.gameObject.SetActive(false);

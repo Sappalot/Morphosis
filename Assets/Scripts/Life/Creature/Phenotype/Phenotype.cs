@@ -33,7 +33,7 @@ public class Phenotype : MonoBehaviour {
 
 		// root them
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdateConnectionsNervesPhenotype(this);
+			cellList[index].UpdateConnectionsNervesGenotypePhenotype(false); // <== false: don't add output nerves since they were all added when cloning
 		}
 
 		for (int index = 0; index < cellList.Count; index++) {
@@ -1430,6 +1430,7 @@ public class Phenotype : MonoBehaviour {
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].Show(on);
 		}
+		nerveArrows.Show(on);
 	}
 	
 	public void MoveOriginToOrigo() {

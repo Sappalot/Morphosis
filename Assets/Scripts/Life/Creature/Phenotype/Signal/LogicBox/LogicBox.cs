@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
 public class LogicBox : SignalUnit {
-	private bool outputEarly; // phenotype
 	private bool outputLate; // phenotype
+	private bool outputEarly; // phenotype
 	
-	private Nerve[] inputNerves = new Nerve[GeneLogicBox.columnCount]; // a, b, c, d, e, f
+	public Nerve[] inputNerves = new Nerve[GeneLogicBox.columnCount]; // a, b, c, d, e, f
 
 	public LogicBox(SignalUnitEnum signalUnitEnum, Cell hostCell) : base(hostCell) {
 		base.signalUnitEnum = signalUnitEnum;
@@ -21,7 +21,7 @@ public class LogicBox : SignalUnit {
 				inputNerves[i].headSignalUnitEnum = signalUnitEnum;
 				inputNerves[i].headSignalUnitSlotEnum = SignalUnit.IndexToSignalInputSlotUnit(i);
 
-				GeneNerve geneNerve = geneLogicBox.GetInput(i).nerve;
+				GeneNerve geneNerve = geneLogicBox.GetInput(i).geneNerve;
 				inputNerves[i].tailSignalUnitEnum = geneNerve.tailUnitEnum;
 				inputNerves[i].tailSignalUnitSlotEnum = geneNerve.tailUnitSlotEnum;
 				if (geneNerve.isLocal) {
@@ -48,9 +48,9 @@ public class LogicBox : SignalUnit {
 	}
 
 	// Assume all input nerves are updated at this stage
-	public override void RootRecursivlyGenotypePhenotype(Nerve nerve) {
+	public override void RootRecursivlyGenotypePhenotype(Nerve nerve, bool addOutputNere) {
 		bool wasAllreadyRooted = rootnessEnum == RootnessEnum.Rooted;
-		base.RootRecursivlyGenotypePhenotype(nerve); // roots me!
+		base.RootRecursivlyGenotypePhenotype(nerve, addOutputNere); // roots me!
 
 		if (wasAllreadyRooted) {
 			return;
@@ -62,7 +62,7 @@ public class LogicBox : SignalUnit {
 				// ask to which this genes unit where tail is "pointing"
 				SignalUnit childSignalUnit = hostCell.GetSignalUnit(inputNerves[i].tailSignalUnitEnum);
 				if (childSignalUnit != null) {
-					childSignalUnit.RootRecursivlyGenotypePhenotype(inputNerves[i]);
+					childSignalUnit.RootRecursivlyGenotypePhenotype(inputNerves[i], addOutputNere);
 				}
 			} else if (inputNerves[i].nerveStatusEnum == NerveStatusEnum.InputExternal) {
 				// ask external unit where tail is pointing
@@ -70,7 +70,7 @@ public class LogicBox : SignalUnit {
 				if (childCell != null) {
 					SignalUnit childSignalUnit = childCell.GetSignalUnit(inputNerves[i].tailSignalUnitEnum);
 					if (childSignalUnit != null) {
-						childSignalUnit.RootRecursivlyGenotypePhenotype(inputNerves[i]);
+						childSignalUnit.RootRecursivlyGenotypePhenotype(inputNerves[i], addOutputNere);
 					}
 				}
 			}
@@ -164,10 +164,18 @@ public class LogicBox : SignalUnit {
 			foreach (GeneLogicBoxPart nextPart in gate.partsConnected) {
 				if (nextPart.isTransmittingSignal) {
 					if (nextPart is GeneLogicBoxInput) {
-						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && ((nextPart as GeneLogicBoxInput).nerve.tailUnitEnum == SignalUnitEnum.Void || !hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).nerve.tailUnitEnum, (nextPart as GeneLogicBoxInput).nerve.tailUnitSlotEnum))) {
-							// next part turned out to be an open input valve with its input off
-							return false; // one off ==> AND is off :(
+						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass) {
+							// TODO: find easier way to access nerve
+							Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(gate.geneLogicBox.signalUnit)).inputNerves[(nextPart as GeneLogicBoxInput).column];
+							if (inputNerve.tailSignalUnitEnum == SignalUnitEnum.Void || inputNerve.tailCell == null || !inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
+								// next part turned out to be an open input valve with its input off
+								return false; // one off ==> AND is off :(
+							}
 						}
+						//if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && ((nextPart as GeneLogicBoxInput).nerve.tailUnitEnum == SignalUnitEnum.Void || !hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).nerve.tailUnitEnum, (nextPart as GeneLogicBoxInput).nerve.tailUnitSlotEnum))) {
+							// next part turned out to be an open input valve with its input off
+						//	return false; // one off ==> AND is off :(
+						//}
 					} else if (nextPart is GeneLogicBoxGate) {
 						if (!HasSignalPostGate((nextPart as GeneLogicBoxGate), hostCell)) {
 							// next part turned out to be a gate with output off
@@ -181,10 +189,18 @@ public class LogicBox : SignalUnit {
 			foreach (GeneLogicBoxPart nextPart in gate.partsConnected) {
 				if (nextPart.isTransmittingSignal) {
 					if (nextPart is GeneLogicBoxInput) {
-						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && (nextPart as GeneLogicBoxInput).nerve.tailUnitEnum != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).nerve.tailUnitEnum, (nextPart as GeneLogicBoxInput).nerve.tailUnitSlotEnum)) {
-							// next part turned out to be an open input valve with its input on
-							return true; // one on ==> OR is on :)
+						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass) {
+							Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(gate.geneLogicBox.signalUnit)).inputNerves[(nextPart as GeneLogicBoxInput).column];
+							if (inputNerve.tailSignalUnitEnum != SignalUnitEnum.Void && inputNerve.tailCell != null && inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
+								// next part turned out to be an open input valve with its input on
+								return true; // one on ==> OR is on :)
+							}
 						}
+
+						//if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && (nextPart as GeneLogicBoxInput).nerve.tailUnitEnum != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).nerve.tailUnitEnum, (nextPart as GeneLogicBoxInput).nerve.tailUnitSlotEnum)) {
+						//	// next part turned out to be an open input valve with its input on
+						//	return true; // one on ==> OR is on :)
+						//}
 					} else if (nextPart is GeneLogicBoxGate) {
 						if (HasSignalPostGate((nextPart as GeneLogicBoxGate), hostCell)) {
 							// next part turned out to be a gate with output on
@@ -197,8 +213,19 @@ public class LogicBox : SignalUnit {
 		}
 	}
 
-	public static bool HasSignalPostInputValve(IGeneInput input, Cell hostCell) {
-		return (input as IGeneInput).valveMode == SignalValveModeEnum.Pass && (input as IGeneInput).nerve.tailUnitEnum != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as IGeneInput).nerve.tailUnitEnum, (input as IGeneInput).nerve.tailUnitSlotEnum);
+	public static bool HasSignalPostInputValve(Cell hostCell, SignalUnitEnum signalUnitEnum, GeneLogicBoxInput geneLogicBoxInput) {
+		if ((geneLogicBoxInput as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass) {
+			Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(signalUnitEnum)).inputNerves[geneLogicBoxInput.column];
+			if (inputNerve.tailSignalUnitEnum != SignalUnitEnum.Void && inputNerve.tailCell != null && inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
+				return true;
+			}
+		}
+		return false;
+
+//			Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(gate.geneLogicBox.signalUnit)).inputNerves[(nextPart as GeneLogicBoxInput).column];
+//		if (inputNerve.tailSignalUnitEnum != SignalUnitEnum.Void && inputNerve.tailCell != null && inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
+
+		//	return (input as IGeneInput).valveMode == SignalValveModeEnum.Pass && (input as IGeneInput).geneNerve.tailUnitEnum != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as IGeneInput).geneNerve.tailUnitEnum, (input as IGeneInput).geneNerve.tailUnitSlotEnum);
 	}
 
 	private bool TestInput(int leftFlank) {

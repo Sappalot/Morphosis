@@ -240,7 +240,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 							if (connectedPart is GeneLogicBoxGate) {
 								arrowColor = LogicBox.HasSignalPostGate((connectedPart as GeneLogicBoxGate), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 							} else if (connectedPart is GeneLogicBoxInput) {
-								arrowColor = LogicBox.HasSignalPostInputValve((connectedPart as GeneLogicBoxInput), selectedCell) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
+								arrowColor = LogicBox.HasSignalPostInputValve(selectedCell, motherPanel.signalUnitEnum, (connectedPart as GeneLogicBoxInput)) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 							}
 						} else if (motherPanel.affectedSignalUnit.rootnessEnum == RootnessEnum.Rootable) {
 							arrowColor = ColorScheme.instance.signalRootable;

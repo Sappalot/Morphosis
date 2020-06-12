@@ -30,7 +30,7 @@ public class GeneLogicBoxGate : GeneLogicBoxPart {
 		}
 	} // is taking place inside logic box (might be blocked, might not)
 
-	private GeneLogicBox geneLogicBox;
+	public GeneLogicBox geneLogicBox { get; private set;}
 	public GeneLogicBoxGate(GeneLogicBox geneLogicBox, int row, IGenotypeDirtyfy genotypeDirtyfy) {
 		this.genotypeDirtyfy = genotypeDirtyfy;
 		this.geneLogicBox = geneLogicBox;

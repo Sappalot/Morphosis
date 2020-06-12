@@ -34,8 +34,8 @@ public class GeneLogicBox : GeneSignalUnit {
 
 	public void ConnectAllInputInputTo(SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
 		for (int i = 0; i < columnCount; i++) {
-			inputRow3[i].nerve.tailUnitEnum = signalUnit;
-			inputRow3[i].nerve.tailUnitSlotEnum = signalUnitSlot;
+			inputRow3[i].geneNerve.tailUnitEnum = signalUnit;
+			inputRow3[i].geneNerve.tailUnitSlotEnum = signalUnitSlot;
 		}
 		UpdateConnections();
 	}
@@ -63,8 +63,8 @@ public class GeneLogicBox : GeneSignalUnit {
 	}
 
 	public void ConnectInputTo(int column, SignalUnitEnum signalUnit, SignalUnitSlotEnum signalUnitSlot) {
-		inputRow3[column].nerve.tailUnitEnum = signalUnit;
-		inputRow3[column].nerve.tailUnitSlotEnum = signalUnitSlot;
+		inputRow3[column].geneNerve.tailUnitEnum = signalUnit;
+		inputRow3[column].geneNerve.tailUnitSlotEnum = signalUnitSlot;
 		UpdateConnections();
 	}
 

@@ -57,7 +57,7 @@ public class Genotype : MonoBehaviour {
 
 		// root them
 		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
-			geneCellListIndexSorted[index].UpdateConnectionsNervesGenotypePhenotype();
+			geneCellListIndexSorted[index].UpdateConnectionsNervesGenotypePhenotype(true);
 		}
 	}
 

@@ -27,6 +27,9 @@ public class CellData {
 	// Constant
 	public CommonSensorData constantSensorData;
 
+	//Axon
+	public AxonData axonData;
+
 	// Dendrites
 	public LogicBoxData dendritesLogicBoxData;
 

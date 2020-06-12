@@ -6,7 +6,7 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 	// TODO don't access nerve directly
 	public GeneNerve m_nerve;
 
-	public GeneNerve nerve {
+	public GeneNerve geneNerve {
 		get {
 			return m_nerve;
 		}
@@ -32,8 +32,8 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 		rightFlank = GetFlankRightOfColumn(column);
 
 		m_nerve = new GeneNerve(this.genotypeDirtyfy);
-		nerve.headUnitEnum = signalUnit; // me
-		nerve.headUnitSlotEnum = (SignalUnitSlotEnum)column; // me
+		geneNerve.headUnitEnum = signalUnit; // me
+		geneNerve.headUnitSlotEnum = (SignalUnitSlotEnum)column; // me
 	}
 
 	public int column {
@@ -50,7 +50,7 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 
 	public void Defaultify() {
 		valveMode = SignalValveModeEnum.Block;
-		nerve.Defaultify();
+		geneNerve.Defaultify();
 	}
 
 	public void Randomize(bool isOrigin) {
@@ -71,7 +71,7 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 
 		// we wont change where we sample from if we are locked
 		if (lockness == LocknessEnum.Unlocked) {
-			didMutate |= nerve.Mutate(strength, isOrigin);
+			didMutate |= geneNerve.Mutate(strength, isOrigin);
 		}
 
 		return didMutate;
@@ -81,13 +81,13 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 	private GeneLogicBoxInputData geneLogicBoxInputData = new GeneLogicBoxInputData();
 	public GeneLogicBoxInputData UpdateData() {
 		geneLogicBoxInputData.valveMode = valveMode;
-		geneLogicBoxInputData.geneNerveData = nerve.UpdateData();
+		geneLogicBoxInputData.geneNerveData = geneNerve.UpdateData();
 		return geneLogicBoxInputData;
 	}
 
 	// Load
 	public void ApplyData(GeneLogicBoxInputData geneLogicBoxInputData) {
 		valveMode = geneLogicBoxInputData.valveMode;
-		nerve.ApplyData(geneLogicBoxInputData.geneNerveData); 
+		geneNerve.ApplyData(geneLogicBoxInputData.geneNerveData); 
 	}
 }

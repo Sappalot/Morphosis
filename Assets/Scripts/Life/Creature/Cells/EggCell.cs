@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEditor.Profiling.Memory.Experimental;
-using UnityEngine;
 
 public class EggCell : Cell {
 
@@ -35,9 +33,9 @@ public class EggCell : Cell {
 		//fertilizeAttachmentSensor, no input
 	}
 
-	public override void UpdateConnectionsNervesGenotypePhenotype() {
-		base.UpdateConnectionsNervesGenotypePhenotype();
-		fertilizeLogicBox.RootRecursivlyGenotypePhenotype(null); // root
+	public override void UpdateConnectionsNervesGenotypePhenotype(bool addOutputNere) {
+		base.UpdateConnectionsNervesGenotypePhenotype(addOutputNere);
+		fertilizeLogicBox.RootRecursivlyGenotypePhenotype(null, addOutputNere); // root
 	}
 
 	public override List<Nerve> GetAllNervesGenotypePhenotype() {
@@ -71,10 +69,6 @@ public class EggCell : Cell {
 		if (((EggCell)geneCell).fertilizeAttachmentSensor.rootnessEnum == RootnessEnum.Rooted) {
 			fertilizeAttachmentSensor.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
 		}
-	}
-
-	public override void UpdateConnectionsNervesPhenotype(Phenotype phenotype) {
-
 	}
 
 	public override void UpdateRootable(Cell geneCell) {

@@ -16,6 +16,19 @@ public class HudSignalArrow : MonoBehaviour {
 	[HideInInspector]
 	public SignalUnitSlotEnum tailUnitSlot = SignalUnitSlotEnum.Void; // The slot on that (above) unit
 
+	[HideInInspector]
+	public Cell headCell;
+
+	[HideInInspector]
+	public Cell tailCell;
+
+	public Vector2 headPosition;
+	public Vector2 tailPosition;
+
+	public string ToTailString() {
+		return tailUnit.ToString() + "_" + tailUnitSlot.ToString();
+	}
+
 	private bool m_showHeadLabel;
 	public bool showHeadLabel {
 		get {

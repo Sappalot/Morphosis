@@ -1,5 +1,5 @@
 ﻿public interface IGeneInput {
-	GeneNerve nerve { get; }
+	GeneNerve geneNerve { get; }
 
 
 	SignalValveModeEnum valveMode {get; set;}
