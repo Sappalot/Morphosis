@@ -107,19 +107,8 @@ public class Nerve {
 
 	public bool isRootable {
 		get {
-			if (tailCell == null) {
-				return false;
-			}
-			if (tailCell.GetSignalUnit(tailSignalUnitEnum) == null) {
-				return false;
-			}
-			if (headCell == null) {
-				return true;
-			}
-			if (headCell.GetSignalUnit(headSignalUnitEnum) == null) {
-				return true; //?
-			}
-			return tailCell.GetSignalUnit(tailSignalUnitEnum).rootnessEnum == RootnessEnum.Rootable || headCell == null || headCell.GetSignalUnit(headSignalUnitEnum).rootnessEnum == RootnessEnum.Rootable;
+			return (tailCell == null || tailCell.GetSignalUnit(tailSignalUnitEnum) == null || tailCell.GetSignalUnit(tailSignalUnitEnum).rootnessEnum == RootnessEnum.Rootable ||
+					headCell == null || headCell.GetSignalUnit(headSignalUnitEnum) == null || headCell.GetSignalUnit(headSignalUnitEnum).rootnessEnum == RootnessEnum.Rootable);
 		}
 	}
 

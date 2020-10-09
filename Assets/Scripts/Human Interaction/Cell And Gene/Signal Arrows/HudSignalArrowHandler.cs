@@ -216,13 +216,16 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		if (isDirtySignal && nervesToHighlite == null) {
 			foreach (HudSignalArrow arrow in arrowList) {
 				Color color = Color.black;
-				if (mode == PhenoGenoEnum.Phenotype && arrow.tailCell != null) {
-					if (arrow.tailCell.GetSignalUnit(arrow.tailUnit).rootnessEnum == RootnessEnum.Rootable || arrow.headCell == null || arrow.headCell.GetSignalUnit(arrow.headUnit).rootnessEnum == RootnessEnum.Rootable) {
+				if (mode == PhenoGenoEnum.Phenotype) {
+					if (arrow.tailCell == null || arrow.tailCell.GetSignalUnit(arrow.tailUnit).rootnessEnum == RootnessEnum.Rootable || arrow.headCell == null || arrow.headCell.GetSignalUnit(arrow.headUnit).rootnessEnum == RootnessEnum.Rootable) {
+						// Rootable - Head or tail is not rooted, because there are cells unbuilt
 						color = ColorScheme.instance.signalRootable;
-					} else /* Rooted */{
+					} else {
+						// Rooted - head and tail are built (show signal on / off)
 						color = arrow.tailCell.GetOutputFromUnit(arrow.tailUnit, arrow.tailUnitSlot) ? ColorScheme.instance.signalOn : ColorScheme.instance.signalOff;
 					}
 				} else {
+					// Genotype - same for all "signal off" allways
 					color = ColorScheme.instance.signalOff;
 				}
 				arrow.GetComponent<Image>().color = ColorUtil.SetAlpha(color, 0.5f);
