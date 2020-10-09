@@ -130,7 +130,9 @@ public abstract class Cell : MonoBehaviour {
 	public LogicBox originDetatchLogicBox;
 	public SizeSensor originSizeSensor;
 
-	// step 1. 
+	// Genotype
+
+	// step 1.
 	public virtual void PreUpdateNervesGenotype() {
 		// clear averything
 		constantSensor.PreUpdateNervesGenotype();
@@ -221,7 +223,7 @@ public abstract class Cell : MonoBehaviour {
 		return nervesExternal;
 	}
 
-	//--
+	// Phenotype
 
 	public virtual void UpdateSensorAreaTablesPhenotype() {
 		dendritesLogicBox.UpdateAreaTablesPhenotype();
@@ -233,7 +235,8 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// Step 1.
-	public virtual void PreUpdateNervesPhenotype() {
+	// No need to override (or will there be such a case for som cells?)
+	public void PreUpdateNervesPhenotype() {
 		PreUpdateNervesGenotype(); // they are the same
 	}
 

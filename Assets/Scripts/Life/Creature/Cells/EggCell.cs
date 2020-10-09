@@ -51,9 +51,9 @@ public class EggCell : Cell {
 
 	//--
 
-	public override void PreUpdateNervesPhenotype() {
+	// no need to override
+	//PreUpdateNervesPhenotype...
 
-	}
 
 	public override void CloneNervesFromGenotypeToPhenotype(Cell geneCell, Phenotype phenotype) {
 		base.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
@@ -82,8 +82,6 @@ public class EggCell : Cell {
 		base.UpdateSensorAreaTablesPhenotype();
 
 		fertilizeLogicBox.UpdateAreaTablesPhenotype();
-
-
 		fertilizeEnergySensor.UpdateAreaTablesPhenotype();
 		fertilizeAttachmentSensor.UpdateAreaTablesPhenotype();
 	}

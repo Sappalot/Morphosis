@@ -42,8 +42,6 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 		}
 	}
 
-
-
 	public override int GetTransmittingInputCount() {
 		return isTransmittingSignal ? 1 : 0;
 	}
