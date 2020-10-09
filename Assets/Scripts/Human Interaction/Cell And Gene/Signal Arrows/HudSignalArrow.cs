@@ -26,7 +26,7 @@ public class HudSignalArrow : MonoBehaviour {
 	public Vector2 tailPosition;
 
 	public string ToTailString() {
-		return tailUnit.ToString() + "_" + tailUnitSlot.ToString();
+		return tailCell.id + "_" + tailUnit.ToString() + "_" + tailUnitSlot.ToString();
 	}
 
 	private bool m_showHeadLabel;

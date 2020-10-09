@@ -190,10 +190,6 @@ public abstract class Cell : MonoBehaviour {
 			nerves.AddRange(dendritesLogicBox.GetAllNervesGenotypePhenotype());
 		}
 
-		if (dendritesLogicBox.rootnessEnum != RootnessEnum.Unrooted) {
-			nerves.AddRange(dendritesLogicBox.GetAllNervesGenotypePhenotype());
-		}
-
 		if (energySensor.rootnessEnum != RootnessEnum.Unrooted) {
 			nerves.AddRange(energySensor.GetAllNervesGenotypePhenotype());
 		}
