@@ -358,7 +358,7 @@ public class Genotype : MonoBehaviour {
 
 	public bool TryUpdateGeneCellPattern(Creature creature, Vector2 position, float heading) { // heading 90 ==> origin is pointing north
 		if (isGeneCellPatternDirty) {
-			Debug.Log("TryUpdateGeneCellPattern");
+			//Debug.Log("TryUpdateGeneCellPattern");
 
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
 				Debug.Log("Update Creature TryUpdateGeneCellPattern");
@@ -473,7 +473,7 @@ public class Genotype : MonoBehaviour {
 
 	public bool TryUpdateInterGeneCells() {
 		if (isInterGeneCellDirty) {
-			Debug.Log("TryUpdateInterGeneCells ... nerves");
+			//Debug.Log("TryUpdateInterGeneCells ... nerves");
 
 			UpdateBrain();
 

@@ -347,7 +347,7 @@ public abstract class Cell : MonoBehaviour {
 	public bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
 		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for
 		if (GetSignalUnit(outputUnit) == null) {
-			Debug.Log("Ooops! no outputting unit found");
+			//Debug.Log("Ooops! no outputting unit found");
 			return false;
 		} else {
 			return GetSignalUnit(outputUnit).GetOutput(outputUnitSlot);
@@ -372,6 +372,8 @@ public abstract class Cell : MonoBehaviour {
 		} else if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
 			return originSizeSensor;
 		}
+
+		// Work sensors will return null, since they are not overloaded
 
 		return null;
 	}

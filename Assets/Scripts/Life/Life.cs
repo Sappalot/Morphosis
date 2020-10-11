@@ -137,17 +137,13 @@ public class Life : MonoBehaviour {
 		mother.KillCell(eggCell, false, worldTicks); //When deleting egg cell other creatures connected, will come loose since neighbours are updated from mothers cellMap 
 
 		// Spawn child at egg cell location
-		Creature child = InstantiateCreature(); // Will create soul as well
+		Creature child = InstantiateCreature();
+		child.GenerateEmbryo(mother.genotype.GetMutatedClone(child, GlobalSettings.instance.mutation.masterMutationStrength), eggCell.position, eggCell.heading, child); //Mutation Hack
+		// The child genome will have things altered to it when mutating, so it will be called forged like a clean slate
+		// so we will have to set its 'creation', 'generation' etcetera after that
 		child.bornTick = worldTicks; //The time of birth is the time when the egg is fertilized
 		child.creation = CreatureCreationEnum.Born;
 		child.generation = mother.generation + 1;
-
-		// Let there be evolution, and there was evolution
-		//child.GenerateEmbryo(mother.genotype.genome, eggCell.position, eggCell.heading);
-		//.GetMutatedClone(0.2f)
-
-		
-		child.GenerateEmbryo(mother.genotype.GetMutatedClone(child, GlobalSettings.instance.mutation.masterMutationStrength), eggCell.position, eggCell.heading, child); //Mutation Hack
 		child.phenotype.originCell.energy = eggEnergy;
 		child.phenotype.originCell.originPulseTick = mother.phenotype.originCell.originPulseTick; // make them swim locomote, should be 0 for both allready...
 		child.phenotype.muscleAndFluxCellTick = mother.phenotype.muscleAndFluxCellTick; // to make veins pump energy into child without jerkyness they need to be synced
@@ -373,7 +369,8 @@ public class Life : MonoBehaviour {
 		clone.nickname += " (Copy)";
 		clone.hasPhenotypeCollider = false;
 		clone.creation = CreatureCreationEnum.Cloned;
-		//Let generation be same as mothers
+		clone.generation = original.generation; //Let generation be same as mothers
+
 
 		clone.bornTick = bornTick;
 		return clone;

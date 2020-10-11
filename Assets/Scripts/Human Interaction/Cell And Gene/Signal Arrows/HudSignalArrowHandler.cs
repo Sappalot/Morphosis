@@ -157,7 +157,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					Vector2 head = cellAndGenePanel.TotalPanelOffset(nerve.headSignalUnitEnum, nerve.headSignalUnitSlotEnum);
 					Vector2 tail;
 
-					if (mode == PhenoGenoEnum.Phenotype && (selectedCell.GetSignalUnit(arrow.tailUnit).rootnessEnum == RootnessEnum.Rootable || selectedCell.GetSignalUnit(arrow.headUnit).rootnessEnum == RootnessEnum.Rootable)) {
+					if (mode == PhenoGenoEnum.Phenotype && (selectedCell.GetSignalUnit(arrow.tailUnit) == null || selectedCell.GetSignalUnit(arrow.tailUnit).rootnessEnum == RootnessEnum.Rootable || selectedCell.GetSignalUnit(arrow.headUnit) == null || selectedCell.GetSignalUnit(arrow.headUnit).rootnessEnum == RootnessEnum.Rootable)) {
 						arrow.GetComponent<Image>().color = ColorScheme.instance.signalRootable;
 					} else /* Rooted */{
 						arrow.GetComponent<Image>().color = ColorScheme.instance.signalOff;
@@ -217,7 +217,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			foreach (HudSignalArrow arrow in arrowList) {
 				Color color = Color.black;
 				if (mode == PhenoGenoEnum.Phenotype) {
-					if (arrow.tailCell == null || arrow.tailCell.GetSignalUnit(arrow.tailUnit).rootnessEnum == RootnessEnum.Rootable || arrow.headCell == null || arrow.headCell.GetSignalUnit(arrow.headUnit).rootnessEnum == RootnessEnum.Rootable) {
+					if (arrow.tailCell == null || arrow.tailCell.GetSignalUnit(arrow.tailUnit) == null || arrow.tailCell.GetSignalUnit(arrow.tailUnit).rootnessEnum == RootnessEnum.Rootable || arrow.headCell == null || arrow.headCell.GetSignalUnit(arrow.headUnit) == null || arrow.headCell.GetSignalUnit(arrow.headUnit).rootnessEnum == RootnessEnum.Rootable) {
 						// Rootable - Head or tail is not rooted, because there are cells unbuilt
 						color = ColorScheme.instance.signalRootable;
 					} else {

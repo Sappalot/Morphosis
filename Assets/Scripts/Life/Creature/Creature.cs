@@ -76,6 +76,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 	}
 
 	// regenerate new nerves, regrow cellStructure according to old genome, update inter cell stuff
+	
 	public void ReforgeInterGeneCellAndForward() {
 		ReforgeBase();
 		genotype.MakeInterGeneCellDirty();
@@ -83,6 +84,8 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 	}
 
 	// regrow cellStructure according to old genome, update inter cell stuff
+	// this one is called as we do gene changes that are not leading to cell pattern being changed
+	// We regrow crature fully anyway, as it is reforged due to that minor change
 	public void ReforgeCellPatternAndForward() {
 		ReforgeBase();
 		phenotype.MakeCellPaternDifferentFromGenotypeDirty(); // force regrowth
@@ -851,21 +854,17 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 	public CreatureData UpdateData() {
 		BringOtherGenoPhenoPositionAndRotationToCurrent(); //Do we really need this one??
 
-		//me
-		creatureData.id = id;
-		creatureData.nickname = nickname;
-		creatureData.creation = creation;
-		creatureData.generation = generation;
-
-		creatureData.bornTick = bornTick;
-		creatureData.deadTick = deadTick;
-		//todo: spieces
-
 		creatureData.genotypeData = genotype.UpdateData();
 		creatureData.phenotypeData = phenotype.UpdateData();
 
 
-		//time
+		creatureData.id = id;
+		creatureData.nickname = nickname;
+		creatureData.creation = creation;
+		creatureData.generation = generation;
+		creatureData.bornTick = bornTick;
+		creatureData.deadTick = deadTick;
+
 		creatureData.growTicks = growTicks;
 		creatureData.canNotGrowMoreTicks = canNotGrowMoreTicks;
 		creatureData.detatch = detatch;
@@ -888,25 +887,23 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 
 	// Load
 	public void ApplyData(CreatureData creatureData) {
-		//me
-		nickname = creatureData.nickname;
-		id = creatureData.id;
-		creation = creatureData.creation;
-		generation = creatureData.generation;
-
-		bornTick = creatureData.bornTick;
-		deadTick = creatureData.deadTick;
-
 		genotype.ApplyData(creatureData.genotypeData, this);
 		Vector2 position = creatureData.genotypeData.originPosition;
 		float heading = creatureData.genotypeData.originHeading;
 		genotype.TryUpdateGeneCellPattern(this, position, heading); // Generating genotype here caused Unity freeze ;/ (? still so 2020-04-12)
+		phenotype.ApplyData(creatureData.phenotypeData, this);
+
+		// Set these properties after changing gene stuff to prevent them from being erased (during reforge)
+		nickname = creatureData.nickname;
+		id = creatureData.id;
+		creation = creatureData.creation;
+		generation = creatureData.generation;
+		bornTick = creatureData.bornTick;
+		deadTick = creatureData.deadTick;
 
 		growTicks = creatureData.growTicks;
 		canNotGrowMoreTicks = creatureData.canNotGrowMoreTicks;
 		detatch = creatureData.detatch;
-
-		phenotype.ApplyData(creatureData.phenotypeData, this);
 
 		//Relatives
 		ClearMotherAndChildrenReferences();

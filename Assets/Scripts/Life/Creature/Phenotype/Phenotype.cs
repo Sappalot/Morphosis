@@ -766,7 +766,7 @@ public class Phenotype : MonoBehaviour {
 	// TODO: At the moment we are updating whole body every time a new cell is grown. This is probably costy. Just update the cells affected by the change made (dirtymark per cell)
 	public bool TryUpdateInterCells(Creature creature, string motherId) {
 		if (isInterCellDirty) {
-			Debug.Log("TryUpdateInterCells");
+			//Debug.Log("TryUpdateInterCells");
 
 			UpdateNeighbourReferencesInterBody(creature);
 
