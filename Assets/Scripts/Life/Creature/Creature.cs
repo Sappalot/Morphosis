@@ -706,7 +706,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 
 
 		if (isDirtyGraphics) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+			if (GlobalSettings.instance.debug.debugLogMenuUpdate)
 				DebugUtil.Log("Update Creature (due to user input)");
 
 			ShowCurrentGenoPhenoAndHideOther();

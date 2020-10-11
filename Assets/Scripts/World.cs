@@ -22,7 +22,7 @@ public class World : MonoSingleton<World> {
 	private List<HistoryEvent> historyEvents = new List<HistoryEvent>();
 
 	public Ball ballPrefab;
-	public new void Initialize() {
+	public void Initialize() {
 
 		//Instantiate test balls
 		//for (int y = 0; y < 45; y++) {

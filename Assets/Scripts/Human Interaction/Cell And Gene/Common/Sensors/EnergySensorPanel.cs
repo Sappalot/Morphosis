@@ -37,7 +37,7 @@ public class EnergySensorPanel : SignalUnitPanel {
 		if (isDirty) {
 			base.Update();
 
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update Energy Sensor Panel");
 			}
 

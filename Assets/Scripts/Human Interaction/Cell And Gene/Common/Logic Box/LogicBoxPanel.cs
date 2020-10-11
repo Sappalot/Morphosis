@@ -151,7 +151,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 		if (isDirty) {
 			base.Update();
 
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update Signal logic box");
 			}
 

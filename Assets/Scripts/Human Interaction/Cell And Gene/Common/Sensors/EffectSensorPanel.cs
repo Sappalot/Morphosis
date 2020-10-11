@@ -63,7 +63,7 @@ public class EffectSensorPanel : SignalUnitPanel {
 		if (isDirty) {
 			base.Update();
 
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update Effect Sensor Panel");
 			}
 

@@ -71,7 +71,6 @@ public class Genotype : MonoBehaviour {
 		for (int index = 0; index < genomeLength; index++) {
 			genes[index] = new Gene(index, genotypeDirtyfy);
 		}
-		int a = 1;
 	}
 
 	public void AddCellToGeneCellLists(Cell cell) {
@@ -360,7 +359,7 @@ public class Genotype : MonoBehaviour {
 		if (isGeneCellPatternDirty) {
 			//DebugUtil.Log("TryUpdateGeneCellPattern");
 
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update Creature TryUpdateGeneCellPattern");
 			}
 

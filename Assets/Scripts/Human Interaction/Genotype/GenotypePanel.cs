@@ -157,7 +157,7 @@ public class GenotypePanel : MonoSingleton<GenotypePanel> {
 
 	private void Update() {
 		if (isDirty) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update GenotypePanel");
 			}
 

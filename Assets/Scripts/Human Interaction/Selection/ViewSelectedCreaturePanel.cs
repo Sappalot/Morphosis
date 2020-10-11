@@ -125,7 +125,7 @@ public class ViewSelectedCreaturePanel : MonoSingleton<ViewSelectedCreaturePanel
 		}
 
 		if (isDirty) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update ViewSelectedCreaturePanel");
 			}
 

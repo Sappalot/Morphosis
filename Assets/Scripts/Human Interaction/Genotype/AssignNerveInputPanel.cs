@@ -136,7 +136,6 @@ public class AssignNerveInputPanel : MonoSingleton<AssignNerveInputPanel> {
 		}
 
 		Genotype genotype = CreatureSelectionPanel.instance.soloSelected.genotype;
-		Phenotype phenotype = CreatureSelectionPanel.instance.soloSelected.phenotype;
 
 		if (targetGeneCellMapPosition == null || genotype.GetCellAtMapPosition(targetGeneCellMapPosition) == null || selectedRootCellMapPosition == null || genotype.GetCellAtMapPosition(selectedRootCellMapPosition) == null) {
 			affectedPanel.ShowNerveInputExternally(null);

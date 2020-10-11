@@ -14,6 +14,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	public class Debug {
 		public bool debugLogViaEditor = true;
 		public bool debugLogViaBuild = true;
+		public bool debugLogMenuUpdate = false;
 	}
 	public Debug debug;
 
@@ -352,6 +353,4 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	public AnimationCurve loudAudioVolumeAtOrtho;
 	public AnimationCurve quietAudioVolumeAtOrtho;
 
-	// DEBUG
-	public bool printoutAtDirtyMarkedUpdate = true;
 }

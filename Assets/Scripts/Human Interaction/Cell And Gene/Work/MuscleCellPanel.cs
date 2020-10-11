@@ -43,7 +43,7 @@ public class MuscleCellPanel : ComponentPanel {
 
 	private void Update() {
 		if (isDirty) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update CellPanel");
 			}
 

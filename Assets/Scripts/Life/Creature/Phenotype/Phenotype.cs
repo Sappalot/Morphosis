@@ -368,9 +368,7 @@ public class Phenotype : MonoBehaviour {
 
 	public bool TryRegrowCellPattern(Creature creature, Vector2 position, float heading) {
 		if (isCellPatternDiffererentFromGenomeDirty) {
-			DebugUtil.Log("Update Creature TryUpdateCellPattern");
-
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update Creature TryUpdateCellPattern");
 			}
 			Setup(position, heading);
@@ -1629,7 +1627,7 @@ public class Phenotype : MonoBehaviour {
 
 		// Warning:  So we are more restrictive with these updates now, make sure colliders are updated as they should
 		if (isDirtyCollider) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
+			if (GlobalSettings.instance.debug.debugLogMenuUpdate)
 				DebugUtil.Log("Update Creature Phenotype");
 
 			SetCollider(hasCollider);

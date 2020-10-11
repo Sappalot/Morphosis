@@ -1390,7 +1390,6 @@ public abstract class Cell : MonoBehaviour {
 			heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex) + angleDiffFromBindpose;
 		}
 
-		//DebugUtil.Log("Update arrow");
 		rotatedRoot.localRotation = Quaternion.Euler(0f, 0f, heading);
 	}
 

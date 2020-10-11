@@ -9,7 +9,7 @@ public class NerveArrow : MonoBehaviour {
 	[HideInInspector]
 	public Nerve nerve;
 
-	private PhenoGenoEnum phenoGenoMode;
+	private PhenoGenoEnum phenoGenoMode = PhenoGenoEnum.Genotype;
 
 	public enum HighliteEnum {
 		notHighlited,

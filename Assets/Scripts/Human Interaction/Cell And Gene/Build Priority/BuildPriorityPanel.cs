@@ -52,7 +52,7 @@ public class BuildPriorityPanel : MonoBehaviour {
 		if (isDirty) {
 			ignoreSliderMoved = true;
 
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update CellBuildPriorityPanel");
 			}
 

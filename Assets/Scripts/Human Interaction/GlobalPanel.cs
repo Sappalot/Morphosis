@@ -116,7 +116,6 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public override void Init() {
 		OnRunPhysicsClicked();
 		saveDirerectoryLabel.text = Application.persistentDataPath;
-		saveDirerectoryLabel.text = Environment.GetEnvironmentVariable("AppData") + "/LocalLow/" + Application.companyName + "/" + Application.productName + "/output_log.txt";
 	}
 
 	// History
@@ -245,6 +244,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 			ProgressBar.instance.gameObject.SetActive(false);
 			DebugUtil.Log("World loaded");
+			//Debug.LogWarning("Warning: Graph knows no GraphSettings");
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		});
 	}

@@ -40,7 +40,7 @@ public class GeneAuxiliaryPanel : MonoSingleton<GeneAuxiliaryPanel> {
 
 	private void Update() {
 		if (isDirty) {
-			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
+			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update GeneCellPanel");
 			}
 			if (viewedGene == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
