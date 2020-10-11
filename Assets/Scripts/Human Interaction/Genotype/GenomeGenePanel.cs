@@ -26,7 +26,7 @@ public class GenomeGenePanel : MonoBehaviour {
 	}
 
 	public void OnClicked() {
-		//Debug.Log("Clicked " + index);
+		//DebugUtil.Log("Clicked " + index);
 		if (MouseAction.instance.actionState == MouseActionStateEnum.free) {
 			GenePanel.instance.selectedGene = gene;
 			GenomePanel.instance.MakeDirty();
@@ -42,7 +42,7 @@ public class GenomeGenePanel : MonoBehaviour {
 	private void Update() {
 		if (isDirty) {
 			//if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
-				//Debug.Log("Update GenomeGene");
+				//DebugUtil.Log("Update GenomeGene");
 			//Nothing to represent
 			if (GenomePanel.instance.genotype == null || gene == null) {
 				//text.text = "-";

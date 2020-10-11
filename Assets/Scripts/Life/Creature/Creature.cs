@@ -707,7 +707,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 
 		if (isDirtyGraphics) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
-				Debug.Log("Update Creature (due to user input)");
+				DebugUtil.Log("Update Creature (due to user input)");
 
 			ShowCurrentGenoPhenoAndHideOther();
 			phenotype.hasCollider = CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !phenotype.isGrabbed;
@@ -793,7 +793,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 				}
 			}
 			// ☠ ꕕ Haha, make use of these
-			//Debug.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
+			//DebugUtil.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
 
 			// Detatch child from mother
 			if (PhenotypePhysicsPanel.instance.detatch.isOn && IsAttachedToMotherAlive() && phenotype.originCell.originDetatchLogicBox.GetOutput(SignalUnitSlotEnum.outputEarlyA)) {

@@ -46,7 +46,7 @@ public class CreatureSelectionRectangle : MouseDrag {
 			}
 			
 			rectangle.transform.localScale = new Vector3(0.1f, 0.1f, 0f);
-			//Debug.Log("MouseButton @ " + downPositionMouse);
+			//DebugUtil.Log("MouseButton @ " + downPositionMouse);
 		}
 	}
 

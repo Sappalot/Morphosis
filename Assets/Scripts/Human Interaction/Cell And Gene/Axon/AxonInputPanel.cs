@@ -118,7 +118,7 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update Anone Input Panel");
+				DebugUtil.Log("Update Anone Input Panel");
 			}
 			ignoreSliderMoved = true;
 

@@ -103,7 +103,7 @@ public class OriginPanel : ComponentPanel {
 			ignoreHumanInput = true;
 
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update CellPanel");
+				DebugUtil.Log("Update CellPanel");
 			}
 
 			// ...ghost ...

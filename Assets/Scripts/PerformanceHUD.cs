@@ -34,7 +34,7 @@ public class PerformanceHUD : MonoBehaviour {
 			updateCooldown = 1800f; // 1/2 hour
 			timeSinceLastUpdate = 0f;
 
-			Debug.Log("No: " + debugLogPrintCounter + " | Time since Startup: " + uptime + " h | FPS: " + fps + " | PPS: " + pps);
+			DebugUtil.Log("No: " + debugLogPrintCounter + " | Time since Startup: " + uptime + " h | FPS: " + fps + " | PPS: " + pps);
 			debugLogPrintCounter++;
 		}
 		updateCooldown -= Time.unscaledDeltaTime;

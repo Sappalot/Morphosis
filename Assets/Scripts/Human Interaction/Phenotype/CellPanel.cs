@@ -41,7 +41,7 @@ public class CellPanel : MonoSingleton<CellPanel> {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update CellPanel");
+				DebugUtil.Log("Update CellPanel");
 			}
 			if (selectedCell == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
 				typeHeadingLabel.text = "Cell:";

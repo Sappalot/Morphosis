@@ -43,7 +43,7 @@ public class VeinCellPanel : ComponentPanel {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update CellPanel");
+				DebugUtil.Log("Update CellPanel");
 			}
 
 			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.veinCell.effectProductionDown);

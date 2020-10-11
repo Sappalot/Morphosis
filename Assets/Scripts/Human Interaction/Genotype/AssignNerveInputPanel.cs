@@ -65,12 +65,12 @@ public class AssignNerveInputPanel : MonoSingleton<AssignNerveInputPanel> {
 		}
 		if (isInAuxternalGene) {
 			// we have been pushing a button in an external gene panel
-			Debug.Log("Setting externally");
+			DebugUtil.Log("Setting externally");
 			affectedPanel.TrySetNerveInputExternally(inputUnit, inputUnitSlot, nerveVectorToSet);
 
 		} else {
 			// we have been pushing a button in the same gene panel, we are local
-			Debug.Log("Setting locally");
+			DebugUtil.Log("Setting locally");
 			affectedPanel.TrySetNerveInputLocally(inputUnit, inputUnitSlot);
 		}
 		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
@@ -145,10 +145,10 @@ public class AssignNerveInputPanel : MonoSingleton<AssignNerveInputPanel> {
 
 
 		if (selectedRootCellMapPosition != null && targetGeneCellMapPosition != selectedRootCellMapPosition) {
-			//Debug.Log("Target position: " + targetGeneCell.mapPosition);
-			//Debug.Log("Root position: " + selectedRootCell.mapPosition);
+			//DebugUtil.Log("Target position: " + targetGeneCell.mapPosition);
+			//DebugUtil.Log("Root position: " + selectedRootCell.mapPosition);
 			int distance = CellMap.ManhexanDistance(targetGeneCellMapPosition, selectedRootCellMapPosition);
-			//Debug.Log("Manhexan distance: " + distance);
+			//DebugUtil.Log("Manhexan distance: " + distance);
 
 			if (distance <= 5) {
 				// move vector to origin (tail at origo)
@@ -172,7 +172,7 @@ public class AssignNerveInputPanel : MonoSingleton<AssignNerveInputPanel> {
 				} else if (rootDirection == 5) { // se
 					turnToLocalAngle = 2; // +120
 				}
-				//Debug.Log("Vector before rotate: " + nerveVector.ToString());
+				//DebugUtil.Log("Vector before rotate: " + nerveVector.ToString());
 				nerveVector = CellMap.HexagonalRotate(nerveVector, turnToLocalAngle);
 
 				// flip vector horizontally only if cell flip side is (white|black) 
@@ -180,7 +180,7 @@ public class AssignNerveInputPanel : MonoSingleton<AssignNerveInputPanel> {
 					nerveVector = CellMap.HexagonalFlip(nerveVector);
 				}
 
-				//Debug.Log("Final Vector: " + nerveVector.ToString());
+				//DebugUtil.Log("Final Vector: " + nerveVector.ToString());
 
 				// nerveVector is now in creature space
 				CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
@@ -190,7 +190,7 @@ public class AssignNerveInputPanel : MonoSingleton<AssignNerveInputPanel> {
 
 				return true;
 			} else {
-				Debug.Log("Too long nerve, max distance = 5");
+				DebugUtil.Log("Too long nerve, max distance = 5");
 			}
 
 		}
@@ -215,10 +215,10 @@ public class AssignNerveInputPanel : MonoSingleton<AssignNerveInputPanel> {
 
 		
 		if (selectedRootCellMapPosition != null && targetGeneCellMapPosition != selectedRootCellMapPosition ) {
-			//Debug.Log("Target position: " + targetGeneCell.mapPosition);
-			//Debug.Log("Root position: " + selectedRootCell.mapPosition);
+			//DebugUtil.Log("Target position: " + targetGeneCell.mapPosition);
+			//DebugUtil.Log("Root position: " + selectedRootCell.mapPosition);
 			int distance = CellMap.ManhexanDistance(targetGeneCellMapPosition, selectedRootCellMapPosition);
-			//Debug.Log("Manhexan distance: " + distance);
+			//DebugUtil.Log("Manhexan distance: " + distance);
 
 			if (distance <= 5) {
 				// move vector to origin (tail at origo)
@@ -242,7 +242,7 @@ public class AssignNerveInputPanel : MonoSingleton<AssignNerveInputPanel> {
 				} else if (rootDirection == 5) { // se
 					turnToLocalAngle = 2; // +120
 				}
-				//Debug.Log("Vector before rotate: " + nerveVector.ToString());
+				//DebugUtil.Log("Vector before rotate: " + nerveVector.ToString());
 				nerveVector = CellMap.HexagonalRotate(nerveVector, turnToLocalAngle);
 
 				// flip vector horizontally only if cell flip side is (white|black) 
@@ -252,7 +252,7 @@ public class AssignNerveInputPanel : MonoSingleton<AssignNerveInputPanel> {
 
 				nerveVectorToSet = nerveVector;
 
-				//Debug.Log("Final Vector: " + nerveVector.ToString());
+				//DebugUtil.Log("Final Vector: " + nerveVector.ToString());
 
 				// nerveVector is now in creature space
 				CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
@@ -266,7 +266,7 @@ public class AssignNerveInputPanel : MonoSingleton<AssignNerveInputPanel> {
 
 				return true;
 			} else {
-				Debug.Log("Too long nerve, max distance = 5");
+				DebugUtil.Log("Too long nerve, max distance = 5");
 			}
 
 		}

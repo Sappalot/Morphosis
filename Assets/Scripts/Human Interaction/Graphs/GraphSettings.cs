@@ -31,7 +31,7 @@ public class GraphSettings : MonoBehaviour {
 	}
 
 	public void OnButtonClicked() {
-		Debug.Log("Button clicked!");
+		DebugUtil.Log("Button clicked!");
 	}
 
 	public void OnInputButtonClicked() {
@@ -44,7 +44,7 @@ public class GraphSettings : MonoBehaviour {
 		if (float.TryParse(maxInputField.text, out result)) {
 			maxValue = result;
 		} else {
-			Debug.Log("Not a number!");
+			DebugUtil.Log("Not a number!");
 		}
 		maxInputField.gameObject.SetActive(false);
 		UpdateButtonText();

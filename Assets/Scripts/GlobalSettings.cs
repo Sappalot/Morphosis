@@ -11,6 +11,13 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 	}
 
 	[Serializable]
+	public class Debug {
+		public bool debugLogViaEditor = true;
+		public bool debugLogViaBuild = true;
+	}
+	public Debug debug;
+
+	[Serializable]
 	public class Mutation {
 		public float masterMutationStrength = 1f;
 

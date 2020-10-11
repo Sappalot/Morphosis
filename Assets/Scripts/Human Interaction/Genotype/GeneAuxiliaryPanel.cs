@@ -41,7 +41,7 @@ public class GeneAuxiliaryPanel : MonoSingleton<GeneAuxiliaryPanel> {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update GeneCellPanel");
+				DebugUtil.Log("Update GeneCellPanel");
 			}
 			if (viewedGene == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
 				typeHeadingLabel.text = "Auxiliary Gene:";

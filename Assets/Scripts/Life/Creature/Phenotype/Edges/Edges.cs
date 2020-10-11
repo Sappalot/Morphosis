@@ -95,7 +95,7 @@ public class Edges : MonoBehaviour {
 			Cell.ApexAngle apexAngle;
 			Cell nextCell = GetNextOwnPeripheryCell(creature, currentCell, previousCell, out apexAngle);
 			if (nextCell == null) {
-				Debug.Log("We don't have a next periphery cell");
+				DebugUtil.Log("We don't have a next periphery cell");
 				throw new RuntimeException("Could not find a next periphery cell");
 			}
 			

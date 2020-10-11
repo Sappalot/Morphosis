@@ -151,7 +151,7 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update Signal logic box");
+				DebugUtil.Log("Update Signal logic box");
 			}
 
 			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null)) {

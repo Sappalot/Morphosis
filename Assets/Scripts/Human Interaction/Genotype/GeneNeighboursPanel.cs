@@ -51,7 +51,7 @@ public class GeneNeighboursPanel : MonoBehaviour {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate)
-				Debug.Log("Update GeneNeighbourPanel");
+				DebugUtil.Log("Update GeneNeighbourPanel");
 
 			//Nothing to represent
 			if (cellAndGenePanel.gene == null) {

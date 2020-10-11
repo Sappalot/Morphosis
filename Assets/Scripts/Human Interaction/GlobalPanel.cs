@@ -116,6 +116,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 	public override void Init() {
 		OnRunPhysicsClicked();
 		saveDirerectoryLabel.text = Application.persistentDataPath;
+		saveDirerectoryLabel.text = Environment.GetEnvironmentVariable("AppData") + "/LocalLow/" + Application.companyName + "/" + Application.productName + "/output_log.txt";
 	}
 
 	// History
@@ -223,7 +224,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		SelectPausePhysics();
 		Freezer.instance.Save();
 		Morphosis.instance.Restart(() => {
-			Debug.Log("Morfosis restarted");
+			DebugUtil.Log("Morfosis restarted");
 			ProgressBar.instance.gameObject.SetActive(false);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		});
@@ -243,7 +244,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		() => {
 
 			ProgressBar.instance.gameObject.SetActive(false);
-			Debug.Log("World loaded");
+			DebugUtil.Log("World loaded");
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		});
 	}

@@ -21,7 +21,7 @@ public class Morphosis : MonoSingleton<Morphosis> {
 	}
 
 	private void Start () {
-		Debug.Log(Application.persistentDataPath);
+		DebugUtil.Log(Application.persistentDataPath);
 		Application.runInBackground = true;
 		CellMap.Init();
 

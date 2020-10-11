@@ -30,7 +30,7 @@ public class GenePanel : MonoSingleton<GenePanel> {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update GeneCellPanel");
+				DebugUtil.Log("Update GeneCellPanel");
 			}
 			if (selectedGene == null || !CreatureSelectionPanel.instance.hasSoloSelected) {
 				typeHeadingLabel.text = "Gene:";

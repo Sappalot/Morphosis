@@ -127,7 +127,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update Hibernate Panel");
+				DebugUtil.Log("Update Hibernate Panel");
 			}
 			ignoreSliderMoved = true;
 

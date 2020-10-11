@@ -89,7 +89,7 @@ public class WorkPanel : MonoBehaviour {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update CellPanel");
+				DebugUtil.Log("Update CellPanel");
 			}
 
 			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && gene == null)) {

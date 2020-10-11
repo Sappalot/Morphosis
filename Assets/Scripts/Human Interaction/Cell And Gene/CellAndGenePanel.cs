@@ -222,7 +222,7 @@ public class CellAndGenePanel : MonoBehaviour {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update GeneAndCellPanel");
+				DebugUtil.Log("Update GeneAndCellPanel");
 			}
 
 			if ((mode == PhenoGenoEnum.Phenotype && cell == null) || (mode == PhenoGenoEnum.Genotype && gene == null)) {

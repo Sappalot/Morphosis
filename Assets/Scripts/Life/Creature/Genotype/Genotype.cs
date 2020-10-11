@@ -358,10 +358,10 @@ public class Genotype : MonoBehaviour {
 
 	public bool TryUpdateGeneCellPattern(Creature creature, Vector2 position, float heading) { // heading 90 ==> origin is pointing north
 		if (isGeneCellPatternDirty) {
-			//Debug.Log("TryUpdateGeneCellPattern");
+			//DebugUtil.Log("TryUpdateGeneCellPattern");
 
 			if (GlobalSettings.instance.printoutAtDirtyMarkedUpdate) {
-				Debug.Log("Update Creature TryUpdateGeneCellPattern");
+				DebugUtil.Log("Update Creature TryUpdateGeneCellPattern");
 			}
 
 			Clear();
@@ -473,7 +473,7 @@ public class Genotype : MonoBehaviour {
 
 	public bool TryUpdateInterGeneCells() {
 		if (isInterGeneCellDirty) {
-			//Debug.Log("TryUpdateInterGeneCells ... nerves");
+			//DebugUtil.Log("TryUpdateInterGeneCells ... nerves");
 
 			UpdateBrain();
 
@@ -609,7 +609,7 @@ public class Genotype : MonoBehaviour {
 		foreach (Cell geneCell in geneCellsWithGene) {
 			SignalUnit signalUnit = geneCell.GetSignalUnit(signalUnitEnum);
 			if (signalUnit == null) {
-				Debug.Log("null");
+				DebugUtil.Log("null");
 			}
 
 			if (signalUnit.rootnessEnum == RootnessEnum.Rooted) {
