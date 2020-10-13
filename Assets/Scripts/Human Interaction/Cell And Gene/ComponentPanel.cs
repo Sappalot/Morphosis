@@ -50,10 +50,11 @@ public abstract class ComponentPanel : MonoBehaviour {
 	}
 
 	public void OnGenomeChanged() {
-		if (CreatureSelectionPanel.instance.hasSoloSelected) {
-			CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
-			CreatureSelectionPanel.instance.soloSelected.generation = 1;
-		}
+		// updates as gene is changes
+		//if (CreatureSelectionPanel.instance.hasSoloSelected) {
+		//	CreatureSelectionPanel.instance.soloSelected.creation = CreatureCreationEnum.Forged;
+		//	CreatureSelectionPanel.instance.soloSelected.generation = 1;
+		//}
 
 		CreatureSelectionPanel.instance.MakeDirty();
 		GenomePanel.instance.MakeDirty();

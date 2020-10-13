@@ -367,7 +367,7 @@ public class Gene {
 		eggCellFertilizeLogic.SetCellToLocked(2, 1); // above attachment
 		eggCellFertilizeLogic.UpdateConnections();
 		eggCellFertilizeEnergySensor.Defaultify();
-		eggCellFertilizeEnergySensor.thresholdMin = 20f;
+		eggCellFertilizeEnergySensor.thresholdMin = 0f; // same as 
 		eggCellFertilizeEnergySensor.threshold = 25f;
 		// attachmentSensor: no need, no settings
 		// ^ egg ^

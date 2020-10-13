@@ -13,6 +13,8 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 	public Text selectedCreatureText;
 	public Text creatureCreatedText;
+	public AgeBar ageBar;
+	public Text creatureAgeText;
 
 	//right side
 	public Text moveButtonText;
@@ -935,6 +937,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			OnPressedRestorePreviousSelection();
 		}
 
+
+
+
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update CreatureSelectionPanel");
@@ -972,6 +977,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 				selectedCreatureText.text = "";
 				creatureCreatedText.text = "";
 
+				ageBar.isOn = false;
+				creatureAgeText.text = "";
+
 				//right side
 				moveButtonText.color = ColorScheme.instance.grayedOut;
 				rotateButtonText.color = ColorScheme.instance.grayedOut;
@@ -999,9 +1007,21 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			} else if (selection.Count == 1) {
 				selectedCreatureText.text = soloSelected.id; // soloSelected.nickname;
 				//motherText.text = "Mother: " + (soloSelected.hasMotherSoul ? (soloSelected.soul.isConnectedWithMotherSoul ? "[" : "") + soloSelected.motherSoul.id + (soloSelected.soul.isConnectedWithMotherSoul ? "]" : "") : "<none>");
-
 				creatureCreatedText.text = soloSelected.creation.ToString() + (soloSelected.creation != CreatureCreationEnum.Frozen ? ", Generation: " + soloSelected.generation : "");
-				
+
+				if (soloSelected.creation != CreatureCreationEnum.Frozen) {
+					ulong ageInSeconds = (ulong)(soloSelected.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime);
+					if (ageInSeconds < 3600) {
+						creatureAgeText.text = "Age: " + TimeUtil.GetTimeString(ageInSeconds);
+					} else {
+						creatureAgeText.text = "Age: Ancient";
+					}
+					ageBar.isOn = true;
+					ageBar.SetAge(ageInSeconds, GlobalSettings.instance.phenotype.maxAge);
+				} else {
+					ageBar.isOn = false;
+					creatureAgeText.text = "";
+				}
 
 				//right side
 				moveButtonText.color = Color.black;
@@ -1040,7 +1060,9 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			} else {
 				selectedCreatureText.text = selection.Count + " Creatures";
 				creatureCreatedText.text = "-";
-				
+
+				ageBar.isOn = false;
+				creatureAgeText.text = "";
 
 				//right side
 				moveButtonText.color = Color.black;

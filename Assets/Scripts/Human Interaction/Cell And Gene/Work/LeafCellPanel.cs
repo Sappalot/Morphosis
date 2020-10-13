@@ -45,6 +45,10 @@ public class LeafCellPanel : ComponentPanel {
 
 	private void Update() {
 		if (isDirty) {
+			if (selectedCell == null) {
+				return;
+			}
+
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update CellPanel");
 			}

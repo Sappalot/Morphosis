@@ -10,11 +10,11 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public SizeBar sizeBar;
 	public Text sizeText;
 	public EnergyBar energyBar;
-	public AgeBar ageBar;
+	
 	public Text creatureSpeed;
 	public Text creatureEffect;
 	public Text creatureEffectAverage;
-	public Text creatureAgeText;
+	
 
 	public Toggle followToggle;
 	public Toggle yawToggle;
@@ -102,7 +102,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			if (solo == null || !solo.phenotype.isAlive) {
 				sizeBar.isOn = false;
 				energyBar.isOn = false;
-				ageBar.isOn = false;
+				
 				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
 					creatureEffect.text = "Total Effect/Cell: ";
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction  || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
@@ -113,7 +113,6 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 					creatureEffect.text = "Flux Effect/Cell: ";
 				}
 
-				creatureAgeText.text = "";
 				creatureSpeed.text = "Speed:";
 
 				isDirty = false;
@@ -144,17 +143,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 				creatureEffect.text = string.Format("Flux Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.EffectUpPerCell(false, true), solo.phenotype.EffectDownPerCell(false, false, true), solo.phenotype.EffectPerCell(false, false, true));
 			}
 
-			if (solo.creation != CreatureCreationEnum.Frozen) {
-				ulong ageInSeconds = (ulong)(solo.GetAgeTicks(World.instance.worldTicks) * Time.fixedDeltaTime);
-				if (ageInSeconds < 3600) {
-					creatureAgeText.text = "Age: " + TimeUtil.GetTimeString(ageInSeconds);
-				} else {
-					creatureAgeText.text = "Age: Ancient";
-				}
 
-				ageBar.isOn = true;
-				ageBar.SetAge(ageInSeconds, GlobalSettings.instance.phenotype.maxAge);
-			}
 
 
 			creatureSpeed.text = string.Format("Speed: {0:F2} m/s", solo.phenotype.speed);
