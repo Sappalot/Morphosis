@@ -27,6 +27,7 @@ public enum SignalUnitEnum {
 	
 	EnergySensor,
 	EffectSensor,
+	SurroundingSensor, //eye
 
 	OriginDetatchLogicBox,
 	OriginSizeSensor,
