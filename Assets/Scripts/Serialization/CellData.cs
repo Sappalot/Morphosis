@@ -36,6 +36,7 @@ public class CellData {
 	// Sensors
 	public CommonSensorData energySensorData;
 	public CommonSensorData effectSensorData;
+	public CommonSensorData surroundingSensorData;
 
 	// Origin
 	public int originPulseTick;

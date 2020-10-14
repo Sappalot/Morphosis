@@ -99,6 +99,7 @@ public class Gene {
 	// Sensors...
 	public GeneEnergySensor energySensor;
 	public GeneEffectSensor effectSensor;
+	public GeneSurroundingSensor surroundingSensor;
 	// ^ sensors ^
 
 	// Origin...
@@ -225,6 +226,8 @@ public class Gene {
 				return energySensor;
 			case SignalUnitEnum.EffectSensor:
 				return effectSensor;
+			case SignalUnitEnum.SurroundingSensor:
+				return surroundingSensor;
 			case SignalUnitEnum.OriginDetatchLogicBox:
 				if (isOrigin) {
 					return originDetatchLogicBox;
@@ -313,6 +316,7 @@ public class Gene {
 		dendritesLogicBox = new GeneLogicBox(SignalUnitEnum.DendritesLogicBox, this.genotypeDirtyfy);
 		energySensor = new GeneEnergySensor(SignalUnitEnum.EnergySensor, this.genotypeDirtyfy);
 		effectSensor = new GeneEffectSensor(SignalUnitEnum.EffectSensor, this.genotypeDirtyfy);
+		surroundingSensor = new GeneSurroundingSensor(SignalUnitEnum.SurroundingSensor, this.genotypeDirtyfy);
 
 		originDetatchLogicBox = new GeneLogicBox(SignalUnitEnum.OriginDetatchLogicBox, this.genotypeDirtyfy);
 		originSizeSensor = new GeneSizeSensor(SignalUnitEnum.OriginSizeSensor, this.genotypeDirtyfy);
@@ -385,6 +389,7 @@ public class Gene {
 
 		energySensor.Defaultify();
 		effectSensor.Defaultify();
+		surroundingSensor.Defaultify();
 
 		// ...origing...
 		originDetatchLogicBox.Defaultify();
@@ -481,6 +486,7 @@ public class Gene {
 		// Sensors
 		energySensor.Mutate(strength);
 		effectSensor.Mutate(strength);
+		surroundingSensor.Mutate(strength);
 
 		// Origin..
 		originDetatchLogicBox.Mutate(strength, isOrigin);
@@ -574,6 +580,7 @@ public class Gene {
 		// Sensors
 		geneData.energySensorData = energySensor.UpdateData();
 		geneData.effectSensorData = effectSensor.UpdateData();
+		geneData.surroundingSensorData = surroundingSensor.UpdateData();
 
 		// Origin
 		geneData.originPulsePeriodTicks =     originPulseTickPeriod;
@@ -627,6 +634,7 @@ public class Gene {
 		// Sensors
 		energySensor.ApplyData(geneData.energySensorData);
 		effectSensor.ApplyData(geneData.effectSensorData);
+		surroundingSensor.ApplyData(geneData.surroundingSensorData);
 
 		// Origin
 		originPulseTickPeriod = geneData.originPulsePeriodTicks == 0 ? 80 : geneData.originPulsePeriodTicks;

@@ -31,6 +31,7 @@ public class GeneData {
 	// Sensors
 	public GeneEnergySensorData energySensorData;
 	public GeneEffectSensorData effectSensorData;
+	public GeneSurroundingSensorData surroundingSensorData;
 
 	// origin
 	public int originPulsePeriodTicks; // ticks / complete wave

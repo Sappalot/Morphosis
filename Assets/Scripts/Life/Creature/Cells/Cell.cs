@@ -127,6 +127,7 @@ public abstract class Cell : MonoBehaviour {
 	public LogicBox dendritesLogicBox;
 	public EnergySensor energySensor;
 	public EffectSensor effectSensor;
+	public SurroundingSensor surroundingSensor;
 	public LogicBox originDetatchLogicBox;
 	public SizeSensor originSizeSensor;
 
@@ -140,6 +141,7 @@ public abstract class Cell : MonoBehaviour {
 		dendritesLogicBox.PreUpdateNervesGenotype();
 		energySensor.PreUpdateNervesGenotype();
 		effectSensor.PreUpdateNervesGenotype();
+		surroundingSensor.PreUpdateNervesGenotype();
 		if (isOrigin) {
 			originDetatchLogicBox.PreUpdateNervesGenotype();
 			originSizeSensor.PreUpdateNervesGenotype();
@@ -153,9 +155,10 @@ public abstract class Cell : MonoBehaviour {
 		//constant sensor, no input
 		axon.UpdateInputNervesGenotype(genotype);
 		dendritesLogicBox.UpdateInputNervesGenotype(genotype);
-		
+
 		//energySensor, no input
 		//effectSensor, no input
+		//surroundingSensor, no input
 		if (isOrigin) {
 			originDetatchLogicBox.UpdateInputNervesGenotype(genotype);
 		}
@@ -198,6 +201,10 @@ public abstract class Cell : MonoBehaviour {
 			nerves.AddRange(effectSensor.GetAllNervesGenotypePhenotype());
 		}
 
+		if (surroundingSensor.rootnessEnum != RootnessEnum.Unrooted) {
+			nerves.AddRange(surroundingSensor.GetAllNervesGenotypePhenotype());
+		}
+
 		if (isOrigin) {
 			nerves.AddRange(originDetatchLogicBox.GetAllNervesGenotypePhenotype());
 			if (originSizeSensor.rootnessEnum != RootnessEnum.Unrooted) { // input from origin can be disabled leading to it not being rooted
@@ -225,6 +232,7 @@ public abstract class Cell : MonoBehaviour {
 		dendritesLogicBox.UpdateAreaTablesPhenotype();
 		energySensor.UpdateAreaTablesPhenotype();
 		effectSensor.UpdateAreaTablesPhenotype();
+		// surroundingSensor, no areaTable
 		if (isOrigin) {
 			originDetatchLogicBox.UpdateAreaTablesPhenotype();
 		}
@@ -258,6 +266,10 @@ public abstract class Cell : MonoBehaviour {
 			effectSensor.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
 		}
 
+		if (geneCell.surroundingSensor.rootnessEnum == RootnessEnum.Rooted) {
+			surroundingSensor.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
+		}
+
 		if (isOrigin) {
 			if (geneCell.originDetatchLogicBox.rootnessEnum == RootnessEnum.Rooted) {
 				originDetatchLogicBox.CloneNervesFromGenotypeToPhenotype(geneCell, phenotype);
@@ -279,20 +291,11 @@ public abstract class Cell : MonoBehaviour {
 		dendritesLogicBox.rootnessEnum =			DetermineRootness(geneCell.dendritesLogicBox.rootnessEnum,		dendritesLogicBox.rootnessEnum);
 		energySensor.rootnessEnum =					DetermineRootness(geneCell.energySensor.rootnessEnum,			energySensor.rootnessEnum);
 		effectSensor.rootnessEnum =					DetermineRootness(geneCell.effectSensor.rootnessEnum,			effectSensor.rootnessEnum);
+		surroundingSensor.rootnessEnum =			DetermineRootness(geneCell.surroundingSensor.rootnessEnum,		surroundingSensor.rootnessEnum);
 		if (isOrigin) {
 			originDetatchLogicBox.rootnessEnum =	DetermineRootness(geneCell.originDetatchLogicBox.rootnessEnum,	originDetatchLogicBox.rootnessEnum);
 			originSizeSensor.rootnessEnum =			DetermineRootness(geneCell.originSizeSensor.rootnessEnum,		originSizeSensor.rootnessEnum);
 		}
-
-		//constantSensor.rootnessEnum =		(geneCell.constantSensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
-		//axon.rootnessEnum =					(geneCell.axon.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
-		//dendritesLogicBox.rootnessEnum =	(geneCell.dendritesLogicBox.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
-		//energySensor.rootnessEnum =			(geneCell.energySensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
-		//effectSensor.rootnessEnum =			(geneCell.effectSensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
-		//if (isOrigin) {
-		//	originDetatchLogicBox.rootnessEnum =	(geneCell.originDetatchLogicBox.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
-		//	originSizeSensor.rootnessEnum =			(geneCell.originSizeSensor.rootnessEnum == RootnessEnum.Rooted) ? RootnessEnum.Rootable : RootnessEnum.Unrooted;
-		//}
 	}
 
 	private static RootnessEnum DetermineRootness(RootnessEnum geneRootness, RootnessEnum cellRootness) {
@@ -312,6 +315,7 @@ public abstract class Cell : MonoBehaviour {
 		dendritesLogicBox.Clear();
 		energySensor.Clear();
 		effectSensor.Clear();
+		surroundingSensor.Clear();
 		originDetatchLogicBox.Clear();
 		originSizeSensor.Clear();
 	}
@@ -338,6 +342,7 @@ public abstract class Cell : MonoBehaviour {
 		dendritesLogicBox.ComputeSignalOutput(deltaTicks);
 		energySensor.ComputeSignalOutput(deltaTicks);
 		effectSensor.ComputeSignalOutput(deltaTicks);
+		surroundingSensor.ComputeSignalOutput(deltaTicks);
 		if (isOrigin) {
 			originDetatchLogicBox.ComputeSignalOutput(deltaTicks);
 			originSizeSensor.ComputeSignalOutput(deltaTicks);
@@ -367,6 +372,8 @@ public abstract class Cell : MonoBehaviour {
 			return energySensor;
 		} else if (signalUnit == SignalUnitEnum.EffectSensor) {
 			return effectSensor;
+		} else if (signalUnit == SignalUnitEnum.SurroundingSensor) {
+			return surroundingSensor;
 		} else if (signalUnit == SignalUnitEnum.OriginDetatchLogicBox) {
 			return originDetatchLogicBox;
 		} else if (signalUnit == SignalUnitEnum.OriginSizeSensor) {
@@ -439,10 +446,11 @@ public abstract class Cell : MonoBehaviour {
 
 		// Sensors...
 		constantSensor = new ConstantSensor(SignalUnitEnum.ConstantSensor, this); // own component
-		axon = new Axon(SignalUnitEnum.Axon, this);
+		axon = new Axon(SignalUnitEnum.Axon, this); // own component
 		dendritesLogicBox = new LogicBox(SignalUnitEnum.DendritesLogicBox, this); // own component
 		energySensor = new EnergySensor(SignalUnitEnum.EnergySensor, this); // own component
 		effectSensor = new EffectSensor(SignalUnitEnum.EffectSensor, this); // own component
+		surroundingSensor = new SurroundingSensor(SignalUnitEnum.SurroundingSensor, this); // own component
 		originDetatchLogicBox = new LogicBox(SignalUnitEnum.OriginDetatchLogicBox, this); // inside origin component
 		originSizeSensor = new SizeSensor(SignalUnitEnum.OriginSizeSensor, this); // inside origin component
 
@@ -1897,6 +1905,7 @@ public abstract class Cell : MonoBehaviour {
 		// Sensors
 		cellData.energySensorData = energySensor.UpdateData();
 		cellData.effectSensorData = effectSensor.UpdateData();
+		cellData.surroundingSensorData = surroundingSensor.UpdateData();
 
 		// Origin
 		cellData.originPulseTick = originPulseTick;
@@ -1953,6 +1962,7 @@ public abstract class Cell : MonoBehaviour {
 		// Sensors
 		energySensor.ApplyData(cellData.energySensorData);
 		effectSensor.ApplyData(cellData.effectSensorData);
+		surroundingSensor.ApplyData(cellData.surroundingSensorData);
 
 		originPulseTick = cellData.originPulseTick;
 		originDetatchLogicBox.ApplyData(cellData.originDetatchLogicBoxData);

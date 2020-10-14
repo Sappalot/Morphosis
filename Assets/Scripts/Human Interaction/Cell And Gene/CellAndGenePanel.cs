@@ -76,8 +76,8 @@ public class CellAndGenePanel : MonoBehaviour {
 		axonPanel.MakeDirty();
 		dendritesLogicBoxPanel.MakeDirty();
 		energySensorPanel.MakeDirty();
-		surroundingSensorPanel.MakeDirty();
 		effectSensorPanel.MakeDirty();
+		surroundingSensorPanel.MakeDirty();
 		buildPriorityPanel.MakeDirty();
 
 		originPanel.isGhost = !gene.isOrigin;
