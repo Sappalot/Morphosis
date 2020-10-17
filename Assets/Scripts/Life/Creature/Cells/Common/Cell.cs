@@ -3,20 +3,14 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using Boo.Lang.Runtime;
 
+// Base class to all Cell types
 public abstract class Cell : MonoBehaviour {
 
 	//------- Inspector
-	public SpriteRenderer cellSelected; //transparent
-	public SpriteRenderer triangleSprite;
-	public SpriteRenderer openCircleSprite; //cell type colour
-	public SpriteRenderer filledCircleSprite; //cell type colour
-	public SpriteRenderer creatureSelectedSprite;
-	public SpriteRenderer shadowSprite;
-	public SpriteRenderer skelletonBone;
-	public Text label;
-	public Canvas labelCanvas;
+	public CellCommon cellCommon; //To be able to make changes quickly to everything, stuff that is same for all types and not overridable
 
-	public Transform rotatedRoot; // All under this root will be rotated according to heading 0 = east, 90 = north
+	public Canvas cellLabelCanvas; // need to be here since scaled when muscle
+	public Text cellLabelCanvasLabel;
 
 	public SpringJoint2D northSpring;
 	public SpringJoint2D southEastSpring;
@@ -440,8 +434,8 @@ public abstract class Cell : MonoBehaviour {
 		cellNeighbourDictionary.Add(5, southEastNeighbour);
 
 		UpdateOutline(false);
-		if (buds != null) {
-			buds.Init();
+		if (cellCommon.buds != null) {
+			cellCommon.buds.Init();
 		}
 
 		// Sensors...
@@ -545,31 +539,30 @@ public abstract class Cell : MonoBehaviour {
 	// Text ...
 
 	public void SetLabelEnabled(bool enabled) {
-		labelCanvas.gameObject.SetActive(enabled);
-		label.gameObject.SetActive(enabled);
+		cellLabelCanvas.gameObject.SetActive(enabled);
+		cellLabelCanvasLabel.gameObject.SetActive(enabled);
 	}
 
 	public void RemoveLabelCanvas() {
-		Destroy(labelCanvas);
+		Destroy(cellLabelCanvas);
 	}
 
 
 	public void SetLabelText(string text) {
-		label.text = text;
+		cellLabelCanvasLabel.text = text;
 	}
 
 	public void SetLabelColor(Color color) {
-		label.color = color;
+		cellLabelCanvasLabel.color = color;
 	}
 
 	public void SetCorrectLabelOrientation() {
-		labelCanvas.transform.rotation = Quaternion.identity;
+		cellLabelCanvas.transform.rotation = Quaternion.identity;
 	}
 
 	// ^ Text ^
 
-	// Buds...
-	public CellBuds buds;
+
 
 	// Only graphics, update only when cells has been built, removed or detatched
 	public void UpdateBuds() {
@@ -578,28 +571,28 @@ public abstract class Cell : MonoBehaviour {
 				int localCardinalIndex = AngleUtil.CardinalIndexRawToSafe(bindCardinalIndex + worldCardinalIndex - 1);
 				Cell budCell = creature.genotype.GetCellAtMapPosition(CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
 				bool show = !HasOwnNeighbourCell(localCardinalIndex) && budCell != null; // If it is an empty spot (or if it full but child origin or mother placenta)
-				//bool isMotherPlacenta = creature.phenotype.IsMotherPlacentaLocation(creature, CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
-				//bool isChildOrigin = creature.phenotype.IsChildOriginLocation(creature, CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
-				buds.SetEnabledBud(worldCardinalIndex, show);
-				buds.SetEnabledPriority(worldCardinalIndex, false);
+																						 //bool isMotherPlacenta = creature.phenotype.IsMotherPlacentaLocation(creature, CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
+																						 //bool isChildOrigin = creature.phenotype.IsChildOriginLocation(creature, CellMap.GetGridNeighbourGridPosition(mapPosition, localCardinalIndex));
+				cellCommon.buds.SetEnabledBud(worldCardinalIndex, show);
+				cellCommon.buds.SetEnabledPriority(worldCardinalIndex, false);
 				if (show) {
 					CellNeighbour n = GetNeighbour(localCardinalIndex);
 					if (n != null) {
 						bool isPriorityBud = n.isPriorityBud; //Priority bud status should allready have been updated in phenotype
-						buds.SetEnabledPriority(worldCardinalIndex, isPriorityBud);
+						cellCommon.buds.SetEnabledPriority(worldCardinalIndex, isPriorityBud);
 						if (creature.IsAttachedToMotherAlive() && creature.phenotype.cellCount >= creature.CellCountAtCompleteness(creature.genotype.originCell.gene.originEmbryoMaxSizeCompleteness)) { // embryo max size
-							buds.SetColorOfPriority(worldCardinalIndex, n.isPriorityBudOnAttachedCreature ? ColorScheme.instance.budBlockedByAttached : ColorScheme.instance.budEmbryoMaxSize);
+							cellCommon.buds.SetColorOfPriority(worldCardinalIndex, n.isPriorityBudOnAttachedCreature ? ColorScheme.instance.budBlockedByAttached : ColorScheme.instance.budEmbryoMaxSize);
 						} else {
-							buds.SetColorOfPriority(worldCardinalIndex, n.isPriorityBudOnAttachedCreature ? ColorScheme.instance.budBlockedByAttached : ColorScheme.instance.budHighestPrio);
+							cellCommon.buds.SetColorOfPriority(worldCardinalIndex, n.isPriorityBudOnAttachedCreature ? ColorScheme.instance.budBlockedByAttached : ColorScheme.instance.budHighestPrio);
 						}
-						buds.SetColorOfBud(worldCardinalIndex, budCell.GetColor());
+						cellCommon.buds.SetColorOfBud(worldCardinalIndex, budCell.GetColor());
 					}
 				}
 			}
 		} else {
 			for (int index = 0; index < 6; index++) {
-				buds.SetEnabledBud(index, false);
-				buds.SetEnabledPriority(index, false);
+				cellCommon.buds.SetEnabledBud(index, false);
+				cellCommon.buds.SetEnabledPriority(index, false);
 			}
 		}
 	}
@@ -1019,53 +1012,53 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void ShowSkelletonBone(bool show) {
-		skelletonBone.enabled = show;
+		cellCommon.skelletonBone.enabled = show;
 	}
 
 	public void ShowTriangle(bool show) {
-		triangleSprite.enabled = show;
+		cellCommon.triangleSprite.enabled = show;
 	}
 
 	public void SetTriangleColor(Color color) {
-		triangleSprite.color = color;
+		cellCommon.triangleSprite.color = color;
 	}
 
 	public void ShowOpenCircle(bool show) {
-		openCircleSprite.enabled = show;
+		cellCommon.openCircleSprite.enabled = show;
 	}
 
 	public void ShowFilledCircle(bool show) {
-		filledCircleSprite.enabled = show;
+		cellCommon.filledCircleSprite.enabled = show;
 	}
 
 	public void ShowOutline(bool show) {
 		//creatureSelectedSprite.gameObject.SetActive(show);
-		creatureSelectedSprite.enabled = show;
+		cellCommon.creatureSelectedSprite.enabled = show;
 	}
 
 	public void UpdateOutline(bool isHighlited) {
 		if (isHighlited) {
-			creatureSelectedSprite.color = ColorScheme.instance.outlineSelected;
+			cellCommon.creatureSelectedSprite.color = ColorScheme.instance.outlineSelected;
 		} else {
 			if (creature != null) {
-				creatureSelectedSprite.color = creature.phenotype.outlineClusterColor;
+				cellCommon.creatureSelectedSprite.color = creature.phenotype.outlineClusterColor;
 			} else {
-				creatureSelectedSprite.color = ColorScheme.instance.outlineCluster;
+				cellCommon.creatureSelectedSprite.color = ColorScheme.instance.outlineCluster;
 			}
 		}
 	}
 
 	public void SetOutlineColor(Color color) {
-		creatureSelectedSprite.color = color;
+		cellCommon.creatureSelectedSprite.color = color;
 	}
 
 	public void ShowCellSelected(bool on) {
-		cellSelected.enabled = on;
+		cellCommon.cellSelected.enabled = on;
 	}
 
 	private bool isOnTop = false;
 	public void ShowOnTop(bool onTop) {
-		shadowSprite.enabled = onTop;
+		cellCommon.shadowSprite.enabled = onTop;
 		SpriteRenderer[] allRenderers = GetComponentsInChildren<SpriteRenderer>(true);
 		foreach (SpriteRenderer s in allRenderers) {
 			if (isOnTop && !onTop) {
@@ -1075,9 +1068,9 @@ public abstract class Cell : MonoBehaviour {
 			}
 		}
 		if (isOnTop && !onTop) {
-			labelCanvas.sortingOrder = labelCanvas.sortingOrder - 10;
+			cellLabelCanvas.sortingOrder = cellLabelCanvas.sortingOrder - 10;
 		} else if (!isOnTop && onTop) {
-			labelCanvas.sortingOrder = labelCanvas.sortingOrder + 10;
+			cellLabelCanvas.sortingOrder = cellLabelCanvas.sortingOrder + 10;
 		}
 
 		if (!onTop) {
@@ -1089,11 +1082,11 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void SetTringleHeadingAngle(float angle) {
-		rotatedRoot.rotation = Quaternion.Euler(0, 0, angle);
+		cellCommon.rotatedRoot.rotation = Quaternion.Euler(0, 0, angle);
 	}
 
 	public void SetTringleFlipSide(FlipSideEnum flip) {
-		triangleSprite.flipX = (flip == FlipSideEnum.WhiteBlack);
+		cellCommon.triangleSprite.flipX = (flip == FlipSideEnum.WhiteBlack);
 	}
 
 	public Vector2 velocity {
@@ -1398,7 +1391,7 @@ public abstract class Cell : MonoBehaviour {
 			heading = AngleUtil.CardinalIndexToAngle(bindCardinalIndex) + angleDiffFromBindpose;
 		}
 
-		rotatedRoot.localRotation = Quaternion.Euler(0f, 0f, heading);
+		cellCommon.rotatedRoot.localRotation = Quaternion.Euler(0f, 0f, heading);
 	}
 
 	public float angleDiffFromBindpose {
@@ -1582,53 +1575,66 @@ public abstract class Cell : MonoBehaviour {
 
 		// Selector spin
 		if (mayBeSelected) {
-			cellSelected.transform.Rotate(0f, 0f, -Time.unscaledDeltaTime * 90f);
+			cellCommon.cellSelected.transform.Rotate(0f, 0f, -Time.unscaledDeltaTime * 90f);
 		}
 
-		openCircleSprite.color = GetColor();
+		cellCommon.openCircleSprite.color = GetColor();
+
+		// update sensor regardless of view
+		if (surroundingSensor.rootnessEnum == RootnessEnum.Unrooted) {
+			SetLabelEnabled(false);
+			cellCommon.cellEyeZone.gameObject.SetActive(false);
+			cellCommon.cellEyeBall.gameObject.SetActive(false);
+		} else if (surroundingSensor.rootnessEnum == RootnessEnum.Rootable || surroundingSensor.rootnessEnum == RootnessEnum.Rooted) {
+			//SetLabelEnabled(true);
+			//SetLabelText("E");
+			//SetLabelColor(ColorScheme.instance.signalRootable);
+			cellCommon.cellEyeBall.gameObject.SetActive(true);
+			cellCommon.cellEyeBall.fieldOfView = surroundingSensor.fieldOfView;
+			cellCommon.cellEye.transform.localRotation = flipSide == FlipSideEnum.BlackWhite ? Quaternion.Euler(0, 0, surroundingSensor.direction) : Quaternion.Euler(0, 0, -surroundingSensor.direction);
+
+			if (CreatureSelectionPanel.instance.IsSelected(creature)) {
+				cellCommon.cellEyeZone.gameObject.SetActive(true);
+				cellCommon.cellEyeZone.UpdateGraphics(surroundingSensor.fieldOfView, surroundingSensor.rangeNear, surroundingSensor.rangeFar);
+			} else {
+				cellCommon.cellEyeZone.gameObject.SetActive(false);
+			}
+		}
 
 		// Main 2 Circles
 		if (phenoGeno == PhenoGenoEnum.Phenotype) {
 			SetLabelEnabled(false);
 
+			if (GlobalPanel.instance.graphicsSkelletonBoneToggle.isOn) {
+				cellCommon.skelletonBone.color = GetColor(PhenoGenoEnum.Phenotype) * 0.95f;
+			}
+
 			if (creature.creation == CreatureCreationEnum.Frozen) {
-				filledCircleSprite.color = GetColor();
+				cellCommon.filledCircleSprite.color = GetColor();
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.type) {
 
-				filledCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
-				openCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
+				cellCommon.filledCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
+				cellCommon.openCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
 
-				SetLabelEnabled(true);
-				if (surroundingSensor.rootnessEnum == RootnessEnum.Unrooted) {
-					SetLabelEnabled(false);
-				} else if (surroundingSensor.rootnessEnum == RootnessEnum.Rootable) {
-					SetLabelEnabled(true);
-					SetLabelText("E");
-					SetLabelColor(Color.gray);
-				} else /* Rooted */{
-					SetLabelEnabled(true);
-					SetLabelText("E");
-					SetLabelColor(Color.black);
-				}
 
 				// overrides
 				if (effectProductionPredPrayDown > 0f) {
-					openCircleSprite.color = ColorScheme.instance.isHurt;
+					cellCommon.openCircleSprite.color = ColorScheme.instance.isHurt;
 				} else if (creature.phenotype.visualTelepoke > 0) {
-					openCircleSprite.color = ColorScheme.instance.isTelepoked;
+					cellCommon.openCircleSprite.color = ColorScheme.instance.isTelepoked;
 				} else if (creature.phenotype.IsSliding(World.instance.worldTicks)) {
-					openCircleSprite.color = ColorScheme.instance.isSliding;
+					cellCommon.openCircleSprite.color = ColorScheme.instance.isSliding;
 				} else if (isNeighbourToShell) {
-					openCircleSprite.color = ColorScheme.instance.shell;
+					cellCommon.openCircleSprite.color = ColorScheme.instance.shell;
 				}
 				
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.energy) {
-				filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(energyFullness);
+				cellCommon.filledCircleSprite.color = ColorScheme.instance.cellGradientEnergy.Evaluate(energyFullness);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.flux) {
 				float intensity = 0.2f;
 				float red = Mathf.Min(EffectDown(false, false, true, true) * intensity, 1f);
 				float green = Mathf.Min(EffectUp(false, true, true) * intensity, 1f);
-				filledCircleSprite.color = new Color(red, green, 0f);
+				cellCommon.filledCircleSprite.color = new Color(red, green, 0f);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.effect) {
 				float effectValue = 0f;
 
@@ -1649,19 +1655,19 @@ public abstract class Cell : MonoBehaviour {
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
 					effectValue = 0.5f + creature.phenotype.EffectPerCell(false, false, true) * 0.1f;
 				}
-				filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
+				cellCommon.filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.leafExposure) {
 				Color color = Color.black;
 				if (GetCellType() == CellTypeEnum.Leaf) {
 					color = ColorScheme.instance.cellGradientLeafExposure.Evaluate((this as LeafCell).lowPassExposure);
 				}
-				filledCircleSprite.color = color;
-				openCircleSprite.color = color;
+				cellCommon.filledCircleSprite.color = color;
+				cellCommon.openCircleSprite.color = color;
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.childCountCreature) {
 				float value = 0.05f + creature.ChildrenCountDeadOrAlive() * 0.1f;
-				filledCircleSprite.color = ColorScheme.instance.cellCreatureChildCount.Evaluate(value);
+				cellCommon.filledCircleSprite.color = ColorScheme.instance.cellCreatureChildCount.Evaluate(value);
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.predatorPray) {
-				filledCircleSprite.color = Color.blue;
+				cellCommon.filledCircleSprite.color = Color.blue;
 				bool hasPray = false, hasPredator = false, isEatingOnPray = false, isPredatorEatinOnMe = false;
 
 				if (GetCellType() == CellTypeEnum.Jaw) {
@@ -1679,49 +1685,49 @@ public abstract class Cell : MonoBehaviour {
 					}
 				}
 
-				openCircleSprite.color = Color.blue;
-				filledCircleSprite.color = Color.blue;
+				cellCommon.openCircleSprite.color = Color.blue;
+				cellCommon.filledCircleSprite.color = Color.blue;
 
 				//outer
 				if (hasPray && hasPredator) {
-					openCircleSprite.color = Color.yellow;
+					cellCommon.openCircleSprite.color = Color.yellow;
 				} else if (hasPray) {
-					openCircleSprite.color = Color.green;
+					cellCommon.openCircleSprite.color = Color.green;
 				} else if (hasPredator) {
-					openCircleSprite.color = Color.red;
+					cellCommon.openCircleSprite.color = Color.red;
 				}
 
 				//inner
 				if (isEatingOnPray && isPredatorEatinOnMe) {
-					filledCircleSprite.color = Color.yellow;
+					cellCommon.filledCircleSprite.color = Color.yellow;
 				} else if (isEatingOnPray) {
-					filledCircleSprite.color = Color.green;
+					cellCommon.filledCircleSprite.color = Color.green;
 				} else if (isPredatorEatinOnMe) {
-					filledCircleSprite.color = Color.red;
+					cellCommon.filledCircleSprite.color = Color.red;
 				}
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.typeAndPredatorPray) {
 				float effectValue = 0.5f + effectProductionPredPray * 0.02f;
 				if (effectProductionPredPray == 0f) {
-					filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
+					cellCommon.filledCircleSprite.color = ColorScheme.instance.ToColor(GetCellType());
 				} else if (GetCellType() == CellTypeEnum.Jaw && effectProductionPredPray < 0f) {
-					filledCircleSprite.color = Color.white;
+					cellCommon.filledCircleSprite.color = Color.white;
 				} else {
-					filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
+					cellCommon.filledCircleSprite.color = ColorScheme.instance.cellGradientEffect.Evaluate(effectValue);
 				}
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.update) {
-				filledCircleSprite.color = didUpdateFunctionThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
+				cellCommon.filledCircleSprite.color = didUpdateFunctionThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
 				//openCircleSprite.color = didUpdateEnergyThisFrame > 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.creation) {
 				if (creature.creation == CreatureCreationEnum.Born) {
-					filledCircleSprite.color = Color.magenta;
+					cellCommon.filledCircleSprite.color = Color.magenta;
 				} else if (creature.creation == CreatureCreationEnum.Cloned) {
-					filledCircleSprite.color = Color.yellow;
+					cellCommon.filledCircleSprite.color = Color.yellow;
 				} else {
 					//forged
-					filledCircleSprite.color = Color.cyan;
+					cellCommon.filledCircleSprite.color = Color.cyan;
 				}
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.individual) {
-				filledCircleSprite.color = creature.phenotype.individualColor;
+				cellCommon.filledCircleSprite.color = creature.phenotype.individualColor;
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.pulse) {
 				//filledCircleSprite.color = isOrigin && originPulseTick == 0 ? ColorScheme.instance.ToColor(GetCellType()) : Color.blue;
 				if (isAxonEnabled) {
@@ -1729,36 +1735,36 @@ public abstract class Cell : MonoBehaviour {
 					float green = 0f;
 					float blue = 0f;
 					green = blue = 0.5f + GetAxonPulseValue(0) * 0.5f;
-					filledCircleSprite.color = new Color(red, green, blue);
+					cellCommon.filledCircleSprite.color = new Color(red, green, blue);
 				} else if (GetCellType() == CellTypeEnum.Muscle) {
 					if (((MuscleCell)this).masterAxonGridPosition == null) {
-						filledCircleSprite.color = Color.black; // has no masterAxonGridPosition, should have
+						cellCommon.filledCircleSprite.color = Color.black; // has no masterAxonGridPosition, should have
 					} else {
 						Cell masterAxon = creature.phenotype.cellMap.GetCell(((MuscleCell)this).masterAxonGridPosition);
 						if (masterAxon == null) {
-							filledCircleSprite.color = Color.gray; // has a masterAxonGridPosition, but there is no cell there (could be killed or unborn)
+							cellCommon.filledCircleSprite.color = Color.gray; // has a masterAxonGridPosition, but there is no cell there (could be killed or unborn)
 						} else {
 							if (((MuscleCell)this).masterAxoneDistance != null) {
 								float red = 0f;
 								float green = 0f;
 								float blue = 0f;
 								red = green = 0.5f + masterAxon.GetAxonPulseValue((int)((MuscleCell)this).masterAxoneDistance) * 0.5f;
-								filledCircleSprite.color = new Color(red, green, blue);
+								cellCommon.filledCircleSprite.color = new Color(red, green, blue);
 							}
 						}
 					}
 				} else {
-					filledCircleSprite.color = Color.blue;
+					cellCommon.filledCircleSprite.color = Color.blue;
 				}
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.age) {
-				filledCircleSprite.color = ColorScheme.instance.creatureAgeGradient.Evaluate(creature.GetAgeNormalized(World.instance.worldTicks));
+				cellCommon.filledCircleSprite.color = ColorScheme.instance.creatureAgeGradient.Evaluate(creature.GetAgeNormalized(World.instance.worldTicks));
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.shell) {
 				if (GetCellType() == CellTypeEnum.Shell) {
-					filledCircleSprite.color = (this as ShellCell).GetColor(PhenoGenoEnum.Phenotype);
-					openCircleSprite.color = (this as ShellCell).GetColor(PhenoGenoEnum.Phenotype);
+					cellCommon.filledCircleSprite.color = (this as ShellCell).GetColor(PhenoGenoEnum.Phenotype);
+					cellCommon.openCircleSprite.color = (this as ShellCell).GetColor(PhenoGenoEnum.Phenotype);
 				} else {
-					filledCircleSprite.color = Color.black;
-					openCircleSprite.color = Color.black;
+					cellCommon.filledCircleSprite.color = Color.black;
+					cellCommon.openCircleSprite.color = Color.black;
 				}
 
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.buildPriority) {
@@ -1780,23 +1786,21 @@ public abstract class Cell : MonoBehaviour {
 						SetLabelColor(Color.gray);
 					}
 
-					filledCircleSprite.color = Color.black;
+					cellCommon.filledCircleSprite.color = Color.black;
 					SetCorrectLabelOrientation();
 				} else {
-					filledCircleSprite.color = GetColor();
+					cellCommon.filledCircleSprite.color = GetColor();
 					SetLabelEnabled(false);
 				}
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.isSleeping) {
 
 				if (theRigidBody.IsSleeping()) {
-					filledCircleSprite.color = Color.gray;
+					cellCommon.filledCircleSprite.color = Color.gray;
 				} else {
-					filledCircleSprite.color = Color.white;
+					cellCommon.filledCircleSprite.color = Color.white;
 				}
 			} else if (PhenotypeGraphicsPanel.instance.graphicsCell == PhenotypeGraphicsPanel.CellGraphicsEnum.ramSpeed) {
-				filledCircleSprite.color = Color.blue;
-
-
+				cellCommon.filledCircleSprite.color = Color.blue;
 			}
 
 		} else { // Genotype...
@@ -1805,10 +1809,10 @@ public abstract class Cell : MonoBehaviour {
 					SetLabelEnabled(true);
 					SetLabelText(gene.index.ToString());
 					SetLabelColor(Color.black);
-					filledCircleSprite.color = GetColor();
+					cellCommon.filledCircleSprite.color = GetColor();
 					SetCorrectLabelOrientation();
 				} else {
-					filledCircleSprite.color = GetColor();
+					cellCommon.filledCircleSprite.color = GetColor();
 					SetLabelEnabled(false);
 				}
 			} else if (GenotypeGraphicsPanel.instance.graphicsGeneCell == GenotypeGraphicsPanel.CellGraphicsEnum.buildIndex) {
@@ -1817,10 +1821,10 @@ public abstract class Cell : MonoBehaviour {
 					SetLabelEnabled(true);
 					SetLabelText(buildIndex.ToString());
 					SetLabelColor(Color.gray);
-					filledCircleSprite.color = Color.black;
+					cellCommon.filledCircleSprite.color = Color.black;
 					SetCorrectLabelOrientation();
 				} else {
-					filledCircleSprite.color = GetColor();
+					cellCommon.filledCircleSprite.color = GetColor();
 					SetLabelEnabled(false);
 				}
 			} else if (GenotypeGraphicsPanel.instance.graphicsGeneCell == GenotypeGraphicsPanel.CellGraphicsEnum.buildPriority) {
@@ -1840,10 +1844,10 @@ public abstract class Cell : MonoBehaviour {
 						SetLabelColor(Color.gray);
 					}
 
-					filledCircleSprite.color = Color.black;
+					cellCommon.filledCircleSprite.color = Color.black;
 					SetCorrectLabelOrientation();
 				} else {
-					filledCircleSprite.color = GetColor();
+					cellCommon.filledCircleSprite.color = GetColor();
 					SetLabelEnabled(false);
 				}
 			}
