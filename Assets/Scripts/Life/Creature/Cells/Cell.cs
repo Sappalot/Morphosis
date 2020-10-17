@@ -127,7 +127,7 @@ public abstract class Cell : MonoBehaviour {
 	public LogicBox dendritesLogicBox;
 	public EnergySensor energySensor;
 	public EffectSensor effectSensor;
-	public SurroundingSensor surroundingSensor;
+	public SurroundingSensor surroundingSensor; // Eye
 	public LogicBox originDetatchLogicBox;
 	public SizeSensor originSizeSensor;
 
@@ -1597,6 +1597,19 @@ public abstract class Cell : MonoBehaviour {
 
 				filledCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
 				openCircleSprite.color = GetColor(PhenoGenoEnum.Phenotype);
+
+				SetLabelEnabled(true);
+				if (surroundingSensor.rootnessEnum == RootnessEnum.Unrooted) {
+					SetLabelEnabled(false);
+				} else if (surroundingSensor.rootnessEnum == RootnessEnum.Rootable) {
+					SetLabelEnabled(true);
+					SetLabelText("E");
+					SetLabelColor(Color.gray);
+				} else /* Rooted */{
+					SetLabelEnabled(true);
+					SetLabelText("E");
+					SetLabelColor(Color.black);
+				}
 
 				// overrides
 				if (effectProductionPredPrayDown > 0f) {
