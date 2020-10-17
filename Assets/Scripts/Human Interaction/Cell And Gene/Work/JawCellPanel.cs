@@ -105,7 +105,7 @@ public class JawCellPanel : ComponentPanel {
 			}
 
 			if (GetMode() == PhenoGenoEnum.Phenotype) {
-				if (cellAndGenePanel.cell != null) {
+				if (cellAndGenePanel.cell != null && cellAndGenePanel.cell.GetCellType() == CellTypeEnum.Jaw) {
 					componentFooterPanel.SetProductionEffectText(selectedCell.effectProductionPredPrayUp, GlobalSettings.instance.phenotype.jawCell.effectProductionDown);
 					prayCellCount.text = "Pray count: " + (cellAndGenePanel.cell as JawCell).prayCount;
 					cannibalizeKinToggle.interactable = false;

@@ -432,7 +432,7 @@ public class Phenotype : MonoBehaviour {
 
 			//EvoFixedUpdate(creature, 0f); //Do we really need to do this here?
 			originCell.heading = spawnHeading;
-			originCell.rotatedRoot.rotation = Quaternion.Euler(0f, 0f, originCell.heading); // Just updating graphics
+			originCell.cellCommon.rotatedRoot.rotation = Quaternion.Euler(0f, 0f, originCell.heading); // Just updating graphics
 			growCellCount++;
 		}
 		
