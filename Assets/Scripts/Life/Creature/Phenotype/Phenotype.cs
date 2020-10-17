@@ -261,6 +261,7 @@ public class Phenotype : MonoBehaviour {
 	public CellMap cellMap = new CellMap(); //Containing only built cells
 	private bool isDirtyCollider = true;
 	private bool areBudsDirty = true;
+	private bool areSensorsGraphicsDirty = true;
 
 	public void UpdateArmour() {
 		foreach (Cell cell in cellList) {
@@ -270,6 +271,10 @@ public class Phenotype : MonoBehaviour {
 
 	public void MakeBudsDirty() {
 		areBudsDirty = true;
+	}
+
+	public void MakeSensorsDirty() {
+		areSensorsGraphicsDirty = true;
 	}
 
 	public void DisablePhysicsComponents() {
