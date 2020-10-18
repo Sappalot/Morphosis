@@ -40,6 +40,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 	private void Update() {
 		// Update connections
 		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
+			DebugUtil.Log("No creature selected");
 			return;
 		}
 
@@ -69,6 +70,7 @@ public class HudSignalArrowHandler : MonoBehaviour {
 
 			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null)) {
 				// no menu
+				DebugUtil.Log("Ooooops, no menu");
 				isDirtyConnections = false;
 				return;
 			}

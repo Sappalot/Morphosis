@@ -63,34 +63,6 @@ public class CellAndGenePanel : MonoBehaviour {
 
 	public void MakeDirty() {
 		isDirty = true;
-
-		if ((mode == PhenoGenoEnum.Phenotype && cell == null) || (mode == PhenoGenoEnum.Genotype && gene == null)) {
-			// no menu
-			isDirty = false;
-			return;
-		}
-
-		overvirewPanel.MakeDirty();
-		workPanel.MakeDirty();
-		constantSensorPanel.MakeDirty();
-		axonPanel.MakeDirty();
-		dendritesLogicBoxPanel.MakeDirty();
-		energySensorPanel.MakeDirty();
-		effectSensorPanel.MakeDirty();
-		surroundingSensorPanel.MakeDirty();
-		buildPriorityPanel.MakeDirty();
-
-		originPanel.isGhost = !gene.isOrigin;
-		originPanel.MakeDirty();
-
-
-
-		if (mode == PhenoGenoEnum.Genotype) {
-			geneNeighboursPanel.MakeDirty();
-		}
-
-		hudSignalArrowHandler.MakeDirtyConnections();
-		hudSignalArrowHandler.MakeDirtySignal();
 	}
 
 	// new
@@ -228,7 +200,19 @@ public class CellAndGenePanel : MonoBehaviour {
 		return offset;
 	}
 
-	private void Update() {
+	// Big trouble 2020-10-18, In genotype, when creating a nerve from one output to some other input that other input would not update (turning from ghost to signal off)
+	// The reason for this was probably that the Make-dirty-functions (now in this function, before in this cass MakeDirty) was called earlier.
+	// the call earlier was probably because some other Update function calling it was executed earlier
+	// Stuff has worked up until now because this make dirty was called late (luckey)
+	// By moving the MakeDirty functions into this function and making it Update =to=> LateUpdate
+	// Stuff works again
+
+	// I tried calling it frequently instead which worked but caused trouble for the nerve arrow xPut labels
+
+	// The original idea eas to Let make dirty call other make dirty as much as they need
+	// then everything would be updated in update, so NO make dirty inside of Update
+	// Try to make it so, what a work :(
+	private void LateUpdate() {
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				DebugUtil.Log("Update GeneAndCellPanel");
@@ -236,9 +220,31 @@ public class CellAndGenePanel : MonoBehaviour {
 
 			if ((mode == PhenoGenoEnum.Phenotype && cell == null) || (mode == PhenoGenoEnum.Genotype && gene == null)) {
 				// no menu
-				isDirty = false;
+				Debug.Log("No CellAndGeneCellMenu");
+
+				//isDirty = false;
 				return;
 			}
+
+			overvirewPanel.MakeDirty();
+			workPanel.MakeDirty();
+			constantSensorPanel.MakeDirty();
+			axonPanel.MakeDirty();
+			dendritesLogicBoxPanel.MakeDirty();
+			energySensorPanel.MakeDirty();
+			effectSensorPanel.MakeDirty();
+			surroundingSensorPanel.MakeDirty();
+			buildPriorityPanel.MakeDirty();
+
+			originPanel.isGhost = !gene.isOrigin;
+			originPanel.MakeDirty();
+
+			if (mode == PhenoGenoEnum.Genotype) {
+				geneNeighboursPanel.MakeDirty();
+			}
+
+			hudSignalArrowHandler.MakeDirtyConnections();
+			hudSignalArrowHandler.MakeDirtySignal();
 
 			//originPanel.gameObject.SetActive(gene.isOrigin);
 			//buildPriorityPanel.gameObject.SetActive(!gene.isOrigin);
@@ -246,6 +252,8 @@ public class CellAndGenePanel : MonoBehaviour {
 			isDirty = false;
 		}
 	}
+
+	private int panelTickPeriod;
 
 	public Gene gene {
 		get {
