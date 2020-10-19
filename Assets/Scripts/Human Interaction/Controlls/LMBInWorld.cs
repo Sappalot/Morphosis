@@ -144,15 +144,15 @@ public class LMBInWorld : MonoBehaviour {
 		if (!AssignNerveInputPanel.instance.isInAuxternalGene && MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput && AssignNerveInputPanel.instance.selectedRootCellMapPosition != null) {
 			Vector2 pickPosition = cameraVirtual.ScreenToWorldPoint(Input.mousePosition);
 			Cell newCellHover = Morphosis.instance.GetCellAtPosition(pickPosition);
-			if (newCellHover != null) {
+			if (newCellHover != null && newCellHover.creature == CreatureSelectionPanel.instance.soloSelected) {
+				// a cell in the creature which we have selected
 				if (newCellHover.mapPosition != cellHoverMapPosition) {
 					cellHoverMapPosition = newCellHover.mapPosition;
 					
 					AssignNerveInputPanel.instance.ShowNerveInputMapPositionExternally(newCellHover.mapPosition);
 				}
 			} else {
-				//AssignNerveInputPanel.instance.ShowNerveInputMapPositionExternally(null);
-				//cellHoverMapPosition = new Vector2i(666, 666);
+				AssignNerveInputPanel.instance.ShowNerveInputMapPositionExternally(null);
 			}
 		}
 	}

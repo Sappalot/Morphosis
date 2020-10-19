@@ -218,13 +218,13 @@ public class CellAndGenePanel : MonoBehaviour {
 				DebugUtil.Log("Update GeneAndCellPanel");
 			}
 
-			if ((mode == PhenoGenoEnum.Phenotype && cell == null) || (mode == PhenoGenoEnum.Genotype && gene == null)) {
-				// no menu
-				Debug.Log("No CellAndGeneCellMenu");
+			//if ((mode == PhenoGenoEnum.Phenotype && cell == null) || (mode == PhenoGenoEnum.Genotype && gene == null)) {
+			//	// no menu
+			//	Debug.Log("No CellAndGeneCellMenu");
 
-				//isDirty = false;
-				return;
-			}
+			//	//isDirty = false;
+			//	return;
+			//}
 
 			overvirewPanel.MakeDirty();
 			workPanel.MakeDirty();
@@ -236,7 +236,7 @@ public class CellAndGenePanel : MonoBehaviour {
 			surroundingSensorPanel.MakeDirty();
 			buildPriorityPanel.MakeDirty();
 
-			originPanel.isGhost = !gene.isOrigin;
+			originPanel.isGhost = gene != null ? !gene.isOrigin : false;
 			originPanel.MakeDirty();
 
 			if (mode == PhenoGenoEnum.Genotype) {

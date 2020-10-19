@@ -717,7 +717,7 @@ public class Genotype : MonoBehaviour {
 			geneCellListIndexSorted[index].UpdateFlipSide();
 			geneCellListIndexSorted[index].UpdateBuds();
 
-			nerveArrows.UpdateGraphics(isSelected);
+			nerveArrows.UpdateGraphics(isSelected, isGrabbed);
 		}
 	}
 

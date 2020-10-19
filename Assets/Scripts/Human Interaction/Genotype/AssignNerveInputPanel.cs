@@ -65,12 +65,12 @@ public class AssignNerveInputPanel : MonoSingleton<AssignNerveInputPanel> {
 		}
 		if (isInAuxternalGene) {
 			// we have been pushing a button in an external gene panel
-			DebugUtil.Log("Setting externally");
+			//DebugUtil.Log("Setting externally");
 			affectedPanel.TrySetNerveInputExternally(inputUnit, inputUnitSlot, nerveVectorToSet);
 
 		} else {
 			// we have been pushing a button in the same gene panel, we are local
-			DebugUtil.Log("Setting locally");
+			//DebugUtil.Log("Setting locally");
 			affectedPanel.TrySetNerveInputLocally(inputUnit, inputUnitSlot);
 		}
 		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();

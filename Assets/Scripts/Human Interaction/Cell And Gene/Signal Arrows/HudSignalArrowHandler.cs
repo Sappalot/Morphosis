@@ -40,7 +40,6 @@ public class HudSignalArrowHandler : MonoBehaviour {
 	private void Update() {
 		// Update connections
 		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
-			DebugUtil.Log("No creature selected");
 			return;
 		}
 
@@ -64,13 +63,13 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		if (isDirtyConnections) {
 			if ((mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.genotype.isInterGeneCellDirty) ||
 				(mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.soloSelected.phenotype.isInterCellDirty)) {
-				DebugUtil.Log("Ooooops, not ready to refresh yet");
+				DebugUtil.Log("HudSignalArrowHandler: Ooooops, not ready to refresh yet");
 				return; // Ooooops, not ready to refresh yet
 			}
 
 			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null)) {
 				// no menu
-				DebugUtil.Log("Ooooops, no menu");
+				//DebugUtil.Log("HudSignalArrowHandler: Ooooops, no menu");
 				isDirtyConnections = false;
 				return;
 			}

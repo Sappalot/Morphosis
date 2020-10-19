@@ -1628,7 +1628,7 @@ public class Phenotype : MonoBehaviour {
 			cellList[index].UpdateGraphics(isSelected);
 		}
 
-		nerveArrows.UpdateGraphics(isSelected);
+		nerveArrows.UpdateGraphics(isSelected, isGrabbed);
 
 		// Warning:  So we are more restrictive with these updates now, make sure colliders are updated as they should
 		if (isDirtyCollider) {

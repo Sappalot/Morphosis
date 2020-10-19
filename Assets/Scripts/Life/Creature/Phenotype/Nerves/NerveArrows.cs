@@ -25,15 +25,15 @@ public class NerveArrows : MonoBehaviour {
 		nerveArrowList.Clear();
 	}
 
-	public void UpdateGraphics(bool isSelected) {
-		arrowContainer.gameObject.SetActive(isSelected);
+	public void UpdateGraphics(bool isSelected, bool isGrabbed) {
+		arrowContainer.gameObject.SetActive(isSelected && !isGrabbed);
 		if (!isSelected) {
 			return;
 		}
 
-		//if (!CreatureSelectionPanel.instance.hasSoloSelected) {
-		//	return;
-		//}
+		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
+			return;
+		}
 
 		// unhighlite all
 		foreach (NerveArrow nerveArrow in nerveArrowList) {
