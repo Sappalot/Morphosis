@@ -3,6 +3,8 @@
 public class Nerve {
 	public NerveStatusEnum nerveStatusEnum;
 
+	public NerveColorsEnum nerveColorsEnum;
+
 	public Cell headCellLost { get; private set; }
 
 	private Cell m_headCell;
@@ -26,8 +28,6 @@ public class Nerve {
 	public SignalUnitSlotEnum tailSignalUnitSlotEnum;
 
 	public Vector2i toTailVector; // Assume head is pointing to me: vector in cell space, from head (0, 0) to tail (x, y)
-
-	
 
 	public Vector2i toHeadVector {
 		get {
@@ -105,12 +105,76 @@ public class Nerve {
 		}
 	}
 
-	public bool isRootable {
+	public bool isRootable { // That is unrooted
 		get {
-			return (tailCell == null || tailCell.GetSignalUnit(tailSignalUnitEnum) == null || tailCell.GetSignalUnit(tailSignalUnitEnum).rootnessEnum == RootnessEnum.Rootable ||
-					headCell == null || headCell.GetSignalUnit(headSignalUnitEnum) == null || headCell.GetSignalUnit(headSignalUnitEnum).rootnessEnum == RootnessEnum.Rootable);
+			if (headCell == null) {
+				return true;
+			} else {
+				// there is a head cell
+				if (headCell.GetSignalUnit(headSignalUnitEnum) == null) {
+					// head cell is a ghost
+					return true;
+				}
+				if (headCell.GetSignalUnit(headSignalUnitEnum).rootnessEnum == RootnessEnum.Rootable) {
+					// head is at an input but not leading to root
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
+
+	// Used with external nerves
+	//public NerveColorsEnum GetNerveColor(PhenoGenoEnum phenoGenoMode) {
+	//	if (phenoGenoMode == PhenoGenoEnum.Phenotype) {
+	//		if (tailCell == null) {
+	//			if (headCell == null) {
+	//				// Both ends are in the void. Need to have either head or tail at cell
+	//				return NerveColorsEnum.Error;
+	//			} else {
+	//				// head: cell | tail: void
+	//				if (headCell.GetSignalUnit(headSignalUnitEnum) == null) {
+	//					// head: cell (ghost input) | tail: void. Makes no sence 
+	//					return NerveColorsEnum.Error;
+	//				} else if( headCell.GetSignalUnit(headSignalUnitEnum).rootnessEnum == RootnessEnum.Rootable) {
+	//					// head: cell (now unrooted but rootable) | tail: void
+	//					return NerveColorsEnum.Unrooted_HeadOnInput_TailInVoid;
+	//				} else if (headCell.GetSignalUnit(headSignalUnitEnum).rootnessEnum == RootnessEnum.Rooted) {
+	//					// head: cell (ghost input) | tail: void. Makes no sence
+
+	//				}
+	//			}
+	//		} else {
+	//			if (headCell == null) {
+	//				// head: void | tail: cell
+	//				if (tailCell.GetSignalUnit(tailSignalUnitEnum) == null) {
+	//					//head: void | tail: cell (ghost)
+	//					return NerveColorsEnum.Unrooted_HeadInVoid_TailOnGhostOutput; // Not shown since 
+	//				} else {
+	//					//head: void | tail: cell
+	//					return NerveColorsEnum.Unrooted_HeadInVoid_TailOnOutput;
+	//				}
+	//			} else {
+	//				// head: cell | tail :cell
+	//				if (tailCell.GetSignalUnit(tailSignalUnitEnum) == null) {
+	//					//head: cell | tail: cell (ghost)
+	//					return NerveColorsEnum.Rooted_HeadOnInput_TailOnGhost; 
+	//				} else {
+	//					//head: cell | tail: cell
+	//					if (IsOn) {
+	//						return NerveColorsEnum.Rooted_HeadOnInput_TailOnOutput_On;
+	//					} else {
+	//						return NerveColorsEnum.Rooted_HeadOnInput_TailOnOutput_Off;
+	//					}
+	//				}
+	//			}
+	//		}
+
+	//	} else /* Genotype */ {
+	//		return NerveColorsEnum.Error;
+	//	}
+	//}
 
 	public static bool AreTwinNerves(Nerve nerveA, Nerve nerveB, bool careAboutStatus) {
 		// Ignorance: call nerves with different status and tail twins, as long as heads are same
