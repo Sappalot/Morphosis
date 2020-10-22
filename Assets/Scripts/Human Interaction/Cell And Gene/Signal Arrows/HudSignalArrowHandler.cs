@@ -106,10 +106,10 @@ public class HudSignalArrowHandler : MonoBehaviour {
 					Vector2 head;
 
 					if (nerve.nerveStatusEnum == NerveStatusEnum.OutputLocal) {
-						// Local input
+						// Local output
 						head = cellAndGenePanel.TotalPanelOffset(nerve.headSignalUnitEnum, nerve.headSignalUnitSlotEnum);
 					} else {
-						// External input (short arrow, pointing up, with head at input )
+						// External output (short arrow, pointing up, with head at input )
 						head = tail + Vector2.up * externalArrowLength;
 
 						arrow.headPosition = head;

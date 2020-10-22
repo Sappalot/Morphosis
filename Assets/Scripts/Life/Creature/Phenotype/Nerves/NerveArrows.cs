@@ -29,7 +29,7 @@ public class NerveArrows : MonoBehaviour {
 		// Don't show nerve arrows when moving/rotating creature
 		// Nerves pointing to/away from void will not follow when rotating, so it looks bad
 		// TODO: draw the nerves when moving/rotating properly. Hint: They are drawn in world space
-		arrowContainer.gameObject.SetActive(isSelected && !isGrabbed); 
+		arrowContainer.gameObject.SetActive(isSelected); //&& !isGrabbed
 		if (!isSelected) {
 			return;
 		}
@@ -65,7 +65,7 @@ public class NerveArrows : MonoBehaviour {
 		}
 
 		for (int index = 0; index < nerveArrowList.Count; index++) {
-			nerveArrowList[index].UpdateGraphics();
+			nerveArrowList[index].UpdateGraphics(isGrabbed);
 		}
 	}
 
@@ -100,6 +100,4 @@ public class NerveArrows : MonoBehaviour {
 	public void OnRecycle() {
 		Clear();
 	}
-
-
 }

@@ -28,9 +28,10 @@ public class NerveArrow : MonoBehaviour {
 
 	public void Setup(PhenoGenoEnum phenoGenoMode, Nerve nerve) {
 		this.nerve = nerve;
+		this.phenoGenoMode = phenoGenoMode;
 	}
 
-	public void UpdateGraphics() {
+	public void UpdateGraphics(bool isGrabbed) {
 
 
 		//Debug.Assert(nerve.nerveStatusEnum == NerveStatusEnum.Output_GenotypeExternal || nerve.nerveStatusEnum == NerveStatusEnum.Input_GenotypeExternal, "Strange nerve found: " + nerve.nerveStatusEnum + ", should be Output_GenotypeExternal or Output_GenotypeLocal");
@@ -89,7 +90,7 @@ public class NerveArrow : MonoBehaviour {
 				}
 				nerveVector = CellMap.HexagonalRotate(nerveVector, turnToCreatureAngle);
 
-				headPosition = tailPosition + Quaternion.Euler(0, 0, (nerve.headCellLost.creature.GetOriginHeading(phenoGenoMode)) - 90f) * CellMap.ToModelSpacePosition(nerveVector) + (isHighlited ? 1f : 0f) * Vector3.back;
+				headPosition = tailPosition + Quaternion.Euler(0, 0, (isGrabbed ? nerve.headCellLost.creature.GetOriginHeading(phenoGenoMode) - 90f : nerve.tailCell.heading - 90f)) * CellMap.ToModelSpacePosition(nerveVector) + (isHighlited ? 1f : 0f) * Vector3.back;
 			}
 
 			mainArrow.GetComponent<LineRenderer>().SetPosition(1, headPosition);  // head = front = start = 1 = narrow
@@ -139,7 +140,7 @@ public class NerveArrow : MonoBehaviour {
 				}
 				nerveVector = CellMap.HexagonalRotate(nerveVector, turnToCreatureAngle);
 
-				tailPosition = headPosition + Quaternion.Euler(0, 0, (nerve.hostCell.creature.GetOriginHeading(phenoGenoMode)) - 90f) * CellMap.ToModelSpacePosition(nerveVector) + (isHighlited ? 1f : 0f) * Vector3.back;
+				tailPosition = headPosition + Quaternion.Euler(0, 0, isGrabbed ? nerve.hostCell.creature.GetOriginHeading(phenoGenoMode) - 90f : nerve.hostCell.heading - 90f) * CellMap.ToModelSpacePosition(nerveVector) + (isHighlited ? 1f : 0f) * Vector3.back;
 			} else /* tailCell != null */ {
 				tailPosition = nerve.tailCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
 			}
