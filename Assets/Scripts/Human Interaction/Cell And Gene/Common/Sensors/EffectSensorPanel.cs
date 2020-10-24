@@ -64,7 +64,7 @@ public class EffectSensorPanel : SignalUnitPanel {
 			base.Update();
 
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update Effect Sensor Panel");
+				Debug.Log("Update Effect Sensor Panel");
 			}
 
 			effectMeasuredDropdown.interactable = IsUnlocked();

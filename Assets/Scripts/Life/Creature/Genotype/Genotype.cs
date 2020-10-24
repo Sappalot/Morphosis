@@ -173,11 +173,11 @@ public class Genotype : MonoBehaviour {
 			}
 			// there should be an axone at origin, since it is forced to be there
 			if (currentPosition.x == 0 && currentPosition.y == 0) {
-				Debug.LogError("We are at root now but no axone was found");
+				genotypeDirtyfy.ReforgeCellPatternAndForward();Error("We are at root now but no axone was found");
 			}
 			currentPosition = geneCellMap.GetCellGridPositionUpBranch(currentPosition);
 		}
-		Debug.LogError("We should have been climbing all the way up the branc to the origin, by now!");
+		genotypeDirtyfy.ReforgeCellPatternAndForward();Error("We should have been climbing all the way up the branc to the origin, by now!");
 		return null;
 	}
 
@@ -190,13 +190,13 @@ public class Genotype : MonoBehaviour {
 				return distance;
 			}
 			if (currentPosition.x == 0 && currentPosition.y == 0) {
-				Debug.LogError("We are at root now but no axone was found");
+				genotypeDirtyfy.ReforgeCellPatternAndForward();Error("We are at root now but no axone was found");
 				return null;
 			}
 			currentPosition = geneCellMap.GetCellGridPositionUpBranch(currentPosition);
 			distance++;
 		}
-		Debug.LogError("We should have been climbing all the way to the root by now!");
+		genotypeDirtyfy.ReforgeCellPatternAndForward();Error("We should have been climbing all the way to the root by now!");
 		return null;
 	}
 
@@ -357,10 +357,10 @@ public class Genotype : MonoBehaviour {
 
 	public bool TryUpdateGeneCellPattern(Creature creature, Vector2 position, float heading) { // heading 90 ==> origin is pointing north
 		if (isGeneCellPatternDirty) {
-			//DebugUtil.Log("TryUpdateGeneCellPattern");
+			//Debug.Log("TryUpdateGeneCellPattern");
 
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update Creature TryUpdateGeneCellPattern");
+				Debug.Log("Update Creature TryUpdateGeneCellPattern");
 			}
 
 			Clear();
@@ -472,7 +472,7 @@ public class Genotype : MonoBehaviour {
 
 	public bool TryUpdateInterGeneCells() {
 		if (isInterGeneCellDirty) {
-			//DebugUtil.Log("TryUpdateInterGeneCells ... nerves");
+			//Debug.Log("TryUpdateInterGeneCells ... nerves");
 
 			UpdateBrain();
 
@@ -608,7 +608,7 @@ public class Genotype : MonoBehaviour {
 		foreach (Cell geneCell in geneCellsWithGene) {
 			SignalUnit signalUnit = geneCell.GetSignalUnit(signalUnitEnum);
 			if (signalUnit == null) {
-				DebugUtil.Log("null");
+				Debug.Log("null");
 			}
 
 			if (signalUnit.rootnessEnum == RootnessEnum.Rooted) {

@@ -215,12 +215,12 @@ public class CellAndGenePanel : MonoBehaviour {
 	private void LateUpdate() {
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update GeneAndCellPanel");
+				Debug.Log("Update GeneAndCellPanel");
 			}
 
 			//if ((mode == PhenoGenoEnum.Phenotype && cell == null) || (mode == PhenoGenoEnum.Genotype && gene == null)) {
 			//	// no menu
-			//	Debug.Log("No CellAndGeneCellMenu");
+			//	genotypeDirtyfy.ReforgeCellPatternAndForward();("No CellAndGeneCellMenu");
 
 			//	//isDirty = false;
 			//	return;

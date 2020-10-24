@@ -43,7 +43,7 @@ public class RootCellPanel : ComponentPanel {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update CellPanel");
+				Debug.Log("Update CellPanel");
 			}
 
 			componentFooterPanel.SetProductionEffectText(0f, GlobalSettings.instance.phenotype.rootCell.effectProductionDown);

@@ -47,7 +47,7 @@ public class ShellCellPanel : ComponentPanel {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update ShellCellPanel");
+				Debug.Log("Update ShellCellPanel");
 			}
 
 			if (selectedGene != null) {

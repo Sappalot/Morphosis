@@ -79,22 +79,22 @@ public class LMBInWorld : MonoBehaviour {
 				} else if (MouseAction.instance.actionState == MouseActionStateEnum.selectSignalOutput) {
 					// We have been pressing a signal input in the genotype panel and are about to assign an input to this nerve
 					if (cellClicked == null) {
-						DebugUtil.Log("...in the void");
+						Debug.Log("...in the void");
 					} else {
 						if (AssignNerveInputPanel.instance.selectedRootCellMapPosition == null) {
 							if (AssignNerveInputPanel.instance.TrySetNarrowedGeneCellMapPosition(cellClicked.mapPosition)) {
-								DebugUtil.Log("RootGeneCell narrowed down");
+								Debug.Log("RootGeneCell narrowed down");
 							} else {
-								DebugUtil.Log("You must select one of the Gene cells containing the selected gene!");
+								Debug.Log("You must select one of the Gene cells containing the selected gene!");
 							}
 						} else {
 							// TODO: show nerves as we move mouse from cell to cell
 
 							// click will select this geneCell as the one we want to listen to
 							if (AssignNerveInputPanel.instance.TrySetNerveInputMapPositionExternally(cellClicked.mapPosition)) {
-								DebugUtil.Log("(RootGeneCell was allready set) Source geneCell selected");
+								Debug.Log("(RootGeneCell was allready set) Source geneCell selected");
 							} else {
-								DebugUtil.Log("You must select an extarnal gene cell as an input source!");
+								Debug.Log("You must select an extarnal gene cell as an input source!");
 							}
 						}
 					}

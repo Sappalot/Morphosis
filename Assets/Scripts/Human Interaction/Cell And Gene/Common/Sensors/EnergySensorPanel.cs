@@ -38,7 +38,7 @@ public class EnergySensorPanel : SignalUnitPanel {
 			base.Update();
 
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update Energy Sensor Panel");
+				Debug.Log("Update Energy Sensor Panel");
 			}
 
 			if (selectedGene != null && affectedGeneSignalUnit != null) {

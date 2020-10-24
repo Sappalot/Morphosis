@@ -130,7 +130,7 @@ public class Portal : MonoBehaviour {
 				continue;
 			}
 			if (blocker.IsPhenotypePartlyInside(arrivalRect)) {
-				//DebugUtil.Log("Blocker: " + blocker.id + " found");
+				//Debug.Log("Blocker: " + blocker.id + " found");
 				// Oooops Ordo N^2
 				foreach (Cell travelerCell in traveler.phenotype.cellList) {
 					Vector2 travelerCellArrivalPosition = travelerCell.position + departureToArrival;

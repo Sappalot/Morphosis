@@ -41,7 +41,7 @@ public class GenomeGenePanel : MonoBehaviour {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update GenomeGene");
+				Debug.Log("Update GenomeGene");
 			}
 
 			//Nothing to represent

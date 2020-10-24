@@ -707,7 +707,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 
 		if (isDirtyGraphics) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate)
-				DebugUtil.Log("Update Creature (due to user input)");
+				Debug.Log("Update Creature (due to user input)");
 
 			ShowCurrentGenoPhenoAndHideOther();
 			phenotype.hasCollider = CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !phenotype.isGrabbed;
@@ -759,7 +759,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 
 		//time
 		growTicks++;
-		if (growTicks >= GlobalSettings.instance.quality.growTickPeriod) {
+		if (growTicks >= phenotype.growTickPeriodSizeDependant) { // GlobalSettings.instance.quality.growTickPeriod
 			growTicks = 0;
 		}
 
@@ -789,11 +789,11 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 					canNotGrowMoreTicks = 0;
 				} else {
 					// so, i didn't grow and i cant grow more
-					canNotGrowMoreTicks += GlobalSettings.instance.quality.growTickPeriod;
+					canNotGrowMoreTicks += phenotype.growTickPeriodSizeDependant; //GlobalSettings.instance.quality.growTickPeriod;
 				}
 			}
 			// ☠ ꕕ Haha, make use of these
-			//DebugUtil.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
+			//Debug.Log(" Id: " + id + ", CGM: " + cantGrowMore + ", roomBound: " + reason.roomBound + ", energyBound: " + reason.energyBound + ", respawnTimeBound: " + reason.respawnTimeBound + ", fullyGrown: " + reason.fullyGrown);
 
 			// Detatch child from mother
 			if (PhenotypePhysicsPanel.instance.detatch.isOn && IsAttachedToMotherAlive() && phenotype.originCell.originDetatchLogicBox.GetOutput(SignalUnitSlotEnum.outputEarlyA)) {

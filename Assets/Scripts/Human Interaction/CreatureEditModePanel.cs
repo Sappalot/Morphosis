@@ -67,7 +67,7 @@ public class CreatureEditModePanel : MonoSingleton<CreatureEditModePanel> {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update CreatureEditModePanel");
+				Debug.Log("Update CreatureEditModePanel");
 			}
 
 			phenotypeImage.color = (mode == PhenoGenoEnum.Phenotype) ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;

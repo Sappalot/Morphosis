@@ -95,7 +95,7 @@ public class Edges : MonoBehaviour {
 			Cell.ApexAngle apexAngle;
 			Cell nextCell = GetNextOwnPeripheryCell(creature, currentCell, previousCell, out apexAngle);
 			if (nextCell == null) {
-				DebugUtil.Log("We don't have a next periphery cell");
+				Debug.Log("We don't have a next periphery cell");
 				throw new RuntimeException("Could not find a next periphery cell");
 			}
 			
@@ -174,7 +174,7 @@ public class Edges : MonoBehaviour {
 		apexAngle = Cell.ApexAngle.blunt;
 		int previousDirection = -1; // -1 and 0 should both work, right? // We need to have a previous direction which is pointing east in model space
 		if (currentCell == null) {
-			Debug.LogError("currentCell = NULL");
+			genotypeDirtyfy.ReforgeCellPatternAndForward();Error("currentCell = NULL");
 		}
 
 		if (previousCell != null) {

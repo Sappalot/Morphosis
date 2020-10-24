@@ -14,6 +14,16 @@ public class Phenotype : MonoBehaviour {
 
 	public NerveArrows nerveArrows;
 
+	private int GrowTickPeriodAtSize(int size) {
+		return GlobalSettings.instance.quality.growTickPeriod / size;
+	}
+
+	public int growTickPeriodSizeDependant {
+		get {
+			return GrowTickPeriodAtSize(cellCount);
+		}
+	}
+
 	// ... Signal ...
 	private void UpdateBrain(Genotype genotype) {
 		// area tables
@@ -374,7 +384,7 @@ public class Phenotype : MonoBehaviour {
 	public bool TryRegrowCellPattern(Creature creature, Vector2 position, float heading) {
 		if (isCellPatternDiffererentFromGenomeDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update Creature TryUpdateCellPattern");
+				Debug.Log("Update Creature TryUpdateCellPattern");
 			}
 			Setup(position, heading);
 			TryGrowFully(creature, true);
@@ -476,7 +486,7 @@ public class Phenotype : MonoBehaviour {
 						// but first wait a try a bit more before we give up and build
 						failedToGrowBuds++;
 						bool isNoNormalBlockingJustMotherOfChildBlocking = !noGrowthReason.spaceIsOccupied && (noGrowthReason.spaceIsOccupiedByMotherPlacenta || noGrowthReason.spaceIsOccupiedByChildOrigin);
-						if (growOtherIfBudsBlocked || isNoNormalBlockingJustMotherOfChildBlocking || failedToGrowBuds > Mathf.FloorToInt(originCell.gene.originGrowPriorityCellPersistance / (GlobalSettings.instance.quality.growTickPeriod * Time.fixedDeltaTime))) {
+						if (growOtherIfBudsBlocked || isNoNormalBlockingJustMotherOfChildBlocking || failedToGrowBuds > Mathf.FloorToInt(originCell.gene.originGrowPriorityCellPersistance / (/*GlobalSettings.instance.quality.growTickPeriod*/growTickPeriodSizeDependant * Time.fixedDeltaTime))) {
 							//failedToGrowBuds = 0;
 							highestPriority = buildGeneCell.buildPriority; //step up highestPriority 'layer' a notch, and give all cells at this priority 'layer' a chance
 						} else {
@@ -585,7 +595,7 @@ public class Phenotype : MonoBehaviour {
 
 				// Is the cell too far away from root? Does this ever happen???
 				if (Vector2.Distance(spawnPosition, originCell.position) > Creature.maxRadiusCircle) {
-					DebugUtil.Log("Building too far far away!!!!");
+					Debug.Log("Building too far far away!!!!");
 				}
 
 				// Spawn cell according to gene cells instructions!
@@ -748,7 +758,7 @@ public class Phenotype : MonoBehaviour {
 
 	//Only used by grow above (Not taking mother and children into account)
 	private void UpdateNeighbourReferencesIntraBody() {
-		//DebugUtil.Log("Updating intER creature neighbours!!");
+		//Debug.Log("Updating intER creature neighbours!!");
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
 			Vector2i center = cell.mapPosition;
@@ -769,7 +779,7 @@ public class Phenotype : MonoBehaviour {
 	// TODO: At the moment we are updating whole body every time a new cell is grown. This is probably costy. Just update the cells affected by the change made (dirtymark per cell)
 	public bool TryUpdateInterCells(Creature creature, string motherId) {
 		if (isInterCellDirty) {
-			//DebugUtil.Log("TryUpdateInterCells");
+			//Debug.Log("TryUpdateInterCells");
 
 			UpdateNeighbourReferencesInterBody(creature);
 
@@ -788,7 +798,7 @@ public class Phenotype : MonoBehaviour {
 			try {
 				edges.GenerateWings(creature, cellMap); // Wings are ONLY generated from here
 			} catch (RuntimeException e) {
-				DebugUtil.Log("Error: " + e);
+				Debug.Log("Error: " + e);
 				hasError = true;
 				isAlive = false;
 				return false;
@@ -853,11 +863,11 @@ public class Phenotype : MonoBehaviour {
 							if (neighbourMapPosition == creature.GetMotherAlive().ChildOriginMapPosition(child.id)) {
 								// My placenta to childs origin
 								placentaCell.SetNeighbourCell(cardinalIndex, originCell);
-								//DebugUtil.Log("Me(origin)" + creature.id + " <==neighbour== Mother(placenta)" + creatureMother.id);
+								//Debug.Log("Me(origin)" + creature.id + " <==neighbour== Mother(placenta)" + creatureMother.id);
 
 								//childs origin to my placenta
 								originCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - child.GetMotherAlive().ChildOriginBindCardinalIndex(child.id) + 1 + 3), placentaCell);
-								//DebugUtil.Log("Me(origin)" + creature.id + " ==neighbour==> Mother(placenta)" + creatureMother.id);
+								//Debug.Log("Me(origin)" + creature.id + " ==neighbour==> Mother(placenta)" + creatureMother.id);
 							}
 						}
 					}
@@ -875,11 +885,11 @@ public class Phenotype : MonoBehaviour {
 						if (neighbourMapPosition == creature.ChildOriginMapPosition(child.id)) {
 							// My placenta to childs origin
 							placentaCell.SetNeighbourCell(cardinalIndex, child.phenotype.originCell);
-							//DebugUtil.Log("Me: " + creature.id + ", my Child :" + child.id + " Me(placenta) ==neighbour==> Child(origin)");
+							//Debug.Log("Me: " + creature.id + ", my Child :" + child.id + " Me(placenta) ==neighbour==> Child(origin)");
 
 							//childs origin to my placenta
 							child.phenotype.originCell.SetNeighbourCell(AngleUtil.CardinalIndexRawToSafe(cardinalIndex - creature.ChildOriginBindCardinalIndex(child.id) + 1 + 3), placentaCell);
-							//DebugUtil.Log("Me: " + creature.id + ", my Child :" + child.id + " Me(placenta) <==neighbour== Child(origin)");
+							//Debug.Log("Me: " + creature.id + ", my Child :" + child.id + " Me(placenta) <==neighbour== Child(origin)");
 						}
 					}
 				}
@@ -1567,7 +1577,7 @@ public class Phenotype : MonoBehaviour {
 		for (int safety = 0; safety < 100 && (highestPriorityValue != null && !hasHighestPriorityNormalCell && remainingGeneCells.Count > 0); safety++) {
 
 			if (safety > 90) {
-				DebugUtil.Log("Ooooops!");
+				Debug.Log("Ooooops!");
 			}
 			// one or more highest priority cells ==> highestPriorityGeneCells
 			highestPriorityValue = null;
@@ -1633,7 +1643,7 @@ public class Phenotype : MonoBehaviour {
 		// Warning:  So we are more restrictive with these updates now, make sure colliders are updated as they should
 		if (isDirtyCollider) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate)
-				DebugUtil.Log("Update Creature Phenotype");
+				Debug.Log("Update Creature Phenotype");
 
 			SetCollider(hasCollider);
 			isDirtyCollider = false;

@@ -46,16 +46,16 @@ public class MouseDrag : MonoBehaviour {
 
 	public virtual void OnDraggingStart(int mouseButton) {
 		// implement this for start of dragging
-		DebugUtil.Log("MouseButton" + mouseButton + " START Drag");
+		Debug.Log("MouseButton" + mouseButton + " START Drag");
 	}
 
 	public virtual void OnDragging(int mouseButton) {
 		// implement this for dragging
-		DebugUtil.Log("MouseButton" + mouseButton + "DRAGGING");
+		Debug.Log("MouseButton" + mouseButton + "DRAGGING");
 	}
 
 	public virtual void OnDraggingEnd(int mouseButton) {
 		// implement this for end of dragging
-		DebugUtil.Log("MouseButton" + mouseButton + " END Drag");
+		Debug.Log("MouseButton" + mouseButton + " END Drag");
 	}
 }

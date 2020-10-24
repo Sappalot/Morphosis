@@ -36,7 +36,7 @@ public class OutputPanel : MonoBehaviour {
 				MarkAsNewForge();
 
 			} else {
-				DebugUtil.Log("Can't connect a nerve to a ghost output");
+				Debug.Log("Can't connect a nerve to a ghost output");
 				Audio.instance.ActionDenied(1f);
 			}
 		}
@@ -54,7 +54,7 @@ public class OutputPanel : MonoBehaviour {
 	public void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update Output Panel");
+				Debug.Log("Update Output Panel");
 			}
 
 			if (!CreatureSelectionPanel.instance.hasSoloSelected) {

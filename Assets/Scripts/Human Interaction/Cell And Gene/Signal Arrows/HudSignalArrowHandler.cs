@@ -63,18 +63,18 @@ public class HudSignalArrowHandler : MonoBehaviour {
 		if (isDirtyConnections) {
 			if ((mode == PhenoGenoEnum.Genotype && CreatureSelectionPanel.instance.soloSelected.genotype.isInterGeneCellDirty) ||
 				(mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.soloSelected.phenotype.isInterCellDirty)) {
-				DebugUtil.Log("HudSignalArrowHandler: Ooooops, not ready to refresh yet");
+				Debug.Log("HudSignalArrowHandler: Ooooops, not ready to refresh yet");
 				return; // Ooooops, not ready to refresh yet
 			}
 
 			if ((mode == PhenoGenoEnum.Phenotype && selectedCell == null) || (mode == PhenoGenoEnum.Genotype && selectedGene == null)) {
 				// no menu
-				//DebugUtil.Log("HudSignalArrowHandler: Ooooops, no menu");
+				//Debug.Log("HudSignalArrowHandler: Ooooops, no menu");
 				isDirtyConnections = false;
 				return;
 			}
 
-			//DebugUtil.Log("Updating Hud Signal Arrow Handler");
+			//Debug.Log("Updating Hud Signal Arrow Handler");
 
 			foreach (HudSignalArrow arrow in arrowList) {
 				hudSignalArrowPool.Recycle(arrow);
@@ -255,10 +255,10 @@ public class HudSignalArrowHandler : MonoBehaviour {
 			List<List<Nerve>> nerveTwinBundleList = genotype.GetNerveTwinBundles(selectedGene, viewXput.signalUnitEnum, viewXput.xputType);
 			if (nerveTwinBundleList.Count > 0) {
 				//for (int i = 0; i < nerveTwinBundleList.Count; i++) {
-				//	DebugUtil.Log("twin bundle: " + i + ", length: " + nerveTwinBundleList[i].Count);
+				//	Debug.Log("twin bundle: " + i + ", length: " + nerveTwinBundleList[i].Count);
 				//}
 				int nerveTwinBundleIndex = viewXput.index == 0 ? -1 : (viewXput.index - 1) % nerveTwinBundleList.Count;
-				//DebugUtil.Log("Index: " + (nerveTwinBundleIndex == -1 ? "EVERYTHING" : nerveTwinBundleIndex.ToString()));
+				//Debug.Log("Index: " + (nerveTwinBundleIndex == -1 ? "EVERYTHING" : nerveTwinBundleIndex.ToString()));
 
 				nerveToHighlite = new List<Nerve>();
 				if (nerveTwinBundleIndex == -1) {

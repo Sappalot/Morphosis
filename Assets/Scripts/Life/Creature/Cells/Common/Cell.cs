@@ -346,7 +346,7 @@ public abstract class Cell : MonoBehaviour {
 	public bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
 		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for
 		if (GetSignalUnit(outputUnit) == null) {
-			//DebugUtil.Log("Ooops! no outputting unit found");
+			//Debug.Log("Ooops! no outputting unit found");
 			return false;
 		} else {
 			return GetSignalUnit(outputUnit).GetOutput(outputUnitSlot);
@@ -936,7 +936,7 @@ public abstract class Cell : MonoBehaviour {
 	public void UpdatePulse() {
 		originPulseTick++;
 		if (gene == null) {
-			DebugUtil.Log("No gene in cell: " + ToString()); // Why don't we get an exception
+			Debug.Log("No gene in cell: " + ToString()); // Why don't we get an exception
 		}
 
 		if (originPulseTick >= gene.originPulseTickPeriod) {
@@ -1176,15 +1176,15 @@ public abstract class Cell : MonoBehaviour {
 
 	public int GetDirectionOfOwnNeighbourCell(Creature me, Cell cell) {
 		if (me == null) {
-			Debug.LogError("GetDirectionOfOwnNeighbourCell: I am null");
+			genotypeDirtyfy.ReforgeCellPatternAndForward();Error("GetDirectionOfOwnNeighbourCell: I am null");
 			throw new RuntimeException("I am null");
 		}
 		if (cell == null) {
-			Debug.LogError("GetDirectionOfOwnNeighbourCell: neighbour is null");
+			genotypeDirtyfy.ReforgeCellPatternAndForward();Error("GetDirectionOfOwnNeighbourCell: neighbour is null");
 			throw new RuntimeException("neighbour is null");
 		}
 		if (cell.creature == null) {
-			Debug.LogError("GetDirectionOfOwnNeighbourCell: neighbour.creature is null");
+			genotypeDirtyfy.ReforgeCellPatternAndForward();Error("GetDirectionOfOwnNeighbourCell: neighbour.creature is null");
 			throw new RuntimeException("neighbour.creature is null");
 		}
 		if (cell.creature != me) {
@@ -1275,7 +1275,7 @@ public abstract class Cell : MonoBehaviour {
 		float angle = LongAngle(alphaVector, betaVector);
 
 		float goalAngle = AngleUtil.GetAngleDifference(alphaIndex, betaIndex);
-		//DebugUtil.Log(this.id + " Spring: " + alphaNeighbour.cell.id + "-" + betaNeighbour.cell.id + " = GoalA: " + goalAngle + " A: " + angle);
+		//Debug.Log(this.id + " Spring: " + alphaNeighbour.cell.id + "-" + betaNeighbour.cell.id + " = GoalA: " + goalAngle + " A: " + angle);
 		float diff = (goalAngle - angle);
 
 

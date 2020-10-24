@@ -942,7 +942,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update CreatureSelectionPanel");
+				Debug.Log("Update CreatureSelectionPanel");
 			}
 
 			StartCoroutine(UpdateIsVisible());

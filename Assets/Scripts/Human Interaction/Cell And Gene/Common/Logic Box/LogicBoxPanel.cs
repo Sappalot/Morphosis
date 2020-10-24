@@ -152,7 +152,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 			base.Update();
 
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update Signal logic box");
+				Debug.Log("Update Signal logic box");
 			}
 
 			//...ghost...

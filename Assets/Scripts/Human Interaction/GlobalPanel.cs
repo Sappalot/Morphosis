@@ -223,7 +223,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		SelectPausePhysics();
 		Freezer.instance.Save();
 		Morphosis.instance.Restart(() => {
-			DebugUtil.Log("Morfosis restarted");
+			Debug.Log("Morfosis restarted");
 			ProgressBar.instance.gameObject.SetActive(false);
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		});
@@ -243,8 +243,8 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 		() => {
 
 			ProgressBar.instance.gameObject.SetActive(false);
-			DebugUtil.Log("World loaded");
-			//Debug.LogWarning("Warning: Graph knows no GraphSettings");
+			Debug.Log("World loaded");
+			//genotypeDirtyfy.ReforgeCellPatternAndForward();Warning("Warning: Graph knows no GraphSettings");
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		});
 	}

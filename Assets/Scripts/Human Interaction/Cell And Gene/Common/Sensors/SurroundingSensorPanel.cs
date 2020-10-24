@@ -76,7 +76,7 @@ public class SurroundingSensorPanel : SignalUnitPanel {
 			base.Update();
 
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update Surrounding Sensor Panel");
+				Debug.Log("Update Surrounding Sensor Panel");
 			}
 
 			if (selectedGene != null && affectedGeneSignalUnit != null) {

@@ -72,7 +72,7 @@ public class OverviewPanel : MonoBehaviour {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update CellPanel");
+				Debug.Log("Update CellPanel");
 			}
 
 			energyBar.effectMeasure = EffectTempEnum.None;

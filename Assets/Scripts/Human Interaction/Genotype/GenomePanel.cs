@@ -42,7 +42,7 @@ public class GenomePanel : MonoSingleton<GenomePanel> {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate)
-				DebugUtil.Log("Update GenomePanel");
+				Debug.Log("Update GenomePanel");
 			if (genotype == null) {
 				for (int index = 0; index < genomeGenes.Length; index++) {
 					genomeGenes[index].gene = null;

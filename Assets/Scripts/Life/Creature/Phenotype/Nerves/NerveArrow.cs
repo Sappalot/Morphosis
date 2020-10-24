@@ -90,7 +90,9 @@ public class NerveArrow : MonoBehaviour {
 				}
 				nerveVector = CellMap.HexagonalRotate(nerveVector, turnToCreatureAngle);
 
-				headPosition = tailPosition + Quaternion.Euler(0, 0, (isGrabbed ? nerve.headCellLost.creature.GetOriginHeading(phenoGenoMode) - 90f : nerve.tailCell.heading - 90f)) * CellMap.ToModelSpacePosition(nerveVector) + (isHighlited ? 1f : 0f) * Vector3.back;
+				// if grabbed we need  to rotate nerve by origin heading since the other headings are not updated
+				// Don't know why i had to add this correction: - nerve.headCell.bindCardinalIndex * 60f
+				headPosition = tailPosition + Quaternion.Euler(0, 0, (isGrabbed ? nerve.headCellLost.creature.GetOriginHeading(phenoGenoMode) - 90f : nerve.tailCell.heading - 30f - nerve.tailCell.bindCardinalIndex * 60f)) * CellMap.ToModelSpacePosition(nerveVector) + (isHighlited ? 1f : 0f) * Vector3.back;
 			}
 
 			mainArrow.GetComponent<LineRenderer>().SetPosition(1, headPosition);  // head = front = start = 1 = narrow
@@ -140,7 +142,9 @@ public class NerveArrow : MonoBehaviour {
 				}
 				nerveVector = CellMap.HexagonalRotate(nerveVector, turnToCreatureAngle);
 
-				tailPosition = headPosition + Quaternion.Euler(0, 0, isGrabbed ? nerve.hostCell.creature.GetOriginHeading(phenoGenoMode) - 90f : nerve.hostCell.heading - 90f) * CellMap.ToModelSpacePosition(nerveVector) + (isHighlited ? 1f : 0f) * Vector3.back;
+				// if grabbed we need  to rotate nerve by origin heading since the other headings are not updated
+				// Don't know why i had to add this correction: - nerve.headCell.bindCardinalIndex * 60f
+				tailPosition = headPosition + Quaternion.Euler(0, 0, isGrabbed ? nerve.headCell.creature.GetOriginHeading(phenoGenoMode) - 90f : nerve.headCell.heading - 30f - nerve.headCell.bindCardinalIndex * 60f) * CellMap.ToModelSpacePosition(nerveVector) + (isHighlited ? 1f : 0f) * Vector3.back;
 			} else /* tailCell != null */ {
 				tailPosition = nerve.tailCell.transform.position + (isHighlited ? 1f : 0f) * Vector3.back;
 			}

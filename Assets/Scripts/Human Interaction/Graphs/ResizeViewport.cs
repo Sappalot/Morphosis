@@ -26,7 +26,7 @@ public class ResizeViewport : MonoBehaviour {
 			float viewportY = (windowSize.rect.height - (height + topMargin)) / windowSize.rect.height;
 
 			viewportToResize.rect = new Rect(0, viewportY, viewportWidth, viewportHeight);
-			//DebugUtil.Log("w: " + viewportWidth + ", h: " + viewportHeight + ", y: " + viewportY);
+			//Debug.Log("w: " + viewportWidth + ", h: " + viewportHeight + ", y: " + viewportY);
 
 			windowResolution = new Vector2i((int)windowSize.rect.width, (int)windowSize.rect.height);
 

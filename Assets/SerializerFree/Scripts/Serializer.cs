@@ -128,7 +128,7 @@ namespace SerializerFree
 
 		public static void DebugLogError ( string error, string method, Object context = null )
 		{
-			Debug.LogError ( string.Format ( "{0} - {1} {2}", TAG, method, error ), context );
+			genotypeDirtyfy.ReforgeCellPatternAndForward();Error ( string.Format ( "{0} - {1} {2}", TAG, method, error ), context );
 		}
 
 		#endregion

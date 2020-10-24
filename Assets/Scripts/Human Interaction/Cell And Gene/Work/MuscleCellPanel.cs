@@ -44,7 +44,7 @@ public class MuscleCellPanel : ComponentPanel {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update CellPanel");
+				Debug.Log("Update CellPanel");
 			}
 
 			if (GetMode() == PhenoGenoEnum.Phenotype) {

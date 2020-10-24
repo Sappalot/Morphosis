@@ -316,7 +316,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public int shellCellTickPeriod = 50;
 		public int veinCellTickPeriod = 50;
 
-		public int growTickPeriod = 30; // Detatch attempt has same period as grow
+		public int growTickPeriod = 80; // Detatch attempt has same period as grow
 
 		public int signalTickPeriod = 20;
 

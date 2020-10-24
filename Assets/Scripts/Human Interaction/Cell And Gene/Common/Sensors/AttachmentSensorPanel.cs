@@ -7,7 +7,7 @@ public class AttachmentSensorPanel : SignalUnitPanel {
 			base.Update();
 
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update Attachment Sensor Panel");
+				Debug.Log("Update Attachment Sensor Panel");
 			}
 
 			isDirty = false;

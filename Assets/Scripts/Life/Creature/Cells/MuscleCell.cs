@@ -68,7 +68,7 @@ public class MuscleCell : Cell {
 					if (masterAxoneDistance != null) {
 						isContracting = masterAxon.IsAxonPulseContracting((int)masterAxoneDistance);
 					} else {
-						Debug.LogError("We have found a master axone, but failed to calculate the distance there from me!");
+						genotypeDirtyfy.ReforgeCellPatternAndForward();Error("We have found a master axone, but failed to calculate the distance there from me!");
 					}
 				}
 			}
@@ -128,7 +128,7 @@ public class MuscleCell : Cell {
 			if (spring != null) {
 				spring.distance = this.radius + northEastNeighbour.cell.radius;
 			} else {
-				Debug.LogError("Spring missing north east");
+				genotypeDirtyfy.ReforgeCellPatternAndForward();Error("Spring missing north east");
 			}
 		}
 
@@ -136,7 +136,7 @@ public class MuscleCell : Cell {
 			if (northSpring != null) {
 				northSpring.distance = this.radius + northNeighbour.cell.radius;
 			} else {
-				Debug.LogError("Spring missing north");
+				genotypeDirtyfy.ReforgeCellPatternAndForward();Error("Spring missing north");
 			}
 			
 		}
@@ -146,7 +146,7 @@ public class MuscleCell : Cell {
 			if (spring != null) {
 				spring.distance = this.radius + northWestNeighbour.cell.radius;
 			} else {
-				Debug.LogError("Spring missing north west"); // This has occured :/ TODO: figgure out and fix!
+				genotypeDirtyfy.ReforgeCellPatternAndForward();Error("Spring missing north west"); // This has occured :/ TODO: figgure out and fix!
 			}
 			
 		}
@@ -155,7 +155,7 @@ public class MuscleCell : Cell {
 			if (southWestSpring != null) {
 				southWestSpring.distance = this.radius + southWestNeighbour.cell.radius;
 			} else {
-				Debug.LogError("Spring missing south west");
+				genotypeDirtyfy.ReforgeCellPatternAndForward();Error("Spring missing south west");
 			}
 		}
 
@@ -164,7 +164,7 @@ public class MuscleCell : Cell {
 			if (spring != null) {
 				spring.distance = this.radius + southNeighbour.cell.radius;
 			} else {
-				Debug.LogError("Spring missing south");
+				genotypeDirtyfy.ReforgeCellPatternAndForward();Error("Spring missing south");
 			}
 		}
 
@@ -172,7 +172,7 @@ public class MuscleCell : Cell {
 			if (southEastSpring != null) {
 				southEastSpring.distance = this.radius + southEastNeighbour.cell.radius;
 			} else {
-				Debug.LogError("Spring missing south east");
+				genotypeDirtyfy.ReforgeCellPatternAndForward();Error("Spring missing south east");
 			}
 		}
 
@@ -183,7 +183,7 @@ public class MuscleCell : Cell {
 				UpdatePlacentaSpringLengths();
 			}
 		} else {
-			//Debug.LogError("Placenta springs array is missing (the container)");
+			//genotypeDirtyfy.ReforgeCellPatternAndForward();Error("Placenta springs array is missing (the container)");
 		}
 
 

@@ -53,7 +53,7 @@ public class BuildPriorityPanel : MonoBehaviour {
 			ignoreSliderMoved = true;
 
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update CellBuildPriorityPanel");
+				Debug.Log("Update CellBuildPriorityPanel");
 			}
 
 			if (mode == PhenoGenoEnum.Phenotype && cellAndGenePanel.cell != null) {

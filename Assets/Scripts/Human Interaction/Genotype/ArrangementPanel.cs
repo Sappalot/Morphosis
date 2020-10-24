@@ -157,7 +157,7 @@ public class ArrangementPanel : MonoBehaviour {
 	}
 
 	public void OnClickedPerifierCircle() {
-		DebugUtil.Log("TODO: select the gene this reference is pointing to?");
+		Debug.Log("TODO: select the gene this reference is pointing to?");
 	}
 
 	public void OnPointerEnterArea() {
@@ -228,7 +228,7 @@ public class ArrangementPanel : MonoBehaviour {
 
 		if (isDirty) {
 			if(GlobalSettings.instance.debug.debugLogMenuUpdate)
-				DebugUtil.Log("Update ArrangementPanel");
+				Debug.Log("Update ArrangementPanel");
 
 			FlipSideEnum viewedFlipSide = GenotypePanel.instance.viewedFlipSide;
 

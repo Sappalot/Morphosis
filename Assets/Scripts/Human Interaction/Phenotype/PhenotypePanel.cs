@@ -80,7 +80,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate)
-				DebugUtil.Log("Update PhenotypePanel");
+				Debug.Log("Update PhenotypePanel");
 
 			StartCoroutine(UpdateIsVisible());
 

@@ -33,7 +33,7 @@ public class SizeSensorPanel : SignalUnitPanel {
 			base.Update();
 
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
-				DebugUtil.Log("Update Size Sensor Panel");
+				Debug.Log("Update Size Sensor Panel");
 			}
 
 			if (isGhost) {
