@@ -14,11 +14,11 @@ public class Phenotype : MonoBehaviour {
 
 	public NerveArrows nerveArrows;
 
-	private int GrowTickPeriodAtSize(int size) {
-		return GlobalSettings.instance.quality.growTickPeriod / size;
+	public int GrowTickPeriodAtSize(int size) {
+		return (int)GlobalSettings.instance.quality.growTickPeriodAtSize.Evaluate(size);
 	}
 
-	public int growTickPeriodSizeDependant {
+	public int growTickPeriod {
 		get {
 			return GrowTickPeriodAtSize(cellCount);
 		}
@@ -486,7 +486,7 @@ public class Phenotype : MonoBehaviour {
 						// but first wait a try a bit more before we give up and build
 						failedToGrowBuds++;
 						bool isNoNormalBlockingJustMotherOfChildBlocking = !noGrowthReason.spaceIsOccupied && (noGrowthReason.spaceIsOccupiedByMotherPlacenta || noGrowthReason.spaceIsOccupiedByChildOrigin);
-						if (growOtherIfBudsBlocked || isNoNormalBlockingJustMotherOfChildBlocking || failedToGrowBuds > Mathf.FloorToInt(originCell.gene.originGrowPriorityCellPersistance / (/*GlobalSettings.instance.quality.growTickPeriod*/growTickPeriodSizeDependant * Time.fixedDeltaTime))) {
+						if (growOtherIfBudsBlocked || isNoNormalBlockingJustMotherOfChildBlocking || failedToGrowBuds > Mathf.FloorToInt(originCell.gene.originGrowPriorityCellPersistance / (/*GlobalSettings.instance.quality.growTickPeriod*/growTickPeriod * Time.fixedDeltaTime))) {
 							//failedToGrowBuds = 0;
 							highestPriority = buildGeneCell.buildPriority; //step up highestPriority 'layer' a notch, and give all cells at this priority 'layer' a chance
 						} else {

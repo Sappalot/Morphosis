@@ -6,10 +6,7 @@ using Boo.Lang.Runtime;
 // The container of genotype(genes) and phenotype(body)
 // Holds information that does not fit into genes or body 
 public class Creature : MonoBehaviour, IGenotypeDirtyfy {
-
-	public static int maxCellCount = 40;
-	public static int maxRadiusHexagon = 16; // used to limit blueprint. R = 16 ==> we can have can have 16 cells north of origin at most origin = 0, 1 = neighbour, .... cell 16 = perifery 
-	public static float maxRadiusCircle = maxRadiusHexagon + 0.5f; // used for culling and check so that we don't build too far away from origin 
+	public static float maxRadiusCircle = -666;
 		
 	public Genotype genotype;
 	public Phenotype phenotype;
@@ -42,6 +39,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 	public int canNotGrowMoreTicks { get; private set; } // blocked by myself, child/mother/other creature, or terrain(?)
 
 	public void Initialize() {
+		maxRadiusCircle = GlobalSettings.instance.phenotype.creatureHexagonMaxRadius + 0.5f; // used for culling and check so that we don't build too far away from origin 
 		genotype.Initialize(this);
 	}
 
@@ -759,7 +757,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 
 		//time
 		growTicks++;
-		if (growTicks >= phenotype.growTickPeriodSizeDependant) { // GlobalSettings.instance.quality.growTickPeriod
+		if (growTicks >= phenotype.growTickPeriod) { // GlobalSettings.instance.quality.growTickPeriod
 			growTicks = 0;
 		}
 
@@ -789,7 +787,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 					canNotGrowMoreTicks = 0;
 				} else {
 					// so, i didn't grow and i cant grow more
-					canNotGrowMoreTicks += phenotype.growTickPeriodSizeDependant; //GlobalSettings.instance.quality.growTickPeriod;
+					canNotGrowMoreTicks += phenotype.growTickPeriod; //GlobalSettings.instance.quality.growTickPeriod;
 				}
 			}
 			// ☠ ꕕ Haha, make use of these

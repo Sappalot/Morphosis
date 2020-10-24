@@ -45,7 +45,7 @@ public class LeafCellPanel : ComponentPanel {
 
 	private void Update() {
 		if (isDirty) {
-			if (selectedCell == null) {
+			if (selectedCell == null || !(selectedCell is LeafCell)) { // hmmmm, seems like !(selectedCell is LeafCell) should not be needed
 				return;
 			}
 
@@ -58,8 +58,15 @@ public class LeafCellPanel : ComponentPanel {
 					componentFooterPanel.SetProductionEffectText(selectedCell.effectProductionInternalUp, GlobalSettings.instance.phenotype.leafCell.effectProductionDown);
 
 					exposure.text = string.Format("Exposure: {0:F2}%", (selectedCell as LeafCell).lowPassExposure * 100f);
-					creatureSizeFactor.text = string.Format("Creature size factor: {0:F2}%", GlobalSettings.instance.phenotype.leafCell.exposureFactorAtBodySize.Evaluate(selectedCell.creature.cellCount) * 100f);
-					overPopulationFactor.text = string.Format("Over population factor: {0:F2}%", GlobalSettings.instance.phenotype.leafCell.exposureFactorAtPopulation.Evaluate(World.instance.life.cellAliveCount) * 100f);
+					creatureSizeFactor.text = string.Format("Creature size factor: {0:F2}% <color=#303030ff>[{1:F2}% ... {2:F2}%]</color>",
+						GlobalSettings.instance.phenotype.leafCell.exposureFactorAtBodySize.Evaluate(selectedCell.creature.cellCount) * 100f,
+						GlobalSettings.instance.phenotype.leafCell.exposureFactorAtBodySize.Evaluate(1) * 100f,
+						GlobalSettings.instance.phenotype.leafCell.exposureFactorAtBodySize.Evaluate(GlobalSettings.instance.phenotype.creatureMaxCellCount) * 100f);
+					
+						overPopulationFactor.text = string.Format("Over population factor: {0:F2}% <color=#303030ff>[{1:F2}% ... {2:F2}%]</color>",
+						GlobalSettings.instance.phenotype.leafCell.exposureFactorAtPopulation.Evaluate(World.instance.life.cellAliveCount) * 100f,
+						GlobalSettings.instance.phenotype.leafCell.exposureFactorAtPopulation.Evaluate(1) * 100f,
+						GlobalSettings.instance.phenotype.leafCell.exposureFactorAtPopulation.Evaluate(10000) * 100f); // We will never reach this number so it's a worst case scenarion+
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
 				componentFooterPanel.SetProductionEffectText(string.Format("Production Effect: [exposure (0...1)] * {0:F2} - {0:F2} W", GlobalSettings.instance.phenotype.leafCell.effectProductionUpMax, GlobalSettings.instance.phenotype.leafCell.effectProductionDown));

@@ -92,7 +92,7 @@ public class GeneSurroundingSensor : GeneSignalUnit {
 
 		//rnd = Random.Range(0, gs.mutation.energySensorAreaRadiusChange * strength + 1000f);
 		//if (rnd < gs.mutation.energySensorAreaRadiusChange * strength) {
-		//	areaRadius = (int)Mathf.Clamp(areaRadius + gs.mutation.energySensorAreaRadiusChangeMaxAmount * gs.mutation.RandomDistributedValue(), 0f, Creature.maxRadiusHexagon - 1);
+		//	areaRadius = (int)Mathf.Clamp(areaRadius + gs.mutation.energySensorAreaRadiusChangeMaxAmount * gs.mutation.RandomDistributedValue(), 0f, GlobalSettings.instance.phenotype.creatureHexagonMaxRadius - 1);
 		//}
 
 		//rnd = Random.Range(0, gs.mutation.energySensorThresholdChange * strength + 1000f);

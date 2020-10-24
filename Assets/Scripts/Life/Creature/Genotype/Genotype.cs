@@ -173,11 +173,11 @@ public class Genotype : MonoBehaviour {
 			}
 			// there should be an axone at origin, since it is forced to be there
 			if (currentPosition.x == 0 && currentPosition.y == 0) {
-				genotypeDirtyfy.ReforgeCellPatternAndForward();Error("We are at root now but no axone was found");
+				Debug.LogError("We are at root now but no axone was found");
 			}
 			currentPosition = geneCellMap.GetCellGridPositionUpBranch(currentPosition);
 		}
-		genotypeDirtyfy.ReforgeCellPatternAndForward();Error("We should have been climbing all the way up the branc to the origin, by now!");
+		Debug.LogError("We should have been climbing all the way up the branc to the origin, by now!");
 		return null;
 	}
 
@@ -190,13 +190,13 @@ public class Genotype : MonoBehaviour {
 				return distance;
 			}
 			if (currentPosition.x == 0 && currentPosition.y == 0) {
-				genotypeDirtyfy.ReforgeCellPatternAndForward();Error("We are at root now but no axone was found");
+				Debug.LogError("We are at root now but no axone was found");
 				return null;
 			}
 			currentPosition = geneCellMap.GetCellGridPositionUpBranch(currentPosition);
 			distance++;
 		}
-		genotypeDirtyfy.ReforgeCellPatternAndForward();Error("We should have been climbing all the way to the root by now!");
+		Debug.LogError("We should have been climbing all the way to the root by now!");
 		return null;
 	}
 
@@ -387,7 +387,7 @@ public class Genotype : MonoBehaviour {
 							Gene referenceGene = geneReference.gene;
 							Vector2i referenceCellMapPosition = CellMap.GetGridNeighbourGridPosition(spawningFromCell.mapPosition, referenceBindHeading);
 
-							//if (!CellMap.IsInsideHexagon(referenceCellMapPosition, Creature.maxRadiusHexagon)) {
+							//if (!CellMap.IsInsideHexagon(referenceCellMapPosition, GlobalSettings.instance.phenotype.creatureHexagonMaxRadius)) {
 							if (!CellMap.IsInsideMaximumHexagon(referenceCellMapPosition)) {
 								spawningFromCell.failBlueprintNeighboursDueToAreaOrCount = true;
 								continue;
@@ -426,7 +426,7 @@ public class Genotype : MonoBehaviour {
 					}
 				}
 
-				if (geneCellMap.cellCount > Creature.maxCellCount) {
+				if (geneCellMap.cellCount > GlobalSettings.instance.phenotype.creatureMaxCellCount) {
 					//MarkeAllGeneCellsAsCanGrowNeighbours();
 
 					// We have more cells in the blueprint than max size, so REMOVE the last buildOrderIndex layer ALL TOGETHER and call it a creature

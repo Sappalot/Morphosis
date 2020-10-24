@@ -7,13 +7,17 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	//public Text creatureSize;
 	public CellPanel cellPanel;
 	public GameObject bodyPanel;
-	public SizeBar sizeBar;
-	public Text sizeText;
-	public EnergyBar energyBar;
 	
-	public Text creatureSpeed;
+	
+	public EnergyBar energyBar;
 	public Text creatureEffect;
 	public Text creatureEffectAverage;
+	public SizeBar sizeBar;
+	public Text sizeText;
+	public Text growthPeriodLabel;
+
+	public Text creatureSpeed;
+
 	
 
 	public Toggle followToggle;
@@ -122,8 +126,6 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			sizeBar.isOn = true;
 			sizeBar.UpdateBar(solo.genotype.geneCellCount, solo.phenotype.cellCount, solo.genotype.GetGeneCellOfTypeCount(CellTypeEnum.Egg), solo.phenotype.GetCellOfTypeCount(CellTypeEnum.Egg), solo.GetAttachedChildrenAliveCount());
 
-			sizeText.text = "Size: " + solo.phenotype.cellCount + " / " + solo.genotype.geneCellCount;
-
 			energyBar.isOn = true;
 			energyBar.fullness = solo.phenotype.energyFullness;
 			energyBar.effectTotal = solo.phenotype.EffectPerCell(true, true, true);
@@ -143,8 +145,9 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 				creatureEffect.text = string.Format("Flux Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.EffectUpPerCell(false, true), solo.phenotype.EffectDownPerCell(false, false, true), solo.phenotype.EffectPerCell(false, false, true));
 			}
 
+			growthPeriodLabel.text = string.Format("Try grow cell every: {0:F2} s  <color=#303030ff>[{1:F2} ... {2:F2}] </color>", solo.phenotype.growTickPeriod * Time.fixedDeltaTime, solo.phenotype.GrowTickPeriodAtSize(1) * Time.fixedDeltaTime, solo.phenotype.GrowTickPeriodAtSize(GlobalSettings.instance.phenotype.creatureMaxCellCount) * Time.fixedDeltaTime);
 
-
+			sizeText.text = "Size: " + solo.phenotype.cellCount + " / " + solo.genotype.geneCellCount;
 
 			creatureSpeed.text = string.Format("Speed: {0:F2} m/s", solo.phenotype.speed);
 

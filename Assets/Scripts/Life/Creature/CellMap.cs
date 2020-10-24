@@ -84,7 +84,7 @@ public class CellMap {
 
 	// hexaRadius = 0; just gridPosition Cell
 	public static bool IsInsideMaximumHexagon(Vector2i gridPosition) {
-		return ManhexanDistanceFromOrigin(gridPosition) <= Creature.maxRadiusHexagon;
+		return ManhexanDistanceFromOrigin(gridPosition) <= GlobalSettings.instance.phenotype.creatureHexagonMaxRadius;
 	}
 
 	public static List<Vector2i> GetGridPositionsWithinHexagon(int hexaRadius) {

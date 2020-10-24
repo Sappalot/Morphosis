@@ -1176,15 +1176,15 @@ public abstract class Cell : MonoBehaviour {
 
 	public int GetDirectionOfOwnNeighbourCell(Creature me, Cell cell) {
 		if (me == null) {
-			genotypeDirtyfy.ReforgeCellPatternAndForward();Error("GetDirectionOfOwnNeighbourCell: I am null");
+			Debug.LogError("GetDirectionOfOwnNeighbourCell: I am null");
 			throw new RuntimeException("I am null");
 		}
 		if (cell == null) {
-			genotypeDirtyfy.ReforgeCellPatternAndForward();Error("GetDirectionOfOwnNeighbourCell: neighbour is null");
+			Debug.LogError("GetDirectionOfOwnNeighbourCell: neighbour is null");
 			throw new RuntimeException("neighbour is null");
 		}
 		if (cell.creature == null) {
-			genotypeDirtyfy.ReforgeCellPatternAndForward();Error("GetDirectionOfOwnNeighbourCell: neighbour.creature is null");
+			Debug.LogError("GetDirectionOfOwnNeighbourCell: neighbour.creature is null");
 			throw new RuntimeException("neighbour.creature is null");
 		}
 		if (cell.creature != me) {

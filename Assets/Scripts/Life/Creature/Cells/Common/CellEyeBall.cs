@@ -47,7 +47,7 @@ public class CellEyeBall : MonoBehaviour {
 			float fovNormalized = Mathf.InverseLerp(graphicalMinFOV, 360f, cachedFOV);
 			float fovNormalized180 = Mathf.InverseLerp(graphicalMinFOV, 360f, 180f);
 
-			//genotypeDirtyfy.ReforgeCellPatternAndForward();("FOV: " + testFOV + " ==> normalized: " + fovNormalized);
+			//Debug.Log("FOV: " + testFOV + " ==> normalized: " + fovNormalized);
 
 			float pupilPositionX = Mathf.Lerp(pupilPositionXSmall, pupilPositionXBig, pupilPositionDevelopment.Evaluate(fovNormalized));
 			pupil.transform.localPosition = new Vector3(pupilPositionX, 0f, -1f);

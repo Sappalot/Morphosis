@@ -174,7 +174,7 @@ public class Edges : MonoBehaviour {
 		apexAngle = Cell.ApexAngle.blunt;
 		int previousDirection = -1; // -1 and 0 should both work, right? // We need to have a previous direction which is pointing east in model space
 		if (currentCell == null) {
-			genotypeDirtyfy.ReforgeCellPatternAndForward();Error("currentCell = NULL");
+			Debug.LogError("currentCell = NULL");
 		}
 
 		if (previousCell != null) {

@@ -25,7 +25,7 @@ public class GraphGroup : MonoBehaviour {
 		if (graphSettings != null) {
 			maxValue = graphSettings.maxValue;
 		} else {
-			genotypeDirtyfy.ReforgeCellPatternAndForward();Warning("Warning: Graph knows no GraphSettings");
+			Debug.LogWarning("Warning: Graph knows no GraphSettings");
 		}
 		foreach (Graph g in graphs) {
 			g.DrawGraph(graphArea, scale, level, history, maxValue, textMeasureStepsAgo);

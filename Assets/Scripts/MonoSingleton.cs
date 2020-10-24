@@ -21,14 +21,14 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T
 
                 // Object not found, we create a temporary one
                 if (m_Instance == null) {
-                    genotypeDirtyfy.ReforgeCellPatternAndForward();Warning("No instance of " + typeof(T).ToString() + ", a temporary one is created.");
+                    Debug.LogWarning("No instance of " + typeof(T).ToString() + ", a temporary one is created.");
 
                     isTemporaryInstance = true;
                     m_Instance = new GameObject("Temp Instance of " + typeof(T).ToString(), typeof(T)).GetComponent<T>();
 
                     // Problem during the creation, this should not happen
                     if (m_Instance == null) {
-                        genotypeDirtyfy.ReforgeCellPatternAndForward();Error("Problem during the creation of " + typeof(T).ToString());
+                        Debug.LogError("Problem during the creation of " + typeof(T).ToString());
                     }
                 }
                 if (!_isInitialized) {
@@ -51,7 +51,7 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T
             m_Instance = this as T;
         }
         else if (m_Instance != this) {
-            genotypeDirtyfy.ReforgeCellPatternAndForward();Error("Another instance of " + GetType() + " is already exist! Destroying self...");
+            Debug.LogError("Another instance of " + GetType() + " is already exist! Destroying self...");
             DestroyImmediate(this);
             return;
         }

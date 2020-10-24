@@ -244,7 +244,7 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 			ProgressBar.instance.gameObject.SetActive(false);
 			Debug.Log("World loaded");
-			//genotypeDirtyfy.ReforgeCellPatternAndForward();Warning("Warning: Graph knows no GraphSettings");
+			//Debug.LogWarning("Warning: Graph knows no GraphSettings");
 			MouseAction.instance.actionState = MouseActionStateEnum.free;
 		});
 	}

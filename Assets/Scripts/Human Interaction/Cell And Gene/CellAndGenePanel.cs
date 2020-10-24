@@ -220,7 +220,7 @@ public class CellAndGenePanel : MonoBehaviour {
 
 			//if ((mode == PhenoGenoEnum.Phenotype && cell == null) || (mode == PhenoGenoEnum.Genotype && gene == null)) {
 			//	// no menu
-			//	genotypeDirtyfy.ReforgeCellPatternAndForward();("No CellAndGeneCellMenu");
+			//	Debug.Log("No CellAndGeneCellMenu");
 
 			//	//isDirty = false;
 			//	return;
