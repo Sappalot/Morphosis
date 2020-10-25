@@ -67,11 +67,11 @@ public class EffectSensorPanel : SignalUnitPanel {
 				Debug.Log("Update Effect Sensor Panel");
 			}
 
-			effectMeasuredDropdown.interactable = IsUnlocked();
+			ignoreHumanInput = true;
+
+			effectMeasuredDropdown.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
 			if (selectedGene != null && affectedGeneSignalUnit != null) {
-				ignoreHumanInput = true;
-
 				effectMeasuredDropdown.value = (int)(affectedGeneSignalUnit as GeneEffectSensor).effectMeassure;
 				effectMeasuredDropdown.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
@@ -91,10 +91,9 @@ public class EffectSensorPanel : SignalUnitPanel {
 
 				effectThresholdSlider.value = (affectedGeneSignalUnit as GeneEffectSensor).usedThreshold;
 				effectThresholdSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
-
-				ignoreHumanInput = false;
 			}
 
+			ignoreHumanInput = false;
 			isDirty = false;
 		}
 	}

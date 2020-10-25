@@ -1591,7 +1591,7 @@ public abstract class Cell : MonoBehaviour {
 			//SetLabelColor(ColorScheme.instance.signalRootable);
 			cellCommon.cellEyeBall.gameObject.SetActive(true);
 			cellCommon.cellEyeBall.fieldOfView = surroundingSensor.fieldOfView;
-			cellCommon.cellEye.transform.localRotation = flipSide == FlipSideEnum.BlackWhite ? Quaternion.Euler(0, 0, surroundingSensor.direction) : Quaternion.Euler(0, 0, -surroundingSensor.direction);
+			cellCommon.cellEye.transform.localRotation = flipSide == FlipSideEnum.BlackWhite ? Quaternion.Euler(0, 0, surroundingSensor.directionLocal) : Quaternion.Euler(0, 0, -surroundingSensor.directionLocal);
 
 			if (CreatureSelectionPanel.instance.IsSelected(creature)) {
 				cellCommon.cellEyeZone.gameObject.SetActive(true);

@@ -18,8 +18,15 @@ public class LeafCell : Cell {
 
 	public override void SetDefaultState() {
 		base.SetDefaultState();
-		lowPassExposure = GlobalSettings.instance.phenotype.leafCell.defaultExposure;
+		lowPassExposure = exposureAtProductionEffectZero;
 	}
+
+	private float exposureAtProductionEffectZero {
+		get {
+			return GlobalSettings.instance.phenotype.leafCell.effectProductionDown / GlobalSettings.instance.phenotype.leafCell.effectProductionUpMax; ;
+		}
+	}
+	
 
 	private float m_lowPassExposure;
 	public float lowPassExposure {
@@ -84,7 +91,7 @@ public class LeafCell : Cell {
 
 			Vector2 direction = GeometryUtil.GetVector(Random.Range(0f, 360f), 1f);
 
-			Vector2 start = position + direction * (radius - 0.1f); // we have to start inside ourselves to be able to catch touching bart of neighbours
+			Vector2 start = position + direction * (radius - 0.1f); // we have to start inside ourselves to be able to catch touching part of neighbours
 			Vector2 perpendicular = new Vector2(-direction.y, direction.x); //debug shit
 
 			float rayEnergy = startEnergy; //100% when leaving
@@ -224,8 +231,6 @@ public class LeafCell : Cell {
 			}
 			// ^ enter / exit lines ^
 
-			float exposureAtProductionEffectZero = GlobalSettings.instance.phenotype.leafCell.effectProductionDown / GlobalSettings.instance.phenotype.leafCell.effectProductionUpMax;
-
 			// if it is calm exposure goes towards the 'true' exposure value. If it is windy (cell is moving) we go towards the exposure which gives a net production of zero
 			float exposure = Mathf.Lerp(exposureAtProductionEffectZero, ((rayRange - transparentTravelDistance) / maxRange), absoluteEffectCalmnessFactor);
 
@@ -255,18 +260,18 @@ public class LeafCell : Cell {
 		} else {
 			effectProductionInternalUp = 0f;
 			effectProductionInternalDown = 0f;
-			m_lowPassExposure = GlobalSettings.instance.phenotype.leafCell.defaultExposure;
+			m_lowPassExposure = exposureAtProductionEffectZero;
 		}
 	}
 
 	private float GetEnergyLoss(RaycastHit2D hit, float energyLossAir) {
-		CollisionType type = GetCollisionType(hit);
+		RaycastUtil.CollisionType type = RaycastUtil.GetCollisionType(hit, creature);
 
-		if (type == CollisionType.ownCell || type == CollisionType.connectedViaClusterCell) {
+		if (type == RaycastUtil.CollisionType.ownCell || type == RaycastUtil.CollisionType.connectedViaClusterCell) {
 			//return energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOwnCell;
 			float transparencyAtHit = GetTransparencyOfHit(hit);
 			return Mathf.Lerp(energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOwnCell, energyLossAir, transparencyAtHit);
-		} else if (type == CollisionType.othersCell) {
+		} else if (type == RaycastUtil.CollisionType.othersCell) {
 			//return energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOtherCell;
 			float transparencyAtHit = GetTransparencyOfHit(hit);
 			return Mathf.Lerp(energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOtherCell, energyLossAir, transparencyAtHit);
@@ -277,11 +282,11 @@ public class LeafCell : Cell {
 	}
 
 	private bool IsTransparentCell(RaycastHit2D hit) {
-		CollisionType type = GetCollisionType(hit);
+		RaycastUtil.CollisionType type = RaycastUtil.GetCollisionType(hit, creature);
 
-		if (type == CollisionType.ownCell) {
+		if (type == RaycastUtil.CollisionType.ownCell) {
 			return (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal);
-		} else if (type == CollisionType.othersCell) {
+		} else if (type == RaycastUtil.CollisionType.othersCell) {
 			return (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal);
 		} else {
 			return false;
@@ -314,31 +319,6 @@ public class LeafCell : Cell {
 		Debug.DrawLine(closeOnRay - perpendicular * energyClose, farOnRay - perpendicular * energyFar, color, 5f);
 	}
 
-	private enum CollisionType {
-		ownCell,
-		connectedViaClusterCell,
-		othersCell,
-		otherObstacle,
-	}
-
-	private CollisionType GetCollisionType(RaycastHit2D hit) {
-		if (hit.collider.gameObject.GetComponent<Cell>() != null) {
-			Creature hitCreature = hit.collider.gameObject.GetComponent<Cell>().creature; 
-			if (hitCreature == creature) {
-				return CollisionType.ownCell;
-			} else {
-				List<Creature> creaturesInCluster = creature.creaturesInCluster; // is this one expensive? in case it is cache it and update it when cluster might change
-				foreach (Creature c in creaturesInCluster) { 
-					if (hitCreature == c) {
-						return CollisionType.connectedViaClusterCell;
-					}
-				}
-				return CollisionType.othersCell;
-			}
-		}
-		return CollisionType.otherObstacle;
-	}
-
 	private CellTypeEnum GetCollisionCellType(RaycastHit2D hit) {
 		if (hit.collider.gameObject.GetComponent<Cell>() != null) {
 			return hit.collider.gameObject.GetComponent<Cell>().GetCellType();
@@ -346,10 +326,10 @@ public class LeafCell : Cell {
 		return CellTypeEnum.Error;
 	}
 
-	private Color GetColorForCollisionType(CollisionType type) {
-		if (type == CollisionType.ownCell) {
+	private Color GetColorForCollisionType(RaycastUtil.CollisionType type) {
+		if (type == RaycastUtil.CollisionType.ownCell) {
 			return Color.yellow;
-		} else if (type == CollisionType.othersCell) {
+		} else if (type == RaycastUtil.CollisionType.othersCell) {
 			return Color.red;
 		} else {
 			//Other obstacle
@@ -358,7 +338,7 @@ public class LeafCell : Cell {
 	}
 
 	private Color GetCollisionColor(RaycastHit2D hit) {
-		return GetColorForCollisionType(GetCollisionType(hit));
+		return GetColorForCollisionType(RaycastUtil.GetCollisionType(hit, creature));
 	}
 
 	public override CellTypeEnum GetCellType() {

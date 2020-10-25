@@ -4,33 +4,60 @@ using UnityEngine;
 
 public class SurroundingSensor : SignalUnit {
 	private bool[] output = new bool[6]; // outputs 
+	private RaycastHit2D[] raycastHitArrayOne;
+
+	public SurroundingSensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
+		base.signalUnitEnum = signalUnit;
+		if (raycastHitArrayOne == null) {
+			raycastHitArrayOne = new RaycastHit2D[1]; // Raycast function will return as the array is full, so by making it 1 big we can ignore everything that is behind the first hit
+		}
+	}
+
+	public GeneSurroundingSensorChannel SensorAtChannelByType(int channel, SurroundingSensorChannelSensorTypeEnum type) {
+		return geneSurroundingSensor.SensorAtChannelByType(channel, type);
+	}
+
+	public SurroundingSensorChannelSensorTypeEnum OperatingSensorAtChannel(int channel) { // index: 0 is ditched,  1 = output at A, ....
+		return geneSurroundingSensor.OperatingSensorAtChannel(channel);
+	}
 
 	public float fieldOfView {
 		get {
-			return (hostCell.gene.surroundingSensor as GeneSurroundingSensor).fieldOfView;
+			return geneSurroundingSensor.fieldOfView;
 		}
 	}
 
-	public float direction {
+	// direction in local space, that is offset from cells heading
+
+	public float directionLocal {
 		get {
-			return (hostCell.gene.surroundingSensor as GeneSurroundingSensor).direction;
+			return geneSurroundingSensor.directionLocal;
 		}
 	}
+
+	// the eyes direction in world space, 0 is east 90 is north 
+	public float eyeHeading {
+		get {
+			return AngleUtil.AngleRawToSafe(hostCell.heading + (hostCell.flipSide == FlipSideEnum.BlackWhite ? directionLocal : -directionLocal));
+		}
+	}
+	
 
 	public float rangeNear {
 		get {
-			return (hostCell.gene.surroundingSensor as GeneSurroundingSensor).rangeNear;
+			return geneSurroundingSensor.rangeNear;
 		}
 	}
 
 	public float rangeFar {
 		get {
-			return (hostCell.gene.surroundingSensor as GeneSurroundingSensor).rangeFar;
+			return geneSurroundingSensor.rangeFar;
 		}
 	}
-
-	public SurroundingSensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
-		base.signalUnitEnum = signalUnit;
+	private GeneSurroundingSensor geneSurroundingSensor {
+		get {
+			return (hostCell.gene.surroundingSensor as GeneSurroundingSensor);
+		}
 	}
 
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
@@ -42,22 +69,35 @@ public class SurroundingSensor : SignalUnit {
 																  //if (!hostCell.gene.effectSensor.isRooted) {
 																  //	return;
 																  //}
+			//Debug.Log("Eye heading: " + eyeHeading);
 
-			output[0] = false; //hostCell.Effect((hostCell.gene.effectSensor as GeneEffectSensor).effectMeassure) >= (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;
-			output[1] = true; //hostCell.Effect((hostCell.gene.effectSensor as GeneEffectSensor).effectMeassure) < (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;
+			Vector2 rayVectorNormalized = GeometryUtil.GetVector(eyeHeading, 1f);
+			Vector2 rayStart = hostCell.position + rayVectorNormalized * hostCell.radius; // start at rim of cell
 
+			int raycastHitCount = Physics2D.RaycastNonAlloc(rayStart, rayVectorNormalized, raycastHitArrayOne, rangeFar - hostCell.radius, 1);
+			RaycastUtil.CollisionType hitType = RaycastUtil.CollisionType.undefined;
+			if (raycastHitCount == 0) {
+				//Debug.Log("See only the void");
+			} else {
+				hitType = RaycastUtil.GetCollisionType(raycastHitArrayOne[0], hostCell.creature);
+				//Debug.Log("See " + hitType.ToString());
+			}
 
-			// TODO: raycast world and update output according to settings
-
-			//if (areaCells != null) {
-			//	float averageEffect = GetAverageEffect(areaCells, (hostCell.gene.effectSensor as GeneEffectSensor).effectMeassure);
-			//	output[2] = averageEffect >= (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;
-			//	output[3] = averageEffect < (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;
-			//}
-
-			//float creatureEnergy = hostCell.creature.phenotype.EffectPerCell((hostCell.gene.effectSensor as GeneEffectSensor).effectMeassure);
-			//output[4] = creatureEnergy >= (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;
-			//output[5] = creatureEnergy < (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;
+			for (int channel = 0; channel < 6; channel++) {
+				bool evaluatedOutput = false;
+				if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov) {
+					if (hitType == RaycastUtil.CollisionType.othersCell) {
+						evaluatedOutput = true;
+					}
+				} else if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov) {
+					if (hitType == RaycastUtil.CollisionType.otherObstacle) {
+						evaluatedOutput = true;
+					}
+				} else {
+					Debug.LogError("SurroundingSensor: Trying to evaluate output for an unknown SurroundingSensorChannelSensorTypeEnum");
+				}
+				output[channel] = evaluatedOutput;
+			}
 		}
 	}
 

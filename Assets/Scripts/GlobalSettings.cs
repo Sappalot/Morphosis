@@ -191,9 +191,6 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 			[Tooltip("Was 18. When ray is traveling away from cell it loses this much potential effect (effectProductionUpMax) for each meter it is penetrating other cells, measured in [W/m]. Other cells are all cells that are not connected to this one via cluser. This value affects the exposure, which in turn affects the productionUpEffect")]
 			public float sunRayEffectLossPerDistanceThroughOtherCell = 18f;
-
-			[Tooltip("A new born leaf cells' exposure will be set to this value")]
-			public float defaultExposure = 0.5f;
 		}
 		public LeafCell leafCell;
 

@@ -7,7 +7,7 @@ public class GeneSurroundingSensor : GeneSignalUnit {
 		this.signalUnit = signalUnit;
 
 		// create all the sensor
-		for( int c = 1; c < 7; c++) {
+		for( int c = 0; c < 6; c++) {
 			channelDictionaryAtChannel[c] = new Dictionary<SurroundingSensorChannelSensorTypeEnum, GeneSurroundingSensorChannel>();
 			channelDictionaryAtChannel[c].Add(SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov, new GeneSurroundingSensorChannelCreatureCellFovCov());
 			channelDictionaryAtChannel[c].Add(SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov, new GeneSurroundingSensorChannelTerrainRockFovCov());
@@ -19,31 +19,33 @@ public class GeneSurroundingSensor : GeneSignalUnit {
 
 	// The type of sensor that is coosen to operate at each channel
 	// The values should match the ones int the SurroundingSensor type dropdown AND SurroundingSensorChannelSensorTypeEnum
-	private SurroundingSensorChannelSensorTypeEnum[] sensorTypeAtChannel = new SurroundingSensorChannelSensorTypeEnum[7]; // index: 0 = UNUSED!!! , 1 = Channel, .... | value 0 = creature cell covCov > , value 1 = terrain rock coverage >
-	public SurroundingSensorChannelSensorTypeEnum SensorTypeAtChannel(int channel) { // index: 0 is ditched,  1 = output at A, ....
+	private SurroundingSensorChannelSensorTypeEnum[] sensorTypeAtChannel = new SurroundingSensorChannelSensorTypeEnum[6]; // index: 0 = A
+	public SurroundingSensorChannelSensorTypeEnum OperatingSensorAtChannel(int channel) { // index: 0 is ditched,  1 = output at A, ....
 		return sensorTypeAtChannel[channel];
 	}
-	public void SetSensorTypeAtChannel(int channel, SurroundingSensorChannelSensorTypeEnum sensor) { // a = 1
+	public void SetSensorTypeAtChannel(int channel, SurroundingSensorChannelSensorTypeEnum sensor) { // a = 0
 		sensorTypeAtChannel[channel] = sensor;
 		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	// All the geneSensors at each of the 6 channel
-	private Dictionary<SurroundingSensorChannelSensorTypeEnum, GeneSurroundingSensorChannel>[] channelDictionaryAtChannel = new Dictionary<SurroundingSensorChannelSensorTypeEnum, GeneSurroundingSensorChannel>[7];
-	public GeneSurroundingSensorChannel GetGeneSensorChannel(int channel, SurroundingSensorChannelSensorTypeEnum type) {
+	private Dictionary<SurroundingSensorChannelSensorTypeEnum, GeneSurroundingSensorChannel>[] channelDictionaryAtChannel = new Dictionary<SurroundingSensorChannelSensorTypeEnum, GeneSurroundingSensorChannel>[6];
+	public GeneSurroundingSensorChannel SensorAtChannelByType(int channel, SurroundingSensorChannelSensorTypeEnum type) {
 		return channelDictionaryAtChannel[channel][type];
 	}
 
-	private float m_direction = 0;
+	private float m_directionLocal = 0;
 	// In which angle the eye is looking, 0 same as cells heading (in the direction of the black-white arrow)
 	// possitive number is the angle from the heading towards the black side, negative is the white side
+	// If cell is flipped (black | white) and cells heding is north (90). directio = 90 ==> looking left (black side). direction -90 ==> looking right (white side)
+	// If cell is flipped (white | black) and cells heding is north (90). directio = 90 ==> looking right (black side). direction -90 ==> looking left (white side)
 	// range [-180, 180] degrees
-	public float direction {
+	public float directionLocal {
 		get {
-			return m_direction;
+			return m_directionLocal;
 		}
 		set {
-			m_direction = value;
+			m_directionLocal = value;
 			genotypeDirtyfy.ReforgeCellPatternAndForward();
 		}
 	}
@@ -94,18 +96,18 @@ public class GeneSurroundingSensor : GeneSignalUnit {
 	}
 
 	public void Defaultify() {
-		for (int c = 1; c < 7; c++) {
-			GetGeneSensorChannel(c, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov).Defaultify();
-			GetGeneSensorChannel(c, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov).Defaultify();
+		for (int c = 0; c < 6; c++) {
+			SensorAtChannelByType(c, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov).Defaultify();
+			SensorAtChannelByType(c, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov).Defaultify();
 		}
+		SetSensorTypeAtChannel(0, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov); // A
 		SetSensorTypeAtChannel(1, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov);
 		SetSensorTypeAtChannel(2, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov);
-		SetSensorTypeAtChannel(3, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov);
+		SetSensorTypeAtChannel(3, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov);
 		SetSensorTypeAtChannel(4, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov);
-		SetSensorTypeAtChannel(5, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov);
-		SetSensorTypeAtChannel(6, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov);
+		SetSensorTypeAtChannel(5, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov); // F
 
-		direction = 0f;
+		directionLocal = 0f;
 		fieldOfView = 90f;
 		rangeFar = 8f;
 		rangeNear = 0.6f;
@@ -114,18 +116,18 @@ public class GeneSurroundingSensor : GeneSignalUnit {
 	}
 
 	public void Randomize() {
-		for (int channel = 1; channel < 7; channel++) {
-			GetGeneSensorChannel(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov).Randomize();
-			GetGeneSensorChannel(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov).Randomize();
+		for (int channel = 0; channel < 6; channel++) {
+			SensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov).Randomize();
+			SensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov).Randomize();
 		}
 		// randomize eye properties
 		genotypeDirtyfy.ReforgeCellPatternAndForward();
 	}
 
 	public void Mutate(float strength) {
-		for (int channel = 1; channel < 7; channel++) {
-			GetGeneSensorChannel(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov).Mutate(strength);
-			GetGeneSensorChannel(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov).Mutate(strength);
+		for (int channel = 0; channel < 6; channel++) {
+			SensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov).Mutate(strength);
+			SensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov).Mutate(strength);
 		}
 		// mutate eye properties
 		genotypeDirtyfy.ReforgeCellPatternAndForward();
@@ -134,16 +136,16 @@ public class GeneSurroundingSensor : GeneSignalUnit {
 	// Save
 	private GeneSurroundingSensorData data = new GeneSurroundingSensorData();
 	public GeneSurroundingSensorData UpdateData() {
-		for (int channel = 1; channel < 7; channel++) {
-			data.sensorTypeAtChannel[channel] = SensorTypeAtChannel(channel);
+		for (int channel = 0; channel < 6; channel++) {
+			data.sensorTypeAtChannel[channel] = OperatingSensorAtChannel(channel);
 		}
 
-		for (int channel = 1; channel < 7; channel++) {
-			data.creatureCellFovCovDataAtChannel[channel] = ((GeneSurroundingSensorChannelCreatureCellFovCov)GetGeneSensorChannel(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).UpdateData();
-			data.terrainRockFovCovDataAtChannel[channel] = ((GeneSurroundingSensorChannelTerrainRockFovCov)GetGeneSensorChannel(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).UpdateData();
+		for (int channel = 0; channel < 6; channel++) {
+			data.creatureCellFovCovDataAtChannel[channel] = ((GeneSurroundingSensorChannelCreatureCellFovCov)SensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).UpdateData();
+			data.terrainRockFovCovDataAtChannel[channel] = ((GeneSurroundingSensorChannelTerrainRockFovCov)SensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).UpdateData();
 		}
 
-		data.direction = direction;
+		data.directionLocal = directionLocal;
 		data.fieldOfView = fieldOfView;
 		data.rangeFar = rangeFar;
 		data.rangeNear = rangeNear;
@@ -152,26 +154,26 @@ public class GeneSurroundingSensor : GeneSignalUnit {
 
 	// Load
 	public void ApplyData(GeneSurroundingSensorData data) {
-		for (int channel = 1; channel < 7; channel++) {
+		for (int channel = 0; channel < 6; channel++) {
 			SetSensorTypeAtChannel(channel, data.sensorTypeAtChannel[channel]);
 		}
 
-		for (int channel = 1; channel < 7; channel++) {
+		for (int channel = 0; channel < 6; channel++) {
 			GeneSurroundingSensorChannelCreatureCellFovCovData creatureCellData = data.creatureCellFovCovDataAtChannel[channel];
 			// They might be missing in old freezer
 			if (creatureCellData == null) {
 				creatureCellData = new GeneSurroundingSensorChannelCreatureCellFovCovData();
 			}
-			((GeneSurroundingSensorChannelCreatureCellFovCov)GetGeneSensorChannel(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).ApplyData(creatureCellData);
+			((GeneSurroundingSensorChannelCreatureCellFovCov)SensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).ApplyData(creatureCellData);
 
 			GeneSurroundingSensorChannelTerrainRockFovCovData terrainRockData = data.terrainRockFovCovDataAtChannel[channel];
 			if (terrainRockData == null) {
 				terrainRockData = new GeneSurroundingSensorChannelTerrainRockFovCovData();
 			}
-			((GeneSurroundingSensorChannelTerrainRockFovCov)GetGeneSensorChannel(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).ApplyData(terrainRockData);
+			((GeneSurroundingSensorChannelTerrainRockFovCov)SensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).ApplyData(terrainRockData);
 		}
 
-		direction = data.direction;
+		directionLocal = data.directionLocal;
 		fieldOfView = data.fieldOfView;
 		rangeFar = data.rangeFar;
 		rangeNear = data.rangeNear;

@@ -17,7 +17,7 @@ public class SurroundingSensorPanel : SignalUnitPanel {
 	public Text channelLabelE;
 	public Text channelLabelF;
 
-	public int viewedChannel = 1; // 1 = A
+	public int viewedChannel = 0; // 0 = A
 
 	// ^ channel ^
 
@@ -85,7 +85,7 @@ public class SurroundingSensorPanel : SignalUnitPanel {
 			return;
 		}
 
-		(affectedGeneSignalUnit as GeneSurroundingSensor).direction = (float)directionSlider.value;
+		(affectedGeneSignalUnit as GeneSurroundingSensor).directionLocal = (float)directionSlider.value;
 		OnGenomeChanged();
 	}
 
@@ -133,33 +133,33 @@ public class SurroundingSensorPanel : SignalUnitPanel {
 				// ^ ghost ^
 
 				// ... selected channel ...
-				channelViewAButtonImage.color = viewedChannel == 1 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
-				channelViewBButtonImage.color = viewedChannel == 2 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
-				channelViewCButtonImage.color = viewedChannel == 3 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
-				channelViewDButtonImage.color = viewedChannel == 4 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
-				channelViewEButtonImage.color = viewedChannel == 5 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
-				channelViewFButtonImage.color = viewedChannel == 6 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+				channelViewAButtonImage.color = viewedChannel == 0 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+				channelViewBButtonImage.color = viewedChannel == 1 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+				channelViewCButtonImage.color = viewedChannel == 2 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+				channelViewDButtonImage.color = viewedChannel == 3 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+				channelViewEButtonImage.color = viewedChannel == 4 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
+				channelViewFButtonImage.color = viewedChannel == 5 ? ColorScheme.instance.selectedViewed : ColorScheme.instance.notSelectedViewed;
 				// ^ selected channel ^
 
 				// ... channel sensor panel ...
-				channelLabelA.text = channelSensorPanels[(int)(affectedGeneSignalUnit as GeneSurroundingSensor).SensorTypeAtChannel(1)].shortName;
-				channelLabelB.text = channelSensorPanels[(int)(affectedGeneSignalUnit as GeneSurroundingSensor).SensorTypeAtChannel(2)].shortName;
-				channelLabelC.text = channelSensorPanels[(int)(affectedGeneSignalUnit as GeneSurroundingSensor).SensorTypeAtChannel(3)].shortName;
-				channelLabelD.text = channelSensorPanels[(int)(affectedGeneSignalUnit as GeneSurroundingSensor).SensorTypeAtChannel(4)].shortName;
-				channelLabelE.text = channelSensorPanels[(int)(affectedGeneSignalUnit as GeneSurroundingSensor).SensorTypeAtChannel(5)].shortName;
-				channelLabelF.text = channelSensorPanels[(int)(affectedGeneSignalUnit as GeneSurroundingSensor).SensorTypeAtChannel(6)].shortName;
+				channelLabelA.text = channelSensorPanels[(int)(affectedGeneSignalUnit as GeneSurroundingSensor).OperatingSensorAtChannel(0)].shortName;
+				channelLabelB.text = channelSensorPanels[(int)(affectedGeneSignalUnit as GeneSurroundingSensor).OperatingSensorAtChannel(1)].shortName;
+				channelLabelC.text = channelSensorPanels[(int)(affectedGeneSignalUnit as GeneSurroundingSensor).OperatingSensorAtChannel(2)].shortName;
+				channelLabelD.text = channelSensorPanels[(int)(affectedGeneSignalUnit as GeneSurroundingSensor).OperatingSensorAtChannel(3)].shortName;
+				channelLabelE.text = channelSensorPanels[(int)(affectedGeneSignalUnit as GeneSurroundingSensor).OperatingSensorAtChannel(4)].shortName;
+				channelLabelF.text = channelSensorPanels[(int)(affectedGeneSignalUnit as GeneSurroundingSensor).OperatingSensorAtChannel(5)].shortName;
 
-				channelSensorTypeDropdown.value = (int)(affectedGeneSignalUnit as GeneSurroundingSensor).SensorTypeAtChannel(viewedChannel);
+				channelSensorTypeDropdown.value = (int)(affectedGeneSignalUnit as GeneSurroundingSensor).OperatingSensorAtChannel(viewedChannel);
 				channelSensorTypeDropdown.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
-				SurroundingSensorChannelSensorTypeEnum viewedChannelType = (affectedGeneSignalUnit as GeneSurroundingSensor).SensorTypeAtChannel(viewedChannel);
+				SurroundingSensorChannelSensorTypeEnum viewedChannelType = (affectedGeneSignalUnit as GeneSurroundingSensor).OperatingSensorAtChannel(viewedChannel);
 				creatureCellFovCovPanel.gameObject.SetActive(viewedChannelType == SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov);
 				terrainRockFovCovPanel.gameObject.SetActive(viewedChannelType == SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov);
 				
 				// ^ channel sensor panel ^
 
-				directionSliderLabel.text = string.Format("Direction: {0:F1} °", (affectedGeneSignalUnit as GeneSurroundingSensor).direction);
-				directionSlider.value = (affectedGeneSignalUnit as GeneSurroundingSensor).direction;
+				directionSliderLabel.text = string.Format("Direction: {0:F1} °", (affectedGeneSignalUnit as GeneSurroundingSensor).directionLocal);
+				directionSlider.value = (affectedGeneSignalUnit as GeneSurroundingSensor).directionLocal;
 				directionSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
 				fieldOfViewSliderLabel.text = string.Format("Field Of View: {0:F1} °", (affectedGeneSignalUnit as GeneSurroundingSensor).fieldOfView);

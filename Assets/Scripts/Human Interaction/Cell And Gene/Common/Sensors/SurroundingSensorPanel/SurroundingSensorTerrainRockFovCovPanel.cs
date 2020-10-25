@@ -15,7 +15,7 @@ public class SurroundingSensorTerrainRockFovCovPanel : SurroundingSensorChannelS
 			return;
 		}
 
-		((GeneSurroundingSensorChannelTerrainRockFovCov)cellAndGenePanel.gene.surroundingSensor.GetGeneSensorChannel(motherPanel.viewedChannel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).threshold = thresholdSlider.value;
+		((GeneSurroundingSensorChannelTerrainRockFovCov)cellAndGenePanel.gene.surroundingSensor.SensorAtChannelByType(motherPanel.viewedChannel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).threshold = thresholdSlider.value;
 		OnGenomeChanged();
 	}
 
@@ -28,7 +28,7 @@ public class SurroundingSensorTerrainRockFovCovPanel : SurroundingSensorChannelS
 
 			ignoreHumanInput = true;
 
-			float threshold = ((GeneSurroundingSensorChannelTerrainRockFovCov)cellAndGenePanel.gene.surroundingSensor.GetGeneSensorChannel(motherPanel.viewedChannel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).threshold;
+			float threshold = ((GeneSurroundingSensorChannelTerrainRockFovCov)cellAndGenePanel.gene.surroundingSensor.SensorAtChannelByType(motherPanel.viewedChannel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).threshold;
 			thresholdSliderLabel.text = string.Format("Terrain Rock FOV Coverage > {0:F0} %", threshold * 100f);
 			thresholdSlider.value = threshold;
 			thresholdSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;

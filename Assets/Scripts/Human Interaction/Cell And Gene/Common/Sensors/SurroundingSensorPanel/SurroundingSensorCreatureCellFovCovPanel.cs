@@ -16,7 +16,7 @@ public class SurroundingSensorCreatureCellFovCovPanel : SurroundingSensorChannel
 			return;
 		}
 
-		((GeneSurroundingSensorChannelCreatureCellFovCov)cellAndGenePanel.gene.surroundingSensor.GetGeneSensorChannel(motherPanel.viewedChannel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).threshold = thresholdSlider.value;
+		((GeneSurroundingSensorChannelCreatureCellFovCov)cellAndGenePanel.gene.surroundingSensor.SensorAtChannelByType(motherPanel.viewedChannel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).threshold = thresholdSlider.value;
 		OnGenomeChanged();
 	}
 
@@ -29,7 +29,7 @@ public class SurroundingSensorCreatureCellFovCovPanel : SurroundingSensorChannel
 
 			ignoreHumanInput = true;
 
-			float threshold = ((GeneSurroundingSensorChannelCreatureCellFovCov)cellAndGenePanel.gene.surroundingSensor.GetGeneSensorChannel(motherPanel.viewedChannel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).threshold;
+			float threshold = ((GeneSurroundingSensorChannelCreatureCellFovCov)cellAndGenePanel.gene.surroundingSensor.SensorAtChannelByType(motherPanel.viewedChannel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).threshold;
 			thresholdSliderLabel.text = string.Format("Creature Cell FOV Coverage > {0:F0} %", threshold * 100f);
 			thresholdSlider.value = threshold;
 			thresholdSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
