@@ -98,7 +98,7 @@ public class WorkPanel : MonoBehaviour {
 				return;
 			}
 
-			typeDropdown.interactable = IsUnlocked();
+			typeDropdown.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
 			ignoreMenuChange = true;
 			typeDropdown.value = (int)gene.type;

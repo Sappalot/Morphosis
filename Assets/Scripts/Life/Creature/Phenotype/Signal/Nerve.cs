@@ -3,8 +3,6 @@
 public class Nerve {
 	public NerveStatusEnum nerveStatusEnum;
 
-	public NerveColorsEnum nerveColorsEnum;
-
 	public Cell headCellLost { get; private set; }
 
 	private Cell m_headCell;

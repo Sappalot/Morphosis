@@ -176,8 +176,12 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 			[Tooltip("Ths leafs' fotosyntesis effect which is gaining the cell [W], proportional to the exposure of it.'")]
 			public float effectProductionUpMax = 12f;
 
-			[Tooltip("Leaf exposure will be multiplied by a factor depending on number of cells in creatures' body. Few cells => low factor, so that algae can't clog up simulation")] public AnimationCurve exposureFactorAtBodySize;
+			public AnimationCurve exposureFactorAtBodySize;
+
+			[Tooltip("Leaf exposure will be multiplied by a factor depending on number of cells in creatures' body. Few cells => low factor, so that algae can't clog up simulation")]
 			public AnimationCurve exposureFactorAtPopulation;
+
+			public AnimationCurve absoluteEffectFactorAtSpeed;
 
 			[Tooltip("A sun beam hitting cell from this far [m] can contribute to its exposure. Or... Cell is searching this far [m] for open space.")]
 			public float sunRayMaxRange = 35.0f;

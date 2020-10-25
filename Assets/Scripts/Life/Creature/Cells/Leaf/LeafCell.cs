@@ -35,6 +35,18 @@ public class LeafCell : Cell {
 		}
 	}
 
+	public float speed {
+		get {
+			return velocity.magnitude;
+		}
+	}
+
+	public float absoluteEffectCalmnessFactor {
+		get {
+			return GlobalSettings.instance.phenotype.leafCell.absoluteEffectFactorAtSpeed.Evaluate(speed);
+		}
+	}
+
 	// Friction (Drag)
 	public override void SetFrictionNormal() {
 		if (creature.phenotype.cellCount >= 3) {
@@ -212,7 +224,10 @@ public class LeafCell : Cell {
 			}
 			// ^ enter / exit lines ^
 
-			float exposure = ((rayRange - transparentTravelDistance) / maxRange);
+			float exposureAtProductionEffectZero = GlobalSettings.instance.phenotype.leafCell.effectProductionDown / GlobalSettings.instance.phenotype.leafCell.effectProductionUpMax;
+
+			// if it is calm exposure goes towards the 'true' exposure value. If it is windy (cell is moving) we go towards the exposure which gives a net production of zero
+			float exposure = Mathf.Lerp(exposureAtProductionEffectZero, ((rayRange - transparentTravelDistance) / maxRange), absoluteEffectCalmnessFactor);
 
 			exposureRecord[exposureRecorCursor] = exposure;
 			exposureRecorCursor++;

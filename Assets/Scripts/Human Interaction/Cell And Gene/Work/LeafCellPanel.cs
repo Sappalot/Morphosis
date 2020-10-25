@@ -2,9 +2,11 @@
 using UnityEngine.UI;
 
 public class LeafCellPanel : ComponentPanel {
-	public Text exposure;
-	public Text creatureSizeFactor;
-	public Text overPopulationFactor;
+	public Text exposureLabel;
+	public Text creatureSizeFactorLabel;
+	public Text overPopulationFactorLabel;
+	public Text absoluteEffectCalmnessFactorLabel;
+
 
 	public LogicBoxPanel dummyLogicBoxAPanel;
 	public LogicBoxPanel dummyLogicBoxBPanel;
@@ -57,23 +59,28 @@ public class LeafCellPanel : ComponentPanel {
 				if (cellAndGenePanel.cell != null) {
 					componentFooterPanel.SetProductionEffectText(selectedCell.effectProductionInternalUp, GlobalSettings.instance.phenotype.leafCell.effectProductionDown);
 
-					exposure.text = string.Format("Exposure: {0:F2}%", (selectedCell as LeafCell).lowPassExposure * 100f);
-					creatureSizeFactor.text = string.Format("Creature size factor: {0:F2}% <color=#303030ff>[{1:F2}% ... {2:F2}%]</color>",
+					exposureLabel.text = string.Format("Exposure: {0:F2}%", (selectedCell as LeafCell).lowPassExposure * 100f);
+					creatureSizeFactorLabel.text = string.Format("Creature size factor: {0:F2}% <color=#303030ff>[{1:F2}% ... {2:F2}%]</color>",
 						GlobalSettings.instance.phenotype.leafCell.exposureFactorAtBodySize.Evaluate(selectedCell.creature.cellCount) * 100f,
 						GlobalSettings.instance.phenotype.leafCell.exposureFactorAtBodySize.Evaluate(1) * 100f,
 						GlobalSettings.instance.phenotype.leafCell.exposureFactorAtBodySize.Evaluate(GlobalSettings.instance.phenotype.creatureMaxCellCount) * 100f);
 					
-						overPopulationFactor.text = string.Format("Over population factor: {0:F2}% <color=#303030ff>[{1:F2}% ... {2:F2}%]</color>",
+						overPopulationFactorLabel.text = string.Format("Over population factor: {0:F2}% <color=#303030ff>[{1:F2}% ... {2:F2}%]</color>",
 						GlobalSettings.instance.phenotype.leafCell.exposureFactorAtPopulation.Evaluate(World.instance.life.cellAliveCount) * 100f,
 						GlobalSettings.instance.phenotype.leafCell.exposureFactorAtPopulation.Evaluate(1) * 100f,
 						GlobalSettings.instance.phenotype.leafCell.exposureFactorAtPopulation.Evaluate(10000) * 100f); // We will never reach this number so it's a worst case scenarion+
+
+					absoluteEffectCalmnessFactorLabel.text = string.Format("Absolute Effect calmness factor: {0:F2}% <color=#303030ff>[{1:F2}% ... {2:F2}%]</color>",
+					(selectedCell as LeafCell).absoluteEffectCalmnessFactor * 100f,
+					GlobalSettings.instance.phenotype.leafCell.absoluteEffectFactorAtSpeed.Evaluate(0) * 100f,
+					GlobalSettings.instance.phenotype.leafCell.exposureFactorAtPopulation.Evaluate(20) * 100f);
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
 				componentFooterPanel.SetProductionEffectText(string.Format("Production Effect: [exposure (0...1)] * {0:F2} - {0:F2} W", GlobalSettings.instance.phenotype.leafCell.effectProductionUpMax, GlobalSettings.instance.phenotype.leafCell.effectProductionDown));
 
-				exposure.text = "Exposure : -";
-				creatureSizeFactor.text = "Creature size factor: -";
-				overPopulationFactor.text = "Over population factor: -";
+				exposureLabel.text = "Exposure : -";
+				creatureSizeFactorLabel.text = "Creature size factor: -";
+				overPopulationFactorLabel.text = "Over population factor: -";
 			}
 
 			if (selectedGene != null) {

@@ -10,7 +10,6 @@ public abstract class SignalUnitPanel : ComponentPanel {
 	public bool isGhost = false; // Can't be used for this gene/geneCell (will be grayed out)
 
 	public SignalLocations locations = new SignalLocations();
-	public GameObject componentHeaderPanel;
 
 	public OutputPanel[] outputPanels; // TODO: Make LogixBoxPanel and AxonPanel use output panel (also make all output panel handle early and late (late = early foor leaf node sensors))
 
@@ -189,7 +188,10 @@ public abstract class SignalUnitPanel : ComponentPanel {
 
 	public bool isAnyAffectedSignalUnitsRootedGenotype {
 		get {
-			return allAffectedSignalUnitsGenotype.Exists(r => r.rootnessEnum == RootnessEnum.Rooted);
+			if (allAffectedSignalUnitsGenotype != null) {
+				return allAffectedSignalUnitsGenotype.Exists(r => r.rootnessEnum == RootnessEnum.Rooted);
+			}
+			return false;
 		}
 		
 	}

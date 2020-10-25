@@ -73,6 +73,7 @@ public class EffectSensorPanel : SignalUnitPanel {
 				ignoreHumanInput = true;
 
 				effectMeasuredDropdown.value = (int)(affectedGeneSignalUnit as GeneEffectSensor).effectMeassure;
+				effectMeasuredDropdown.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
 				cellEffectMoreThanLabel.text = string.Format("Cl. P ≥ {0:F1} W", (affectedGeneSignalUnit as GeneEffectSensor).usedThreshold);
 				cellEffectLessThanLabel.text = string.Format("Cl. P < {0:F1} W", (affectedGeneSignalUnit as GeneEffectSensor).usedThreshold);

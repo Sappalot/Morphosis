@@ -19,7 +19,7 @@ public abstract class ComponentPanel : MonoBehaviour {
 		return mode;
 	}
 
-	public virtual void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
+	virtual public void Initialize(PhenoGenoEnum mode, CellAndGenePanel cellAndGenePanel) {
 		this.mode = mode;
 		this.cellAndGenePanel = cellAndGenePanel;
 	}
