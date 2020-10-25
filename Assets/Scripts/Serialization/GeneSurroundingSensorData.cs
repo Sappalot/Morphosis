@@ -12,4 +12,5 @@ public class GeneSurroundingSensorData {
 	public float fieldOfView;
 	public float rangeFar;
 	public float rangeNear;
+
 }

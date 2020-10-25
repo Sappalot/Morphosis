@@ -157,8 +157,18 @@ public class GeneSurroundingSensor : GeneSignalUnit {
 		}
 
 		for (int channel = 1; channel < 7; channel++) {
-			((GeneSurroundingSensorChannelCreatureCellFovCov)GetGeneSensorChannel(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).ApplyData(data.creatureCellFovCovDataAtChannel[channel]);
-			((GeneSurroundingSensorChannelTerrainRockFovCov)GetGeneSensorChannel(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).ApplyData(data.terrainRockFovCovDataAtChannel[channel]);
+			GeneSurroundingSensorChannelCreatureCellFovCovData creatureCellData = data.creatureCellFovCovDataAtChannel[channel];
+			// They might be missing in old freezer
+			if (creatureCellData == null) {
+				creatureCellData = new GeneSurroundingSensorChannelCreatureCellFovCovData();
+			}
+			((GeneSurroundingSensorChannelCreatureCellFovCov)GetGeneSensorChannel(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).ApplyData(creatureCellData);
+
+			GeneSurroundingSensorChannelTerrainRockFovCovData terrainRockData = data.terrainRockFovCovDataAtChannel[channel];
+			if (terrainRockData == null) {
+				terrainRockData = new GeneSurroundingSensorChannelTerrainRockFovCovData();
+			}
+			((GeneSurroundingSensorChannelTerrainRockFovCov)GetGeneSensorChannel(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).ApplyData(terrainRockData);
 		}
 
 		direction = data.direction;

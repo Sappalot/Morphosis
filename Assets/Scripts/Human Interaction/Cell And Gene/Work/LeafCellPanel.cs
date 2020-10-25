@@ -73,7 +73,7 @@ public class LeafCellPanel : ComponentPanel {
 					absoluteEffectCalmnessFactorLabel.text = string.Format("Absolute Effect calmness factor: {0:F2}% <color=#303030ff>[{1:F2}% ... {2:F2}%]</color>",
 					(selectedCell as LeafCell).absoluteEffectCalmnessFactor * 100f,
 					GlobalSettings.instance.phenotype.leafCell.absoluteEffectFactorAtSpeed.Evaluate(0) * 100f,
-					GlobalSettings.instance.phenotype.leafCell.exposureFactorAtPopulation.Evaluate(20) * 100f);
+					GlobalSettings.instance.phenotype.leafCell.absoluteEffectFactorAtSpeed.Evaluate(20) * 100f);
 				}
 			} else if (GetMode() == PhenoGenoEnum.Genotype) {
 				componentFooterPanel.SetProductionEffectText(string.Format("Production Effect: [exposure (0...1)] * {0:F2} - {0:F2} W", GlobalSettings.instance.phenotype.leafCell.effectProductionUpMax, GlobalSettings.instance.phenotype.leafCell.effectProductionDown));
