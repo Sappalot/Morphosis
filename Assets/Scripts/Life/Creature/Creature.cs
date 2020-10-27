@@ -702,8 +702,6 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 			}
 		}
 
-
-
 		if (isDirtyGraphics) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate)
 				Debug.Log("Update Creature (due to user input)");
