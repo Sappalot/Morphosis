@@ -170,7 +170,6 @@ public class Axon : SignalUnit {
 		} else {
 			return 0f; // relax
 		}
-
 	}
 
 	public bool IsPulseContracting(int distance) {

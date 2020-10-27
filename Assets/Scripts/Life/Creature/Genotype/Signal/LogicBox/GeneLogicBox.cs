@@ -370,6 +370,7 @@ public class GeneLogicBox : GeneSignalUnit {
 	}
 
 	public void Mutate(float strength, bool isOrigin) {
+		return; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		// Extend flanks
 		foreach (GeneLogicBoxGate gate in gateRow1) {
 			if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateExtendFlank, strength) || true) {

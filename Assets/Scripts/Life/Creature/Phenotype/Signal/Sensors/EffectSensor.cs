@@ -24,9 +24,9 @@ public class EffectSensor : SignalUnit {
 
 	public override void ComputeSignalOutput(int deltaTicks) {
 		if (signalUnitEnum == SignalUnitEnum.EffectSensor) { // redundant check ? 
-			//if (!hostCell.gene.effectSensor.isRooted) {
-			//	return;
-			//}
+			if (rootnessEnum != RootnessEnum.Rooted) {
+				return;
+			}
 
 			output[0] = hostCell.Effect((hostCell.gene.effectSensor as GeneEffectSensor).effectMeassure) >= (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;
 			output[1] = hostCell.Effect((hostCell.gene.effectSensor as GeneEffectSensor).effectMeassure) < (hostCell.gene.effectSensor as GeneEffectSensor).usedThreshold;

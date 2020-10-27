@@ -136,6 +136,10 @@ public class LogicBox : SignalUnit {
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {
+		if (rootnessEnum != RootnessEnum.Rooted) {
+			return;
+		}
+
 		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnitEnum == SignalUnitEnum.WorkLogicBoxA) {
 			outputEarly = ThroughGates(hostCell.gene.eggCellFertilizeLogic);
 		} else if (signalUnitEnum == SignalUnitEnum.DendritesLogicBox) {

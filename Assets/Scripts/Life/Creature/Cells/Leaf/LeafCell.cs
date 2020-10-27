@@ -50,7 +50,7 @@ public class LeafCell : Cell {
 
 	public float absoluteEffectCalmnessFactor {
 		get {
-			return GlobalSettings.instance.phenotype.leafCell.absoluteEffectFactorAtSpeed.Evaluate(speed);
+			return GlobalSettings.instance.phenotype.leafCell.exposureFactorAtSpeed.Evaluate(creature.phenotype.IsSliding(World.instance.worldTicks) ? 0f : speed);
 		}
 	}
 
@@ -232,7 +232,7 @@ public class LeafCell : Cell {
 			// ^ enter / exit lines ^
 
 			// if it is calm exposure goes towards the 'true' exposure value. If it is windy (cell is moving) we go towards the exposure which gives a net production of zero
-			float exposure = Mathf.Lerp(exposureAtProductionEffectZero, ((rayRange - transparentTravelDistance) / maxRange), absoluteEffectCalmnessFactor);
+			float exposure = Mathf.Lerp(exposureAtProductionEffectZero - GlobalSettings.instance.phenotype.leafCell.exposurePenalty, ((rayRange - transparentTravelDistance) / maxRange), absoluteEffectCalmnessFactor);
 
 			exposureRecord[exposureRecorCursor] = exposure;
 			exposureRecorCursor++;

@@ -101,11 +101,11 @@ public class GeneSurroundingSensor : GeneSignalUnit {
 			SensorAtChannelByType(c, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov).Defaultify();
 		}
 		SetSensorTypeAtChannel(0, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov); // A
-		SetSensorTypeAtChannel(1, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov);
+		SetSensorTypeAtChannel(1, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov);
 		SetSensorTypeAtChannel(2, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov);
 		SetSensorTypeAtChannel(3, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov);
-		SetSensorTypeAtChannel(4, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov);
-		SetSensorTypeAtChannel(5, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov); // F
+		SetSensorTypeAtChannel(4, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov);
+		SetSensorTypeAtChannel(5, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov); // F
 
 		directionLocal = 0f;
 		fieldOfView = 90f;

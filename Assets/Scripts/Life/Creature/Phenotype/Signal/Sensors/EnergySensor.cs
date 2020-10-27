@@ -28,9 +28,9 @@ public class EnergySensor : SignalUnit {
 
 	public override void ComputeSignalOutput(int deltaTicks) {
 		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnitEnum == SignalUnitEnum.WorkSensorA) {
-			//if (!hostCell.gene.eggCellFertilizeEnergySensor.isRooted) {
-			//	return;
-			//}
+			if (rootnessEnum != RootnessEnum.Rooted) {
+				return;
+			}
 
 			output[0] = hostCell.energy >= (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;
 			output[1] = hostCell.energy < (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).threshold;

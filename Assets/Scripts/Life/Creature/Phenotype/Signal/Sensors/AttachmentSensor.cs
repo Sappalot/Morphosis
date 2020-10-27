@@ -15,9 +15,9 @@ public class AttachmentSensor : SignalUnit {
 
 	public override void ComputeSignalOutput(int deltaTicks) {
 		if (hostCell.GetCellType() == CellTypeEnum.Egg && signalUnitEnum == SignalUnitEnum.WorkSensorB) {
-			//if (!hostCell.gene.eggCellAttachmentSensor.isRooted) {
-			//	return;
-			//}
+			if (rootnessEnum != RootnessEnum.Rooted) {
+				return;
+			}
 			output[0] = hostCell.creature.IsAttachedToMotherAlive();
 			output[1] = !hostCell.creature.IsAttachedToMotherAlive();
 			output[2] = hostCell.creature.IsAttachedToChildAlive();

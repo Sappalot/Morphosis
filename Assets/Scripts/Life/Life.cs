@@ -237,11 +237,38 @@ public class Life : MonoBehaviour {
 			World.instance.cameraController.TryUnlockCamera();
 		}
 
-		Vector2 position = creature.GetOriginPosition(PhenoGenoEnum.Phenotype);
+		
 
 		creature.DetatchFromMother(false, tryPlayFX);
 		foreach (Creature child in creature.GetChildrenAlive()) {
 			child.DetatchFromMother(false, tryPlayFX);
+		}
+
+		if (tryPlayFX) {
+			// Happened once during night run 2020-10-26, called from:
+			//at System.Collections.Generic.List`1[Cell].get_Item(Int32 index)[0x00000] in < filename unknown >:0
+			//at Phenotype.get_originCell()[0x00000] in < filename unknown >:0
+			//at Creature.GetOriginPosition(PhenoGenoEnum type)[0x00000] in < filename unknown >:0
+			//at Life.KillCreatureSafe(.Creature creature, Boolean tryPlayFX)[0x00000] in < filename unknown >:0
+			//at Life.UpdatePhysics(UInt64 worldTicks)[0x00000] in < filename unknown >:0
+			//at World.UpdatePhysics()[0x00000] in < filename unknown >:0
+			//at Morphosis.FixedUpdate()[0x00000] in < filename unknown >:0
+			if (creature.phenotype.hasOriginCell) {
+				Vector2 position = creature.GetOriginPosition(PhenoGenoEnum.Phenotype);
+				bool hasAudio;
+				float audioVolume;
+				bool hasParticles;
+				bool hasMarker;
+				SpatialUtil.FxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
+				if (hasAudio) {
+					Audio.instance.CreatureDeath(audioVolume);
+				}
+				if (hasMarker) {
+					EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDeath, position, 0f, SpatialUtil.MarkerScale());
+				}
+			} else {
+				Debug.LogError("Life: Oooops, The OriginCell is not in the phenotype cell list as we are to play creature death effect. It was needed to get the position for this gonner. That is OK though, we just skip playing the effects for the kill.");
+			}
 		}
 
 		creature.KillAllCells(tryPlayFX); // for the fx :)
@@ -267,17 +294,6 @@ public class Life : MonoBehaviour {
 		GenePanel.instance.MakeDirty();
 
 		creatureDeathsPerSecond.IncreaseCounter();
-
-		if (tryPlayFX) {
-			bool hasAudio; float audioVolume; bool hasParticles; bool hasMarker;
-			SpatialUtil.FxGrade(position, true, out hasAudio, out audioVolume, out hasParticles, out hasMarker);
-			if (hasAudio) {
-				Audio.instance.CreatureDeath(audioVolume);
-			}
-			if (hasMarker) {
-				EventSymbolPlayer.instance.Play(EventSymbolEnum.CreatureDeath, position, 0f, SpatialUtil.MarkerScale());
-			}
-		}
 	}
 
 	// When leaving to freezer

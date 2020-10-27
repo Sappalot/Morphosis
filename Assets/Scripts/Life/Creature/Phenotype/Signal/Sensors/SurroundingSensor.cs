@@ -66,10 +66,9 @@ public class SurroundingSensor : SignalUnit {
 
 	public override void ComputeSignalOutput(int deltaTicks) {
 		if (signalUnitEnum == SignalUnitEnum.SurroundingSensor) { // redundant check ? 
-																  //if (!hostCell.gene.effectSensor.isRooted) {
-																  //	return;
-																  //}
-			//Debug.Log("Eye heading: " + eyeHeading);
+			if (rootnessEnum != RootnessEnum.Rooted) {
+				return;
+			}
 
 			Vector2 rayVectorNormalized = GeometryUtil.GetVector(eyeHeading, 1f);
 			Vector2 rayStart = hostCell.position + rayVectorNormalized * hostCell.radius; // start at rim of cell
@@ -79,12 +78,35 @@ public class SurroundingSensor : SignalUnit {
 			if (raycastHitCount == 0) {
 				//Debug.Log("See only the void");
 			} else {
-				hitType = RaycastUtil.GetCollisionType(raycastHitArrayOne[0], hostCell.creature);
+				hitType = RaycastUtil.GetCollisionType(raycastHitArrayOne[0], hostCell.creature, true);
 				//Debug.Log("See " + hitType.ToString());
 			}
 
 			for (int channel = 0; channel < 6; channel++) {
 				bool evaluatedOutput = false;
+
+				//Hack
+				if (channel == 2) {
+					if (hitType == RaycastUtil.CollisionType.othersCell) {
+						evaluatedOutput = false;
+					} else {
+						evaluatedOutput = true;
+					}
+					output[channel] = evaluatedOutput;
+					continue;
+				}
+
+				if (channel == 3) {
+					if (hitType == RaycastUtil.CollisionType.otherObstacle) {
+						evaluatedOutput = false;
+					} else {
+						evaluatedOutput = true;
+					}
+					output[channel] = evaluatedOutput;
+					continue;
+				}
+
+
 				if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov) {
 					if (hitType == RaycastUtil.CollisionType.othersCell) {
 						evaluatedOutput = true;
