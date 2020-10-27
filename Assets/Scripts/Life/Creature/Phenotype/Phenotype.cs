@@ -1439,11 +1439,11 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public void Show(bool on) {
+	public void Show(bool cells, bool nerveArrows) {
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].Show(on);
+			cellList[index].Show(cells);
 		}
-		nerveArrows.Show(on);
+		this.nerveArrows.UpdateGraphics(nerveArrows, false);
 	}
 	
 	public void MoveOriginToOrigo() {
@@ -1634,11 +1634,15 @@ public class Phenotype : MonoBehaviour {
 		edges.UpdateGraphics(GlobalPanel.instance.graphicsPeripheryToggle.isOn && creature.isInsideFrustum && !(PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && isSelected) && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype);
 		// TODO: let veins the objects that move energy from cell to cell stay here, but move the graphical representation out of here as we are only showing a couple of creatures at a time there can be a global vein renderer with a pool
 		veins.UpdateGraphics(PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && isSelected && creature.isInsideFrustum && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype);
+		
+
+
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].UpdateGraphics(isSelected);
 		}
 
-		nerveArrows.UpdateGraphics(isSelected, isGrabbed);
+
+		nerveArrows.UpdateGraphics(CreatureSelectionPanel.instance.IsSelectedCluster(creature), isGrabbed);
 
 		// Warning:  So we are more restrictive with these updates now, make sure colliders are updated as they should
 		if (isDirtyCollider) {

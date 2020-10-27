@@ -14,9 +14,7 @@ public class NerveArrows : MonoBehaviour {
 	private List<NerveArrow> nerveArrowList = new List<NerveArrow>();
 	private PhenoGenoEnum phenoGenoMode;
 
-	public void Show(bool show) {
-		arrowContainer.gameObject.SetActive(show);
-	}
+
 
 	public void Clear() {
 		for (int index = 0; index < nerveArrowList.Count; index++) {
@@ -25,48 +23,47 @@ public class NerveArrows : MonoBehaviour {
 		nerveArrowList.Clear();
 	}
 
-	public void UpdateGraphics(bool isSelected, bool isGrabbed) {
-		// Don't show nerve arrows when moving/rotating creature
-		// Nerves pointing to/away from void will not follow when rotating, so it looks bad
-		// TODO: draw the nerves when moving/rotating properly. Hint: They are drawn in world space
-		arrowContainer.gameObject.SetActive(isSelected); //&& !isGrabbed
-		if (!isSelected) {
-			return;
-		}
+	// if !show just disable cheep :)
+	public void UpdateGraphics(bool show, bool isGrabbed) { // is grabbed is used to be able as we use root position and rotation instread of cells position and rotation
+		if (show) {
+			Show(true);
 
-		if (!CreatureSelectionPanel.instance.hasSoloSelected) {
-			return;
-		}
+			// unhighlite all
+			foreach (NerveArrow nerveArrow in nerveArrowList) {
+				nerveArrow.highlitedEnum = NerveArrow.HighliteEnum.notHighlited;
+			}
 
-		// unhighlite all
-		foreach (NerveArrow nerveArrow in nerveArrowList) {
-			nerveArrow.highlitedEnum = NerveArrow.HighliteEnum.notHighlited;
-		}
+			// highlite viewed
+			List<Nerve> nervesToHighlite = null;
+			if (phenoGeno == PhenoGenoEnum.Genotype) {
+				Gene selectedGene = GenePanel.instance.selectedGene;
+				Genotype genotype = CreatureSelectionPanel.instance.soloSelected.genotype;
+				nervesToHighlite = HudSignalArrowHandler.GetNervesToHighliteGenotype(genotype, selectedGene);
+			} else {
+				Cell selectedCell = CellPanel.instance.selectedCell;
+				nervesToHighlite = HudSignalArrowHandler.GetNervesToHighlitePhenotype(selectedCell);
+			}
 
-		// highlite viewed
-		List<Nerve> nervesToHighlite = null;
-		if (phenoGeno == PhenoGenoEnum.Genotype) {
-			Gene selectedGene = GenePanel.instance.selectedGene;
-			Genotype genotype = CreatureSelectionPanel.instance.soloSelected.genotype;
-			nervesToHighlite = HudSignalArrowHandler.GetNervesToHighliteGenotype(genotype, selectedGene);
-		} else {
-			Cell selectedCell = CellPanel.instance.selectedCell;
-			nervesToHighlite = HudSignalArrowHandler.GetNervesToHighlitePhenotype(selectedCell);
-		}
+			if (nervesToHighlite != null) {
+				for (int index = 0; index < nerveArrowList.Count; index++) {
+					NerveArrow nerveArrow = nerveArrowList[index];
 
-		if (nervesToHighlite != null) {
-			for (int index = 0; index < nerveArrowList.Count; index++) {
-				NerveArrow nerveArrow = nerveArrowList[index];
-
-				if (nervesToHighlite.Find(n => n == nerveArrow.nerve) != null) {
-					nerveArrow.highlitedEnum = NerveArrow.HighliteEnum.highlitedArrowAndCircles;
+					if (nervesToHighlite.Find(n => n == nerveArrow.nerve) != null) {
+						nerveArrow.highlitedEnum = NerveArrow.HighliteEnum.highlitedArrowAndCircles;
+					}
 				}
 			}
-		}
 
-		for (int index = 0; index < nerveArrowList.Count; index++) {
-			nerveArrowList[index].UpdateGraphics(isGrabbed);
+			for (int index = 0; index < nerveArrowList.Count; index++) {
+				nerveArrowList[index].UpdateGraphics(isGrabbed);
+			}
+		} else {
+			Show(false);
 		}
+	}
+
+	private void Show(bool show) {
+		arrowContainer.gameObject.SetActive(show);
 	}
 
 	public void GenerateGenotype(Genotype genotype) {

@@ -387,6 +387,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 		}
 	}
 
+	// Costy. Cache this one and update it as creatures in cluster are detatching or dying or fertilizing egg cell
 	public List<Creature> creaturesInCluster {
 		get {
 			List<Creature> allreadyInList = new List<Creature>();
@@ -668,7 +669,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 	}
 
 	private void ShowCurrentGenoPhenoAndHideOther() {
-		phenotype.Show(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype); //Don't use SetActive() since it clears rigigdBody velocity
+		phenotype.Show(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype, CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.IsSelectedCluster(this)); //Don't use SetActive() since it clears rigigdBody velocity
 		genotype.gameObject.SetActive(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype);
 	}
 
@@ -678,7 +679,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 	public void UpdateGraphics() {
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
 			if (phenotype.isAlive && (!phenotype.hasOriginCell || SpatialUtil.IsInsideFrustum(phenotype.originCell.position))) {
-				// Entering frustum
+				// inside frustum
 				isInsideFrustum = true;
 				phenotype.UpdateGraphics(this);
 			} else if (isInsideFrustum) {

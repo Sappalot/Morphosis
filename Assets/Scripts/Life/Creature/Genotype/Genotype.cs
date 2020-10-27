@@ -721,7 +721,6 @@ public class Genotype : MonoBehaviour {
 		}
 	}
 
-
 	public void ShowGeneCellsSelected(bool on) {
 		for (int index = 0; index < geneCellListIndexSorted.Count; index++) {
 			geneCellListIndexSorted[index].ShowCellSelected(on);
