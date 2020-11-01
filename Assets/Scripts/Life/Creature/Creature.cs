@@ -669,7 +669,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 	}
 
 	private void ShowCurrentGenoPhenoAndHideOther() {
-		phenotype.Show(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype, CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && CreatureSelectionPanel.instance.IsSelectedCluster(this)); //Don't use SetActive() since it clears rigigdBody velocity
+		phenotype.Show(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype, CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureSelectionPanel.instance.IsSelectedCluster(this)); //Don't use SetActive() since it clears rigigdBody velocity
 		genotype.gameObject.SetActive(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype);
 	}
 

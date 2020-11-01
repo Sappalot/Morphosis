@@ -18,10 +18,8 @@ public class ShellCell : Cell {
 		effectProductionInternalUp = 0f;
 	}
 
-	public override float transparency {
-		get {
-			return GlobalSettings.instance.phenotype.shellCell.transparency;
-		}
+	public override float Transparency() {
+		return GlobalSettings.instance.phenotype.shellCell.transparency;
 	}
 
 	// old transparent shell below

@@ -31,6 +31,10 @@ public class JawCell : Cell {
 		prays.Clear();
 	}
 
+	public override float Transparency() {
+		return GlobalSettings.instance.phenotype.jawCell.transparency;
+	}
+
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		base.UpdateCellWork(deltaTicks, worldTicks);
 		if (deleteFlagged) {

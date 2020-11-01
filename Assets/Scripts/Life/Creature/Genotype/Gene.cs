@@ -80,11 +80,28 @@ public class Gene {
 
 	public float transparancy {
 		get {
-			if (type == CellTypeEnum.Shell) {
-				return GlobalSettings.instance.phenotype.shellCell.transparency;
-			} else {
-				return 0f;
+
+			switch (type) {
+				case CellTypeEnum.Egg:
+					return GlobalSettings.instance.phenotype.eggCell.transparency;
+				case CellTypeEnum.Fungal:
+					return GlobalSettings.instance.phenotype.fungalCell.transparency;
+				case CellTypeEnum.Jaw:
+					return GlobalSettings.instance.phenotype.jawCell.transparency;
+				case CellTypeEnum.Leaf:
+					return GlobalSettings.instance.phenotype.leafCell.transparency;
+				case CellTypeEnum.Muscle:
+					return GlobalSettings.instance.phenotype.muscleCell.transparency;
+				case CellTypeEnum.Root:
+					return GlobalSettings.instance.phenotype.rootCell.transparency;
+				case CellTypeEnum.Shell:
+					return GlobalSettings.instance.phenotype.shellCell.transparency;
+				case CellTypeEnum.Vein:
+					return GlobalSettings.instance.phenotype.veinCell.transparency;
+
 			}
+			return 0f;
+
 		}
 	}
 

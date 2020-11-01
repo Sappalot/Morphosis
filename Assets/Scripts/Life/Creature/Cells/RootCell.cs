@@ -9,4 +9,8 @@
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Root;
 	}
+
+	public override float Transparency() {
+		return GlobalSettings.instance.phenotype.rootCell.transparency;
+	}
 }

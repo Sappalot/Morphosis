@@ -52,6 +52,10 @@ public class MuscleCell : Cell {
 		}
 	}
 
+	public override float Transparency() {
+		return GlobalSettings.instance.phenotype.muscleCell.transparency;
+	}
+
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		base.UpdateCellWork(deltaTicks, worldTicks);
 

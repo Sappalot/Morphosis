@@ -9,4 +9,8 @@
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Fungal;
 	}
+
+	public override float Transparency() {
+			return GlobalSettings.instance.phenotype.fungalCell.transparency;
+	}
 }

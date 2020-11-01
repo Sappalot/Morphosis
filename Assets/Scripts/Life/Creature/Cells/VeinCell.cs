@@ -10,4 +10,8 @@
 	public override CellTypeEnum GetCellType() {
 		return CellTypeEnum.Vein;
 	}
+
+	public override float Transparency() {
+		return GlobalSettings.instance.phenotype.veinCell.transparency;
+	}
 }

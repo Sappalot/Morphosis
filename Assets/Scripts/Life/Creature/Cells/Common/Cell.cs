@@ -771,13 +771,13 @@ public abstract class Cell : MonoBehaviour {
 	public bool isNeighbourToShell;
 
 	private float m_armour = 1f;
-	public virtual float armour {
+	public float armour {
 		get {
 			return m_armour;
 		}
 	}
 
-	public virtual void UpdateArmour() {
+	public void UpdateArmour() {
 		m_armour = 1;
 		if (GetCellType() == CellTypeEnum.Shell) {
 			m_armour = GlobalSettings.instance.phenotype.shellCell.armour;
@@ -795,11 +795,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
-	public virtual float transparency {
-		get {
-			return 0f;
-		}
-	}
+	public abstract float Transparency();
 
 	// Friction (Drag)
 	virtual public void SetFrictionNormal() {

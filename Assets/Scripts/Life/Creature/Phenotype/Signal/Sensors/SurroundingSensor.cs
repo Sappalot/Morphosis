@@ -73,12 +73,14 @@ public class SurroundingSensor : SignalUnit {
 			Vector2 rayVectorNormalized = GeometryUtil.GetVector(eyeHeading, 1f);
 			Vector2 rayStart = hostCell.position + rayVectorNormalized * hostCell.radius; // start at rim of cell
 
-			int raycastHitCount = Physics2D.RaycastNonAlloc(rayStart, rayVectorNormalized, raycastHitArrayOne, rangeFar - hostCell.radius, 1);
-			RaycastUtil.CollisionType hitType = RaycastUtil.CollisionType.undefined;
+			int layerMask = 1; // default
+			
+			int raycastHitCount = Physics2D.RaycastNonAlloc(rayStart, rayVectorNormalized, raycastHitArrayOne, rangeFar - hostCell.radius, layerMask);
+			CollisionType hitType = CollisionType.undefined;
 			if (raycastHitCount == 0) {
 				//Debug.Log("See only the void");
 			} else {
-				hitType = RaycastUtil.GetCollisionType(raycastHitArrayOne[0], hostCell.creature, true);
+				hitType = GetCollisionType(raycastHitArrayOne[0], hostCell.creature);
 				//Debug.Log("See " + hitType.ToString());
 			}
 
@@ -87,7 +89,7 @@ public class SurroundingSensor : SignalUnit {
 
 				//Hack
 				if (channel == 2) {
-					if (hitType == RaycastUtil.CollisionType.othersCell) {
+					if (hitType == CollisionType.othersCell) {
 						evaluatedOutput = false;
 					} else {
 						evaluatedOutput = true;
@@ -97,7 +99,7 @@ public class SurroundingSensor : SignalUnit {
 				}
 
 				if (channel == 3) {
-					if (hitType == RaycastUtil.CollisionType.otherObstacle) {
+					if (hitType == CollisionType.nonCellObstacle) {
 						evaluatedOutput = false;
 					} else {
 						evaluatedOutput = true;
@@ -108,11 +110,11 @@ public class SurroundingSensor : SignalUnit {
 
 
 				if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov) {
-					if (hitType == RaycastUtil.CollisionType.othersCell) {
+					if (hitType == CollisionType.othersCell) {
 						evaluatedOutput = true;
 					}
 				} else if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov) {
-					if (hitType == RaycastUtil.CollisionType.otherObstacle) {
+					if (hitType == CollisionType.nonCellObstacle) {
 						evaluatedOutput = true;
 					}
 				} else {
@@ -127,6 +129,37 @@ public class SurroundingSensor : SignalUnit {
 		for (int i = 0; i < output.Length; i++) {
 			output[i] = false;
 		}
+	}
+
+	private enum CollisionType {
+		ownCell,
+		othersCellIgnored,
+		othersCell,
+		nonCellObstacle,
+		undefined,
+	}
+
+	private static CollisionType GetCollisionType(RaycastHit2D hit, Creature me) {
+		Cell hitCell = hit.collider.gameObject.GetComponent<Cell>();
+		if (hitCell != null) {
+			Creature hitCreature = hitCell.creature;
+			if (hitCreature == me) {
+				return CollisionType.ownCell;
+			} else {
+				bool isJawCell = hitCell is JawCell;
+				bool hitIsChildOfMe = me.GetChildrenAlive().Contains(hitCell.creature);
+				bool hitIsMotherOfMe = me.GetMotherAlive() == hitCell.creature;
+				string myMotherId = me.GetMotherIdDeadOrAlive();
+				string hitMotherId = hitCell.creature.GetMotherIdDeadOrAlive();
+				bool meAndHitHasSameMother = myMotherId != null && hitMotherId != null && myMotherId == hitMotherId;
+				if (isJawCell || hitIsChildOfMe || hitIsMotherOfMe || meAndHitHasSameMother) {
+					return CollisionType.othersCellIgnored;
+				}
+				return CollisionType.othersCell;
+			}
+		}
+
+		return CollisionType.nonCellObstacle;
 	}
 
 	// Load Save

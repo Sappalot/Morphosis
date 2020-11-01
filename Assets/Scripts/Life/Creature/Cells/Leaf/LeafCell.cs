@@ -7,7 +7,6 @@ public class LeafCell : Cell {
 	private const int exposureRecordMaxCapacity = 10;
 	private float[] exposureRecord = new float[exposureRecordMaxCapacity];
 	private int exposureRecorCursor = 0;
-	//private int exposureRecordCount = 0;
 
 	public override void OnBorrowToWorld() {
 		base.OnBorrowToWorld(); // will call Set Default state from base class back to leaf (since this cell is a leaf)
@@ -76,7 +75,9 @@ public class LeafCell : Cell {
 	}
 	// ^ Friction (Drag) ^
 
-
+	public override float Transparency() {
+		return GlobalSettings.instance.phenotype.leafCell.transparency;
+	}
 
 	public override void UpdateCellWork(int deltaTicks, ulong worldTicks) {
 		base.UpdateCellWork(deltaTicks, worldTicks);
@@ -98,7 +99,12 @@ public class LeafCell : Cell {
 			float rayRange = maxRange;
 
 			//RaycastHit2D[] hits = Physics2D.RaycastAll(start, direction, maxRange, 1);
-			int raycastHitCount = Physics2D.RaycastNonAlloc(start, direction, raycastHitArray, maxRange, 1);
+			int layerMask = 1 << 0; // default
+			layerMask |= 1 << 8; // wall shade (a fake creature that steals light)
+			// we listens to both layers so that we have some fake competition at the edges of the world, where the shades are
+
+				
+			int raycastHitCount = Physics2D.RaycastNonAlloc(start, direction, raycastHitArray, maxRange, layerMask);
 			//Store all entries --> exits
 			List<HitPoint> enterExit = new List<HitPoint>();
 
@@ -231,27 +237,33 @@ public class LeafCell : Cell {
 			}
 			// ^ enter / exit lines ^
 
-			// if it is calm exposure goes towards the 'true' exposure value. If it is windy (cell is moving) we go towards the exposure which gives a net production of zero
-			float exposure = Mathf.Lerp(exposureAtProductionEffectZero - GlobalSettings.instance.phenotype.leafCell.exposurePenalty, ((rayRange - transparentTravelDistance) / maxRange), absoluteEffectCalmnessFactor);
+			// bring exposure yield to the range [0 ... 1]
+			// Keep the system if we decide to use it again
+			float beamExposureNormalized = (rayRange - transparentTravelDistance) / maxRange;
 
-			exposureRecord[exposureRecorCursor] = exposure;
+			// make possible to tweak exposure yield at  
+			float beamExposureNormalizedBalanced = GlobalSettings.instance.phenotype.leafCell.exposureFactorAtRayLengthNormalized.Evaluate(beamExposureNormalized);
+
+			// if it is calm exposure goes towards the 'true' exposure value. If it is windy (cell is moving) we go towards the exposure which gives a net production of a little bit punished below zero
+			// Beware a small penalty takes us a long way when it comes to leaf death
+			float beamExposureNormalizedBalancedPunished = Mathf.Lerp(exposureAtProductionEffectZero - GlobalSettings.instance.phenotype.leafCell.exposurePenalty, beamExposureNormalizedBalanced, absoluteEffectCalmnessFactor);
+
+			exposureRecord[exposureRecorCursor] = beamExposureNormalizedBalancedPunished;
 			exposureRecorCursor++;
 			if (exposureRecorCursor >= exposureRecordMaxCapacity) {
 				exposureRecorCursor = 0;
 			}
 
+			// TODO: optimize how we go through and sum up exposure
 			m_lowPassExposure = 0f;
 			for (int i = 0; i < exposureRecordMaxCapacity; i++) {
 				m_lowPassExposure += exposureRecord[i];
 			}
 			m_lowPassExposure /= exposureRecordMaxCapacity;
 
+			// balance low pass exposure
 			m_lowPassExposure *= GlobalSettings.instance.phenotype.leafCell.exposureFactorAtPopulation.Evaluate(World.instance.life.cellAliveCount) * GlobalSettings.instance.phenotype.leafCell.exposureFactorAtBodySize.Evaluate(creature.cellCount);
 
-			int attachedMotherCellCount = 0; 
-			if (creature.IsAttachedToMotherAlive()) {
-				attachedMotherCellCount = creature.GetMotherAlive().cellCount;
-			}
 			effectProductionInternalUp = m_lowPassExposure * GlobalSettings.instance.phenotype.leafCell.effectProductionUpMax;
 
 			if (CellPanel.instance.selectedCell == this) {
@@ -265,39 +277,34 @@ public class LeafCell : Cell {
 	}
 
 	private float GetEnergyLoss(RaycastHit2D hit, float energyLossAir) {
-		RaycastUtil.CollisionType type = RaycastUtil.GetCollisionType(hit, creature);
+		CollisionType type = GetCollisionType(hit);
 
-		if (type == RaycastUtil.CollisionType.ownCell || type == RaycastUtil.CollisionType.connectedViaClusterCell) {
-			//return energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOwnCell;
+		if (type == CollisionType.cell) {
 			float transparencyAtHit = GetTransparencyOfHit(hit);
-			return Mathf.Lerp(energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOwnCell, energyLossAir, transparencyAtHit);
-		} else if (type == RaycastUtil.CollisionType.othersCell) {
-			//return energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOtherCell;
-			float transparencyAtHit = GetTransparencyOfHit(hit);
-			return Mathf.Lerp(energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughOtherCell, energyLossAir, transparencyAtHit);
+			return Mathf.Lerp(energyLossAir * GlobalSettings.instance.phenotype.leafCell.sunRayEffectLossPerDistanceThroughCell, energyLossAir, transparencyAtHit);
 		} else {
 			//Wall
 			return energyLossAir * 1000f; //J / m; 
 		}
 	}
 
-	private bool IsTransparentCell(RaycastHit2D hit) {
-		RaycastUtil.CollisionType type = RaycastUtil.GetCollisionType(hit, creature);
+	//private bool IsTransparentCell(RaycastHit2D hit) {
+	//	RaycastUtil.CollisionType type = RaycastUtil.GetCollisionType(hit, creature);
 
-		if (type == RaycastUtil.CollisionType.ownCell) {
-			return (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal);
-		} else if (type == RaycastUtil.CollisionType.othersCell) {
-			return (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal);
-		} else {
-			return false;
-		}
-	}
+	//	if (type == RaycastUtil.CollisionType.ownCell) {
+	//		return (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal);
+	//	} else if (type == RaycastUtil.CollisionType.othersCell) {
+	//		return (GetCollisionCellType(hit) == CellTypeEnum.Shell || GetCollisionCellType(hit) == CellTypeEnum.Fungal);
+	//	} else {
+	//		return false;
+	//	}
+	//}
 
 	public float GetTransparencyOfHit(RaycastHit2D hit) {
 		//return 0; //Everything has same transpareance when it comes to my cells, //Everything has same transpareance when it comes to opponent cells
 		Cell hitCell = hit.collider.gameObject.GetComponent<Cell>();
 		if (hitCell != null) {
-			return hitCell.transparency;
+			return hitCell.Transparency();
 		}
 		return 0f;
 	}
@@ -326,11 +333,9 @@ public class LeafCell : Cell {
 		return CellTypeEnum.Error;
 	}
 
-	private Color GetColorForCollisionType(RaycastUtil.CollisionType type) {
-		if (type == RaycastUtil.CollisionType.ownCell) {
+	private Color GetColorForCollisionType(CollisionType type) {
+		if (type == CollisionType.cell) {
 			return Color.yellow;
-		} else if (type == RaycastUtil.CollisionType.othersCell) {
-			return Color.red;
 		} else {
 			//Other obstacle
 			return Color.gray;
@@ -338,7 +343,7 @@ public class LeafCell : Cell {
 	}
 
 	private Color GetCollisionColor(RaycastHit2D hit) {
-		return GetColorForCollisionType(RaycastUtil.GetCollisionType(hit, creature));
+		return GetColorForCollisionType(GetCollisionType(hit));
 	}
 
 	public override CellTypeEnum GetCellType() {
@@ -355,5 +360,20 @@ public class LeafCell : Cell {
 		} else {
 			return ColorScheme.instance.cellGradientLeafGreenExposure.Evaluate(lowPassExposure);
 		}
+	}
+
+	private enum CollisionType {
+		cell,
+		nonCellObstacle,
+		undefined,
+	}
+
+	private static CollisionType GetCollisionType(RaycastHit2D hit) {
+		Cell hitCell = hit.collider.gameObject.GetComponent<Cell>();
+		if (hitCell != null) {
+			return CollisionType.cell;
+
+		}
+		return CollisionType.nonCellObstacle; // could be terrain (in layer 1) or shade (in layer 8)
 	}
 }

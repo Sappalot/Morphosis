@@ -144,6 +144,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public class EggCell {
 			[Tooltip("The cost of running this cell [W]")]
 			public float effectProductionDown = 0.15f;
+			public float transparency = 0.5f;
 		}
 		public EggCell eggCell;
 
@@ -151,6 +152,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public class FungalCell {
 			[Tooltip("The cost of running this cell [W]")]
 			public float effectProductionDown = 0.15f;
+			public float transparency = 0.5f;
 		}
 		[Tooltip("Up for grabs")]
 		public FungalCell fungalCell;
@@ -165,6 +167,8 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 			[Tooltip("How big part of effectProductionUp (the eating effect) that is gaining the cell [W/W] (the rest is wasted into thin air)")]
 			public float effectProductionUpKeepFactor = 0.85f;
+
+			public float transparency = 0.5f;
 		}
 		public JawCell jawCell;
 
@@ -176,23 +180,29 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 			[Tooltip("Ths leafs' fotosyntesis effect which is gaining the cell [W], proportional to the exposure of it.'")]
 			public float effectProductionUpMax = 12f;
 
-			public AnimationCurve exposureFactorAtBodySize;
-
-			[Tooltip("Leaf exposure will be multiplied by a factor depending on number of cells in creatures' body. Few cells => low factor, so that algae can't clog up simulation")]
-			public AnimationCurve exposureFactorAtPopulation;
-
-			public AnimationCurve exposureFactorAtSpeed;
-
-			public float exposurePenalty = 0.05f;
-
 			[Tooltip("A sun beam hitting cell from this far [m] can contribute to its exposure. Or... Cell is searching this far [m] for open space.")]
 			public float sunRayMaxRange = 35.0f;
 
-			[Tooltip("Was 8. When ray is traveling away from cell it loses this much potential effect (effectProductionUpMax) for each meter it is penetrating own cells, measured in [W/m]. Other cells connected via cluster counts as own cells. This value affects the exposure, which in turn affects the productionUpEffect")]
-			public float sunRayEffectLossPerDistanceThroughOwnCell = 8f;
+			//Was 8 and had different for own and opponent cells.
+			[Tooltip("When ray is traveling away from cell it loses this much potential effect (effectProductionUpMax) for each meter it is penetrating cells, measured in [W/m]. This value affects the exposure, which in turn affects the productionUpEffect")]
+			public float sunRayEffectLossPerDistanceThroughCell = 6f;
 
-			[Tooltip("Was 18. When ray is traveling away from cell it loses this much potential effect (effectProductionUpMax) for each meter it is penetrating other cells, measured in [W/m]. Other cells are all cells that are not connected to this one via cluser. This value affects the exposure, which in turn affects the productionUpEffect")]
-			public float sunRayEffectLossPerDistanceThroughOtherCell = 18f;
+			[Tooltip("Leaf exposure from a sunRay gives exposure depending on its length (reaching away from the creature). This graph tells how much at what range. X is normalized range, 1 is sunRayMaxRange. Y is exposure at this range, 1 is maximum exposure at 100%")]
+			public AnimationCurve exposureFactorAtRayLengthNormalized;
+
+			[Tooltip("Leaf exposure will be multiplied by a factor depending on number of cells in creatures' body. Few cells => low factor, so that algae can't clog up simulation")]
+			public AnimationCurve exposureFactorAtBodySize;
+
+			[Tooltip("Leaf exposure will be multiplied by a factor depending on total number of cells in the world. Used as an overall way to max cap population")]
+			public AnimationCurve exposureFactorAtPopulation;
+
+			[Tooltip("Leaf exposure will be lerped towards 'the exposure which gives 0 effect' - exposurePenalty, depending on speed. In the curve 1 ==> buisniss as usual | 0 ==> 'the penalty value'. Reason: Kill offf ents, as we don't like trees to walk around much :) ")]
+			public AnimationCurve exposureFactorAtSpeed;
+
+			[Tooltip("How many percentunits, under 0 effect, that we will punish leaf exposure of fast moving creature")]
+			public float exposurePenalty = 0.05f;
+
+			public float transparency = 0f;
 		}
 		public LeafCell leafCell;
 
@@ -203,6 +213,8 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 
 			[Tooltip("How much energy [J] we pay for each contraction. From this value an effect cost is calculated which is applied  together with the effectProductionDown when we contract the cell")]
 			public float energyProductionDownPerContraction = 0.05f;
+
+			public float transparency = 0.5f;
 		}
 		public MuscleCell muscleCell;
 
@@ -210,6 +222,8 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public class RootCell {
 			[Tooltip("The cost of running this cell [W]")]
 			public float effectProductionDown = 0.1f;
+
+			public float transparency = 0.5f;
 		}
 		public RootCell rootCell;
 
@@ -219,7 +233,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 			public float effectProductionDown = 0.1f;
 			public float armour = 10f;
 			public float armourAffectFactorOnNeighbour = 0.5f;
-			public float transparency = 0f;
+			public float transparency = 0.5f;
 		}
 		public ShellCell shellCell;
 
@@ -233,6 +247,7 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 			[Tooltip("The cost of running this cell [W]")]
 			public float effectProductionDown = 0.1f;
 
+			public float transparency = 0.5f;
 		}
 		public VeinCell veinCell;
 

@@ -36,9 +36,11 @@ public class NerveArrows : MonoBehaviour {
 			// highlite viewed
 			List<Nerve> nervesToHighlite = null;
 			if (phenoGeno == PhenoGenoEnum.Genotype) {
-				Gene selectedGene = GenePanel.instance.selectedGene;
-				Genotype genotype = CreatureSelectionPanel.instance.soloSelected.genotype;
-				nervesToHighlite = HudSignalArrowHandler.GetNervesToHighliteGenotype(genotype, selectedGene);
+				if (CreatureSelectionPanel.instance.hasSoloSelected) {
+					Gene selectedGene = GenePanel.instance.selectedGene;
+					Genotype genotype = CreatureSelectionPanel.instance.soloSelected.genotype;
+					nervesToHighlite = HudSignalArrowHandler.GetNervesToHighliteGenotype(genotype, selectedGene);
+				}
 			} else {
 				Cell selectedCell = CellPanel.instance.selectedCell;
 				nervesToHighlite = HudSignalArrowHandler.GetNervesToHighlitePhenotype(selectedCell);

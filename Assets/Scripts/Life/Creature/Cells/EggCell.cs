@@ -49,6 +49,10 @@ public class EggCell : Cell {
 		return nerves;
 	}
 
+	public override float Transparency() {
+		return GlobalSettings.instance.phenotype.eggCell.transparency;
+	}
+
 	//--
 
 	// no need to override
