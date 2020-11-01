@@ -4,9 +4,10 @@ using UnityEngine;
 public class LeafCell : Cell {
 	//public LineRenderer[] testRays = new LineRenderer[6];
 
-	private const int exposureRecordMaxCapacity = 10;
-	private float[] exposureRecord = new float[exposureRecordMaxCapacity];
+	private const int exposureRecordCapacity = 20;
+	private float[] exposureRecord = new float[exposureRecordCapacity];
 	private int exposureRecorCursor = 0;
+	private float exposureRecordSum; // this sum is updated to be the sum of watever is in the exposure record. An optimization, so that we dont have to go through the entire buffer and sum up the records each frame
 
 	public override void OnBorrowToWorld() {
 		base.OnBorrowToWorld(); // will call Set Default state from base class back to leaf (since this cell is a leaf)
@@ -27,23 +28,26 @@ public class LeafCell : Cell {
 	}
 	
 
+	// As the low pass exposure is loaded, all records are set to the average value of the saved cell
+	// That is, we replace the various records in the buffer all with average values, This is not the same but does it really matter?
 	private float m_lowPassExposure;
 	public float lowPassExposure {
 		get {
 			return m_lowPassExposure;
 		}
 		set { 
-			for (int i = 0; i < exposureRecordMaxCapacity; i++) {
+			for (int i = 0; i < exposureRecordCapacity; i++) {
 				exposureRecord[i] = value;
 			}
 			m_lowPassExposure = value;
+			exposureRecordSum = value * exposureRecordCapacity;
 			exposureRecorCursor = 0;
 		}
 	}
 
 	public float speed {
 		get {
-			return velocity.magnitude;
+			return velocity.magnitude; // use squared instead and adapt animation curve to match it!
 		}
 	}
 
@@ -248,18 +252,32 @@ public class LeafCell : Cell {
 			// Beware a small penalty takes us a long way when it comes to leaf death
 			float beamExposureNormalizedBalancedPunished = Mathf.Lerp(exposureAtProductionEffectZero - GlobalSettings.instance.phenotype.leafCell.exposurePenalty, beamExposureNormalizedBalanced, absoluteEffectCalmnessFactor);
 
+			// TODO: optimize how we go through and sum up exposure
+
+			// sum -= old record (the one at exposureRecorCursor), last time we read this data
+			exposureRecordSum -= exposureRecord[exposureRecorCursor];
+
+			// write new record
 			exposureRecord[exposureRecorCursor] = beamExposureNormalizedBalancedPunished;
+
+			// sum += new record
+			exposureRecordSum += beamExposureNormalizedBalancedPunished;
+
+			// move and wrap cursor
 			exposureRecorCursor++;
-			if (exposureRecorCursor >= exposureRecordMaxCapacity) {
+			if (exposureRecorCursor >= exposureRecordCapacity) {
+				// start over
 				exposureRecorCursor = 0;
 			}
 
-			// TODO: optimize how we go through and sum up exposure
-			m_lowPassExposure = 0f;
-			for (int i = 0; i < exposureRecordMaxCapacity; i++) {
-				m_lowPassExposure += exposureRecord[i];
-			}
-			m_lowPassExposure /= exposureRecordMaxCapacity;
+			// The average is boxed (as in not weighted)
+			m_lowPassExposure = exposureRecordSum / exposureRecordCapacity;
+
+						//m_lowPassExposure = 0f;
+						//for (int i = 0; i < exposureRecordMaxCapacity; i++) {
+						//	m_lowPassExposure += exposureRecord[i];
+						//}
+						//m_lowPassExposure /= exposureRecordMaxCapacity;
 
 			// balance low pass exposure
 			m_lowPassExposure *= GlobalSettings.instance.phenotype.leafCell.exposureFactorAtPopulation.Evaluate(World.instance.life.cellAliveCount) * GlobalSettings.instance.phenotype.leafCell.exposureFactorAtBodySize.Evaluate(creature.cellCount);
