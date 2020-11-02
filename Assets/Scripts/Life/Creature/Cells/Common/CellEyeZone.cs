@@ -20,14 +20,21 @@ public class CellEyeZone : MonoBehaviour {
 	public Transform allowDeadZoneCircle;
 	public Transform allowFovCircle;
 
+	public LineRenderer debugRay;
 
 	private float cachedFOV = -1f;
 	private float cachedRangeNear = -1f;
 	private float cachedRangeFar = -1f;
 
+	private const float hoverDistance = -20f;
 
+	public void UpdateGraphics(float fieldOfView, float rangeNear, float rangeFar, SurroundingSensor.DebugRay debugRay) {
 
-	public void UpdateGraphics(float fieldOfView, float rangeNear, float rangeFar) {
+		// ...debug ray....
+		this.debugRay.SetPosition(0, new Vector3(debugRay.rayStart.x, debugRay.rayStart.y, hoverDistance)); // tail
+		this.debugRay.SetPosition(1, new Vector3(debugRay.rayEnd.x, debugRay.rayEnd.y, hoverDistance)); // head
+		// ^ debug ray ^
+
 		if (fieldOfView == this.cachedFOV && rangeNear == this.cachedRangeNear && rangeFar == this.cachedRangeFar) {
 			return;
 		}

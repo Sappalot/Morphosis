@@ -17,13 +17,15 @@ public class EnergySensor : SignalUnit {
 		return output[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}
 
-	public override void UpdateAreaTablesPhenotype() {
-		areaCells.Clear();
-		if (signalUnitEnum == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) { // this is an energy sensor
-			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).areaRadius);
-		} else if (signalUnitEnum == SignalUnitEnum.EnergySensor) {
-			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.energySensor as GeneEnergySensor).areaRadius);
-		} 
+	public override void PostUpdateNervesPhenotype() {
+		if (rootnessEnum == RootnessEnum.Rooted) {
+			areaCells.Clear();
+			if (signalUnitEnum == SignalUnitEnum.WorkSensorA && hostCell.GetCellType() == CellTypeEnum.Egg) { // this is an energy sensor
+				areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.eggCellFertilizeEnergySensor as GeneEnergySensor).areaRadius);
+			} else if (signalUnitEnum == SignalUnitEnum.EnergySensor) {
+				areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.energySensor as GeneEnergySensor).areaRadius);
+			}
+		}
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {

@@ -67,7 +67,7 @@ public abstract class SignalUnit {
 
 	//--
 
-	public virtual void UpdateAreaTablesPhenotype() {}
+	public virtual void PostUpdateNervesPhenotype() {}
 
 	public virtual void CloneNervesFromGenotypeToPhenotype(Cell geneCell, Phenotype phenotype) {
 		// clone output

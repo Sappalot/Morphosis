@@ -41,7 +41,9 @@ public class MuscleCell : Cell {
 		scale.localScale = new Vector3(1f, 1f, 1f);
 	}
 
-	public void UpdateMasterAxon() {
+	public override void OnCellSpawned() {
+		base.OnCellSpawned();
+
 		masterAxonGridPosition = creature.genotype.GetClosestAxonGeneCellUpBranch(mapPosition).mapPosition;
 		masterAxoneDistance = creature.genotype.GetDistanceToClosestAxonGeneCellUpBranch(mapPosition);
 	}

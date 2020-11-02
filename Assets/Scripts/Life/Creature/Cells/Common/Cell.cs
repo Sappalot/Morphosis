@@ -125,6 +125,13 @@ public abstract class Cell : MonoBehaviour {
 	public LogicBox originDetatchLogicBox;
 	public SizeSensor originSizeSensor;
 
+	// Phenotype
+	// Eetup all that is needed as the moment cell is spawned
+	// Will just be called now and never again during cells life
+	public virtual void OnCellSpawned() {
+		surroundingSensor.OnCellSpawned();
+	}
+
 	// Genotype
 
 	// step 1.
@@ -222,15 +229,7 @@ public abstract class Cell : MonoBehaviour {
 
 	// Phenotype
 
-	public virtual void UpdateSensorAreaTablesPhenotype() {
-		dendritesLogicBox.UpdateAreaTablesPhenotype();
-		energySensor.UpdateAreaTablesPhenotype();
-		effectSensor.UpdateAreaTablesPhenotype();
-		// surroundingSensor, no areaTable
-		if (isOrigin) {
-			originDetatchLogicBox.UpdateAreaTablesPhenotype();
-		}
-	}
+
 
 	// Step 1.
 	// No need to override (or will there be such a case for som cells?)
@@ -301,6 +300,16 @@ public abstract class Cell : MonoBehaviour {
 			return RootnessEnum.Rootable;
 		}
 		return RootnessEnum.Unrooted;
+	}
+
+	public virtual void PostUpdateNervesPhenotype() {
+		dendritesLogicBox.PostUpdateNervesPhenotype();
+		energySensor.PostUpdateNervesPhenotype(); // area tables
+		effectSensor.PostUpdateNervesPhenotype(); // area tables
+		surroundingSensor.PostUpdateNervesPhenotype(); // geometry of the eye
+		if (isOrigin) {
+			originDetatchLogicBox.PostUpdateNervesPhenotype();
+		}
 	}
 
 	virtual public void ClearSignal() {
@@ -420,6 +429,7 @@ public abstract class Cell : MonoBehaviour {
 
 	// ^ Axon ^
 
+	// This one is called as cell is Instantiated (So not when it is being reused)
 	public virtual void Initialize(PhenoGenoEnum phenoGeno) {
 		this.phenoGeno = phenoGeno;
 		SetLabelEnabled(phenoGeno == PhenoGenoEnum.Genotype);
@@ -1591,7 +1601,7 @@ public abstract class Cell : MonoBehaviour {
 
 			if (CreatureSelectionPanel.instance.IsSelected(creature)) {
 				cellCommon.cellEyeZone.gameObject.SetActive(true);
-				cellCommon.cellEyeZone.UpdateGraphics(surroundingSensor.fieldOfView, surroundingSensor.rangeNear, surroundingSensor.rangeFar);
+				cellCommon.cellEyeZone.UpdateGraphics(surroundingSensor.fieldOfView, surroundingSensor.rangeNear, surroundingSensor.rangeFar, surroundingSensor.lastDebugRay);
 			} else {
 				cellCommon.cellEyeZone.gameObject.SetActive(false);
 			}

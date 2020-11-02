@@ -26,10 +26,7 @@ public class Phenotype : MonoBehaviour {
 
 	// ... Signal ...
 	private void UpdateBrain(Genotype genotype) {
-		// area tables
-		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].UpdateSensorAreaTablesPhenotype();
-		}
+
 
 		// clear
 		for (int index = 0; index < cellList.Count; index++) {
@@ -50,6 +47,11 @@ public class Phenotype : MonoBehaviour {
 			cellList[index].UpdateRootable(genotype.GetCellAtMapPosition(cellList[index].mapPosition));
 		}
 
+		// Now we know what is rooted and what is not
+		// Setup the sensors that are rooted (if needed)
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].PostUpdateNervesPhenotype();
+		}
 	}
 
 	public List<Nerve> GetAllExternalNerves() {
@@ -441,9 +443,10 @@ public class Phenotype : MonoBehaviour {
 		// If first cell => grow origin
 		if (cellList.Count == 0) {
 			SpawnCell(creature, genotype.GetGeneAt(0), new Vector2i(), 0, AngleUtil.CardinalEnumToCardinalIndex(CardinalDirectionEnum.north), FlipSideEnum.BlackWhite, spawnPosition, true, 30f);
-			if (originCell.GetCellType() == CellTypeEnum.Muscle) {
-				((MuscleCell)originCell).UpdateMasterAxon(); // master axon will be me in this case
-			}
+			originCell.OnCellSpawned();
+//if (originCell.GetCellType() == CellTypeEnum.Muscle) {
+//	((MuscleCell)originCell).UpdateMasterAxon(); // master axon will be me in this case
+//}
 
 			//EvoFixedUpdate(creature, 0f); //Do we really need to do this here?
 			originCell.heading = spawnHeading;
@@ -604,10 +607,11 @@ public class Phenotype : MonoBehaviour {
 				newCell.UpdateNeighbourVectors(); //We need to update vectors to our neighbours, so that we can find our direction 
 				newCell.UpdateHeading(); // otation is needed in order to place subsequent cells right
 				newCell.UpdateFlipSide(); // Just graphics
-				
-				if (newCell.GetCellType() == CellTypeEnum.Muscle) {
-					((MuscleCell)newCell).UpdateMasterAxon();
-				}
+
+				newCell.OnCellSpawned();
+				//if (newCell.GetCellType() == CellTypeEnum.Muscle) {
+				//	((MuscleCell)newCell).UpdateMasterAxon();
+				//}
 				growCellCount++;
 
 				// Play Fx
@@ -635,7 +639,7 @@ public class Phenotype : MonoBehaviour {
 
 			PhenotypePanel.instance.MakeDirty();
 			MakeDirtyCollider();
-			MakeInterCellDirty();
+			MakeInterCellDirty(); // TODO: Specefy which cells are dirty (grown + neighbours) so that we dont have to update them all unnessessarily
 		}
 		return growCellCount;
 	}
@@ -776,7 +780,7 @@ public class Phenotype : MonoBehaviour {
 	// Update wings
 	// Update Signal connections
 	// 
-	// TODO: At the moment we are updating whole body every time a new cell is grown. This is probably costy. Just update the cells affected by the change made (dirtymark per cell)
+	// TODO OPTIMIZE: At the moment we are updating whole body every time a new cell is grown. This is costy. Just update the cells affected by the change made (dirtymark per cell)
 	public bool TryUpdateInterCells(Creature creature, string motherId) {
 		if (isInterCellDirty) {
 			//Debug.Log("TryUpdateInterCells");
@@ -829,7 +833,7 @@ public class Phenotype : MonoBehaviour {
 			nerveArrows.GeneratePhenotype(this);
 
 			//Armour
-			UpdateArmour();
+			UpdateArmour(); // just needed at startup
 
 			isInterCellDirty = false;
 			return true;
@@ -1359,11 +1363,12 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	private void UpdateMasterAxons() {
+	private void OnCellsSpawned() {
 		for (int index = 0; index < cellList.Count; index++) {
-			if (cellList[index].GetCellType() == CellTypeEnum.Muscle) {
-				((MuscleCell)cellList[index]).UpdateMasterAxon();
-			}
+			cellList[index].OnCellSpawned();
+			//if (cellList[index].GetCellType() == CellTypeEnum.Muscle) {
+			//((MuscleCell)cellList[index]).UpdateMasterAxon();
+			//}
 		}
 	}
 
@@ -1904,7 +1909,7 @@ public class Phenotype : MonoBehaviour {
 
 		//Turn arrrows right
 		UpdateRotation();
-		UpdateMasterAxons();
+		OnCellsSpawned();
 
 		MakeBudsDirty(); // so that the priority bud arrows graphics will be updated
 	}

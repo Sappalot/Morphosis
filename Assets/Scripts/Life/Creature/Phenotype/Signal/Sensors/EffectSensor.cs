@@ -17,9 +17,11 @@ public class EffectSensor : SignalUnit {
 		return output[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}
 
-	public override void UpdateAreaTablesPhenotype() {
-		areaCells.Clear();
-		areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.effectSensor as GeneEffectSensor).usedAreaRadius);
+	public override void PostUpdateNervesPhenotype() {
+		if (rootnessEnum == RootnessEnum.Rooted) {
+			areaCells.Clear();
+			areaCells = hostCell.creature.phenotype.cellMap.GetCellsInHexagonAroundPosition(hostCell.mapPosition, (hostCell.gene.effectSensor as GeneEffectSensor).usedAreaRadius);
+		}
 	}
 
 	public override void ComputeSignalOutput(int deltaTicks) {

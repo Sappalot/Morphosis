@@ -6,6 +6,21 @@ public class SurroundingSensor : SignalUnit {
 	private bool[] output = new bool[6]; // outputs 
 	private RaycastHit2D[] raycastHitArrayOne;
 
+	private int raySlotCount; // number of rays int the field of view. The rays are supposed to cover the entire area with no gap bigger than 0.9 meters 
+	private const float smallestArcGap = 0.95f;
+	private float[] raySlotLocalDirectionsBlackWhite; // the direction of each slot relative to the directionLocal
+	private float[] raySlotLocalDirectionsWhiteBlack; // the direction of each slot relative to the directionLocal
+	private int rayCursor;
+
+	public int[,] cellsByTypeRecord; //[channel, rays] We need one for each channel since the types asked for might be different in them.   0 = no cell, 1 = cell by type
+	public int[] cellsByTypeSum; // one for each channel
+
+	private bool hasBeenSetup;
+
+	public float CellsByTypeFovCov(int channel) {
+		return (float)cellsByTypeSum[channel] / (float)raySlotCount;
+	}
+
 	public SurroundingSensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
 		base.signalUnitEnum = signalUnit;
 		if (raycastHitArrayOne == null) {
@@ -13,8 +28,33 @@ public class SurroundingSensor : SignalUnit {
 		}
 	}
 
-	public GeneSurroundingSensorChannel SensorAtChannelByType(int channel, SurroundingSensorChannelSensorTypeEnum type) {
-		return geneSurroundingSensor.SensorAtChannelByType(channel, type);
+	public override void PostUpdateNervesPhenotype() {
+		// Just needed to be set up once after cell has been spawned and before being used first time
+		if (rootnessEnum == RootnessEnum.Rooted && !hasBeenSetup) {
+			float arcLength = rangeFar * 2f * Mathf.PI * (fieldOfView / 360f);
+			raySlotCount = Mathf.CeilToInt(arcLength / smallestArcGap) + 1;
+
+			float strideAngle = raySlotCount == 0 ? 0f : fieldOfView / (float)(raySlotCount - 1f);
+
+			// Store the fan of slots relative to localDirection
+			// Dont care about flip side since we can scan either way... doesn't matter
+			raySlotLocalDirectionsBlackWhite = new float[raySlotCount];
+			raySlotLocalDirectionsWhiteBlack = new float[raySlotCount];
+			for (int slot = 0; slot < raySlotCount; slot++) {
+				raySlotLocalDirectionsBlackWhite[slot] = (hostCell.flipSide == FlipSideEnum.BlackWhite ? directionLocal : -directionLocal) - fieldOfView / 2f + slot * strideAngle;
+				raySlotLocalDirectionsWhiteBlack[slot] = (hostCell.flipSide == FlipSideEnum.BlackWhite ? directionLocal : -directionLocal) + fieldOfView / 2f - slot * strideAngle;
+			}
+
+			rayCursor = 0;
+
+			// ... records ...
+			cellsByTypeRecord = new int[6, raySlotCount];
+			cellsByTypeSum = new int[6];
+		}
+	}
+
+	public GeneSurroundingSensorChannel GeneSurroundingSensorAtChannelByType(int channel, SurroundingSensorChannelSensorTypeEnum type) {
+		return geneSurroundingSensor.GeneSensorAtChannelByType(channel, type);
 	}
 
 	public SurroundingSensorChannelSensorTypeEnum OperatingSensorAtChannel(int channel) { // index: 0 is ditched,  1 = output at A, ....
@@ -42,7 +82,6 @@ public class SurroundingSensor : SignalUnit {
 		}
 	}
 	
-
 	public float rangeNear {
 		get {
 			return geneSurroundingSensor.rangeNear;
@@ -54,6 +93,13 @@ public class SurroundingSensor : SignalUnit {
 			return geneSurroundingSensor.rangeFar;
 		}
 	}
+
+	public void OnCellSpawned() {
+		hasBeenSetup = false;
+	}
+
+
+
 	private GeneSurroundingSensor geneSurroundingSensor {
 		get {
 			return (hostCell.gene.surroundingSensor as GeneSurroundingSensor);
@@ -64,17 +110,34 @@ public class SurroundingSensor : SignalUnit {
 		return output[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}
 
+	public class DebugRay {
+		public Vector2 rayStart;
+		public Vector2 rayEnd;
+	}
+
+	public DebugRay lastDebugRay = new DebugRay();
+
+
 	public override void ComputeSignalOutput(int deltaTicks) {
 		if (signalUnitEnum == SignalUnitEnum.SurroundingSensor) { // redundant check ? 
 			if (rootnessEnum != RootnessEnum.Rooted) {
 				return;
 			}
 
-			Vector2 rayVectorNormalized = GeometryUtil.GetVector(eyeHeading, 1f);
+			Vector2 rayVectorNormalized = GeometryUtil.GetVector(hostCell.heading + (hostCell.flipSide == FlipSideEnum.BlackWhite ? raySlotLocalDirectionsBlackWhite[rayCursor] : raySlotLocalDirectionsWhiteBlack[rayCursor]), 1f);
 			Vector2 rayStart = hostCell.position + rayVectorNormalized * hostCell.radius; // start at rim of cell
 
+			lastDebugRay.rayStart = hostCell.position + rayVectorNormalized * hostCell.radius;
+			lastDebugRay.rayEnd = hostCell.position + rayVectorNormalized * rangeFar;
+
+			rayCursor++;
+			if (rayCursor >= raySlotCount) {
+				rayCursor = 0;
+			}
+
+			//return;
+
 			int layerMask = 1; // default
-			
 			int raycastHitCount = Physics2D.RaycastNonAlloc(rayStart, rayVectorNormalized, raycastHitArrayOne, rangeFar - hostCell.radius, layerMask);
 			CollisionType hitType = CollisionType.undefined;
 			if (raycastHitCount == 0) {
@@ -85,42 +148,25 @@ public class SurroundingSensor : SignalUnit {
 			}
 
 			for (int channel = 0; channel < 6; channel++) {
-				bool evaluatedOutput = false;
 
-				//Hack
-				if (channel == 2) {
-					if (hitType == CollisionType.othersCell) {
-						evaluatedOutput = false;
-					} else {
-						evaluatedOutput = true;
-					}
-					output[channel] = evaluatedOutput;
-					continue;
-				}
+				int newHit = (hitType == CollisionType.othersCell ? 1 : 0);
+				cellsByTypeSum[channel] -= cellsByTypeRecord[channel, rayCursor];
+				cellsByTypeRecord[channel, rayCursor] = newHit;
+				cellsByTypeSum[channel] += newHit;
 
-				if (channel == 3) {
-					if (hitType == CollisionType.nonCellObstacle) {
-						evaluatedOutput = false;
-					} else {
-						evaluatedOutput = true;
-					}
-					output[channel] = evaluatedOutput;
-					continue;
-				}
-
+				output[channel] = false;
 
 				if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov) {
-					if (hitType == CollisionType.othersCell) {
-						evaluatedOutput = true;
-					}
-				} else if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov) {
-					if (hitType == CollisionType.nonCellObstacle) {
-						evaluatedOutput = true;
-					}
-				} else {
-					Debug.LogError("SurroundingSensor: Trying to evaluate output for an unknown SurroundingSensorChannelSensorTypeEnum");
+					output[channel] = CellsByTypeFovCov(channel) > ((GeneSurroundingSensorChannelCreatureCellFovCov)GeneSurroundingSensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).threshold;
 				}
-				output[channel] = evaluatedOutput;
+				// else if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov) {
+				//	if (hitType == CollisionType.nonCellObstacle) {
+
+				//	}
+				//} else {
+				//	Debug.LogError("SurroundingSensor: Trying to evaluate output for an unknown SurroundingSensorChannelSensorTypeEnum");
+				//}
+				// output[channel] = false;
 			}
 		}
 	}
@@ -186,3 +232,24 @@ public class SurroundingSensor : SignalUnit {
 		output[5] = sensorData.slotF;
 	}
 }
+
+				////Hack
+				//if (channel == 2) {
+				//	if (hitType == CollisionType.othersCell) {
+				//		evaluatedOutput = false;
+				//	} else {
+				//		evaluatedOutput = true;
+				//	}
+				//	output[channel] = evaluatedOutput;
+				//	continue;
+				//}
+
+				//if (channel == 3) {
+				//	if (hitType == CollisionType.nonCellObstacle) {
+				//		evaluatedOutput = false;
+				//	} else {
+				//		evaluatedOutput = true;
+				//	}
+				//	output[channel] = evaluatedOutput;
+				//	continue;
+				//}

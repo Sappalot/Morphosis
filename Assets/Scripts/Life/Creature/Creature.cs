@@ -74,7 +74,8 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 	}
 
 	// regenerate new nerves, regrow cellStructure according to old genome, update inter cell stuff
-	
+	// this one is called as we do gene changes that are not leading to cell pattern being changed
+	// though changes to brain is made, so we need to rewire the nerves
 	public void ReforgeInterGeneCellAndForward() {
 		ReforgeBase();
 		genotype.MakeInterGeneCellDirty();

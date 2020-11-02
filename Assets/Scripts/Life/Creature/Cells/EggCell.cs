@@ -82,12 +82,12 @@ public class EggCell : Cell {
 		fertilizeAttachmentSensor.rootnessEnum = ((EggCell)geneCell).fertilizeAttachmentSensor.rootnessEnum;
 	}
 
-	public override void UpdateSensorAreaTablesPhenotype() {
-		base.UpdateSensorAreaTablesPhenotype();
+	public override void PostUpdateNervesPhenotype() {
+		base.PostUpdateNervesPhenotype();
 
-		fertilizeLogicBox.UpdateAreaTablesPhenotype();
-		fertilizeEnergySensor.UpdateAreaTablesPhenotype();
-		fertilizeAttachmentSensor.UpdateAreaTablesPhenotype();
+		fertilizeLogicBox.PostUpdateNervesPhenotype();
+		fertilizeEnergySensor.PostUpdateNervesPhenotype();
+		fertilizeAttachmentSensor.PostUpdateNervesPhenotype();
 	}
 
 	public override void ComputeSignalOutputs(int deltaTicks) {
