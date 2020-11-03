@@ -30,7 +30,7 @@ public class SurroundingSensorCreatureCellFovCovPanel : SurroundingSensorChannel
 
 			ignoreHumanInput = true;
 			if (mode == PhenoGenoEnum.Phenotype) {
-				if (!motherPanel.isGhost && motherPanel.selectedCell != null && motherPanel.selectedCell.surroundingSensor != null && motherPanel.selectedCell.surroundingSensor.cellsByTypeSum != null) {
+				if (!motherPanel.isGhost && motherPanel.selectedCell != null && motherPanel.selectedCell.surroundingSensor != null && motherPanel.selectedCell.surroundingSensor.rootnessEnum == RootnessEnum.Rooted) {
 					currentValueLabel.text = string.Format("Creature Cell FOV Coverage: {0:F1} % ", motherPanel.selectedCell.surroundingSensor.CellsByTypeFovCov(motherPanel.viewedChannel) * 100f);
 				} else {
 					currentValueLabel.text = string.Format("Creature Cell FOV Coverage: -");

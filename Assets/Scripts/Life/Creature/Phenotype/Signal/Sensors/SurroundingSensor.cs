@@ -12,13 +12,20 @@ public class SurroundingSensor : SignalUnit {
 	private float[] raySlotLocalDirectionsWhiteBlack; // the direction of each slot relative to the directionLocal
 	private int rayCursor;
 
-	public int[,] cellsByTypeRecord; //[channel, rays] We need one for each channel since the types asked for might be different in them.   0 = no cell, 1 = cell by type
-	public int[] cellsByTypeSum; // one for each channel
+	private int[,] cellsByTypeRecord; //[channel, rays] We need one for each channel since the types asked for might be different in them.   0 = no cell, 1 = cell by type
+	private int[] cellsByTypeSum = new int[6];
+
+	private int[,] terrainRockRecord;
+	private int[] terrainRockSum = new int[6];
 
 	private bool hasBeenSetup;
 
 	public float CellsByTypeFovCov(int channel) {
 		return (float)cellsByTypeSum[channel] / (float)raySlotCount;
+	}
+
+	public float TerrainRockFovCov(int channel) {
+		return (float)terrainRockSum[channel] / (float)raySlotCount;
 	}
 
 	public SurroundingSensor(SignalUnitEnum signalUnit, Cell hostCell) : base(hostCell) {
@@ -47,9 +54,20 @@ public class SurroundingSensor : SignalUnit {
 
 			rayCursor = 0;
 
-			// ... records ...
+			// ... reset records ...
 			cellsByTypeRecord = new int[6, raySlotCount];
-			cellsByTypeSum = new int[6];
+			terrainRockRecord = new int[6, raySlotCount];
+			for (int c = 0; c < 6; c++) {
+				for (int r = 0; r < raySlotCount; r++) {
+					cellsByTypeRecord[c, r] = 0;
+					terrainRockRecord[c, r] = 0;
+				}
+			}
+
+			for (int c = 0; c < 6; c++) {
+				cellsByTypeSum[c] = 0;
+				terrainRockSum[c] = 0;
+			}
 		}
 	}
 
@@ -148,25 +166,23 @@ public class SurroundingSensor : SignalUnit {
 			}
 
 			for (int channel = 0; channel < 6; channel++) {
-
-				int newHit = (hitType == CollisionType.othersCell ? 1 : 0);
-				cellsByTypeSum[channel] -= cellsByTypeRecord[channel, rayCursor];
-				cellsByTypeRecord[channel, rayCursor] = newHit;
-				cellsByTypeSum[channel] += newHit;
-
 				output[channel] = false;
 
 				if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov) {
-					output[channel] = CellsByTypeFovCov(channel) > ((GeneSurroundingSensorChannelCreatureCellFovCov)GeneSurroundingSensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).threshold;
-				}
-				// else if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov) {
-				//	if (hitType == CollisionType.nonCellObstacle) {
+					int newHit = (hitType == CollisionType.othersCell ? 1 : 0);
+					cellsByTypeSum[channel] -= cellsByTypeRecord[channel, rayCursor];
+					cellsByTypeRecord[channel, rayCursor] = newHit;
+					cellsByTypeSum[channel] += newHit;
 
-				//	}
-				//} else {
-				//	Debug.LogError("SurroundingSensor: Trying to evaluate output for an unknown SurroundingSensorChannelSensorTypeEnum");
-				//}
-				// output[channel] = false;
+					output[channel] = CellsByTypeFovCov(channel) > ((GeneSurroundingSensorChannelCreatureCellFovCov)GeneSurroundingSensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).threshold;
+				} else if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov) {
+					int newHit = (hitType == CollisionType.nonCellObstacle ? 1 : 0);
+					terrainRockSum[channel] -= terrainRockRecord[channel, rayCursor];
+					terrainRockRecord[channel, rayCursor] = newHit;
+					terrainRockSum[channel] += newHit;
+
+					output[channel] = TerrainRockFovCov(channel) > ((GeneSurroundingSensorChannelTerrainRockFovCov)GeneSurroundingSensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).threshold;
+				}
 			}
 		}
 	}

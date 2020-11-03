@@ -2,6 +2,8 @@
 using UnityEngine.UI;
 
 public class SurroundingSensorTerrainRockFovCovPanel : SurroundingSensorChannelSensorPanel {
+
+	public Text currentValueLabel;
 	public Text thresholdSliderLabel;
 	public Slider thresholdSlider;
 
@@ -27,9 +29,18 @@ public class SurroundingSensorTerrainRockFovCovPanel : SurroundingSensorChannelS
 			}
 
 			ignoreHumanInput = true;
+			if (mode == PhenoGenoEnum.Phenotype) {
+				if (!motherPanel.isGhost && motherPanel.selectedCell != null && motherPanel.selectedCell.surroundingSensor != null && motherPanel.selectedCell.surroundingSensor.rootnessEnum == RootnessEnum.Rooted) {
+					currentValueLabel.text = string.Format("Terrain rock FOV Coverage: {0:F1} % ", motherPanel.selectedCell.surroundingSensor.TerrainRockFovCov(motherPanel.viewedChannel) * 100f);
+				} else {
+					currentValueLabel.text = string.Format("Terrain rock FOV Coverage: -");
+				}
+			} else /* Genotype */ {
+				currentValueLabel.text = string.Format("Terrain rock FOV Coverage: -");
+			}
 
 			float threshold = ((GeneSurroundingSensorChannelTerrainRockFovCov)cellAndGenePanel.gene.surroundingSensor.GeneSensorAtChannelByType(motherPanel.viewedChannel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).threshold;
-			thresholdSliderLabel.text = string.Format("Terrain Rock FOV Coverage > {0:F0} %", threshold * 100f);
+			thresholdSliderLabel.text = string.Format("Threshold > {0:F0} %", threshold * 100f);
 			thresholdSlider.value = threshold;
 			thresholdSlider.interactable = IsUnlocked() && mode == PhenoGenoEnum.Genotype;
 
