@@ -8,6 +8,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 
 	public Image blockButton;
 	public Image passButton;
+	public Image passInvertedButton;
 	public Image lockedOverlayImage;
 	public Image semiLockedOverlayImage;
 
@@ -18,7 +19,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 
 	private int column;
 	private bool isDirty = false;
-	private bool ignoreSliderMoved = false;
+	private bool ignoreHumanInput = false;
 
 	public void MakeMotherPanelDirty() {
 		motherPanel.MakeDirty();
@@ -59,28 +60,34 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	}
 
 	public void OnBlockClicked() {
-		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput == null || affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked || ignoreSliderMoved) {
+		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput == null || affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked || ignoreHumanInput) {
 			return;
 		}
 		affectedGeneLogicBoxInput.valveMode = SignalValveModeEnum.Block;
-		motherPanel.MarkAsNewForge();
-		motherPanel.UpdateConnections();
-		motherPanel.MakeDirty();
-		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
-		MakeDirty();
+		PostButtonClicked();
 	}
 
 	public void OnPassClicked() {
-		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput == null || affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked || ignoreSliderMoved) {
+		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput == null || affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked || ignoreHumanInput) {
 			return;
 		}
 		affectedGeneLogicBoxInput.valveMode = SignalValveModeEnum.Pass;
+		PostButtonClicked();
+	}
+
+	public void OnPassInvertedClicked() {
+		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneLogicBoxInput == null || affectedGeneLogicBoxInput.lockness == LocknessEnum.Locked || ignoreHumanInput) {
+			return;
+		}
+		affectedGeneLogicBoxInput.valveMode = SignalValveModeEnum.PassInverted;
+		PostButtonClicked();
+	}
+
+	private void PostButtonClicked() {
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
-		
+
 		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
 		GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
@@ -88,7 +95,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 	}
 
 	public void OnSetReferenceClicked() {
-		if (!isGhost && IsUnlocked() && affectedGeneLogicBoxInput.lockness == LocknessEnum.Unlocked && affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
+		if (!isGhost && IsUnlocked() && affectedGeneLogicBoxInput.lockness == LocknessEnum.Unlocked && (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass || affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.PassInverted)) {
 			AssignNerveInputPanel.instance.TryStartNerveAssignation(this, affectedGeneLogicBoxInput.geneNerve);
 			motherPanel.MakeDirty();
 		}
@@ -129,13 +136,14 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate) {
 				Debug.Log("Update Hibernate Panel");
 			}
-			ignoreSliderMoved = true;
+			ignoreHumanInput = true;
 
 			// ...ghost ...
 			
 			if (isGhost) {
 				blockButton.color = ColorScheme.instance.grayedOut;
 				passButton.color = ColorScheme.instance.grayedOut;
+				passInvertedButton.color = ColorScheme.instance.grayedOut;
 				inputButtonImage.color = ColorScheme.instance.signalGhost;
 				lockedOverlayImage.gameObject.SetActive(false);
 				semiLockedOverlayImage.gameObject.SetActive(false);
@@ -151,6 +159,7 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 
 			blockButton.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
 			passButton.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
+			passInvertedButton.color = affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.PassInverted ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
 
 			if (mode == PhenoGenoEnum.Genotype) {
 				if (affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Block || !motherPanel.isAnyAffectedSignalUnitsRootedGenotype) {
@@ -184,12 +193,13 @@ public class LogicBoxInputPanel : MonoBehaviour, IInputPanel {
 				lockedOverlayImage.gameObject.SetActive(false);
 				semiLockedOverlayImage.gameObject.SetActive(false);
 			}
-			ignoreSliderMoved = false;
+			ignoreHumanInput = false;
 
 			isDirty = false;
 		}
 	}
 
+	// The colouring of the pre valve input 
 	private LogicBoxInputEnum runtimeOutput {
 		get {
 			if (affectedGeneLogicBoxInput != null) {

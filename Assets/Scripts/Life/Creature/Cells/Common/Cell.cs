@@ -352,6 +352,7 @@ public abstract class Cell : MonoBehaviour {
 		}
 	}
 
+	// we never invert output, so much is clear
 	public bool GetOutputFromUnit(SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot) {
 		// Outputs that all cells have, come here if overriden functions could not find the output we are asking for
 		if (GetSignalUnit(outputUnit) == null) {

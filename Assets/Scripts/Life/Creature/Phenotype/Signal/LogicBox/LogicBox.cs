@@ -16,7 +16,7 @@ public class LogicBox : SignalUnit {
 	public override void UpdateInputNervesGenotype(Genotype genotype) {
 		GeneLogicBox geneLogicBox = (GeneLogicBox)hostCell.gene.GetGeneSignalUnit(signalUnitEnum);
 		for (int i = 0; i < GeneLogicBox.columnCount; i++) {
-			if (geneLogicBox.GetInput(i).valveMode == SignalValveModeEnum.Pass) {
+			if (geneLogicBox.GetInput(i).valveMode == SignalValveModeEnum.Pass || geneLogicBox.GetInput(i).valveMode == SignalValveModeEnum.PassInverted) {
 				inputNerves[i].headCell = hostCell;
 				inputNerves[i].headSignalUnitEnum = signalUnitEnum;
 				inputNerves[i].headSignalUnitSlotEnum = SignalUnit.IndexToSignalInputSlotUnit(i);
@@ -31,14 +31,7 @@ public class LogicBox : SignalUnit {
 					inputNerves[i].toTailVector = geneNerve.nerveVector;
 					inputNerves[i].tailCell = GeneNerve.GetGeneCellAtNerveTail(hostCell, geneNerve, genotype);
 
-
-
 					inputNerves[i].nerveStatusEnum = NerveStatusEnum.InputExternal;
-					//if (inputNerves[i].tailCell != null) {
-					//	inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeExternal;
-					//} else {
-					//	inputNerves[i].nerveStatusEnum = NerveStatusEnum.Input_GenotypeExternalVoid;
-					//}
 				}
 			} else {
 				// blocked input ==> void nerve
@@ -159,6 +152,7 @@ public class LogicBox : SignalUnit {
 	// TODO: find out a way not to use static functions here
 	// we need to know what logic box we are talking to in panel as we want to update signal colors
 
+	// A gate is doing some logic, this method figures out wheter it has signal on/or off depending on gate and input
 	public static bool HasSignalPostGate(GeneLogicBoxGate gate, Cell hostCell) {
 		if (gate.row == 0 && !gate.isTransmittingSignal) {
 			return false; // If we are not transmitting anything through top gate, this box is useless. undefined but let's just turn output off
@@ -172,14 +166,17 @@ public class LogicBox : SignalUnit {
 							// TODO: find easier way to access nerve
 							Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(gate.geneLogicBox.signalUnit)).inputNerves[(nextPart as GeneLogicBoxInput).column];
 							if (inputNerve.tailSignalUnitEnum == SignalUnitEnum.Void || inputNerve.tailCell == null || !inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
-								// next part turned out to be an open input valve with its input off
+								// next part turned out to be a pass input valve with its input off
 								return false; // one off ==> AND is off :(
 							}
+						} else if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.PassInverted) {
+							Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(gate.geneLogicBox.signalUnit)).inputNerves[(nextPart as GeneLogicBoxInput).column];
+							if (inputNerve.tailSignalUnitEnum != SignalUnitEnum.Void && inputNerve.tailCell != null && inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
+								// next part turned out to be a pass INVERTED input valve with its input on
+								return false; // on ==Inverted==> off ... one off ==> AND is off :(
+							}
 						}
-						//if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && ((nextPart as GeneLogicBoxInput).nerve.tailUnitEnum == SignalUnitEnum.Void || !hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).nerve.tailUnitEnum, (nextPart as GeneLogicBoxInput).nerve.tailUnitSlotEnum))) {
-							// next part turned out to be an open input valve with its input off
-						//	return false; // one off ==> AND is off :(
-						//}
+						// what if we have an passInverted valve 
 					} else if (nextPart is GeneLogicBoxGate) {
 						if (!HasSignalPostGate((nextPart as GeneLogicBoxGate), hostCell)) {
 							// next part turned out to be a gate with output off
@@ -189,22 +186,23 @@ public class LogicBox : SignalUnit {
 				}
 			}
 			return true; // We didn't find an input or a gate with an off signal ==> all signals must have been ON :)
-		} else {
+		} else /* (gate.operatorType == LogicOperatorEnum.OR) */{
 			foreach (GeneLogicBoxPart nextPart in gate.partsConnected) {
 				if (nextPart.isTransmittingSignal) {
 					if (nextPart is GeneLogicBoxInput) {
 						if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass) {
 							Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(gate.geneLogicBox.signalUnit)).inputNerves[(nextPart as GeneLogicBoxInput).column];
 							if (inputNerve.tailSignalUnitEnum != SignalUnitEnum.Void && inputNerve.tailCell != null && inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
-								// next part turned out to be an open input valve with its input on
+								// next part turned out to be an pass input valve with its input on
 								return true; // one on ==> OR is on :)
 							}
+						} else if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.PassInverted) {
+							Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(gate.geneLogicBox.signalUnit)).inputNerves[(nextPart as GeneLogicBoxInput).column];
+							if (inputNerve.tailSignalUnitEnum == SignalUnitEnum.Void || inputNerve.tailCell == null || !inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
+								// next part turned out to be an pass INVERTED input valve with its input off
+								return true; // off ==Inverted==> on ... one on ==> OR is on :)
+							}
 						}
-
-						//if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass && (nextPart as GeneLogicBoxInput).nerve.tailUnitEnum != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((nextPart as GeneLogicBoxInput).nerve.tailUnitEnum, (nextPart as GeneLogicBoxInput).nerve.tailUnitSlotEnum)) {
-						//	// next part turned out to be an open input valve with its input on
-						//	return true; // one on ==> OR is on :)
-						//}
 					} else if (nextPart is GeneLogicBoxGate) {
 						if (HasSignalPostGate((nextPart as GeneLogicBoxGate), hostCell)) {
 							// next part turned out to be a gate with output on
@@ -217,10 +215,16 @@ public class LogicBox : SignalUnit {
 		}
 	}
 
+	
 	public static bool HasSignalPostInputValve(Cell hostCell, SignalUnitEnum signalUnitEnum, GeneLogicBoxInput geneLogicBoxInput) {
 		if ((geneLogicBoxInput as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass) {
 			Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(signalUnitEnum)).inputNerves[geneLogicBoxInput.column];
 			if (inputNerve.tailSignalUnitEnum != SignalUnitEnum.Void && inputNerve.tailCell != null && inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
+				return true;
+			}
+		} else if ((geneLogicBoxInput as GeneLogicBoxInput).valveMode == SignalValveModeEnum.PassInverted) {
+			Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(signalUnitEnum)).inputNerves[geneLogicBoxInput.column];
+			if (inputNerve.tailSignalUnitEnum == SignalUnitEnum.Void || inputNerve.tailCell == null || !inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
 				return true;
 			}
 		}

@@ -3,4 +3,5 @@
 public enum SignalValveModeEnum {
 	Block,
 	Pass,
+	PassInverted,
 }

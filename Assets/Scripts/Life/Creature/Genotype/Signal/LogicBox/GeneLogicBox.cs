@@ -52,6 +52,11 @@ public class GeneLogicBox : GeneSignalUnit {
 		UpdateConnections();
 	}
 
+	public void SetInputToPassInverted(int column) {
+		inputRow3[column].valveMode = SignalValveModeEnum.PassInverted;
+		UpdateConnections();
+	}
+
 	public void SetInputLockness(int column, LocknessEnum lockness) {
 		inputRow3[column].lockness = lockness;
 		UpdateConnections();
@@ -101,7 +106,7 @@ public class GeneLogicBox : GeneSignalUnit {
 	public void UpdateConnections() {
 		// Row 3, input
 		foreach (GeneLogicBoxInput input3 in inputRow3) {
-			input3.isTransmittingSignal = input3.valveMode == SignalValveModeEnum.Pass;
+			input3.isTransmittingSignal = (input3.valveMode == SignalValveModeEnum.Pass || input3.valveMode == SignalValveModeEnum.PassInverted);
 		}
 
 		// Row 2

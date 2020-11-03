@@ -138,7 +138,7 @@ public class LogicBoxPanel : SignalUnitPanel {
 		List<IGeneInput> arrows = new List<IGeneInput>();
 		if (isAnyAffectedSignalUnitsRootedGenotype) {
 			for (int i = 0; i < inputRow3.Length; i++) {
-				if (inputRow3[i].affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass) {
+				if (inputRow3[i].affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.Pass || inputRow3[i].affectedGeneLogicBoxInput.valveMode == SignalValveModeEnum.PassInverted) {
 					arrows.Add(inputRow3[i].affectedGeneLogicBoxInput);
 				}
 			}

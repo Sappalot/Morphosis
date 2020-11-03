@@ -61,9 +61,28 @@ public class GeneLogicBoxInput : GeneLogicBoxPart, IGeneInput {
 		GlobalSettings gs = GlobalSettings.instance;
 		float rnd;
 
+		
 		rnd = Random.Range(0, gs.mutation.logicBoxInputValveToggle * strength + 1000f);
 		if (rnd < gs.mutation.logicBoxInputValveToggle * strength) {
-			valveMode = (valveMode == SignalValveModeEnum.Pass ? SignalValveModeEnum.Block : SignalValveModeEnum.Pass);
+			if (valveMode == SignalValveModeEnum.Block) {
+				if (Random.Range(0, 2) == 0) {
+					valveMode = SignalValveModeEnum.Pass;
+				} else {
+					valveMode = SignalValveModeEnum.PassInverted;
+				}
+			} else if (valveMode == SignalValveModeEnum.Pass) {
+				if (Random.Range(0, 2) == 0) {
+					valveMode = SignalValveModeEnum.Block;
+				} else {
+					valveMode = SignalValveModeEnum.PassInverted;
+				}
+			} else /* pass inverted*/{
+				if (Random.Range(0, 2) == 0) {
+					valveMode = SignalValveModeEnum.Block;
+				} else {
+					valveMode = SignalValveModeEnum.Pass;
+				}
+			}
 			didMutate = true;
 		}
 
