@@ -116,14 +116,6 @@ public class SurroundingSensor : SignalUnit {
 		hasBeenSetup = false;
 	}
 
-
-
-	private GeneSurroundingSensor geneSurroundingSensor {
-		get {
-			return (hostCell.gene.surroundingSensor as GeneSurroundingSensor);
-		}
-	}
-
 	public override bool GetOutput(SignalUnitSlotEnum signalUnitSlot) {
 		return output[SignalUnitSlotOutputToIndex(signalUnitSlot)];
 	}
@@ -143,7 +135,7 @@ public class SurroundingSensor : SignalUnit {
 			}
 
 			Vector2 rayVectorNormalized = GeometryUtil.GetVector(hostCell.heading + (hostCell.flipSide == FlipSideEnum.BlackWhite ? raySlotLocalDirectionsBlackWhite[rayCursor] : raySlotLocalDirectionsWhiteBlack[rayCursor]), 1f);
-			Vector2 rayStart = hostCell.position + rayVectorNormalized * hostCell.radius; // start at rim of cell
+			Vector2 rayStart = hostCell.position + rayVectorNormalized * (hostCell.radius - 0.1f); // start at a little bit inside rim of cell. Reason: ray only hits collision areas as it enters them and if they are kissing eye it might start inside them
 
 			lastDebugRay.rayStart = hostCell.position + rayVectorNormalized * hostCell.radius;
 			lastDebugRay.rayEnd = hostCell.position + rayVectorNormalized * rangeFar;
@@ -153,37 +145,67 @@ public class SurroundingSensor : SignalUnit {
 				rayCursor = 0;
 			}
 
-			//return;
-
 			int layerMask = 1; // default
 			int raycastHitCount = Physics2D.RaycastNonAlloc(rayStart, rayVectorNormalized, raycastHitArrayOne, rangeFar - hostCell.radius, layerMask);
-			CollisionType hitType = CollisionType.undefined;
-			if (raycastHitCount == 0) {
-				//Debug.Log("See only the void");
-			} else {
-				hitType = GetCollisionType(raycastHitArrayOne[0], hostCell.creature);
-				//Debug.Log("See " + hitType.ToString());
-			}
 
 			for (int channel = 0; channel < 6; channel++) {
 				output[channel] = false;
-
 				if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov) {
-					int newHit = (hitType == CollisionType.othersCell ? 1 : 0);
+					int newHit = 0; // 1 if this ray is hitting something that the eye sees
+					if (raycastHitCount > 0) {
+						Cell hitCell = raycastHitArrayOne[0].collider.gameObject.GetComponent<Cell>();
+						if (hitCell != null) {
+							// ray was hitting a cell
+							Creature hitCreature = hitCell.creature;
+							if (hitCreature != hostCell.creature) {
+								// ray was hitting a cell in another creature (never count own cells)
+								switch (hitCell.GetCellType()) {
+									case CellTypeEnum.Egg:
+										newHit = GeneSurroundingSensorChannelFovCov(channel).seeEgg ? 1 : 0;
+										break;
+									case CellTypeEnum.Fungal:
+										newHit = GeneSurroundingSensorChannelFovCov(channel).seeFungal ? 1 : 0;
+										break;
+									case CellTypeEnum.Jaw:
+										if (GeneSurroundingSensorChannelFovCov(channel).seeJawThreat || GeneSurroundingSensorChannelFovCov(channel).seeJawHarmless) {
+											bool isThreatToMe = IsJawThreatToMe((JawCell)hitCell, hostCell.creature);
+											newHit = (isThreatToMe && GeneSurroundingSensorChannelFovCov(channel).seeJawThreat) || (!isThreatToMe && GeneSurroundingSensorChannelFovCov(channel).seeJawHarmless) ? 1 : 0;
+										}
+										break;
+									case CellTypeEnum.Leaf:
+										newHit = GeneSurroundingSensorChannelFovCov(channel).seeLeaf ? 1 : 0;
+										break;
+									case CellTypeEnum.Muscle:
+										newHit = GeneSurroundingSensorChannelFovCov(channel).seeMuscle ? 1 : 0;
+										break;
+									case CellTypeEnum.Root:
+										newHit = GeneSurroundingSensorChannelFovCov(channel).seeRoot ? 1 : 0;
+										break;
+									case CellTypeEnum.Shell:
+										newHit = GeneSurroundingSensorChannelFovCov(channel).seeShell ? 1 : 0;
+										break;
+									case CellTypeEnum.Vein:
+										newHit = GeneSurroundingSensorChannelFovCov(channel).seeVein ? 1 : 0;
+										break;
+								} // end switch cell type
+							} // end if hit other than me
+						} // end if hit cell
+					} // end if hitting anything at all
+
 					cellsByTypeSum[channel] -= cellsByTypeRecord[channel, rayCursor];
 					cellsByTypeRecord[channel, rayCursor] = newHit;
 					cellsByTypeSum[channel] += newHit;
 
 					output[channel] = CellsByTypeFovCov(channel) > ((GeneSurroundingSensorChannelCreatureCellFovCov)GeneSurroundingSensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).threshold;
 				} else if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov) {
-					int newHit = (hitType == CollisionType.nonCellObstacle ? 1 : 0);
-					terrainRockSum[channel] -= terrainRockRecord[channel, rayCursor];
-					terrainRockRecord[channel, rayCursor] = newHit;
-					terrainRockSum[channel] += newHit;
+					//int newHit = (hitType == CollisionType.nonCellObstacle ? 1 : 0);
+					//terrainRockSum[channel] -= terrainRockRecord[channel, rayCursor];
+					//terrainRockRecord[channel, rayCursor] = newHit;
+					//terrainRockSum[channel] += newHit;
 
-					output[channel] = TerrainRockFovCov(channel) > ((GeneSurroundingSensorChannelTerrainRockFovCov)GeneSurroundingSensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).threshold;
+					//output[channel] = TerrainRockFovCov(channel) > ((GeneSurroundingSensorChannelTerrainRockFovCov)GeneSurroundingSensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).threshold;
 				}
-			}
+			} // end for every channel
 		}
 	}
 
@@ -222,6 +244,44 @@ public class SurroundingSensor : SignalUnit {
 		}
 
 		return CollisionType.nonCellObstacle;
+	}
+
+	private static bool IsJawThreatToMe(JawCell jaw, Creature me) {
+		Creature otherCreature = jaw.creature;
+		bool otherCreatureIsMyMother = me.HasMotherAlive() && me.GetMotherAlive() == otherCreature;
+		bool iAmOtherCreaturesMother = otherCreature.HasMotherAlive() && otherCreature.GetMotherAlive() == me;
+		bool otherCreatureAndMeAreSiblings = otherCreature.GetMotherIdDeadOrAlive() == me.GetMotherIdDeadOrAlive();
+
+		// don't eat attached mother
+		if (me.HasMotherAlive() && otherCreature == me.GetMotherAlive() && me.IsAttachedToMotherAlive()) {
+			return false;
+		}
+
+		// don't eat attached children
+		if (otherCreature.HasMotherAlive() && me == otherCreature.GetMotherAlive() && otherCreature.IsAttachedToMotherAlive()) {
+			return false;
+		}
+
+		// TODO: kin and father
+		if (otherCreatureIsMyMother) {
+			return jaw.gene.jawCellCannibalizeChildren; // there is a chance she will not eat me
+		} else if (iAmOtherCreaturesMother) {
+			return jaw.gene.jawCellCannibalizeMother; // ther eis a cahance it will not eat me
+		} else if (otherCreatureAndMeAreSiblings) {
+			return jaw.gene.jawCellCannibalizeSiblings; // ther eis a cahance it will not eat me
+		} else /* We are strangers to eachothers*/ {
+			return true;
+		}
+	}
+
+	private GeneSurroundingSensor geneSurroundingSensor {
+		get {
+			return (hostCell.gene.surroundingSensor as GeneSurroundingSensor);
+		}
+	}
+
+	private GeneSurroundingSensorChannelCreatureCellFovCov GeneSurroundingSensorChannelFovCov(int channel) {
+		return (GeneSurroundingSensorChannelCreatureCellFovCov)geneSurroundingSensor.GeneSensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov);
 	}
 
 	// Load Save

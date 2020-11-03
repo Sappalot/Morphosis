@@ -97,8 +97,18 @@ public class JawCell : Cell {
 		Cell prayCell = other.GetComponent<Cell>();
 
 		if (prayCell != null && prayCell.creature != creature) {
-
 			Creature pray = prayCell.creature;
+
+			// don't eat attached mother
+			if (creature.HasMotherAlive() && pray == creature.GetMotherAlive() && creature.IsAttachedToMotherAlive()) {
+				return;
+			}
+
+			// don't eat attached children
+			if (pray.HasMotherAlive() && creature == pray.GetMotherAlive() && pray.IsAttachedToMotherAlive()) {
+				return;
+			}
+
 			// spare mother
 			if (!gene.jawCellCannibalizeMother && creature.HasMotherAlive() && creature.GetMotherAlive().id == pray.id) {
 				return;
