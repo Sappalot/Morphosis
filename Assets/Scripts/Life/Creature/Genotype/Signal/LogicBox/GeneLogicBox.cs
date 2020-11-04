@@ -197,53 +197,6 @@ public class GeneLogicBox : GeneSignalUnit {
 		}
 	}
 
-	// remove
-	//public override void MarkThisAndChildrenAsRooted(Genotype genotype, Cell geneCell, SignalUnitEnum signalUnit) {
-	//	//if (isUsed) {
-	//	//	return;
-	//	//}
-
-	//	isRooted = true;
-
-	//	if (geneCell == null || geneCell.gene == null) {
-	//		return;
-	//	}
-		
-	//	foreach (GeneLogicBoxInput input3 in inputRow3) {
-	//		if (input3.valveMode == SignalValveModeEnum.Pass) {
-	//			if (input3.nerve.isLocal) {
-	//				GeneSignalUnit child = geneCell.gene.GetGeneSignalUnit(input3.nerve.tailUnitEnum);
-	//				if (child != null) {
-	//					child.MarkThisAndChildrenAsRooted(genotype, geneCell, signalUnit);
-	//				}
-	//			} else {
-	//				Cell childCell = GeneNerve.GetGeneCellAtNerveTail(geneCell, input3.nerve, genotype);
-	//				if (childCell != null) {
-	//					GeneSignalUnit child = childCell.gene.GetGeneSignalUnit(input3.nerve.tailUnitEnum);
-	//					if (child != null) {
-	//						child.MarkThisAndChildrenAsRooted(genotype, childCell, signalUnit);
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
-
-	//public override List<GeneNerve> GetExternalGeneNerves() {
-	//	if (!isRooted) { // TODO: take isUsed from outside into account as well
-	//		return null;
-	//	}
-
-	//	List<GeneNerve> nerves = new List<GeneNerve>();
-	//	for (int i = 0; i < columnCount; i++) {
-	//		if (inputRow3[i].valveMode == SignalValveModeEnum.Pass && inputRow3[i].nerve.nerveVector != null) {
-	//			nerves.Add(inputRow3[i].nerve);
-	//		}
-	//	}
-
-	//	return nerves;
-	//}
-
 	public bool HasGateAbove(GeneLogicBoxGate gate) {
 		return AreSomeCellsOccupiedByGate(gate.row - 1, gate.leftFlank, gate.rightFlank);
 	}
@@ -375,7 +328,7 @@ public class GeneLogicBox : GeneSignalUnit {
 	}
 
 	public void Mutate(float strength, bool isOrigin) {
-		return; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 		// Extend flanks
 		foreach (GeneLogicBoxGate gate in gateRow1) {
 			if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateExtendFlank, strength) || true) {
@@ -444,8 +397,9 @@ public class GeneLogicBox : GeneSignalUnit {
 			}
 
 			if (locations.Count > 0) {
+				LogicOperatorEnum logicOperator = (LogicOperatorEnum)Random.Range(0, 4);
 				GateLocation location = locations[Random.Range(0, locations.Count)];
-				TryCreateGate(location.row, Random.Range(0, 2) == 0 ? LogicOperatorEnum.And : LogicOperatorEnum.Or, GeneLogicBoxGate.GetFlankLeftOfColumn(location.startColumn), GeneLogicBoxGate.GetFlankRightOfColumn(location.endColumn), false);
+				TryCreateGate(location.row, logicOperator, GeneLogicBoxGate.GetFlankLeftOfColumn(location.startColumn), GeneLogicBoxGate.GetFlankRightOfColumn(location.endColumn), false);
 			}
 		}
 
@@ -453,11 +407,13 @@ public class GeneLogicBox : GeneSignalUnit {
 		if (MutationUtil.ShouldMutate(GlobalSettings.instance.mutation.logicBoxGateToggleLogicOperation, strength) || true) {
 			List<GeneLogicBoxGate> usedGates = GetUsedGates(true);
 			int rnd = Random.Range(0, usedGates.Count);
-			if (usedGates[rnd].operatorType == LogicOperatorEnum.And) {
-				usedGates[rnd].operatorType = LogicOperatorEnum.Or;
-			} else {
-				usedGates[rnd].operatorType = LogicOperatorEnum.And;
+
+			int randomOperator = Random.Range(0, 4);
+			if (randomOperator == (int)usedGates[rnd].operatorType) {
+				// LAZY: if it is to be the same just make it one bigger
+				randomOperator = (randomOperator + 1) % 4;
 			}
+			usedGates[rnd].operatorType = (LogicOperatorEnum)randomOperator;
 		}
 
 		// valves

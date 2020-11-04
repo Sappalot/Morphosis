@@ -153,12 +153,13 @@ public class LogicBox : SignalUnit {
 	// we need to know what logic box we are talking to in panel as we want to update signal colors
 
 	// A gate is doing some logic, this method figures out wheter it has signal on/or off depending on gate and input
+	// 2020 fall - added NAND and NOR simply by reversing the return values (if NAND or NOR) :)
 	public static bool HasSignalPostGate(GeneLogicBoxGate gate, Cell hostCell) {
 		if (gate.row == 0 && !gate.isTransmittingSignal) {
 			return false; // If we are not transmitting anything through top gate, this box is useless. undefined but let's just turn output off
 		}
 
-		if (gate.operatorType == LogicOperatorEnum.And) {
+		if (gate.operatorType == LogicOperatorEnum.And || gate.operatorType == LogicOperatorEnum.Nand) {
 			foreach (GeneLogicBoxPart nextPart in gate.partsConnected) {
 				if (nextPart.isTransmittingSignal) {
 					if (nextPart is GeneLogicBoxInput) {
@@ -167,26 +168,26 @@ public class LogicBox : SignalUnit {
 							Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(gate.geneLogicBox.signalUnit)).inputNerves[(nextPart as GeneLogicBoxInput).column];
 							if (inputNerve.tailSignalUnitEnum == SignalUnitEnum.Void || inputNerve.tailCell == null || !inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
 								// next part turned out to be a pass input valve with its input off
-								return false; // one off ==> AND is off :(
+								return gate.operatorType == LogicOperatorEnum.And ? false : true; // one off ==> AND is off :( (...then a layer of inversion on top when NAND)
 							}
 						} else if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.PassInverted) {
 							Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(gate.geneLogicBox.signalUnit)).inputNerves[(nextPart as GeneLogicBoxInput).column];
 							if (inputNerve.tailSignalUnitEnum != SignalUnitEnum.Void && inputNerve.tailCell != null && inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
 								// next part turned out to be a pass INVERTED input valve with its input on
-								return false; // on ==Inverted==> off ... one off ==> AND is off :(
+								return gate.operatorType == LogicOperatorEnum.And ? false : true; // on ==Inverted==> off ... one off ==> AND is off :(   (...then a layer of inversion on top when NAND)
 							}
 						}
 						// what if we have an passInverted valve 
 					} else if (nextPart is GeneLogicBoxGate) {
 						if (!HasSignalPostGate((nextPart as GeneLogicBoxGate), hostCell)) {
 							// next part turned out to be a gate with output off
-							return false; // one false ==> AND is off :(
+							return gate.operatorType == LogicOperatorEnum.And ? false : true; // one false ==> AND is off :(   (...then a layer of inversion on top when NAND)
 						}
 					}
 				}
 			}
-			return true; // We didn't find an input or a gate with an off signal ==> all signals must have been ON :)
-		} else /* (gate.operatorType == LogicOperatorEnum.OR) */{
+			return gate.operatorType == LogicOperatorEnum.And ? true : false; // We didn't find an input or a gate with an off signal ==> all signals must have been ON :)
+		} else /* (gate.operatorType == LogicOperatorEnum.OR || gate.operatorType == LogicOperatorEnum.NOR */{
 			foreach (GeneLogicBoxPart nextPart in gate.partsConnected) {
 				if (nextPart.isTransmittingSignal) {
 					if (nextPart is GeneLogicBoxInput) {
@@ -194,24 +195,24 @@ public class LogicBox : SignalUnit {
 							Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(gate.geneLogicBox.signalUnit)).inputNerves[(nextPart as GeneLogicBoxInput).column];
 							if (inputNerve.tailSignalUnitEnum != SignalUnitEnum.Void && inputNerve.tailCell != null && inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
 								// next part turned out to be an pass input valve with its input on
-								return true; // one on ==> OR is on :)
+								return gate.operatorType == LogicOperatorEnum.Or ? true : false; // one on ==> OR is on :)   (...then a layer of inversion on top when NOR)
 							}
 						} else if ((nextPart as GeneLogicBoxInput).valveMode == SignalValveModeEnum.PassInverted) {
 							Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(gate.geneLogicBox.signalUnit)).inputNerves[(nextPart as GeneLogicBoxInput).column];
 							if (inputNerve.tailSignalUnitEnum == SignalUnitEnum.Void || inputNerve.tailCell == null || !inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
 								// next part turned out to be an pass INVERTED input valve with its input off
-								return true; // off ==Inverted==> on ... one on ==> OR is on :)
+								return gate.operatorType == LogicOperatorEnum.Or ? true : false; // off ==Inverted==> on ... one on ==> OR is on :)     (...then a layer of inversion on top when NOR)
 							}
 						}
 					} else if (nextPart is GeneLogicBoxGate) {
 						if (HasSignalPostGate((nextPart as GeneLogicBoxGate), hostCell)) {
 							// next part turned out to be a gate with output on
-							return true; // one on ==> OR is on :)
+							return gate.operatorType == LogicOperatorEnum.Or ? true : false; // one on ==> OR is on :)   (...then a layer of inversion on top when NOR)
 						}
 					}
 				}
 			}
-			return false; // We didnt find any input or gate with an ON-signal ==> all singnals must have been OFF :(
+			return gate.operatorType == LogicOperatorEnum.Or ? false : true; // We didnt find any input or gate with an ON-signal. Conclution: all singnals must have been OFF (valve shut) :(   ==> We just set the output to off in this case (...then a layer of inversion on top when NOR)
 		}
 	}
 

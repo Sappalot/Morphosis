@@ -15,6 +15,8 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	public GameObject buttonOverlay;
 	public Image andButtonImage;
 	public Image orButtonImage;
+	public Image nandButtonImage;
+	public Image norButtonImage;
 
 	public Image[] inputArrows = new Image[GeneLogicBox.columnCount];
 
@@ -98,6 +100,22 @@ public class LogicBoxGatePanel : MonoBehaviour {
 	public void OnClickedOrOperator() {
 		if (affectedGeneLogicBoxGate != null && affectedGeneLogicBoxGate.operatorType != LogicOperatorEnum.Or) {
 			affectedGeneLogicBoxGate.operatorType = LogicOperatorEnum.Or;
+			motherPanel.MarkAsNewForge();
+			MakeDirty();
+		}
+	}
+
+	public void OnClickedNandOperator() {
+		if (affectedGeneLogicBoxGate != null && affectedGeneLogicBoxGate.operatorType != LogicOperatorEnum.Nand) {
+			affectedGeneLogicBoxGate.operatorType = LogicOperatorEnum.Nand;
+			motherPanel.MarkAsNewForge();
+			MakeDirty();
+		}
+	}
+
+	public void OnClickedNorOperator() {
+		if (affectedGeneLogicBoxGate != null && affectedGeneLogicBoxGate.operatorType != LogicOperatorEnum.Nor) {
+			affectedGeneLogicBoxGate.operatorType = LogicOperatorEnum.Nor;
 			motherPanel.MarkAsNewForge();
 			MakeDirty();
 		}
@@ -208,6 +226,8 @@ public class LogicBoxGatePanel : MonoBehaviour {
 			if (buttonOverlay && affectedGeneLogicBoxGate != null) {
 				andButtonImage.color = affectedGeneLogicBoxGate.operatorType == LogicOperatorEnum.And ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
 				orButtonImage.color = affectedGeneLogicBoxGate.operatorType == LogicOperatorEnum.Or ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
+				nandButtonImage.color = affectedGeneLogicBoxGate.operatorType == LogicOperatorEnum.Nand ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
+				norButtonImage.color = affectedGeneLogicBoxGate.operatorType == LogicOperatorEnum.Nor ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
 			}
 
 			// input arrows

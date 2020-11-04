@@ -3,4 +3,6 @@
 public enum LogicOperatorEnum {
 	And,
 	Or,
+	Nand,
+	Nor,
 }
