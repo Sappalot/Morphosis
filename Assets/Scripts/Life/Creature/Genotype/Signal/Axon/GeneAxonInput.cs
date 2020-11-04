@@ -41,16 +41,39 @@ public class GeneAxonInput : IGeneInput {
 		geneNerve.Defaultify();
 	}
 
-	public void Mutate(float strength, bool isOrigin) {
+	public bool Mutate(float strength, bool isOrigin) {
+		bool didMutate = false;
+
 		GlobalSettings gs = GlobalSettings.instance;
 		float rnd;
 
 		rnd = Random.Range(0, gs.mutation.logicBoxInputValveToggle * strength + 1000f);
 		if (rnd < gs.mutation.logicBoxInputValveToggle * strength) {
-			valveMode = (valveMode == SignalValveModeEnum.Pass ? SignalValveModeEnum.Block : SignalValveModeEnum.Pass);
+			if (valveMode == SignalValveModeEnum.Block) {
+				if (Random.Range(0, 2) == 0) {
+					valveMode = SignalValveModeEnum.Pass;
+				} else {
+					valveMode = SignalValveModeEnum.PassInverted;
+				}
+			} else if (valveMode == SignalValveModeEnum.Pass) {
+				if (Random.Range(0, 2) == 0) {
+					valveMode = SignalValveModeEnum.Block;
+				} else {
+					valveMode = SignalValveModeEnum.PassInverted;
+				}
+			} else /* pass inverted*/{
+				if (Random.Range(0, 2) == 0) {
+					valveMode = SignalValveModeEnum.Block;
+				} else {
+					valveMode = SignalValveModeEnum.Pass;
+				}
+			}
+			didMutate = true;
 		}
 
-		geneNerve.Mutate(strength, isOrigin); // never locked
+		didMutate  |= geneNerve.Mutate(strength, isOrigin); // never locked
+
+		return didMutate;
 	}
 
 	// Save

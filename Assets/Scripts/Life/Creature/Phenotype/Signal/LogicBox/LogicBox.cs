@@ -215,7 +215,6 @@ public class LogicBox : SignalUnit {
 		}
 	}
 
-	
 	public static bool HasSignalPostInputValve(Cell hostCell, SignalUnitEnum signalUnitEnum, GeneLogicBoxInput geneLogicBoxInput) {
 		if ((geneLogicBoxInput as GeneLogicBoxInput).valveMode == SignalValveModeEnum.Pass) {
 			Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(signalUnitEnum)).inputNerves[geneLogicBoxInput.column];
@@ -229,11 +228,6 @@ public class LogicBox : SignalUnit {
 			}
 		}
 		return false;
-
-//			Nerve inputNerve = ((LogicBox)hostCell.GetSignalUnit(gate.geneLogicBox.signalUnit)).inputNerves[(nextPart as GeneLogicBoxInput).column];
-//		if (inputNerve.tailSignalUnitEnum != SignalUnitEnum.Void && inputNerve.tailCell != null && inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
-
-		//	return (input as IGeneInput).valveMode == SignalValveModeEnum.Pass && (input as IGeneInput).geneNerve.tailUnitEnum != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as IGeneInput).geneNerve.tailUnitEnum, (input as IGeneInput).geneNerve.tailUnitSlotEnum);
 	}
 
 	private bool TestInput(int leftFlank) {

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class AxonInputPanel : MonoBehaviour, IInputPanel {
 	public Image blockButton;
 	public Image passButton;
+	public Image passInvertedButton;
 	public Image lockedOverlayImage;
 	public Image semiLockedOverlayImage;
 
@@ -19,6 +20,7 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 
 	private AxonPanel motherPanel;
 
+	[HideInInspector]
 	public CellAndGenePanel cellAndGenePanel;
 
 	public void MakeMotherPanelDirty() {
@@ -53,13 +55,7 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 			return;
 		}
 		affectedGeneAxonInput.valveMode = SignalValveModeEnum.Block;
-		motherPanel.MarkAsNewForge();
-		motherPanel.UpdateConnections();
-		motherPanel.MakeDirty();
-		CellPanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.hudSignalArrowHandler.MakeDirtyConnections();
-		GenePanel.instance.cellAndGenePanel.MakeDirty(); // arrows need to be updated
-		MakeDirty();
+		PostButtonClicked();
 	}
 
 	public void OnPassClicked() {
@@ -67,6 +63,18 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 			return;
 		}
 		affectedGeneAxonInput.valveMode = SignalValveModeEnum.Pass;
+		PostButtonClicked();
+	}
+
+	public void OnPassInvertedClicked() {
+		if (!IsUnlocked() || mode == PhenoGenoEnum.Phenotype || affectedGeneAxonInput == null || affectedGeneAxonInput.lockness == LocknessEnum.Locked || ignoreSliderMoved) {
+			return;
+		}
+		affectedGeneAxonInput.valveMode = SignalValveModeEnum.PassInverted;
+		PostButtonClicked();
+	}
+
+	private void PostButtonClicked() {
 		motherPanel.MarkAsNewForge();
 		motherPanel.UpdateConnections();
 		motherPanel.MakeDirty();
@@ -78,7 +86,7 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 	}
 
 	public void OnSetReferenceClicked() {
-		if (isUsed && IsUnlocked() && affectedGeneAxonInput.lockness == LocknessEnum.Unlocked && affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass) {
+		if (isUsed && IsUnlocked() && affectedGeneAxonInput.lockness == LocknessEnum.Unlocked && (affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass || affectedGeneAxonInput.valveMode == SignalValveModeEnum.PassInverted)) {
 			AssignNerveInputPanel.instance.TryStartNerveAssignation(this, affectedGeneAxonInput.geneNerve);
 			motherPanel.MakeDirty();
 		}
@@ -88,14 +96,12 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 		affectedGeneAxonInput.geneNerve.tailUnitEnum = inputUnit;
 		affectedGeneAxonInput.geneNerve.tailUnitSlotEnum = inputUnitSlot;
 		affectedGeneAxonInput.geneNerve.nerveVector = null;
-		//affectedGeneAxonInput.nerve.state = GeneNerve.State.Resting;
 	}
 
 	public void TrySetNerveInputExternally(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, Vector2i nerveVectorLocal) {
 		affectedGeneAxonInput.geneNerve.tailUnitEnum = inputUnit;
 		affectedGeneAxonInput.geneNerve.tailUnitSlotEnum = inputUnitSlot;
 		affectedGeneAxonInput.geneNerve.nerveVector = nerveVectorLocal;
-		//affectedGeneAxonInput.nerve.state = GeneNerve.State.Resting;
 	}
 
 	public void TrySetNerve(SignalUnitEnum inputUnit, SignalUnitSlotEnum inputUnitSlot, SignalUnitEnum outputUnit, SignalUnitSlotEnum outputUnitSlot, Vector2i nerveVector) {
@@ -129,6 +135,7 @@ public class AxonInputPanel : MonoBehaviour, IInputPanel {
 
 			blockButton.color = affectedGeneAxonInput.valveMode == SignalValveModeEnum.Block ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
 			passButton.color = affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
+			passInvertedButton.color = affectedGeneAxonInput.valveMode == SignalValveModeEnum.PassInverted ? ColorScheme.instance.selectedChanged : ColorScheme.instance.notSelectedChanged;
 
 			if (mode == PhenoGenoEnum.Genotype) {
 				if (affectedGeneAxonInput.valveMode == SignalValveModeEnum.Block || !motherPanel.isAnyAffectedSignalUnitsRootedGenotype) {

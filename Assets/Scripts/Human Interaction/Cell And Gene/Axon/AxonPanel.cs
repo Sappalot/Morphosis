@@ -118,10 +118,10 @@ public class AxonPanel : SignalUnitPanel {
 			return null;
 		}
 		List<IGeneInput> arrows = new List<IGeneInput>();
-		if (inputLeftPanel.affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass) {
+		if (inputLeftPanel.affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass || inputLeftPanel.affectedGeneAxonInput.valveMode == SignalValveModeEnum.PassInverted) {
 			arrows.Add(inputLeftPanel.affectedGeneAxonInput);
 		}
-		if (inputRightPanel.affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass) {
+		if (inputRightPanel.affectedGeneAxonInput.valveMode == SignalValveModeEnum.Pass|| inputRightPanel.affectedGeneAxonInput.valveMode == SignalValveModeEnum.PassInverted) {
 			arrows.Add(inputRightPanel.affectedGeneAxonInput);
 		}
 		return arrows;

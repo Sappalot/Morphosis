@@ -16,7 +16,7 @@ public class Axon : SignalUnit {
 	public override void UpdateInputNervesGenotype(Genotype genotype) {
 		GeneAxon geneAxon = (GeneAxon)hostCell.gene.GetGeneSignalUnit(signalUnitEnum);
 		for (int i = 0; i < 2; i++) {
-			if (geneAxon.GetInput(i).valveMode == SignalValveModeEnum.Pass) {
+			if (geneAxon.GetInput(i).valveMode == SignalValveModeEnum.Pass || geneAxon.GetInput(i).valveMode == SignalValveModeEnum.PassInverted) {
 				inputNerves[i].headCell = hostCell;
 				inputNerves[i].headSignalUnitEnum = signalUnitEnum;
 				inputNerves[i].headSignalUnitSlotEnum = SignalUnit.IndexToSignalInputSlotUnit(i);
@@ -239,10 +239,13 @@ public class Axon : SignalUnit {
 			if (inputNerve.tailSignalUnitEnum != SignalUnitEnum.Void && inputNerve.tailCell != null && inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
 				return true;
 			}
+		} else if ((input as IGeneInput).valveMode == SignalValveModeEnum.PassInverted) {
+			Nerve inputNerve = ((Axon)hostCell.GetSignalUnit(signalUnitEnum)).inputNerves[input.geneNerve.headUnitSlotEnum == SignalUnitSlotEnum.inputA ? 0 : 1];
+			if (inputNerve.tailSignalUnitEnum == SignalUnitEnum.Void || inputNerve.tailCell == null || !inputNerve.tailCell.GetOutputFromUnit(inputNerve.tailSignalUnitEnum, inputNerve.tailSignalUnitSlotEnum)) {
+				return true;
+			}
 		}
 		return false;
-
-		//return (input as IGeneInput).valveMode == SignalValveModeEnum.Pass && (input as IGeneInput).geneNerve.tailUnitEnum != SignalUnitEnum.Void && hostCell.GetOutputFromUnit((input as IGeneInput).geneNerve.tailUnitEnum, (input as IGeneInput).geneNerve.tailUnitSlotEnum);
 	}
 
 	// Load Save
