@@ -278,8 +278,8 @@ public class GlobalSettings : MonoSingleton<GlobalSettings> {
 		public float veinFluxEffectStrong = 0.5f; //W
 
 		//General
-		public int creatureHexagonMaxRadius = 16; // used to limit blueprint. R = 16 ==> we can have can have 16 cells north of origin at most origin = 0, 1 = neighbour, .... cell 16 = perifery 
-		public int creatureMaxCellCount = 40;
+		public int creatureHexagonMaxRadius = 16; // used to limit blueprint. R = 16 ==> Diameter 16 + 1 + 16 ==> we can have can have 16 cells north of origin at most origin = 0, 1 = neighbour, .... cell 16 = perifery 
+		public int creatureMaxCellCount = 40; // if the last 'genome build iteration' (build intex) exceeds 40 none of them (in that iteration) will be built
 		public float cellMaxEnergy = 100f; // J
 		public float cellDefaultEnergy = 0.33f;
 		public bool reclaimCutBranchEnergy = true; //when a branch is detatched, its energy will be reclaimed and distributed among cells in creature

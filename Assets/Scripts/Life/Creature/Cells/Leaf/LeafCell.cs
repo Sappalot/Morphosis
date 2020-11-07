@@ -252,16 +252,18 @@ public class LeafCell : Cell {
 			// Beware a small penalty takes us a long way when it comes to leaf death
 			float beamExposureNormalizedBalancedPunished = Mathf.Lerp(exposureAtProductionEffectZero - GlobalSettings.instance.phenotype.leafCell.exposurePenalty, beamExposureNormalizedBalanced, absoluteEffectCalmnessFactor);
 
+			float beamExposureNormalizedBalancedPunishedSunyness = beamExposureNormalizedBalancedPunished * 1f; //0.8 seems fine for dark area
+
 			// TODO: optimize how we go through and sum up exposure
 
 			// sum -= old record (the one at exposureRecorCursor), last time we read this data
 			exposureRecordSum -= exposureRecord[exposureRecorCursor];
 
 			// write new record
-			exposureRecord[exposureRecorCursor] = beamExposureNormalizedBalancedPunished;
+			exposureRecord[exposureRecorCursor] = beamExposureNormalizedBalancedPunishedSunyness;
 
 			// sum += new record
-			exposureRecordSum += beamExposureNormalizedBalancedPunished;
+			exposureRecordSum += beamExposureNormalizedBalancedPunishedSunyness;
 
 			// move and wrap cursor
 			exposureRecorCursor++;

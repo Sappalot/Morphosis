@@ -198,12 +198,15 @@ public class SurroundingSensor : SignalUnit {
 
 					output[channel] = CellsByTypeFovCov(channel) > ((GeneSurroundingSensorChannelCreatureCellFovCov)GeneSurroundingSensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov)).threshold;
 				} else if (OperatingSensorAtChannel(channel) == SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov) {
-					//int newHit = (hitType == CollisionType.nonCellObstacle ? 1 : 0);
-					//terrainRockSum[channel] -= terrainRockRecord[channel, rayCursor];
-					//terrainRockRecord[channel, rayCursor] = newHit;
-					//terrainRockSum[channel] += newHit;
+					int newHit = 0; // 1 if this ray is hitting something that the eye sees
+					if (raycastHitCount > 0) {
+						newHit = (raycastHitArrayOne[0].collider.gameObject.GetComponent<Cell>() == null ? 1 : 0);
+					}
+					terrainRockSum[channel] -= terrainRockRecord[channel, rayCursor];
+					terrainRockRecord[channel, rayCursor] = newHit;
+					terrainRockSum[channel] += newHit;
 
-					//output[channel] = TerrainRockFovCov(channel) > ((GeneSurroundingSensorChannelTerrainRockFovCov)GeneSurroundingSensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).threshold;
+					output[channel] = TerrainRockFovCov(channel) > ((GeneSurroundingSensorChannelTerrainRockFovCov)GeneSurroundingSensorAtChannelByType(channel, SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov)).threshold;
 				}
 			} // end for every channel
 		}

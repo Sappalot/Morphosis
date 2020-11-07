@@ -172,7 +172,7 @@ public class LMBInWorld : MonoBehaviour {
 	}
 
 	static bool TryDefrostCreature(Creature creature) {
-		if (TerrainPerimeter.instance.IsCompletelyInside(creature) && creature.creation == CreatureCreationEnum.Frozen) {
+		if (World.instance.terrain.IsCompletelyInside(creature) && creature.creation == CreatureCreationEnum.Frozen) {
 			creature.OnDefrost();
 			Freezer.instance.RemoveCreature(creature);
 			World.instance.life.AddCreature(creature);

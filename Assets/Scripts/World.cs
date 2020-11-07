@@ -70,16 +70,10 @@ public class World : MonoSingleton<World> {
 	}
 
 	public void UpdatePhysics() {
-
-		// test
 		life.UpdateStructure();
 		life.UpdatePhysics(worldTicks);
-		if (PhenotypePhysicsPanel.instance.teleport.isOn) {
-			Portals.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
-		}
-		if (PhenotypePhysicsPanel.instance.killEscaping.isOn) {
-			TerrainPerimeter.instance.UpdatePhysics(World.instance.life.creatures, worldTicks);
-		}
+
+		terrain.UpdatePhysics(worldTicks);
 		
 		if (worldTicks % 20 == 0) {
 
@@ -121,7 +115,7 @@ public class World : MonoSingleton<World> {
 			}
 		}
 
-		terrain.UpdatePhysics();
+		//terrain.UpdatePhysics();
 		worldTicks++; //The only place where time is increased
 	}
 
@@ -172,6 +166,7 @@ public class World : MonoSingleton<World> {
 	public void Restart(Action onDone) {
 		Time.timeScale = 0;
 
+		terrain.Restart();
 
 		life.Restart(() => {
 			CreatureSelectionPanel.instance.ClearSelection();
@@ -187,8 +182,6 @@ public class World : MonoSingleton<World> {
 			AlternativeToolModePanel.instance.Restart();
 
 			history.Clear();
-
-			terrain.Restart();
 
 			GlobalPanel.instance.SelectPausePhysics();
 			GraphPlotter.instance.MakeDirty();

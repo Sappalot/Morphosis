@@ -270,7 +270,7 @@ public class Phenotype : MonoBehaviour {
 	private Vector2 velocity = new Vector2();
 	private Vector2 spawnPosition;
 	private float spawnHeading;
-	public CellMap cellMap = new CellMap(); //Containing only built cells
+	public CellMap cellMap = new CellMap(); //Containing built cells and kill stamp times of cells which was killed (so we can keep track of when they are able to be regrown)
 	private bool isDirtyCollider = true;
 	private bool areBudsDirty = true;
 	private bool areSensorsGraphicsDirty = true;
@@ -1917,6 +1917,10 @@ public class Phenotype : MonoBehaviour {
 	// Save
 	private PhenotypeData phenotypeData = new PhenotypeData();
 	public PhenotypeData UpdateData() {
+		// TODO: add cellMap as we want to keep track of kill stamp times
+		// As for noe that we don't: stuff that could not be regrown (because just killed) can be regrown instantly if we save then load world
+		// Bug 2020-11-06. We had some problem with cells (jaws) not being build though they had all reasons to be built. It was might related to the killTimeStamps. They was regrown properly when pressing grow button 
+
 		phenotypeData.cellDataList.Clear();
 		for (int index = 0; index < cellList.Count; index++) {
 			Cell cell = cellList[index];
@@ -1939,6 +1943,8 @@ public class Phenotype : MonoBehaviour {
 
 	// Load
 	public void ApplyData(PhenotypeData phenotypeData, Creature creature) {
+		// TODO: add cellMap as we want to keep track of kill stamp times
+
 		Setup(phenotypeData.cellDataList[0].position, phenotypeData.cellDataList[0].heading);
 		for (int index = 0; index < phenotypeData.cellDataList.Count; index++) {
 			CellData cellData = phenotypeData.cellDataList[index];

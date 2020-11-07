@@ -798,7 +798,7 @@ public class CreatureSelectionPanel : MonoSingleton<CreatureSelectionPanel> {
 			} else {
 				worldCount++;
 			}
-			if (TerrainPerimeter.instance.IsCompletelyInside(c)) {
+			if (World.instance.terrain.IsCompletelyInside(c)) {
 				insideWorldCount++;
 			}
 			if (Freezer.instance.IsCompletelyInside(c)) {

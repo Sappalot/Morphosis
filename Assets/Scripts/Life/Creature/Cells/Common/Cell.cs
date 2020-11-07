@@ -103,7 +103,7 @@ public abstract class Cell : MonoBehaviour {
 	private int didUpdateEnergyThisFrame = 0;
 
 	public bool failBlueprintNeighboursDueToAreaOrCount; // this happens when gene cell is at the perifery of the allowed creature area (hexagon) OR when the creature blueprint has to many geneCells allready
-	public bool failBlueprintNeighboursDueToConcurentBuild;
+	public bool failBlueprintNeighboursDueToConcurentBuild; // this happens if 2 cells (of same priority) tries to buld in the same location at once
 
 	// Origin only
 	[HideInInspector]

@@ -3,5 +3,5 @@
 [Serializable]
 
 public class TerrainData {
-	public PidCircleData pidCircleData;
+	public Vector2i totalSizeWanted;
 }

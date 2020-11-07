@@ -31,7 +31,7 @@ public class CellMap {
 	private Dictionary<GridPosition, Cell> grid = new Dictionary<GridPosition, Cell>();
 	private List<Vector2i> illegalPositions = new List<Vector2i>(); // cell position allready occupied with another cell of lower build order
 
-	private Dictionary<Vector2i, float?> positionKilledTimeStamp = new Dictionary<Vector2i, float?>(); // phenotype
+	private Dictionary<Vector2i, float?> positionKilledTimeStamp = new Dictionary<Vector2i, float?>(); // phenotype, used to be able to know when a killed cell can be respawned
 	
 	private static Dictionary<Vector2i, int> radiusAtGridPosition = new Dictionary<Vector2i, int>();
 	private static List<Vector2i> gridPositionsWithinRadius0 = new List<Vector2i>();
@@ -181,6 +181,7 @@ public class CellMap {
 		return true;
 	}
 
+	// ....Killed time stamp ... to keep track of regrow cooldown
 	public bool HasKilledTimeStamp(Vector2i gridPosition) {
 		return positionKilledTimeStamp.ContainsKey(gridPosition);
 	}
@@ -196,7 +197,7 @@ public class CellMap {
 	public void RemoveTimeStamp(Vector2i gridPosition) {
 		positionKilledTimeStamp.Remove(gridPosition);
 	}
-
+	// ^ Killed time stamp ^
 
 	public float cellRadius = 0.5f;
 

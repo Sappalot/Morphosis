@@ -11,8 +11,7 @@ public class Portal : MonoBehaviour {
 	private Rect arrivalRect;
 	private Vector2 departureToArrival;
 
-
-	public void Start() {
+	public void UpdateFlights() {
 		departureRect = new Rect(departureArea.transform.position, departureArea.transform.localScale);
 		arrivalRect = new Rect(arrivalArea.transform.position, arrivalArea.transform.localScale);
 		departureToArrival = arrivalArea.transform.position - departureArea.transform.position;

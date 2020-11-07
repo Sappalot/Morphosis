@@ -52,13 +52,13 @@ public class Morphosis : MonoSingleton<Morphosis> {
 
 	public Cell GetCellAtPosition(Vector2 pickPosition) {
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
-			if (TerrainPerimeter.instance.IsInside(pickPosition)) {
+			if (World.instance.terrain.IsInside(pickPosition)) {
 				return World.instance.life.GetCellAtPosition(pickPosition);
 			} else if (Freezer.instance.IsInside(pickPosition)) {
 				return Freezer.instance.GetCellAtPosition(pickPosition);
 			}
 		} else if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) {
-			if (TerrainPerimeter.instance.IsInside(pickPosition)) {
+			if (World.instance.terrain.IsInside(pickPosition)) {
 				return World.instance.life.GetGeneCellAtPosition(pickPosition, CreatureSelectionPanel.instance.soloSelected);
 			} else if (Freezer.instance.IsInside(pickPosition)) {
 				return Freezer.instance.GetGeneCellAtPosition(pickPosition);
