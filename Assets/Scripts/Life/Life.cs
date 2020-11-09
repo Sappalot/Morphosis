@@ -5,6 +5,13 @@ using System.Collections;
 using Boo.Lang.Runtime;
 
 public class Life : MonoBehaviour {
+	public GameObject hidable;
+
+	public bool show {
+		set {
+			hidable.SetActive(value);
+		}
+	}
 
 	private Dictionary<string, Creature> creatureDictionary = new Dictionary<string, Creature>();
 	private List<Creature> creatureList = new List<Creature>(); // All enbodied creatures (the once that we can see and play with)
@@ -307,7 +314,7 @@ public class Life : MonoBehaviour {
 		creatureDictionary.Add(creature.id, creature);
 		creatureList.Add(creature);
 
-		creature.transform.parent = transform;
+		creature.transform.parent = hidable.transform;
 		creature.name = creature.sceneGraphName;
 	}
 
@@ -424,7 +431,7 @@ public class Life : MonoBehaviour {
 		creature.id = id;
 		creature.nickname = "Nick " + id; //dafault
 
-		creature.transform.parent = transform;
+		creature.transform.parent = hidable.transform;
 		creature.name = creature.sceneGraphName;
 
 		return creature;

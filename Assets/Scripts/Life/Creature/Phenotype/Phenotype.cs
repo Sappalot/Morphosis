@@ -27,7 +27,6 @@ public class Phenotype : MonoBehaviour {
 	// ... Signal ...
 	private void UpdateBrain(Genotype genotype) {
 
-
 		// clear
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].PreUpdateNervesPhenotype();
@@ -1421,6 +1420,9 @@ public class Phenotype : MonoBehaviour {
 		// skelleton bone
 		for (int index = 0; index < cellList.Count; index++) {
 			cellList[index].ShowSkelletonBone(!cellList[index].isOrigin && GlobalPanel.instance.graphicsSkelletonBoneToggle.isOn);
+			
+			// hijacked
+			//cellList[index].EnableAllSpriteRenderers(!cellList[index].isOrigin && GlobalPanel.instance.graphicsSkelletonBoneToggle.isOn);
 		}
 	}
 
@@ -1769,7 +1771,7 @@ public class Phenotype : MonoBehaviour {
 
 		// We are applying force only if mussceles are set to contract
 		// Edges, let edge-wings apply proper forces to neighbouring cells, caused by muscle edges swiming through ether
-
+		// remember: either all cells are sleeping or they are all awake
 		if (originCell.theRigidBody.IsAwake()) {
 			if (PhenotypePhysicsPanel.instance.frictionWater.isOn) {
 				edges.UpdatePhysics(creature, worldTick);

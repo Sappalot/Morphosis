@@ -600,7 +600,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 			if (creation == CreatureCreationEnum.Frozen) {
 				transform.parent = Freezer.instance.transform;
 			} else {
-				transform.parent = World.instance.life.transform;
+				transform.parent = World.instance.life.hidable.transform; // need to be there in order to hide in terrain edit mode
 			}
 		} else if (type == PhenoGenoEnum.Genotype) {
 			phenotype.hasDirtyPosition = true;
@@ -616,7 +616,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 			if (creation == CreatureCreationEnum.Frozen) {
 				transform.parent = Freezer.instance.transform;
 			} else {
-				transform.parent = World.instance.life.transform;
+				transform.parent = World.instance.life.hidable.transform; // need to be there in order to hide in terrain edit mode
 			}
 		}
 		isDirtyGraphics = true;

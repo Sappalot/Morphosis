@@ -3,8 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
-
-	//public Text creatureSize;
 	public CellPanel cellPanel;
 	public GameObject bodyPanel;
 	
@@ -81,10 +79,14 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 		cellPanel.gameObject.SetActive(cellPanelActive);
 	}
 
+	private bool ignoreHumanInput = false;
+
 	private void Update() {
 		if (isDirty) {
 			if (GlobalSettings.instance.debug.debugLogMenuUpdate)
 				Debug.Log("Update PhenotypePanel");
+
+			ignoreHumanInput = true;
 
 			StartCoroutine(UpdateIsVisible());
 
@@ -119,6 +121,7 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 
 				creatureSpeed.text = "Speed:";
 
+				ignoreHumanInput = false;
 				isDirty = false;
 				return;
 			}
@@ -150,6 +153,8 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			sizeText.text = "Size: " + solo.phenotype.cellCount + " / " + solo.genotype.geneCellCount;
 
 			creatureSpeed.text = string.Format("Speed: {0:F2} m/s", solo.phenotype.speed);
+
+			ignoreHumanInput = false;
 
 			isDirty = false;
 		}

@@ -1012,6 +1012,19 @@ public abstract class Cell : MonoBehaviour {
 	[HideInInspector]
 	public Vector2 modelSpacePosition;
 
+
+	private bool cacheEnabled = true;
+	public void EnableAllSpriteRenderers(bool enable) {
+		if (enable == cacheEnabled) {
+			return;
+		}
+		cacheEnabled = enable;
+		SpriteRenderer[] renderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
+		foreach(SpriteRenderer r in renderers) {
+			r.enabled = enable;
+		}
+	}
+
 	public void Show(bool show) {
 		for (int index = 0; index < transform.childCount; index++) {
 			transform.GetChild(index).gameObject.SetActive(show);
@@ -1023,7 +1036,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void ShowTriangle(bool show) {
-		cellCommon.triangleSprite.enabled = show;
+		cellCommon.triangleSprite.enabled = false;
 	}
 
 	public void SetTriangleColor(Color color) {
@@ -1865,13 +1878,13 @@ public abstract class Cell : MonoBehaviour {
 		// Some of these operations will wake sleeping rigid body, be quiet!!
 		
 		//Optimize further
-		transform.rotation = Quaternion.identity; // Cell should never be rotated. Rotate rotated node in cell instead! We need this one so we reset the cell rotation after being rotated via rotate creature
+		transform.rotation = Quaternion.identity; // Cell should never be rotated. Rotate rotated node in cell instead! We need this line so we reset the cell rotation after being rotated via rotate creature
 
 		UpdateNeighbourVectors(); //costy, update only if cell has direction and is in frustum
 		if (groups > 1) {
 			TurnHingeNeighboursInPlace(); //optimize further
 		}
-		UpdateHeading(); //costy, update only if cell has direction and is in frustum
+		UpdateHeading(); //costy, TODO: update only if cell has direction and is in frustum
 		UpdateFlipSide();
 	}
 

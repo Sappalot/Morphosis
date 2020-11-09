@@ -3,5 +3,5 @@
 [Serializable]
 
 public class TerrainData {
-	public Vector2i totalSizeWanted;
+	public Vector2i sizeDepartureExclusive;
 }

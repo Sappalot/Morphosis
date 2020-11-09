@@ -12,9 +12,6 @@ public class Terrain : MonoBehaviour {
 	public Transform southWall;
 	public Transform southEastCorner;
 
-	public Vector2i totalSize; // the size when trunkated to the nearest tile (floor)
-	private Vector2i totalSizeTiled;
-
 	public const int tileSide = 5; // the side of a tile in meters
 
 	private bool isDirty;
@@ -23,18 +20,47 @@ public class Terrain : MonoBehaviour {
 		isDirty = true;
 	}
 
-	private Vector2i m_totalSizeWanted; // includes departure area
-	public Vector2i totalSizeWanted {
+	private const int defaultWidthDepartureExlusive = 120;
+	private const int defaultHeightDepartureExclusive = 120;
+
+	private const int minWidthDepartureExclusive = 60;
+	private const int minHeightDepartureExclusive = 60;
+
+	private const int maxWidthDepartureExclusive = 560;
+	private const int maxHeightDepartureExclusive = 560;
+
+	private const int departureAreaWidth = 20; // same as height
+
+	private Vector2i sizeDepartureExclusiveTileCount {
+		get {
+			return new Vector2i(sizeDepartureExclusive.x / tileSide, sizeDepartureExclusive.y / tileSide);
+		}
+	}
+
+	private Vector2i sizeDepartureInclusiveTileCount { 
+		get {
+			return new Vector2i(sizeDepartureInclusive.x / tileSide, sizeDepartureInclusive.y / tileSide);
+		}
+	}
+
+	// Only what is used, so without the departure zones
+	private Vector2i m_sizeDepartureExclusive = new Vector2i(defaultWidthDepartureExlusive, defaultHeightDepartureExclusive);
+	public Vector2i sizeDepartureExclusive { // will clamp to legal values and truncated down to the nearest tile
 		set {
-			m_totalSizeWanted = value;
-			totalSizeTiled = new Vector2i(value.x / tileSide, value.y / tileSide);
-			totalSize = new Vector2i(totalSizeTiled.x * tileSide, totalSizeTiled.y * tileSide);
-			terrainPerimeter.liveZoneSize = new Vector2i(totalSize.x, totalSize.y);
+			int widthClamped = Mathf.Clamp(value.x, minWidthDepartureExclusive, maxWidthDepartureExclusive);
+			int heightClamped = Mathf.Clamp(value.y, minHeightDepartureExclusive, maxHeightDepartureExclusive);
+
+			int widthClampedTruncated = (widthClamped / tileSide) * tileSide;
+			int heightClampedTruncated = (heightClamped / tileSide) * tileSide;
+			Vector2i sizeDepartureExclusiveTileCount = new Vector2i(widthClamped / tileSide, heightClamped / tileSide);
+			
+			m_sizeDepartureExclusive = new Vector2i(widthClampedTruncated, heightClampedTruncated);
+			terrainPerimeter.liveZoneSize = new Vector2i(sizeDepartureInclusive.x, sizeDepartureInclusive.y);
 
 			// graphics
-			eastWall.transform.localPosition = new Vector2(totalSize.x, 0f);
-			southWall.transform.localPosition = new Vector2(0f, -totalSize.y);
-			southEastCorner.transform.localPosition = new Vector2(totalSize.x, -totalSize.y);
+			eastWall.transform.localPosition = new Vector2(sizeDepartureInclusive.x, 0f);
+			southWall.transform.localPosition = new Vector2(0f, -sizeDepartureInclusive.y);
+			southEastCorner.transform.localPosition = new Vector2(sizeDepartureInclusive.x, -sizeDepartureInclusive.y);
 
 			// teleporters, calculated from transforms set above
 			portals.UpdatePortalFlights();
@@ -42,12 +68,18 @@ public class Terrain : MonoBehaviour {
 			MakeDirty();
 		}
 		get {
-			return m_totalSizeWanted;
+			return m_sizeDepartureExclusive;
+		}
+	}
+
+	private Vector2i sizeDepartureInclusive { // truncated down to the nearest tile, including departure areas
+		get {
+			return new Vector2i(sizeDepartureExclusive.x + departureAreaWidth * 2, sizeDepartureExclusive.y + departureAreaWidth * 2); 
 		}
 	}
 
 	public void Restart() {
-		totalSizeWanted = new Vector2i(160, 160);
+		sizeDepartureExclusive = new Vector2i(defaultWidthDepartureExlusive, defaultHeightDepartureExclusive);
 	}
 
 	public bool IsInside(Vector2 position) {
@@ -73,13 +105,13 @@ public class Terrain : MonoBehaviour {
 
 	// Save
 	public TerrainData UpdateData() {
-		terrainData.totalSizeWanted = totalSizeWanted;
+		terrainData.sizeDepartureExclusive = sizeDepartureExclusive;
 		return terrainData;
 	}
 
 	// Load
 	public void ApplyData(TerrainData terrainData) {
-		totalSizeWanted = terrainData.totalSizeWanted;
+		sizeDepartureExclusive = terrainData.sizeDepartureExclusive;
 	}
 }
 //}

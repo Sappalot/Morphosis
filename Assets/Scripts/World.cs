@@ -52,7 +52,7 @@ public class World : MonoSingleton<World> {
 
 	public void UpdateGraphics() {
 		//Handle time from here to not get locked out
-		if ((!GlobalPanel.instance.isRunPhysics || CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) && !doSave) {
+		if ((!GlobalPanel.instance.isRunPhysics || (EditModePanel.instance.mode == LifeTerrainEnum.Life && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype) || EditModePanel.instance.mode == LifeTerrainEnum.Terrain) && !doSave) {
 			Time.timeScale = 0f;
 			life.UpdateStructure();
 		} else if (GlobalPanel.instance.physicsUpdatesPerSecond == 0f) {
@@ -167,6 +167,8 @@ public class World : MonoSingleton<World> {
 		Time.timeScale = 0;
 
 		terrain.Restart();
+		TerrainGlobalSettingsPanel.instance.MakeDirty(); //The loaded level might have size sliders in different positions ==> make them update
+
 
 		life.Restart(() => {
 			CreatureSelectionPanel.instance.ClearSelection();
@@ -178,6 +180,7 @@ public class World : MonoSingleton<World> {
 			//	}
 			//}
 
+			EditModePanel.instance.Restart();
 			CreatureEditModePanel.instance.Restart();
 			AlternativeToolModePanel.instance.Restart();
 

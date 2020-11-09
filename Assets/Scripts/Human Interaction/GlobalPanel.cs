@@ -231,6 +231,9 @@ public class GlobalPanel : MonoSingleton<GlobalPanel> {
 
 	public void OnLoadClicked() {
 		if (Morphosis.isInterferredByOtheActions()) { return; }
+
+		//EditModePanel.instance.mode = LifeTerrainEnum.Life;
+
 		MouseAction.instance.actionState = MouseActionStateEnum.loadingWorld;
 
 		ProgressBar.instance.gameObject.SetActive(true);
