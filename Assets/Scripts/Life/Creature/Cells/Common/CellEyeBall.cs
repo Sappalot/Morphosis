@@ -1,13 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-// All cells knows this one in order to handle common stuff
-// Made to be able to change all (types) at once via the CellCommon prefab
-// stuff that need not be overridden
 //[ExecuteInEditMode]
 public class CellEyeBall : MonoBehaviour {
-
-
 	public Transform leftShutter;
 	public Transform rightShutter;
 	public Transform backShutter;

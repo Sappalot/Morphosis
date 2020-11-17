@@ -4,6 +4,10 @@ public class GeneSurroundingSensorChannelTerrainRockFovCov : GeneSurroundingSens
 
 	public float threshold;
 
+	public GeneSurroundingSensorChannelTerrainRockFovCov(IGenotypeDirtyfy genotypeDirtyfy) {
+		this.genotypeDirtyfy = genotypeDirtyfy;
+	}
+
 	public override void Defaultify() {
 		threshold = 0f;
 	}

@@ -1036,7 +1036,7 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	public void ShowTriangle(bool show) {
-		cellCommon.triangleSprite.enabled = false;
+		cellCommon.triangleSprite.enabled = show;
 	}
 
 	public void SetTriangleColor(Color color) {

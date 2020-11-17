@@ -9,8 +9,8 @@ public class GeneSurroundingSensor : GeneSignalUnit {
 		// create all the sensor
 		for( int c = 0; c < 6; c++) {
 			channelDictionaryAtChannel[c] = new Dictionary<SurroundingSensorChannelSensorTypeEnum, GeneSurroundingSensorChannel>();
-			channelDictionaryAtChannel[c].Add(SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov, new GeneSurroundingSensorChannelCreatureCellFovCov());
-			channelDictionaryAtChannel[c].Add(SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov, new GeneSurroundingSensorChannelTerrainRockFovCov());
+			channelDictionaryAtChannel[c].Add(SurroundingSensorChannelSensorTypeEnum.CreatureCellFovCov, new GeneSurroundingSensorChannelCreatureCellFovCov(genotypeDirtyfy));
+			channelDictionaryAtChannel[c].Add(SurroundingSensorChannelSensorTypeEnum.TerrainRockFovCov, new GeneSurroundingSensorChannelTerrainRockFovCov(genotypeDirtyfy));
 		}
 		Defaultify();
 	}

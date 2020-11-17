@@ -3,15 +3,109 @@
 public class GeneSurroundingSensorChannelCreatureCellFovCov : GeneSurroundingSensorChannel {
 
 	public float threshold;
-	public bool seeEgg;
-	public bool seeFungal;
-	public bool seeJawThreat;
-	public bool seeJawHarmless;
-	public bool seeLeaf;
-	public bool seeMuscle;
-	public bool seeRoot;
-	public bool seeShell;
-	public bool seeVein;
+
+	private bool m_seeEgg;
+	public bool seeEgg {
+		get {
+			return m_seeEgg;
+		}
+		set {
+			m_seeEgg = value;
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
+		}
+	}
+
+	private bool m_seeFungal;
+	public bool seeFungal {
+		get {
+			return m_seeFungal;
+		}
+		set {
+			m_seeFungal = value;
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
+		}
+	}
+
+	private bool m_seeJawThreat;
+	public bool seeJawThreat {
+		get {
+			return m_seeJawThreat;
+		}
+		set {
+			m_seeJawThreat = value;
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
+		}
+	}
+
+	private bool m_seeJawHarmless;
+	public bool seeJawHarmless {
+		get {
+			return m_seeJawHarmless;
+		}
+		set {
+			m_seeJawHarmless = value;
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
+		}
+	}
+
+	private bool m_seeLeaf;
+	public bool seeLeaf {
+		get {
+			return m_seeLeaf;
+		}
+		set {
+			m_seeLeaf = value;
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
+		}
+	}
+
+	private bool m_seeMuscle;
+	public bool seeMuscle {
+		get {
+			return m_seeMuscle;
+		}
+		set {
+			m_seeMuscle = value;
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
+		}
+	}
+
+	private bool m_seeRoot;
+	public bool seeRoot {
+		get {
+			return m_seeRoot;
+		}
+		set {
+			m_seeRoot = value;
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
+		}
+	}
+
+	private bool m_seeShell;
+	public bool seeShell {
+		get {
+			return m_seeShell;
+		}
+		set {
+			m_seeShell = value;
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
+		}
+	}
+
+	private bool m_seeVein;
+	public bool seeVein {
+		get {
+			return m_seeVein;
+		}
+		set {
+			m_seeVein = value;
+			genotypeDirtyfy.ReforgeCellPatternAndForward();
+		}
+	}
+
+	public GeneSurroundingSensorChannelCreatureCellFovCov(IGenotypeDirtyfy genotypeDirtyfy) {
+		this.genotypeDirtyfy = genotypeDirtyfy;
+	}
 
 	public override void Defaultify() {
 		threshold = 0f;
@@ -25,6 +119,8 @@ public class GeneSurroundingSensorChannelCreatureCellFovCov : GeneSurroundingSen
 		seeShell = true;
 		seeVein = true;
 	}
+
+
 
 	public override void Mutate(float strength) {
 		// TODO: mutate stuff
