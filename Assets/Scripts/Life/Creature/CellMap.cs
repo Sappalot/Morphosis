@@ -210,6 +210,8 @@ public class CellMap {
 	public void Clear() {
 		grid.Clear();
 		illegalPositions.Clear();
+		// Remember to clear phenotypes cooldown as well, caused some nasty non grow bug in the autumn 2020
+		positionKilledTimeStamp.Clear();
 	}
 
 	public bool HasCell(Vector2i gridPosition) {
