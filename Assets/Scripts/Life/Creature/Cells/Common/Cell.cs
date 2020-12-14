@@ -472,6 +472,9 @@ public abstract class Cell : MonoBehaviour {
 			theRigidBody.simulated = true;
 			theRigidBody.bodyType = RigidbodyType2D.Dynamic;
 		}
+
+		cellCommon.gameObject.SetActive(true); // will be set to false if show creatures == false
+
 		SetDefaultState(); // don't call this function on overridden OnBorrowToWorld
 	}
 
@@ -605,6 +608,13 @@ public abstract class Cell : MonoBehaviour {
 				cellCommon.buds.SetEnabledBud(index, false);
 				cellCommon.buds.SetEnabledPriority(index, false);
 			}
+		}
+	}
+
+	public void ShowBuds(bool show) {
+		for (int index = 0; index < 6; index++) {
+			cellCommon.buds.SetEnabledBud(index, show);
+			cellCommon.buds.SetEnabledPriority(index, show);
 		}
 	}
 
@@ -1013,21 +1023,20 @@ public abstract class Cell : MonoBehaviour {
 	public Vector2 modelSpacePosition;
 
 
-	private bool cacheEnabled = true;
-	public void EnableAllSpriteRenderers(bool enable) {
-		if (enable == cacheEnabled) {
-			return;
+	public void SetActiveChildren(bool active) {
+		//all under cellCommon(not commonCell transform itself which is used to hide cell)
+		for (int index = 0; index < cellCommon.transform.childCount; index++) {
+			cellCommon.transform.GetChild(index).gameObject.SetActive(active);
 		}
-		cacheEnabled = enable;
-		SpriteRenderer[] renderers = gameObject.GetComponentsInChildren<SpriteRenderer>();
-		foreach(SpriteRenderer r in renderers) {
-			r.enabled = enable;
-		}
-	}
 
-	public void Show(bool show) {
+		// Doesn't work
+		//cellCommon.gameObject.SetActive(active);
+
+		// all other, jaw mouth and others
 		for (int index = 0; index < transform.childCount; index++) {
-			transform.GetChild(index).gameObject.SetActive(show);
+			if (transform.GetChild(index) != cellCommon.transform) {
+				transform.GetChild(index).gameObject.SetActive(active);
+			}
 		}
 	}
 
@@ -1587,12 +1596,11 @@ public abstract class Cell : MonoBehaviour {
 	}
 
 	// Update
-	private bool graphicsWasDisabled;
+	private bool cachedEnableGraphics;
 
 
 	//TODO: update cell graphics from here
 	public void UpdateGraphics(bool mayBeSelected) {
-
 		// Selector spin
 		if (mayBeSelected) {
 			cellCommon.cellSelected.transform.Rotate(0f, 0f, -Time.unscaledDeltaTime * 90f);
@@ -1625,7 +1633,7 @@ public abstract class Cell : MonoBehaviour {
 		if (phenoGeno == PhenoGenoEnum.Phenotype) {
 			SetLabelEnabled(false);
 
-			if (GlobalPanel.instance.graphicsSkelletonBoneToggle.isOn) {
+			if (GlobalPanel.instance.graphicsSkelletonBoneToggle.isOn && GlobalPanel.instance.graphicsCreaturesToggle.isOn) {
 				cellCommon.skelletonBone.color = GetColor(PhenoGenoEnum.Phenotype) * 0.95f;
 			}
 

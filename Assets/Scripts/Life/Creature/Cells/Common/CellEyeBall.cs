@@ -26,6 +26,12 @@ public class CellEyeBall : MonoBehaviour {
 
 	public float graphicalMinFOV;
 
+	public MeshRenderer leftShutterRenderer;
+	public MeshRenderer rightShutterRenderer;
+	public MeshRenderer backShutterRenderer;
+	public MeshRenderer quadRenderer;
+	public MeshRenderer pupilRenderer;
+
 	//[Range(0f, 360F)]
 	//public float testFOV = 90f;
 

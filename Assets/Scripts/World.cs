@@ -60,7 +60,7 @@ public class World : MonoSingleton<World> {
 			Time.timeScale = 1f;
 		}
 
-		if (GlobalPanel.instance.graphicsCreaturesToggle.isOn) {
+		if (GlobalPanel.instance.graphicsCreaturesToggle.isOn || true) {
 			life.UpdateGraphics();
 		}
 	}

@@ -550,7 +550,8 @@ public class Phenotype : MonoBehaviour {
 						cellMap.RemoveTimeStamp(buildGeneCell.mapPosition);
 					}
 				}
-
+				
+				
 				// Is the cell map position is free to grow on (regarding any cell)?
 				// TODO: Check obstacles in addition to cells! Otherwise cell can be built inside terrain ==> creatures shoots away
 				Vector2 spawnPosition = averagePosition / positionCount;
@@ -1338,6 +1339,9 @@ public class Phenotype : MonoBehaviour {
 		detatchmentKick = null;
 		kickTickStamp = 0;
 
+		SetActiveCommon(true); // make tmen active by uppon startup
+		cachedShowCreatureGraphics = false;
+
 		//Perifery edges
 		edges.OnRecycle();
 
@@ -1419,7 +1423,7 @@ public class Phenotype : MonoBehaviour {
 
 		// skelleton bone
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].ShowSkelletonBone(!cellList[index].isOrigin && GlobalPanel.instance.graphicsSkelletonBoneToggle.isOn);
+			cellList[index].ShowSkelletonBone(!cellList[index].isOrigin && GlobalPanel.instance.graphicsSkelletonBoneToggle.isOn && GlobalPanel.instance.graphicsCreaturesToggle.isOn);
 			
 			// hijacked
 			//cellList[index].EnableAllSpriteRenderers(!cellList[index].isOrigin && GlobalPanel.instance.graphicsSkelletonBoneToggle.isOn);
@@ -1446,9 +1450,34 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
-	public void Show(bool cells, bool nerveArrows) {
+	public void ShowOpenCircle(bool on) {
 		for (int index = 0; index < cellList.Count; index++) {
-			cellList[index].Show(cells);
+			cellList[index].ShowOpenCircle(on);
+		}
+	}
+
+	public void ShowFilledCircle(bool on) {
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].ShowFilledCircle(on);
+		}
+	}
+
+	public void ShowBuds(bool on) {
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].ShowBuds(on);
+		}
+	}
+
+	public void ShowSkelletonBones(bool on) {
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].ShowSkelletonBone(on);
+		}
+	}
+
+
+	public void SetActiveChildren(bool cells, bool nerveArrows) {
+		for (int index = 0; index < cellList.Count; index++) {
+			cellList[index].SetActiveChildren(cells);
 		}
 		this.nerveArrows.UpdateGraphics(nerveArrows, false);
 	}
@@ -1463,6 +1492,11 @@ public class Phenotype : MonoBehaviour {
 	public void Halt() {
 		foreach (Cell cell in cellList) {
 			cell.theRigidBody.velocity = Vector2.zero;
+		}
+	}
+	public void SetActiveCommon(bool active) {
+		foreach (Cell cell in cellList) {
+			cell.cellCommon.gameObject.SetActive(active);
 		}
 	}
 
@@ -1628,9 +1662,36 @@ public class Phenotype : MonoBehaviour {
 		}
 	}
 
+	public bool cachedShowCreatureGraphics;
 	// Update
 	public void UpdateGraphics(Creature creature) {
 		bool isSelected = CreatureSelectionPanel.instance.IsSelected(creature);
+
+		if (!GlobalPanel.instance.graphicsCreaturesToggle.isOn) {
+			// need to disable shit every frame since there might be new cells built
+			if (isDirtyCollider) {
+				SetCollider(hasCollider);
+				isDirtyCollider = false;
+			}
+
+			if (isSelected) {
+				edges.UpdateGraphics(false);
+				veins.UpdateGraphics(false);
+				nerveArrows.UpdateGraphics(false, false);
+			}
+
+			SetActiveCommon(false);
+			cachedShowCreatureGraphics = GlobalPanel.instance.graphicsCreaturesToggle.isOn;
+			return;
+		}
+		if (GlobalPanel.instance.graphicsCreaturesToggle.isOn && !cachedShowCreatureGraphics) {
+			SetActiveCommon(true);
+			UpdateTriangleOutlineAndBones(creature, CreatureSelectionPanel.instance.IsSelected(creature), CreatureSelectionPanel.instance.IsSelectedCluster(creature));
+			MakeBudsDirty();
+		}
+		cachedShowCreatureGraphics = GlobalPanel.instance.graphicsCreaturesToggle.isOn;
+
+		
 
 		//TODO: Update cells flip triangles here
 		//Rotate cells
@@ -1640,7 +1701,7 @@ public class Phenotype : MonoBehaviour {
 		// Slightly faster framerate if disabling the 3 below
 		edges.UpdateGraphics(GlobalPanel.instance.graphicsPeripheryToggle.isOn && creature.isInsideFrustum && !(PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && isSelected) && CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype);
 		// TODO: let veins the objects that move energy from cell to cell stay here, but move the graphical representation out of here as we are only showing a couple of creatures at a time there can be a global vein renderer with a pool
-		veins.UpdateGraphics(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureSelectionPanel.instance.IsSelectedCluster(creature) && creature.isInsideFrustum);
+		veins.UpdateGraphics(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureSelectionPanel.instance.IsSelectedCluster(creature) && creature.isInsideFrustum );
 
 		nerveArrows.UpdateGraphics(CreatureSelectionPanel.instance.IsSelectedCluster(creature) && creature.isInsideFrustum && !(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated), isGrabbed);
 

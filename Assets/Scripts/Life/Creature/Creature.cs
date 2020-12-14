@@ -547,6 +547,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 		growTicks = 0;
 
 		ClearMotherAndChildrenReferences();
+		
 		genotype.SetDefault();
 	}
 
@@ -670,7 +671,9 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 	}
 
 	private void ShowCurrentGenoPhenoAndHideOther() {
-		phenotype.Show(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype, CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureSelectionPanel.instance.IsSelectedCluster(this)); //Don't use SetActive() since it clears rigigdBody velocity
+		//Don't use SetActive() since it clears rigigdBody velocity
+		phenotype.SetActiveChildren(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype, CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype && !PhenotypeGraphicsPanel.instance.isGraphicsCellEnergyRelated && CreatureSelectionPanel.instance.IsSelectedCluster(this)); 
+		
 		genotype.gameObject.SetActive(CreatureEditModePanel.instance.mode == PhenoGenoEnum.Genotype);
 	}
 
@@ -679,6 +682,11 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 
 	public void UpdateGraphics() {
 		if (CreatureEditModePanel.instance.mode == PhenoGenoEnum.Phenotype) {
+			if (!GlobalPanel.instance.graphicsCreaturesToggle.isOn) {
+				// don't care if outside frustum, just hide
+				phenotype.UpdateGraphics(this);
+			}
+
 			if (phenotype.isAlive && (!phenotype.hasOriginCell || SpatialUtil.IsInsideFrustum(phenotype.originCell.position))) {
 				// inside frustum
 				isInsideFrustum = true;
