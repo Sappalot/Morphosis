@@ -328,8 +328,6 @@ public class GeneLogicBox : GeneSignalUnit {
 	}
 
 	public void Mutate(float strength, bool isOrigin) {
-		// TODO: make mutation less strong
-		return;
 
 		// Extend flanks
 		foreach (GeneLogicBoxGate gate in gateRow1) {
