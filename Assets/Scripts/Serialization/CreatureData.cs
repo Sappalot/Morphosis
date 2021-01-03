@@ -9,7 +9,7 @@ public class CreatureData {
 	public int generation = 1;
 
 	public ulong bornTick;
-	public ulong deadTick;
+	public long ageOffsetTick;
 
 	public GenotypeData genotypeData = new GenotypeData();
 	public PhenotypeData phenotypeData = new PhenotypeData();

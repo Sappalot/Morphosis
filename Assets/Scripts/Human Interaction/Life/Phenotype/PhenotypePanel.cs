@@ -14,6 +14,9 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 	public Text sizeText;
 	public Text growthPeriodLabel;
 
+	public AgeBar ageBar;
+	public Text creatureAgeLabel;
+
 	public Text creatureSpeed;
 
 	
@@ -67,6 +70,22 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 		}
 	}
 
+	public void OnClickAge() {
+		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
+			creature.ChangeAge(120);
+			CellPanel.instance.MakeDirty();
+			MakeDirty();
+		}
+	}
+
+	public void OnClickRejuvenate() {
+		foreach (Creature creature in CreatureSelectionPanel.instance.selection) {
+			creature.ChangeAge(-120);
+			CellPanel.instance.MakeDirty();
+			MakeDirty();
+		}
+	}
+
 	public void MakeDirty() {
 		isDirty = true;
 	}
@@ -106,53 +125,60 @@ public class PhenotypePanel : MonoSingleton<PhenotypePanel> {
 			}
 
 			if (solo == null || !solo.phenotype.isAlive) {
-				sizeBar.isOn = false;
 				energyBar.isOn = false;
-				
+				sizeBar.isOn = false;
+				ageBar.isOn = false;
+
 				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
 					creatureEffect.text = "Total Effect/Cell: ";
-				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction  || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
 					creatureEffect.text = "Production Effect/Cell: ";
 				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellExternal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureExternal) {
 					creatureEffect.text = "External Effect/Cell: ";
-				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux  || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
 					creatureEffect.text = "Flux Effect/Cell: ";
 				}
 
+				sizeText.text = "Size:";
+				growthPeriodLabel.text = "Try grow cell every:";
 				creatureSpeed.text = "Speed:";
 
 				ignoreHumanInput = false;
 				isDirty = false;
 				return;
+			} else if (CreatureSelectionPanel.instance.hasSoloSelected) {
+
+				energyBar.isOn = true;
+				energyBar.fullness = solo.phenotype.energyFullness;
+				energyBar.effectTotal = solo.phenotype.EffectPerCell(true, true, true);
+				energyBar.effectProd = solo.phenotype.EffectPerCell(true, false, false);
+				energyBar.effectExternal = solo.phenotype.EffectPerCell(false, true, false);
+				energyBar.effectFlux = solo.phenotype.EffectPerCell(false, false, true);
+				if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
+					creatureEffect.text = string.Format("Total Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.EffectUpPerCell(true, true), solo.phenotype.EffectDownPerCell(true, true, true), solo.phenotype.EffectPerCell(true, true, true));
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
+					creatureEffect.text = string.Format("Production Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.EffectUpPerCell(true, false), solo.phenotype.EffectDownPerCell(true, false, false), solo.phenotype.EffectPerCell(true, false, false));
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellExternal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureExternal) {
+					creatureEffect.text = string.Format("External Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", 0f, solo.phenotype.EffectDownPerCell(false, true, false), solo.phenotype.EffectPerCell(false, true, false));
+				} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
+					creatureEffect.text = string.Format("Flux Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.EffectUpPerCell(false, true), solo.phenotype.EffectDownPerCell(false, false, true), solo.phenotype.EffectPerCell(false, false, true));
+				}
+
+				sizeBar.isOn = true;
+				sizeBar.UpdateBar(solo.genotype.geneCellCount, solo.phenotype.cellCount, solo.genotype.GetGeneCellOfTypeCount(CellTypeEnum.Egg), solo.phenotype.GetCellOfTypeCount(CellTypeEnum.Egg), solo.GetAttachedChildrenAliveCount());
+				sizeText.text = "Size: " + solo.phenotype.cellCount + " / " + solo.genotype.geneCellCount;
+				growthPeriodLabel.text = string.Format("Try grow cell every: {0:F2} s  <color=#303030ff>[{1:F2} ... {2:F2}] </color>", solo.phenotype.growTickPeriod * Time.fixedDeltaTime, solo.phenotype.GrowTickPeriodAtSize(1) * Time.fixedDeltaTime, solo.phenotype.GrowTickPeriodAtSize(GlobalSettings.instance.phenotype.creatureMaxCellCount) * Time.fixedDeltaTime);
+
+				creatureSpeed.text = string.Format("Speed: {0:F2} m/s", solo.phenotype.speed);
+
+				if (solo.creation != CreatureCreationEnum.Frozen) {
+					ulong ageInSeconds = (ulong)Mathf.FloorToInt(solo.GetAge(World.instance.worldTicks));
+					ageBar.isOn = true;
+					ageBar.SetAge(ageInSeconds, GlobalSettings.instance.phenotype.maxAge);
+				} else {
+					ageBar.isOn = false;
+				}
 			}
-
-			sizeBar.isOn = true;
-			sizeBar.UpdateBar(solo.genotype.geneCellCount, solo.phenotype.cellCount, solo.genotype.GetGeneCellOfTypeCount(CellTypeEnum.Egg), solo.phenotype.GetCellOfTypeCount(CellTypeEnum.Egg), solo.GetAttachedChildrenAliveCount());
-
-			energyBar.isOn = true;
-			energyBar.fullness = solo.phenotype.energyFullness;
-			energyBar.effectTotal = solo.phenotype.EffectPerCell(true, true, true);
-			energyBar.effectProd = solo.phenotype.EffectPerCell(true, false, false);
-			energyBar.effectExternal = solo.phenotype.EffectPerCell(false, true, false);
-			energyBar.effectFlux = solo.phenotype.EffectPerCell(false, false, true);
-
-			//creatureEnergy.text = string.Format("Energy: {0:F2}%", solo.phenotype.energyFullness * 100f);
-
-			if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellTotal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureTotal) {
-				creatureEffect.text = string.Format("Total Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.EffectUpPerCell(true, true), solo.phenotype.EffectDownPerCell(true, true, true), solo.phenotype.EffectPerCell(true, true, true));
-			} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellProduction || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureProduction) {
-				creatureEffect.text = string.Format("Production Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.EffectUpPerCell(true, false), solo.phenotype.EffectDownPerCell(true, false, false), solo.phenotype.EffectPerCell(true, false, false));
-			} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellExternal || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureExternal) {
-				creatureEffect.text = string.Format("External Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", 0f, solo.phenotype.EffectDownPerCell(false, true, false), solo.phenotype.EffectPerCell(false, true, false));
-			} else if (PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CellFlux || PhenotypeGraphicsPanel.instance.effectMeasure == PhenotypeGraphicsPanel.EffectMeasureEnum.CreatureFlux) {
-				creatureEffect.text = string.Format("Flux Effect/Cell: {0:F2} - {1:F2} = {2:F2}W", solo.phenotype.EffectUpPerCell(false, true), solo.phenotype.EffectDownPerCell(false, false, true), solo.phenotype.EffectPerCell(false, false, true));
-			}
-
-			growthPeriodLabel.text = string.Format("Try grow cell every: {0:F2} s  <color=#303030ff>[{1:F2} ... {2:F2}] </color>", solo.phenotype.growTickPeriod * Time.fixedDeltaTime, solo.phenotype.GrowTickPeriodAtSize(1) * Time.fixedDeltaTime, solo.phenotype.GrowTickPeriodAtSize(GlobalSettings.instance.phenotype.creatureMaxCellCount) * Time.fixedDeltaTime);
-
-			sizeText.text = "Size: " + solo.phenotype.cellCount + " / " + solo.genotype.geneCellCount;
-
-			creatureSpeed.text = string.Format("Speed: {0:F2} m/s", solo.phenotype.speed);
 
 			ignoreHumanInput = false;
 

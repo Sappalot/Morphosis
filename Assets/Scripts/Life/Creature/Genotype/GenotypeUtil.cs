@@ -28,7 +28,8 @@ public static class GenotypeUtil {
 				if (Random.Range(0, 6) == 0) {
 					sourceGenome = Random.Range(0, genomes.Count);
 				}
-				combination[geneIndex].arrangements[arrangementIndex] = genomes[sourceGenome][geneIndex].arrangements[arrangementIndex];
+				// MAKE A DEEP COPY INSTEAD OF A SHALLOW ONE!!
+				combination[geneIndex].arrangements[arrangementIndex] = genomes[sourceGenome][geneIndex].arrangements[arrangementIndex].GetClone(genotypeDirtyfy);
 			}
 		}
 		for (int index = 0; index < Genotype.genomeLength; index++) {

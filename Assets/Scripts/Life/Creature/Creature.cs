@@ -350,19 +350,18 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 	//time
 	[HideInInspector]
 	public ulong bornTick;
-	[HideInInspector]
-	public ulong deadTick;
+	private long ageOffsetTick; // Magic age added by player, can't occur naturaly
 
-	public ulong GetAgeTicks(ulong worldTicks) {
-		return worldTicks - bornTick;
+	public long GetAgeTicks(ulong worldTicks) {
+		return (long)worldTicks - (long)bornTick + ageOffsetTick;
 	}
 
 	public float GetAge(ulong worldTicks) { // Age in seconds
-		return (worldTicks - bornTick) * Time.fixedDeltaTime;
+		return GetAgeTicks(worldTicks) * Time.fixedDeltaTime;
 	}
 
 	public float GetAgeNormalized(ulong worldTicks) { // Age in seconds
-		return ((worldTicks - bornTick) * Time.fixedDeltaTime) / GlobalSettings.instance.phenotype.maxAge;
+		return GetAge(worldTicks) / GlobalSettings.instance.phenotype.maxAge;
 	}
 
 	public float energy {
@@ -545,6 +544,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 		detatch = false;
 		canNotGrowMoreTicks = 0;
 		growTicks = 0;
+		ageOffsetTick = 0;
 
 		ClearMotherAndChildrenReferences();
 		
@@ -565,6 +565,20 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 
 	public void ChangeEnergy(float amount) {
 		phenotype.ChangeEnergy(amount);
+		isDirtyGraphics = true;
+	}
+
+	public void ChangeAge(int older) { // s
+		ageOffsetTick += Mathf.CeilToInt(older / Time.fixedDeltaTime);
+
+		// Adjust offset to clamp age to legal range
+		long ageTicks = GetAgeTicks(World.instance.worldTicks);
+		if (ageTicks < 0) {
+			ageOffsetTick -= ageTicks;
+		} else if (ageTicks > GlobalSettings.instance.phenotype.maxAge / Time.fixedDeltaTime) {
+			ageOffsetTick -= (ageTicks - Mathf.CeilToInt(GlobalSettings.instance.phenotype.maxAge / Time.fixedDeltaTime) );
+		}
+
 		isDirtyGraphics = true;
 	}
 
@@ -869,7 +883,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 		creatureData.creation = creation;
 		creatureData.generation = generation;
 		creatureData.bornTick = bornTick;
-		creatureData.deadTick = deadTick;
+		creatureData.ageOffsetTick = ageOffsetTick;
 
 		creatureData.growTicks = growTicks;
 		creatureData.canNotGrowMoreTicks = canNotGrowMoreTicks;
@@ -905,7 +919,7 @@ public class Creature : MonoBehaviour, IGenotypeDirtyfy {
 		creation = creatureData.creation;
 		generation = creatureData.generation;
 		bornTick = creatureData.bornTick;
-		deadTick = creatureData.deadTick;
+		ageOffsetTick = creatureData.ageOffsetTick;
 
 		growTicks = creatureData.growTicks;
 		canNotGrowMoreTicks = creatureData.canNotGrowMoreTicks;

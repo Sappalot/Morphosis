@@ -674,7 +674,9 @@ public class Arrangement {
 		}
 	}
 
-	public Arrangement GetClone() {
+	// Create a deep copy of this Arrangement
+	// GenotypeDirtyfy is the genomeWhich will be dirty as stuff is changed in the cloned arrangement
+	public Arrangement GetClone(IGenotypeDirtyfy genotypeDirtyfy) {
 		Arrangement clone = new Arrangement(1, genotypeDirtyfy);
 		clone.ApplyData(UpdateData());
 		return clone;
